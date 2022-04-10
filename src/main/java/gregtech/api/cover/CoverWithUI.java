@@ -14,7 +14,9 @@ public interface CoverWithUI {
     }
 
     @Deprecated
-    ModularUI createUI(EntityPlayer player);
+    default ModularUI createUI(EntityPlayer player) {
+        return null;
+    }
 
     default ModularWindow createWindow(UIBuildContext buildContext) {
         return null;

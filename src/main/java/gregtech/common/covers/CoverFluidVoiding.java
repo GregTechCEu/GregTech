@@ -11,12 +11,8 @@ import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.LabelWidget;
-import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -53,19 +49,6 @@ public class CoverFluidVoiding extends CoverPump {
     @Override
     protected String getUITitle() {
         return "cover.fluid.voiding.title";
-    }
-
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-
-        //this.fluidFilter.initUI(20, primaryGroup::addWidget);
-
-        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 100 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 100);
-        return builder.build(this, player);
     }
 
     @Override

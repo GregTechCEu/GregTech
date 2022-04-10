@@ -10,8 +10,6 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
-import com.cleanroommc.modularui.common.widget.TextFieldWidget;
 import com.cleanroommc.modularui.common.widget.*;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -25,8 +23,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GregTechUI;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackKey;
@@ -450,55 +446,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     protected String getUITitle() {
         return "cover.conveyor.title";
-    }
-
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        return builder.build(this, player);
-    }
-
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle(), GTValues.VN[tier]));
-
-        primaryGroup.addWidget(new IncrementButtonWidget(136, 20, 30, 20, 1, 8, 64, 512, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-        primaryGroup.addWidget(new IncrementButtonWidget(10, 20, 30, 20, -1, -8, -64, -512, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-
-        primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, gregtech.api.guiOld.GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf(transferRate), val -> {
-                    if (val != null && !val.isEmpty())
-                        setTransferRate(MathHelper.clamp(Integer.parseInt(val), 1, maxItemTransferRate));
-                })
-                        .setNumbersOnly(1, maxItemTransferRate)
-                        .setMaxLength(4)
-                        .setPostFix("cover.conveyor.transfer_rate")
-        );
-
-        /*primaryGroup.addWidget(new CycleButtonWidget(10, 45, 75, 20,
-                ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
-        primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));*/
-
-        if (coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
-                coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe) {
-            final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, gregtech.api.guiOld.GuiTextures.DISTRIBUTION_MODE, 3,
-                    () -> distributionMode.ordinal(),
-                    val -> setDistributionMode(DistributionMode.values()[val]))
-                    .setTooltipHoverString(val -> DistributionMode.values()[val].getName());
-            primaryGroup.addWidget(distributionModeButton);
-        }
-
-        //this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
-
-        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 190 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 190);
-        return buildUI(builder, player);
     }
 
     @Override

@@ -18,10 +18,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GregTechUI;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.LabelWidget;
-import gregtech.api.guiOld.widgets.WidgetGroup;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.newFilter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,7 +37,6 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
-    //protected final FluidFilterWrapper fluidFilter;
     protected Filter<FluidStack> fluidFilter;
     protected FluidFilterMode filterMode;
     protected FluidHandlerFiltered fluidHandler;
@@ -52,8 +47,6 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         this.titleLocale = titleLocale;
         this.texture = texture;
         this.fluidFilter = fluidFilter;
-        //this.fluidFilter = new FluidFilterWrapper(this);
-        //this.fluidFilter.setFluidFilter(fluidFilter);
     }
 
     protected void setFilterMode(FluidFilterMode filterMode) {
@@ -86,19 +79,6 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return EnumActionResult.SUCCESS;
     }
 
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup fluidFilterGroup = new WidgetGroup();
-        fluidFilterGroup.addWidget(new LabelWidget(10, 5, "cover.fluid_filter.title"));
-        fluidFilterGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(10, 20, 110, 20,
-                GTUtility.mapToString(FluidFilterMode.values(), (it) -> it.localeName), () -> this.filterMode.ordinal(),
-                (newMode) -> this.setFilterMode(FluidFilterMode.values()[newMode])));
-        //this.fluidFilter.initUI(45, fluidFilterGroup::addWidget);
-        return ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 105 + 82)
-                .widget(fluidFilterGroup)
-                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 105)
-                .build(this, player);
-    }
-
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         return ModularWindow.builder(176, 166)
@@ -109,7 +89,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
                 .widget(new CycleButtonWidget()
                         .setForEnum(FluidFilterMode.class, this::getFilterMode, this::setFilterMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))
-                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                        .setBackground(GuiTextures.BASE_BUTTON)
                         .setPos(10, 14)
                         .setSize(110, 20))
                 .widget(fluidFilter.createBlacklistButton(buildContext)

@@ -10,8 +10,6 @@ import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
-import com.cleanroommc.modularui.common.widget.TextFieldWidget;
 import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
@@ -20,15 +18,12 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GregTechUI;
 import gregtech.api.gui.GuiFunctions;
-import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.*;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
@@ -435,50 +430,9 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup(new Position(0, 10));
-        primaryGroup.addWidget(new LabelWidget(10, 5, "metaitem.cover.digital.name", 0));
-        ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
-        buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, GuiTextures.BUTTON_FLUID, () -> this.mode == MODE.FLUID, (pressed) -> {
-            if (pressed) setMode(MODE.FLUID);
-        }).setTooltipText("metaitem.cover.digital.mode.fluid");
-        buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, GuiTextures.BUTTON_ITEM, () -> this.mode == MODE.ITEM, (pressed) -> {
-            if (pressed) setMode(MODE.ITEM);
-        }).setTooltipText("metaitem.cover.digital.mode.item");
-        buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, GuiTextures.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY, (pressed) -> {
-            if (pressed) setMode(MODE.ENERGY);
-        }).setTooltipText("metaitem.cover.digital.mode.energy");
-        buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, GuiTextures.BUTTON_MACHINE, () -> this.mode == MODE.MACHINE, (pressed) -> {
-            if (pressed) setMode(MODE.MACHINE);
-        }).setTooltipText("metaitem.cover.digital.mode.machine");
-        buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, GuiTextures.BUTTON_INTERFACE, () -> this.mode == MODE.PROXY, (pressed) -> {
-            if (pressed) setMode(MODE.PROXY);
-        }).setTooltipText("metaitem.cover.digital.mode.proxy");
-        primaryGroup.addWidget(new LabelWidget(10, 25, "metaitem.cover.digital.title.mode", 0));
-        primaryGroup.addWidget(buttons[0]);
-        primaryGroup.addWidget(buttons[1]);
-        primaryGroup.addWidget(buttons[2]);
-        primaryGroup.addWidget(buttons[3]);
-        primaryGroup.addWidget(buttons[4]);
-
-        primaryGroup.addWidget(new LabelWidget(10, 50, "monitor.gui.title.slot", 0));
-        primaryGroup.addWidget(new ClickButtonWidget(40, 45, 20, 20, "-1", (data) -> setMode(slot - (data.isShiftClick ? 10 : 1))));
-        primaryGroup.addWidget(new ClickButtonWidget(140, 45, 20, 20, "+1", (data) -> setMode(slot + (data.isShiftClick ? 10 : 1))));
-        primaryGroup.addWidget(new ImageWidget(60, 45, 80, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(100, 55, "", 16777215, () -> Integer.toString(this.slot)));
-
-        primaryGroup.addWidget(new LabelWidget(10, 75, "metaitem.cover.digital.title.spin", 0));
-        primaryGroup.addWidget(new ClickButtonWidget(40, 70, 20, 20, "R", (data) -> setMode(this.spin.rotateY())));
-        primaryGroup.addWidget(new ImageWidget(60, 70, 80, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(100, 80, "", 16777215, () -> this.spin.toString()));
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 202).widget(primaryGroup).bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 120);
-        return builder.build(this, player);
-    }
-
-    @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 178)
-                .setBackground(gregtech.api.gui.GuiTextures.BACKGROUND)
+                .setBackground(GuiTextures.BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new TextWidget(Text.localised("metaitem.cover.digital.name"))
                         .setPos(10, 5))
@@ -489,41 +443,41 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                                 .setToggle(() -> this.mode == MODE.FLUID, val -> {
                                     if (val) setMode(MODE.FLUID);
                                 })
-                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_FLUID)
+                                .setTexture(GuiTextures.BUTTON_FLUID)
                                 .addTooltip(Text.localised("metaitem.cover.digital.mode.fluid")))
                         .widget(new CycleButtonWidget()
                                 .setToggle(() -> this.mode == MODE.ITEM, val -> {
                                     if (val) setMode(MODE.ITEM);
                                 })
-                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_ITEM)
+                                .setTexture(GuiTextures.BUTTON_ITEM)
                                 .addTooltip(Text.localised("metaitem.cover.digital.mode.item")))
                         .widget(new CycleButtonWidget()
                                 .setToggle(() -> this.mode == MODE.ENERGY, val -> {
                                     if (val) setMode(MODE.ENERGY);
                                 })
-                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_ENERGY)
+                                .setTexture(GuiTextures.BUTTON_ENERGY)
                                 .addTooltip(Text.localised("metaitem.cover.digital.mode.energy")))
                         .widget(new CycleButtonWidget()
                                 .setToggle(() -> this.mode == MODE.MACHINE, val -> {
                                     if (val) setMode(MODE.MACHINE);
                                 })
-                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_MACHINE)
+                                .setTexture(GuiTextures.BUTTON_MACHINE)
                                 .addTooltip(Text.localised("metaitem.cover.digital.mode.machine")))
                         .widget(new CycleButtonWidget()
                                 .setToggle(() -> this.mode == MODE.PROXY, val -> {
                                     if (val) setMode(MODE.PROXY);
                                 })
-                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_INTERFACE)
+                                .setTexture(GuiTextures.BUTTON_INTERFACE)
                                 .addTooltip(Text.localised("metaitem.cover.digital.mode.proxy")))
                         .setPos(40, 20))
                 .widget(new TextWidget(Text.localised("monitor.gui.title.slot")).setPos(10, 50))
                 .widget(new ButtonWidget()
                         .setOnClick(GuiFunctions.getIncrementer(-1, -10, -1, -10, value -> setMode(slot + value)))
-                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-1").color(0xFFFFFF))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-1").color(0xFFFFFF))
                         .setPos(40, 45))
                 .widget(new ButtonWidget()
                         .setOnClick(GuiFunctions.getIncrementer(1, 10, 1, 10, value -> setMode(slot + value)))
-                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("1").color(0xFFFFFF))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("1").color(0xFFFFFF))
                         .setPos(140, 45))
                 .widget(new TextFieldWidget()
                         .setGetterInt(() -> this.slot)
@@ -532,7 +486,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         .setMaxLines(1)
                         .setTextAlignment(Alignment.Center)
                         .setTextColor(0xFFFFFF)
-                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY)
+                        .setBackground(GuiTextures.DISPLAY)
                         .setPos(60, 45)
                         .setSize(80, 20));
         if (this.attachedSide.getAxis() == EnumFacing.Axis.Y) {
@@ -540,12 +494,12 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                     .setPos(10, 75))
                     .widget(new ButtonWidget()
                             .setOnClick((clickData, widget) -> setMode(this.spin.rotateY()))
-                            .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("R").color(0xFFFFFF))
+                            .setBackground(GuiTextures.BASE_BUTTON, new Text("R").color(0xFFFFFF))
                             .setPos(40, 70))
                     .widget(TextWidget.dynamicString(() -> this.spin.toString())
                             .setDefaultColor(0xFFFFFF)
                             .setTextAlignment(Alignment.Center)
-                            .setBackground(gregtech.api.gui.GuiTextures.DISPLAY)
+                            .setBackground(GuiTextures.DISPLAY)
                             .setPos(60, 70)
                             .setSize(80, 20));
         }
@@ -1052,9 +1006,9 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         }
         if (this.isProxy()) {
             if (isWorkingEnabled) {
-                RenderUtil.renderTextureArea(GuiTextures.COVER_INTERFACE_MACHINE_ON_PROXY, -7f / 16, 1f / 16, 14f / 16, 3f / 16, 0.002f);
+                RenderUtil.renderTextureArea(gregtech.api.guiOld.GuiTextures.COVER_INTERFACE_MACHINE_ON_PROXY, -7f / 16, 1f / 16, 14f / 16, 3f / 16, 0.002f);
             } else {
-                RenderUtil.renderTextureArea(GuiTextures.COVER_INTERFACE_MACHINE_OFF_PROXY, -7f / 16, -1f / 16, 14f / 16, 5f / 16, 0.002f);
+                RenderUtil.renderTextureArea(gregtech.api.guiOld.GuiTextures.COVER_INTERFACE_MACHINE_OFF_PROXY, -7f / 16, -1f / 16, 14f / 16, 5f / 16, 0.002f);
             }
         }
     }

@@ -5,16 +5,11 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.TextFieldWidget;
 import com.cleanroommc.modularui.common.widget.*;
-import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
-import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.CycleButtonWidget;
-import gregtech.api.guiOld.widgets.*;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -22,7 +17,6 @@ import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.newFilter.Filter;
 import gregtech.common.covers.newFilter.fluid.SimpleFluidFilter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
@@ -296,49 +290,10 @@ public class CoverFluidRegulator extends CoverPump {
         return "cover.fluid_regulator.title";
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    @Override
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(92, 43, 75, 18,
-                TransferMode.class, this::getTransferMode, this::setTransferMode)
-                .setTooltipHoverString("cover.fluid_regulator.transfer_mode.description"));
-
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(110, 64, 38, 18, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 64, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 64, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(111, 70, 36, 11, this::getTransferAmountString, val -> {
-            if (val != null && !val.isEmpty()) {
-                int amount = Integer.parseInt(val);
-                if (this.bucketMode == BucketMode.BUCKET) {
-                    amount = IntMath.saturatedMultiply(amount, 1000);
-                }
-                setTransferAmount(amount);
-            }
-        })
-                .setCentered(true)
-                .setNumbersOnly(1, transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
-                .setMaxLength(10)
-                .setScale(0.6f));
-
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
-
-        return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
-    }
-
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 228);
-        builder.setBackground(gregtech.api.gui.GuiTextures.BACKGROUND)
+        builder.setBackground(GuiTextures.BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(7, 6))
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 145))
@@ -370,48 +325,48 @@ public class CoverFluidRegulator extends CoverPump {
                         .widget(new Row()
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferRate))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
-                                .widget(new com.cleanroommc.modularui.common.widget.TextFieldWidget()
+                                .widget(new TextFieldWidget()
                                         .setMaxLines(1)
                                         .setGetterInt(() -> transferRate)
                                         .setSetterInt(this::setTransferRate)
                                         .setNumbers(() -> 1, () -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
                                         .setTextAlignment(Alignment.Center)
                                         .setTextColor(0xFFFFFF)
-                                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferRate))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12)))
-                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                        .widget(new CycleButtonWidget()
                                 .setForEnum(PumpMode.class, this::getPumpMode, this::setPumpMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(PumpMode.class))
-                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .setBackground(GuiTextures.BASE_BUTTON)
                                 .setSize(80, 12))
-                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                        .widget(new CycleButtonWidget()
                                 .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
                                 .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
-                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .setBackground(GuiTextures.BASE_BUTTON)
                                 .setSize(80, 12))
-                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                        .widget(new CycleButtonWidget()
                                 .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(BucketMode.class))
-                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .setBackground(GuiTextures.BASE_BUTTON)
                                 .addTooltip(new Text("cover.conveyor.distribution.description").localise())
                                 .setSize(80, 12))
-                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                        .widget(new CycleButtonWidget()
                                 .setForEnum(TransferMode.class, this::getTransferMode, this::setTransferMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(TransferMode.class))
-                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .setBackground(GuiTextures.BASE_BUTTON)
                                 .addTooltip(new Text("cover.robotic_arm.transfer_mode.description").localise())
                                 .setSize(80, 12))
                         .widget(new Row()
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferSize))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
                                         .setMaxLines(1)
@@ -420,11 +375,11 @@ public class CoverFluidRegulator extends CoverPump {
                                         .setNumbers(() -> 1, () -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
                                         .setTextAlignment(Alignment.Center)
                                         .setTextColor(0xFFFFFF)
-                                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferSize))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .setTicker(this::showTransferAmountField))
                         .setPos(89, 18)
