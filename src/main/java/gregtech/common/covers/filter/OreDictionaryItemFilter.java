@@ -6,6 +6,7 @@ import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.OreDictFilterTestSlot;
 import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OreDictExprFilter;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +28,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     private ItemStack testStack = ItemStack.EMPTY;
 
     private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
-    private final Map<ItemStack, Boolean> recentlyChecked = new HashMap<>();
+    private final Map<ItemStackKey, Boolean> recentlyChecked = new HashMap<>();
 
     protected void setOreDictFilterExpression(String oreDictFilterExpression) {
         this.oreDictFilterExpression = oreDictFilterExpression;
@@ -154,14 +155,15 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     public boolean matchesItemStack(ItemStack itemStack) {
-        Boolean b = recentlyChecked.get(itemStack);
+        ItemStackKey key = new ItemStackKey(itemStack);
+        Boolean b = recentlyChecked.get(key);
         if (b != null)
             return b;
         if (OreDictExprFilter.matchesOreDict(matchRules, itemStack)) {
-            recentlyChecked.put(itemStack, true);
+            recentlyChecked.put(key, true);
             return true;
         }
-        recentlyChecked.put(itemStack, false);
+        recentlyChecked.put(key, false);
         return false;
     }
 
