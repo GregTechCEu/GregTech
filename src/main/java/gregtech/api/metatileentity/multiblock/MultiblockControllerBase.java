@@ -18,6 +18,7 @@ import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.Block;
@@ -401,6 +402,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void explodeMultiblock() {
+        if (ConfigHolder.machines.explosionMode == 0) return;
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
         parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
         doExplosion(8);

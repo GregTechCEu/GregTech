@@ -225,7 +225,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
             if (hasDrainedWater) {
                 filledSteam = steamFluidTank.fill(ModHandler.getSteam(fillAmount), true);
             }
-            if (this.hasNoWater && hasDrainedWater) {
+            if (ConfigHolder.machines.explosionMode != 0 && this.hasNoWater && hasDrainedWater) {
                 doExplosion(2.0f);
             } else this.hasNoWater = !hasDrainedWater;
             if (filledSteam == 0 && hasDrainedWater) {

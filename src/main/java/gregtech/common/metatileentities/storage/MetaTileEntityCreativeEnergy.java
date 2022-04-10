@@ -18,6 +18,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -139,7 +140,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             lastEnergyInputPerSec = energyInputPerSec;
             energyOutputPerSec = 0;
             energyInputPerSec = 0;
-            if (doExplosion) {
+            if (ConfigHolder.machines.explosionMode != 0 && doExplosion) {
                 getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                         1, false);
                 doExplosion = false;

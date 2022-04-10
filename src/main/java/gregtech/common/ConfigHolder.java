@@ -74,8 +74,10 @@ public class ConfigHolder {
         @Config.Comment({"Steam to EU multiplier for Steam Multiblocks.", "1.0 means 1L Steam -> 1 EU. 0.5 means 2L Steam -> 1 EU.", "Default: 0.5"})
         public double multiblockSteamToEU = 0.5;
 
-        @Config.Comment({"Whether machines should explode when overloaded with power.", "Default: true"})
-        public boolean doExplosions = true;
+        @Config.Comment({"Whether machines how explode when overloaded with power.", "0 - Disable Explosion", "1 - Explode without Destroy", "2 - Enable Explosion", "Default: 2"})
+        @Config.RangeInt(min = 0, max = 2)
+        @Config.SlidingOption
+        public int explosionMode = 2;
 
         @Config.Comment({"Energy use multiplier for electric items.", "Default: 100"})
         public int energyUsageMultiplier = 100;

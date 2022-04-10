@@ -3,6 +3,7 @@ package gregtech.common.pipelike.fluidpipe.tile;
 import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
@@ -52,7 +53,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 TileEntityFluidPipe.setNeighboursToFire(world, pos);
         } else
             world.setBlockToAir(pos);
-        if (isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
+        if (ConfigHolder.machines.explosionMode != 0 && isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
             this.doExplosion(1.0f + GTValues.RNG.nextFloat());
         }
     }
