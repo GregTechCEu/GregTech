@@ -5,6 +5,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.covers.CoverConveyor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemCarrotOnAStick;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -28,7 +30,6 @@ import java.util.*;
 public class VirtualContainerRegistry extends WorldSavedData{
     private static final int DEFAULT_SIZE = 27; // 27 slots
     private static final String DATA_ID = GTValues.MODID + ".vcontainer_data";
-    // private static final IItemHandlerModifiable modifiable;
 
     protected static Map<UUID, Map<String, VirtualContainer>> containerMap = new HashMap<>();
 
@@ -80,7 +81,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
     }
 
     /**
-     * Adds a tank to the registry
+     * Adds a container to the registry
      * @param key The name of the container
      * @param uuid The uuid of the player the container is private to, or null if the container is public
      * @param size The initial size of the container
@@ -128,9 +129,10 @@ public class VirtualContainerRegistry extends WorldSavedData{
             NBTTagCompound publicContainers = nbt.getCompoundTag("Public");
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
+                NBTTagCompound itemCompound = containerCompound.getCompoundTag(key);
                 VirtualContainerRegistry.addContainer(key, null, containerCompound.getInteger("Size"));
 
-                GTUtility.readItems(VirtualContainerRegistry.getContainer(key, null), key, containerCompound);
+                GTUtility.readItems(VirtualContainerRegistry.getContainer(key, null), key, itemCompound);
             }
         }
         if (nbt.hasKey("Private")) {
@@ -140,8 +142,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-
-                    GTUtility.readItems(VirtualContainerRegistry.getContainerCreate(key, uuid, containerCompound.getInteger("Size")), key, containerCompound);
+                    NBTTagCompound itemCompound = containerCompound.getCompoundTag(key);
+                    GTUtility.readItems(VirtualContainerRegistry.getContainerCreate(key, uuid, containerCompound.getInteger("Size")), key, itemCompound);
                 }
             }
         }
@@ -154,13 +156,12 @@ public class VirtualContainerRegistry extends WorldSavedData{
         containerMap.forEach( (uuid, map) -> {
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, container) -> {
-                if (container.getSizeInventory() > 0) {
-                    NBTTagCompound containerCompound = new NBTTagCompound();
-                    containerCompound.setInteger("Size", container.getSizeInventory());
-
-                    GTUtility.writeItems(container, key, containerCompound);
-                    mapCompound.setTag(key, containerCompound);
-                }
+                NBTTagCompound containerCompound = new NBTTagCompound();
+                NBTTagCompound itemCompound = new NBTTagCompound();
+                containerCompound.setInteger("Size", container.getSlots());
+                GTUtility.writeItems(container, key, itemCompound);
+                containerCompound.setTag(key, itemCompound);
+                mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
                 if (uuid == null) {
@@ -192,206 +193,111 @@ public class VirtualContainerRegistry extends WorldSavedData{
         }
     }
 
-    protected static class VirtualContainer implements  IInventory, IItemHandlerModifiable {
-        @Nullable
-        protected List<ItemStack> items;
-        protected int size;
-        protected boolean isDirty;
+    protected static class VirtualContainer implements IItemHandlerModifiable {
 
+        protected int size;
+        protected ArrayList<ItemStack> items;
 
         public VirtualContainer(int size){
             this.size = size;
-        }
-
-        @Override
-        public int getSizeInventory() {
-            return this.size;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return this.size > 0 ? true : false;
+            // items = new ArrayList<>(this.size);
+            items = new ArrayList<>(this.size);
+            for (int slot = 0; slot < this.size; slot++) {
+                items.add(slot, ItemStack.EMPTY);
+            }
+            GTLog.logger.debug("Virtual Container of size: " + size + " (" + items.size() + ") " + " has been constructed");
         }
 
         @Override
         public int getSlots() {
-            return this.size;
+            return items.size();
         }
 
         @Override
         public ItemStack getStackInSlot(int i) {
-            return items.size() > 0 ? items.get(i) : null;
+            return items.get(i) != ItemStack.EMPTY ? items.get(i) : ItemStack.EMPTY;
         }
 
         /**
          *
          * @param slot index of the array to insert the ItemStack into.
          * @param itemStack ItemStack to insert into the array
-         * @param doInsert Should the array be modified with the insert?
+         * @param simulate Should the List<ItemStack> be modified?
          * @return a copy of the ItemStack with the adjusted amount
          */
         @Nonnull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean doInsert) {
-            if (doInsert){
-                items.add(slot, itemStack);
-            }
-
-            for (int srcIndex = 0; srcIndex < items.size(); srcIndex++) {
-                if (itemStack.isEmpty()) {
-                    continue;
-                }
-
-                // int amt = items.get(srcIndex).getMaxStackSize() - items.get(srcIndex).getCount();
-                ItemStack remainder = GTTransferUtils.insertItem(this, itemStack, true);
-                int amountToInsert = itemStack.getCount() - remainder.getCount();
-
-                if (amountToInsert > 0) {
-                    itemStack = this.extractItem(srcIndex, amountToInsert, false);
-                    if (!sourceStack.isEmpty()) {
-                        GTTransferUtils.insertItem(targetInventory, sourceStack, false);
-                        itemsLeftToTransfer -= sourceStack.getCount();
-
-                        if (itemsLeftToTransfer == 0) {
-                            break;
-                        }
-                    }
-                }
-            }
-            return maxTransferAmount - itemsLeftToTransfer;
-            /*
-            ItemStack itemCopy;
-
-            if (doInsert && (items[slot].isItemEqual(itemStack) || items[slot] == ItemStack.EMPTY)) {
-                // case 1: 64 items in slot, amt should be 0 and incoming item stack is returned unchanged
-                // case 2: 32 items in slot, amt should be 32 and incoming item stack is returned with 0 or self - 32
-                // case 3: no item in slot, amt should be item stack count and an empty item stack is returned
-
-                items[slot].setCount(items[slot].getCount() + remainder);
-            }
-
-            if (remainder == 0)
+        public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean simulate) {
+            if (itemStack.isEmpty())
                 return ItemStack.EMPTY;
 
-            itemCopy = itemStack;
-            itemCopy.setCount(remainder);
-            return itemCopy;
+            int amtTheoretical; // theoretically, how much can be inserted?
+            if (items.get(slot).isEmpty())
+                amtTheoretical = 64;
+            else
+                amtTheoretical = items.get(slot).getMaxStackSize() - items.get(slot).getCount();
+            int remainder = itemStack.getCount() - amtTheoretical;  // what is left of the incoming item stack?
+            // int amtActual = Math.max(0, amtTheoretical - itemStack.getCount()); // how much can actually be inserted?
 
-             */
+            if (!simulate){
+                items.set(slot, itemStack);
+                items.get(slot).setCount(items.get(slot).getCount() + Math.max(0, amtTheoretical - itemStack.getCount()));
+                // items.get(slot).setCount(items.get(slot).getCount() + amtActual);
+                /*GTLog.logger.warn(
+                        "Remainder: " + remainder +
+                        " Slot: " + slot +
+                        " Amount that can be inserted: " + amtTheoretical +
+                        " Item to insert: " + itemStack);*/
+            }
+            if (remainder <= 0) { // not enough or exactly for a full stack
+                // GTLog.logger.warn("Empty ItemStack has been returned, all of " + itemStack + " has been inserted");
+                return ItemStack.EMPTY;
+            }
+            else { // more than a full stack, there are leftover incoming items to return
+                itemStack.setCount(remainder);
+                // GTLog.logger.warn("Item: " + itemStack + " has been inserted");
+                return itemStack;
+            }
         }
 
+        /**
+         *
+         * @param slot - The slot to extract from
+         * @param amtToExtract - The amount to extract from the slot
+         * @param simulate - Should the List<ItemStack> be modified?
+         * @return - Returns the item extracted
+         */
         @Nonnull
         @Override
-        public ItemStack extractItem(int slot, int amtToExtract, boolean doExtract) {
-            /*// case 1: 64 items in slot, amtToExtract is 64, return item stack and set item at slot to empty item stack
-            // case 2: 64 items in slot, amtToExtract is 32, return item stack with 32 and set item count at slot to 32
-            // case 3: 64 items in slot, amtToExtract is 0, return an empty item stack and item at slot is unchanged
-            int amtExtractable = Math.min(items[slot].getCount(), amtToExtract);
-            int remainder = Math.max(0, items[slot].getCount() - amtToExtract);
-            ItemStack itemCopy = items[slot];
+        public ItemStack extractItem(int slot, int amtToExtract, boolean simulate) {
+            if (items.get(slot).isEmpty())
+                return ItemStack.EMPTY;
 
-            if (doExtract && (items[slot].getCount() > 0 || items[slot] != ItemStack.EMPTY)) {
-                items[slot].setCount(remainder);
-            }
-            itemCopy.setCount(amtToExtract);
-            return itemCopy;*/
-            return items[slot];
+            int remainder = amtToExtract - items.get(slot).getCount();
+            ItemStack returnable = items.get(slot).copy();
+            returnable.setCount(amtToExtract - remainder);
+
+            if (!simulate) // extracted all item in slot
+                items.set(slot, ItemStack.EMPTY);
+
+            return returnable;
         }
 
         @Override
         public int getSlotLimit(int slot) {
-            return items[slot].getMaxStackSize();
-        }
-
-        @Override
-        public ItemStack decrStackSize(int slot, int amt) {
-            items[slot].setCount(items[slot].getCount() - amt);
-            return items[slot];
-        }
-
-        @Override
-        public ItemStack removeStackFromSlot(int slot) {
-            ItemStack itemReturnable = items[slot];
-            items[slot] = null;
-            return itemReturnable;
-        }
-
-        @Override
-        public void setInventorySlotContents(int slot, ItemStack itemStack) {
-            items[slot] = itemStack;
-        }
-
-        @Override
-        public int getInventoryStackLimit() {
-            return 64;
-        }
-
-        @Override
-        public void markDirty() {
-            isDirty = true;
-        }
-
-        @Override
-        public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
-            return false;
-        }
-
-        @Override
-        public void openInventory(EntityPlayer entityPlayer) {
-            return;
-        }
-
-        @Override
-        public void closeInventory(EntityPlayer entityPlayer) {
-            return;
-        }
-
-        @Override
-        public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-            return
-                    items[slot].isItemEqual(itemStack) ||
-                    items[slot] == ItemStack.EMPTY ||
-                    items[slot].getCount() < itemStack.getCount();
-        }
-
-        @Override
-        public int getField(int slot) {
-            return 0;
-        }
-
-        @Override
-        public void setField(int slot, int amount) {
-
-        }
-
-        @Override
-        public int getFieldCount() {
-            return 0;
-        }
-
-        @Override
-        public void clear() {
-            items = new ItemStack[size];
-        }
-
-        @Override
-        public String getName() {
-            return null;
-        }
-
-        @Override
-        public boolean hasCustomName() {
-            return false;
-        }
-
-        @Override
-        public ITextComponent getDisplayName() {
-            return null;
+            return items.get(slot).getMaxStackSize();
         }
 
         @Override
         public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
-            setInventorySlotContents(slot, itemStack);
+            items.set(slot, itemStack);
+        }
+
+        public boolean isEmpty(){
+            for (ItemStack item : items) {
+                return item == ItemStack.EMPTY;
+            }
+            return false;
         }
     }
 }
