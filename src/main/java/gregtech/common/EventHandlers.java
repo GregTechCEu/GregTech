@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.VirtualContainerRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
@@ -209,6 +210,7 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
+        VirtualContainerRegistry.initializeStorage(event.getWorld());
         CapesRegistry.checkAdvancements(event.getWorld());
     }
 
