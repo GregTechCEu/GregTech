@@ -70,18 +70,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
     public static VirtualContainer getContainerCreate(String key, UUID uuid, int size) {
         if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
             addContainer(key, uuid, size);
-            /*GTLog.logger.warn(
-                    "\nCreated new container" +
-                    "\nKey: " + key +
-                    "\nUUID: " + (uuid == null ? "null" : uuid) +
-                    "\nSize: " + size
-            );*/
         }
-        /*GTLog.logger.warn(
-                "\nRetrieved existing container" +
-                "\nKey: " + key +
-                "\nUUID: " + (uuid == null ? "null" : uuid)
-        );*/
         return getContainer(key, uuid);
     }
 
@@ -103,7 +92,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      */
     public static void addContainer(String key, UUID uuid, int size) {
         if(containerMap.containsKey(uuid) && containerMap.get(uuid).containsKey(key)) {
-            GTLog.logger.warn("Overwriting virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", this might cause fluid loss!");
+            GTLog.logger.warn("Overwriting virtual container " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", this might cause fluid loss!");
         } else if (!containerMap.containsKey(uuid)) {
             containerMap.put(uuid, new HashMap<>());
         }
@@ -144,13 +133,13 @@ public class VirtualContainerRegistry extends WorldSavedData{
             NBTTagCompound publicContainers = nbt.getCompoundTag("Public");
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
-                NBTTagCompound itemCompound = containerCompound.getCompoundTag(key);
-                VirtualContainerRegistry.addContainer(key, null, containerCompound.getInteger("Size"));
-
+                int size = containerCompound.getInteger("Size");
+                VirtualContainerRegistry.addContainer(key, null, size);
                 GTUtility.readItems(
-                        getContainerCreate(key, null, containerCompound.getInteger("Size")),
+                        getContainerCreate(key, null, size),
                         "Slots",
-                        itemCompound);
+                        containerCompound
+                );
             }
         }
         if (nbt.hasKey("Private")) {
@@ -160,11 +149,11 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-                    NBTTagCompound itemCompound = containerCompound.getCompoundTag(key);
+                    // NBTTagCompound itemCompound = containerCompound.getCompoundTag("Container");
                     GTUtility.readItems(
                             getContainerCreate(key, uuid, containerCompound.getInteger("Size")),
                             "Slots",
-                            itemCompound
+                            containerCompound
                     );
 
                 }
@@ -180,14 +169,12 @@ public class VirtualContainerRegistry extends WorldSavedData{
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, container) -> {
                 NBTTagCompound containerCompound = new NBTTagCompound();
-                NBTTagCompound itemCompound = new NBTTagCompound();
                 containerCompound.setInteger("Size", container.getSlots());
                 GTUtility.writeItems(
                         container,
                         "Slots",
-                        itemCompound
+                        containerCompound
                 );
-                containerCompound.setTag(key, itemCompound);
                 mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
