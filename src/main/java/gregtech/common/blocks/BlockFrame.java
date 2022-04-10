@@ -2,12 +2,17 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
+import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.pipenet.block.ItemBlockPipe;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.util.GTLog;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -39,7 +44,7 @@ import javax.annotation.Nullable;
 public final class BlockFrame extends DelayedStateBlock implements IModelSupplier {
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "frame_block"), "normal");
-    private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
+    public static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
     public final PropertyMaterial variantProperty;
 
@@ -145,9 +150,29 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
-        if (stackInHand.isEmpty() || !(stackInHand.getItem() instanceof FrameItemBlock)) {
+        if (stackInHand.isEmpty()) {
             return false;
         }
+        // replace frame with pipe and set the frame material to this frame
+        if (stackInHand.getItem() instanceof ItemBlockPipe) {
+            BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
+            if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
+                IBlockState pipeState = blockPipe.getDefaultState();
+                worldIn.setBlockState(pos, pipeState);
+                blockPipe.onBlockPlacedBy(worldIn, pos, pipeState, playerIn, stackInHand);
+                IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
+                if (pipeTile instanceof TileEntityPipeBase) {
+                    ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
+                } else {
+                    GTLog.logger.error("Pipe was not placed!");
+                }
+                if (!playerIn.capabilities.isCreativeMode) {
+                    stackInHand.shrink(1);
+                }
+                return true;
+            }
+        }
+
         MutableBlockPos blockPos = new MutableBlockPos(pos);
         for (int i = 0; i < 32; i++) {
             if (worldIn.getBlockState(blockPos).getBlock() instanceof BlockFrame) {
