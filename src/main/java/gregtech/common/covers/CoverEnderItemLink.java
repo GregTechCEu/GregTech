@@ -172,7 +172,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void openUI(EntityPlayerMP player) {
-        updateContainerLink();
+        // updateContainerLink();
         CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
         isColorTemp = false;
     }
@@ -239,6 +239,10 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     public void updateContainerLink() {
         this.linkedContainer.changeInventory(VirtualContainerRegistry.getContainerCreate(makeContainerName(), getContainerUUID()));
+        GTLog.logger.warn(
+                "\nRetrieved container" +
+                "\nContainer name: " + makeContainerName() +
+                "\nContainer UUID: " + getContainerUUID());
         coverHolder.markDirty();
     }
 

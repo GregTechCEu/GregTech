@@ -85,8 +85,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
 
-        this.filterWrapper.initUI(y + 38, widgetGroup);
-        this.filterWrapper.blacklistUI(y + 38, widgetGroup, () -> true);
+        this.filterWrapper.initUI(y + 15, widgetGroup);
+        this.filterWrapper.blacklistUI(y + 15, widgetGroup, () -> true);
 /*
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::showGlobalTransferLimitSlider);
         stackSizeGroup.addWidget(new ImageWidget(139, 70, 35, 20, GuiTextures.DISPLAY));

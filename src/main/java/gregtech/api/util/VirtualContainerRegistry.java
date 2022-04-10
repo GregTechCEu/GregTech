@@ -36,7 +36,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
     public VirtualContainerRegistry(){
         super(DATA_ID);
     }
-
+    // for some reason, MapStorage throws an error if this constructor is not present
+    @SuppressWarnings("unused")
     public VirtualContainerRegistry(String name){
         super(name);
     }
@@ -69,15 +70,29 @@ public class VirtualContainerRegistry extends WorldSavedData{
     public static VirtualContainer getContainerCreate(String key, UUID uuid, int size) {
         if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
             addContainer(key, uuid, size);
+            /*GTLog.logger.warn(
+                    "\nCreated new container" +
+                    "\nKey: " + key +
+                    "\nUUID: " + (uuid == null ? "null" : uuid) +
+                    "\nSize: " + size
+            );*/
         }
+        /*GTLog.logger.warn(
+                "\nRetrieved existing container" +
+                "\nKey: " + key +
+                "\nUUID: " + (uuid == null ? "null" : uuid)
+        );*/
         return getContainer(key, uuid);
     }
 
+    /**
+     * Retrieves a container from the registry, creating it with {@link #DEFAULT_SIZE the default size} if it does not exist
+     * @param key The name of the container
+     * @param uuid The uuid of the player the container is private to, or null if the container is public
+     * @return The container object
+     */
     public static VirtualContainer getContainerCreate(String key, UUID uuid) {
-        if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
-            addContainer(key, uuid, DEFAULT_SIZE);
-        }
-        return getContainer(key, uuid);
+        return getContainerCreate(key, uuid, DEFAULT_SIZE);
     }
 
     /**
@@ -132,7 +147,10 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound itemCompound = containerCompound.getCompoundTag(key);
                 VirtualContainerRegistry.addContainer(key, null, containerCompound.getInteger("Size"));
 
-                GTUtility.readItems(VirtualContainerRegistry.getContainer(key, null), key, itemCompound);
+                GTUtility.readItems(
+                        getContainerCreate(key, null, containerCompound.getInteger("Size")),
+                        "Slots",
+                        itemCompound);
             }
         }
         if (nbt.hasKey("Private")) {
@@ -143,7 +161,12 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
                     NBTTagCompound itemCompound = containerCompound.getCompoundTag(key);
-                    GTUtility.readItems(VirtualContainerRegistry.getContainerCreate(key, uuid, containerCompound.getInteger("Size")), key, itemCompound);
+                    GTUtility.readItems(
+                            getContainerCreate(key, uuid, containerCompound.getInteger("Size")),
+                            "Slots",
+                            itemCompound
+                    );
+
                 }
             }
         }
@@ -159,7 +182,11 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound containerCompound = new NBTTagCompound();
                 NBTTagCompound itemCompound = new NBTTagCompound();
                 containerCompound.setInteger("Size", container.getSlots());
-                GTUtility.writeItems(container, key, itemCompound);
+                GTUtility.writeItems(
+                        container,
+                        "Slots",
+                        itemCompound
+                );
                 containerCompound.setTag(key, itemCompound);
                 mapCompound.setTag(key, containerCompound);
             });
@@ -231,31 +258,28 @@ public class VirtualContainerRegistry extends WorldSavedData{
             if (itemStack.isEmpty())
                 return ItemStack.EMPTY;
 
-            int amtTheoretical; // theoretically, how much can be inserted?
+            int amt; // theoretically, how much can be inserted?
             if (items.get(slot).isEmpty())
-                amtTheoretical = 64;
+                amt = items.get(slot).getMaxStackSize();
             else
-                amtTheoretical = items.get(slot).getMaxStackSize() - items.get(slot).getCount();
-            int remainder = itemStack.getCount() - amtTheoretical;  // what is left of the incoming item stack?
-            // int amtActual = Math.max(0, amtTheoretical - itemStack.getCount()); // how much can actually be inserted?
+                amt = items.get(slot).getMaxStackSize() - items.get(slot).getCount();
+            int remainder = Math.max(0, itemStack.getCount() - amt);  // what is left of the incoming item stack?
 
             if (!simulate){
                 items.set(slot, itemStack);
-                items.get(slot).setCount(items.get(slot).getCount() + Math.max(0, amtTheoretical - itemStack.getCount()));
-                // items.get(slot).setCount(items.get(slot).getCount() + amtActual);
-                /*GTLog.logger.warn(
-                        "Remainder: " + remainder +
-                        " Slot: " + slot +
-                        " Amount that can be inserted: " + amtTheoretical +
-                        " Item to insert: " + itemStack);*/
+                items.get(slot).setCount(itemStack.getCount());
+
             }
+            /*GTLog.logger.warn(
+                    "\nItem to be inserted: " + itemStack +
+                    "\nAmount to be inserted: " + itemStack.getCount() +
+                    "\nItem to return: " + itemStack.getDisplayName() + " count: " + remainder +
+                    "\nSimulate: " + simulate);*/
             if (remainder <= 0) { // not enough or exactly for a full stack
-                // GTLog.logger.warn("Empty ItemStack has been returned, all of " + itemStack + " has been inserted");
                 return ItemStack.EMPTY;
             }
             else { // more than a full stack, there are leftover incoming items to return
                 itemStack.setCount(remainder);
-                // GTLog.logger.warn("Item: " + itemStack + " has been inserted");
                 return itemStack;
             }
         }
@@ -280,6 +304,11 @@ public class VirtualContainerRegistry extends WorldSavedData{
             if (!simulate) // extracted all item in slot
                 items.set(slot, ItemStack.EMPTY);
 
+            /*GTLog.logger.warn(
+                    "\nItem to be extracted: " + items.get(slot) +
+                    "\nAmount to extract: " + amtToExtract +
+                    "\nItem to return: " + returnable +
+                    "\nSimulate: " + simulate);*/
             return returnable;
         }
 
@@ -295,9 +324,10 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
         public boolean isEmpty(){
             for (ItemStack item : items) {
-                return item == ItemStack.EMPTY;
+                if (!item.isEmpty())
+                    return false;
             }
-            return false;
+            return true;
         }
     }
 }
