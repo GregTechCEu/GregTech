@@ -189,13 +189,14 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon) {
+    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon, @Optional int criticalTemp) {
         if (checkFrozen("add Wires to a material")) return;
         if (m.hasProperty(PropertyKey.WIRE)) {
             m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
             m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
             m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
             m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
-        } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon));
+            m.getProperty(PropertyKey.WIRE).setSuperconductorCriticalTemperature(criticalTemp);
+        } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp));
     }
 }
