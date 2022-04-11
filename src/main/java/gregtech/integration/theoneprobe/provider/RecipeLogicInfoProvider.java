@@ -35,7 +35,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 if (EUt > 0) {
                     probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + TextFormatting.RED + EUt + TextFormatting.RESET + " EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + TextFormatting.RESET + ")");
                 } else if (EUt < 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + TextFormatting.RED + (EUt * -1) + TextFormatting.RESET + " EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + TextFormatting.RESET + ")");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + TextFormatting.RED + (EUt * -1) + TextFormatting.RESET + " EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt * -1)] + TextFormatting.RESET + ")");
                 }
             }
         }
