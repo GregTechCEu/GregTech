@@ -28,7 +28,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     private ItemStack testStack = ItemStack.EMPTY;
 
     private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
-    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
+    private static final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
     private final Object2BooleanOpenCustomHashMap<ItemStack> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
 
     protected void setOreDictFilterExpression(String oreDictFilterExpression) {
