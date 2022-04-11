@@ -1656,16 +1656,16 @@ tile.concrete.dark_bricks.chiseled.name=Точеные кирпичи темно
 
 # Паровые механизмы
 gregtech.machine.steam_boiler.tooltip_produces=Производит %,dмВ пара в секунду
-gregtech.machine.steam_boiler_coal_bronze.name=Маленький паровой угольный котел
-gregtech.machine.steam_boiler_coal_bronze.tooltip=Ранний способ получить энергию пара
-gregtech.machine.steam_boiler_coal_steel.name=Паровой угольный котел высокого давления
-gregtech.machine.steam_boiler_coal_steel.tooltip=Быстрее, чем маленький паровой угольный котел
-gregtech.machine.steam_boiler_solar_bronze.name=Паровой солнечный котел
+gregtech.machine.steam_boiler_coal_bronze.name=Маленький угольный паровой котел
+gregtech.machine.steam_boiler_coal_bronze.tooltip=Ранний способ получить паровую энергию
+gregtech.machine.steam_boiler_coal_steel.name=Угольный паровой котел высокого давления
+gregtech.machine.steam_boiler_coal_steel.tooltip=Быстрее, чем маленький угольный паровой котел
+gregtech.machine.steam_boiler_solar_bronze.name=Солнечный паровой котел
 gregtech.machine.steam_boiler_solar_bronze.tooltip=Пар от энергии солнца
-gregtech.machine.steam_boiler_lava_bronze.name=Маленький паровой лавовый котел
-gregtech.machine.steam_boiler_lava_bronze.tooltip=Котел работает на лаве
-gregtech.machine.steam_boiler_lava_steel.name=Паровой лавовый котел высокого давления
-gregtech.machine.steam_boiler_lava_steel.tooltip=Быстрее, чем маленький паровой лавовый котел
+gregtech.machine.steam_boiler_lava_bronze.name=Маленький жидкостный паровой котел
+gregtech.machine.steam_boiler_lava_bronze.tooltip=Котел работает на жидкостях
+gregtech.machine.steam_boiler_lava_steel.name=Жидкостный паровой котел высокого давления
+gregtech.machine.steam_boiler_lava_steel.tooltip=Быстрее, чем маленький жидкостный паровой котел
 gregtech.machine.steam_extractor_bronze.name=Паровой экстрактор
 gregtech.machine.steam_extractor_bronze.tooltip=Извлечение вашей первой резины
 gregtech.machine.steam_extractor_steel.name=Паровой экстрактор высокого давления
@@ -1679,36 +1679,36 @@ gregtech.machine.steam_compressor_steel.name=Паровой компрессор
 gregtech.machine.steam_hammer_bronze.name=Паровой кузнечный молот
 gregtech.machine.steam_hammer_steel.name=Паровой кузнечный молот высокого давления
 gregtech.machine.steam_furnace_bronze.name=Паровая печь
-gregtech.machine.steam_furnace_bronze.tooltip=Выплавка при помощи пара
+gregtech.machine.steam_furnace_bronze.tooltip=Плавка с паром под давлением
 gregtech.machine.steam_furnace_steel.name=Паровая печь высокого давления
 gregtech.machine.steam_furnace_steel.tooltip=Плавка с паром под давлением
-gregtech.machine.steam_alloy_smelter_bronze.name=Паровая плавильня
-gregtech.machine.steam_alloy_smelter_steel.name=Паровая плавильня высокого давления
+gregtech.machine.steam_alloy_smelter_bronze.name=Паровая печь для сплавов
+gregtech.machine.steam_alloy_smelter_steel.name=Паровая печь для сплавов высокого давления
 
 # Генераторы
 
-gregtech.machine.combustion_generator.lv.name=Базовый дизельный генератор
+gregtech.machine.combustion_generator.lv.name=Обычный дизельный генератор
 gregtech.machine.combustion_generator.mv.name=Улучшенный дизельный генератор
 gregtech.machine.combustion_generator.hv.name=Улучшенный дизельный генератор II
 gregtech.machine.combustion_generator.ev.name=Турбодизельный генератор II
-gregtech.machine.steam_turbine.lv.name=Базовая паровая турбина
-gregtech.machine.steam_turbine.mv.name=Улучшеная паровая турбина
-gregtech.machine.steam_turbine.hv.name=Турбо паровая турбина
+gregtech.machine.steam_turbine.lv.name=Обычная паровая турбина
+gregtech.machine.steam_turbine.mv.name=Улучшенная паровая турбина
+gregtech.machine.steam_turbine.hv.name=Улучшенная паровая турбина II
 gregtech.machine.steam_turbine.ev.name=Турбопаровая турбина II
-gregtech.machine.gas_turbine.lv.name=Базовая газовая турбина
-gregtech.machine.gas_turbine.mv.name=Улучшеная газовая турбина
-gregtech.machine.gas_turbine.hv.name=Турбо газовая турбина
+gregtech.machine.gas_turbine.lv.name=Обычная газовая турбина
+gregtech.machine.gas_turbine.mv.name=Улучшенная газовая турбина
+gregtech.machine.gas_turbine.hv.name=Улучшенная газовая турбина II
 gregtech.machine.gas_turbine.ev.name=Турбогазовая турбина II
 gregtech.machine.magic_energy_absorber.name=Поглотитель магической энергии
-gregtech.machine.magic_energy_absorber.tooltip=Максимальное напряжение: §a2048 §7(§aEV§7)/nСобирает энергию от эндерных кристаллов в 64 блоках/nКаждый кристалл эндера добавляет 32 EU/т к выходу/nПоместите яйцо дракона сверху, чтобы усилить вывод/n/nКогда усилено:/nКаждый эндер кристалл добавляет 128 EU/т
+gregtech.machine.magic_energy_absorber.tooltip=Максимальное напряжение: §a2048 §7(§aEV§7)/nСобирает энергию от кристаллов Энда в 64 блоках./nКаждый кристалл Энда добавляет 32 EU/т к выходу/nПоместите яйцо дракона сверху, чтобы усилить вывод/n/nКогда усилено:/nКаждый кристалл Энда добавляет 128 EU/т
 gregtech.machine.magic_energy_converter.name=Конвертер магической энергии
 gregtech.machine.magic_energy_converter.tooltip=Выходное напряжение: §a128 §7(§aMV§7)/nСобирает эссенции из контейнеров в пределах 16 блоков/nПотребляет 20 энергии через второй
 
 # Machines
-gregtech.machine.block_breaker.lv.name=Базовый разрушитель блоков
-gregtech.machine.block_breaker.mv.name=Продвинутый разрушитель блоков
-gregtech.machine.block_breaker.hv.name=Продвинутый разрушитель блоков II
-gregtech.machine.block_breaker.ev.name=Продвинутый разрушитель блоков III
+gregtech.machine.block_breaker.lv.name=Обычный разрушитель блоков
+gregtech.machine.block_breaker.mv.name=Улучшенный разрушитель блоков
+gregtech.machine.block_breaker.hv.name=Улучшенный разрушитель блоков II
+gregtech.machine.block_breaker.ev.name=Улучшенный разрушитель блоков III
 gregtech.machine.block_breaker.tooltip=Разрушает блок перед собой и подбирает то, что выпало
 gregtech.machine.block_breaker.consumption=Потребляет §e%d EU§7 за операцию
 gregtech.machine.block_breaker.speed_bonus=Бонус скорости: §e%d%%
@@ -1996,9 +1996,9 @@ gregtech.machine.fisher.requirement=Требует куб воды радиус�
 
 
 # Креативные вкладки
-itemGroup.gregtech.main=Главная (GTCE)
-itemGroup.gregtech.materials=Материалы (GTCE)
-itemGroup.gregtech.ores=Руды (GTCE)
+itemGroup.gregtech.main=Главная (GTCEu)
+itemGroup.gregtech.materials=Материалы (GTCEu)
+itemGroup.gregtech.ores=Руды (GTCEu)
 behaviour.softhammer=Активирует и деактивирует машины
 behaviour.wrench=Повернет блок по правому клику
 behaviour.boor.by=от %s
@@ -2211,7 +2211,7 @@ gregtech.machine.workbench.name=Инженерный верстак
 gregtech.machine.workbench.tab.workbench=Создание
 gregtech.machine.workbench.tab.item_list=Хранение
 gregtech.machine.workbench.storage_note_1=(Доступные предметы в соседних
-gregtech.machine.workbench.storage_note_2=инвентарях, доступные для крафта)
+gregtech.machine.workbench.storage_note_2=инвентарях, используемые для крафта)
 gregtech.item_list.item_stored=§7Хранится: %,d
 gregtech.machine.workbench.tab.crafting=Создание
 gregtech.machine.workbench.tab.container=Контейнер
@@ -2429,19 +2429,19 @@ gregtech.machine.drum.bronze.name=Бронзовая бочка
 gregtech.machine.drum.steel.name=Стальная бочка
 gregtech.machine.drum.stainless_steel.name=Нержавеющая бочка
 gregtech.machine.drum.titanium.name=Титановая бочка
-gregtech.machine.drum.tungstensteel.name=Вольфрамовая бочка
+gregtech.machine.drum.tungstensteel.name=Вольфрамо-стальная бочка
 gregtech.machine.crate.wood.name=Деревянный ящик
 gregtech.machine.crate.bronze.name=Бронзовый ящик
 gregtech.machine.crate.steel.name=Стальной ящик
 gregtech.machine.crate.stainless_steel.name=Ящик из нержавеющей стали
 gregtech.machine.crate.titanium.name=Титановый ящик
 gregtech.machine.crate.tungstensteel.name=Ящик из вольфрамовой стали
-gregtech.machine.steam_compressor_bronze.tooltip=Сжатие предметов
-gregtech.machine.steam_compressor_steel.tooltip=Сжатие предметов
+gregtech.machine.steam_compressor_bronze.tooltip=Сжимает предметы
+gregtech.machine.steam_compressor_steel.tooltip=Сжимает предметы
 gregtech.machine.steam_hammer_bronze.tooltip=Кузнечный молот
 gregtech.machine.steam_hammer_steel.tooltip=Кузнечный молот
-gregtech.machine.steam_alloy_smelter_bronze.tooltip=Комбинированная плавильня
-gregtech.machine.steam_alloy_smelter_steel.tooltip=Комбинированная плавильня
+gregtech.machine.steam_alloy_smelter_bronze.tooltip=Комбинирующая плавильня
+gregtech.machine.steam_alloy_smelter_steel.tooltip=Комбинирующая плавильня
 gregtech.machine.combustion_generator.lv.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.mv.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.hv.tooltip=Requires flammable Liquids
@@ -3541,13 +3541,13 @@ tile.stone_polished.red_granite.name=Полированный красный г�
 
 # Stone Brick Blocks
 tile.stone_bricks.black_granite.name=Черно-гранитный кирпич
-tile.stone_bricks.concrete_dark.name=Темные бетонные кирпичи
-tile.stone_bricks_cracked.red_granite.name=Потрескавшиеся красно-гранитные кирпичи
-tile.stone_bricks_cracked.concrete_dark.name=Потрескавшиеся темные бетонные кирпичи
+tile.stone_bricks.concrete_dark.name=Темный бетонный кирпич
+tile.stone_bricks_cracked.red_granite.name=Потрескавшийся красно-гранитный кирпич
+tile.stone_bricks_cracked.concrete_dark.name=Потрескавшийся темный бетонный кирпич
 
 # Mossy Stone Brick Blocks
-tile.stone_bricks_mossy.black_granite.name=Замшелые черно-гранитные кирпичи
-tile.stone_bricks.red_granite.name=Красно-гранитные кирпичи
+tile.stone_bricks_mossy.black_granite.name=Замшелый черно-гранитный кирпич
+tile.stone_bricks.red_granite.name=Красно-гранитный кирпич
 tile.stone_chiseled.marble.name=Точеный мрамор
 
 # Tiled Stone Blocks
@@ -3556,8 +3556,8 @@ tile.stone_tiled.concrete_light.name=Светлая бетонная плитк�
 tile.stone_tiled_small.concrete_light.name=Маленькая легкая бетонная плитка
 
 # Small Stone Brick Blocks
-tile.stone_bricks_small.black_granite.name=Маленькие черные гранитные кирпичи
-tile.stone_bricks_small.concrete_dark.name=Маленькие темные бетонные кирпичи
+tile.stone_bricks_small.black_granite.name=Маленький черный гранитный кирпич
+tile.stone_bricks_small.concrete_dark.name=Маленький тёмный бетонный кирпич
 gregtech.terminal.app_name.battery=Менеджер батарей
 gregtech.terminal.app_name.hardware=Менеджер оборудования
 metaitem.battery.hull.ev.tooltip=Пустой §5EV §7корпус батареи
@@ -3720,12 +3720,12 @@ tile.multiblock_casing.extreme_engine_intake.name=Корпус воздухоз�
 tile.multiblock_casing.assembly_control.name=Корпус управления сборкой
 
 # Fusion casing blocks
-tile.fusion_casing.superconductor_coil.name=Блок сверхпроводящих катушек
-tile.fusion_casing.fusion_coil.name=Блок катушек Fusion
-tile.fusion_casing.fusion_casing.name=Корпус Fusion реактора
-tile.fusion_casing.fusion_casing_mk2.name=Корпус Fusion MK II реактора
-tile.fusion_casing.fusion_casing_mk3.name=Корпус Fusion MK III реактора
-tile.transparent_casing.fusion_glass.name=Fusion cтекло
+tile.fusion_casing.superconductor_coil.name=Сверхпроводниковая нагревательная катушка
+tile.fusion_casing.fusion_coil.name=Катушка термоядерного реактора
+tile.fusion_casing.fusion_casing.name=Корпус термоядерного реактора
+tile.fusion_casing.fusion_casing_mk2.name=Корпус термоядерного реактора модель 2
+tile.fusion_casing.fusion_casing_mk3.name=Корпус термоядерного реактора модель 3
+tile.transparent_casing.fusion_glass.name=Стекло термоядерного реактора
 gregtech.machine.drum.enable_output=Сливает жидкость в вертикально соединённые резервуары
 gregtech.machine.drum.disable_output=Не сливает жидкость
 gregtech.tank_valve.tooltip=Используется для заполнения и опустошения многоблочных резервуаров. Автоматические выходы, когда повернут вниз.
@@ -3736,7 +3736,7 @@ gregtech.machine.tank_valve.steel.name=Клапан стального резе�
 gregtech.machine.tank_valve.wood.name=Клапан деревянного резервуара
 gregtech.machine.tank.steel.name=Стальной многоблочный резервуар
 gregtech.multiblock.tank.tooltip=Заполняйте и сливайте через контроллер или клапаны резервуара.
-gregtech.machine.clipboard.name=Планер
+gregtech.machine.clipboard.name=Блонкот
 
 # Asphalt
 tile.asphalt.asphalt.name=Асфальт
@@ -3763,9 +3763,9 @@ tile.stone_polished.marble.name=Полированный мрамор
 tile.stone_polished.basalt.name=Полированный базальт
 tile.stone_polished.concrete_light.name=Полированный светлый бетон
 tile.stone_polished.concrete_dark.name=Полированный темный бетон
-tile.stone_bricks.marble.name=Мраморные кирпичи
-tile.stone_bricks.basalt.name=Базальтовые кирпичи
-tile.stone_bricks.concrete_light.name=Светлые бетонные кирпичи
+tile.stone_bricks.marble.name=Мраморный кирпич
+tile.stone_bricks.basalt.name=Базальтовый кирпич
+tile.stone_bricks.concrete_light.name=Светлый бетонный кирпич
 
 # Mossy Cobble Stone Blocks
 tile.stone_cobble_mossy.black_granite.name=Замшелый черно-гранитный булыжник
@@ -3774,17 +3774,17 @@ tile.stone_cobble_mossy.concrete_light.name=Замшелый светло-бет
 tile.stone_cobble_mossy.concrete_dark.name=Замшелый темно-бетонный булыжник
 tile.stone_cobble.concrete_light.name=Светло-бетонный булыжник
 tile.stone_cobble.concrete_dark.name=Темно-бетонный булыжник
-tile.stone_bricks_cracked.marble.name=Потрескавшиеся мраморные кирпичи
-tile.stone_bricks_cracked.basalt.name=Потрескавшиеся базальтовые кирпичи
-tile.stone_bricks_mossy.red_granite.name=Замшелые красно-гранитные кирпичи
+tile.stone_bricks_cracked.marble.name=Потрескавшийся мраморный кирпич
+tile.stone_bricks_cracked.basalt.name=Потрескавшийся базальтовый кирпич
+tile.stone_bricks_mossy.red_granite.name=Замшелый красно-гранитный кирпич
 
 # Cracked Stone Brick Blocks
-tile.stone_bricks_cracked.black_granite.name=Потрескавшиеся черно-гранитные кирпичи
-tile.stone_bricks_mossy.marble.name=Замшелые мраморные кирпичи
-tile.stone_bricks_mossy.basalt.name=Замшелые базальтовые кирпичи
-tile.stone_bricks_mossy.concrete_light.name=Замшелые светлые бетонные кирпичи
-tile.stone_bricks_cracked.concrete_light.name=Потрескавшиеся светлые бетонные кирпичи
-tile.stone_bricks_mossy.concrete_dark.name=Замшелые темные бетонные кирпичи
+tile.stone_bricks_cracked.black_granite.name=Потрескавшийся черно-гранитный кирпич
+tile.stone_bricks_mossy.marble.name=Замшелый мраморный кирпич
+tile.stone_bricks_mossy.basalt.name=Замшелый базальтовый кирпич
+tile.stone_bricks_mossy.concrete_light.name=Замшелый светлый бетонный кирпич
+tile.stone_bricks_cracked.concrete_light.name=Потрескавшийся светлый бетонный кирпич
+tile.stone_bricks_mossy.concrete_dark.name=Замшелый темный бетонный кирпич
 
 # Chiseled Stone Blocks
 tile.stone_chiseled.black_granite.name=Точеный черный гранит
@@ -3798,30 +3798,30 @@ tile.stone_tiled.basalt.name=Базальтовая плитка
 tile.stone_tiled.concrete_dark.name=Темная бетонная плитка
 
 # Small Tiled Stone Blocks
-tile.stone_tiled_small.black_granite.name=Маленькие черные гранитные плитки
-tile.stone_tiled_small.red_granite.name=Маленькие красные гранитные плитки
-tile.stone_tiled_small.marble.name=Маленькие мраморные плитки
-tile.stone_tiled_small.basalt.name=Маленькие базальтовые плитки
-tile.stone_tiled_small.concrete_dark.name=Маленькие темные бетонные плитки
-tile.stone_bricks_small.red_granite.name=Маленькие красные гранитные кирпичи
-tile.stone_bricks_small.marble.name=Маленькие мраморные кирпичи
-tile.stone_bricks_small.basalt.name=Маленькие базальтовые кирпичи
-tile.stone_bricks_small.concrete_light.name=Маленькие светлые бетонные кирпичи
-gregtech.machine.steam_boiler_solar_steel.name=Паровой солнечный котел высокого давления
+tile.stone_tiled_small.black_granite.name=Маленькая черная гранитная плитка
+tile.stone_tiled_small.red_granite.name=Маленькая красная гранитная плитка
+tile.stone_tiled_small.marble.name=Маленькая мраморная плитка
+tile.stone_tiled_small.basalt.name=Маленькая базальтовая плитка
+tile.stone_tiled_small.concrete_dark.name=Маленькая темная бетонная плитка
+tile.stone_bricks_small.red_granite.name=Маленький красный гранитный кирпич
+tile.stone_bricks_small.marble.name=Маленький мраморный кирпич
+tile.stone_bricks_small.basalt.name=Маленький базальтовый кирпич
+tile.stone_bricks_small.concrete_light.name=Маленький светлый бетонный кирпич
+gregtech.machine.steam_boiler_solar_steel.name=Солнечный паровой котел высокого давления
 
 # Square Stone Brick Blocks
-tile.stone_bricks_square.black_granite.name=Квадратные черные гранитные кирпичи
-tile.stone_bricks_square.red_granite.name=Квадратные красные гранитные кирпичи
-tile.stone_bricks_square.marble.name=Квадратные мраморные кирпичи
-tile.stone_bricks_square.basalt.name=Квадратные базальтовые кирпичи
-tile.stone_bricks_square.concrete_light.name=Квадратные светлые бетонные кирпичи
-tile.stone_bricks_square.concrete_dark.name=Квадратные темные бетонные кирпичи
-gregtech.machine.steam_boiler_solar_steel.tooltip=Пар от энергии солнца
+tile.stone_bricks_square.black_granite.name=Квадратный черный гранитный кирпич
+tile.stone_bricks_square.red_granite.name=Квадратный красный гранитный кирпич
+tile.stone_bricks_square.marble.name=Квадратный мраморный кирпич
+tile.stone_bricks_square.basalt.name=Квадратный базальтовый кирпич
+tile.stone_bricks_square.concrete_light.name=Квадратный светлый бетонный кирпич
+tile.stone_bricks_square.concrete_dark.name=Квадратный темный бетонный кирпич
+gregtech.machine.steam_boiler_solar_steel.tooltip=Пар от солнечной энергии
 gregtech.machine.steam_boiler.heat_amount=Теплоемкость: %s %%
 gregtech.machine.steam_rock_breaker_bronze.name=Паровой камнелом
 gregtech.machine.steam_miner.name=Паровой шахтер
 gregtech.machine.steam_rock_breaker_bronze.tooltip=Поместите воду и лаву рядом
-gregtech.machine.steam_rock_breaker_steel.name=Паровой каменолом высокого давления
+gregtech.machine.steam_rock_breaker_steel.name=Паровой камнолом высокого давления
 gregtech.machine.steam_rock_breaker_steel.tooltip=Поместите воду и лаву рядом
 gregtech.machine.steam_turbine.tooltip=Преобразует пар в EU
 gregtech.machine.steam_miner.tooltip=Добывает руды ТОЛЬКО ниже шахтера!
@@ -3933,3 +3933,6 @@ gregtech.machine.macerator.iv.tooltip=Blend-O-Matic 9001
 gregtech.machine.macerator.luv.tooltip=Blend-O-Matic 9002
 gregtech.machine.macerator.zpm.tooltip=Blend-O-Matic 9003
 gregtech.machine.macerator.opv.name=Легендарный дробитель
+
+# Stone Bricks Windmill A Blocks
+tile.stone_bricks_windmill_a.black_granite.name=Черная гранитная плитка мельницей
