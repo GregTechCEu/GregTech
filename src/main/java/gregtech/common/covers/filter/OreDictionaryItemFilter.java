@@ -6,17 +6,17 @@ import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.OreDictFilterTestSlot;
 import gregtech.api.gui.widgets.TextFieldWidget2;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OreDictExprFilter;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -28,7 +28,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     private ItemStack testStack = ItemStack.EMPTY;
 
     private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
-    private final Map<ItemStackKey, Boolean> recentlyChecked = new HashMap<>();
+    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
+    private final Object2BooleanOpenCustomHashMap<ItemStack> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
 
     protected void setOreDictFilterExpression(String oreDictFilterExpression) {
         this.oreDictFilterExpression = oreDictFilterExpression;
@@ -155,15 +156,14 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     public boolean matchesItemStack(ItemStack itemStack) {
-        ItemStackKey key = new ItemStackKey(itemStack);
-        Boolean b = recentlyChecked.get(key);
+        Boolean b = recentlyChecked.get(itemStack);
         if (b != null)
             return b;
         if (OreDictExprFilter.matchesOreDict(matchRules, itemStack)) {
-            recentlyChecked.put(key, true);
+            recentlyChecked.put(itemStack, true);
             return true;
         }
-        recentlyChecked.put(key, false);
+        recentlyChecked.put(itemStack, false);
         return false;
     }
 
