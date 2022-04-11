@@ -26,10 +26,10 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -171,11 +171,21 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                 }
                 return true;
             }
+            return false;
         }
 
-        MutableBlockPos blockPos = new MutableBlockPos(pos);
+        if (!(stackInHand.getItem() instanceof FrameItemBlock)) {
+            return false;
+        }
+        BlockPos.PooledMutableBlockPos blockPos = BlockPos.PooledMutableBlockPos.retain();
+        blockPos.setPos(pos);
         for (int i = 0; i < 32; i++) {
             if (worldIn.getBlockState(blockPos).getBlock() instanceof BlockFrame) {
+                blockPos.move(EnumFacing.UP);
+                continue;
+            }
+            TileEntity te = worldIn.getTileEntity(blockPos);
+            if (te instanceof IPipeTile && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
                 blockPos.move(EnumFacing.UP);
                 continue;
             }
@@ -184,9 +194,19 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                 if (!playerIn.capabilities.isCreativeMode) {
                     stackInHand.shrink(1);
                 }
+                blockPos.release();
                 return true;
+            } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
+                Material material = ((BlockFrame) ((FrameItemBlock) stackInHand.getItem()).getBlock()).getGtMaterial(stackInHand.getMetadata());
+                ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(material);
+                blockPos.release();
+                return true;
+            } else {
+                blockPos.release();
+                return false;
             }
         }
+        blockPos.release();
         return false;
     }
 
