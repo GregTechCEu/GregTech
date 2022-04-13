@@ -5,37 +5,44 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.common.metatileentities.transport.LongDistancePipeWalker;
 import gregtech.common.tools.DamageValues;
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity implements IDataInfoProvider {
 
-    protected MetaTileEntityPipelineEndpoint source;
-    protected MetaTileEntityPipelineEndpoint target;
-    protected BlockPos targetPos;
+    protected MetaTileEntityPipelineEndpoint source = null;
+    protected MetaTileEntityPipelineEndpoint target = null;
+    protected int targetDistance = -1;
+    private static long time = 0;
+
+    public static void startTimer() {
+        time = System.nanoTime();
+    }
+
+    public static void endTimer(int scannedPipes) {
+        long end = System.nanoTime();
+        GTLog.logger.info("Scanning {} pipes took {} ns", scannedPipes, end - time);
+        time = 0;
+    }
 
     public MetaTileEntityPipelineEndpoint(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -46,43 +53,99 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     }
 
     protected void scanPipes() {
-        if (source != null && source.isValid() && source.target == this) return;
-        targetPos = getPos();
-        target = this;
-        source = null;
+        LongDistancePipeWalker walker = getPipeWalker();
+        walker.reset();
+        walker.traversePipeNet();
+        if (walker.getEndpoint() != null) {
+            this.target = walker.getEndpoint();
+            this.target.source = this;
+            this.targetDistance = walker.getDistance();
+        }
+    }
+
+    public static Pair<MetaTileEntityPipelineEndpoint, Integer> scanPipes(World world, BlockPos startPos, @Nullable EnumFacing endpointFacing, Predicate<IBlockState> pipeValidator, Predicate<MetaTileEntityPipelineEndpoint> endpointValidator) {
+        startTimer();
+        HashSet<BlockPos> observedSet = new HashSet<>();
+        BlockPos.MutableBlockPos currentPos = new BlockPos.MutableBlockPos(startPos);
+        int length = 0;
+
+        if (endpointFacing != null) {
+            IBlockState block = world.getBlockState(startPos.offset(endpointFacing.getOpposite()));
+            if (!pipeValidator.test(block)) {
+                endTimer(0);
+                return null;
+            }
+            observedSet.add(startPos);
+            currentPos.move(endpointFacing.getOpposite());
+            length++;
+        }
+
+        observedSet.add(startPos);
+
+        Stack<EnumFacing> moveStack = new Stack<>();
+        main:
+        while (true) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                currentPos.move(facing);
+                if (observedSet.contains(currentPos)) {
+                    currentPos.move(facing.getOpposite());
+                    continue;
+                }
+                IBlockState state = world.getBlockState(currentPos);
+                if (pipeValidator.test(state)) {
+                    observedSet.add(currentPos.toImmutable());
+                    moveStack.push(facing.getOpposite());
+                    length++;
+                    continue main;
+                }
+                MetaTileEntity mte = MetaTileEntity.tryGet(world, currentPos);
+                if (mte instanceof MetaTileEntityPipelineEndpoint && endpointValidator.test((MetaTileEntityPipelineEndpoint) mte)) {
+                    endTimer(observedSet.size());
+                    return Pair.of((MetaTileEntityPipelineEndpoint) mte, length);
+                } else {
+                    currentPos.move(facing.getOpposite());
+                }
+            }
+            if (!moveStack.isEmpty()) {
+                currentPos.move(moveStack.pop());
+                //also remove already visited block from path
+                //currentPath.path.remove(currentPos);
+                length--;
+            } else break;
+        }
+        return null;
+    }
+
+    public static MetaTileEntityPipelineEndpoint scanPipes2(World world, BlockPos pos, @Nullable EnumFacing endpointFacing, Predicate<IBlockState> pipeValidator, Predicate<MetaTileEntityPipelineEndpoint> endpointValidator) {
+        startTimer();
+        HashSet<BlockPos> newChecks = new HashSet<>();
+        HashSet<BlockPos> oldChecks = new HashSet<>();
+        HashSet<BlockPos> toCheck = new HashSet<>(Collections.singletonList(pos.offset(EnumFacing.NORTH)));
 
         // Start scanning from the output's side
-        Block block = getWorld().getBlockState(getPos().offset(getFrontFacing().getOpposite())).getBlock();
-        if (!isPipeBlockValid(block)) return;
-
-        HashSet<BlockPos> newChecks = new HashSet<>();
-        HashSet<BlockPos> oldChecks = new HashSet<>(Collections.singletonList(getPos()));
-        HashSet<BlockPos> toCheck = new HashSet<>(Collections.singletonList(getPos().offset(EnumFacing.NORTH)));
-        HashSet<BlockPos> pipes = new HashSet<>();
+        if (endpointFacing != null) {
+            IBlockState block = world.getBlockState(pos.offset(endpointFacing.getOpposite()));
+            if (!pipeValidator.test(block)) {
+                endTimer(0);
+                return null;
+            }
+            oldChecks.add(pos);
+            toCheck.add(pos.offset(endpointFacing.getOpposite()));
+        }
 
         while (!toCheck.isEmpty()) {
-            for (BlockPos pos : toCheck) {
-                if (getWorld().getBlockState(pos).getBlock() == block) {
-                    pipes.add(pos);
+            for (BlockPos nextPos : toCheck) {
+                if (pipeValidator.test(world.getBlockState(nextPos))) {
                     BlockPos surroundingPos;
                     for (EnumFacing facing : EnumFacing.VALUES) {
-                        surroundingPos = pos.offset(facing);
+                        surroundingPos = nextPos.offset(facing);
                         if (oldChecks.add(surroundingPos)) newChecks.add(surroundingPos);
                     }
                 } else {
-                    TileEntity tileEntity = getWorld().getTileEntity(pos);
-                    if (tileEntity != this.getHolder() && tileEntity instanceof IGregTechTileEntity) {
-                        MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-                        if (metaTileEntity != this && metaTileEntity instanceof MetaTileEntityPipelineEndpoint) {
-                            if (pipes.contains(metaTileEntity.getPos().offset(metaTileEntity.getFrontFacing()))) {
-                                if (getDistanceToPosition(pos) >= getMinimumEndpointDistance()) {
-                                    target = (MetaTileEntityPipelineEndpoint) metaTileEntity;
-                                    targetPos = target.getPos();
-                                    return;
-                                }
-                            }
-                        }
-                        oldChecks.remove(pos);
+                    MetaTileEntity mte = MetaTileEntity.tryGet(world, nextPos);
+                    if (mte instanceof MetaTileEntityPipelineEndpoint && endpointValidator.test((MetaTileEntityPipelineEndpoint) mte)) {
+                        endTimer(oldChecks.size() + newChecks.size());
+                        return (MetaTileEntityPipelineEndpoint) mte;
                     }
                 }
             }
@@ -90,57 +153,62 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
             toCheck.addAll(newChecks);
             newChecks.clear();
         }
+        endTimer(oldChecks.size());
+        return null;
     }
 
-    public boolean checkTargetValid() {
-        if (getWorld() == null || getWorld().isRemote)
-            return false;
+    public void setSource(MetaTileEntityPipelineEndpoint endpoint) {
+        this.source = endpoint;
+    }
 
-        if (targetPos == null) {
-            // no target position, so scan for one
-            scanPipes();
-        } else if (target == null || !target.isValid()) {
-            // no target, try checking the position
-            target = null;
-            if (getWorld().isBlockLoaded(targetPos)) {
-                // only check if the chunk is loaded
-                TileEntity tileEntity = getWorld().getTileEntity(targetPos);
-                if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityPipelineEndpoint &&
-                        isSameConnector(((IGregTechTileEntity) tileEntity).getMetaTileEntity())) {
-                    // correct connector found
-                    target = (MetaTileEntityPipelineEndpoint) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-                } else if (tileEntity != null) {
-                    // wrong connector type, so invalidate the position
-                    targetPos = null;
-                }
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        onPipeBlockChanged(true);
+    }
+
+    public void onPipeBlockChanged() {
+        onPipeBlockChanged(true);
+    }
+
+    private void onPipeBlockChanged(boolean send) {
+        if (send) {
+            if (source != null) {
+                source.onPipeBlockChanged(false);
+            }
+            if (target != null) {
+                target.onPipeBlockChanged(false);
             }
         }
-        // no target found
-        if (target == null || target == this) return false;
-        // if the target does not have a source, or this is not the target's source, make it this
-        if (target.source == null || !target.source.isValid() || target.source.target == null || !target.source.target.isValid())
-            target.source = this;
-
-        // return if this is the target's source
-        return target.source == this;
+        source = null;
+        target = null;
+        targetDistance = -1;
     }
 
-    /**
-     *
-     * @param block the block to check
-     * @return {@code true} if the pipe block is valid for this pipeline, else {@code false}
-     */
-    protected abstract boolean isPipeBlockValid(Block block);
+    @Nullable
+    public MetaTileEntityPipelineEndpoint getTargetEndpoint() {
+        if (getWorld() == null || getWorld().isRemote) {
+            throw new IllegalStateException("Can't check on null world or client!");
+        }
+        if (target == null) {
+            if (targetDistance < 0) {
+                scanPipes();
+            }
+            if (target == null) {
+                return null;
+            }
+        }
+        MetaTileEntity mte = MetaTileEntity.tryGet(getWorld(), target.getPos());
+        if (mte != target) {
+            onPipeBlockChanged(true);
+            return getTargetEndpoint();
+        }
+        return target;
+    }
+
+    protected abstract LongDistancePipeWalker getPipeWalker();
 
     /**
-     *
-     * @param metaTileEntity the metaTileEntity to check
-     * @return {@code true} if the metaTileEntity is the same type of pipeline connector, else {@code false}
-     */
-    protected abstract boolean isSameConnector(MetaTileEntity metaTileEntity);
-
-    /**
-     *
      * @return the minimum distance in blocks between pipeline endpoints for a valid pipeline connection
      */
     protected abstract int getMinimumEndpointDistance();
@@ -158,7 +226,8 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        if (targetPos != null && target != this) {
+        if (target != null && target != this) {
+            BlockPos targetPos = target.getPos();
             data.setBoolean("hasTarget", true);
             data.setInteger("targetX", targetPos.getX());
             data.setInteger("targetY", targetPos.getY());
@@ -171,8 +240,8 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("hasTarget")) {
-            targetPos = new BlockPos(data.getInteger("targetX"), data.getInteger("targetY"), data.getInteger("targetZ"));
-            if (getDistanceToPosition(targetPos) < getMinimumEndpointDistance()) targetPos = null;
+            //target = new BlockPos(data.getInteger("targetX"), data.getInteger("targetY"), data.getInteger("targetZ"));
+            //if (getDistanceToPosition(target) < getMinimumEndpointDistance()) target = null;
         }
     }
 
@@ -185,7 +254,13 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
 
             if (softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, true)) {
                 softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false);
-                if (!getWorld().isRemote) scanPipes();
+                if (!getWorld().isRemote) {
+                    if ((target == null && source == null) || targetDistance < 0) {
+                        scanPipes();
+                    } else {
+                        onPipeBlockChanged();
+                    }
+                }
 
                 IToolStats.onOtherUse(stack, getWorld(), getPos());
                 return true;
@@ -206,7 +281,7 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        if (source != null && source.isValid() && source.target == this) {
+        if (isValid() && source != null && source.isValid()) {
             BlockPos pos = source.getPos();
             return Arrays.asList(new TextComponentTranslation("behavior.tricorder.long_distance_pipeline.is_target").setStyle(new Style().setColor(TextFormatting.YELLOW)),
                     new TextComponentTranslation("behavior.tricorder.long_distance_pipeline.source_pos",
@@ -214,12 +289,14 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
                             new TextComponentTranslation(GTUtility.formatNumbers(pos.getY())).setStyle(new Style().setColor(TextFormatting.AQUA)),
                             new TextComponentTranslation(GTUtility.formatNumbers(pos.getZ())).setStyle(new Style().setColor(TextFormatting.AQUA))));
         }
-        if (checkTargetValid()) {
+        if (getTargetEndpoint() != null) {
+            BlockPos targetPos = target.getPos();
             return Arrays.asList(new TextComponentTranslation("behavior.tricorder.long_distance_pipeline.has_target").setStyle(new Style().setColor(TextFormatting.GREEN)),
                     new TextComponentTranslation("behavior.tricorder.long_distance_pipeline.target_pos",
                             new TextComponentTranslation(GTUtility.formatNumbers(targetPos.getX())).setStyle(new Style().setColor(TextFormatting.AQUA)),
                             new TextComponentTranslation(GTUtility.formatNumbers(targetPos.getY())).setStyle(new Style().setColor(TextFormatting.AQUA)),
-                            new TextComponentTranslation(GTUtility.formatNumbers(targetPos.getZ())).setStyle(new Style().setColor(TextFormatting.AQUA))));
+                            new TextComponentTranslation(GTUtility.formatNumbers(targetPos.getZ())).setStyle(new Style().setColor(TextFormatting.AQUA))),
+                    new TextComponentString("Distance: " + targetDistance));
         }
 
         return Collections.singletonList(new TextComponentTranslation("behavior.tricorder.long_distance_pipeline.no_target").setStyle(new Style().setColor(TextFormatting.RED)));
