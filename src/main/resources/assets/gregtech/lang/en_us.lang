@@ -5114,6 +5114,15 @@ terminal.vtank_viewer.refresh=Refresh tank index
 terminal.teleporter.dimension=Dimension:
 terminal.teleporter.spawn_portal=Engage
 
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %d mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
+
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
 metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.

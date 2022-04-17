@@ -5125,6 +5125,15 @@ terminal.vtank_viewer.description=永远不要再次失去任何末影流体连�
 terminal.vtank_viewer.title=虚拟容器查看器
 terminal.vtank_viewer.refresh=刷新容器指数
 
+terminal.maze.title=提修斯的逃跑
+terminal.maze.play=开始
+terminal.maze.continue=继续
+terminal.maze.pause=暂停
+terminal.maze.death.1=天啊! 你被弥诺陶洛斯吃掉了!
+terminal.maze.death.2=你在死之前破解了%d个迷宫。
+terminal.maze.death.3=再玩一次?
+terminal.maze.retry=重试
+
 metaitem.cover.digital.title.mode=模式:
 metaitem.cover.digital.title.spin=自旋:
 metaitem.cover.digital.wireless.tooltip.1=§e右击中央监视器以远程绑定到它。

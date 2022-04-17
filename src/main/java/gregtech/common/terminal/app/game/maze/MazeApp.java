@@ -11,6 +11,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.terminal.app.game.maze.widget.EnemyWidget;
 import gregtech.common.terminal.app.game.maze.widget.MazeWidget;
 import gregtech.common.terminal.app.game.maze.widget.PlayerWidget;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public class MazeApp extends AbstractApplication {
             this.setOs(os);
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
             // enemy 0: Title
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF).setXCentered(true), 0);
-            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "Play",
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.title", 0xFFFFFFFF).setXCentered(true), 0);
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "terminal.maze.play",
                     (clickData -> {
                         this.setGameState(1);
                         this.resetGame();
@@ -60,13 +61,13 @@ public class MazeApp extends AbstractApplication {
             this.setEnemy(new EnemyWidget(-100, -100, this));
             // GameState 2: Pause
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)), 2, 3);
-            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> this.setGameState(1)).setShouldClientCallback(true), 2);
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true), 2);
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "terminal.maze.continue", (clickData) -> this.setGameState(1)).setShouldClientCallback(true), 2);
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.pause", 0xFFFFFFFF).setXCentered(true), 2);
             // GameState 3: Death
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true), 3);
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + this.getMazesSolved() + " mazes before losing.", true), 3);
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true), 3);
-            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "Retry", (clickData -> {
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "terminal.maze.death.1", true), 3);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> I18n.format("terminal.maze.death.2",this.getMazesSolved()) , true), 3);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "terminal.maze.death.3", true), 3);
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "terminal.maze.retry", (clickData -> {
                 this.setGameState(1);
                 this.setMazesSolved(0);
                 MAZE_SIZE = 9;

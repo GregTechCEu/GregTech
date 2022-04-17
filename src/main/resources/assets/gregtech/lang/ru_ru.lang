@@ -4956,6 +4956,10 @@ terminal.settings.description=Системные настройки для те�
 terminal.settings.theme=Тема
 terminal.settings.theme.color=Настройка цветов терминала
 terminal.settings.theme.wallpaper=Настройка фона
+terminal.settings.theme.wallpaper.resource=resource
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=color
+terminal.settings.theme.wallpaper.file=file
 terminal.settings.theme.select=Выбрать изображение
 terminal.settings.theme.image=Изображение
 terminal.settings.home=Кнопка домой
@@ -5060,6 +5064,15 @@ terminal.world_prospector.color=Изменить цвет подстветки
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Виртуальный просмотр резервуаров
 terminal.vtank_viewer.refresh=Обновить
+
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %d mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
 
 metaitem.cover.digital.title.mode=Режим:
 metaitem.cover.digital.title.spin=Поворот:
