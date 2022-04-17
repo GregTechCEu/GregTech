@@ -3996,3 +3996,16 @@ gregtech.machine.canner.lv.tooltip=Укладывает вещи в контей
 gregtech.machine.canner.mv.tooltip=Укладывает вещи в контейнеры и вынимает из них
 gregtech.machine.canner.hv.tooltip=Укладывает вещи в контейнеры и вынимает из них
 gregtech.machine.canner.ev.tooltip=Укладывает вещи в контейнеры и вынимает из них
+tile.stone_bricks_windmill_a.red_granite.name=Красная гранитная плитка "Ветряная мельница" A
+tile.stone_bricks_windmill_a.marble.name=Мраморная плитка "Ветряная мельница" A
+tile.stone_bricks_windmill_a.basalt.name=Базальтовая плитка "Ветряная мельница" A
+tile.stone_bricks_windmill_a.concrete_light.name=Светлые бетонные плитки "Ветряная мельница" A
+tile.stone_bricks_windmill_a.concrete_dark.name=Тёмные бетонные плитки "Ветряная мельница" A
+
+# Stone Bricks Windmill B Blocks
+tile.stone_bricks_windmill_b.black_granite.name=Чёрные гранитный плитки "Ветряная мельница" B
+tile.stone_bricks_windmill_b.red_granite.name=Красные гранитный плитки "Ветряная мельница" B
+tile.stone_bricks_windmill_b.marble.name=Мраморная плитка "Ветряная мельница" B
+tile.stone_bricks_windmill_b.basalt.name=Базальтовая плитка "Ветряная мельница" B
+tile.stone_bricks_windmill_b.concrete_light.name=Светлые бетонные плитки "Ветряная мельница" B
+tile.stone_bricks_windmill_b.concrete_dark.name=Тёмные бетонные плитки "Ветряная мельница" B
