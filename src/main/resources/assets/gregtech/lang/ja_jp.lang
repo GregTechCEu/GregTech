@@ -5067,6 +5067,10 @@ terminal.maze.death.2=生きている間に%dの迷路を突破した.
 terminal.maze.death.3=再挑戦する?
 terminal.maze.retry=リトライ
 
+terminal.minesweeper.time=%d秒経過
+terminal.minesweeper.lose=失敗! %d秒後にリスタートします.
+terminal.minesweeper.win=%d秒で勝利しました! %d秒後にリスタートします.
+
 metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:
 metaitem.cover.digital.wireless.tooltip.1=§eセントラルモニターを右クリックすることで無線でリンクできます.

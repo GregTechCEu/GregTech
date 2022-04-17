@@ -5134,6 +5134,10 @@ terminal.maze.death.2=你在死之前破解了%d个迷宫。
 terminal.maze.death.3=再玩一次?
 terminal.maze.retry=重试
 
+terminal.minesweeper.time=%d秒经过
+terminal.minesweeper.lose=你输了。游戏将在%d秒后重新开始.
+terminal.minesweeper.win=你在%d秒内赢了!游戏将在%d秒后重新开始.
+
 metaitem.cover.digital.title.mode=模式:
 metaitem.cover.digital.title.spin=自旋:
 metaitem.cover.digital.wireless.tooltip.1=§e右击中央监视器以远程绑定到它。

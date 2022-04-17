@@ -3,6 +3,7 @@ package gregtech.common.terminal.app.game.minesweeper;
 import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.common.terminal.app.game.minesweeper.widget.MineMapWidget;
+import net.minecraft.client.resources.I18n;
 
 public class MinesweeperApp extends AbstractApplication {
     private MineMapWidget mineField;
@@ -51,10 +52,10 @@ public class MinesweeperApp extends AbstractApplication {
 
     public String getStatus() {
         return resetCountdown == 100 ?
-                (timer / 20) + " seconds elapsed" : // Normal
+                I18n.format("terminal.minesweeper.time", timer / 20): // Normal
                 mineField.hasLost() ?
-                        "You lost. Game will restart in " + resetCountdown / 20 + " seconds." : // Losing condition
-                        "You won in " + (timer / 20) + " seconds! Game will restart in " + resetCountdown / 20; // Winning condition
+                        I18n.format("terminal.minesweeper.lose", resetCountdown / 20):// Losing condition
+                        I18n.format("terminal.minesweeper.win", timer / 20, resetCountdown / 20); // Winning condition
     }
 
     @Override
