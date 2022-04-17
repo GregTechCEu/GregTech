@@ -73,7 +73,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
     private void onModifyTextureChanged(String type) {
         textureGroup.clearAllWidgets();
         switch (type) {
-            case "resource":
+            case "terminal.settings.theme.wallpaper.resource":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof TextureArea)) {
                     TerminalTheme.WALL_PAPER.setTexture(new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/terminal_background.png"), 0.0, 0.0, 1.0, 1.0));
                     TerminalTheme.saveConfig();
@@ -84,7 +84,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                             TerminalTheme.saveConfig();
                         });
                 break;
-            case "url":
+            case "terminal.settings.theme.wallpaper.url":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof URLTexture)) {
                     TerminalTheme.WALL_PAPER.setTexture(new URLTexture(null));
                     TerminalTheme.saveConfig();
@@ -94,7 +94,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                     TerminalTheme.saveConfig();
                 });
                 break;
-            case "color":
+            case "terminal.settings.theme.wallpaper.color":
                 ColorRectTexture texture;
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof ColorRectTexture)) {
                     texture = new ColorRectTexture(-1);
@@ -107,7 +107,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                         .setColorSupplier(texture::getColor, true)
                         .setOnColorChanged(texture::setColor));
                 break;
-            case "file":
+            case "terminal.settings.theme.wallpaper.file":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof FileTexture)) {
                     TerminalTheme.WALL_PAPER.setTexture(new FileTexture(null));
                     TerminalTheme.saveConfig();
