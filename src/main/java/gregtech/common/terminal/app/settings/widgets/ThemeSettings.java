@@ -41,7 +41,13 @@ public class ThemeSettings extends AbstractWidgetGroup {
         this.addColorButton(TerminalTheme.COLOR_B_3, "COLOR_B_3", (int) (x * 12), y);
         this.addWidget(new LabelWidget(323 / 2, 75, "terminal.settings.theme.wallpaper", -1).setXCentered(true));
         this.addWidget(new ImageWidget((int) x, 95, 150, 105, TerminalTheme.WALL_PAPER).setBorder(2, -1));
-        this.addWidget(new SelectorWidget((int) (x + 170), 95, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
+        this.addWidget(new SelectorWidget((int) (x + 170), 95, 116, 20,
+                Arrays.asList(
+                        "terminal.settings.theme.wallpaper.resource",
+                        "terminal.settings.theme.wallpaper.url",
+                        "terminal.settings.theme.wallpaper.color",
+                        "terminal.settings.theme.wallpaper.file"),
+                -1, TerminalTheme.WALL_PAPER::getTypeName, true)
                 .setIsUp(true)
                 .setOnChanged(this::onModifyTextureChanged)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
