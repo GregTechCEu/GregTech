@@ -1,0 +1,14 @@
+{
+  "section": "GCP",
+  "title": "Terminal",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Tablet device you spawned with is very valuable to do plenty of tasks in GregTech.§r\n\nThis Quest explains how you can use the §4Terminal§.. §bThis is merely basic information, you can skip this for a while as the Terminal isn\u0027t used much in the early game§r.\n\nThe Terminal runs on §4GregOS™§r (not an actual Trademark), an operating system which works with §5Applications§r.\n\n\n§9Machines Guides§r, §9Multiblock Guides§r, §9Item Guides§r, §9Tutorials§r are what they sound like. Note that they are currently still being worked on.\n\n§9Guide Editor§r is used to write Guides! Just as above. The GTCEu wiki has some small instructions for how to write them. If you are feeling like helping us with filling up guides, please go ahead and message us on our §8Discord§r (link is in the Curseforge page) with the work you\u0027ve put, or contribute to our §7GitHub§r.\n\n§9System Settings§r changes... settings (duh) related to the Terminal. You can §bset your own background picture§r, remove the double confirmation on exit, and more. Most of the keybinds apply to the §5Home§r button. Double clicking by default exists any open Application.\n\n§9Multiblock Helper§r is split into two functionalities.\nA couple devices are required to be mounted, which enable §bVR visualization§r of multiblock structures.\nThe upgrade unlocked at §6HV§r allows you to §6debug§r and §6auto-build§r.\n\n§9Battery Manager§r, assuming you have a Battery mounted, checks the Energy level and indicates energy usage of other Apps.\n\n§9Hardware Manager§r is used to mount Hardwares, such as Battery, to enable other Apps.\n\n§9App Store§r (not exactly a Store) adds Apps to your collection, and allows upgrades for some of them. Keep in mind Apps may still require specific mounted devices to function.\n\n§9Pong§r, §9Theseus\u0027 Escape§r, §9Minesweeper§r are minigame Apps. Don\u0027t forget to play GregTech, too!\n\n§9Ore Prospector§r works the same way as the portable §dProspector§r and can be upgraded several times.\n\n§9Fluid Prospector§r works the same way as the portable §dProspector§r (but for fluids!) and can be upgraded several times.\n\n§9Recipe Chart§r is a wonderful chart planner to build Recipe Chains and visualize them.\n\n§9GT Console§r configures machines as if you were using regular tools, but without using them! This is similar to the remote access from the §3Central Monitor§r.\n\n§9World Prospector§r is a §dX-Ray VR§r for filtered blocks.\n\n§9Virtual Tank Viewer§r is used in combination with §3Ender Fluid Covers§r. It stores information about all your §dVirtual Tanks§r.\n\n§9Cape Selector§r lets you become fancy! You can have your characters wear a fancy §dCape§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:465"
+}
