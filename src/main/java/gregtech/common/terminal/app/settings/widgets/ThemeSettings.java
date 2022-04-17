@@ -47,13 +47,23 @@ public class ThemeSettings extends AbstractWidgetGroup {
                         "terminal.settings.theme.wallpaper.url",
                         "terminal.settings.theme.wallpaper.color",
                         "terminal.settings.theme.wallpaper.file"),
-                -1, TerminalTheme.WALL_PAPER::getTypeName, true)
+                -1, this::getLocalizedWallpaperTypeName, true)
                 .setIsUp(true)
                 .setOnChanged(this::onModifyTextureChanged)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
                 .setBackground(TerminalTheme.COLOR_6));
         textureGroup = new WidgetGroup((int) (x + 170), 122, (int) (x * 11 - 170), 65);
         this.addWidget(textureGroup);
+    }
+
+    private String getLocalizedWallpaperTypeName(){
+        switch(TerminalTheme.WALL_PAPER.getTypeName()){
+            case "resource": return "terminal.settings.theme.wallpaper.resource";
+            case "url": return "terminal.settings.theme.wallpaper.url";
+            case "color": return "terminal.settings.theme.wallpaper.color";
+            case "file": return "terminal.settings.theme.wallpaper.file";
+        }
+        return null;
     }
 
     private void addColorButton(ColorRectTexture texture, String name, int x, int y) {
