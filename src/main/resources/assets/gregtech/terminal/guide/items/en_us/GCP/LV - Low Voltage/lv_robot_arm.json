@@ -1,0 +1,14 @@
+{
+  "section": "GCP/LV - Low Voltage",
+  "title": "LV Robot Arm",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oA crafting component, OH MY GOSH THIS ONE IS EXPENSIVE, but also a cover!§r\n(Next quest explain how to interact with covers)\n\n\nThe Robot Arm, when placed on a machine, is a more advanced Conveyor Module. It lets you transfer items in specific batches, at specific rates, or keep a certain amount of items stocked.\nActual uses for the Robot Arm will be explained in future Quests as tutorial.\n\n§9Note:§r The functionalities provided by the Robot Arm work §lonly§r if it is doing the operation.\n\n\n§bLore:§r GregTech 5 had blocks such as the Buffer, Filter and Type Filter to allow fine control over items. In GTCE it\u0027s all been replaced by the almighty Robot Arm and various Filter Covers. That is a lot more compact!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:187"
+}

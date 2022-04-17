@@ -1,0 +1,14 @@
+{
+  "section": "GCP/LV - Low Voltage",
+  "title": "LV Electric Piston",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oA crafting component, did you expect anything fancier?§r\n\nJust like the LV Motor, it is used to craft LV machines."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:172"
+}

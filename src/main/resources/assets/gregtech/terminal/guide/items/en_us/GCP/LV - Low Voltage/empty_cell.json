@@ -1,0 +1,14 @@
+{
+  "section": "GCP/LV - Low Voltage",
+  "title": "Empty Cell \u0026 Empty Universal Cell",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oGTCE killed Cell Chemistry... GTCE killed Cells!\n... So let\u0027s have GTCEu revive them! Nonono, not the Cell Chemistry, the §9§oCells§r.§r\n\nCells are an alternative form of Fluid storage. All Cell types with the same type and amount of Fluid inside them §6stack§r. They can be automatically filled with a §3Canning Machine§r.\n\nCells hold §done bucket§r of Fluid.\n\nUniversal Cells hold up to §done bucket§r, but also can store §9fractions§r of Buckets. Ideal to store leftover Fluid without spending a whole Drum. \n\nCells made from higher tier materials can hold even more fluid, but §9Drums§r and §9Super Tanks§r will hold more by then.\n\nLike Drums, Cells can be placed into a crafting grid to clear their contents."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:78"
+}

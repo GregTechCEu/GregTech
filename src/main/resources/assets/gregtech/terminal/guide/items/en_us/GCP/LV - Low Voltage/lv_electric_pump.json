@@ -1,0 +1,14 @@
+{
+  "section": "GCP/LV - Low Voltage",
+  "title": "LV Electric Pump",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oA crafting component, but also a cover!§r\n(Next quest explain how to interact with covers)\n\n\nThe pump, when placed on a machine, will transfer fluid. You can configure it to import or export.\nIt can accept a §9Fluid Filter§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:142"
+}

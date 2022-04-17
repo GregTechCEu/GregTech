@@ -1,0 +1,14 @@
+{
+  "section": "GCP/Introduction",
+  "title": "Hammer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Here\u0027s your Introduction to GregTech tools. Something that may confuse you is how JEI displays Neutronium tools. But in fact you can make the tools off §dmany materials§r. The first one being Iron...! Or Wrought Iron if you read that quest.\n\n\n§9§lHammer:§r A crafting tool used to for a lot of early game recipes. It also works as a mining tool for ores to crush them, more information on that later. Its last function is to mute machines by §msmacking§r right-clicking them.\n\nAs an additional on §lall§r GregTech tools. You can §6repair§r them in an §6Anvil§r using the material of the tool itself, like any vanilla tool! §dBottles o\u0027 Enchanting§r are craftable too.\n\n\n§eNote:§r Any Quest with GregTech tools can be completed with the tool crafted from any material, not just the one displayed."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:6"
+}

@@ -1,0 +1,14 @@
+{
+  "section": "GCP/LV - Low Voltage",
+  "title": "LV Conveyor Module",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oA crafting component, but also a cover!§r\n(Next quest explains how to interact with covers)\n\n\nThe Conveyor Module, when placed on a machine, will transfer items. You can configure it to import or export.\nThis has a special interaction with Item Pipes to enable perfect §dRound Robin§r.\nIt can also accept various §9Item Filters§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:157"
+}
