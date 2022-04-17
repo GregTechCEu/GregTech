@@ -1,0 +1,14 @@
+{
+  "section": "GCP/MV - Medium Voltage",
+  "title": "Liquid-Fueled Impeller Jetpack",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "This Jetpack takes most §aCombustion Fuel§r to enable a primitive form of flight.\n\nFill it like you would fill a Drum.\n\nPress §4H§r (default) to enable Hover Mode."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:gt_armor:2"
+}

@@ -1,0 +1,14 @@
+{
+  "section": "GCP/EV - Extreme Voltage",
+  "title": "Advanced NanoMuscle",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oQuite a bit of a microcrafting project, but this is worth it!§r\n\nThe Advanced Nano Chestplate combines protection, a personal battery and an §6enhanced Jetpack§r, all in one.\n\nTo §denable charging§r, shift right-click it when it is in your hand, then equip it (Note that there is a bug when it sometimes does not want to charge... you will forgive it, right?).\n\nNote that this stores §oa lot§r of energy, and uses it fairly fast. You may want to invest in a §3HV Turbo Charger§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:gt_armor:30"
+}

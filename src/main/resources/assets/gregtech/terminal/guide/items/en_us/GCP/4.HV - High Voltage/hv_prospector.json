@@ -1,0 +1,14 @@
+{
+  "section": "GCP/HV - High Voltage",
+  "title": "HV Prospector",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "This prospector has a §6higher range§r than the §7LV§r one. You definitively want this!\n\nShift right-clicking on it will change the mod to §6Fluid Prospection§r.\nThis will tell you the base §dyield§r of Fluid veins, along with how full they are.\n\n§9Reminder:§r The yield of §3Fluid Drilling Rigs§r is proportional to the fullness of the vein. When low enoug, it defaults to yield defined in the json file.\nWhen the fullness drops below 30% (rough estimation), you can consider moving to another vein... unless you have an §3Advanced Fluid Drilling Rig§r which does not care much about the fullness due to the huge boost it gives."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:467"
+}

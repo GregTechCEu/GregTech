@@ -1,0 +1,14 @@
+{
+  "section": "GCP/EV - Extreme Voltage",
+  "title": "Ender Fluid Link Cover",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§aEnder Fluid Link Covers§r are §dGregTech§r\u0027s §r§3Ender Tanks§r. Each Cover sends their fluids through a frequency defined by an §68-digit hexadecimal number§r (0-9, then A-F for each digit). That gives you §64.29 billion§r channels to work with! Ender Fluid Link Covers work as long as their chunk is loaded - regardless of distance or dimension.\n\nThey don\u0027t come cheap though, so consider a way to farm §3Ender Pearls§r.\n\nSetting the mode to Import will §c§opull§r fluids from the world location it is attached to, while Export will §9§opush§r fluids to the world. You must turn the I/O to Enabled for it to start working. Each channel has a buffer of §d64 buckets§r.\n\nThe \"Virtual Tank Viewer\" app in your §4Terminal§r allows you to see the contents of all Ender Fluid Link channels. Regardless, I recommend you set up a system to organise all those channels. I would also advise against using the default channel (FFFFFFFF) in all cases."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:311"
+}

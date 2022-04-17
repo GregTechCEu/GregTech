@@ -1,0 +1,14 @@
+{
+  "section": "GCP/HV - High Voltage",
+  "title": "Ore Dictionary Filter",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis is a guide on how to automatically route §lall§r§o your Hot Ingots to your Vacuum Freezer while keeping everything automated perfectly fine.§r\n\nThe cheap way would be to use filters, and manually add Hot Ingots one by one... That\u0027s boring! I don\u0027t like being bored, let\u0027s do something much better.\n\n\nInstall an §aOre Dictionary Filter§r Cover on the §3Input Bus§r of your §3Vacuum Freezer§r, open it and set to §e§lingotHot*§r whitelist.\nThe slot is to §dtest§r items to make sure you configured the Filter properly, drag ingots from JEI!\n\nFrom here, you have the option to route either with §9Item Pipes§r or §9AE2§r.\n\n§2With Item Pipes§r, connect the output of your §3EBF(s)§r to the input of your §3Vacuum Freezer§r and the output dump (Chest, Crate, or ME Interface).\nYou can also have a §dRestrictive Pipe§r in front of the output dump to ensure the Vacuum Freezer will be prioritized.\n\n§2With AE2§r, place a §3ME Storage Bus§r on top of your Cover and set to very §dhigh priority§r. Any hot ingots entering your ME system will automatically be moved into the Vacuum Freezer.\n\n\n§9Note:§r If you wish to know more Ore Dictionaries for more automation setups, they will display if you press Shift when hovering over an item. This is due to an enabled config in JEI Integration.\n\n§9Other Note:§r The Ore Dictionary Filter partially supports §dregex§r, hover over the info icon for more information."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:292"
+}
