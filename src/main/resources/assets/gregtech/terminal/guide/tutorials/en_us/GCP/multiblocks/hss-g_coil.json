@@ -1,0 +1,13 @@
+{
+  "section": "GCP/multiblocks",
+  "title": "HSS-G Coils",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oAlmost as hot as the surface temperature of the Sun!§r\n\n§aHSS-G Coils§r bring up the Heat Capacity to §d5,400K§r.\n\nSweet §6Coil bonuses§r should be the incentive to make those early, as they become mandatory only during the §dLuV§r Age.\n\nAt this point, you may go back to using only one §3Electric Blast Furnace§r for your entire base, powering with the highest available Voltage you have.\nHot Metals will start taking longer to cool down as they don\u0027t get perfect overclocks. For that you will probably want a dual or quad §3Vacuum Freezer§r."
+      ]
+    }
+  ],
+  "fixed": []
+}

@@ -1,0 +1,14 @@
+{
+  "section": "GCP",
+  "title": "Primitive Water Pump",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Primitive Water Pump§r is your first way to automatically generate water for your boilers. It does not pump water from the world, instead it just creates it.\n\nIt is a multiblock, so consult §2JEI§r for the structure. Also, multiblocks can be §6previewed in world§r if you sneak right-click the main Block with an empty hand.\nIts functionality is fully explained in the description page in §2JEI§r.\n\nSmall tip for you: no need to worry about Biome for now, as the boilers need very little water to keep up.\n\nThe §3Output Hatch§r is where water will be generated, you may have it face up or down to auto-output water into your pipes.\n§9Reminder:§r Use a §5Wrench§r to rotate GregTech blocks (sneak right-click).\n\n\n§bLore:§r This Multiblock was ported from IMPACT, a 1.7.10 GregTech modpack which we appreciate greatly."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "primitive_water_pump"
+}

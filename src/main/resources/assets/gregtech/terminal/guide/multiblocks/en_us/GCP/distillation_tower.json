@@ -1,0 +1,14 @@
+{
+  "section": "GCP",
+  "title": "Distillation Tower",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oTime for a real oil refinery.§r\n\nThe §3Distillation Tower§r is a multiblock meant for producing huge amounts of products. In §3Distilleries§r, you had to pick only one product to output. DTs output §6all of it at once§r!\n\n§9Note the special placement rules:§r Energy, Items, and Fluid Inputs can only be placed on the bottom layer. Maintenance can be placed anywhere. Fluid Outputs can only be placed starting on the second vertical layer, and only allow one per layer as well.\n\nThe §3DT§r can form at any height from §c3§r to §c13§r blocks, allowing 2 to 12 Fluid Outputs. Fluid will always output on the layer corresponding to the recipe in §2JEI§r.\n\nIt is a good idea to use §3Super Tanks§r as the output for every layer.\n\n§5Soon to be coming:§r The §3DT§r will be able to ignore fluids outputs if built short. For example you will be able to build a 4 blocks tall Tower to run Fermented Biomass and void all fluids after Ethanol... Not saying that you should do that, just that it will be a possibility.\n\n\n§cNote:§r Using the §3Distillation Tower§r for Oil -\u003e Fuel -\u003e Diesel is §cnot§r worth it! You will spend more energy Overclocking the Multiblock, than what the extra outputs will provide. You may instead look at the §3Processing Array§r (§1IV§r) for large scale Diesel production.\nIt is however §6very worth§r for Cracked Fuels and Pyrolyse products."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "distillation_tower"
+}

@@ -1,0 +1,13 @@
+{
+  "section": "GCP/multiblocks",
+  "title": "Coils Behaviour",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Electric Blast Furnace§r, §3Pyrolyse Oven, §aMulti Smelter§r, and §3Cracking Unit§r all require heating Coils. But what are the advantages of using higher tier coils?\n\nThe latter three are quite straightforward. Higher tier coils reduce the §eprocessing time§r of the Pyrolyse Oven, reduce the §9energy usage§r of the Cracking Unit, and increase the §anumber of parallel smelts§r and reduce the §9energy usage§r of the Multi Smelter.\n\nFor the EBF, things get slightly more complicated. The EBF smelts items at a certain §dtemperature§r. This is mainly determined by the tier of heating coil used - §r§6Cupronickel§r is §d1800K§r, §bKanthal§r is §d2700K§r, etc. Additionally, starting from §6HV§r, each tier of energy adds §d100K§r to the temperature.\n\nEach EBF recipe has a certain base temperature, for example, §bAluminium§r is smelted at §d1700K§r. If the EBF temperature is not high enough, the recipe can\u0027t be done. If the EBF temperature is high enough, 2 different bonuses are applied:\n§9-§r For every §d900K§r above the recipe temperature, the amount of energy required is multiplied by §a0.95x§r, which stacks.\n§9-§r For every §d1800K§r above the recipe temperature, one additional overclock will be §6100% efficient§r; in other words, it will §5quadruple the speed§r, instead of doubling it."
+      ]
+    }
+  ],
+  "fixed": []
+}

@@ -1,0 +1,14 @@
+{
+  "section": "GCP",
+  "title": "Steam Grinder",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Steam Oven\u0027s elder brother. Or perhaps it was the opposite?§r\n\nThe §3Steam Grinder§r is §lthe§r reason you will start doing Ore Processing. §6It can pulverize large batches of items fast and effortlessly.§r\n\n\nAs always, check §2JEI§r for the structure.\n\nRecipes are handled differently than in previous Multiblocks or Singleblocks machines.\nThe main block acts as the brain.\nInputs go into the Input Bus.\nOutputs come out of the Output Bus.\nThe Steam Hatch is the heart, pump steam in to power the whole thing.\n\n§9Note:§r Buses and Hatches §dautomatically import/export§r (depending on context) through their front face. This makes automation extremely easy. Simply place chests, drawers, anything you see fit next to their side with a dot.\n\n\n§cWarning:§r This multiblock is much more expensive than your typical machines at this point. You will also need some alloys you have not crafted yet. Either be prepared to spend a lot of resources, or wait until you start LV Age (it will be easier).\n\n\n§bLore:§r This Multiblock originally comes from GT++. It required Tumbaga to craft, an alloy with a mix of Gold and Bronze."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_grinder"
+}
