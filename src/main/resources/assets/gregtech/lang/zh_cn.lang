@@ -5138,6 +5138,10 @@ terminal.minesweeper.time=%d秒经过
 terminal.minesweeper.lose=你输了。游戏将在%d秒后重新开始.
 terminal.minesweeper.win=你在%d秒内赢了!游戏将在%d秒后重新开始.
 
+terminal.cape_selector.empty=看来你还没有开放任何披风!
+terminal.cape_selector.select=点击已开放的披风以选择!
+terminal.cape_selector.tip=你可以经过获得困难的进度以开放披风。
+
 metaitem.cover.digital.title.mode=模式:
 metaitem.cover.digital.title.spin=自旋:
 metaitem.cover.digital.wireless.tooltip.1=§e右击中央监视器以远程绑定到它。

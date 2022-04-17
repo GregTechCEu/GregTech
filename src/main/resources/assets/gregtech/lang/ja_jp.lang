@@ -5071,6 +5071,10 @@ terminal.minesweeper.time=%d秒経過
 terminal.minesweeper.lose=失敗! %d秒後にリスタートします.
 terminal.minesweeper.win=%d秒で勝利しました! %d秒後にリスタートします.
 
+terminal.cape_selector.empty=まだマントを一つも持っていません！
+terminal.cape_selector.select=マントをクリックして選択してください!
+terminal.cape_selector.tip=象徴的な実績を達成することでマントを獲得できます.
+
 metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:
 metaitem.cover.digital.wireless.tooltip.1=§eセントラルモニターを右クリックすることで無線でリンクできます.

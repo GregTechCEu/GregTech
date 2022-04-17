@@ -5127,6 +5127,10 @@ terminal.minesweeper.time=%d seconds elapsed
 terminal.minesweeper.lose=You lost. Game will restart in %d seconds.
 terminal.minesweeper.win=You won in %d seconds! Game will restart in %d
 
+terminal.cape_selector.empty=It looks like you haven't unlocked any capes yet!
+terminal.cape_selector.select=Click on an unlocked cape to select it!
+terminal.cape_selector.tip=You can get these from high-level advancements.
+
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
 metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.

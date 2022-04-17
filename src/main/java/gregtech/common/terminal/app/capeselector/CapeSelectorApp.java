@@ -29,14 +29,14 @@ public class CapeSelectorApp extends AbstractApplication {
 
         this.addWidget(new SimpleTextWidget(166, 33, "", 0xFFFFFF, () -> {
             if(this.getCapeList().getCapes() == null || this.getCapeList().getCapes().isEmpty()) {
-                return "It looks like you haven't unlocked any capes yet!";
+                return "terminal.cape_selector.empty";
             }
-            return "Click on an unlocked cape to select it!";
+            return "terminal.cape_selector.select";
         }));
 
         this.addWidget(new SimpleTextWidget(166, 45, "", 0xFFFFFF, () -> {
             if(this.getCapeList().getCapes() == null || this.getCapeList().getCapes().isEmpty()) {
-                return "You can get these from high-level advancements.";
+                return "terminal.cape_selector.tip";
             }
             return "";
         }));
