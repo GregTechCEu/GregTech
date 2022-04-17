@@ -11,7 +11,6 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.terminal.app.game.maze.widget.EnemyWidget;
 import gregtech.common.terminal.app.game.maze.widget.MazeWidget;
 import gregtech.common.terminal.app.game.maze.widget.PlayerWidget;
-import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class MazeApp extends AbstractApplication {
             this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.pause", 0xFFFFFFFF).setXCentered(true), 2);
             // GameState 3: Death
             this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "terminal.maze.death.1", true), 3);
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> I18n.format("terminal.maze.death.2",this.getMazesSolved()) , true), 3);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "terminal.maze.death.2", 0xFFFFFFFF, () -> String.valueOf(this.getMazesSolved()),true), 3);
             this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "terminal.maze.death.3", true), 3);
             this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "terminal.maze.retry", (clickData -> {
                 this.setGameState(1);

@@ -5130,13 +5130,14 @@ terminal.maze.play=开始
 terminal.maze.continue=继续
 terminal.maze.pause=暂停
 terminal.maze.death.1=天啊! 你被弥诺陶洛斯吃掉了!
-terminal.maze.death.2=你在死之前破解了%d个迷宫。
+terminal.maze.death.2=你在死之前破解了%s个迷宫。
 terminal.maze.death.3=再玩一次?
 terminal.maze.retry=重试
 
-terminal.minesweeper.time=%d秒经过
-terminal.minesweeper.lose=你输了。游戏将在%d秒后重新开始.
-terminal.minesweeper.win=你在%d秒内赢了!游戏将在%d秒后重新开始.
+terminal.minesweeper.time=%s秒经过
+terminal.minesweeper.lose=你输了。游戏将在%s秒后重新开始.
+terminal.minesweeper.win.1=你在%s秒内赢了!
+terminal.minesweeper.win.2=游戏将在%s秒后重新开始.
 
 terminal.cape_selector.empty=看来你还没有开放任何披风!
 terminal.cape_selector.select=点击已开放的披风以选择!
