@@ -1,0 +1,64 @@
+{
+  "section": "Primitive",
+  "title": "Wooden Multiblock Tank",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Wooden Multiblock Tank§r is an early game solution for storing liquids. Unfortunately, it cannot store much, as it does not handle gases or hot liquids."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1597,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "This Multiblock has one possible Multiblock Part, which is used for automatically filling and extracting fluids from the structure."
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": -12,
+      "y": 176,
+      "width": 59,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1596,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "card",
+      "x": 7,
+      "y": 170,
+      "width": 178,
+      "height": 35,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "x": 35,
+      "y": 176,
+      "width": 137,
+      "height": 20,
+      "content": [
+        "Tank Valve for automating structure. Maximum: 2"
+      ]
+    }
+  ],
+  "metatileentity": "tank.wood"
+}
