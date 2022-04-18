@@ -1,0 +1,13 @@
+{
+  "section": "multiblocks",
+  "title": "Kanthal Coil",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oIs it getting hot in here?§r\n\n§3Kanthal Heating Coils§r are the next major step in progression. This increases the temperature of your §3Blast Furnace§r to §d2,700K§r, allowing you to process new materials. They may also §eaccelerate§r less hot recipes - check the next quest for details.\n\nYou will need §a128 Ingots§r, which will take easily over an hour. You can move on to other projects while your §3EBF§r is hard at work."
+      ]
+    }
+  ],
+  "fixed": []
+}
