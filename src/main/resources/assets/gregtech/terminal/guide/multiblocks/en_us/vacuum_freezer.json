@@ -1,0 +1,136 @@
+{
+  "section": "Electric",
+  "title": "Vacuum Freezer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Vacuum Freezer§r is one of the more important Multiblocks, as it allows you to get actual ingots from super heated Blast Furnace outputs."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1002,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Any ingots made in the §6Electric Blast Furnace§r that have a blast temperature of greater than §91750§r K will not generate regular ingots, but instead will generate Hot Ingots. These Ingots will damage the player when held, and are required to be cooled down in the Vacuum Freezer."
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "card",
+      "x": 6,
+      "y": 189,
+      "width": 178,
+      "height": 105,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
+      "type": "slots",
+      "x": 7,
+      "y": 198,
+      "width": 56,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1151,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 14,
+      "y": 224,
+      "width": 43,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1166,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 54,
+      "y": 199,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Item Input bus. Maximum 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 53,
+      "y": 223,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Item Output Bus. Maximum 1"
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 8,
+      "y": 249,
+      "width": 55,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1181,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 1,
+      "y": 274,
+      "width": 68,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1196,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 52,
+      "y": 248,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Fluid Input Hatch. Optionally 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 51,
+      "y": 273,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Fluid Output Hatch. Optionally 1"
+      ]
+    }
+  ],
+  "metatileentity": "vacuum_freezer"
+}

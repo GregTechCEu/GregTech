@@ -1,0 +1,237 @@
+{
+  "section": "Electric",
+  "title": "Electric Blast Furnace",
+  "stream": [
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "content": [
+        "The §6Electric Blast Furnace§r is one of the main Multiblock Structures in Gregtech, and the main goal of earlygame progression."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1001,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Like all Gregtech Multiblocks, this structure is modular, and can be made up of many different combinations of Multiblock Parts."
+      ]
+    },
+    {
+      "type": "card",
+      "fill": -3745585,
+      "width": 180,
+      "height": 190,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Electric Blast Furnace§r can form with any combination of blocks above. For example, if the desired recipe does not deal with fluids, neither of the fluid related hatches are required.\n\nOverclocking the Blast Furnace is as simple as ensuring the the Multiblock has 2 Energy Inputs, so 4 Amps of energy can be received, which will ensure that the mutliblock runs at the tier above the energy inputs.\n\nFor the Blast Furnace specifically, the Muffler Hatch needs to be placed at the center of the top layer, and must face upwards."
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": 12,
+      "y": 159,
+      "width": 35,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1001,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 11,
+      "y": 182,
+      "width": 36,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1151,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 12,
+      "y": 206,
+      "width": 34,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1166,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 13,
+      "y": 228,
+      "width": 32,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1181,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 13,
+      "y": 251,
+      "width": 32,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1196,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 10,
+      "y": 273,
+      "width": 38,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1654,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 10,
+      "y": 296,
+      "width": 38,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1657,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 9,
+      "y": 319,
+      "width": 40,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1211,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 52,
+      "y": 159,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "The Controller block"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 52,
+      "y": 182,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Item Input. Minimum 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 51,
+      "y": 206,
+      "width": 108,
+      "height": 10,
+      "content": [
+        "Item Output. Minimum 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 51,
+      "y": 230,
+      "width": 125,
+      "height": 10,
+      "content": [
+        "Fluid Input. No Minimum"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 49,
+      "y": 251,
+      "width": 131,
+      "height": 10,
+      "content": [
+        "Fluid Output. No Minimum"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 48,
+      "y": 271,
+      "width": 135,
+      "height": 20,
+      "content": [
+        "Maintence Hatch. Required based on Config. Exactly 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 48,
+      "y": 295,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Muffler Hatch. Exactly 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 47,
+      "y": 318,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Energy Input. Minimum 1"
+      ]
+    }
+  ],
+  "metatileentity": "electric_blast_furnace"
+}
