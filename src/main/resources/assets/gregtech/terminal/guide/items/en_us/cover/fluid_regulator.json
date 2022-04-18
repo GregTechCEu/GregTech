@@ -1,0 +1,14 @@
+{
+  "section": "Cover",
+  "title": "Fluid Regulator",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oA cover!§r\n\nThe §aFluid Regulator§r is sort of the equivalent to a §9Robot Arm§r for Fluids.\nIt can transfer fluids, but has two useful modes:\n§9-§r §dSupply Exact§r will transfer the amount of specified Fluid per tick if available. No more, no less.\n§9-§r §dKeep Exact§r will make sure the exact amount of Fluid in the attached machine is being kept.\n\n\n§bLore§r: Yes, the texture for this is simply the Fluid Pump texture reflected around the vertical axis. This way the same way in GregTech 5."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:247"
+}

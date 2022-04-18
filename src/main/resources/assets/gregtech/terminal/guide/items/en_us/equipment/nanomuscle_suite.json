@@ -1,0 +1,14 @@
+{
+  "section": "Equipment",
+  "title": "NanoMuscle™ Suite",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oNot an actual TradeMark.§r\n\nYou probably don\u0027t have mobs to fight, but this armor provides nice QoL that you may enjoy!\n\n§9Helmet:§r Provides §dNight vision§r (default keybind §4M§r but check for conflicts)\n\n§9Chestplate:§r Provides nothing interesting, but can be further upgraded into the §aAdvanced§r version at the very end of §6HV§r Age.\n\n§9Leggings:§r Provides nothing special, perhaps we should have given it a small speed boost?\n\n§9Boots:§r Provides §dStep Assist§r. You read that right!\n\n\n§bLore:§r This armor is originally inspired by IndustrialCraft, but its first implementation within the GTCE environment came with Nuke Powered Utils, an addon mod to GTCE."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:gt_armor:21"
+}

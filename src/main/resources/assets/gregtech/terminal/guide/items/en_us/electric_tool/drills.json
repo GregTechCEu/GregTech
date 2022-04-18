@@ -1,0 +1,14 @@
+{
+  "section": "Electric Tool",
+  "title": "Drills",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§9Drills§r are electric tools which come in different tiers. The §7LV§r Drill may not be too appealing, but higher-tier drills can mine 3x3x3, 5x5x5, and up to 9x9x9 to make huge holes!§r\n\nThis suggested drill is with a Diamond tip, which might be the best material for it right now.\n\nYou may hold off and make an §bMV§r drill §einstead§r. That one will be completely worth it.\n\n§9Note 1:§r All Electric Tools have a lot more durability than indicated, as they use Energy to prevent damage from being applied! On top of that, they can be enchanted as Pickaxes can.\n\n§9Note 2:§r Don\u0027t charge Drills while mining, as your item will be constantly updated and it will keep resetting the mining progress. \n\n§bLore:§r Up until GTCEu, Electric tools required Stainless Steel, which made them locked until almost HV age."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:20"
+}

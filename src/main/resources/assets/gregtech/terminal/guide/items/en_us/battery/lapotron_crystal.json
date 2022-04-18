@@ -1,0 +1,14 @@
+{
+  "section": "Battery",
+  "title": "Lapotron Crystal",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The Best Battery-like item, for §5EV§r!\n\nThe §aLapotron Crystal§r requires quite a bit of nested crafting, so craft it in bulks or automate it with AE2 patterns."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:742"
+}
