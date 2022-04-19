@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Cutting Machine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oMore upgrades...! §r\n\nThe §bMV§  §3Cutting Machine§r is required to cut §7Silicon Boules§r to prepare them for §aLaser Engraving§r.\n\nI recommend you run this machine with §dLubricant§r, to cut down on the processing time.\nLubricant can be §3brewed§r from an Oil and §aTalc§r, §2Soapstone§r or §cRedstone§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "cutter.mv"
+}

@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Miner",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§5Player:§r §oI hate mining!§r\n\n§5Writer:§r §oBut I gave you Mining Hammers!§r\n\n§5Player:§r §oI hate mining!§r\n\n§5Writer:§r §oA solution for you, is the §3§oMiner§r§o!§r\n\nThis kind soul§r will mine ores for you when placed above a vein.\nVertical range is unlimited. Horizontal range is written on the tooltip.\n\nThe §bMV§r variant may not have the range to mine a full vein. However the §6HV§r variant does! So you may hold off on it for now. Get §eeither§r to complete this Quest.\n\nYou will need §9Power§r. §aCharged Batteries§r may work but they may also run out which is a bit inconvenient.\nMy top suggestion is to use a filled §3Drum§r of some kind of fuel (if you are using Steam, out of luck!) and a §3Generator§r. Place the Drum above your Generator and right-click it with a §5Screwdriver§r to auto-output into the Generator. §oYou had forgotten about that feature didn\u0027t you?§r\n\n\n§cNote:§r Do not forget to §dchunkload§r all 9 chunks of the ore vein with FTB Utilities (open the map in the top left corner, claim the chunks with left-click, and enable force loading with shift-left-click).\n\n\n§9Tip:§r You can either a §3ME Chest§r or a §32x2 Drawer§r as the output inventory to make transporting the ores back home a simple task. The §3ME Chest§r can be powered with EU directly."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "miner.mv"
+}

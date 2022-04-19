@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Electrolyzer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§lOutside of Ore Processing:§r\nThis machine, similarly to the Centrifuge, also does a lot of things...\nAnd I cannot list them! But fortunately it\u0027s one of the cheapest, so get it whenever you want something from it.\n\n§lFor Ore Processing:§r\nSo, I lied, it\u0027s not §oexactly§r in the Ore Processing, it\u0027s actually for §aDecomposition of Dusts§r. However, most of this style of Decomposition through Electrolysis is locked at §bMV§r.\nYou can see the §emolecular formula§r in Dust tooltips to see at a glance what you can get from them.\n\n§cTake caution!§r Due to how ores work, Dusts which can be §ddirectly smelted§r into Ingots can give higher metal yields than electrolysis. However, it means you lose the other products in the dust. You will have to decide for yourself on each case."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "electrolyzer.lv"
+}

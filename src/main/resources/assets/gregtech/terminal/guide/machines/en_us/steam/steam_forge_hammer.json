@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "Steam Forge Hammer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Forge Hammer hammers... That\u0027s fascinating!§r\n\nA lot of recipes are the same as your hand crafting recipes using a §5Hammer§r, but instead uses this machine!\n\nIt can process §aCobblestone in Gravel§r, and §aGravel into Sand§r. And it\u0027s fast at that too!\n\nLast but not least, it makes Plates at a better ratio: §6three Ingots for two Plates§r. A worthwhile investment!\n\n\nYou know what? Bonus! Get an anvil back from crafting it. This is a small reminder that you can repair GregTech tools using an Anvil."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_hammer_bronze"
+}

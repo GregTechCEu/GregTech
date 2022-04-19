@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Precision Laser Engraver",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Laser Engraver§r engraves patterns into §9Silicon Wafers§r based on the type of §9Lens§r it is given. After the wafers are engraved, they must be passed through a §3Cutting Machine§r to turn them into components ready to be put into Circuits.\nHigher tier Engravers can etch more complex wafers for more efficient Circuits.\n\nFor now, the §aIntegrated Logic Circuit§r will be the one of interest, but the others will become important for higher tier Circuits."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "laser_engraver.mv"
+}

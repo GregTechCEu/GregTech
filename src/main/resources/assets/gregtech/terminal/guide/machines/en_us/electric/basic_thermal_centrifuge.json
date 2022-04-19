@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Thermal Centrifuge",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Thermal Centrifuge§r is the most energy hungry out of the Ore Processing machines.\nIt takes §aCrushed Ore§r or §aPurified Ore§r to give a different §6Byproduct§r from the §3Ore Washer§r, but at the same rate.\n\n\n§bLore:§r The Thermal Centrifuge in GT5 required 48EU/t to run. Yes this is above 32EU/t, but GT5 had special mechanics where certain machines such as this one could accept more than 1 Amp.\nIn GTCE, the Thermal Centrifuge was made to only work at MV with 60EU/t recipes.\nAnd now to be honest with you... it was awful, never worth it. So we buffed the machine to be much more relevant."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "thermal_centrifuge.lv"
+}

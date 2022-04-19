@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "Steam Compressor",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Steam Compressor compresses... I\u0027m actually speechless.§r\n\nI mean... that\u0027s it, nothing fancier. But you\u0027re unlocking new recipes for progression, mainly towards §9Steel§r!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_compressor_bronze"
+}

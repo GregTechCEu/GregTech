@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Arc Furnace",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe description of the machine refers to metallurgy where Blast Furnace and Arc Furnace serve a similar purpose, not exactly here though!§r\n\nThe §3Arc Furnace§r uses a little bit of §9Oxygen§r to smelt items in a different fashion than Furnaces.\n\nYou can use it to make easier §aWrought Iron§r, §aGlass§r, and gain access to §aAnnealed Copper§r.\nIt can also recycle various components and machines back to their original material.\n\n\n§bLore:§r Previous versions had both the Arc Furnace and the Plasma Arc Furnace. But why not use one machine for both? That\u0027s what we decided, but then we decided to remove one of the two plasma recipes. And then the other plasma recipe... Enough rambling that just means the Plasma Arc Furnace is gone. RIP."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "arc_furnace.lv"
+}

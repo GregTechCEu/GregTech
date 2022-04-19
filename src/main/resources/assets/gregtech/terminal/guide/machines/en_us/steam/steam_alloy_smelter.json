@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "Steam Alloy Smelter",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Alloy Smelter makes alloys... The name didn\u0027t state it clearly enough.§r\n\nUse it for more §6efficient Bronze§r, and for future alloys.\n\nThis is the most Steam hungry machine out of all of them. If you ever run out of steam, whack your machine with the §5Soft Mallet§r to pause it momentarily."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_alloy_smelter_bronze"
+}

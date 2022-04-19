@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Extractor",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Steam Extractor extracts... Wait no this was in the line one chapter ago!§r\n\nThe reason I did not present LV versions of Steam machines is because they are not required! You may not want to invest into an upgrade that virtually does nothing. Except for §othis one§r specifically because it does more.\n\n\nThe §3Basic Extractor§r gains Fluid capabilities, which enables §aFluid Extraction§r. Use it to melt Rubber that you previously solidified, to §dmelt Soldering Alloy§r for your circuits, to §dmelt Red Alloy§r for the §6best Vacuum Tube recipe§r in the §3Assembler§r!\n\n\n§bLore:§r Did you notice this machine is both an Extractor and a Fluid Extractor? The two of them were separated in previous versions of GregTech."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "extractor.lv"
+}

@@ -1,0 +1,13 @@
+{
+  "section": "Steam",
+  "title": "Steam Machines Behavior",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Steam Machines accept Steam into their internal storage tank, piped from Boilers.\n\nSteam machines will run recipes from JEI up to §aUsage: 32 EU/t (LV)§r. EU may be the Energy Unit for Electric machines, but the Steam machines will run using a proportional amount of steam.\nRegular Steam Machines are §9twice as slow§r as indicated by JEI.\nHigh Pressure Steam Machines are the same speed as indicated by JEI, with adjused steam consumption. You will unlock them once you obtain §dSteel§r.\n\n\nAfter each recipe, the Steam machines will vent some cooler steam (particles) from the dot side.\n§cImportant:§r Keep the exhaust port unblocked, this is neither an input or output slot! If the machine fails to vent steam, it will stop working.\n§9Reminder:§r Use your Wrench to change which side the exhaust port is facing (right-click).\n\n§o\nIf you feel like sending yourself off to Heaven, I invite you to stand on top of pipes transporting steam, or you can also stand right in front of the vent as the machines are running recipes.§r"
+      ]
+    }
+  ],
+  "fixed": []
+}

@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Macerator II",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oShredding your Ores with Byproducts.§r\n\nThe §3HV Macerator§r finally unlocks more of the slots shown in JEI. With this the first §9three§r slots are now available. This allows you to receive the §6unique ore Byproduct§r from macerating §dThermal §dCentrifuged Ore§r.\n\nMacerating Ores costs §a32 EU/t§r with §5both overclocks§r, which makes this machine able to fit in LV lines, convenient!\n\nDespite the signicant improvements this machine provides, it is still not completely worth it to do advanced processing for your all ores. Energy and time are a huge factor to never neglect, so select only the ores that you care for the §6Byproducts§r.\n\n§bLore:§r In GregTech 5u, the HV macerator only gave two slots. Who needed that stone dust anyways?"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "macerator.hv"
+}

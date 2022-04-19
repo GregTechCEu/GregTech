@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "Steam Extractor",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Steam Extractor extracts... I cannot believe my own words.§r\n\nNot many recipes are in the §3Extractor§r, but it is used for §9Rubber§r, which you will need after Steel.\n\nYou can also process Dirt in the Extractor for §aBones§r, which makes §aBone Meal§r for crops."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_extractor_bronze"
+}

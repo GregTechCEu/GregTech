@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Brewery",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The Brewery can be used to make §aLubricant§r from §aRedstone§r and §aCreosote§r/§aOil§r.\n\nLubricant has its uses here and there, but is mostly for the §3Cutting Machine§r. That significantly reduces duration of recipes.\n\n\n§\n§9Note:§r The Brewery enables the Biomass path towards §9Ethylene§r. The same can be done in the §3Pyrolyse Oven§r. The other path invovles Oil.§r\n\n\n§bLore:§r §oYou can make a Brewery if you want to build up a company and start selling Booze... Oh wait nevermind, that\u0027s GregTech 6.§r"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "brewery.lv"
+}

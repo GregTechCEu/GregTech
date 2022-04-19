@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Low Voltage Transformer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§3Transformers§r allow you to step up and down Voltage tiers safely. Transformers change the power they receive into an equivalent amount of power 1 voltage tier above or below the input voltage.\n\nApart from running machines on different voltage tiers, Transformers are useful for transporting power across longer distances. Cable loss has less of an effect at higher voltages.\n\nTransformers have 5 low voltage sides, and 1 high voltage side.\n\nThe §9normal§r Transformer can only do 1A \u003c-\u003e 4A conversion, but §9Adjustable§r Transformers can be changed between 1A \u003c-\u003e 4A, 2A \u003c-\u003e 8A, 4A \u003c-\u003e 16A, and 16A \u003c-\u003e 64A conversions. \n\nUse a §aSoft Hammer§r to change between transform up and down, and a §aScrewdriver§r on Adjustable Transformers to change the amperage.\n\nHigher tier Transformers require §9Coils§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "transformer.lv"
+}

@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "Small Steam Solid Fuel Boiler",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oWhy is this chapter called Steam Age again? It can\u0027t be due to this machine, can it?§r\n\nAnyways... The §3Solid Boiler§r is the only available Boiler for now, as the Glass needed for the others is not available. Make one, or two.\n\n§cImportant:§r Boilers can §cexplode§r! Water does not mess too well with high temperatures, and a steam explosion may occur under the following conditions:\n§9-§r The Boiler is hot, shown by the red bar in the GUI\n§9AND\n-§r The Boiler has no water, signified by the absence of blue bar\n§9AND\n-§r The Boiler receives water§r\n\nYou can be perfectly safe by filling the boiler with water before heating it up, and making sure it has water constantly. The drain is slow - §a1 mB§r of Water boils into §a160 mB§r of Steam - so you don\u0027t have to worry too much.\n\nThe Boiler will auto eject steam on all faces except bottom. For automated Water input, use the bottom face.\n\n\n§9Note:§r In this modpack, explosions are configured to not damage any block or entity, but you still lose your machine!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_boiler_coal_bronze"
+}

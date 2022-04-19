@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "High Pressure Boilers",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§3High Pressure Boilers§r will be a better source of Steam to power your Steam machines.\n\nKeep in mind energy conversion will use Steam to also power your Electric machines in the LV age.\n\n§cNote:§r You will need more than a handful of §3HP Boilers§r. The more you make, the easier it will be.\n\nThe §3Solid Boiler§r burns solid Fuel. It\u0027s self explanatory.\n\nThe §3Liquid Boiler§r burns either §dLava§r or §dCreosote§r.\n\nThe §3Solar Boiler§r burns nothing, it works on solar energy.\n\nDo you want a recommendation...? Well, you\u0027re out of luck, all of them are really good while having their own drawback. But I can tell you this: you will love the Advancement name from making an HP Solar Boiler.\n\n\nGet §eany§r of the three proposed boilers to complete this quest."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_boiler_coal_steel"
+}

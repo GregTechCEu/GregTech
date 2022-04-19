@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Bending Machine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oArgueably the second best LV machine to craft, but the choice is yours!§r\n\nThis helps converting one §6Ingot into one Plate§r, which is a better ratio than the Forge Hammer.\n\nYou will need a §dProgrammed Circuit§r for recipes. That would be nice if the questbook designer gave one for free, wouldn\u0027t it?\n\nYou can right click the Programmed Circuit in your hand or within the machine\u0027s §aConfiguration Slot§r to change the configuration number. Note that at the time of writing, this slot is §cnot detected§r for recipes!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "bender.lv"
+}

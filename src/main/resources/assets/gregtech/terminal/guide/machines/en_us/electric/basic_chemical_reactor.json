@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Chemical Reactor",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis of a chemical reaction, either realistic, theorical or invented by the power of video gaming. The Chemical Reactor will create the conditions for it to happen, and TADAAA. You can also call this a magic box, if you want.§r\n\n\nThe §3Chemical Reactor§r will be required for §la lot§r of recipes.\n\n\nThen, use your freshly made Chemical Reactor to unlock a new, §6better recipe for Rubber§r. It is §dunusable§r as a Fluid, so you will need to make another machine next.\n\nMake an §3Solidifier§r to solidify directly into §aRubber Sheets§r. You want this.\n\nMake an §3Assembling Machine§r to use the molten Rubber for §aCables§r. Not important for Tin Cables.\n\n\n§eNote:§r Submit a fluid by having it stored in §lany§r tank in your inventory. A Drum is the perfect candidate."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "chemical_reactor.lv"
+}

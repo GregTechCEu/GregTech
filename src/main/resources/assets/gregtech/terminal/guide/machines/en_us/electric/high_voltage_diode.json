@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "High Voltage Diode",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Diode§r (block, not item component) accepts energy inputs from 5 sides, but only outputs through a single side.\n\nIts main purpose is to §dlimit Amperage§r. It is useful for regulating centralised Power generation, so you can distribute your power everywhere without having to math out what cable size is safe depending on consumers...\n\nThey can also be used as some sort of Repeaters when the voltage loss from Cables (or GTEU P2P tunnels, more on that later!) get too high.\n\nYou can use a §5Soft Hammer§r to change the Amperage limit of the output.\n\n§eAny§r Diode will complete this Quest."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "diode.hv"
+}

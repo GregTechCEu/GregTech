@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Battery Buffer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oBy itself, the Battery Buffer does nothing. What it does, however, is accept batteries in its inventory, to act as a... buffer... with the... batteries. I hope you got it!§r\n\nThe §3Battery Buffer§r handles §9two Amps in§r, and §9one Amp out§r §dper Battery§r. Output side has the dot, all other sides are inputs.\n§6It will also charge both EU and RF Tools inside it§r.\n\nThis is a must have if you don\u0027t have unlimited power at hand.\n\nGet §eeither§r a four slot, or an eight slot Battery Buffer. A sixteen slot variant also exists but that\u0027s overkill right now.\n\n§9Note:§r Do not loop your lossy Cables back to your Battery Buffer, you will end up voiding energy!\n\n§bLore:§r To be frank with you, the GTCE Battery Buffer was mediocre. It has been reworked by yours truly to provide a mix between GT5 and GTCE\u0027s functionality. Energy now splits evenly across all batteries!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "battery_buffer.lv.4"
+}

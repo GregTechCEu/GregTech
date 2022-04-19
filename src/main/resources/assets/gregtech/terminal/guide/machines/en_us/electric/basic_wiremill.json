@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Wiremill",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oTechnically, you could make more or less any LV Machine, but I specifically want you to make the best one of them all first! I know, I know... You\u0027re asking where is your freedom of choice.§r\n\nNo more painful wires! This machine lets you make §6two Wires from one Ingot§r, that should be three times cheaper than what you were doing up until now!\n\nTo the right of this Quest are more important machines which will help you a lot to get cheaper intermediates.\n\n\n§9Note:§r Recipes inside §3LV Machines§r go up to §aUsage: 32 EU/t (LV)§r. Anything higher than that and you will need a MV or even better machine instead. Needless to say that\u0027s for later.\n\n\n§oThis Quest\u0027s reward is wonderful. It\u0027s called freedom!\nOverall rewards will also be less generous.§r"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "wiremill.lv"
+}
