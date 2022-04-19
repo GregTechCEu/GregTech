@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Pipe",
+  "title": "Item Pipes",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§3Item Pipes§r are a simple yet very effective way to move items around §dinstantly§r, but with throughput limitations.\nHigher tier pipes provide ridiculously large throughput, a rare sight in modded Minecraft!\n\nItem Pipes §9do not pull§r, but they will push any item inserted into them to other connected inventories, prioritizing §9the closest§r first.\n\nThe priority mechanics are §omore complicated§r, so skip ahead if you are not interested:\nA §eDestination§r will have a §dRouting Value§r calculated, which is the sum of all Routing Values of the individual Pipes to that Destination. Whichever Destination has the §clowest §dRouting Value§r will be the one selected for Insertion.\n§3Restrictive Pipes§r typically have the lowest Priority for insertion due to their higher Routing Value.\n\n\nRight now, you can use them in combination with §6Hoppers§r, but you will also be able to use them with Conveyor Modules, Output Buses, and machine Auto-Outputs all in the LV age.\n\n§9Note:§r GT6-style Pipes are §denabled§r. It means that placing Pipes connect them only to the block they were placed against. To open more connections, use your §5Wrench§r on the grid.\n\nGet §eany§r of the suggested Item Pipes to complete this quest.\n\n§bLore:§r Oooooh YEAH! Item Pipes were in GregTech 5, and for whatever reason they were not kept for GTCE, so you had to use other mods to transport items. Who does that!? Jokes aside, I hope you love Item Pipes being back in GregTech!"
+      ]
+    }
+  ],
+  "fixed": []
+}

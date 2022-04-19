@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Misc",
+  "title": "Machine Auto-Output Behaviour",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "All machines typically have one §7Front Face§r, and one §9Output Face§r.\nThe §7Front Face§r should be obvious.\nThe §9Output Face§r is the face with a dot or hole on it. By default, this is at the back of the machine as you place it.\n\nMachines can §aauto-output§r through their output face. To turn on auto-output, click the appropriate button in the GUI. Fluid and item auto-outputs are toggled separately. Further control over auto-outputs can be achieved with §dFilters§r and §dCovers§r, which are explained in the quest to the left of this one.\n\nRight-clicking a machine with a §5Wrench§r changes the output side, and shift-right-clicking changes the front side. Keep in mind that the front side §ccannot§r also be the output side! \n\nBy default, items and fluids cannot be inserted through the output side, but this can be toggled with a §5Screwdriver§r. Either right-click the output face directly, or shift-right-click on the grid corresponding to the side of the output.\n\n\nThere are unique machines that do not process recipes, such as the §3Pump§r, §3Miner§r, §3Fisher§r, §3Item Collector§r...\nThese machines will output on their Front Face (which is still marked as a dot)."
+      ]
+    }
+  ],
+  "fixed": []
+}

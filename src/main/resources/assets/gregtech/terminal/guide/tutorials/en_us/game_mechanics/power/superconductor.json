@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Power",
+  "title": "Superconductor",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oCheck the recipe from the wire, and then in the Material JEI page, check the recipe for the dust. Handy isn\u0027t it?§r\n\n§6Superconductors§r are special Wires available for each Voltage tier. They do not have any Cable counterpart, but they have absolutely §6no cable loss§r! They also don\u0027t damage you when you touch them.\nThe 1x variant also covers 2 Amps! Isn\u0027t that nice?\n\nNow is a good time to replace your crappy §aTin Cables§r. Recycle them in the §3Packager§r to recover both Tin and Rubber.\n\n§bLore:§r No version of GregTech had actual Superconductors for LV up until Gregicality and GTCEu. Though some modpacks had lossless cables."
+      ]
+    }
+  ],
+  "fixed": []
+}

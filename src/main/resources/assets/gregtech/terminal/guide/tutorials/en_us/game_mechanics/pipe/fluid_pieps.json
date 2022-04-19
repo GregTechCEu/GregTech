@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Pipe",
+  "title": "Fluid Pipes",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oLiquids, Gases... It\u0027s all the same here.§r\n\n§3Fluid Pipes§r will transport Steam between machines for you.\n\nEach Pipe has a certain §dthroughput§r in L/s (mB/s), and a Temperature Limit (this is only relevant right now for Steam, as it will burn Wooden Pipes).\nEach material has several §dsizes§r for Pipes. The bigger the Pipe, the higher the throughput.\n\nFor example, a normal Bronze Fluid Pipe transfers 2,400 L/s. It also has a 1,200 L internal buffer.\n\n§9Reminder:§r 1 second \u003d 20 ticks. Assuming the server does not lag.\n\n\nGet §eeither§r a Small, or Normal Bronze Fluid Pipe to complete this quest. Both are used in crafting.\n\n§9Note:§r GT6-style Pipes are §denabled§r. It means that placing Pipes connect them only to the block they were placed against. To open more connections, use your §5Wrench§r on the grid.\nYou can also shift-right click with your §5Wrench§r to disable input from a side. This can help counteract sloshing."
+      ]
+    }
+  ],
+  "fixed": []
+}

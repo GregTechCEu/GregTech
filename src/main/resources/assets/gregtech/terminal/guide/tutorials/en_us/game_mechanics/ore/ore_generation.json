@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Ore",
+  "title": "Ore Generation",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oSome of the details are repeated from the introduction quest, but we feel like we needed to expand on the explanation if you want to know all the details!§r\n\nThe veins and their details can be found in §2JEI§r. They contain up to four different ores.\n\n§dSurface rocks§r indicate the type of veins that are below them. In §2JEI§r, press U on the Tiny Dust you mined from the rock and navigate to the §aOre Page§r. This page contains details on what types of ores generate, their generation patterns, their spawning dimension and Y-level range, and their spawning weight, which is the chance it spawns.\n\nOre veins generate in a §4Grid§r. Every vein is spaced by 3 chunks from one to another in a cardinal direction.\nThey spawn at the §4Center§r of the Chunks which have both their X and Z coordinates be at §b1 plus a multiple of 3§r (-8, -5, -2, 1, 4, 7, ...).\n\nIt will be simpler if you simply rely on §2In Game Info§r displayed in the top left corner. In most cases there will be a §dSurface Rock§r in the Center of the Chunk, which provides completely accurate information for the Ore Vein.\n\nHowever Ore veins may be deleted by caves, Oil deposits, or from trying to generate above the ground.\n\nIt\u0027s a good practice to make §dWaypoints§r to every vein you find, and to label their type. You may want to come back to it several times.\n\n\nEach Ore vein is always §d7 blocks§r tall, and ores generate in 4 different patterns:\n- The §9Top Ore§r generates in the higher 4 layers of the vein.\n- The §9Bottom Ore§r generates in the lower 3 layers of the vein.\n- The §9Between Ore§r generates in the middle 3 layers of the vein.\n- The §9Sporadic Ore§r generates anywhere in the vein. There will be the least amount of this ore in a vein.\nThe same ore type can be in 2 different generation patterns, such as in Cassiterite veins.\n§\n\n\nIn §6LV§r Age, you can craft an Ore Prospector to assist yourself in finding ores."
+      ]
+    }
+  ],
+  "fixed": []
+}

@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Misc",
+  "title": "Combatting Lag",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe chances you are having TPS issues playing this modpack are slim, this Quest is more suited for late game bases with GregTech and AE2, and the tips apply to other modpacks.§r\n\nIf you run the command §9/forge tps§r, you will be given the current §4TPS§r and the §4tick time§r in milliseconds.\nIf the tick time exceeds 50ms, the server is under too much load, and won\u0027t be able to keep up with a steady 20 TPS.\n\nAny machine will add up to the tick time, but don\u0027t be too scared of adding machines. Most of the lag usually comes from things that are unoptimized.\n\nThings to §cavoid§r in general:\n§9-§r Entities are pretty bad. Ground items or mob entities should be kept as low as possible at any given time. Thanksfully this is should not be an issue in this modpack.\n§9-§r Building everything packed together in a small space. Note that this does §onot§r affect TPS, but you will suffer FPS drops instead.\n§9-§r Huge walls of drawers, as iterating through every single one of them for insertion and extraction can be pretty taxing.\n\nThings to§c avoid§r with AE2:\n§9-§r ME Import and Export Buses on large networks. Use ME Interfaces instead.\n§9-§r Crafting Cards to passively do large requests. Note that this is not as bad as it used to be, thanks to the optimizations from AE2 Unofficial.\n§9-§r Recursive insertion and/or extraction through sub-networks. If you use sub-networks, make them do very specific things rather than interacting with another AE2 network.\n\nThings to §cavoid§r with GregTech (GTCEu has received a lot of improvements over GTCE, but it is possible to destroy the TPS, as with any mod):\n§9-§r X Producers to Y Consumers. Use a Diode or Battery Buffer to separate your line of generators to your line of machines.\n§9-§r Large amounts of Fluid Pipes. They are §onot§r laggy individually, but they can add up if you have thousands of them.\n§9-§r Big Item Pipe networks. Small networks are better, to reduce the number of iterations over inventories."
+      ]
+    }
+  ],
+  "fixed": []
+}

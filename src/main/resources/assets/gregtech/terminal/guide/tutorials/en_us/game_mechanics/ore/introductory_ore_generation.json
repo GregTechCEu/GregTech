@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Ore",
+  "title": "Introductory Ore Generation",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The ore generation in §2GregTech§r is very different to vanilla or normal modded Minecraft. All ores generate in §6huge veins§r which can contain §dthousands§r of ore blocks!\n\nThe full extent of ore generation is explained in the Tips and Tricks tab, but here is what you need to know:\n\n§9-§r Ore veins generate in a §4Grid§r. Every vein is §9spaced by 3 chunks§r from one to another in a cardinal direction. We have added §2In Game Info§r to display if you are located in an Ore vein in the top-left corner of your screen, as seen in GregTech: New Horizons.\n\n§9-§r §dSurface Rocks§r indicate a nearby type of vein. Pick one up and check §r§5JEI§r (press U) to see the types of ores beneath it.\n\n§9-§r It\u0027s a good practice to make §dWaypoints§r (default §4B§r, keybind conflicts with Baubles) to every vein you find, and to label their type. You may want to come back to it several times."
+      ]
+    }
+  ],
+  "fixed": []
+}
