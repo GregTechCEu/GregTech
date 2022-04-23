@@ -27,9 +27,12 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -120,8 +123,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     public void update() {
         super.update();
 
-        if (getWorld().isRemote && this.isActive()) {
-            pollutionParticles();
+        if(this.isActive()) {
+            if(getWorld().isRemote) {
+                pollutionParticles();
+            }
+            else {
+                damageEntities();
+            }
         }
     }
 
@@ -134,5 +142,12 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
         float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
         runMufflerEffect(xPos, yPos, zPos, 0, ySpd, 0);
+    }
+
+    private void damageEntities() {
+        BlockPos middlePos = this.getPos();
+        EnumFacing facing = EnumFacing.getFacingFromAxis(getFrontFacing().getAxisDirection(), getFrontFacing().getAxis());
+        middlePos = middlePos.offset(facing, -1);
+        this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(middlePos)).forEach(entity -> entity.attackEntityFrom(DamageSource.LAVA, 3.0f));
     }
 }
