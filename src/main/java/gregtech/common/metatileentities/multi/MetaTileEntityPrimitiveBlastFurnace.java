@@ -145,8 +145,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
     private void damageEntities() {
         BlockPos middlePos = this.getPos();
-        EnumFacing facing = EnumFacing.getFacingFromAxis(getFrontFacing().getAxisDirection(), getFrontFacing().getAxis());
-        middlePos = middlePos.offset(facing, -1);
+        middlePos = middlePos.offset(getFrontFacing().getOpposite());
         this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(middlePos)).forEach(entity -> entity.attackEntityFrom(DamageSource.LAVA, 3.0f));
     }
 }
