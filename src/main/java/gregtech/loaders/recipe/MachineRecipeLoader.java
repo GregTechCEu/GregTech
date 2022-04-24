@@ -635,15 +635,6 @@ public class MachineRecipeLoader {
         BLAST_RECIPES.recipeBuilder().duration(500).EUt(VA[MV]).input(ingot, Iron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(300).EUt(VA[MV]).input(ingot, WroughtIron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder()
-                .input(dust, Ilmenite, 10)
-                .input(dust, Carbon, 4)
-                .output(ingot, WroughtIron, 2)
-                .output(dust, Rutile, 4)
-                .fluidOutputs(CarbonDioxide.getFluid(2000))
-                .blastFurnaceTemp(1700)
-                .duration(1600).EUt(VA[HV]).buildAndRegister();
-
         //Tempered Glass
         BLAST_RECIPES.recipeBuilder()
                 .input(block, Glass)

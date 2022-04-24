@@ -251,7 +251,6 @@ public class FirstDegreeMaterials {
                 .fluidTemp(273)
                 .build();
 
-        // todo new recipe to get TiO2 from this
         Ilmenite = new Material.Builder(284, "ilmenite")
                 .dust(3).ore()
                 .color(0x463732).iconSet(METALLIC)

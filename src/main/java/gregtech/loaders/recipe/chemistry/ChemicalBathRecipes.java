@@ -5,11 +5,10 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import net.minecraft.init.Items;
 
-import static gregtech.api.GTValues.ULV;
-import static gregtech.api.GTValues.VA;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class ChemicalBathRecipes {
 
@@ -62,6 +61,14 @@ public class ChemicalBathRecipes {
                 .fluidInputs(Water.getFluid(100))
                 .outputs(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(dust, Ilmenite, 5)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(dust, Rutile, 3)
+                .fluidOutputs(IronSulfate.getFluid(1000))
+                .fluidOutputs(Water.getFluid(1000))
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(dust, Scheelite, 6)
