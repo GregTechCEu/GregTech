@@ -1596,6 +1596,8 @@ material.malachite=Malachite
 material.mica=Mica
 material.barite=Barite
 material.alunite=Alunite
+material.potassium_bisulfate=Potassium Bisulfate
+material.potassium_persulfate=Potassium Persulfate
 material.talc=Talc
 material.soapstone=Soapstone
 material.kyanite=Kyanite
@@ -1655,6 +1657,18 @@ material.antimony_trifluoride=Antimony Trifluoride
 material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 material.naquadria_sulfate=Naquadria Sulfate
 material.pyrochlore=Pyrochlore
+material.copper_sulfate=Copper Sulfate
+material.iron_sulfate=Iron Sulfate
+material.cobalt_sulfate=Cobalt Sulfate
+material.magnesium_sulfate=Magnesium Sulfate
+material.nickel_sulfate=Nickel Sulfate
+material.zinc_sulfate=Zinc Sulfate
+material.manganese_sulfate=Manganese Sulfate
+material.aluminium_sulfate=Aluminium Sulfate
+material.chloroauric_acid=Chloroauric Acid
+material.chloroplatinic_acid=Chloroplatinic Acid
+material.stannic_chloride=Stannic Chloride
+material.alumina=Alumina
 
 
 # Organic Chemistry Materials

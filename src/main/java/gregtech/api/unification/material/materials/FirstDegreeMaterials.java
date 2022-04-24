@@ -1466,14 +1466,14 @@ public class FirstDegreeMaterials {
                 .setFormula("Al2(SO4)3", true);
 
         ChloroauricAcid = new Material.Builder(458, "chloroauric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xFFC846)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Gold, 1, Chlorine, 4)
                 .build();
 
         ChloroplatinicAcid = new Material.Builder(459, "chloroplatinic_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xFF4646)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Platinum, 1, Chlorine, 6)
