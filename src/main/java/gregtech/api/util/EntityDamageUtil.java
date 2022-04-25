@@ -7,6 +7,7 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -71,21 +72,22 @@ public class EntityDamageUtil {
         if (entity instanceof EntitySnowman || entity instanceof EntityPolarBear || entity instanceof EntityStray)
             return;
         // frost walker entities cannot be chilled
-        for (ItemStack stack : entity.getArmorInventoryList()) {
-            if (stack.isEmpty()) continue;
+        ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+        // check for empty in order to force damage to be applied if armor breaks
+        if (!stack.isEmpty()) {
             for (NBTBase base : stack.getEnchantmentTagList()) {
                 NBTTagCompound compound = (NBTTagCompound) base;
-                int id = compound.getByte("id");
-                if (id == FROST_WALKER_ID) {
-                    stack.damageItem(damage, entity);
+                if (compound.getShort("id") == FROST_WALKER_ID) {
+                    stack.damageItem(1, entity);
                     return;
                 }
             }
         }
 
         entity.attackEntityFrom(DamageSources.getFrostDamage(), damage);
-        if (entity instanceof EntityPlayerMP)
+        if (entity instanceof EntityPlayerMP) {
             GTTriggers.COLD_DEATH.trigger((EntityPlayerMP) entity);
+        }
     }
 
     /**

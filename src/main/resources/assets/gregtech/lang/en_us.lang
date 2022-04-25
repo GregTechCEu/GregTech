@@ -4745,6 +4745,7 @@ gregtech.fluid_pipe.gas_proof=§6Can handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids
 gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
+gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s

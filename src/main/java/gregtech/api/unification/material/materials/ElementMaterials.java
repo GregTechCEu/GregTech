@@ -332,7 +332,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Ir)
                 .toolStats(7.0f, 3.0f, 2560, 21)
-                .fluidPipeProperties(3398, 250, true)
+                .fluidPipeProperties(3398, 250, true, false, true, false)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1100)
                 .fluidTemp(2719)
                 .build();

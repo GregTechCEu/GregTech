@@ -112,23 +112,24 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
-        if (entityIn instanceof EntityLivingBase && worldIn.getTotalWorldTime() % 10 == 0) {
-            EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
-            TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-            if (!(pipe instanceof TileEntityFluidPipeTickable) || pipe.getFrameMaterial() != null)
-                return;
-
-            // apply temperature damage for each pipe
-            int temperature = 0;
-            int nonEmptyTanks = 0;
-            for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
-                if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                    temperature += tank.getFluid().getFluid().getTemperature(tank.getFluid());
-                    nonEmptyTanks++;
+        TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null && ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
+            if (entityIn instanceof EntityLivingBase) {
+                // apply temperature damage for the hottest and coldest pipe
+                int maxTemperature = Integer.MIN_VALUE;
+                int minTemperature = Integer.MAX_VALUE;
+                for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
+                    if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                        maxTemperature = Math.max(maxTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                        minTemperature = Math.min(minTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                    }
                 }
-            }
-            if (nonEmptyTanks != 0) {
-                EntityDamageUtil.applyTemperatureDamage(entityLiving, temperature / nonEmptyTanks, 1.0F, 5);
+                if (maxTemperature != Integer.MIN_VALUE) {
+                    EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, maxTemperature, 1.0F, 5);
+                }
+                if (minTemperature != Integer.MAX_VALUE) {
+                    EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
+                }
             }
         }
     }
