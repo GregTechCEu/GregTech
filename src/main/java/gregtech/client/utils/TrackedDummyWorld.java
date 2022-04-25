@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -80,6 +81,12 @@ public class TrackedDummyWorld extends DummyWorld {
         maxPos.setY(Math.max(maxPos.getY(), pos.getY()));
         maxPos.setZ(Math.max(maxPos.getZ(), pos.getZ()));
         return super.setBlockState(pos, newState, flags);
+    }
+
+    @Override
+    // De-allocated lightUpdateBlockList, default return
+    public boolean checkLightFor(EnumSkyBlock lightType, BlockPos pos) {
+        return true;
     }
 
     public Vector3f getSize() {
