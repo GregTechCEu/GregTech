@@ -10,6 +10,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,7 +34,8 @@ public class DummyWorld extends World {
         this.calculateInitialWeather();
         this.getWorldBorder().setSize(30000000);
         // De-allocate lightUpdateBlockList, checkLightFor uses this
-        ObfuscationReflectionHelper.setPrivateValue(World.class, this, null, "field_72994_J");
+        ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
+                FMLLaunchHandler.isDeobfuscatedEnvironment() ? "lightUpdateBlockList" : "field_72994_J");
     }
 
     @Override
