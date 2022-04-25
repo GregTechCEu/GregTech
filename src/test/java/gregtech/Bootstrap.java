@@ -9,7 +9,9 @@ import net.minecraft.client.resources.Locale;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class Bootstrap {
@@ -21,6 +23,9 @@ public class Bootstrap {
             return;
         }
         try {
+            Field deobfuscatedEnvironment = CoreModManager.class.getDeclaredField("deobfuscatedEnvironment");
+            deobfuscatedEnvironment.setAccessible(true);
+            deobfuscatedEnvironment.setBoolean(null, true);
             Method setLocale = I18n.class.getDeclaredMethod("setLocale", Locale.class); // No need to care about obfuscation
             setLocale.setAccessible(true);
             setLocale.invoke(null, new Locale());
