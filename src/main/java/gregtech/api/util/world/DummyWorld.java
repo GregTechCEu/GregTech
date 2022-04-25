@@ -82,4 +82,10 @@ public class DummyWorld extends World {
     protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
         return chunkProvider.isChunkGeneratedAt(x, z);
     }
+
+    @Override
+    // De-allocated lightUpdateBlockList, default return
+    public boolean checkLightFor(EnumSkyBlock lightType, BlockPos pos) {
+        return true;
+    }
 }
