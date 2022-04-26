@@ -568,10 +568,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         int overclockedEUt = recipeEUt;
         double overclockedDuration = recipeDuration;
 
+        int tier, previousTier = 0;
+
         while (overclockedEUt * voltageMultiplier <= GTValues.V[GTUtility.getTierByVoltage(maximumVoltage)] && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
+
+            // Find the tier that the OC result will be run at
+            tier = GTUtility.getTierByVoltage((long) (overclockedEUt * voltageMultiplier));
+
+            // Only allow the duration bonus from the Overclock once per voltage tier
+            if(tier != previousTier) {
+                overclockedDuration /= durationDivisor;
+            }
             overclockedEUt *= voltageMultiplier;
-            overclockedDuration /= durationDivisor;
             maxOverclocks--;
+            previousTier = tier;
         }
         return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
     }
