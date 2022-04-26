@@ -29,6 +29,26 @@
         "textures": {
           "all": "gregtech:blocks/casings/signs/machine_casing_bosshazard"
         }
+      },
+      "gregification_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_gregificationhazard"
+        }
+      },
+      "causality_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_causalityhazard"
+        }
+      },
+      "automated_defenses_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_turrethazard"
+        }
+      },
+      "high_pressure_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_highpressurehazard"
+        }
       }
     }
   }

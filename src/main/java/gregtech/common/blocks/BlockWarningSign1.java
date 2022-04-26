@@ -24,7 +24,13 @@ public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType>{
         SPATIAL_STORAGE_HAZARD("spatial_storage_hazard"),
         LASER_HAZARD("laser_hazard"),
         MOB_HAZARD("mob_hazard"),
-        BOSS_HAZARD("boss_hazard");
+        BOSS_HAZARD("boss_hazard"),
+        GREGIFICATION_HAZARD("gregification_hazard"),
+        CAUSALITY_HAZARD("causality_hazard"),
+        AUTOMATED_DEFENSES_HAZARD("automated_defenses_hazard"),
+        HIGH_PRESSURE_HAZARD("high_pressure_hazard");
+
+
 
         private final String name;
 
