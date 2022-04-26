@@ -144,7 +144,10 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        return transferMode != TransferMode.TRANSFER_ANY;
+        if (transferMode == TransferMode.TRANSFER_ANY) {
+            return false;
+        }
+        return itemFilterContainer.showGlobalTransferLimitSlider();
     }
 
     @Override
