@@ -75,7 +75,7 @@ public class Material implements Comparable<Material> {
                 }
             }
             if (water != 0 && this.hasFlag(MaterialFlags.HYDRATED_SALT)) {
-                components.append("\u00b7 "); // middle dot
+                components.append("\u2219 "); // middle dot
                 if (water != 1) components.append(water);
                 components.append("H\u2082O"); // subscript 2
             }
