@@ -104,6 +104,25 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
+    protected boolean canWorkWithInputs() {
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+        if (controller instanceof RecipeMapMultiblockController) {
+            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
+
+            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+                if (invalidatedInputList.isEmpty()) return true;
+                for (IItemHandlerModifiable bus : metaTileEntity.getNotifiedItemInputList()) {
+                    if (invalidatedInputList.contains(bus)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return super.canWorkWithInputs();
+    }
+
+    @Override
     protected void trySearchNewRecipe() {
         // do not run recipes when there are more than 5 maintenance problems
         // Maintenance can apply to all multiblocks, so cast to a base multiblock class
