@@ -110,7 +110,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
             if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
-                if (invalidatedInputList.isEmpty()) return true;
+                if (invalidatedInputList.isEmpty() || !metaTileEntity.getNotifiedFluidInputList().isEmpty()) return true;
                 for (IItemHandlerModifiable bus : metaTileEntity.getNotifiedItemInputList()) {
                     if (invalidatedInputList.contains(bus)) {
                         return true;
