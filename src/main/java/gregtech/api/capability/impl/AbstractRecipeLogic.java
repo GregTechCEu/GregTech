@@ -251,6 +251,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * use sparingly
      */
     public void forceRecipeRecheck() {
+        this.previousRecipe = null;
         trySearchNewRecipe();
     }
 
