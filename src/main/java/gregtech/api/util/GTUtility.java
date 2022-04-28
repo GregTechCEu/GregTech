@@ -19,7 +19,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
-import gregtech.common.items.behaviors.CrowbarBehaviour;
+import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.MapColor;

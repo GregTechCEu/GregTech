@@ -7,7 +7,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.enchants.EnchantmentHardHammer;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -390,7 +389,7 @@ public class ToolHelper {
                 // Stack lists can be immutable going into Recipe#matches barring no rewrites
                 List<ItemStack> dropAsList = Collections.singletonList(silktouchDrop);
                 // Search for forge hammer recipes from all drops individually (only LV or under)
-                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(GTValues.V[1], dropAsList, Collections.emptyList(), 0, MatchingMode.DEFAULT);
+                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(GTValues.V[1], dropAsList, Collections.emptyList(), 0, false);
                 if (hammerRecipe != null && hammerRecipe.matches(true, dropAsList, Collections.emptyList())) {
                     drops.clear();
                     OrePrefix prefix = OreDictUnifier.getPrefix(silktouchDrop);
