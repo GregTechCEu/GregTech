@@ -1,6 +1,6 @@
 package gregtech.api.items.metaitem.stats;
 
-import gregtech.api.items.toolitem.IToolBehaviour;
+import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import net.minecraft.item.ItemStack;
 
 public interface IItemDurabilityManager extends IItemComponent, IToolBehaviour {
