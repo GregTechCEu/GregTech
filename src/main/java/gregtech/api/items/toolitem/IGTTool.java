@@ -31,6 +31,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,7 +46,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -63,7 +63,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gregtech.api.items.armor.IArmorLogic.*;
+import static gregtech.api.items.armor.IArmorLogic.ATTACK_DAMAGE_MODIFIER;
+import static gregtech.api.items.armor.IArmorLogic.ATTACK_SPEED_MODIFIER;
 import static gregtech.api.items.toolitem.ToolHelper.*;
 
 /**
@@ -315,7 +316,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
         if (!player.world.isRemote && !player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            int result = ToolHelper.shearBlockRoutine(playerMP, stack, pos);
+            int result = -1;
+            if (isTool(stack, "shears")) {
+                result = ToolHelper.shearBlockRoutine(playerMP, stack, pos);
+            }
             if (result != 0) {
                 if (!areaOfEffectBlockBreakRoutine(stack, playerMP)) {
                     if (result == -1) {
@@ -448,30 +452,30 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Client-side methods
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(TextFormatting.WHITE + "Behaves like: " + stack.getItem().getToolClasses(stack).stream().map(StringUtils::capitalize).collect(Collectors.joining(", ")));
+        tooltip.add(I18n.format("metaitem.tool.behaves_like", stack.getItem().getToolClasses(stack).stream().map(StringUtils::capitalize).collect(Collectors.joining(", "))));
         NBTTagCompound behavioursTag = getBehavioursTag(stack);
         List<String> behaviours = new ArrayList<>();
         if (behavioursTag.getBoolean(HARVEST_ICE_KEY)) {
-            behaviours.add(" " + TextFormatting.AQUA + "Silk Harvest Ice");
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.silk_ice"));
         }
         if (behavioursTag.getBoolean(TORCH_PLACING_KEY)) {
-            behaviours.add(" " + TextFormatting.YELLOW + "Torch Placing");
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.torch_place"));
         }
         if (behavioursTag.getBoolean(TREE_FELLING_KEY)) {
-            behaviours.add(" " + TextFormatting.DARK_RED + "Tree Felling");
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.tree_felling"));
         }
         if (behavioursTag.getBoolean(DISABLE_SHIELDS_KEY)) {
-            behaviours.add(" " + TextFormatting.GRAY + "Disable Shields");
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.shield_disable"));
         }
         if (behavioursTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
-            behaviours.add(" " + TextFormatting.DARK_GREEN + "Relocate Mined Blocks");
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.relocate_mining"));
         }
         AoEDefinition aoeDefinition = ToolHelper.getAoEDefinition(stack);
         if (aoeDefinition != AoEDefinition.none()) {
-            behaviours.add(" " + TextFormatting.DARK_PURPLE + (aoeDefinition.column + 1) + "x" + (aoeDefinition.row + 1) + "x" + (aoeDefinition.layer + 1) + " AoE Mining");
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer * 2 + 1));
         }
         if (!behaviours.isEmpty()) {
-            tooltip.add(TextFormatting.YELLOW + "Behaviours:");
+            tooltip.add(I18n.format("metaitem.tool.behavior.behaviors"));
             tooltip.addAll(behaviours);
         }
     }
