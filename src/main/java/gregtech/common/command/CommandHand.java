@@ -2,7 +2,7 @@ package gregtech.common.command;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
@@ -89,16 +89,10 @@ public class CommandHand extends CommandBase {
                         .setStyle(getCopyStyle(ctId, true)));
             }
 
-            if (stackInHand.getItem() instanceof MetaItem) {
-                MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
-                MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
-                if (metaValueItem != null) {
-                    // tool info
-                    if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
-                        IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", toolStats.getClass().getName()));
-                    }
-                }
+            // tool info
+            if (stackInHand.getItem() instanceof IGTTool) {
+                IGTTool tool = (IGTTool) stackInHand.getItem();
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getOreDictName()));
             }
 
             // material info

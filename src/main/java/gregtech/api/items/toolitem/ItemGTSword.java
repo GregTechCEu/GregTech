@@ -69,14 +69,10 @@ public class ItemGTSword extends ItemSword implements IGTTool {
         return sound;
     }
 
+    @Nullable
     @Override
-    public Set<Block> getEffectiveBlocks() {
-        return effectiveBlocks;
-    }
-
-    @Override
-    public Set<String> getOreDictNames() {
-        return Collections.emptySet();
+    public String getOreDictName() {
+        return null;
     }
 
     @Override
