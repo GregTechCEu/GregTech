@@ -125,7 +125,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
-                if (GTValues.isModLoaded("enderio")) {
+                if (Loader.isModLoaded("enderio")) {
                     return basicClass;
                 }
                 ClassReader classReader = new ClassReader(basicClass);
