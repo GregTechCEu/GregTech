@@ -5,7 +5,10 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.items.toolitem.*;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ItemGTTool;
+import gregtech.api.items.toolitem.ToolBuilder;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -23,7 +26,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -189,19 +191,19 @@ public class ToolItems {
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(2));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(3));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(3, 3, 3).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(4));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 1).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(4, 4, 4).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(5));
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
@@ -209,11 +211,11 @@ public class ToolItems {
                 .toolClasses("chainsaw", "axe")
                 .electric(1));
         CHAINSAW_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses("chainsaw", "axe")
                 .electric(2));
         CHAINSAW_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses("chainsaw", "axe")
                 .electric(3));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
