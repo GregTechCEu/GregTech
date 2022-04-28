@@ -1,6 +1,6 @@
 package gregtech.api.items.metaitem.stats;
 
-import gregtech.api.items.toolitem.IToolBehaviour;
+import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
