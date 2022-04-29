@@ -509,6 +509,7 @@ public class MultiblockRecipeLogicTest {
         // Inputs change. did we detect it ?
         assertTrue(mbl.hasNotifiedInputs());
         assertTrue(mbl.getMetaTileEntity().getNotifiedItemInputList().contains(firstBus));
+        assertTrue(mbl.canWorkWithInputs());
         mbl.trySearchNewRecipe();
         assertFalse(mbl.invalidatedInputList.contains(firstBus));
         assertNotNull(mbl.previousRecipe);

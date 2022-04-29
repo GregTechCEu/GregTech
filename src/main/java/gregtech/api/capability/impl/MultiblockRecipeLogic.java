@@ -128,6 +128,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     }
                     iterator.remove();
                 }
+                if (!invalidatedInputList.containsAll(getInputBuses())) {
+                    canWork = true;
+                }
                 return canWork;
             }
         }
