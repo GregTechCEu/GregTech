@@ -200,7 +200,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     lastRecipeIndex = i;
                     return;
                 }
-            } else {
+            }
+            if (currentRecipe == null) {
                 invalidatedInputList.add(bus);
             }
         }
