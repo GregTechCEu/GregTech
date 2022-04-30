@@ -112,6 +112,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
             if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
                 boolean canWork = false;
+                if (!hasNotifiedInputs() && !hasNotifiedOutputs()) {
+                    return false;
+                }
                 if (invalidatedInputList.isEmpty()) {
                     return true;
                 }
@@ -179,7 +182,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (checkPreviousRecipeDistinct(importInventory.get(lastRecipeIndex)) && checkRecipe(previousRecipe)) {
             currentRecipe = previousRecipe;
             currentDistinctInputBus = importInventory.get(lastRecipeIndex);
-            if(prepareRecipeDistinct(currentRecipe)) {
+            if (prepareRecipeDistinct(currentRecipe)) {
                 // No need to cache the previous recipe here, as it is not null and matched by the current recipe,
                 // so it will always be the same
                 return;
@@ -191,7 +194,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         for (int i = 0; i < importInventory.size(); i++) {
             IItemHandlerModifiable bus = importInventory.get(i);
             // Skip this bus if no recipe was found last time
-            if (invalidatedInputList.contains(bus) ) {
+            if (invalidatedInputList.contains(bus)) {
                 continue;
             }
             // Look for a new recipe after a cache miss
@@ -200,7 +203,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;
                 currentDistinctInputBus = bus;
-                if(prepareRecipeDistinct(currentRecipe)) {
+                if (prepareRecipeDistinct(currentRecipe)) {
                     lastRecipeIndex = i;
                     return;
                 }
