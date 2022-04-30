@@ -119,14 +119,15 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     canWork = true;
                     invalidatedInputList.clear();
                     metaTileEntity.getNotifiedFluidInputList().clear();
-                }
-                Iterator<IItemHandlerModifiable> iterator = metaTileEntity.getNotifiedItemInputList().iterator();
-                while (iterator.hasNext()) {
-                    IItemHandlerModifiable bus = iterator.next();
-                    if (invalidatedInputList.remove(bus)) {
-                        canWork = true;
+                } else {
+                    Iterator<IItemHandlerModifiable> iterator = metaTileEntity.getNotifiedItemInputList().iterator();
+                    while (iterator.hasNext()) {
+                        IItemHandlerModifiable bus = iterator.next();
+                        if (invalidatedInputList.remove(bus)) {
+                            canWork = true;
+                        }
+                        iterator.remove();
                     }
-                    iterator.remove();
                 }
                 if (!invalidatedInputList.containsAll(getInputBuses())) {
                     canWork = true;
@@ -189,7 +190,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // each bus individually instead of the combined inventory all at once.
         for (int i = 0; i < importInventory.size(); i++) {
             IItemHandlerModifiable bus = importInventory.get(i);
-            // Skip this bus if no recipe was found last time and the inventory did not change
+            // Skip this bus if no recipe was found last time
             if (invalidatedInputList.contains(bus) ) {
                 continue;
             }
@@ -205,6 +206,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 }
             }
             if (currentRecipe == null) {
+                //no valid recipe found, invalidate this bus
                 invalidatedInputList.add(bus);
             }
         }
