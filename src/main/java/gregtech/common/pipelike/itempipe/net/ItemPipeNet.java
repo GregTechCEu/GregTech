@@ -13,10 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -30,6 +27,10 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = ItemNetWalker.createNetData(getWorldData(), pipePos, facing);
+            if (data == null) {
+                // walker failed, don't cache so it tries again on next insertion
+                return Collections.emptyList();
+            }
             data.sort(Comparator.comparingInt(inv -> inv.properties.getPriority()));
             NET_DATA.put(pipePos, data);
         }
@@ -42,17 +43,16 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
+    protected void onPipeConnectionsUpdate() {
+        NET_DATA.clear();
+    }
+
+    @Override
     protected void transferNodeData(Map<BlockPos, Node<ItemPipeProperties>> transferredNodes, PipeNet<ItemPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
-
-    @Override
-    protected void onPipeConnectionsUpdate() {
-        NET_DATA.clear();
-    }
-
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
