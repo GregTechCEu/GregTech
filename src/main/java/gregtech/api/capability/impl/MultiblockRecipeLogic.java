@@ -112,9 +112,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
             if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
                 boolean canWork = false;
-                if (!hasNotifiedInputs() && !hasNotifiedOutputs()) {
-                    return false;
-                }
                 if (invalidatedInputList.isEmpty()) {
                     return true;
                 }
