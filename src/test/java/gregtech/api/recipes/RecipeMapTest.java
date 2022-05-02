@@ -26,7 +26,7 @@ public class RecipeMapTest {
     RecipeMap<SimpleRecipeBuilder> map;
 
     @Before
-    public void setuepRecipes() {
+    public void setupRecipes() {
         map = new RecipeMap<>("chemical_reactor",
                 0,
                 2,
@@ -74,7 +74,7 @@ public class RecipeMapTest {
 
     @Test
     public void findRecipe() {
-        assertEquals(4, map.getRecipeList().size());
+        assertEquals(3, map.getRecipeList().size());
 
         Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0);
         assertNotNull(r);
@@ -115,7 +115,7 @@ public class RecipeMapTest {
                         Naphtha.getFluid(3000),
                         NitrogenDioxide.getFluid(1000)),
                 64000));
-        assertEquals(3, map.getRecipeList().size());
+        assertEquals(2, map.getRecipeList().size());
     }
 
 }
