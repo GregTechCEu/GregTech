@@ -13,6 +13,13 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     public MapFluidIngredient(FluidStack stack) {
         this.fluid = stack.getFluid();
+        if (stack.tag != null && stack.tag.hasKey("nonConsumable")) {
+            stack = stack.copy();
+            stack.tag.removeTag("nonConsumable");
+            if (stack.tag.isEmpty()) {
+                stack.tag = null;
+            }
+        }
         this.tag = stack.tag;
     }
 
