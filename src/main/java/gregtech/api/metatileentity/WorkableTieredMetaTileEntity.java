@@ -135,7 +135,12 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     protected boolean canInputFluid(FluidStack inputFluid) {
         RecipeMap<?> recipeMap = workable.getRecipeMap();
-        return recipeMap != null && recipeMap.acceptsFluid(inputFluid);
+        List<FluidStack> fluidInputs = new ArrayList<>();
+        for (IFluidTank fluidTank : this.importFluids.getFluidTanks()) {
+            FluidStack fluidStack = fluidTank.getFluid();
+            if (fluidStack != null && fluidStack.amount > 0) fluidInputs.add(fluidStack);
+        }
+        return recipeMap != null && recipeMap.acceptsFluid(fluidInputs, inputFluid);
     }
 
     @Override

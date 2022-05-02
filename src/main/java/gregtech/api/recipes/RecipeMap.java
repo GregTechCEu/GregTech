@@ -313,8 +313,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return root.contains(new MapItemStackIngredient(item));
     }
 
-    public boolean acceptsFluid(FluidStack fluid) {
-        return root.contains(new MapFluidIngredient(fluid));
+    public boolean acceptsFluid(List<FluidStack> fluidInputs, FluidStack fluid) {
+        if (fluidInputs.isEmpty()) {
+            return root.contains(new MapFluidIngredient(fluid));
+        }
+        fluidInputs.add(fluid);
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>();
+        buildFromFluidStacks(list, fluidInputs);
+        return canInsertFluid(list, lookup);
     }
 
     @Nullable
@@ -346,7 +352,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (list.size() == 0) {
             return null;
         }
-        return recurseIngredientTreeFind(list, lookup, canHandle);
+        return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
     }
 
     // In the case of split stacks, merge the items, 2 aluminium dust in separate
@@ -385,17 +391,83 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
+     * Returns a boolean indicating whether the given group of fluids in a valid recipe are potentially valid.
+     *
+     * @param fluidIngredients the ingredients part
+     * @param map         the root branch to search from.
+     * @return a recipe
+     */
+    boolean canInsertFluid(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch map) {
+        // Try each ingredient as a starting point, adding it to the skiplist.
+        boolean canInsert = false;
+        for (int i = 0; i < fluidIngredients.size(); i++) {
+            canInsert = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, map, i, 0, (1L << i));
+            if (canInsert) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recursively finds either a recipe or a branch, and return it upon evaluating all the ingredients
+     *
+     * @param fluidIngredients the ingredients part
+     * @param map         the current branch of the tree
+     * @param index       the index of the wrapper to get
+     * @param count       how deep we are in recursion, < ingredients.length
+     * @param skip        bitmap of ingredients to skip, i.e. which ingredients are used in the
+     *                    recursion.
+     * @return a recipe
+     */
+    boolean recurseFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch map, int index, int count, long skip) {
+        List<AbstractMapIngredient> wr = fluidIngredients.get(index);
+        // Iterate over current level of nodes.
+        for (AbstractMapIngredient t : wr) {
+            Either<Recipe, RecipeMap.Branch> result = map.nodes.get(t);
+            if (result != null) {
+                if (result.left().isPresent() && count == fluidIngredients.size() - 1) {
+                    return true;
+                } else if (result.right().isPresent()) {
+                    if (count == fluidIngredients.size()) {
+                        return true;
+                    }
+                    return diveFluidTreeFindBranchOrRecipe(fluidIngredients, result.right().get(), index, count, skip);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean diveFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch map, int index, int count, long skip) {
+        // We loop around fluidIngredients.size() if we reach the end.
+        int counter = (index + 1) % fluidIngredients.size();
+        while (counter != index) {
+            // Have we already used this ingredient? If so, skip this one.
+            if (((skip & (1L << counter)) == 0)) {
+                // Recursive call.
+                boolean found = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, map, counter, count + 1, skip | (1L << counter));
+                if (found) {
+                    return true;
+                }
+            }
+            counter = (counter + 1) % fluidIngredients.size();
+        }
+        return false;
+    }
+
+    /**
      * Recursively finds a recipe, top level. call this to find a recipe
      *
      * @param ingredients the ingredients part
      * @param map         the root branch to search from.
      * @return a recipe
      */
-    Recipe recurseIngredientTreeFind(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map,
-                                     @Nonnull Predicate<Recipe> canHandle) {
+    Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map,
+                                           @Nonnull Predicate<Recipe> canHandle) {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < ingredients.size(); i++) {
-            Recipe r = recurseIngredientTreeFind(ingredients, map, canHandle, i, 0, (1L << i));
+            Recipe r = recurseIngredientTreeFindRecipe(ingredients, map, canHandle, i, 0, (1L << i));
             if (r != null) {
                 return r;
             }
@@ -415,7 +487,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *                    recursion.
      * @return a recipe
      */
-    Recipe recurseIngredientTreeFind(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
+    Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
         if (count == ingredients.size()) {
             return null;
         }
@@ -425,7 +497,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Either<Recipe, RecipeMap.Branch> result = map.nodes.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
-                Recipe r = result.map(recipe -> canHandle.test(recipe) ? recipe : null, right -> callback(ingredients, right, canHandle, index, count, skip));
+                Recipe r = result.map(recipe -> canHandle.test(recipe) ? recipe : null, right -> diveIngredientTreeFindRecipe(ingredients, right, canHandle, index, count, skip));
                 if (r != null) {
                     return r;
                 }
@@ -434,14 +506,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private Recipe callback(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
+    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
         // We loop around ingredients.size() if we reach the end.
         int counter = (index + 1) % ingredients.size();
         while (counter != index) {
             // Have we already used this ingredient? If so, skip this one.
             if (((skip & (1L << counter)) == 0)) {
                 // Recursive call.
-                Recipe found = recurseIngredientTreeFind(ingredients, map, canHandle, counter, count + 1, skip | (1L << counter));
+                Recipe found = recurseIngredientTreeFindRecipe(ingredients, map, canHandle, counter, count + 1, skip | (1L << counter));
                 if (found != null) {
                     return found;
                 }
