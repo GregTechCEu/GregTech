@@ -367,6 +367,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list.toArray(new ItemStack[0]);
     }
 
+    public static List<CountableIngredient> uniqueCountableIngredientsList(List<CountableIngredient> input) {
+        List<CountableIngredient> list = new ObjectArrayList<>(input.size());
+        loop:
+        for (CountableIngredient item : input) {
+            for (int i = 0; i < list.size(); i++) {
+                CountableIngredient obj = list.get(i);
+                if (IngredientHashStrategy.INSTANCE.equals(item.getIngredient(), obj.getIngredient())) {
+                    list.set(i, new CountableIngredient(item, obj.getCount() + item.getCount()));
+                    continue loop;
+                }
+            }
+            // Add a copy here or it might mutate the stack.
+            list.add(new CountableIngredient(item, item.getCount()));
+        }
+        return list;
+    }
+
     /**
      * Recursively finds a recipe, top level. call this to find a recipe
      *
@@ -625,7 +642,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>((r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
-            buildFromItems(list, r.getInputs());
+            buildFromItems(list, uniqueCountableIngredientsList(r.getInputs()));
         }
         if (r.getFluidInputs().size() > 0) {
             buildFromFluids(list, r.getFluidInputs());

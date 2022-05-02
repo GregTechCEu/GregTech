@@ -29,6 +29,12 @@ public class CountableIngredient {
         }
     }
 
+    public CountableIngredient(CountableIngredient countableIngredient, int count) {
+        this.ingredient = countableIngredient.ingredient;
+        this.count = count;
+        this.nonConsumable = countableIngredient.nonConsumable;
+    }
+
     public static CountableIngredient from(ItemStack stack) {
         return new CountableIngredient(Ingredient.fromStacks(stack), stack.getCount());
     }
