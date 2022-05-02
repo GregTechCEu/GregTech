@@ -349,15 +349,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
-        if (recipeSet.isEmpty())
-            return null;
-        if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
-            return null;
+        Recipe r = find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs));
+        if (r != null) {
+            if (exactVoltage && r.getEUt() != voltage) {
+                return null;
+            }
         }
-        //if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
-        //    return null;
-        //}
-        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs));
+        return r;
     }
 
     public boolean acceptsItem(ItemStack item) {
