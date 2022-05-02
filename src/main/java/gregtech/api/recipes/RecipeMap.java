@@ -188,11 +188,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public Collection<Recipe> getRecipesForFluid(FluidStack fluid) {
         return lookup.getRecipes(false).filter(r -> r.hasInputFluid(fluid)).collect(Collectors.toSet());
-        // return recipeFluidMap.getOrDefault(new FluidKey(fluid), Collections.emptySet());
-    }
-
-    public Collection<Recipe> getRecipesForFluid(FluidKey fluidKey) {
-        return recipeFluidMap.getOrDefault(fluidKey, Collections.emptySet());
     }
 
     private static boolean foundInvalidRecipe = false;
@@ -362,7 +357,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         //if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
         //    return null;
         //}
-        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs, matchingMode));
+        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs));
     }
 
     public boolean acceptsItem(ItemStack item) {

@@ -76,7 +76,7 @@ public class RecipeMapTest {
     public void findRecipe() {
         assertEquals(4, map.getRecipeList().size());
 
-        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0, MatchingMode.DEFAULT);
+        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0);
         assertNotNull(r);
 
         // This test is failing for me locally -dan
@@ -93,7 +93,7 @@ public class RecipeMapTest {
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
                         NitrogenDioxide.getFluid(1000)),
-                64000, MatchingMode.DEFAULT);
+                64000);
         assertNotNull(r);
     }
 
@@ -114,7 +114,7 @@ public class RecipeMapTest {
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
                         NitrogenDioxide.getFluid(1000)),
-                64000, MatchingMode.DEFAULT));
+                64000));
         assertEquals(3, map.getRecipeList().size());
     }
 
