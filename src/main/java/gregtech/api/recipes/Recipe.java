@@ -257,24 +257,13 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return this.EUt == recipe.EUt &&
-                this.duration == recipe.duration &&
-                hasSameInputs(recipe) &&
-                hasSameOutputs(recipe) &&
-                hasSameChancedOutputs(recipe) &&
-                hasSameFluidInputs(recipe) &&
-                hasSameFluidOutputs(recipe) &&
-                hasSameRecipeProperties(recipe);
+        return  hasSameInputs(recipe) &&
+                hasSameFluidInputs(recipe);
     }
 
     private int makeHashCode() {
-        int hash = Objects.hash(EUt, duration);
-        hash = 31 * hash + hashInputs();
-        hash = 41 * hash + hashOutputs();
-        hash = 31 * hash + hashChancedOutputs();
+        int hash = 31 * hashInputs();
         hash = 31 * hash + hashFluidList(this.fluidInputs);
-        hash = 41 * hash + hashFluidList(this.fluidOutputs);
-        hash = 31 * hash + hashRecipeProperties();
         return hash;
     }
 
@@ -306,44 +295,6 @@ public class Recipe {
         return true;
     }
 
-    private int hashOutputs() {
-        int hash = 0;
-        for (ItemStack is : this.outputs) {
-            hash = 31 * hash + hashStrategy.hashCode(is);
-        }
-        return hash;
-    }
-
-    private boolean hasSameOutputs(Recipe otherRecipe) {
-        if (this.outputs.size() != otherRecipe.outputs.size()) return false;
-        for (int i = 0; i < outputs.size(); i++) {
-            if (!hashStrategy.equals(this.outputs.get(i), otherRecipe.outputs.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private int hashChancedOutputs() {
-        int hash = 0;
-        for (ChanceEntry chanceEntry : this.chancedOutputs) {
-            hash = 31 * hash + hashStrategy.hashCode(chanceEntry.itemStack);
-            hash = 31 * hash + chanceEntry.chance;
-            hash = 31 * hash + chanceEntry.boostPerTier;
-        }
-        return hash;
-    }
-
-    private boolean hasSameChancedOutputs(Recipe otherRecipe) {
-        if (this.chancedOutputs.size() != otherRecipe.chancedOutputs.size()) return false;
-        for (int i = 0; i < chancedOutputs.size(); i++) {
-            if (!hashStrategy.equals(this.chancedOutputs.get(i).itemStack, otherRecipe.chancedOutputs.get(i).itemStack)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public int hashFluidList(List<FluidStack> fluids) {
         int hash = 0;
         for (FluidStack fluidStack : fluids) {
@@ -361,29 +312,6 @@ public class Recipe {
             }
         }
         return true;
-    }
-
-    private boolean hasSameFluidOutputs(Recipe otherRecipe) {
-        if (this.fluidOutputs.size() != otherRecipe.fluidOutputs.size()) return false;
-        for (int i = 0; i < fluidOutputs.size(); i++) {
-            if (!fluidOutputs.get(i).isFluidStackIdentical(otherRecipe.fluidOutputs.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private int hashRecipeProperties() {
-        int hash = 0;
-        for (Map.Entry<RecipeProperty<?>, Object> propertyObjectEntry : this.recipePropertyStorage.getRecipeProperties()) {
-            hash = 31 * hash + propertyObjectEntry.getKey().hashCode();
-        }
-        return hash;
-    }
-
-    private boolean hasSameRecipeProperties(Recipe otherRecipe) {
-        if (this.getPropertyCount() != otherRecipe.getPropertyCount()) return false;
-        return this.recipePropertyStorage.getRecipeProperties().containsAll(otherRecipe.recipePropertyStorage.getRecipeProperties());
     }
 
     @Override
