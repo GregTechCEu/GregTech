@@ -815,7 +815,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public Collection<Recipe> getRecipeList() {
         return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
-        // return Collections.unmodifiableList(new ArrayList<>(recipeSet));
     }
 
     public SoundEvent getSound() {
@@ -936,8 +935,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         public boolean removeRecipe(Recipe recipe) {
             for (Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry : nodes.entrySet()) {
                 if (entry.getValue().left().map(check -> check.equals(recipe)).orElse(false)) {
+                    nodes.remove(entry.getKey());
                     return true;
                 } else if (entry.getValue().right().map(branch -> branch.removeRecipe(recipe)).orElse(false)) {
+                    if (entry.getValue().right().get().nodes.isEmpty()) {
+                        nodes.remove(entry.getKey());
+                    }
                     return true;
                 }
             }
