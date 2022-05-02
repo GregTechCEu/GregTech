@@ -802,13 +802,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
 
         public boolean removeRecipe(Recipe recipe) {
-            for (Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry : nodes.entrySet()) {
+            Iterator<Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>>> it = nodes.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry = it.next();
                 if (entry.getValue().left().map(check -> check.equals(recipe)).orElse(false)) {
-                    nodes.remove(entry.getKey());
+                    it.remove();
                     return true;
-                } else if (entry.getValue().right().map(branch -> branch.removeRecipe(recipe)).orElse(false)) {
+                }
+                if (entry.getValue().right().map(branch -> branch.removeRecipe(recipe)).orElse(false)) {
                     if (entry.getValue().right().isPresent() && entry.getValue().right().get().nodes.isEmpty()) {
-                        nodes.remove(entry.getKey());
+                        it.remove();
                     }
                     return true;
                 }
