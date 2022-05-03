@@ -18,6 +18,7 @@ public class CountableIngredient {
     private final Ingredient ingredient;
     private final int count;
     private boolean nonConsumable = false;
+    private boolean strictNBT = false;
 
     public CountableIngredient(Ingredient ingredient, int count) {
         this.ingredient = ingredient;
@@ -27,20 +28,35 @@ public class CountableIngredient {
         } else {
             this.count = count;
         }
+        for (ItemStack stack : ingredient.getMatchingStacks()) {
+            if (stack.hasTagCompound()) {
+                this.strictNBT = true;
+                break;
+            }
+        }
     }
 
     public CountableIngredient(CountableIngredient countableIngredient, int count) {
         this.ingredient = countableIngredient.ingredient;
         this.count = count;
         this.nonConsumable = countableIngredient.nonConsumable;
+        this.strictNBT = countableIngredient.strictNBT;
     }
 
     public static CountableIngredient from(ItemStack stack) {
-        return new CountableIngredient(Ingredient.fromStacks(stack), stack.getCount());
+        CountableIngredient c = new CountableIngredient(Ingredient.fromStacks(stack), stack.getCount());
+        if (stack.hasTagCompound()) {
+            c.strictNBT = true;
+        }
+        return c;
     }
 
     public static CountableIngredient from(ItemStack stack, int amount) {
-        return new CountableIngredient(Ingredient.fromStacks(stack), amount);
+        CountableIngredient c = new CountableIngredient(Ingredient.fromStacks(stack), amount);
+        if (stack.hasTagCompound()) {
+            c.strictNBT = true;
+        }
+        return c;
     }
 
     public static CountableIngredient from(String oredict) {
@@ -80,6 +96,10 @@ public class CountableIngredient {
     public CountableIngredient setNonConsumable() {
         this.nonConsumable = true;
         return this;
+    }
+
+    public boolean isStrictNBT() {
+        return strictNBT;
     }
 
     @Override

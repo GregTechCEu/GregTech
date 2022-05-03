@@ -23,6 +23,7 @@ import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.recipes.map.AbstractMapIngredient;
 import gregtech.api.recipes.map.MapFluidIngredient;
 import gregtech.api.recipes.map.MapItemStackIngredient;
+import gregtech.api.recipes.map.MapItemStackNBTIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
@@ -34,6 +35,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -502,8 +504,58 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     return r;
                 }
             }
+            if (map.NBTnodes.size() > 0) {
+                // Iterate over special nodes.
+                for (Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry : map.NBTnodes.entrySet()) {
+                    AbstractMapIngredient special = entry.getKey();
+                    if (special.equals(t)) {
+                        Recipe r = entry.getValue().map(re -> canHandle.test(re) ? re : null,
+                                branch -> diveIngredientTreeFindRecipe(ingredients, branch, canHandle, index, count, skip));
+                        if (r != null) {
+                            return r;
+                        }
+                    }
+                }
+            }
         }
         return null;
+    }
+
+    private boolean recipeMatchesNBT(@Nonnull List<List<AbstractMapIngredient>> ingredients, Recipe r) {
+        if (r.isNBTMatching()) {
+            boolean matchedAll = true;
+            Integer[] itemAmountInSlot = new Integer[ingredients.size()];
+
+            for (int i = 0; i < itemAmountInSlot.length; i++) {
+                itemAmountInSlot[i] = ((ItemStack) ingredients.get(i).get(0).getComparableIngredient()).getCount();
+            }
+
+            for (CountableIngredient c : r.getInputs()) {
+                if (c.isStrictNBT()) {
+                    int ingredientAmount = c.getCount();
+                    for (int i = 0; i < ingredients.size(); i++) {
+                        ItemStack inputStack = (ItemStack) ingredients.get(i).get(0).getComparableIngredient();
+                        if (!inputStack.hasTagCompound()) {
+                            continue;
+                        }
+                        if (inputStack.isEmpty() || !c.getIngredient().apply(inputStack) || Arrays.stream(c.getIngredient().getMatchingStacks()).noneMatch(stack -> ItemStack.areItemStackTagsEqual(stack, inputStack))) {
+                            continue;
+                        }
+                        int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
+                        ingredientAmount -= itemAmountToConsume;
+                        if (!c.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;
+                        if (ingredientAmount == 0) break;
+                    }
+                    if (ingredientAmount > 0) {
+                        matchedAll = false;
+                    }
+                }
+            }
+            return matchedAll;
+        }
+        else {
+            return true;
+        }
     }
 
     private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
@@ -666,34 +718,50 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<AbstractMapIngredient> current = ingredients.get(index);
         Either<Recipe, Branch> r;
         for (AbstractMapIngredient obj : current) {
-            // Either add the recipe or create a branch.
-            r = map.nodes.compute(obj, (k, v) -> {
-                if (count == ingredients.size() - 1) {
-                    if (v != null) {
-                        if (recipe.getIsCTRecipe()) {
-                            CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", recipe, this.unlocalizedName));
+            if (!obj.NBTsensitive()) {
+                // Either add the recipe or create a branch.
+                r = map.nodes.compute(obj, (k, v) -> {
+                    if (count == ingredients.size() - 1) {
+                        if (v != null) {
+                            if (recipe.getIsCTRecipe()) {
+                                CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", recipe, this.unlocalizedName));
+                            }
+                            if (ConfigHolder.misc.debug) {
+                                GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
+                            }
+                        } else {
+                            v = Either.left(recipe);
                         }
-                        if (ConfigHolder.misc.debug) {
-                            GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
-                        }
-                    } else {
-                        v = Either.left(recipe);
+                        return v;
+                    } else if (v == null) {
+                        Branch traverse = new Branch();
+                        v = Either.right(traverse);
                     }
                     return v;
-                } else if (v == null) {
-                    Branch traverse = new Branch();
-                    v = Either.right(traverse);
+                });
+                // At the end, return.
+                if (count == ingredients.size() - 1) {
+                    continue;
                 }
-                return v;
-            });
-            // At the end, return.
-            if (count == ingredients.size() - 1) {
-                continue;
-            }
 
-            if (r.right().map(m -> !recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
-                current.forEach(map.nodes::remove);
-                return false;
+                if (r.right().map(m -> !recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
+                    current.forEach(map.nodes::remove);
+                    return false;
+                }
+            } else{
+                if (count == ingredients.size() - 1) {
+                    map.NBTnodes.put(obj, Either.left(recipe));
+                } else {
+                    Branch branch = new Branch();
+                    boolean ok = recurseIngredientTreeAdd(recipe, ingredients, branch, (index + 1) % ingredients.size(),
+                            count + 1);
+                    if (!ok) {
+                        current.forEach(map.NBTnodes::remove);
+                        return false;
+                    } else {
+                        map.NBTnodes.put(obj, Either.right(branch));
+                    }
+                }
             }
         }
         return true;
@@ -726,8 +794,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (CountableIngredient r : ingredients) {
             Ingredient t = r.getIngredient();
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
-            for (ItemStack stack : t.getMatchingStacks()) {
-                inner.add(new MapItemStackIngredient(stack));
+            if (r.isStrictNBT()) {
+                for (ItemStack stack : t.getMatchingStacks()) {
+                    inner.add(new MapItemStackNBTIngredient(stack));
+                }
+            } else {
+                for (ItemStack stack : t.getMatchingStacks()) {
+                    inner.add(new MapItemStackIngredient(stack));
+                }
             }
             list.add(inner);
         }
@@ -736,6 +810,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
         for (ItemStack t : ingredients) {
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
+            ls.add(new MapItemStackNBTIngredient(t));
             ls.add(new MapItemStackIngredient(t));
             list.add(ls);
         }
@@ -864,6 +939,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected static class Branch {
 
         private Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes = new Object2ObjectOpenHashMap<>();
+        private Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTnodes = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
             Stream<Recipe> stream = nodes.values().stream().flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));

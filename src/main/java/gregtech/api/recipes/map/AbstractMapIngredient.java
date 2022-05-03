@@ -34,4 +34,12 @@ public abstract class AbstractMapIngredient {
         return false;
     }
 
+    public abstract Object getComparableIngredient();
+
+    public abstract boolean matchesNBT(Object obj);
+
+    public boolean NBTsensitive(){
+        return false;
+    };
+
 }
