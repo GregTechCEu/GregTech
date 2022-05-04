@@ -90,7 +90,7 @@ public class Recipe {
         this.isCTRecipe = isCTRecipe;
         boolean hasTags = false;
         for (CountableIngredient input : inputs) {
-            if (input.isStrictNBT()) {
+            if (input.hasNBTMatchingCondition()) {
                 hasTags = true;
                 break;
             }
@@ -222,6 +222,11 @@ public class Recipe {
                 ItemStack inputStack = inputs.get(i);
                 if (inputStack.isEmpty() || !ingredient.getIngredient().apply(inputStack))
                     continue;
+                if (ingredient.hasNBTMatchingCondition()) {
+                    if (!ingredient.getNBTMatchingCondition().evaluate(inputStack)){
+                        continue;
+                    }
+                }
                 int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
                 if (!ingredient.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;

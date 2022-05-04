@@ -1,22 +1,22 @@
 package gregtech.api.recipes.map;
 
+import gregtech.api.recipes.CountableIngredient;
 import net.minecraft.item.ItemStack;
-
-import java.util.Objects;
 
 public class MapItemStackNBTIngredient extends AbstractMapIngredient {
 
     public final ItemStack stack;
+    public final CountableIngredient.NBTcondition condition;
 
-    public MapItemStackNBTIngredient(ItemStack stack) {
+    public MapItemStackNBTIngredient(ItemStack stack, CountableIngredient.NBTcondition condition) {
         this.stack = stack;
+        this.condition = condition;
     }
 
     @Override
     protected int hash() {
         int hash = stack.getItem().hashCode() * 31;
         hash += 31 * stack.getMetadata();
-        hash += 31 * Objects.hash(stack.getTagCompound());
         return hash;
     }
 
@@ -26,32 +26,16 @@ public class MapItemStackNBTIngredient extends AbstractMapIngredient {
             return false;
         }
         MapItemStackIngredient other = (MapItemStackIngredient) o;
-        return stack.isItemEqual(other.stack);
-    }
-
-    @Override
-    public Object getComparableIngredient() {
-        return stack;
-    }
-
-    @Override
-    public boolean matchesNBT(Object obj) {
-        if (obj instanceof ItemStack) {
-            ItemStack other = (ItemStack) obj;
-            return ItemStack.areItemStackTagsEqual(stack, other);
-        }
-        return false;
+        return ItemStack.areItemsEqual(stack, other.stack) && condition.evaluate(other.stack);
     }
 
     @Override
     public String toString() {
-        return "MapItemStackIngredient{" +
-                "item=" + stack.getItem().getRegistryName() +
-                '}';
+        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + '}';
     }
 
     @Override
-    public boolean NBTsensitive() {
+    public boolean conditionalNBT() {
         return true;
     }
 }

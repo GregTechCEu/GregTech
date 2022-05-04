@@ -42,23 +42,6 @@ public class MapFluidIngredient extends AbstractMapIngredient {
     }
 
     @Override
-    public Object getComparableIngredient() {
-        return new FluidStack(fluid, 1, tag);
-    }
-
-    @Override
-    public boolean matchesNBT(Object other) {
-        if (other instanceof FluidStack) {
-            FluidStack stack = (FluidStack) other;
-            if (tag != null) {
-                return tag.equals(stack.tag);
-            } else
-                return stack.tag == null;
-        }
-        return false;
-    }
-
-    @Override
     public String toString() {
         return "MapFluidIngredient{" +
                 "fluid=" + fluid.getName() +

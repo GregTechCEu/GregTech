@@ -28,18 +28,14 @@ public abstract class AbstractMapIngredient {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) return true;
         if (obj instanceof AbstractMapIngredient) {
             return this.objClass == ((AbstractMapIngredient) obj).objClass;
         }
         return false;
     }
 
-    public abstract Object getComparableIngredient();
-
-    public abstract boolean matchesNBT(Object obj);
-
-    public boolean NBTsensitive(){
+    public boolean conditionalNBT() {
         return false;
-    };
-
+    }
 }
