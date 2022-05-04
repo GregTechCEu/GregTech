@@ -22,11 +22,13 @@ public class MapItemStackNBTIngredient extends AbstractMapIngredient {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof MapItemStackIngredient)) {
-            return false;
+        if (super.equals(o)) {
+            MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) o;
+            //NBT condition is only avaliable on the MapItemStackNBTIngredient created by from the Recipe, so
+            //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
+            return ItemStack.areItemsEqual(stack, other.stack) && other.condition.evaluate(this.stack);
         }
-        MapItemStackIngredient other = (MapItemStackIngredient) o;
-        return ItemStack.areItemsEqual(stack, other.stack) && condition.evaluate(other.stack);
+        return false;
     }
 
     @Override

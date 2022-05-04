@@ -486,24 +486,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<AbstractMapIngredient> wr = ingredients.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<Recipe, RecipeMap.Branch> result = branchMap.nodes.get(t);
+            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
+            if (t.conditionalNBT()) {
+                targetMap = branchMap.NBTrestrictedNodes;
+            } else {
+                targetMap = branchMap.nodes;
+            }
+            Either<Recipe, RecipeMap.Branch> result = targetMap.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
                 Recipe r = result.map(recipe -> canHandle.test(recipe) ? recipe : null, right -> diveIngredientTreeFindRecipe(ingredients, right, canHandle, index, count, skip));
                 if (r != null) {
                     return r;
-                }
-            }
-            if (branchMap.NBTrestrictedNodes.size() > 0) {
-                // Iterate over special nodes.
-                for (Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry : branchMap.NBTrestrictedNodes.entrySet()) {
-                    AbstractMapIngredient special = entry.getKey();
-                    if (special.equals(t)) {
-                        Recipe r = entry.getValue().map(re -> canHandle.test(re) ? re : null, branch -> diveIngredientTreeFindRecipe(ingredients, branch, canHandle, index, count, skip));
-                        if (r != null) {
-                            return r;
-                        }
-                    }
                 }
             }
         }
@@ -688,10 +682,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
                 return v;
             });
-            // At the end, return.
-            if (count == ingredients.size() - 1) {
-                continue;
-            }
 
             if (r.right().map(m -> !recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
                 current.forEach(targetMap::remove);
@@ -743,6 +733,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (ItemStack t : ingredients) {
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
             ls.add(new MapItemStackIngredient(t));
+            ls.add(new MapItemStackNBTIngredient(t, null));
             list.add(ls);
         }
     }

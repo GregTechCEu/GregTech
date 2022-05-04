@@ -31,4 +31,9 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
     public String toString() {
         return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + '}';
     }
+
+    @Override
+    public boolean conditionalNBT() {
+        return false;
+    }
 }

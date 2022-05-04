@@ -65,8 +65,6 @@ public class Recipe {
      * If this Recipe is a Crafttweaker recipe. Used for logging purposes
      */
     private final boolean isCTRecipe;
-    private final boolean NBTMatching;
-
     private final RecipePropertyStorage recipePropertyStorage;
 
     private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
@@ -88,14 +86,6 @@ public class Recipe {
         this.EUt = EUt;
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
-        boolean hasTags = false;
-        for (CountableIngredient input : inputs) {
-            if (input.hasNBTMatchingCondition()) {
-                hasTags = true;
-                break;
-            }
-        }
-        this.NBTMatching = hasTags;
         //sort not consumables inputs to the end
         this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
         this.hashCode = makeHashCode();
@@ -502,10 +492,6 @@ public class Recipe {
 
     public boolean getIsCTRecipe() {
         return isCTRecipe;
-    }
-
-    public boolean isNBTMatching() {
-        return NBTMatching;
     }
 
     public boolean hasValidInputsForDisplay() {
