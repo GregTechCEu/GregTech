@@ -51,7 +51,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
-    protected void onPipeConnectionsUpdate() {
+    public void onPipeConnectionsUpdate() {
         NET_DATA.clear();
     }
 

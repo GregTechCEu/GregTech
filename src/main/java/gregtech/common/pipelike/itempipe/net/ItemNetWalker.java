@@ -93,7 +93,7 @@ public class ItemNetWalker extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        if (!(neighbourPipe instanceof TileEntityItemPipe) || neighbourPipe.isFaceBlocked(faceToNeighbour.getOpposite())) {
+        if (!(neighbourPipe instanceof TileEntityItemPipe)) {
             return false;
         }
         CoverBehavior thisCover = currentPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour);

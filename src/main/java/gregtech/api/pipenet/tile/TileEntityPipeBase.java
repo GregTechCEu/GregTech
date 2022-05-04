@@ -3,10 +3,10 @@ package gregtech.api.pipenet.tile;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -208,6 +208,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 buf.writeVarInt(blockedConnections);
             });
             markDirty();
+            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+            PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
+            if (net != null) {
+                net.onPipeConnectionsUpdate();
+            }
         }
     }
 
