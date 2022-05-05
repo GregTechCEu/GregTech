@@ -801,8 +801,12 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
+            return fluidPipeProperties(maxTemp, throughput, gasProof, false, false, false);
+        }
+
+        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
             properties.ensureSet(PropertyKey.INGOT);
-            properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof));
+            properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
             return this;
         }
 

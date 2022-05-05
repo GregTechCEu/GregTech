@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -92,7 +93,7 @@ public class FluidTooltipUtil {
      */
     @Nonnull
     public static List<String> getWaterTooltip() {
-        return getMaterialTooltip(Materials.Water, Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature());
+        return getMaterialTooltip(Materials.Water, Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature(), false);
     }
 
     /**
@@ -100,17 +101,25 @@ public class FluidTooltipUtil {
      */
     @Nonnull
     public static List<String> getLavaTooltip() {
-        return getMaterialTooltip(Materials.Lava, Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature());
+        return getMaterialTooltip(Materials.Lava, Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature(), false);
     }
 
     @Nonnull
-    public static List<String> getMaterialTooltip(@Nonnull Material material, int temperature) {
+    public static List<String> getMaterialTooltip(@Nonnull Material material, int temperature, boolean isPlasma) {
         List<String> tooltip = new ArrayList<>();
         if (!material.getChemicalFormula().isEmpty())
             tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
         tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", temperature));
-        tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
+        if (isPlasma) {
+            tooltip.add(LocalizationUtils.format(FluidTypes.PLASMA.getUnlocalizedTooltip()));
+        } else {
+            tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
+        }
         tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
+        if (temperature < 120) {
+            // fluids colder than 120K are cryogenic
+            tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature.cryogenic"));
+        }
         return tooltip;
     }
 }

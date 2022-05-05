@@ -170,6 +170,22 @@ public class MaterialFlags {
             .build();
 
     /////////////////
+    //    FLUID    //
+    /////////////////
+
+    public static final MaterialFlag SOLDER_MATERIAL = new MaterialFlag.Builder("solder_material")
+            .requireProps(PropertyKey.FLUID)
+            .build();
+
+    public static final MaterialFlag SOLDER_MATERIAL_BAD = new MaterialFlag.Builder("solder_material_bad")
+            .requireProps(PropertyKey.FLUID)
+            .build();
+
+    public static final MaterialFlag SOLDER_MATERIAL_GOOD = new MaterialFlag.Builder("solder_material_good")
+            .requireProps(PropertyKey.FLUID)
+            .build();
+
+    /////////////////
     //    INGOT    //
     /////////////////
 

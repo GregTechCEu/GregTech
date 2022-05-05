@@ -2,25 +2,22 @@ package gregtech.common.pipelike.fluidpipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
-import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.EntityDamageUtil;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -35,7 +32,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
 
@@ -110,35 +110,34 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
+    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
-        if (entityIn instanceof EntityLivingBase && entityIn.world.getTotalWorldTime() % 20 == 0L) {
-            EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
-            TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-            if(!(pipe instanceof TileEntityFluidPipeTickable) || pipe.getFrameMaterial() != null)
-                return;
-            List<Integer> temps = new ArrayList<>();
-            for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
-                if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                    temps.add(tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+        TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null && ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
+            if (entityIn instanceof EntityLivingBase) {
+                if (((TileEntityFluidPipeTickable) pipe).getFluidTanks().length > 1) {
+                    // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
+                    int maxTemperature = Integer.MIN_VALUE;
+                    int minTemperature = Integer.MAX_VALUE;
+                    for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
+                        if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                            maxTemperature = Math.max(maxTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                            minTemperature = Math.min(minTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                        }
+                    }
+                    if (maxTemperature != Integer.MIN_VALUE) {
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, maxTemperature, 1.0F, 5);
+                    }
+                    if (minTemperature != Integer.MAX_VALUE) {
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
+                    }
+                } else {
+                    FluidTank tank = ((TileEntityFluidPipeTickable) pipe).getFluidTanks()[0];
+                    if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                        // Apply temperature damage for the pipe (single fluid pipes)
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, tank.getFluid().getFluid().getTemperature(), 1.0F, 5);
+                    }
                 }
-            }
-            if (temps.size() == 0)
-                return;
-            float fluidTemperature = (float) temps.stream().mapToInt(i -> i).average().getAsDouble();
-            if (fluidTemperature >= 373) {
-                //100C, temperature of boiling water
-                float damageAmount = (fluidTemperature - 363) / 4.0f;
-                entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
-                if (entityLiving instanceof EntityPlayerMP)
-                    GTTriggers.FLUID_PIPE_DEATH_HEAT.trigger((EntityPlayerMP) entityLiving);
-
-            } else if (fluidTemperature <= 183) {
-                //-90C, temperature of freezing of most gaseous elements
-                float damageAmount = fluidTemperature / 4.0f;
-                entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
-                if (entityLiving instanceof EntityPlayerMP)
-                    GTTriggers.FLUID_PIPE_DEATH_COLD.trigger((EntityPlayerMP) entityLiving);
             }
         }
     }

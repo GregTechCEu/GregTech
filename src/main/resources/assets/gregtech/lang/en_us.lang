@@ -1,11 +1,12 @@
-death.attack.heat=%s was boiled alive.
-death.attack.frost=%s explored cryogenics.
-death.attack.electric=%s was electrocuted.
-death.attack.radiation=%s glows with joy now.
-death.attack.turbine=%s put their head into a turbine.
-death.attack.explosion=%s exploded.
-death.attack.explosion.player=%s exploded with help of %s.
-death.attack.heat.player=%s was boiled alive by %s.
+death.attack.heat=%s was boiled alive
+death.attack.frost=%s explored cryogenics
+death.attack.chemical=%s had a chemical accident
+death.attack.electric=%s was electrocuted
+death.attack.radiation=%s glows with joy now
+death.attack.turbine=%s put their head into a turbine
+death.attack.explosion=%s exploded
+death.attack.explosion.player=%s exploded with help of %s
+death.attack.heat.player=%s was boiled alive by %s
 
 enchantment.disjunction=Disjunction
 
@@ -83,6 +84,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -4673,6 +4675,7 @@ gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K
+gregtech.fluid.temperature.cryogenic=§bCryogenic! Handle with care!
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
@@ -4734,10 +4737,15 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
-gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
+gregtech.fluid_pipe.capacity=§9Capacity: %,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.gas_proof=§6Can handle Gases
+gregtech.fluid_pipe.acid_proof=§6Can handle Acids
+gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
+gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
+gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
