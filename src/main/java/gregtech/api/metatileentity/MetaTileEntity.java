@@ -8,8 +8,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -22,8 +22,8 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GregTechUI;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.sound.GTSoundManager;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -400,7 +400,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                if(useOldGui()) {
+                if (useOldGui()) {
                     MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
                 } else {
                     GregTechUI.MTE_UI.open(playerIn, getWorld(), getPos());

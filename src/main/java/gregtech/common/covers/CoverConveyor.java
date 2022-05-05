@@ -8,9 +8,10 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gregtech.api.GTValues;
@@ -480,7 +481,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setMaxLines(1)
                                         .setGetterInt(() -> transferRate)
                                         .setSetterInt(this::setTransferRate)
                                         .setNumbers(1, maxItemTransferRate)

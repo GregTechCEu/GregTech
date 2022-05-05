@@ -3,9 +3,11 @@ package gregtech.common.covers;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
@@ -328,7 +330,6 @@ public class CoverFluidRegulator extends CoverPump {
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setMaxLines(1)
                                         .setGetterInt(() -> transferRate)
                                         .setSetterInt(this::setTransferRate)
                                         .setNumbers(() -> 1, () -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
@@ -369,7 +370,6 @@ public class CoverFluidRegulator extends CoverPump {
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setMaxLines(1)
                                         .setGetterInt(this::getTransferAmount)
                                         .setSetterInt(this::setTransferAmount)
                                         .setNumbers(() -> 1, () -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)

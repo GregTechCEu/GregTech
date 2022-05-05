@@ -1,9 +1,9 @@
 package gregtech.common.covers.newFilter.fluid;
 
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.FluidSlotWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
-import com.cleanroommc.modularui.common.widget.Widget;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;

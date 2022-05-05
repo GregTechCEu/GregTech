@@ -1,7 +1,7 @@
 package gregtech.api.items.gui;
 
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.entity.player.EntityPlayer;

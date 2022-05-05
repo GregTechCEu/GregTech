@@ -6,17 +6,18 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.ButtonWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
 import com.cleanroommc.modularui.common.widget.Row;
 import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -138,7 +139,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
+        /*WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
         primaryGroup.addWidget(new SlotWidget(filterHolder.getFilterInventory(), 0, 10, 15)
@@ -189,7 +190,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .widget(primaryGroup)
                 .widget(stackSizeGroup)
                 .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 100);
-        return buildUI(builder, player);
+        return buildUI(builder, player);*/
+        return null;
     }
 
     @Override
@@ -211,8 +213,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                                         .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferSize))
                                         .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
-                                .widget(new com.cleanroommc.modularui.common.widget.TextFieldWidget()
-                                        .setMaxLines(1)
+                                .widget(new TextFieldWidget()
                                         .setGetterInt(() -> this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount)
                                         .setSetterInt(val -> setTransferAmount(this.bucketMode == BucketMode.BUCKET ? val * 1000 : val))
                                         .setNumbers(1, Integer.MAX_VALUE)
@@ -241,7 +242,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .build();
     }
 
-    private void checkShowLimitSlider(com.cleanroommc.modularui.common.widget.Widget widget) {
+    private void checkShowLimitSlider(Widget widget) {
         boolean show = !filterHolder.hasFilter() && voidingMode == VoidingMode.VOID_OVERFLOW;
         if (show != widget.isEnabled()) {
             widget.setEnabled(show);

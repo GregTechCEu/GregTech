@@ -7,26 +7,21 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
-import com.cleanroommc.modularui.common.widget.TextFieldWidget;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.ModularUI.Builder;
-import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Iterator;
@@ -158,7 +153,7 @@ public class CoverRoboticArm extends CoverConveyor {
         return "cover.robotic_arm.title";
     }
 
-    @Override
+    /*@Override
     protected ModularUI buildUI(Builder builder, EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(91, 45, 75, 20,
@@ -189,7 +184,8 @@ public class CoverRoboticArm extends CoverConveyor {
         primaryGroup.addWidget(stackSizeGroup);
 
         return super.buildUI(builder.widget(primaryGroup), player);
-    }
+        return null;
+    }*/
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
@@ -230,7 +226,6 @@ public class CoverRoboticArm extends CoverConveyor {
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setMaxLines(1)
                                         .setGetterInt(this::getTransferRate)
                                         .setSetterInt(this::setTransferRate)
                                         .setNumbers(1, maxItemTransferRate)
@@ -271,7 +266,6 @@ public class CoverRoboticArm extends CoverConveyor {
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setMaxLines(1)
                                         .setGetterInt(getFilterHolder()::getTransferStackSize)
                                         .setSetterInt(getFilterHolder()::setTransferStackSize)
                                         .setNumbers(1, maxItemTransferRate)

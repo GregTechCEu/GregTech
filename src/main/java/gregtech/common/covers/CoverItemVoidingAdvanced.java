@@ -6,14 +6,18 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.Row;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.Widget;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,7 +98,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        gregtech.api.guiOld.widgets.WidgetGroup primaryGroup = new gregtech.api.guiOld.widgets.WidgetGroup();
+        /*gregtech.api.guiOld.widgets.WidgetGroup primaryGroup = new gregtech.api.guiOld.widgets.WidgetGroup();
         primaryGroup.addWidget(new gregtech.api.guiOld.widgets.LabelWidget(10, 5, getUITitle()));
 
         this.initFilterUI(20, primaryGroup::addWidget);
@@ -108,12 +112,13 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 .widget(primaryGroup)
                 .widget(filterGroup)
                 .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 125);
-        return buildUI(builder, player);
+        return buildUI(builder, player);*/
+        return null;
     }
 
     //Basically the item filter container GUI code, with different Y widget positioning
     public void initFilterUI(int y, Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new gregtech.api.guiOld.widgets.LabelWidget(10, y, "cover.conveyor.item_filter.title"));
+        /*widgetGroup.accept(new gregtech.api.guiOld.widgets.LabelWidget(10, y, "cover.conveyor.item_filter.title"));
         widgetGroup.accept(new gregtech.api.guiOld.widgets.SlotWidget(filterHolder.getFilterInventory(), 0, 10, y + 15)
                 .setBackgroundTexture(gregtech.api.guiOld.GuiTextures.SLOT, gregtech.api.guiOld.GuiTextures.FILTER_SLOT_OVERLAY));
 
@@ -139,7 +144,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         .setScale(0.9f)
         );
 
-        widgetGroup.accept(stackSizeGroup);
+        widgetGroup.accept(stackSizeGroup);*/
 
         //this.itemFilterContainer.getFilterWrapper().initUI(y + 38, widgetGroup);
 
@@ -165,7 +170,6 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                                 .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                 .setSize(12, 12))
                         .widget(new TextFieldWidget()
-                                .setMaxLines(1)
                                 .setGetterInt(filterHolder::getTransferStackSize)
                                 .setSetterInt(val -> filterHolder.setTransferStackSize(MathHelper.clamp(val, 1, voidingMode.maxStackSize)))
                                 .setNumbers(1, Integer.MAX_VALUE)
@@ -184,7 +188,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 .build();
     }
 
-    private void checkShowLimitSlider(com.cleanroommc.modularui.common.widget.Widget widget) {
+    private void checkShowLimitSlider(Widget widget) {
         boolean show = getFilter() == null && voidingMode == VoidingMode.VOID_OVERFLOW;
         if (show != widget.isEnabled()) {
             widget.setEnabled(show);

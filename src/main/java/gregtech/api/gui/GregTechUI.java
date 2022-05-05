@@ -1,10 +1,10 @@
 package gregtech.api.gui;
 
+import com.cleanroommc.modularui.api.screen.ModularUIContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.builder.UIBuilder;
 import com.cleanroommc.modularui.common.builder.UIInfo;
-import com.cleanroommc.modularui.common.internal.ModularUIContext;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
 import com.cleanroommc.modularui.common.internal.wrapper.ModularGui;
 import com.cleanroommc.modularui.common.internal.wrapper.ModularUIContainer;
 import gregtech.api.capability.GregtechTileCapabilities;

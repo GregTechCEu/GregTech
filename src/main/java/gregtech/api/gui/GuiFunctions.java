@@ -2,7 +2,7 @@ package gregtech.api.gui;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.common.widget.Widget;
+import com.cleanroommc.modularui.api.widget.Widget;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.function.BiConsumer;

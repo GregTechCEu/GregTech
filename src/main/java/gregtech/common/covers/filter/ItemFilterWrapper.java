@@ -1,9 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
-import com.cleanroommc.modularui.common.widget.MultiChildWidget;
-import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.widgets.ServerWidgetGroup;
 import gregtech.api.guiOld.widgets.ToggleButtonWidget;
@@ -36,17 +32,6 @@ public class ItemFilterWrapper {
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton).setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
-
-    public Widget createFilterUI(UIBuildContext buildContext) {
-        return new MultiChildWidget()
-                .addChild(new CycleButtonWidget()
-                        .setToggle(this::isBlacklistFilter, this::setBlacklistFilter)
-                        .setTexture(gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST)
-                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
-                        .setSize(18, 18)
-                        .setPos(126, 0));
-    }
-
 
     public void setItemFilter(ItemFilter itemFilter) {
         this.currentItemFilter = itemFilter;

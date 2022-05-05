@@ -1,8 +1,8 @@
 package gregtech.common.covers.newFilter;
 
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
-import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.nbt.NBTTagCompound;

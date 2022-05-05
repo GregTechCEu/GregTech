@@ -2,8 +2,12 @@ package gregtech.common.covers.newFilter.item;
 
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.SlotWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.OreDictExprFilter;
 import net.minecraft.item.ItemStack;
@@ -69,10 +73,10 @@ public class OreDictFilter extends ItemFilter {
                             updateTestMsg();
                         })
                         .setGetter(() -> oreDictFilterExpression)
-                        .setPattern(pattern)
-                        .setTextAlignment(Alignment.CenterLeft)
                         .setValidator(this::validateInput)
+                        .setPattern(pattern)
                         .setSynced(false, false)
+                        .setTextAlignment(Alignment.CenterLeft)
                         .setBackground(GuiTextures.DISPLAY)
                         .setPos(0, 19)
                         .setSize(162, 18));

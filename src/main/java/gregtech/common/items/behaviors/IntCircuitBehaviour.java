@@ -2,8 +2,8 @@ package gregtech.common.items.behaviors;
 
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Size;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.ButtonWidget;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.gui.GregTechUI;

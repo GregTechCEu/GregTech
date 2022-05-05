@@ -1,11 +1,11 @@
 package gregtech.common.covers.newFilter.item;
 
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
 import com.cleanroommc.modularui.common.widget.SlotWidget;
-import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
 import net.minecraft.item.ItemStack;

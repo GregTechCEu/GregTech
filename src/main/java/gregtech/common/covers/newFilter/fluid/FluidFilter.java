@@ -1,7 +1,7 @@
 package gregtech.common.covers.newFilter.fluid;
 
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.Widget;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import gregtech.common.covers.newFilter.Filter;
 import net.minecraftforge.fluids.FluidStack;
 

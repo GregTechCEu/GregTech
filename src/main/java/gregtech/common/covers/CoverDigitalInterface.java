@@ -8,9 +8,13 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.common.internal.ModularWindow;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.Row;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
@@ -483,7 +487,6 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         .setGetterInt(() -> this.slot)
                         .setSetterInt(val -> this.slot = val)
                         .setNumbers(0, 9999)
-                        .setMaxLines(1)
                         .setTextAlignment(Alignment.Center)
                         .setTextColor(0xFFFFFF)
                         .setBackground(GuiTextures.DISPLAY)
