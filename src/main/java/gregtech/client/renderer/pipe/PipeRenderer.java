@@ -156,7 +156,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             Textures.RENDER_STATE.set(new CubeRendererState(renderLayer, sideMask, world));
             if (renderLayer == BlockRenderLayer.CUTOUT) {
                 renderState.lightMatrix.locate(world, pos);
-                PipeRenderContext renderContext = new PipeRenderContext(pos, renderState.lightMatrix, connectedSidesMap, blockedConnections, pipeType.getThickness(), pipeTile.getFrameMaterial() != null);
+                PipeRenderContext renderContext = new PipeRenderContext(pos, renderState.lightMatrix, connectedSidesMap, blockedConnections, pipeType.getThickness());
                 renderContext.color = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(pipeMaterial, paintingColor));
                 buildRenderer(renderContext, blockPipe, pipeTile, pipeType, pipeMaterial);
                 renderPipeBlock(renderState, renderContext);
@@ -360,15 +360,13 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         private int color;
         private final int connections;
         private final int blockedConnections;
-        private final boolean hasFrame;
 
-        public PipeRenderContext(BlockPos pos, LightMatrix lightMatrix, int connections, int blockedConnections, float thickness, boolean hasFrame) {
+        public PipeRenderContext(BlockPos pos, LightMatrix lightMatrix, int connections, int blockedConnections, float thickness) {
             this.pos = pos;
             this.lightMatrix = lightMatrix;
             this.connections = connections;
             this.blockedConnections = blockedConnections;
             this.pipeThickness = thickness;
-            this.hasFrame = hasFrame;
             if (pos != null && lightMatrix != null) {
                 blockedOverlay = new IVertexOperation[]{new Translation(pos), lightMatrix, new IconTransformation(Textures.PIPE_BLOCKED_OVERLAY)};
             } else {
@@ -377,7 +375,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
 
         public PipeRenderContext(int connections, int blockedConnections, float thickness) {
-            this(null, null, connections, blockedConnections, thickness, false);
+            this(null, null, connections, blockedConnections, thickness);
         }
 
         public PipeRenderContext addOpenFaceRender(IVertexOperation... vertexOperations) {

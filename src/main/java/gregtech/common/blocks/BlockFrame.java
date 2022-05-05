@@ -165,6 +165,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                     ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
                 } else {
                     GTLog.logger.error("Pipe was not placed!");
+                    return false;
                 }
                 if (!playerIn.capabilities.isCreativeMode) {
                     stackInHand.shrink(1);

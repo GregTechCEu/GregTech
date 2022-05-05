@@ -65,7 +65,6 @@ import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BuiltInRenderBlock implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
     protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
-    private static final IndexedCuboid6 FRAME_COLLISION = new IndexedCuboid6(null, BlockFrame.COLLISION_BOX);
 
     public BlockPipe() {
         super(net.minecraft.block.material.Material.IRON);
