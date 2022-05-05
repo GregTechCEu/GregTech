@@ -11,7 +11,6 @@ import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -31,25 +30,12 @@ import java.util.List;
 
 public class OreByProduct implements IRecipeWrapper {
 
-    private static final ImmutableList<OrePrefix> ORES;
+    private static final List<OrePrefix> ORES = new ArrayList<>();
 
-    static {
-        List<OrePrefix> prefixes = new ArrayList<>();
-        prefixes.add(OrePrefix.ore);
-        prefixes.add(OrePrefix.oreNetherrack);
-        prefixes.add(OrePrefix.oreEndstone);
-        if (ConfigHolder.worldgen.allUniqueStoneTypes) {
-            prefixes.add(OrePrefix.oreGranite);
-            prefixes.add(OrePrefix.oreDiorite);
-            prefixes.add(OrePrefix.oreAndesite);
-            prefixes.add(OrePrefix.oreBasalt);
-            prefixes.add(OrePrefix.oreBlackgranite);
-            prefixes.add(OrePrefix.oreMarble);
-            prefixes.add(OrePrefix.oreRedgranite);
-            prefixes.add(OrePrefix.oreSand);
-            prefixes.add(OrePrefix.oreRedSand);
+    public static void addOreByProductPrefix(OrePrefix orePrefix) {
+        if (!ORES.contains(orePrefix)) {
+            ORES.add(orePrefix);
         }
-        ORES = ImmutableList.copyOf(prefixes);
     }
 
     private static final ImmutableList<OrePrefix> IN_PROCESSING_STEPS = ImmutableList.of(
@@ -296,7 +282,7 @@ public class OreByProduct implements IRecipeWrapper {
         ingredients.setInputLists(VanillaTypes.FLUID, fluidInputs);
         ingredients.setOutputLists(VanillaTypes.ITEM, outputs);
     }
-    
+
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         if (chances.containsKey(slotIndex)) {
             ChanceEntry entry = chances.get(slotIndex);
