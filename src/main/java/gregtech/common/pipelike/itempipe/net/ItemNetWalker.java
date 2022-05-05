@@ -30,7 +30,7 @@ public class ItemNetWalker extends PipeNetWalker {
         walker.sourcePipe = sourcePipe;
         walker.facingToHandler = faceToSourceHandler;
         walker.traversePipeNet();
-        return walker.inventories;
+        return walker.isFailed() ? null : walker.inventories;
     }
 
     private ItemPipeProperties minProperties;

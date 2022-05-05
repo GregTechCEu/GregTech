@@ -30,6 +30,7 @@ public abstract class PipeNetWalker {
     private int walkedBlocks;
     private boolean invalid;
     private boolean running;
+    private boolean failed = false;
 
     protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
@@ -147,6 +148,7 @@ public abstract class PipeNetWalker {
             if (walkedBlocks == 1) {
                 // if it is the first block, it wasn't already checked
                 GTLog.logger.warn("First PipeTile is null during walk");
+                this.failed = true;
                 return;
             } else
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
@@ -206,5 +208,9 @@ public abstract class PipeNetWalker {
 
     public boolean isRoot() {
         return this.root == this;
+    }
+
+    public boolean isFailed() {
+        return failed;
     }
 }

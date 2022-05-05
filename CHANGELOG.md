@@ -1,5 +1,18 @@
 ## Changelog
 
+### 2.2.1
+BETA RELEASE (hotfix)
+
+* Allowed Shutter Covers to be controlled with Machine Controller Covers
+    * At present, this does not work between Item Pipes or Wires/Cables
+* Fixed Text Formatting issue with TOP integration
+* Fixed Voiding Mode saving issues with the Advanced Item Voiding Cover
+* Fixed lighting issues with GT glass blocks
+* Fixed Crash with CraftTweaker and the Gas Collector
+* Changed Hashing Strategy for Ore Dictionary Filters to improve memory usage
+* Fixed memory strain and "leak" when handling packets on machines
+* Updated Chinese Translation
+
 ### 2.2.0
 BETA RELEASE
 

@@ -1,0 +1,106 @@
+{
+  "section": "Electric",
+  "title": "Distillation Tower",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Distillation Tower§r is the Variable Layer Multiblock form of the Single Block Distilleries. While the Distillery can only have one output from an input fluid, the Distillation Tower can get all possible outputs from the input fluid.\n\nHowever, the Distillation Tower has a few additional limitations. Most importantly, The number of fluids that the Distillation Tower can output is equal to the number of layers of the of the Multiblock. Additionally, the Distillation Tower cannot be formed with Multifluid output hatches, and the fluid input hatch must be located on the bottom layer of the structure."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1005,
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": 3,
+      "y": 269,
+      "width": 52,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1181,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": -1,
+      "y": 242,
+      "width": 61,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1196,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": -5,
+      "y": 296,
+      "width": 67,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1166,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "card",
+      "x": 10,
+      "y": 234,
+      "width": 177,
+      "height": 90,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "x": 50,
+      "y": 241,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Fluid Output Hatch. Exactly 1 per layer"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 49,
+      "y": 267,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Fluid Input Hatch. Exactly 1"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 46,
+      "y": 294,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Item Output bus. Optionally 1"
+      ]
+    }
+  ],
+  "metatileentity": "distillation_tower"
+}

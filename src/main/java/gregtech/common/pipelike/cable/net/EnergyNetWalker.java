@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,7 +20,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     public static List<RoutePath> createNetData(World world, BlockPos sourcePipe) {
         EnergyNetWalker walker = new EnergyNetWalker(world, sourcePipe, 1, new ArrayList<>());
         walker.traversePipeNet();
-        return walker.routes;
+        return walker.isFailed() ? null : walker.routes;
     }
 
     private final List<RoutePath> routes;
