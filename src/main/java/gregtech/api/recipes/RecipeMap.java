@@ -668,11 +668,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             r = targetMap.compute(obj, (k, v) -> {
                 if (count == ingredients.size() - 1) {
                     if (v != null) {
-                        if (recipe.getIsCTRecipe()) {
-                            CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", recipe, this.unlocalizedName));
-                        }
-                        if (ConfigHolder.misc.debug) {
-                            GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
+                        if (v.left().isPresent() && v.left().get() == recipe) {
+                            return v;
+                        } else {
+                            if (recipe.getIsCTRecipe()) {
+                                CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", recipe, this.unlocalizedName));
+                            }
+                            if (ConfigHolder.misc.debug) {
+                                GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
+                            }
                         }
                     } else {
                         v = Either.left(recipe);
