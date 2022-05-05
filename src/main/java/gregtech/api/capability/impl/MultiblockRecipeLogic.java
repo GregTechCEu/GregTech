@@ -119,6 +119,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     canWork = true;
                     invalidatedInputList.clear();
                     metaTileEntity.getNotifiedFluidInputList().clear();
+                    metaTileEntity.getNotifiedItemInputList().clear();
                 } else {
                     Iterator<IItemHandlerModifiable> iterator = metaTileEntity.getNotifiedItemInputList().iterator();
                     while (iterator.hasNext()) {
