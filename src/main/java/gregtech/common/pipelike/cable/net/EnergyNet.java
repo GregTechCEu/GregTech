@@ -60,7 +60,7 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void onPipeConnectionsUpdate() {
+    public void onPipeConnectionsUpdate() {
         NET_DATA.clear();
     }
 
