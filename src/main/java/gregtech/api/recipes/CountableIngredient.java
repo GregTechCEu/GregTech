@@ -39,6 +39,7 @@ public class CountableIngredient {
         this.nonConsumable = countableIngredient.nonConsumable;
         this.hasNBTMatchingCondition = countableIngredient.hasNBTMatchingCondition;
         this.NBTMatchingCondition = countableIngredient.NBTMatchingCondition;
+        this.NBTMatcher = countableIngredient.NBTMatcher;
     }
 
     public static CountableIngredient from(ItemStack stack) {
@@ -132,6 +133,8 @@ public class CountableIngredient {
 
         String nbtKey;
         long value;
+
+        public static NBTcondition ANY;
 
         public NBTcondition(String nbtKey, long value) {
             this.nbtKey = nbtKey;

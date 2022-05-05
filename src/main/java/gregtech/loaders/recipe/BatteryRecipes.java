@@ -217,24 +217,24 @@ public class BatteryRecipes {
 
 
         // Battery Recycling Recipes
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_CADMIUM).output(BATTERY_HULL_LV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_LITHIUM).output(BATTERY_HULL_LV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_SODIUM).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_CADMIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_LITHIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_SODIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_CADMIUM).output(BATTERY_HULL_MV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_LITHIUM).output(BATTERY_HULL_MV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_SODIUM).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_CADMIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_LITHIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_SODIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_CADMIUM).output(BATTERY_HULL_HV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_LITHIUM).output(BATTERY_HULL_HV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_SODIUM).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_CADMIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_LITHIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_SODIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_EV_VANADIUM).output(BATTERY_HULL_SMALL_VANADIUM).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_IV_VANADIUM).output(BATTERY_HULL_MEDIUM_VANADIUM).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LUV_VANADIUM).output(BATTERY_HULL_LARGE_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_EV_VANADIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_SMALL_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_IV_VANADIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_MEDIUM_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LUV_VANADIUM,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_LARGE_VANADIUM).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_ZPM_NAQUADRIA).output(BATTERY_HULL_MEDIUM_NAQUADRIA).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_UV_NAQUADRIA).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_ZPM_NAQUADRIA,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_MEDIUM_NAQUADRIA).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_UV_NAQUADRIA,CountableIngredient.NBTMatcher.ANY, CountableIngredient.NBTcondition.ANY).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
     }
 
     private static void gemBatteries() {

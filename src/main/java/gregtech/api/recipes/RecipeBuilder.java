@@ -203,6 +203,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return input(item, 1);
     }
 
+    public R input(MetaItem<?>.MetaValueItem item, CountableIngredient.NBTMatcher nbtMatcher, CountableIngredient.NBTcondition nbtCondition) {
+        return inputs(CountableIngredient.from(item.getStackForm()).setNBTMatchingCondition(nbtCondition, nbtMatcher));
+    }
+
     public R input(MetaTileEntity mte) {
         return input(mte, 1);
     }
