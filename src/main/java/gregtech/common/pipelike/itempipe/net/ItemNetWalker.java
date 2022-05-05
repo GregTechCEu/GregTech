@@ -23,7 +23,7 @@ public class ItemNetWalker extends PipeNetWalker {
         walker.sourcePipe = sourcePipe;
         walker.facingToHandler = faceToSourceHandler;
         walker.traversePipeNet();
-        return walker.inventories;
+        return walker.isFailed() ? null : walker.inventories;
     }
 
     private ItemPipeProperties minProperties;
@@ -56,7 +56,8 @@ public class ItemNetWalker extends PipeNetWalker {
 
     @Override
     protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
-        if (neighbourTile == null || (GTUtility.arePosEqual(pipePos, sourcePipe) && faceToNeighbour == facingToHandler)) return;
+        if (neighbourTile == null || (GTUtility.arePosEqual(pipePos, sourcePipe) && faceToNeighbour == facingToHandler))
+            return;
         IItemHandler handler = neighbourTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
         if (handler != null)
             inventories.add(new ItemPipeNet.Inventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), minProperties));

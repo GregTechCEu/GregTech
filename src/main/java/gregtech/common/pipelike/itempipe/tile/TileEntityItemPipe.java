@@ -44,7 +44,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         if (net == null) {
             return;
         }
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (EnumFacing facing : EnumFacing.values()) {
             handlers.put(facing, new ItemNetHandler(net, this, facing));
         }
         defaultHandler = new ItemNetHandler(net, this, null);
