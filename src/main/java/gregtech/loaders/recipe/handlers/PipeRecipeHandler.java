@@ -52,7 +52,7 @@ public class PipeRecipeHandler {
         else if (pipePrefix == OrePrefix.pipeHugeRestrictive) unrestrictive = OrePrefix.pipeHugeItem;
         else return;
 
-        RecipeMaps.PACKER_RECIPES.recipeBuilder()
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(unrestrictive, material)
                 .input(OrePrefix.ring, Materials.Iron, 2)
                 .output(pipePrefix, material)
