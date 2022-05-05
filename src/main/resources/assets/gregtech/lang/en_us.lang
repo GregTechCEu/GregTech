@@ -2232,6 +2232,7 @@ metaitem.debug_scanner.tooltip=Tricorder
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
 behavior.tricorder.block_hardness=Hardness: %s Blast Resistance: %s
 behavior.tricorder.block_name=Name: %s MetaData: %s
+behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=Tank %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=All Tanks Empty
