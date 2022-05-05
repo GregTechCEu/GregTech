@@ -213,7 +213,7 @@ public class Recipe {
                 if (inputStack.isEmpty() || !ingredient.getIngredient().apply(inputStack))
                     continue;
                 if (ingredient.hasNBTMatchingCondition()) {
-                    if (!ingredient.getNBTMatchingCondition().evaluate(inputStack)){
+                    if (!ingredient.getNBTMatcher().evaluate(inputStack, ingredient.getNBTMatchingCondition())){
                         continue;
                     }
                 }

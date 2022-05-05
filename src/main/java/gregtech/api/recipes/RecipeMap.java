@@ -724,7 +724,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
             for (ItemStack stack : t.getMatchingStacks()) {
                 if (r.hasNBTMatchingCondition()) {
-                    inner.add(new MapItemStackNBTIngredient(stack, r.getNBTMatchingCondition()));
+                    inner.add(new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition()));
                 } else {
                     inner.add(new MapItemStackIngredient(stack));
                 }
@@ -737,7 +737,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (ItemStack t : ingredients) {
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
             ls.add(new MapItemStackIngredient(t));
-            ls.add(new MapItemStackNBTIngredient(t, null));
+            ls.add(new MapItemStackNBTIngredient(t));
             list.add(ls);
         }
     }
