@@ -10,7 +10,6 @@ import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
@@ -88,7 +87,6 @@ public class WidgetScrollBar extends Widget {
         String text = I18n.format(this.title);
         text += ": " + new DecimalFormat("#.00").format(getValue());
         fontRenderer.drawString(text, position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2, position.y - 3 + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, this.titleColor);
-        GlStateManager.color(1.0F, 1.0F, 1.0F);
     }
 
     private boolean isOnScrollPane(int mouseX, int mouseY) {

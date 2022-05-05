@@ -10,7 +10,6 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -20,8 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class ClickButtonWidget extends Widget {
 
@@ -95,7 +92,6 @@ public class ClickButtonWidget extends Widget {
         fontRenderer.drawString(text,
                 position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
                 position.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

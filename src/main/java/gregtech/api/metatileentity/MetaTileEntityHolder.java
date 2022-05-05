@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketRecoverMTE;
 import gregtech.api.util.GTLog;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder, IWorldNameable {
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder, IWorldNameable {
 
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
@@ -47,7 +48,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @SideOnly(Side.CLIENT)
     private GTNameTagParticle nameTagParticle;
 
-    private int[] timeStatistics = new int[20];
+    private final int[] timeStatistics = new int[20];
     private int timeStatisticsIndex = 0;
     private int lagWarningCount = 0;
 
@@ -61,13 +62,17 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
      * so it is safe to call it on sample meta tile entities
      * Also can use certain data to preinit the block before data is synced
      */
-    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity, Object... data) {
+    @Override
+    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
-        this.metaTileEntity.onAttached(data);
+        this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
-            sendInitialSyncData();
+            writeCustomData(INITIALIZE_MTE, buffer -> {
+                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(getMetaTileEntity().metaTileEntityId));
+                getMetaTileEntity().writeInitialSyncData(buffer);
+            });
             //just to update neighbours so cables and other things will work properly
             this.needToUpdateLightning = true;
             world.neighborChanged(getPos(), getBlockType(), getPos());
@@ -76,7 +81,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         return metaTileEntity;
     }
 
-    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity){
+    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
         this.metaTileEntity.holder = this;
     }
@@ -89,13 +94,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         }
     }
 
-    public void scheduleChunkForRenderUpdate() {
-        BlockPos pos = getPos();
-        getWorld().markBlockRangeForRenderUpdate(
-                pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1,
-                pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
-    }
-
+    @Override
     public void notifyBlockUpdate() {
         getWorld().notifyNeighborsOfStateChange(pos, getBlockType(), false);
     }
@@ -166,7 +165,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                 world.setBlockToAir(pos);
             }
         }
-        
+
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
             this.needToUpdateLightning = false;
@@ -236,13 +235,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         return list;
     }
 
-    public void sendInitialSyncData() {
-        writeCustomData(INITIALIZE_MTE, buffer -> {
-            buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
-            metaTileEntity.writeInitialSyncData(buffer);
-        });
-    }
-
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeString(getName());
@@ -260,7 +252,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             int metaTileEntityId = buf.readVarInt();
             setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buf);
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
             this.needToUpdateLightning = true;
         }
     }
@@ -271,7 +263,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             int metaTileEntityId = buffer.readVarInt();
             setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buffer);
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
             this.needToUpdateLightning = true;
         } else if (metaTileEntity != null) {
             metaTileEntity.receiveCustomData(discriminator, buffer);
@@ -286,6 +278,16 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public boolean isRemote() {
         return getWorld().isRemote;
+    }
+
+    @Override
+    public World world() {
+        return getWorld();
+    }
+
+    @Override
+    public BlockPos pos() {
+        return getPos();
     }
 
     @Override

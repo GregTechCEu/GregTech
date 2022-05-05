@@ -137,7 +137,7 @@ public class ToolRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addMirroredShapedRecipe(String.format("screwdriver_%s", material.toString()),
+            ModHandler.addMirroredShapedRecipe(String.format("screwdriver_%s", material),
                     MetaItems.SCREWDRIVER.getStackForm(material),
                     " fS", " Sh", "W  ",
                     'S', new UnificationEntry(OrePrefix.stick, material),
@@ -151,7 +151,7 @@ public class ToolRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_PLATE)) {
-            ModHandler.addShapedRecipe(String.format("knife_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("knife_%s", material),
                     MetaItems.KNIFE.getStackForm(material),
                     "fPh", " S ",
                     'S', new UnificationEntry(stickPrefix, material),
@@ -159,21 +159,21 @@ public class ToolRecipeHandler {
         }
 
         if (material.hasFlags(GENERATE_PLATE, GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("butchery_knife_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("butchery_knife_%s", material),
                     MetaItems.BUTCHERY_KNIFE.getStackForm(material),
                     "PPf", "PP ", "Sh ",
                     'S', new UnificationEntry(OrePrefix.stick, material),
                     'P', new UnificationEntry(OrePrefix.plate, material));
 
             if (material.hasFlags(GENERATE_BOLT_SCREW)) {
-                ModHandler.addShapedRecipe(String.format("wire_cutter_%s", material.toString()),
+                ModHandler.addShapedRecipe(String.format("wire_cutter_%s", material),
                         MetaItems.WIRE_CUTTER.getStackForm(material),
                         "PfP", "hPd", "STS",
                         'S', new UnificationEntry(stickPrefix, material),
                         'P', new UnificationEntry(OrePrefix.plate, material),
                         'T', new UnificationEntry(OrePrefix.screw, material));
 
-                ModHandler.addShapedRecipe(String.format("branch_cutter_%s", material.toString()),
+                ModHandler.addShapedRecipe(String.format("branch_cutter_%s", material),
                         MetaItems.BRANCH_CUTTER.getStackForm(material),
                         "PfP", "PdP", "STS",
                         'S', new UnificationEntry(stickPrefix, material),
@@ -184,7 +184,7 @@ public class ToolRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, ToolProperty property) {
-        ModHandler.addMirroredShapedRecipe(String.format("mining_hammer_%s", material.toString()),
+        ModHandler.addMirroredShapedRecipe(String.format("mining_hammer_%s", material),
                 MetaItems.MINING_HAMMER.getStackForm(material),
                 "PP ", "PPR", "PP ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
@@ -200,7 +200,7 @@ public class ToolRecipeHandler {
         }
 
         if(material.hasFlag(GENERATE_PLATE)) {
-            ModHandler.addShapedRecipe(String.format("drill_head_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("drill_head_%s", material),
                     OreDictUnifier.get(OrePrefix.toolHeadDrill, material),
                     "XSX", "XSX", "ShS",
                     'X', new UnificationEntry(OrePrefix.plate, material),
@@ -212,7 +212,7 @@ public class ToolRecipeHandler {
         processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.CHAINSAW_LV, MetaItems.CHAINSAW_MV, MetaItems.CHAINSAW_HV});
 
         if(material.hasFlag(GENERATE_PLATE)) {
-            ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
                     "SRS", "XhX", "SRS",
                     'X', new UnificationEntry(OrePrefix.plate, material),
@@ -225,7 +225,7 @@ public class ToolRecipeHandler {
         processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.WRENCH_LV, MetaItems.WRENCH_MV, MetaItems.WRENCH_HV});
 
         if(material.hasFlag(GENERATE_PLATE)) {
-            ModHandler.addShapedRecipe(String.format("wrench_head_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("wrench_head_%s", material),
                     OreDictUnifier.get(OrePrefix.toolHeadWrench, material),
                     "hXW", "XRX", "WXd",
                     'X', new UnificationEntry(OrePrefix.plate, material),
@@ -238,7 +238,7 @@ public class ToolRecipeHandler {
         processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.BUZZSAW});
 
         if(material.hasFlag(GENERATE_PLATE)) {
-            ModHandler.addShapedRecipe(String.format("buzzsaw_head_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("buzzsaw_head_%s", material),
                     OreDictUnifier.get(OrePrefix.toolHeadBuzzSaw, material),
                     "wXh", "X X", "fXx",
                     'X', new UnificationEntry(OrePrefix.plate, material));
@@ -258,13 +258,13 @@ public class ToolRecipeHandler {
         processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.SCREWDRIVER_LV});
 
         if(material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("screwdriver_head_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("screwdriver_head_%s", material),
                     OreDictUnifier.get(OrePrefix.toolHeadScrewdriver, material),
                     "fX", "Xh",
                     'X', new UnificationEntry(OrePrefix.stick, material));
         }
 
-        ModHandler.addShapelessRecipe(String.format("%s_%s_%s", toolPrefix.name(), material.toString(), Materials.Wood.toString()),
+        ModHandler.addShapelessRecipe(String.format("%s_%s_%s", toolPrefix.name(), material, Materials.Wood.toString()),
                 MetaItems.SCREWDRIVER.getStackForm(material),
                 new UnificationEntry(toolPrefix, material),
                 new UnificationEntry(OrePrefix.stick, Materials.Wood));
@@ -408,7 +408,7 @@ public class ToolRecipeHandler {
                         .EUt(8 * getVoltageMultiplier(material))
                         .buildAndRegister();
         }
-        ModHandler.addMirroredShapedRecipe(String.format("hammer_%s", material.toString()),
+        ModHandler.addMirroredShapedRecipe(String.format("hammer_%s", material),
                 MetaItems.HARD_HAMMER.getStackForm(material),
                 "XX ", "XXS", "XX ",
                 'X', new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material),
@@ -428,7 +428,7 @@ public class ToolRecipeHandler {
                     .buildAndRegister();
 
         if (material.hasProperty(PropertyKey.INGOT)) {
-            ModHandler.addShapedRecipe(String.format("file_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("file_%s", material),
                     MetaItems.FILE.getStackForm(material),
                     "P", "P", "S",
                     'P', new UnificationEntry(OrePrefix.plate, material),
@@ -515,13 +515,13 @@ public class ToolRecipeHandler {
 
             if (ModHandler.isMaterialWood(material)) {
                 MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 48, 1, 4.0f, 1.0f);
-                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
+                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material), itemStack,
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.plank, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             } else {
                 MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 128 * (1 << i), 1, 4.0f, 1.0f);
-                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
+                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material), itemStack,
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.ingot, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
@@ -538,7 +538,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
                     'S', MetaItems.SENSOR_LV.getStackForm(),
                     'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LV),
                     'B', batteryItem.getStackForm());
 
             ModHandler.addShapedEnergyTransferRecipe("magnet_lv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_LV.getStackForm(),
@@ -557,7 +557,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
                     'S', MetaItems.SENSOR_MV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV),
                     'B', batteryItem.getStackForm());
         }
         for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {
@@ -568,7 +568,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel),
                     'S', MetaItems.SENSOR_HV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV),
                     'B', batteryItem.getStackForm());
 
             ModHandler.addShapedEnergyTransferRecipe("magnet_hv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_HV.getStackForm(),
@@ -583,11 +583,11 @@ public class ToolRecipeHandler {
             ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LUV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
-                    'E', MetaItems.EMITTER_LUV.getStackForm(),
+                    'E', MetaItems.EMITTER_LuV.getStackForm(),
                     'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium),
-                    'S', MetaItems.SENSOR_LUV.getStackForm(),
+                    'S', MetaItems.SENSOR_LuV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Master),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LuV),
                     'B', batteryItem.getStackForm());
         }
     }

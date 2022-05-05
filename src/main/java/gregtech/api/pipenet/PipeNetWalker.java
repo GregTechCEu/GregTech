@@ -17,7 +17,7 @@ import java.util.*;
  * <p>On the way it can collect information about the pipes and it's neighbours
  * <p>After creating a walker simply call {@link #traversePipeNet()} to start walking, then you can just collect the data
  * <p><b>Do not walk a walker more than once</b>
- * <p>For example implementations look at {@link ItemNetWalker} and {@link FluidNetWalker}
+ * <p>For example implementations look at {@link ItemNetWalker}
  */
 public abstract class PipeNetWalker {
 
@@ -30,6 +30,7 @@ public abstract class PipeNetWalker {
     private int walkedBlocks;
     private boolean invalid;
     private boolean running;
+    private boolean failed = false;
 
     protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
@@ -47,7 +48,7 @@ public abstract class PipeNetWalker {
      * @param walkedBlocks distance from source in blocks
      * @return new sub walker
      */
-    protected abstract PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks);
+    protected abstract PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks);
 
     /**
      * You can increase walking stats here. for example
@@ -122,7 +123,7 @@ public abstract class PipeNetWalker {
 
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
+                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, side, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
                 walker.root = root;
                 walkers.add(walker);
             }
@@ -147,6 +148,7 @@ public abstract class PipeNetWalker {
             if (walkedBlocks == 1) {
                 // if it is the first block, it wasn't already checked
                 GTLog.logger.warn("First PipeTile is null during walk");
+                this.failed = true;
                 return;
             } else
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
@@ -165,7 +167,7 @@ public abstract class PipeNetWalker {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (!otherPipe.isConnected(accessSide.getOpposite()) || isWalked(otherPipe))
+                if (!otherPipe.isConnected(accessSide.getOpposite()) || otherPipe.isFaceBlocked(accessSide.getOpposite()) || isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);
@@ -206,5 +208,9 @@ public abstract class PipeNetWalker {
 
     public boolean isRoot() {
         return this.root == this;
+    }
+
+    public boolean isFailed() {
+        return failed;
     }
 }

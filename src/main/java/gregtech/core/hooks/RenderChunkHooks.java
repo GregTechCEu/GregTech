@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("unused")
 public class RenderChunkHooks {
     public static <T extends TileEntity> TileEntitySpecialRenderer<T> getRenderer(TileEntityRendererDispatcher renderer, @Nullable TileEntity tileEntityIn) {
+        // TODO
         if (tileEntityIn instanceof MetaTileEntityHolder && !((MetaTileEntityHolder) tileEntityIn).hasTESR()) {
             return null;
         }

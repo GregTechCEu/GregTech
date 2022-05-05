@@ -1,0 +1,14 @@
+{
+  "section": "Tools",
+  "title": "Saw",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Saw§r is a Gregtech tool that is mainly using in crafting recipes, but has some special uses outside of crafting recipes.\n\nFirstly, it will harvest §1Ice§r and §1Packed Ice§r as if it had Silk Touch, dropping the actual items.\n\nSecondly, it will act like Shears when harvesting §1Leaves§r and §1Vines§r, meaning that the actual blocks will be dropped."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:5"
+}

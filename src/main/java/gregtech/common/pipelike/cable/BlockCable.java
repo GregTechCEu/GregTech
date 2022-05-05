@@ -6,23 +6,18 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.tools.DamageValues;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -33,6 +28,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -99,7 +95,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public int onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
+    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
         ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
         if (cutterItem != null) {
             if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
@@ -109,20 +105,38 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                     cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
-                return 1;
+                return EnumActionResult.SUCCESS;
             }
-            return 0;
+            return EnumActionResult.FAIL;
         }
-        return -1;
+        return EnumActionResult.PASS;
     }
 
     @Override
-    public void observedNeighborChange(@Nonnull IBlockState observerState, @Nonnull World world, @Nonnull BlockPos observerPos, @Nonnull Block changedBlock, @Nonnull BlockPos changedBlockPos) {
-        super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-        EnergyNet pipeNet = getWorldPipeNet(world).getNetFromPos(observerPos);
-        if (pipeNet != null) {
-            pipeNet.onNeighbourStateChanged();
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEntityCable) {
+            TileEntityCable cable = (TileEntityCable) tile;
+            int temp = cable.getTemperature();
+            // max light at 5000 K
+            // min light at 500 K
+            if(temp >= 5000) {
+                return 15;
+            }
+            if (temp > 500) {
+                return (temp - 500) * 15 / (4500);
+            }
         }
+        return 0;
+    }
+
+    @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        if (worldIn.isRemote) {
+            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            cable.killParticle();
+        }
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Override

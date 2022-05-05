@@ -6,7 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -35,7 +35,7 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntitySteamItemBus(metaTileEntityId, isExportHatch);
     }
 
@@ -91,6 +91,7 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
                         GuiTextures.SLOT_STEAM.get(IS_STEEL));
             }
         }
+        builder.shouldColor(false);
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
         return builder.build(getHolder(), entityPlayer);
     }

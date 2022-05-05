@@ -10,10 +10,11 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
@@ -49,7 +50,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMufflerHatch(metaTileEntityId, getTier());
     }
 
@@ -74,7 +75,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             if (calculateChance())
                 GTUtility.addStackToItemStackList(recoveryItems.get(slot), items);
         });
-        addItemsToItemHandler(inventory, false, items);
+        GTTransferUtils.addItemsToItemHandler(inventory, false, items);
     }
 
     private boolean calculateChance() {
@@ -99,9 +100,9 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     public void pollutionParticles() {
         BlockPos pos = this.getPos();
         EnumFacing facing = this.getFrontFacing();
-        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.5F;
+        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.25F;
         float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
-        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.5F;
+        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.25F;
 
         float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
         float xSpd;
@@ -116,7 +117,11 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             zSpd = facing.getZOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
         }
         if (getController() instanceof MultiblockWithDisplayBase)
-            ((MultiblockWithDisplayBase) getController()).runMufflerEffect(xPos, yPos, zPos, xSpd, ySpd, zSpd);
+            ((MultiblockWithDisplayBase) getController()).runMufflerEffect(
+                    xPos + GTValues.RNG.nextFloat() * 0.5F,
+                    yPos + GTValues.RNG.nextFloat() * 0.5F,
+                    zPos + GTValues.RNG.nextFloat() * 0.5F,
+                    xSpd, ySpd, zSpd);
     }
 
     @Override

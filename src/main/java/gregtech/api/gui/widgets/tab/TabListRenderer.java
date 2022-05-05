@@ -1,5 +1,6 @@
 package gregtech.api.gui.widgets.tab;
 
+import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 
@@ -17,7 +18,7 @@ public abstract class TabListRenderer {
     public static final TextureArea TABS_LEFT_TEXTURE = TextureArea.fullImage("textures/gui/tab/tabs_left.png");
     public static final TextureArea TABS_RIGHT_TEXTURE = TextureArea.fullImage("textures/gui/tab/tabs_right.png");
 
-    public abstract void renderTabs(Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex);
+    public abstract void renderTabs(ModularUI gui, Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex);
 
     public abstract int[] getTabPos(int tabIndex, int guiWidth, int guiHeight);
 

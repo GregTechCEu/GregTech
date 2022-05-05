@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -9,7 +8,8 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.*;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TITANIUM_STABLE;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST;
 import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
@@ -184,7 +184,7 @@ public class AssemblerRecipeLoader {
                 .outputs(VOLTAGE_COIL_EV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV])
                 .input(stick, NeodymiumMagnetic)
                 .input(wireFine, Iridium, 16)
                 .circuitMeta(1)
@@ -195,7 +195,7 @@ public class AssemblerRecipeLoader {
                 .input(stick, SamariumMagnetic)
                 .input(wireFine, Osmiridium, 16)
                 .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_LUV.getStackForm())
+                .outputs(VOLTAGE_COIL_LuV.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ZPM])

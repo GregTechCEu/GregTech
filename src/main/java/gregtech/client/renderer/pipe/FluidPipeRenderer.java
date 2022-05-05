@@ -1,13 +1,13 @@
 package gregtech.client.renderer.pipe;
 
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.Materials;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -15,13 +15,12 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FluidPipeRenderer extends PipeRenderer {
 
     public static final FluidPipeRenderer INSTANCE = new FluidPipeRenderer();
-    private final Map<MaterialIconSet, EnumMap<FluidPipeType, PipeTextureInfo>> pipeTextures = new HashMap<>();
+    private final EnumMap<FluidPipeType, TextureAtlasSprite> pipeTextures = new EnumMap<>(FluidPipeType.class);
+    private final EnumMap<FluidPipeType, TextureAtlasSprite> pipeTexturesWood = new EnumMap<>(FluidPipeType.class);
 
     private FluidPipeRenderer() {
         super("gt_fluid_pipe", new ResourceLocation(GTValues.MODID, "fluid_pipe"));
@@ -29,17 +28,17 @@ public class FluidPipeRenderer extends PipeRenderer {
 
     @Override
     public void registerIcons(TextureMap map) {
-        for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
-            EnumMap<FluidPipeType, PipeTextureInfo> pipeTypeMap = new EnumMap<>(FluidPipeType.class);
-            TextureAtlasSprite sideTexture = map.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_side"));
-            for (FluidPipeType itemPipeType : FluidPipeType.values()) {
-                ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + itemPipeType.name + "_in");
+        pipeTextures.put(FluidPipeType.TINY, Textures.PIPE_TINY);
+        pipeTextures.put(FluidPipeType.SMALL, Textures.PIPE_SMALL);
+        pipeTextures.put(FluidPipeType.NORMAL, Textures.PIPE_NORMAL);
+        pipeTextures.put(FluidPipeType.LARGE, Textures.PIPE_LARGE);
+        pipeTextures.put(FluidPipeType.HUGE, Textures.PIPE_HUGE);
+        pipeTextures.put(FluidPipeType.QUADRUPLE, Textures.PIPE_QUADRUPLE);
+        pipeTextures.put(FluidPipeType.NONUPLE, Textures.PIPE_NONUPLE);
 
-                TextureAtlasSprite inTexture = map.registerSprite(inLocation);
-                pipeTypeMap.put(itemPipeType, new PipeTextureInfo(inTexture, sideTexture));
-            }
-            this.pipeTextures.put(iconSet, pipeTypeMap);
-        }
+        pipeTexturesWood.put(FluidPipeType.SMALL, Textures.PIPE_SMALL_WOOD);
+        pipeTexturesWood.put(FluidPipeType.NORMAL, Textures.PIPE_NORMAL_WOOD);
+        pipeTexturesWood.put(FluidPipeType.LARGE, Textures.PIPE_LARGE_WOOD);
     }
 
     @Override
@@ -47,15 +46,22 @@ public class FluidPipeRenderer extends PipeRenderer {
         if (material == null || !(pipeType instanceof FluidPipeType)) {
             return;
         }
-        PipeTextureInfo textureInfo = this.pipeTextures.get(material.getMaterialIconSet()).get(pipeType);
-        renderContext.addOpenFaceRender(new IconTransformation(textureInfo.inTexture))
-                .addSideRender(new IconTransformation(textureInfo.sideTexture));
+        if(material == Materials.Wood || material == Materials.TreatedWood) {
+            TextureAtlasSprite sprite = pipeTexturesWood.get(pipeType);
+            if(sprite != null) {
+                renderContext.addOpenFaceRender(new IconTransformation(sprite));
+            } else {
+                renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)));
+            }
+            renderContext.addSideRender(new IconTransformation(Textures.PIPE_SIDE_WOOD));
+        } else {
+            renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
+                    .addSideRender(new IconTransformation(Textures.PIPE_SIDE));
+        }
     }
 
     @Override
     public TextureAtlasSprite getParticleTexture(IPipeType<?> pipeType, @Nullable Material material) {
-        if (material == null || !(pipeType instanceof FluidPipeType))
-            return TextureUtils.getMissingSprite();
-        return pipeTextures.get(material.getMaterialIconSet()).get(pipeType).sideTexture;
+        return Textures.PIPE_SIDE;
     }
 }

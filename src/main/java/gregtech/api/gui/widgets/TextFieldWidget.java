@@ -153,7 +153,6 @@ public class TextFieldWidget extends Widget {
         }
         this.textField.drawTextBox();
         GlStateManager.enableBlend();
-        GlStateManager.color(1,1,1,1);
     }
 
     @Override

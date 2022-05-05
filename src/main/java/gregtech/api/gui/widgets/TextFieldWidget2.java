@@ -36,6 +36,7 @@ public class TextFieldWidget2 extends Widget {
     private String localisedPostFix;
     private final Supplier<String> supplier;
     private final Consumer<String> setter;
+    private Consumer<TextFieldWidget2> onFocus;
     private Pattern regex;
     private Function<String, String> validator = s -> s;
     private boolean initialised = false;
@@ -135,7 +136,6 @@ public class TextFieldWidget2 extends Widget {
         }
         GlStateManager.popMatrix();
         GlStateManager.enableBlend();
-        GlStateManager.color(1, 1, 1, 1f);
     }
 
     @SideOnly(Side.CLIENT)
@@ -193,7 +193,11 @@ public class TextFieldWidget2 extends Widget {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
+
             focused = true;
+            if (onFocus != null) {
+                onFocus.accept(this);
+            }
             if (clickTime < 5) {
                 cursorPos = text.length();
                 cursorPos2 = 0;
@@ -316,10 +320,10 @@ public class TextFieldWidget2 extends Widget {
                 }
                 return true;
             }
-            if(keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
+            if (keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
                 if (cursorPos != cursorPos2) {
                     replaceMarkedText(null);
-                } else if(cursorPos < text.length()) {
+                } else if (cursorPos < text.length()) {
                     String t1 = text.substring(0, cursorPos);
                     String t2 = text.substring(cursorPos + 1);
                     text = t1 + t2;
@@ -370,7 +374,7 @@ public class TextFieldWidget2 extends Widget {
         return text;
     }
 
-    private void unFocus() {
+    public void unFocus() {
         if (!focused) return;
         cursorPos2 = cursorPos;
         text = validator.apply(text);
@@ -395,6 +399,12 @@ public class TextFieldWidget2 extends Widget {
             text = buffer.readString(maxLength);
             setter.accept(text);
             initialised = true;
+            if (cursorPos > text.length()) {
+                cursorPos = text.length();
+            }
+            if (cursorPos2 > text.length()) {
+                cursorPos2 = text.length();
+            }
         }
     }
 
@@ -515,6 +525,16 @@ public class TextFieldWidget2 extends Widget {
 
     public TextFieldWidget2 setMaxLength(int maxLength) {
         this.maxLength = maxLength;
+        return this;
+    }
+
+    /**
+     * Called when the text field gets focused. Only called on client.
+     * Use it to un focus other text fields.
+     * Optimally this should be done automatically, but that is not really possible with the way Modular UI is made
+     */
+    public TextFieldWidget2 setOnFocus(Consumer<TextFieldWidget2> onFocus) {
+        this.onFocus = onFocus;
         return this;
     }
 }

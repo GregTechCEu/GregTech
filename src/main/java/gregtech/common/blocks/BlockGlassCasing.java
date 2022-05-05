@@ -38,13 +38,18 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     @Override
     @Nonnull
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT; // The glasses here dont have the transparency as an ice block, and should not be rendered in TRANSLUCENT.
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
@@ -61,7 +66,8 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     public enum CasingType implements IStringSerializable {
 
         TEMPERED_GLASS("tempered_glass"),
-        FUSION_GLASS("fusion_glass");
+        FUSION_GLASS("fusion_glass"),
+        LAMINATED_GLASS("laminated_glass");
 
         private final String name;
 

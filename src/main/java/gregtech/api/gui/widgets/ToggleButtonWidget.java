@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -21,12 +22,15 @@ import java.util.function.BooleanSupplier;
 
 public class ToggleButtonWidget extends Widget {
 
+    private BooleanSupplier predicate;
+    private boolean isVisible = true;
     protected TextureArea buttonTexture;
     private final BooleanSupplier isPressedCondition;
     private final BooleanConsumer setPressedExecutor;
     private String tooltipText;
     private Object[] tooltipArgs;
     protected boolean isPressed;
+    private boolean shouldUseBaseBackground;
 
     public ToggleButtonWidget(int xPosition, int yPosition, int width, int height, BooleanSupplier isPressedCondition, BooleanConsumer setPressedExecutor) {
         this(xPosition, yPosition, width, height, GuiTextures.VANILLA_BUTTON, isPressedCondition, setPressedExecutor);
@@ -54,20 +58,39 @@ public class ToggleButtonWidget extends Widget {
         return this;
     }
 
+    public ToggleButtonWidget setPredicate(BooleanSupplier predicate) {
+        this.predicate = predicate;
+        this.isVisible = false;
+        return this;
+    }
+
+    public ToggleButtonWidget shouldUseBaseBackground() {
+        this.shouldUseBaseBackground = true;
+        return this;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        if (!isVisible) return;
         Position pos = getPosition();
         Size size = getSize();
-        if (buttonTexture instanceof SizedTextureArea) {
-            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height, isPressed ? 0.5 : 0.0, 0.5);
+        if (shouldUseBaseBackground) {
+            GuiTextures.TOGGLE_BUTTON_BACK.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, isPressed ? 0.5 : 0.0, 1.0, 0.5);
+            GlStateManager.color(1, 1, 1, 1);
+            buttonTexture.draw(pos.x, pos.y, size.width, size.height);
         } else {
-            buttonTexture.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, isPressed ? 0.5 : 0.0, 1.0, 0.5);
+            if (buttonTexture instanceof SizedTextureArea) {
+                ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height, isPressed ? 0.5 : 0.0, 0.5);
+            } else {
+                buttonTexture.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, isPressed ? 0.5 : 0.0, 1.0, 0.5);
+            }
         }
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
+        if (!isVisible) return;
         if (isMouseOverElement(mouseX, mouseY) && tooltipText != null) {
             String postfix = isPressed ? ".enabled" : ".disabled";
             String tooltipHoverString = tooltipText + postfix;
@@ -83,6 +106,10 @@ public class ToggleButtonWidget extends Widget {
             this.isPressed = isPressedCondition.getAsBoolean();
             writeUpdateInfo(1, buf -> buf.writeBoolean(isPressed));
         }
+        if (predicate != null && predicate.getAsBoolean() != isVisible) {
+            this.isVisible = predicate.getAsBoolean();
+            writeUpdateInfo(2, buf -> buf.writeBoolean(isVisible));
+        }
     }
 
     @Override
@@ -90,6 +117,8 @@ public class ToggleButtonWidget extends Widget {
         super.readUpdateInfo(id, buffer);
         if (id == 1) {
             this.isPressed = buffer.readBoolean();
+        } else if (id == 2) {
+            this.isVisible = buffer.readBoolean();
         }
     }
 
@@ -97,7 +126,7 @@ public class ToggleButtonWidget extends Widget {
     @SideOnly(Side.CLIENT)
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
-        if (isMouseOverElement(mouseX, mouseY)) {
+        if (isVisible && isMouseOverElement(mouseX, mouseY)) {
             this.isPressed = !this.isPressed;
             writeClientAction(1, buf -> buf.writeBoolean(isPressed));
             playButtonClickSound();

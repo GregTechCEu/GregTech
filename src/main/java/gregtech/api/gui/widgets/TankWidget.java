@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
@@ -26,8 +25,6 @@ import org.lwjgl.input.Keyboard;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class TankWidget extends Widget implements IIngredientSlot {
 
@@ -149,7 +146,6 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
-            GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         }
         if (overlayTexture != null) {
             overlayTexture.draw(pos.x, pos.y, size.width, size.height);
@@ -169,23 +165,10 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
                 // Add various tooltips from the material
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
-                if (formula != null && !formula.isEmpty()) {
-
-                    // Chemical Formula Tooltip
-                    if(!formula.get(0).isEmpty()) {
-                        tooltips.add(ChatFormatting.YELLOW + formula.get(0));
-                    }
-
-                    // Temperature Tooltip
-                    if(!formula.get(1).isEmpty()) {
-                        tooltips.add(LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(formula.get(1))));
-                    }
-
-                    // Fluid State Tooltip
-                    if(!formula.get(2).isEmpty()) {
-                        String result = Boolean.parseBoolean(formula.get(2)) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
-                                LocalizationUtils.format("gregtech.fluid.state_liquid");
-                        tooltips.add(result);
+                if (formula != null) {
+                    for (String s : formula) {
+                        if (s.isEmpty()) continue;
+                        tooltips.add(s);
                     }
                 }
 

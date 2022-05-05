@@ -1,13 +1,12 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -15,7 +14,6 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSounds;
@@ -26,7 +24,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -55,7 +52,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityProcessingArray(metaTileEntityId, tier);
     }
 
@@ -155,6 +152,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
     }
 
+    @Override
+    public int getItemOutputLimit() {
+        ItemStack machineStack = ((ProcessingArrayWorkable) this.recipeMapWorkable).getMachineStack();
+        MetaTileEntity mte = GTUtility.getMetaTileEntity(machineStack);
+        return mte == null ? 0 : mte.getItemOutputLimit();
+
+    }
+
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
@@ -227,7 +232,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             ItemStack machine = controller.getAbilities(MultiblockAbility.MACHINE_HATCH).get(0).getStackInSlot(0);
 
 
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machine);
+            MetaTileEntity mte = GTUtility.getMetaTileEntity(machine);
 
             if (mte == null)
                 this.activeRecipeMap = null;
@@ -249,8 +254,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
-            return super.findRecipe(Math.min(super.getMaxVoltage(), this.machineVoltage), inputs, fluidInputs, mode);
+        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+            return super.findRecipe(Math.min(super.getMaxVoltage(), this.machineVoltage), inputs, fluidInputs);
         }
 
         @Override
@@ -271,12 +276,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             );
         }
 
-        @Override
-        public boolean trimOutputs() {
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
-
-            //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            return mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+        private ItemStack getMachineStack() {
+            return currentMachineStack;
         }
     }
 }

@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
@@ -139,7 +140,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null) {
             return handleElectricItem(electricItem);
-        } else {
+        } else if (ConfigHolder.compat.energy.nativeEUToFE) {
             IEnergyStorage energyStorage = stackInSlot.getCapability(CapabilityEnergy.ENERGY, null);
             if (energyStorage != null) {
                 return handleForgeEnergyItem(energyStorage);
@@ -178,7 +179,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
 
         if (chargePercent > 0.5) {
-            int chargedBy = energyStorage.receiveEnergy((int) (GTValues.V[machineTier] * ConfigHolder.compat.energy.rfRatio), false);
+            long chargedBy = FeCompat.insertEu(energyStorage, GTValues.V[machineTier]);
             removeEnergy(chargedBy);
             return chargedBy > 0;
         }

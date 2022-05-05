@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -16,13 +17,15 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
+import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
+import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.properties.IProperty;
@@ -47,6 +50,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
@@ -98,7 +102,7 @@ public class GTUtility {
     public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            if (itemStack.getItem() instanceof ToolMetaItem) {
+            if (fixTools && itemStack.getItem() instanceof ToolMetaItem) {
                 ItemStack toolStack = itemStack.copy();
                 NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
                 toolStats.setInteger("Dmg", 0);
@@ -611,8 +615,8 @@ public class GTUtility {
         for (EntityPlayerMP player : entities) {
             if (player.openContainer instanceof ModularUIContainer) {
                 ModularUI modularUI = ((ModularUIContainer) player.openContainer).getModularUI();
-                if (modularUI.holder instanceof MetaTileEntityHolder &&
-                        ((MetaTileEntityHolder) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
+                if (modularUI.holder instanceof IGregTechTileEntity &&
+                        ((IGregTechTileEntity) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
                     result.add(player);
                 }
             }
@@ -647,7 +651,11 @@ public class GTUtility {
 
     public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
-        return compound == null ? new NBTTagCompound() : compound;
+        if (compound == null) {
+            compound = new NBTTagCompound();
+            stack.setTagCompound(compound);
+        }
+        return compound;
     }
 
     public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
@@ -937,8 +945,10 @@ public class GTUtility {
             return false;
         }
 
-        MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
-        if (machine instanceof WorkableTieredMetaTileEntity)
+        MetaTileEntity machine = getMetaTileEntity(machineStack);
+        // Blacklist the Rock Breaker here instead of through the config option so we don't get people removing the config entry and then
+        // complaining it does not work. Remove from here if we ever decide to implement PA Rock Breaker
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity || machine instanceof MetaTileEntityRockBreaker))
             return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
 
         return false;
@@ -991,7 +1001,7 @@ public class GTUtility {
         return result.toString();
     }
 
-  public static String formatNumbers(long number) {
+    public static String formatNumbers(long number) {
         return NUMBER_FORMAT.format(number);
     }
 
@@ -1006,4 +1016,14 @@ public class GTUtility {
         return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
     }
 
+    public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
+        if (world == null || pos == null) return null;
+        TileEntity te = world.getTileEntity(pos);
+        return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
+    }
+
+    public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
+        if (!(stack.getItem() instanceof MachineItemBlock)) return null;
+        return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+    }
 }

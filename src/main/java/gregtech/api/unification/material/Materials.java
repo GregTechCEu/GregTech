@@ -91,8 +91,8 @@ public class Materials {
          * - Gregicality: 3000-19999
          * - FREE RANGE 20000-20999
          * - HtmlTech: 21000-21499
-         * - GregTech Food Option: 21500-21599
-         * - PCM's Ore Addon: 21600-23599
+         * - GregTech Food Option: 21500-21999
+         * - PCM's Ore Addon: 22000-23599
          * - MechTech: 23600-23999
          * - FREE RANGE 24000-31999
          * - Reserved for CraftTweaker: 32000-32767
@@ -534,12 +534,18 @@ public class Materials {
     public static Material Ethylbenzene;
     public static Material Naphthalene;
     public static Material Nitrobenzene;
+    public static Material Cyclohexane;
+    public static Material NitrosylChloride;
+    public static Material CyclohexanoneOxime;
+    public static Material Caprolactam;
     public static Material PlatinumSludgeResidue;
     public static Material PalladiumRaw;
     public static Material RarestMetalMixture;
     public static Material AmmoniumChloride;
     public static Material AcidicOsmiumSolution;
     public static Material RhodiumPlatedPalladium;
+    public static Material Butyraldehyde;
+    public static Material PolyvinylButyral;
 
     /**
      * Not possible to determine exact Components
@@ -670,6 +676,7 @@ public class Materials {
     public static Material AcidicNaquadriaSolution;
     public static Material NaquadriaWaste;
     public static Material Lapotron;
+    public static Material UUMatter;
 
     /**
      * Second Degree Compounds

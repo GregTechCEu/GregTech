@@ -60,7 +60,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                     TerminalDialogWidget.showInfoDialog(os, "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
                 }
             }
-        }).setClientSide().open());
+        }, texture.color).setClientSide().open());
         addWidget(buttonWidget);
     }
 

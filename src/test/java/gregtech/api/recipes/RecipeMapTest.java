@@ -1,10 +1,8 @@
 package gregtech.api.recipes;
 
+import gregtech.Bootstrap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.unification.material.Materials;
-import gregtech.common.MetaFluids;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,10 +19,8 @@ import static org.junit.Assert.assertNotNull;
 public class RecipeMapTest {
 
     @BeforeClass
-    public static void init() {
-        Bootstrap.register();
-        Materials.register();
-        MetaFluids.init();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     @Test
@@ -66,13 +62,13 @@ public class RecipeMapTest {
                 .EUt(1).duration(1)
                 .buildAndRegister();
 
-        assertEquals(3,map.getRecipeList().size());
+        assertEquals(3, map.getRecipeList().size());
 
-        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0, MatchingMode.DEFAULT);
+        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0);
         assertNotNull(r);
 
         // This test is failing for me locally -dan
-        Recipe r2 = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.STONE)), Collections.singletonList(new FluidStack(FluidRegistry.WATER,1)), 0, MatchingMode.DEFAULT);
+        Recipe r2 = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.STONE)), Collections.singletonList(new FluidStack(FluidRegistry.WATER, 1)), 0);
         assertNotNull(r2);
     }
 
@@ -104,8 +100,24 @@ public class RecipeMapTest {
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
                         NitrogenDioxide.getFluid(1000)),
-                64000, MatchingMode.DEFAULT);
+                64000);
         assertNotNull(r);
+
+        map.recipeBuilder()
+                .notConsumable(Epichlorohydrin.getFluid(144))
+                .notConsumable(Naphtha.getFluid(3000))
+                .notConsumable(NitrogenDioxide.getFluid(1000))
+                .fluidOutputs(Epoxy.getFluid(288))
+                .duration(240).EUt(40).buildAndRegister();
+
+        Recipe r2 = map.findRecipe(40,
+                Collections.singletonList(ItemStack.EMPTY),
+                Arrays.asList(
+                        Epichlorohydrin.getFluid(144),
+                        Naphtha.getFluid(3000),
+                        NitrogenDioxide.getFluid(1000)),
+                64000);
+        assertNotNull(r2);
     }
 
 }

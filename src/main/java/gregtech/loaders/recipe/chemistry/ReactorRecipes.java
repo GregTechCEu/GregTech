@@ -21,19 +21,21 @@ public class ReactorRecipes {
     public static void init() {
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(Isoprene.getFluid(144))
                 .fluidInputs(Air.getFluid(2000))
                 .output(dust, RawRubber)
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(Isoprene.getFluid(144))
                 .fluidInputs(Oxygen.getFluid(2000))
                 .output(dust, RawRubber, 3)
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Propene.getFluid(2000))
                 .fluidOutputs(Methane.getFluid(1000))
                 .fluidOutputs(Isoprene.getFluid(1000))
@@ -156,13 +158,6 @@ public class ReactorRecipes {
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .fluidOutputs(Dichlorobenzene.getFluid(1000))
                 .duration(120).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
-                .input(dust, Sodium)
-                .fluidInputs(Water.getFluid(1000))
-                .output(dust, SodiumHydroxide, 3)
-                .duration(40).EUt(8).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(NitrationMixture.getFluid(3000))
@@ -301,6 +296,7 @@ public class ReactorRecipes {
                 .duration(60).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(PhosphoricAcid.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(8000))
                 .fluidInputs(Propene.getFluid(8000))
@@ -413,6 +409,7 @@ public class ReactorRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Ammonia.getFluid(1000))
                 .fluidInputs(Methanol.getFluid(2000))
                 .fluidOutputs(Water.getFluid(2000))
@@ -513,10 +510,10 @@ public class ReactorRecipes {
                 .duration(1100).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumBisulfate, 7)
-                .fluidInputs(Water.getFluid(1000))
-                .output(dust, SodiumHydroxide, 3)
-                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .input(dust, SodiumHydroxide, 3)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(dust, SodiumBisulfate, 7)
+                .fluidOutputs(Water.getFluid(1000))
                 .duration(60).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -525,13 +522,6 @@ public class ReactorRecipes {
                 .fluidInputs(Toluene.getFluid(1000))
                 .outputs(MetaItems.GELLED_TOLUENE.getStackForm(20))
                 .duration(140).EUt(192).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Saltpeter)
-                .fluidInputs(Naphtha.getFluid(576))
-                .output(dustTiny, Potassium)
-                .fluidOutputs(Polycaprolactam.getFluid(1296))
-                .duration(640).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Calcium)
@@ -692,5 +682,18 @@ public class ReactorRecipes {
                 .fluidInputs(Chlorine.getFluid(1000))
                 .output(dust, Salt, 2)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Propene.getFluid(1000))
+                .fluidInputs(Hydrogen.getFluid(2000))
+                .fluidInputs(CarbonMonoxide.getFluid(1000))
+                .fluidOutputs(Butyraldehyde.getFluid(1000))
+                .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Butyraldehyde.getFluid(250))
+                .fluidInputs(PolyvinylAcetate.getFluid(144))
+                .fluidOutputs(PolyvinylButyral.getFluid(144))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
     }
 }

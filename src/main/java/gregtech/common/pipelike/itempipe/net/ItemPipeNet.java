@@ -5,6 +5,7 @@ import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -13,10 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -30,6 +29,10 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = ItemNetWalker.createNetData(getWorldData(), pipePos, facing);
+            if (data == null) {
+                // walker failed, don't cache so it tries again on next insertion
+                return Collections.emptyList();
+            }
             data.sort(Comparator.comparingInt(inv -> inv.properties.getPriority()));
             NET_DATA.put(pipePos, data);
         }
@@ -42,17 +45,16 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
+    public void onPipeConnectionsUpdate() {
+        NET_DATA.clear();
+    }
+
+    @Override
     protected void transferNodeData(Map<BlockPos, Node<ItemPipeProperties>> transferredNodes, PipeNet<ItemPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
-
-    @Override
-    protected void onPipeConnectionsUpdate() {
-        NET_DATA.clear();
-    }
-
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
@@ -70,12 +72,14 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         private final EnumFacing faceToHandler;
         private final int distance;
         private final ItemPipeProperties properties;
+        private final List<Predicate<ItemStack>> filters;
 
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties) {
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties, List<Predicate<ItemStack>> filters) {
             this.pipePos = pipePos;
             this.faceToHandler = facing;
             this.distance = distance;
             this.properties = properties;
+            this.filters = filters;
         }
 
         public BlockPos getPipePos() {
@@ -92,6 +96,19 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
         public ItemPipeProperties getProperties() {
             return properties;
+        }
+
+        public List<Predicate<ItemStack>> getFilters() {
+            return filters;
+        }
+
+        public boolean matchesFilters(ItemStack stack) {
+            for (Predicate<ItemStack> filter : filters) {
+                if (!filter.test(stack)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public BlockPos getHandlerPos() {

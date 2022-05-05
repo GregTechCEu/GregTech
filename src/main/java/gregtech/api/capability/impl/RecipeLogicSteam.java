@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.advancement.GTTriggers;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -100,7 +101,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
             this.needsVenting = buf.readBoolean();
         } else if (dataId == GregtechDataCodes.VENTING_SIDE) {
             this.ventingSide = EnumFacing.VALUES[buf.readByte()];
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            getMetaTileEntity().scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.VENTING_STUCK) {
             this.ventingStuck = buf.readBoolean();
         }
@@ -159,7 +160,9 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
                 ventingSide.getZOffset() / 2.0, 0.1);
-        world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
+            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
         setNeedsVenting(false);
 
     }
@@ -187,14 +190,15 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return standardOverclockingLogic((isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt()) * (negativeEU ? -1 : 1),
-                getMaxVoltage(),
-                isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2,
-                getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier(),
-                maxOverclocks
-        );
+    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+
+        //EUt, Duration
+        int[] result = new int[2];
+
+        result[0] = isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt();
+        result[1] = isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2;
+
+        return result;
     }
 
     @Override

@@ -7,11 +7,13 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.server.command.CommandTreeBase;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.List;
 
 public class GregTechCommand extends CommandTreeBase {
@@ -20,6 +22,7 @@ public class GregTechCommand extends CommandTreeBase {
         addSubcommand(new CommandWorldgen());
         addSubcommand(new CommandHand());
         addSubcommand(new CommandRecipeCheck());
+        addSubcommand(new CommandShaders());
     }
 
     @Nonnull
@@ -41,7 +44,7 @@ public class GregTechCommand extends CommandTreeBase {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, String[] args) throws CommandException {
         if (args.length > 0) {
             if (args[0].equals("copy")) {
                 StringBuilder message = new StringBuilder();
@@ -54,7 +57,9 @@ public class GregTechCommand extends CommandTreeBase {
 
                 if (sender.getCommandSenderEntity() instanceof EntityPlayerMP) {
                     ClipboardUtil.copyToClipboard((EntityPlayerMP) sender.getCommandSenderEntity(), message.toString());
-                    sender.sendMessage(new TextComponentString("Copied [\u00A76" + message.toString() + "\u00A7r] to the clipboard"));
+                    sender.sendMessage(new TextComponentTranslation("gregtech.command.copy.copied_start")
+                            .appendSibling(new TextComponentString(message.toString()).setStyle(new Style().setColor(TextFormatting.GOLD)))
+                            .appendSibling(new TextComponentTranslation("gregtech.command.copy.copied_end")));
                 }
                 return;
             }

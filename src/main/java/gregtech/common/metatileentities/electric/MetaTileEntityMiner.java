@@ -17,8 +17,8 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
@@ -60,7 +60,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMiner(metaTileEntityId, getTier(), this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(), this.minerLogic.getFortune());
     }
 
@@ -130,10 +130,10 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     private void addDisplayText(@Nonnull List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get())));
-        textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get())));
-        textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", this.minerLogic.getCurrentRadius())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -147,9 +147,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     private void addDisplayText2(@Nonnull List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("mX: %d", this.minerLogic.getMineX().get())));
-        textList.add(new TextComponentString(String.format("mY: %d", this.minerLogic.getMineY().get())));
-        textList.add(new TextComponentString(String.format("mZ: %d", this.minerLogic.getMineZ().get())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
     }
 
     @Override

@@ -5,17 +5,22 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class CoverShutter extends CoverBehavior {
+public class CoverShutter extends CoverBehavior implements IControllable {
+
+    private boolean isWorkingAllowed = true;
 
     public CoverShutter(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -43,11 +48,36 @@ public class CoverShutter extends CoverBehavior {
 
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
-        return null;
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return isWorkingEnabled() ? null : defaultValue;
     }
 
     @Override
     public boolean shouldAutoConnect() {
         return false;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return isWorkingAllowed;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        isWorkingAllowed = isActivationAllowed;
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
     }
 }

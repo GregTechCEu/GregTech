@@ -1,5 +1,6 @@
 package gregtech.api.recipes.logic;
 
+import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -10,18 +11,14 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
-import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -46,18 +43,15 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     private static boolean enableBonusOverride = false;
 
     @BeforeClass
-    public static void init() {
-        Bootstrap.register();
-        Materials.register();
-        OrePrefix.runMaterialHandlers();
-        MetaItems.init();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     private static ResourceLocation gregtechId(String name) {
         return new ResourceLocation(GTValues.MODID, name);
     }
 
-    private void initEBF(int id) {
+    private MetaTileEntityElectricBlastFurnace initEBF(int id) {
 
         World world = DummyWorld.INSTANCE;
 
@@ -120,7 +114,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             e.printStackTrace();
         }
 
-        mbt.getHolder().setWorld(world);
+        ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
         //Controller and isAttachedToMultiBlock need the world so we fake it here.
         importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
@@ -179,12 +173,14 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+
+        return (MetaTileEntityElectricBlastFurnace) mbt;
     }
 
     @Test
     public void findMultipliedRecipe_AtMaxParallelsTest() {
 
-        initEBF(511);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(511);
 
         int parallelLimit = 4;
 
@@ -214,7 +210,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false, false);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
@@ -238,7 +234,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     @Test
     public void findMultipliedRecipe_LessThanMaxParallelsTest() {
 
-        initEBF(512);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(512);
 
         int parallelLimit = 4;
 
@@ -268,7 +264,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false, false);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
@@ -291,7 +287,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
     @Test
     public void findAppendedParallelItemRecipe_AtMaxParallelsTest() {
-        initEBF(513);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(513);
 
 
         int parallelLimit = 4;
@@ -322,7 +318,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 120, false, false);
+                exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
@@ -342,7 +338,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
     @Test
     public void findAppendedParallelItemRecipe_LessThanMaxParallelsTest() {
-        initEBF(514);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(514);
 
 
         int parallelLimit = 4;
@@ -373,7 +369,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 120, false, false);
+                exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
@@ -394,7 +390,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     // An end to end test for finding parallel recipes
     @Test
     public void findParallelRecipe_Test() {
-        initEBF(515);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(515);
 
         int parallelLimit = 4;
 
@@ -417,6 +413,11 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             @Override
             public long getMaxVoltage() {
                 return 32;
+            }
+
+            @Override
+            public MetaTileEntity getMetaTileEntity() {
+                return EBF;
             }
         };
 
@@ -466,7 +467,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     // An end to end test for finding parallel recipes
     @Test
     public void findParallelRecipe_FailingFromInputTest() {
-        initEBF(516);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(516);
 
         int parallelLimit = 4;
 
@@ -489,6 +490,11 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             @Override
             public long getMaxVoltage() {
                 return 32;
+            }
+
+            @Override
+            public MetaTileEntity getMetaTileEntity() {
+                return EBF;
             }
         };
 
@@ -527,7 +533,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     // An end to end test for finding parallel recipes
     @Test
     public void findParallelRecipe_FailingFromOutputTest() {
-        initEBF(517);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(517);
 
         int parallelLimit = 4;
 
@@ -550,6 +556,11 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             @Override
             public long getMaxVoltage() {
                 return 32;
+            }
+
+            @Override
+            public MetaTileEntity getMetaTileEntity() {
+                return EBF;
             }
         };
 
@@ -589,7 +600,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
     @Test
     public void applyParallelBonus_Test() {
-        initEBF(518);
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(518);
 
         int parallelLimit = 4;
 
@@ -614,6 +625,11 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             @Override
             public long getMaxVoltage() {
                 return 32;
+            }
+
+            @Override
+            public MetaTileEntity getMetaTileEntity() {
+                return EBF;
             }
         };
 

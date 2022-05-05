@@ -17,12 +17,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import java.util.Iterator;
-import java.util.Map;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -52,10 +48,6 @@ public class VanillaOverrideRecipes {
         toolArmorRecipes();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
-
-        if(ConfigHolder.recipes.harderCharcoalRecipe) {
-            removeCharcoalRecipes();
-        }
     }
 
     private static void woodRecipes() {
@@ -242,18 +234,6 @@ public class VanillaOverrideRecipes {
      * - Removes Glass Bottle Crafting
      */
     private static void glassRecipes() {
-        ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
-                'S', new ItemStack(Blocks.SAND));
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAND))
-                .output(OrePrefix.dust, Materials.QuartzSand)
-                .duration(30).buildAndRegister();
-
-        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
-                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
-                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
-
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
         ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));
     }
@@ -1069,20 +1049,5 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe(regName, output, "P P", "PhP",
                 'P', new UnificationEntry(OrePrefix.plate, material)
         );
-    }
-
-    private static void removeCharcoalRecipes() {
-        Map<ItemStack, ItemStack> furnaceRecipes = FurnaceRecipes.instance().getSmeltingList();
-
-        Iterator<Map.Entry<ItemStack, ItemStack>> recipeIterator = furnaceRecipes.entrySet().iterator();
-
-        while(recipeIterator.hasNext()) {
-            Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
-            if(recipe.getValue().isItemEqual(new ItemStack(Items.COAL, 1, 1))) {
-                if(OreDictUnifier.getOreDictionaryNames(recipe.getKey()).contains("logWood")) {
-                    recipeIterator.remove();
-                }
-            }
-        }
     }
 }

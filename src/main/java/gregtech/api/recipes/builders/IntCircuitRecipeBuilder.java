@@ -52,14 +52,14 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     @Override
     protected EnumValidationResult finalizeAndValidate() {
         if (circuitMeta >= 0) {
-            inputs.add(new CountableIngredient(new IntCircuitIngredient(circuitMeta), 0));
+            inputs.add(new CountableIngredient(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
         }
         return super.finalizeAndValidate();
     }
 
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden));
+                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
     }
 
     @Override

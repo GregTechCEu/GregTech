@@ -3,8 +3,8 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
@@ -23,13 +23,10 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
-        if (getWorld() != null && !getWorld().isRemote) {
-            checkAdjacentFluids();
-        }
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityRockBreaker(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, getTier());
     }
 
@@ -47,6 +44,10 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     private void checkAdjacentFluids() {
+        if (getWorld() == null || getWorld().isRemote) {
+            hasValidFluids = false;
+            return;
+        }
         boolean hasLava = false;
         boolean hasWater = false;
         for (EnumFacing side : EnumFacing.VALUES) {

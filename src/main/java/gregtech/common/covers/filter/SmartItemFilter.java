@@ -2,9 +2,11 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.recipes.*;
+import gregtech.api.recipes.CountableIngredient;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.stack.ItemAndMetadata;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
@@ -13,13 +15,11 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
 
     private SmartFilteringMode filteringMode = SmartFilteringMode.ELECTROLYZER;
-    private SmartMatchingMode matchingMode = SmartMatchingMode.DEFAULT;
 
     public SmartFilteringMode getFilteringMode() {
         return filteringMode;
@@ -30,18 +30,8 @@ public class SmartItemFilter extends ItemFilter {
         markDirty();
     }
 
-    public SmartMatchingMode getMatchingMode() {
-        return matchingMode;
-    }
-
-    public void setMatchingMode(SmartMatchingMode matchingMode) {
-        filteringMode.transferStackSizesCache.clear();
-        this.matchingMode = matchingMode;
-        markDirty();
-    }
-
     @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
+    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
         ItemAndMetadataAndStackSize itemAndMetadata = (ItemAndMetadataAndStackSize) matchSlot;
         return itemAndMetadata.transferStackSize;
     }
@@ -55,7 +45,7 @@ public class SmartItemFilter extends ItemFilter {
             ItemStack infinitelyBigStack = itemStack.copy();
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
-            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE, Collections.singletonList(infinitelyBigStack), Collections.emptyList(), Integer.MAX_VALUE, matchingMode.matchingMode);
+            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE, Collections.singletonList(infinitelyBigStack), Collections.emptyList(), Integer.MAX_VALUE);
             if (recipe == null) {
                 filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
@@ -77,9 +67,6 @@ public class SmartItemFilter extends ItemFilter {
         widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
                 SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
                 .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
-        widgetGroup.accept(new CycleButtonWidget(10, 20, 75, 20,
-                SmartMatchingMode.class, this::getMatchingMode, this::setMatchingMode)
-                .setTooltipHoverString("cover.smart_item_filter.matching_mode.description"));
     }
 
     @Override
@@ -95,15 +82,11 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setInteger("FilterMode", filteringMode.ordinal());
-        tagCompound.setInteger("MatchingMode", matchingMode.ordinal());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
-        if (tagCompound.hasKey("MatchingMode")) {
-            this.matchingMode = SmartMatchingMode.values()[tagCompound.getInteger("MatchingMode")];
-        }
     }
 
     private static class ItemAndMetadataAndStackSize {
@@ -150,25 +133,5 @@ public class SmartItemFilter extends ItemFilter {
         }
     }
 
-    public enum SmartMatchingMode implements IStringSerializable {
-
-        DEFAULT("cover.smart_item_filter.matching_mode.default", MatchingMode.DEFAULT),
-        IGNORE_FLUID("cover.smart_item_filter.matching_mode.ignore_fluid", MatchingMode.IGNORE_FLUIDS);
-
-        public final String localeName;
-        public final MatchingMode matchingMode;
-
-        SmartMatchingMode(String localeName, MatchingMode matchingMode) {
-            this.localeName = localeName;
-            this.matchingMode = matchingMode;
-        }
-
-        @Nonnull
-        @Override
-        public String getName() {
-            return localeName;
-        }
-
-    }
 
 }

@@ -38,6 +38,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -162,14 +163,21 @@ public class ModHandler {
     public static void addSmeltingRecipe(UnificationEntry input, ItemStack output) {
         List<ItemStack> allStacks = OreDictUnifier.getAll(input);
         for (ItemStack inputStack : allStacks) {
-            addSmeltingRecipe(inputStack, output);
+            addSmeltingRecipe(inputStack, output, 0.0f);
+        }
+    }
+
+    public static void addSmeltingRecipe(UnificationEntry input, ItemStack output, float experience) {
+        List<ItemStack> allStacks = OreDictUnifier.getAll(input);
+        for (ItemStack inputStack : allStacks) {
+            addSmeltingRecipe(inputStack, output, experience);
         }
     }
 
     /**
      * Just simple Furnace smelting
      */
-    public static void addSmeltingRecipe(ItemStack input, ItemStack output) {
+    public static void addSmeltingRecipe(ItemStack input, ItemStack output, float experience) {
         boolean skip = false;
         if (input.isEmpty()) {
             GTLog.logger.error("Input cannot be an empty ItemStack", new IllegalArgumentException());
@@ -186,7 +194,7 @@ public class ModHandler {
 
         if (recipes.getSmeltingResult(input).isEmpty()) {
             //register only if there is no recipe with duplicate input
-            recipes.addSmeltingRecipe(input, output, 0.0f);
+            recipes.addSmeltingRecipe(input, output, experience);
         }
     }
 
@@ -616,14 +624,8 @@ public class ModHandler {
             return false;
         }
 
-        boolean wasRemoved = false;
-        for (ItemStack stack : FurnaceRecipes.instance().getSmeltingList().keySet()) {
-            if (ItemStack.areItemStacksEqual(input, stack)) {
-                FurnaceRecipes.instance().getSmeltingList().remove(stack);
-                wasRemoved = true;
-                break;
-            }
-        }
+        boolean wasRemoved = FurnaceRecipes.instance().getSmeltingList().keySet().removeIf(currentStack -> currentStack.getItem() == input.getItem() && (currentStack.getMetadata() == GTValues.W || currentStack.getMetadata() == input.getMetadata()));
+
         if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
@@ -750,7 +752,7 @@ public class ModHandler {
      */
     public static void removeSmeltingEBFMetals() {
 
-        boolean isCTLoaded = GTValues.isModLoaded(GTValues.MODID_CT);
+        boolean isCTLoaded = Loader.isModLoaded(GTValues.MODID_CT);
 
         Field actionAddFurnaceRecipe$output = null;
 

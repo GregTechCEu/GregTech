@@ -3,9 +3,8 @@ package gregtech.common.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
-import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.input.EnumKey;
+import gregtech.api.util.input.KeyBind;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -43,7 +42,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
         byte toggleTimer = nbtData.getByte("toggleTimer");
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
-            if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
+            if (toggleTimer == 0 && KeyBind.ARMOR_MODE_SWITCH.isKeyDown(player)) {
                 toggleTimer = 5;
                 if (!nightvision && item.getCharge() >= 4) {
                     nightvision = true;

@@ -10,25 +10,40 @@ import java.util.Objects;
 public class FluidKey {
 
     public final String fluid;
-    public final NBTTagCompound tag;
+    // Don't make this final, so we can clear the NBT if we remove the only key, resulting in an NBT of {}. Thanks Forge
+    public NBTTagCompound tag;
+    private final int amount;
 
     public FluidKey(FluidStack fluidStack) {
         this.fluid = fluidStack.getFluid().getName();
         this.tag = fluidStack.tag;
+        this.amount = fluidStack.amount;
     }
+
+    public FluidKey copy() {
+        return new FluidKey(new FluidStack(getFluid(), this.amount, tag));
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FluidKey)) return false;
         FluidKey fluidKey = (FluidKey) o;
-        return Objects.equals(fluid, fluidKey.fluid) &&
-                Objects.equals(tag, fluidKey.tag);
+        if (!Objects.equals(fluid, fluidKey.fluid) )
+            return false;
+        if (tag == null && fluidKey.tag != null) return false;
+        else return tag == null || tag.equals(fluidKey.tag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluid, tag);
+        int hash = 0;
+        hash += Objects.hash(fluid);
+        if (tag != null && !tag.isEmpty()) {
+            hash += tag.hashCode();
+        }
+        return hash;
     }
 
     @Override

@@ -17,6 +17,7 @@ import java.util.Objects;
 public class EnergyNetHandler implements IEnergyContainer {
 
     private EnergyNet net;
+    private boolean transfer;
     private final TileEntityCable cable;
     private final EnumFacing facing;
 
@@ -45,7 +46,13 @@ public class EnergyNetHandler implements IEnergyContainer {
     }
 
     @Override
+    public long getEnergyCanBeInserted() {
+        return transfer ? 0 : getEnergyCapacity();
+    }
+
+    @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        if (transfer) return 0;
         if (side == null) {
             if (facing == null) return 0;
             side = facing;
@@ -65,31 +72,49 @@ public class EnergyNetHandler implements IEnergyContainer {
             EnumFacing facing = path.getFaceToHandler().getOpposite();
             if (dest == null || !dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
             long v = voltage - path.getMaxLoss();
-            if(v <= 0)
+            if (v <= 0)
                 continue;
 
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage) {
+                    int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 45 + 36.5);
+                    boolean cableBroken = false;
                     for (TileEntityCable cable1 : path.getPath()) {
-                        burnCable(cable1.getWorld(), cable1.getPos());
+                        cable1.applyHeat(heat);
+                        cableBroken |= cable1.isInvalid();
                     }
-                    break outer;
+                    if (cableBroken) {
+                        // a cable burned away (or insulation melted)
+                        break outer;
+                    }
+                    v = Math.min(cable.getMaxVoltage(), v); // limit transfer to cables max and void rest
                 }
             }
 
+            transfer = true;
             long amps = dest.acceptEnergyFromNetwork(facing, v, amperage - amperesUsed);
+            transfer = false;
             if(amps == 0)
                 continue;
             amperesUsed += amps;
 
             long voltageTraveled = voltage;
+            boolean cableBroken = false;
             for (TileEntityCable cable : path.getPath()) {
                 voltageTraveled -= cable.getNodeData().getLossPerBlock();
-                if(voltageTraveled <= 0)
+                if (voltageTraveled <= 0)
                     break;
-                if(cable.incrementAmperage(amps, voltageTraveled)) {
-                    burnCable(cable.getWorld(), cable.getPos());
+                if (cable.isInvalid()) {
+                    cableBroken = true;
+                } else {
+                    cable.incrementAmperage(amps, voltageTraveled);
                 }
+            }
+
+            if (cableBroken) {
+                // a cable burned away (or insulation melted)
+                // recompute net data
+                break;
             }
 
             if (amperage == amperesUsed)

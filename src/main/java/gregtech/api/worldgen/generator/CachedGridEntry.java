@@ -99,7 +99,9 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
             int masterHeight = world.getHeight(heightSpot).getY();
             int masterBottomHeight = world.getTopSolidOrLiquidBlock(heightSpot).getY();
             this.masterEntry = primerChunk.getCapability(GTWorldGenCapability.CAPABILITY, null);
-            this.masterEntry = new GTWorldGenCapability();
+            if(this.masterEntry == null) {
+                this.masterEntry = new GTWorldGenCapability();
+            }
             this.masterEntry.setMaxHeight(masterHeight, masterBottomHeight);
         }
 

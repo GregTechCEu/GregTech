@@ -19,8 +19,6 @@ public class GregtechDataCodes {
 
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = 560;
-    public static final int SYNC_FLUID_CONTENT = -200;
-    public static final int SYNC_FLUID_AMOUNT = -201;
 
     // Safe
     public static final int UPDATE_LOCKED_STATE = 8;
@@ -40,6 +38,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
+    public static final int INIT_CLIPBOARD_NBT = 3;
 
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
@@ -60,10 +59,12 @@ public class GregtechDataCodes {
     public static final int UPDATE_COVER_DATA_PIPE = 0;
     public static final int COVER_ATTACHED_PIPE = 1;
     public static final int COVER_REMOVED_PIPE = 2;
+    public static final int CABLE_UPDATE_TEMP = 3;
 
     // Multiblock implementation update codes
     public static final int SYNC_CONTROLLER = 100;
     public static final int IS_ROTOR_LOOPING = 200;
+    public static final int FRONT_FACE_FREE = 201;
     public static final int UPDATE_ROTOR_COLOR = 201;
     public static final int STRUCTURE_FORMED = 400;
     public static final int IS_TAPED = 550;
@@ -72,12 +73,6 @@ public class GregtechDataCodes {
     public static final int RECIPE_MAP_INDEX = 553;
     public static final int IS_FRONT_FACE_FREE = 554;
     public static final int MAINTENANCE_MULTIPLIER = 555;
-
-    // Multiblock Fluid Tank implementation update codes
-    public static final int UPDATE_CONTROLLER_POSITION = 1;
-    public static final int DEFORM_TANK = 2;
-    public static final int SYNC_FLUID_CHANGE = 3;
-    public static final int SYNC_TANK_SHAPE = 4;
 
     // Fusion Reactor
     public static final int UPDATE_COLOR = 371;

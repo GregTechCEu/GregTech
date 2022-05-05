@@ -19,18 +19,18 @@ public class SlotUtil {
         } else if (mouseButton == 0 || mouseButton == 1) {
 
             if (stackSlot.isEmpty()) {
-                if (!stackHeld.isEmpty() && slot.isItemValid(stackHeld)) {
+                if (!stackHeld.isEmpty()) {
                     fillPhantomSlot(slot, stackHeld, mouseButton);
                 }
             } else if (stackHeld.isEmpty()) {
                 adjustPhantomSlot(slot, mouseButton, clickTypeIn);
-            } else if (slot.isItemValid(stackHeld)) {
+            } else {
                 if (areItemsEqual(stackSlot, stackHeld)) {
                     adjustPhantomSlot(slot, mouseButton, clickTypeIn);
                 }
                 fillPhantomSlot(slot, stackHeld, mouseButton);
             }
-        } else if (mouseButton == 5) {
+        } else if (mouseButton == 5 || mouseButton == -1) {
             if (!slot.getHasStack()) {
                 fillPhantomSlot(slot, stackHeld, mouseButton);
             }

@@ -30,7 +30,13 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
         ACID_HAZARD("acid_hazard"),
         MAGIC_HAZARD("magic_hazard"),
         FROST_HAZARD("frost_hazard"),
-        NOISE_HAZARD("noise_hazard");
+        NOISE_HAZARD("noise_hazard"),
+        GENERIC_HAZARD("generic_hazard"),
+        HIGH_VOLTAGE_HAZARD("high_voltage_hazard"),
+        MAGNETIC_HAZARD("magnetic_hazard"),
+        ANTIMATTER_HAZARD("antimatter_hazard"),
+        HIGH_TEMPERATURE_HAZARD("high_temperature_hazard"),
+        VOID_HAZARD("void_hazard");
 
         private final String name;
 

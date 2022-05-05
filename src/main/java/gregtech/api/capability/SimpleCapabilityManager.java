@@ -9,6 +9,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.worldgen.generator.GTWorldGenCapability;
+import gregtech.common.metatileentities.converter.ConverterTrait;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -49,6 +50,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
+        registerCapabilityWithNoDefault(ConverterTrait.class);
 
         registerCapabilityWithNoDefault(IWrenchItem.class);
         registerCapabilityWithNoDefault(ICutterItem.class);

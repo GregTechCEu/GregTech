@@ -1,5 +1,235 @@
 ## Changelog
 
+### 2.2.1
+BETA RELEASE (hotfix)
+
+* Allowed Shutter Covers to be controlled with Machine Controller Covers
+    * At present, this does not work between Item Pipes or Wires/Cables
+* Fixed Text Formatting issue with TOP integration
+* Fixed Voiding Mode saving issues with the Advanced Item Voiding Cover
+* Fixed lighting issues with GT glass blocks
+* Fixed Crash with CraftTweaker and the Gas Collector
+* Changed Hashing Strategy for Ore Dictionary Filters to improve memory usage
+* Fixed memory strain and "leak" when handling packets on machines
+* Updated Chinese Translation
+
+### 2.2.0
+BETA RELEASE
+
+Featured Changes:
+
+* Renamed the later game tiers and circuit Ore Dicts
+    * This is not very noticeable in base GTCEu, but for addons, later tiers have changed
+    * OLD: UHV, UEV, UIV, UMV, UXV, MAX
+    * NEW: UHV, UEV, UIV, UXV, OpV, MAX
+    * OreDict entries changed, instead of "circuitBasic" it is now "circuitLv" etc.
+
+* Cable Effects
+    * When overvolted or overamped, Cables and Wires will now have various effects before disappearing
+    * Cables will begin to smoke, then the insulation will "melt off," exposing a hot wire underneath
+    * Wires will begin to glow, getting brighter and brighter until they melt fully
+    * The rate at which these effects occur depends on how overvolted or overamped the Cable/Wire is
+
+* Voiding Covers
+    * Covers for voiding both Items and Fluids
+    * 2 different covers per type:
+        * Normal: Essentially a Trash Can as a Cover, has a slot for the applicable Filter. Available with Steel, does not require a machine to make
+        * Advanced: Allows specifying a finer-tuned amount of Items/Fluid to void similar to a Robor Arm or Fluid Regulator. Available at MV
+
+* Added ja_jp lang translation
+* Added new TheOneProbe information to show current EU/t used in recipes, and show the Primitive Pump's fluid rate
+* Reworked Lighters and Matches, and fixed various issues with them (like slight world lag when using them)
+* Adjust Fluid Temperatures for most Fluids in the mod
+* Rebalance Cracking recipes to make the Cracking Unit more viable
+* Increased the Cracking Unit's coil bonuses
+* Fix the Recipe Chart App not allowing all JEI categories for shift-completing recipes into it
+* Fix 4A EV Dynamo Hatch being marked as an Input Hatch
+* Large improvements to the `/gt hand` command
+* Optimize Item Pipe and Cable networks
+* Heavily optimize fluid insertion algorithms, which should resolve some heavy Spark profiles submitted
+* Fix small vein height numbers causing veins to not spawn consistently
+* Fix crash with Construct's Armory mod
+* Fix many issues with the Crafting Station and rework some of its UI behavior
+* Fix crash with mods registering negative Fluid temperatures
+* Fix crash with Advanced Monitor Proxy Plugin and GT Console App
+* New recipes for Tape
+* Fix Boule cutting recipes being one voltage tier below what they should be
+* Fix various decomposition recipes
+* Fix crash with a certain item stack handler class
+* Add recipes for converting multi-fluid hatches between input and output
+* Fix Prospector App getting stuck on a single mode when minimized
+* Fix multiblocks not deforming when their controller is rotated with a Wrench
+* Fix Block Breaker spawning drops in the wrong location
+* Fix log error when searching in the Guide App
+* Add new Torch recipes
+* Fix Primitive Pump collecting Water in The Nether (and similar dimensions)
+* Fix several minor multiblock formation issues
+* Fix charging RF batteries not respecting the `nativeEUtoRF` config option
+* Fix minor issues with GT armor tooltips and mode switching
+* Fix potential NBT overflow with Super Chests
+* Added Laminated Glass as a higher tier of glass beyond Reinforced Glass, also used in the Assembly Line structure
+* Fix items being allowed into the Machine Hatch that should not be allowed
+* Fix Gas Collector dimension checking
+* Fix parallel notConsumable checking
+* Fix Solar Panels not charging Batteries in Battery Buffers
+* Fix recipe conflict with LCR Polyethylene production
+* Fix exploit with Quantum Chests, and various issues with Item Insertion into them
+* Allow Coke Oven Hatch to auto-output items
+* Fix Pollucite showing a chanced tooltip in the JEI Ore Byproduct Page with no byproduct item
+* Show invalid GT recipes in the CraftTweaker log instead of the standard log
+* Fix the Hammering enchant applying inconsistently in the Anvil and Enchantment Table
+* Fix Quantum Eye/Quantum Star EU/t
+* Add Steam-era Glass Dust recipes (no longer locked behind a specific config option)
+* Fix Ore Multiplier not being exposed to CraftTweaker
+* Added vertical downwards progress bars for some machines
+* Fix Hard Hammer no longer granting the Nether/End multiplier for ores
+* Fix Steam Boilers and Steam Miner playing venting sound when muffled
+* Fix log problems with furnace recipe removals
+* Chinese lang improvements
+* Fix Crafting Table Cover server log error
+* Hide the voiding button on the Central Monitor
+* Internal: MAJOR Large refactor of internal MetaTileEntityHolder usages
+    * Signature: `createMetaTileEntity(MetaTileEntityHolder)` -> `createMetaTileEntity(IGregTechTileEntity)`
+    * Signature: `MetaTileEntityHolder getHolder()` -> `IGregTechTileEntity getHolder()`
+* Internal: Removed `WatchedFluidTank.class` and `MetaTileEntityDrum.SyncFluidTank.class` and their associated data codes
+* Internal: Added `itemInteractionForEntity()` to `IItemBehaviour`
+* Internal: New backend for registering Keybindings
+* Internal: Removed `GTValues.isModLoaded()`, use `net.minecraftforge.fml.common.Loader.isModLoaded()` instead
+* Internal: `GTUtility.getOrCreateNbtCompound(ItemStack)` will now auto-attach the NBTTagCompound to the stack if a new one is created
+* Internal: Removed `MatchingMode.class`, which also changed the signature: `Recipe#matches` and `RecipeMap#findRecipe` among others
+* Internal: Added a critical temperature field to WireProperties, intended for addons to use
+
+### 2.1.4
+BETA RELEASE (hotfix 2)
+
+* Fix Steam Macerator not being able to run all recipes
+* Fix some Fluid-related CraftTweaker methods not working properly
+* Add Spray Can (Solvent) to remove paint from Blocks
+* Allow Spray Cans to paint all ME Cable types
+* Add 4A EV Energy/Dynamo Hatches
+* Restrict the LCE/ECE forming rules to enforce a valid tier of Dynamo Hatch
+* Block the LCE/ECE from allowing boosting if the Dynamo Hatch is not of sufficient tier
+* Fix `harderCharcoalRecipe` config not catching some mod wood smelting recipes
+* Small improvements for the Terminal's UI
+* Fix Sifter progress bar texture
+* Internal: Expose more Machine inventory slots for easier use
+
+### 2.1.3
+BETA RELEASE (hotfix)
+
+* Fix crash on servers
+* Fix converters not respecting rotation changes
+* Fix potential power dupe exploit with converters when conversion rates differ
+* Fix Wrench rotating Vanilla and some mod Blocks in a confusing way
+* Breaking Glass or Glass Panes (or Stained versions) with a GT Hammer drops Glass Dust
+
+### 2.1.2
+BETA RELEASE
+
+Featured Changes:
+
+* Energy Converters
+    * Added Energy Converters (like the CEU mod for GTCE)
+    * By default, they are disabled
+    * The RF <-> EU ratio is configurable, and separated between the 2 conversion modes. By default, it is 4 FE -> 1 EU for both ways
+    * Differences from the CEU mod:
+        * Converters no longer have Battery slots
+        * Converters now have 5 sides for FE input or output
+        * No more CEU/CEF, use a Soft Hammer to switch between modes (like Transformers)
+
+* Optional Voiding Modes on Multiblocks
+    * Multiblocks now have modes to selectively enable voiding outputs
+    * Can choose between the following modes:
+        * Void Nothing (default, original behavior before this change)
+        * Void Items (void any excess items output by recipes)
+        * Void Fluids (void any excess fluids output by recipes)
+        * Void Items and Fluids (void any excess outputs by recipes)
+
+* Default UI Coloration Config
+    * A new config value has been added to colorize GT UIs like GT5 had
+    * Default to the classic GT5 blue color, but any color can be chosen (including 0xFFFFFF, for the CE coloration)
+
+* Fix and optimize many issues with Covers (especially when placed onto Pipes)
+* Redesigned the Clipboard UI (in-inventory and placed in-world)
+* New overlays for Input/Output Hatches and Buses
+* Fix GT GUIs taking longer and longer to open as the world stays open
+* Fix Fluid Prospector and Fluid Rig server-sided crash
+* Added Fertilizer
+* Allow Robot Arm Supply Exact mode to supply over 64 items
+* Fixed Ore Dictionary Filter server-sided crash
+* Reworked internals of the Crafting Station, should perform better and have less issues
+* Fix stack overflow issue with Compact Machines
+* Fix Steam Venting sound not stopping when the machine is muffled
+* Fix Assembly Line and Distillation Tower having no maximum count on Energy Hatches
+* Removed the Sodium Loop
+* Fix Distillation Tower requiring too large of a hatch on some layers
+* Added XP to smelting GT ores
+* Rework Polycaprolactam processing
+* Fix GT Shovels not being able to make Path Blocks
+* Fixed many, many recipe conflicts in the chemical reactor
+* Buffed GT Coal Ore to crush to 2x the normal amount (instead of default amount)
+* New textures for Jetpack Thruster items
+* Fix crash in the TextField widget
+* Fix LuV+ Field Generators using the wrong wires
+* Fix some buttons in UIs having a delay before the tooltip appears
+* Fix potential crash related to Stone Types
+* Add ability for stone types to be added for other mods
+* Added more zh_cn localization
+* Fix maintenance problems not occurring
+* Fix muffler particles having little positional variance
+* Changed prices of Fluid Prospector Terminal App
+* Fixed Heat, Electric, and Frost damage sources ignoring armor
+* Fix issues with user-entered number in Creative Chest/Tank
+* Fix Flint having no decomposition recipe
+* Fix Rubber Planks and Treated Planks not having a burn time
+* Fixed wires not being paintable with a Spray Can
+* Fixed Steam Machines not using the correct duration for all recipes
+* Fixed Miner/Fluid Rig front overlay getting desynced
+* Fixed issue with sounds getting cut off when too many are playing
+* Fixed `/gt shader_reload` command
+* Fixed a few Material tooltips (Polyethylene, Nickel-Zinc Ferrite, Sugar, Liquid Air)
+* Fixed finding elements from CraftTweaker
+* Fixed issues with Terminal text encoding
+* Fix enchanted items in the Crafting Station getting the "glint" effect over the entire slot
+* Allow Dust and Gem Materials to make Wires
+* Added UU-Matter, to be used in the future
+* Removed Graphene Ingot and Fluid
+* Nerfed the amount of Sticky Resin acquired from Rubber Trees
+* Fixed Catalyst order with Steam Machines in JEI
+* Fixed issues with Stone Types
+* Fixed GT Fluid slots sometimes drawing a Fluid incorrectly
+* Internal: Added flag to force generate a block (useful for Dust-only Materials)
+* Internal: Added `PostMaterialEvent` which runs after all Materials are added (GT, Addons, and CT)
+* Internal: Fixed the `NO_SMELTING` flag not always working
+* Internal: Reworked how Not-Consumed inputs are stored internally. Allows for recipes to have any amount of input for not-consumed items/fluids
+* Internal: Deprecated `GTValues#isModLoaded()`, use the similarly named method from Forge's `Loader` class instead
+* Internal: Reworked how Fluids are registered (#542)
+* Internal: JEI Preview world no longer gets ticked
+
+
+### 2.1.1
+BETA RELEASE
+
+* Overhaul Sound System
+    * Muffling machines now no longer requires a world reload, and works immediately
+    * Sounds will no longer stop working entirely after some amount of time
+    * Machines running sound are now more performant
+* Fix crash with Prospector Tool on servers
+* Fix covers on pipes not being able to open UIs
+* Fix issues with Large Turbines on servers
+* Fix some GT blocks having their textures broken after changing Resource Packs / using F3+T
+* Fix log spam in some situations with Fluid Pipes
+* Fix Rock Breaker NPE on load, causing the machine to occasionally disappear
+* Fix crash using Macerators in PA/APA
+* Fix Prospector Tool and Item Magnets not saving their state between world loads
+* Fix ULV Casing getting colored by the default machine color config
+* Fix lag when playing a GT record
+* Fix some Furnace recipe removal errors
+* Adjust some circuit tier tooltips to better match the circuit theme's color
+* Slightly tweak the Wool maceration/assembling recipes
+* Internal: Pipes no longer have textures bound to IconSets. Removes approximately 288 textures from the Atlas
+* Internal: Rename `HermeticCasings.class` -> `BlockHermeticCasing.class`
+
 ### 2.1.0
 BETA RELEASE
 

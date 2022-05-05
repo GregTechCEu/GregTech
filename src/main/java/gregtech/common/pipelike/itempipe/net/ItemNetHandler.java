@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.FacingPos;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -13,8 +14,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -28,6 +30,7 @@ public class ItemNetHandler implements IItemHandler {
     private final EnumFacing facing;
     private final Map<FacingPos, Integer> simulatedTransfersGlobalRoundRobin = new HashMap<>();
     private int simulatedTransfers = 0;
+    private final ItemStackHandler testHandler = new ItemStackHandler(1);
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -60,7 +63,7 @@ public class ItemNetHandler implements IItemHandler {
             this.pipe = tickingPipe;
         }
 
-        if (net == null || pipe == null || pipe.isInvalid()) {
+        if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return stack;
         }
 
@@ -290,42 +293,41 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate, boolean ignoreLimit) {
         int allowed = ignoreLimit ? stack.getCount() : checkTransferable(handler.getProperties().getTransferRate(), stack.getCount(), simulate);
-        if (allowed == 0) return stack;
+        if (allowed == 0 || !handler.matchesFilters(stack)) {
+            return stack;
+        }
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
-        if (pipeCover instanceof CoverRoboticArm && tileCover instanceof CoverRoboticArm)
-            return stack;
-        if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
-            return stack;
-
-        if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
-            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) pipeCover, stack, simulate, allowed, ignoreLimit);
-        if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
-            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) tileCover, stack, simulate, allowed, ignoreLimit);
-
-        return insert(handler.getHandler(world), stack, simulate, allowed, ignoreLimit);
-    }
-
-    public boolean checkExportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
-        if (cover instanceof CoverItemFilter) {
-            CoverItemFilter filter = (CoverItemFilter) cover;
-            return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_INSERT || onPipe) &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT || !onPipe)) || filter.testItemStack(stack);
+        if (pipeCover != null) {
+            testHandler.setStackInSlot(0, stack.copy());
+            IItemHandler itemHandler = pipeCover.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, testHandler);
+            if (itemHandler == null || (itemHandler != testHandler && (allowed = itemHandler.extractItem(0, allowed, true).getCount()) <= 0)) {
+                testHandler.setStackInSlot(0, ItemStack.EMPTY);
+                return stack;
+            }
+            testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
-        return true;
+        IItemHandler neighbourHandler = handler.getHandler(world);
+        if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
+            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed, ignoreLimit);
+        }
+        if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
+            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) tileCover, stack, simulate, allowed, ignoreLimit);
+        }
+
+        return insert(neighbourHandler, stack, simulate, allowed, ignoreLimit);
     }
 
     private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
         if (stack.getCount() == allowed) {
-            ItemStack re = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+            ItemStack re = GTTransferUtils.insertItem(handler, stack, simulate);
             if (!ignoreLimit)
                 transfer(simulate, stack.getCount() - re.getCount());
             return re;
         }
         ItemStack toInsert = stack.copy();
         toInsert.setCount(Math.min(allowed, stack.getCount()));
-        int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
+        int r = GTTransferUtils.insertItem(handler, toInsert, simulate).getCount();
         if (!ignoreLimit)
             transfer(simulate, toInsert.getCount() - r);
         ItemStack remainder = stack.copy();
@@ -357,7 +359,7 @@ public class ItemNetHandler implements IItemHandler {
         boolean isStackSpecific = false;
         Object index = arm.getItemFilterContainer().matchItemStack(stack);
         if (index instanceof Integer) {
-            rate = arm.getItemFilterContainer().getSlotTransferLimit(index, Collections.singleton(new ItemStackKey(stack)));
+            rate = arm.getItemFilterContainer().getSlotTransferLimit(index);
             isStackSpecific = true;
         } else
             rate = arm.getItemFilterContainer().getTransferStackSize();

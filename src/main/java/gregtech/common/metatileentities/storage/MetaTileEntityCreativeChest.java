@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -12,6 +11,8 @@ import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.texture.Textures;
@@ -20,18 +21,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.function.Function;
-import java.util.regex.Pattern;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
@@ -68,7 +63,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityCreativeChest(this.metaTileEntityId);
     }
 
@@ -76,26 +71,29 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomSlotWidget(handler, 0, 36, 6).setBackgroundTexture(GuiTextures.SLOT_DARKENED).setChangeListener(this::markDirty));
-        builder.label(7, 9, "Item");
+        builder.widget(new PhantomSlotWidget(handler, 0, 36, 6)
+                .setClearSlotOnRightClick(true)
+                .setBackgroundTexture(GuiTextures.SLOT)
+                .setChangeListener(this::markDirty));
+        builder.label(7, 9, "gregtech.creative.chest.item");
         builder.widget(new ImageWidget(7, 48, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 50, 152, 10, () -> String.valueOf(itemsPerCycle), value -> {
             if (!value.isEmpty()) {
                 itemsPerCycle = Integer.parseInt(value);
             }
-        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
-        builder.label(7, 28, "Items per cycle");
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
+        builder.label(7, 28, "gregtech.creative.chest.ipc");
 
         builder.widget(new ImageWidget(7, 85, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 87, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "Ticks per cycle");
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
+        builder.label(7, 65, "gregtech.creative.chest.tpc");
 
 
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -114,10 +112,10 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 return;
             stack.setCount(itemsPerCycle);
 
-            ItemStack remainder = ItemHandlerHelper.insertItemStacked(container, stack, true);
+            ItemStack remainder = GTTransferUtils.insertItem(container, stack, true);
             int amountToInsert = stack.getCount() - remainder.getCount();
             if (amountToInsert > 0) {
-                ItemHandlerHelper.insertItemStacked(container, stack, false);
+                GTTransferUtils.insertItem(container, stack, false);
             }
         }
     }
@@ -139,24 +137,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
-    }
-
-    public Function<String, String> getTextFieldValidator() {
-        return val -> {
-            if (val.isEmpty()) {
-                return "0";
-            }
-            long num;
-            try {
-                num = Long.parseLong(val);
-            } catch (NumberFormatException ignored) {
-                return "0";
-            }
-            if (num < 0) {
-                return "0";
-            }
-            return val;
-        };
     }
 
     @Override

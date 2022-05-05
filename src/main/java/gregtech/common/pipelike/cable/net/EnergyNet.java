@@ -8,10 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnergyNet extends PipeNet<WireProperties> {
 
@@ -29,14 +26,14 @@ public class EnergyNet extends PipeNet<WireProperties> {
         List<RoutePath> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = EnergyNetWalker.createNetData(getWorldData(), pipePos);
+            if (data == null) {
+                // walker failed, don't cache so it tries again on next insertion
+                return Collections.emptyList();
+            }
             data.sort(Comparator.comparingInt(RoutePath::getDistance));
             NET_DATA.put(pipePos, data);
         }
         return data;
-    }
-
-    public void onNeighbourStateChanged() {
-        NET_DATA.clear();
     }
 
     public long getEnergyFluxPerSec() {
@@ -58,7 +55,12 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void onPipeConnectionsUpdate() {
+    public void onNeighbourUpdate(BlockPos fromPos) {
+        NET_DATA.clear();
+    }
+
+    @Override
+    public void onPipeConnectionsUpdate() {
         NET_DATA.clear();
     }
 

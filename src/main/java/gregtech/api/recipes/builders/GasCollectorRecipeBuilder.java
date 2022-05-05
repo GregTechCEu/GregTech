@@ -1,5 +1,6 @@
 package gregtech.api.recipes.builders;
 
+import crafttweaker.CraftTweakerAPI;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -9,6 +10,7 @@ import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeBuilder> {
@@ -35,10 +37,23 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     @Override
     public boolean applyProperty(String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
-            this.dimension(((Number) value).intValue());
+            if (value instanceof Integer) {
+                this.dimension((Integer) value);
+            } else if (value instanceof List && !((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Integer) {
+                if (this.dimensionIDs == null) {
+                    this.dimensionIDs = new ArrayList<>();
+                }
+                this.dimensionIDs.addAll((Collection<? extends Integer>) value);
+            } else {
+                if (isCTRecipe) {
+                    CraftTweakerAPI.logError("Dimension for Gas Collector needs to be a Integer");
+                    return false;
+                }
+                throw new IllegalArgumentException("Invalid Dimension Property Type!");
+            }
             return true;
         }
-        return true;
+        return false;
     }
 
     public GasCollectorRecipeBuilder dimension(int dimensionID) {
@@ -50,7 +65,7 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
 
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden);
+                duration, EUt, hidden, isCTRecipe);
         if (!recipe.setProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }

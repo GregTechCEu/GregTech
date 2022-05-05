@@ -6,7 +6,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -46,7 +46,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -81,7 +80,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityFusionReactor(metaTileEntityId, tier);
     }
 
@@ -111,7 +110,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                         .setMinGlobalLimited(1).setPreviewCount(16)))
                 .where('C', states(getCasingState()))
                 .where('K', states(getCoilState()))
-                .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidOutputs())))
+                .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('A', air())
                 .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidInputs())))
                 .where('#', any())
@@ -272,7 +271,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentString("EU: " + this.energyContainer.getEnergyStored() + " / " + this.energyContainer.getEnergyCapacity()));
+        textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
     }
 
