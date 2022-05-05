@@ -54,6 +54,36 @@
         "textures": {
           "all": "gregtech:blocks/casings/signs/machine_casing_noisehazard"
         }
+      },
+      "generic_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_generichazard"
+        }
+      },
+      "high_voltage_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_highvoltagehazard"
+        }
+      },
+      "magnetic_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_magneticfieldhazard"
+        }
+      },
+      "antimatter_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_antimatterhazard"
+        }
+      },
+      "high_temperature_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_hightemperaturehazard"
+        }
+      },
+      "void_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_voidhazard"
+        }
       }
     }
   }

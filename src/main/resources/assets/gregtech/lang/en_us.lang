@@ -2328,6 +2328,21 @@ tile.warning_sign.acid_hazard.name=Acid Hazard Sign Block
 tile.warning_sign.magic_hazard.name=Magic Hazard Sign Block
 tile.warning_sign.frost_hazard.name=Frost Hazard Sign Block
 tile.warning_sign.noise_hazard.name=Noise Hazard Sign Block
+tile.warning_sign.generic_hazard.name=Generic Hazard Sign Block
+tile.warning_sign.high_voltage_hazard.name=High Voltage Hazard Sign Block
+tile.warning_sign.magnetic_hazard.name=Magnetic Hazard Sign Block
+tile.warning_sign.antimatter_hazard.name=Antimatter Hazard Sign Block
+tile.warning_sign.high_temperature_hazard.name=High Temperature Hazard Sign Block
+tile.warning_sign.void_hazard.name=Void Hazard Sign Block
+tile.warning_sign_1.mob_spawner_hazard.name=Mob Spawner Hazard Sign Block
+tile.warning_sign_1.spatial_storage_hazard.name=Spatial Storage Hazard Sign Block
+tile.warning_sign_1.laser_hazard.name=Laser Hazard Sign Block
+tile.warning_sign_1.mob_hazard.name=Mob Infestation Hazard Sign Block
+tile.warning_sign_1.boss_hazard.name=Boss Hazard Sign Block
+tile.warning_sign_1.gregification_hazard.name=Gregification Hazard Sign Block
+tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Block
+tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
+tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
