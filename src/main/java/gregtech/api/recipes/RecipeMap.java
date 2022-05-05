@@ -688,7 +688,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             });
 
             if (r.right().map(m -> !recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
-                current.forEach(targetMap::remove);
+                current.forEach(i -> {
+                    if (count == ingredients.size() - 1) {
+                        targetMap.remove(obj);
+                    } else {
+                        Either<Recipe, Branch> result = targetMap.get(obj);
+                        if (!result.left().isPresent() && !result.right().isPresent()) {
+                            targetMap.remove(obj, result);
+                        }
+                    }
+                });
                 return false;
             }
         }
@@ -813,7 +822,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 if (ingredients.size() == 0) return null;
                 Recipe r = removeDive(recipeToRemove, ingredients.subList(1, ingredients.size()), targetMap, obj, depth);
                 if (r != null) {
-                    targetMap.remove(obj);
+                    if (ingredients.size() == 1) {
+                        targetMap.remove(obj);
+                    } else {
+                        Either<Recipe, Branch> result = targetMap.get(obj);
+                        if(!result.left().isPresent() && !result.right().isPresent()) {
+                            targetMap.remove(obj, result);
+                        }
+                    }
                     if (depth == 0) {
                         found = r;
                         continue;
@@ -829,7 +845,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         Either<Recipe, RecipeMap.Branch> result = targetMap.get(obj);
         if (result != null) {
             // Either return recipe or continue branch.
-            Recipe r = result.map(recipe -> recipe, right -> recurseIngredientTreeRemove(recipeToRemove, ingredients, right, depth));
+            Recipe r = result.map(recipe -> recipe, right -> recurseIngredientTreeRemove(recipeToRemove, ingredients, right, depth + 1));
             if (r == recipeToRemove) {
                 return r;
             }
