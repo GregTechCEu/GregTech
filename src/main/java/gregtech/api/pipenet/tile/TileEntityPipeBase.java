@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
@@ -58,7 +59,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.paintingColor = tileEntity.getPaintingColor();
         this.connections = tileEntity.getConnections();
         if (tileEntity instanceof TileEntityPipeBase) {
-            this.updateEntries.addAll(((TileEntityPipeBase<?, ?>) tileEntity).updateEntries);
+            this.updates.putAll(((TileEntityPipeBase<?, ?>) tileEntity).updates);
         }
         tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
     }
@@ -224,6 +225,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 buf.writeVarInt(blockedConnections);
             });
             markDirty();
+            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+            PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
+            if (net != null) {
+                net.onPipeConnectionsUpdate();
+            }
         }
     }
 

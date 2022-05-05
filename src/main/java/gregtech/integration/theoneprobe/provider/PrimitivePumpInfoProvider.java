@@ -8,6 +8,7 @@ import mcjty.theoneprobe.api.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -27,7 +28,7 @@ public class PrimitivePumpInfoProvider implements IProbeInfoProvider {
 
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof IPrimitivePump) {
-                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.primitive_pump_production*} §b" + ((IPrimitivePump) metaTileEntity).getFluidProduction() + "§r L/s");
+                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.primitive_pump_production*} " + TextFormatting.AQUA + ((IPrimitivePump) metaTileEntity).getFluidProduction() + TextFormatting.RESET + " L/s");
             }
         }
     }

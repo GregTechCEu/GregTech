@@ -91,6 +91,7 @@ public class MetaBlocks {
     public static BlockWireCoil WIRE_COIL;
     public static BlockFusionCasing FUSION_CASING;
     public static BlockWarningSign WARNING_SIGN;
+    public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
 
     public static BlockAsphalt ASPHALT;
@@ -165,6 +166,8 @@ public class MetaBlocks {
         FUSION_CASING.setRegistryName("fusion_casing");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
+        WARNING_SIGN_1 = new BlockWarningSign1();
+        WARNING_SIGN_1.setRegistryName("warning_sign_1");
         HERMETIC_CASING = new BlockHermeticCasing();
         HERMETIC_CASING.setRegistryName("hermetic_casing");
 
@@ -321,6 +324,7 @@ public class MetaBlocks {
         registerItemModel(WIRE_COIL);
         registerItemModel(FUSION_CASING);
         registerItemModel(WARNING_SIGN);
+        registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
         registerItemModel(ASPHALT);
         registerItemModel(STONE_SMOOTH);

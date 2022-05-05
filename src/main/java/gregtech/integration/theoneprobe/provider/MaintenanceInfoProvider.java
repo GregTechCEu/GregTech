@@ -1,5 +1,6 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.common.ConfigHolder;
@@ -20,11 +21,15 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
     @Override
     protected void addProbeInfo(IMaintenance capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
         if (ConfigHolder.machines.enableMaintenance && capability.hasMaintenanceMechanics()) {
-            IProbeInfo horizontalPaneMaintenance = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-            if (capability.hasMaintenanceProblems()) {
-                horizontalPaneMaintenance.text(TextStyleClass.INFO + "{*gregtech.top.maintenance_broken*}");
-            } else {
-                horizontalPaneMaintenance.text(TextStyleClass.INFO + "{*gregtech.top.maintenance_fixed*}");
+            if(tileEntity.hasCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null)) {
+                if(tileEntity.getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null).isStructureFormed()) {
+                    IProbeInfo horizontalPaneMaintenance = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+                    if (capability.hasMaintenanceProblems()) {
+                        horizontalPaneMaintenance.text(TextStyleClass.INFO + "{*gregtech.top.maintenance_broken*}");
+                    } else {
+                        horizontalPaneMaintenance.text(TextStyleClass.INFO + "{*gregtech.top.maintenance_fixed*}");
+                    }
+                }
             }
         }
     }
