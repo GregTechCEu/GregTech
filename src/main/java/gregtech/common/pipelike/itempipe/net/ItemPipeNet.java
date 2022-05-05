@@ -15,6 +15,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -44,7 +45,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
-    protected void onPipeConnectionsUpdate() {
+    public void onPipeConnectionsUpdate() {
         NET_DATA.clear();
     }
 
