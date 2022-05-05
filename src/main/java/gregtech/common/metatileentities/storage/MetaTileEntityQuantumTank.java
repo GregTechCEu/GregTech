@@ -18,9 +18,8 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
-import gregtech.api.gui.widgets.PhantomTankWidget;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +47,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.*;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUIDS;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
 public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
@@ -366,7 +366,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        return new ThermalFluidHandlerItemStack(itemStack, maxFluidCapacity, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return new ThermalFluidHandlerItemStack(itemStack, maxFluidCapacity, Integer.MAX_VALUE, true, true, true, true);
     }
 
     @Override

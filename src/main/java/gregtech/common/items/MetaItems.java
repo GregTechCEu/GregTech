@@ -110,6 +110,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_STAINLESS_STEEL;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_TITANIUM;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_TUNGSTEN_STEEL;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_GLASS_TUBE;
 
     public static MetaItem<?>.MetaValueItem TOOL_MATCHES;
     public static MetaItem<?>.MetaValueItem TOOL_MATCHBOX;

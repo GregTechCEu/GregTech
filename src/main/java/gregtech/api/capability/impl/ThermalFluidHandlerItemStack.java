@@ -1,30 +1,31 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 
-public class ThermalFluidHandlerItemStack extends FluidHandlerItemStack {
+public class ThermalFluidHandlerItemStack extends FluidHandlerItemStack implements IThermalFluidHandlerItemStack {
 
-    public final int minFluidTemperature;
-    public final int maxFluidTemperature;
+    private final int maxFluidTemperature;
+    private final boolean gasProof;
+    private final boolean acidProof;
+    private final boolean cryoProof;
+    private final boolean plasmaProof;
 
     /**
      * @param container The container itemStack, data is stored on it directly as NBT.
      * @param capacity  The maximum capacity of this fluid tank.
      */
-    public ThermalFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, int minFluidTemperature, int maxFluidTemperature) {
+    public ThermalFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
         super(container, capacity);
-        this.minFluidTemperature = minFluidTemperature;
         this.maxFluidTemperature = maxFluidTemperature;
-    }
-
-    @Override
-    public boolean canFillFluidType(FluidStack fluid) {
-        int liquidTemperature = fluid.getFluid().getTemperature();
-        return liquidTemperature >= minFluidTemperature && liquidTemperature <= maxFluidTemperature;
+        this.gasProof = gasProof;
+        this.acidProof = acidProof;
+        this.cryoProof = cryoProof;
+        this.plasmaProof = plasmaProof;
     }
 
     @Override
@@ -45,5 +46,30 @@ public class ThermalFluidHandlerItemStack extends FluidHandlerItemStack {
         if (doDrain && this.getFluid() == null) {
             this.container.setTagCompound(null);
         }
+    }
+
+    @Override
+    public int getMaxFluidTemperature() {
+        return maxFluidTemperature;
+    }
+
+    @Override
+    public boolean isGasProof() {
+        return gasProof;
+    }
+
+    @Override
+    public boolean isAcidProof() {
+        return acidProof;
+    }
+
+    @Override
+    public boolean isCryoProof() {
+        return cryoProof;
+    }
+
+    @Override
+    public boolean isPlasmaProof() {
+        return plasmaProof;
     }
 }

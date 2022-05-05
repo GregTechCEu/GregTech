@@ -9,23 +9,29 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 public class FluidStats implements IItemComponent, IItemCapabilityProvider {
 
-    public final int maxCapacity;
-    public final int minFluidTemperature;
+    public final int capacity;
     public final int maxFluidTemperature;
-    public final boolean allowPartlyFill;
+    private final boolean gasProof;
+    private final boolean acidProof;
+    private final boolean cryoProof;
+    private final boolean plasmaProof;
+    public final boolean allowPartialFill;
 
-    public FluidStats(int maxCapacity, int minFluidTemperature, int maxFluidTemperature, boolean allowPartlyFill) {
-        this.maxCapacity = maxCapacity;
-        this.minFluidTemperature = minFluidTemperature;
+    public FluidStats(int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof, boolean allowPartialFill) {
+        this.capacity = capacity;
         this.maxFluidTemperature = maxFluidTemperature;
-        this.allowPartlyFill = allowPartlyFill;
+        this.gasProof = gasProof;
+        this.acidProof = acidProof;
+        this.cryoProof = cryoProof;
+        this.plasmaProof = plasmaProof;
+        this.allowPartialFill = allowPartialFill;
     }
 
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
-        if (allowPartlyFill) {
-            return new ThermalFluidHandlerItemStack(itemStack, maxCapacity, minFluidTemperature, maxFluidTemperature);
+        if (allowPartialFill) {
+            return new ThermalFluidHandlerItemStack(itemStack, capacity, maxFluidTemperature, gasProof, acidProof, cryoProof, plasmaProof);
         }
-        return new SimpleThermalFluidHandlerItemStack(itemStack, maxCapacity, minFluidTemperature, maxFluidTemperature);
+        return new SimpleThermalFluidHandlerItemStack(itemStack, capacity, maxFluidTemperature, gasProof, acidProof, cryoProof, plasmaProof);
     }
 }
