@@ -222,11 +222,7 @@ public class BatteryRecipes {
         EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_SODIUM).output(BATTERY_HULL_LV).buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_CADMIUM).output(BATTERY_HULL_MV).buildAndRegister();
-
-        CountableIngredient battery = CountableIngredient.from(BATTERY_MV_LITHIUM.getStackForm(),1)
-                .setNBTMatchingCondition(new CountableIngredient.NBTcondition("Charge", "EQUALS", 0L));
-
-        EXTRACTOR_RECIPES.recipeBuilder().inputs(battery).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_LITHIUM).output(BATTERY_HULL_MV).buildAndRegister();
         EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_SODIUM).output(BATTERY_HULL_MV).buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_CADMIUM).output(BATTERY_HULL_HV).buildAndRegister();

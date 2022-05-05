@@ -217,7 +217,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public boolean removeRecipe(Recipe recipe) {
-        return lookup.removeRecipe(recipe);
+        List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
+        return recurseIngredientTreeRemove(recipe, items, lookup, 0) != null;
     }
 
     protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
@@ -654,6 +655,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Loop through NUMBER_OF_INGREDIENTS times.
         List<AbstractMapIngredient> current = ingredients.get(index);
         Either<Recipe, Branch> r;
+        final Branch[] branch = new Branch[1];
         for (AbstractMapIngredient obj : current) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
             if (obj.conditionalNBT()) {
@@ -677,8 +679,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     }
                     return v;
                 } else if (v == null) {
-                    Branch traverse = new Branch();
-                    v = Either.right(traverse);
+                    if (branch[0] == null) {
+                        branch[0] = new Branch();
+                    }
+                    v = Either.right(branch[0]);
                 }
                 return v;
             });
@@ -789,6 +793,50 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
     }
 
+    /**
+     * Adds a recipe to the map. (recursive part)
+     *
+     * @param recipeToRemove the recipe to add.
+     * @param ingredients    list of input ingredients.
+     * @param branchMap      the current branch in the recursion.
+     */
+    Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int depth) {
+        Recipe found = null;
+        for (List<AbstractMapIngredient> current : ingredients) {
+            for (AbstractMapIngredient obj : current) {
+                Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
+                if (obj.conditionalNBT()) {
+                    targetMap = branchMap.NBTrestrictedNodes;
+                } else {
+                    targetMap = branchMap.nodes;
+                }
+                if (ingredients.size() == 0) return null;
+                Recipe r = removeDive(recipeToRemove, ingredients.subList(1, ingredients.size()), targetMap, obj, depth);
+                if (r != null) {
+                    targetMap.remove(obj);
+                    if (depth == 0) {
+                        found = r;
+                        continue;
+                    }
+                    return r;
+                }
+            }
+        }
+        return found;
+    }
+
+    Recipe removeDive(Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap, AbstractMapIngredient obj, int depth) {
+        Either<Recipe, RecipeMap.Branch> result = targetMap.get(obj);
+        if (result != null) {
+            // Either return recipe or continue branch.
+            Recipe r = result.map(recipe -> recipe, right -> recurseIngredientTreeRemove(recipeToRemove, ingredients, right, depth));
+            if (r == recipeToRemove) {
+                return r;
+            }
+        }
+        return null;
+    }
+
     @ZenMethod("recipeBuilder")
     @Method(modid = GTValues.MODID_CT)
     public CTRecipeBuilder ctRecipeBuilder() {
@@ -854,32 +902,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         private final Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTrestrictedNodes = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = nodes.values().stream().flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
+            Stream<Recipe> stream = Stream.concat(
+                            nodes.values().stream(),
+                            NBTrestrictedNodes.values().stream())
+                    .flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
             if (filterHidden) {
                 stream = stream.filter(t -> !t.isHidden());
             }
             return stream;
-        }
-
-        public boolean removeRecipe(Recipe recipe) {
-            Iterator<Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>>> it = nodes.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry = it.next();
-                if (entry.getValue().left().map(check -> check.equals(recipe)).orElse(false)) {
-                    it.remove();
-                    return true;
-                }
-                if (entry.getValue().right().map(branch -> branch.removeRecipe(recipe)).orElse(false)) {
-                    if (entry.getValue().right().isPresent()) {
-                        Branch branch = entry.getValue().right().get();
-                        if (branch.NBTrestrictedNodes.isEmpty() && branch.nodes.isEmpty()) {
-                            it.remove();
-                        }
-                    }
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
