@@ -115,20 +115,28 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null && ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
             if (entityIn instanceof EntityLivingBase) {
-                // apply temperature damage for the hottest and coldest pipe
-                int maxTemperature = Integer.MIN_VALUE;
-                int minTemperature = Integer.MAX_VALUE;
-                for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
-                    if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                        maxTemperature = Math.max(maxTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
-                        minTemperature = Math.min(minTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                if (((TileEntityFluidPipeTickable) pipe).getFluidTanks().length > 1) {
+                    // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
+                    int maxTemperature = Integer.MIN_VALUE;
+                    int minTemperature = Integer.MAX_VALUE;
+                    for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
+                        if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                            maxTemperature = Math.max(maxTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                            minTemperature = Math.min(minTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                        }
                     }
-                }
-                if (maxTemperature != Integer.MIN_VALUE) {
-                    EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, maxTemperature, 1.0F, 5);
-                }
-                if (minTemperature != Integer.MAX_VALUE) {
-                    EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
+                    if (maxTemperature != Integer.MIN_VALUE) {
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, maxTemperature, 1.0F, 5);
+                    }
+                    if (minTemperature != Integer.MAX_VALUE) {
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
+                    }
+                } else {
+                    FluidTank tank = ((TileEntityFluidPipeTickable) pipe).getFluidTanks()[0];
+                    if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                        // Apply temperature damage for the pipe (single fluid pipes)
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, tank.getFluid().getFluid().getTemperature(), 1.0F, 5);
+                    }
                 }
             }
         }
