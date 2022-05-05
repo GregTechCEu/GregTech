@@ -1,9 +1,7 @@
 package gregtech.api.recipes.ingredients.NBTMatching;
 
-import gregtech.api.recipes.CountableIngredient;
-
 /**
- * a class to build a NBT condition, matching a string, then checking if the NBT matches the condition, then returning if the NBT matches
+ * This class is used to check if a NBT tag matches a condition, not necessarily matching the original item tag
  */
 public class NBTcondition {
 

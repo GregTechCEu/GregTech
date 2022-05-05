@@ -3,12 +3,18 @@ package gregtech.api.recipes.ingredients.NBTMatching;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * This class is used to match NBT tags. Used to match a MapItemStackNBTIngredient NBT tag to a given NBT tag value.
+ */
 public class NBTMatcher {
 
     public NBTMatcher() {
 
     }
 
+    /**
+     * Return true without checking if the NBT actually tags match or exists.
+     */
     public static NBTMatcher ANY = new NBTMatcher() {
         @Override
         public boolean evaluate(ItemStack stack, NBTcondition NBTcondition) {
