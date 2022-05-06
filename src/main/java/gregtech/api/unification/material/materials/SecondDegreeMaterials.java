@@ -116,7 +116,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(8.0f, 4.0f, 2560, 21)
-                .fluidPipeProperties(7568, 100, true)
+                .fluidPipeProperties(3587, 225, true)
                 .cableProperties(GTValues.V[5], 3, 2)
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
                 .build();
@@ -278,7 +278,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
-                .fluidPipeProperties(2073, 100, true)
+                .fluidPipeProperties(2073, 50, true, true, false, false)
                 .blastTemp(1453, GasTier.LOW)
                 .fluidTemp(2073)
                 .build();
@@ -288,7 +288,7 @@ public class SecondDegreeMaterials {
                 .color(0xc99781).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Copper, 6, Tin, 2, Lead, 1)
-                .fluidPipeProperties(2023, 69, true)
+                .fluidPipeProperties(1456, 32, true)
                 .fluidTemp(1084)
                 .build();
 

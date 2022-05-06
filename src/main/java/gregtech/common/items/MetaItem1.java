@@ -27,6 +27,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.util.DyeUtil.getOredictColorName;
@@ -146,15 +147,22 @@ public class MetaItem1 extends StandardMetaItem {
         // Limited-Use Items: ID 89-95
 
         TOOL_MATCHES = addItem(89, "tool.matches")
-                .addComponents(new LighterBehaviour(1));
+                .addComponents(new LighterBehaviour(false, false, false));
         TOOL_MATCHBOX = addItem(90, "tool.matchbox")
-                .addComponents(new LighterBehaviour(16)).setMaxStackSize(1);
+                .addComponents(new LighterBehaviour(false, true, false, Items.PAPER, 16)).setMaxStackSize(1);
         TOOL_LIGHTER_INVAR = addItem(91, "tool.lighter.invar")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Invar, M * 2)))
-                .addComponents(new LighterBehaviour(100)).setMaxStackSize(1);
+                .addComponents(new LighterBehaviour(new ResourceLocation(GTValues.MODID, "lighter_open"), true, true, true))
+                .addComponents(new FilteredFluidStats(100, 0, Integer.MAX_VALUE, true,
+                        fs -> fs.getFluid().equals(Materials.Butane.getFluid()) || fs.getFluid().equals(Materials.Propane.getFluid())))
+                .setMaxStackSize(1);
         TOOL_LIGHTER_PLATINUM = addItem(92, "tool.lighter.platinum")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2)))
-                .addComponents(new LighterBehaviour(1000)).setMaxStackSize(1).setRarity(EnumRarity.UNCOMMON);
+                .addComponents(new LighterBehaviour(new ResourceLocation(GTValues.MODID, "lighter_open"), true, true, true))
+                .addComponents(new FilteredFluidStats(1000, 0, Integer.MAX_VALUE, true,
+                        fs -> fs.getFluid().equals(Materials.Butane.getFluid()) || fs.getFluid().equals(Materials.Propane.getFluid())))
+                .setMaxStackSize(1)
+                .setRarity(EnumRarity.UNCOMMON);
 
         BOTTLE_PURPLE_DRINK = addItem(93, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true, new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 

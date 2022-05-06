@@ -203,7 +203,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     public void discardRecipeResolver(EntityPlayer entityPlayer) {
         this.listeners.remove(entityPlayer);
         if (listeners.isEmpty()) {
-            if (!getWorld().isRemote) {
+            if (!getWorld().isRemote && recipeLogic != null) {
                 itemsCrafted = recipeLogic.getItemsCraftedAmount();
                 this.markDirty();
             }

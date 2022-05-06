@@ -2,5 +2,19 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "gregtech:items/metaitems/tool.lighter.invar"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "gregtech:lighter_open": 0.0
+      },
+      "model": "gregtech:item/metaitems/tool.lighter.invar.closed"
+    },
+    {
+      "predicate": {
+        "gregtech:lighter_open": 1.0
+      },
+      "model": "gregtech:item/metaitems/tool.lighter.invar"
+    }
+  ]
 }

@@ -211,14 +211,14 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        this.voidingMode = VoidingMode.values()[tagCompound.getByte("VoidingMode")];
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setInteger("VoidMode", voidingMode.ordinal());
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setByte("VoidingMode", (byte) voidingMode.ordinal());
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidMode")];
     }
 }

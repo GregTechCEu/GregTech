@@ -94,7 +94,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
                 GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
                 () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
         //this.itemFilter.initUI(45, filterGroup::addWidget);
-
+        //this.itemFilter.blacklistUI(45, filterGroup::addWidget, () -> true);
         return ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 105 + 82)
                 .widget(filterGroup)
                 .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 105)

@@ -1,0 +1,15 @@
+{
+  "section": "Tools",
+  "title": "Wrench",
+  "stream": [
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "content": [
+        "The §6Wrench§r is one of the main tools in §1Gregtech§r and has several important uses.\n\nFirst, the Wrench can be the designated tool for breaking machines (Config option, default false). If a Wrench is not used to break the machine, it will break slower.\n\nSecondly, the Wrench can be used to set the output side for machines and multiblock components. Using the §4Machine Grid§r or just clicking on the desired face, Right Clicking with a Wrench will set the output face.\n\nRelated to the above, the Wrench can be used to set the Front Face of machines. Sneaking while Right Clicking (either directly on a face of the machine or using the machine grid) will change the front face of a machine, if it can be changed.\n\nIn addition to manipulating machines, wrenches are used for manipulating pipes. When Right Clicking on a pipe with a wrench, it will enable or disable the pipe connections to the corresponding face. When Sneaking while Right Clicking, pipes will have their travel routes blocked instead (Fluid Pipes only).\n\nLike most Gregtech tools, it can be repaired in an anvil."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:8"
+}

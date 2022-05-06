@@ -6,16 +6,17 @@ import gregtech.api.guiOld.widgets.DrawableWidget;
 import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.guiOld.widgets.OreDictFilterTestSlot;
 import gregtech.api.guiOld.widgets.TextFieldWidget2;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OreDictExprFilter;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     private ItemStack testStack = ItemStack.EMPTY;
 
     private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
-    private final Map<ItemStack, Boolean> recentlyChecked = new HashMap<>();
+    private static final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
+    private final Object2BooleanOpenCustomHashMap<ItemStack> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
 
     protected void setOreDictFilterExpression(String oreDictFilterExpression) {
         this.oreDictFilterExpression = oreDictFilterExpression;

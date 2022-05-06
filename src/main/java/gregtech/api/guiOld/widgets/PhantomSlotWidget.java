@@ -47,6 +47,24 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
     }
 
     @Override
+    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            ItemStack is = gui.entityPlayer.inventory.getItemStack().copy();
+            is.setCount(1);
+            slotReference.putStack(is);
+            writeClientAction(1, buffer -> {
+                buffer.writeItemStack(slotReference.getStack());
+                int mouseButton = Mouse.getEventButton();
+                boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                buffer.writeVarInt(mouseButton);
+                buffer.writeBoolean(shiftDown);
+            });
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
         ItemStack stackHeld = player.inventory.getItemStack();
         return SlotUtil.slotClickPhantom(slotReference, dragType, clickTypeIn, stackHeld);

@@ -14,7 +14,7 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
     LARGE("large", 0.75f, 12, OrePrefix.pipeLargeFluid, true),
     HUGE("huge", 0.875f, 24, OrePrefix.pipeHugeFluid, true),
 
-    QUADRUPLE("quadruple", 0.95f, 6, OrePrefix.pipeQuadrupleFluid, true, 4),
+    QUADRUPLE("quadruple", 0.95f, 2, OrePrefix.pipeQuadrupleFluid, true, 4),
     NONUPLE("nonuple", 0.95f, 2, OrePrefix.pipeNonupleFluid, true, 9);
 
     public final String name;
@@ -59,6 +59,9 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
                 baseProperties.getMaxFluidTemperature(),
                 baseProperties.getThroughput() * capacityMultiplier,
                 baseProperties.isGasProof(),
+                baseProperties.isAcidProof(),
+                baseProperties.isCryoProof(),
+                baseProperties.isPlasmaProof(),
                 channels);
     }
 

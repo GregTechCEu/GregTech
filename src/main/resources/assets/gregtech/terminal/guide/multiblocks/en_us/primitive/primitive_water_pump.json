@@ -1,0 +1,82 @@
+{
+  "section": "Primitive",
+  "title": "Primitive Water Pump",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Primitive Water Pump§r is a Multiblock used for gathering water in the early game. The amount of water gathered depends on the biome that the Multiblock is constructed in. Detailed information on the rates in available on the §3JEI§r information page for the Multiblock."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1648,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Primitive Water Pump§r has only one possible Multiblock part, though it is limited in what tier the part can be."
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": -23,
+      "y": 189,
+      "width": 100,
+      "height": 18,
+      "item_list": []
+    },
+    {
+      "type": "slots",
+      "x": 61,
+      "y": 182,
+      "width": 67,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1649,
+          "count": 1
+        },
+        {
+          "id": "gregtech:machine",
+          "damage": 1195,
+          "count": 1
+        },
+        {
+          "id": "gregtech:machine",
+          "damage": 1196,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "card",
+      "x": 9,
+      "y": 174,
+      "width": 180,
+      "height": 76,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "x": 13,
+      "y": 203,
+      "width": 168,
+      "height": 40,
+      "content": [
+        "The §6Primitive Water Pump§r is limited to §rthe specific output hatch, §ra §2ULV§r output hatch, or a §2LV§r output hatch"
+      ]
+    }
+  ],
+  "metatileentity": "primitive_water_pump"
+}

@@ -9,6 +9,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
@@ -32,9 +33,9 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             if (!(capability instanceof PrimitiveRecipeLogic)) {
                 int EUt = capability.getRecipeEUt();
                 if (EUt > 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} §c" + EUt + "§r EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + "§r)");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + TextFormatting.RED + EUt + TextFormatting.RESET + " EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + TextFormatting.RESET + ")");
                 } else if (EUt < 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} §c" + (EUt * -1) + "§r EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + "§r)");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + TextFormatting.RED + (EUt * -1) + TextFormatting.RESET + " EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt * -1)] + TextFormatting.RESET + ")");
                 }
             }
         }

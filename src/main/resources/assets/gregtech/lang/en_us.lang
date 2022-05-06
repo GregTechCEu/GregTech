@@ -1,11 +1,12 @@
-death.attack.heat=%s was boiled alive.
-death.attack.frost=%s explored cryogenics.
-death.attack.electric=%s was electrocuted.
-death.attack.radiation=%s glows with joy now.
-death.attack.turbine=%s put their head into a turbine.
-death.attack.explosion=%s exploded.
-death.attack.explosion.player=%s exploded with help of %s.
-death.attack.heat.player=%s was boiled alive by %s.
+death.attack.heat=%s was boiled alive
+death.attack.frost=%s explored cryogenics
+death.attack.chemical=%s had a chemical accident
+death.attack.electric=%s was electrocuted
+death.attack.radiation=%s glows with joy now
+death.attack.turbine=%s put their head into a turbine
+death.attack.explosion=%s exploded
+death.attack.explosion.player=%s exploded with help of %s
+death.attack.heat.player=%s was boiled alive by %s
 
 enchantment.disjunction=Disjunction
 
@@ -83,6 +84,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -2195,6 +2197,7 @@ behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
 behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
+behaviour.lighter.fluid.tooltip=Can light things on fire with Butane or Propane
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
@@ -2232,6 +2235,7 @@ metaitem.debug_scanner.tooltip=Tricorder
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
 behavior.tricorder.block_hardness=Hardness: %s Blast Resistance: %s
 behavior.tricorder.block_name=Name: %s MetaData: %s
+behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=Tank %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=All Tanks Empty
@@ -2327,6 +2331,21 @@ tile.warning_sign.acid_hazard.name=Acid Hazard Sign Block
 tile.warning_sign.magic_hazard.name=Magic Hazard Sign Block
 tile.warning_sign.frost_hazard.name=Frost Hazard Sign Block
 tile.warning_sign.noise_hazard.name=Noise Hazard Sign Block
+tile.warning_sign.generic_hazard.name=Generic Hazard Sign Block
+tile.warning_sign.high_voltage_hazard.name=High Voltage Hazard Sign Block
+tile.warning_sign.magnetic_hazard.name=Magnetic Hazard Sign Block
+tile.warning_sign.antimatter_hazard.name=Antimatter Hazard Sign Block
+tile.warning_sign.high_temperature_hazard.name=High Temperature Hazard Sign Block
+tile.warning_sign.void_hazard.name=Void Hazard Sign Block
+tile.warning_sign_1.mob_spawner_hazard.name=Mob Spawner Hazard Sign Block
+tile.warning_sign_1.spatial_storage_hazard.name=Spatial Storage Hazard Sign Block
+tile.warning_sign_1.laser_hazard.name=Laser Hazard Sign Block
+tile.warning_sign_1.mob_hazard.name=Mob Infestation Hazard Sign Block
+tile.warning_sign_1.boss_hazard.name=Boss Hazard Sign Block
+tile.warning_sign_1.gregification_hazard.name=Gregification Hazard Sign Block
+tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Block
+tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
+tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
@@ -4657,6 +4676,7 @@ gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K
+gregtech.fluid.temperature.cryogenic=§bCryogenic! Handle with care!
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
@@ -4718,10 +4738,15 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
-gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
+gregtech.fluid_pipe.capacity=§9Capacity: %,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.gas_proof=§6Can handle Gases
+gregtech.fluid_pipe.acid_proof=§6Can handle Acids
+gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
+gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
+gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
@@ -4824,24 +4849,31 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
-gregtech.command.usage=Usage: /gregtech <worldgen/util>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
-gregtech.command.util.usage=Usage: /gregtech util <hand>
-gregtech.command.util.hand.usage=Usage: /gregtech util hand
-gregtech.command.util.hand.item_id=Item: %s (Metadata: %d)
-gregtech.command.util.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
-gregtech.command.util.hand.fluid=Fluid Info: %s %d / %d L; Can Fill: %s; Can Drain: %s
-gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
-gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.not_a_player=This command is only usable by a player.
-gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
-gregtech.command.util.recipecheck.usage=Usage: /gregtech recipecheck
-gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
-gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
-gregtech.command.util.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.hand.usage=Usage: /gregtech hand
+gregtech.command.hand.item_id=Item: %s (Metadata: %d)
+gregtech.command.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
+gregtech.command.hand.fluid=Fluid Info: %d / %d L; Can Fill: %s; Can Drain: %s
+gregtech.command.hand.fluid2=Fluid Id:
+gregtech.command.hand.material=Material Id:
+gregtech.command.hand.ore_prefix=Ore prefix:
+gregtech.command.hand.meta_item=MetaItem Id:
+gregtech.command.hand.ore_dict_entries=§3Ore dictionary entries:
+gregtech.command.hand.tool_stats=Tool Stats Class: %s
+gregtech.command.hand.not_a_player=This command is only usable by a player.
+gregtech.command.hand.no_item=You must hold something in main hand or off hand before executing this command.
+gregtech.command.recipecheck.usage=Usage: /gregtech recipecheck
+gregtech.command.recipecheck.begin=Starting recipe conflict check...
+gregtech.command.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
+gregtech.command.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
+gregtech.command.copy.click_to_copy=Click to copy
+gregtech.command.copy.copied_start=Copied [
+gregtech.command.copy.copied_end=] to the clipboard
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 
@@ -4898,6 +4930,8 @@ gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
+
+gregtech.terminal.app_name.teleport=Teleporter
 
 
 terminal.app_name.description=No description.
@@ -5073,6 +5107,9 @@ terminal.world_prospector.color=Select box color
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
+
+terminal.teleporter.dimension=Dimension:
+terminal.teleporter.spawn_portal=Engage
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:

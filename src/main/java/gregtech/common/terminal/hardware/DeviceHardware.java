@@ -83,6 +83,9 @@ public class DeviceHardware extends Hardware {
         WIRELESS(MetaItems.WIRELESS, "wireless"),
         CAMERA(MetaItems.CAMERA, "camera"),
 
+        // FIELD GEN
+        FIELD_GENERATOR_UV(MetaItems.FIELD_GENERATOR_UV, "field_generator"),
+
         // SOLAR
         SOLAR_LV(MetaItems.COVER_SOLAR_PANEL_LV, "solar_lv");
 

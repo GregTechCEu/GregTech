@@ -148,6 +148,13 @@ public class CoverRoboticArm extends CoverConveyor {
         return transferMode;
     }
 
+    private boolean shouldDisplayAmountSlider() {
+        if (transferMode == TransferMode.TRANSFER_ANY) {
+            return false;
+        }
+        return itemFilterContainer.showGlobalTransferLimitSlider();
+    }
+
     @Override
     protected String getUITitle() {
         return "cover.robotic_arm.title";
@@ -162,6 +169,8 @@ public class CoverRoboticArm extends CoverConveyor {
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> !filterHolder.hasFilter() && transferMode != TransferMode.TRANSFER_ANY);
         stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, gregtech.api.guiOld.GuiTextures.DISPLAY));
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
+        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
 
         stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
