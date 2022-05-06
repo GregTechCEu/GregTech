@@ -145,7 +145,7 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))); // ingot * 8
 
-        FLUID_CELL_GLASS_TUBE = addItem(85, "fluid_cell.glass_tube")
+        FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
                 .addComponents(new FluidStats(1000, 1200, false, true, false, false, true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))); // small dust
 

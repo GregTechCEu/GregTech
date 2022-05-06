@@ -180,7 +180,7 @@ public class MachineRecipeLoader {
         EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.dust, Glass)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .outputs(MetaItems.FLUID_CELL_GLASS_TUBE.getStackForm(4))
+                .outputs(MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm(4))
                 .duration(128).EUt(VA[LV])
                 .buildAndRegister();
 
