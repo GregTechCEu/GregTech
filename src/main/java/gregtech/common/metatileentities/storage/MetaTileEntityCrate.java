@@ -129,7 +129,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         int slotsHeight = (int) Math.ceil(inventorySize * 1D / slotsPerRow) * 18;
         int width = Math.max(176, slotsPerRow * 18 + 14);
         ModularWindow.Builder builder = ModularWindow.builder(width, 8 + slotsHeight + 96);
-        builder.widget(GuiTextures.BACKGROUND.asWidget().fillParent())
+        builder.setBackground(GuiTextures.BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(width / 2 - 81, 21 + slotsHeight))
                 .widget(new TextWidget(new Text(getMetaFullName()).localise())
                         .setPos(8, 6))
