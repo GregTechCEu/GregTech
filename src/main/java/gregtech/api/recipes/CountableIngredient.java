@@ -34,15 +34,6 @@ public class CountableIngredient {
         }
     }
 
-    public CountableIngredient(CountableIngredient countableIngredient, int count) {
-        this.ingredient = countableIngredient.ingredient;
-        this.count = count;
-        this.nonConsumable = countableIngredient.nonConsumable;
-        this.hasNBTMatchingCondition = countableIngredient.hasNBTMatchingCondition;
-        this.NBTMatchingCondition = countableIngredient.NBTMatchingCondition;
-        this.NBTMatcher = countableIngredient.NBTMatcher;
-    }
-
     public static CountableIngredient from(ItemStack stack) {
         return new CountableIngredient(Ingredient.fromStacks(stack), stack.getCount());
     }
