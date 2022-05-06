@@ -31,7 +31,6 @@ import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
@@ -46,6 +45,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -79,7 +79,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public final boolean isHidden;
 
     private final Branch lookup = new Branch();
-    private final Set<AbstractMapIngredient> root = new ObjectOpenHashSet<>();
+    private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
+    private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
 
     private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
     protected SoundEvent sound;
@@ -211,9 +212,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             return;
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        if (recurseIngredientTreeAdd(recipe, items, lookup, 0, 0)) {
-            items.forEach(root::addAll);
-        }
+        recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
     }
 
     public boolean removeRecipe(Recipe recipe) {
@@ -304,13 +303,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return r;
     }
 
-    public boolean acceptsItem(ItemStack item) {
-        return root.contains(new MapItemStackIngredient(item));
-    }
-
     public boolean acceptsFluid(List<FluidStack> fluidInputs, FluidStack fluid) {
         if (fluidInputs.isEmpty()) {
-            return root.contains(new MapFluidIngredient(fluid));
+            return fluidIngredientRoot.get(new MapFluidIngredient(fluid)) != null;
         }
         fluidInputs.add(fluid);
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>();
@@ -710,7 +705,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
-            builder.add(Collections.singletonList(new MapFluidIngredient(t)));
+            AbstractMapIngredient ingredient;
+            ingredient = new MapFluidIngredient(t);
+            WeakReference<AbstractMapIngredient> cached = fluidIngredientRoot.get(ingredient);
+            if (cached != null && cached.get() != null) {
+                builder.add(Collections.singletonList(cached.get()));
+            } else {
+                fluidIngredientRoot.put(ingredient, new WeakReference<>(ingredient));
+                builder.add(Collections.singletonList(ingredient));
+            }
         }
     }
 
@@ -736,10 +739,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Ingredient t = r.getIngredient();
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
             for (ItemStack stack : t.getMatchingStacks()) {
+                AbstractMapIngredient ingredient;
                 if (r.hasNBTMatchingCondition()) {
-                    inner.add(new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition()));
+                    ingredient = new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition());
                 } else {
-                    inner.add(new MapItemStackIngredient(stack));
+                    ingredient = new MapItemStackIngredient(stack);
+                }
+                WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                if (cached != null && cached.get() != null) {
+                    inner.add(cached.get());
+                } else {
+                    ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
+                    inner.add(ingredient);
                 }
             }
             list.add(inner);
@@ -830,7 +841,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                         targetMap.remove(obj);
                     } else {
                         Either<Recipe, Branch> result = targetMap.get(obj);
-                        if(!result.left().isPresent() && !result.right().isPresent()) {
+                        if (!result.left().isPresent() && !result.right().isPresent()) {
                             targetMap.remove(obj, result);
                         }
                     }
@@ -922,10 +933,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         private final Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTrestrictedNodes = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = Stream.concat(
-                            nodes.values().stream(),
-                            NBTrestrictedNodes.values().stream())
-                    .flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
+            Stream<Recipe> stream = Stream.concat(nodes.values().stream(), NBTrestrictedNodes.values().stream()).flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
             if (filterHidden) {
                 stream = stream.filter(t -> !t.isHidden());
             }
