@@ -4930,6 +4930,8 @@ gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
 
+gregtech.terminal.app_name.teleport=Teleporter
+
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -5104,6 +5106,9 @@ terminal.world_prospector.color=Select box color
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
+
+terminal.teleporter.dimension=Dimension:
+terminal.teleporter.spawn_portal=Engage
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
