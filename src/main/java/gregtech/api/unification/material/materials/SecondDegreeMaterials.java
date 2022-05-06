@@ -20,7 +20,7 @@ public class SecondDegreeMaterials {
                 .color(0xFAFAFA).iconSet(GLASS)
                 .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .fluidTemp(1400)
+                .fluidTemp(1200)
                 .build();
 
         Perlite = new Material.Builder(2001, "perlite")
