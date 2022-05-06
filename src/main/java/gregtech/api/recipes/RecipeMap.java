@@ -344,20 +344,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
     }
 
-    // In the case of split stacks, merge the items, 2 aluminium dust in separate
-    // stacks -> 1 stack with additive count.
     public static ItemStack[] uniqueItems(ItemStack[] input) {
         List<ItemStack> list = new ObjectArrayList<>(input.length);
         loop:
         for (ItemStack item : input) {
             for (ItemStack obj : list) {
                 if (item.isItemEqual(obj)) {
-                    obj.grow(item.getCount());
                     continue loop;
                 }
             }
-            // Add a copy here or it might mutate the stack.
-            list.add(item.copy());
+            list.add(item);
         }
         return list.toArray(new ItemStack[0]);
     }
@@ -366,15 +362,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<CountableIngredient> list = new ObjectArrayList<>(input.size());
         loop:
         for (CountableIngredient item : input) {
-            for (int i = 0; i < list.size(); i++) {
-                CountableIngredient obj = list.get(i);
+            for (CountableIngredient obj : list) {
                 if (IngredientHashStrategy.INSTANCE.equals(item.getIngredient(), obj.getIngredient())) {
-                    list.set(i, new CountableIngredient(item, obj.getCount() + item.getCount()));
                     continue loop;
                 }
             }
-            // Add a copy here or it might mutate the stack.
-            list.add(new CountableIngredient(item, item.getCount()));
+            list.add(item);
         }
         return list;
     }
@@ -388,7 +381,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     boolean canInsertFluid(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch map) {
         // Try each ingredient as a starting point, adding it to the skiplist.
-        boolean canInsert = false;
+        boolean canInsert;
         for (int i = 0; i < fluidIngredients.size(); i++) {
             canInsert = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, map, i, 0, (1L << i));
             if (canInsert) {
@@ -703,7 +696,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return true;
     }
 
-    protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
+    protected void buildFromRecipeFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
             AbstractMapIngredient ingredient;
             ingredient = new MapFluidIngredient(t);
@@ -726,15 +719,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>((r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
-            buildFromItems(list, uniqueCountableIngredientsList(r.getInputs()));
+            buildFromRecipeItems(list, uniqueCountableIngredientsList(r.getInputs()));
         }
         if (r.getFluidInputs().size() > 0) {
-            buildFromFluids(list, r.getFluidInputs());
+            buildFromRecipeFluids(list, r.getFluidInputs());
         }
         return list;
     }
 
-    protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients) {
+    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients) {
         for (CountableIngredient r : ingredients) {
             Ingredient t = r.getIngredient();
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
