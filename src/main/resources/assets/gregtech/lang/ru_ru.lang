@@ -277,9 +277,6 @@ metaitem.battery.hull.uv.tooltip=Пустой §3UV §7корпус батаре
 
 metaitem.battery.charge_time=§aДержит заряд %,d%s
 metaitem.battery.charge_detailed=%,d/%,d EU– Tier %s §7(§%c%,d%s осталось§7)
-
-metaitem.battery.charge_time=§aHolds %,d%s of Power
-metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s remaining§7)
 metaitem.battery.charge_unit.second=sec
 metaitem.battery.charge_unit.minute=min
 metaitem.battery.charge_unit.hour=hr
