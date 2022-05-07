@@ -9,7 +9,8 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.*;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
 
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister
@@ -98,12 +99,22 @@ public class MaterialPropertyExpansion {
 
     @ZenMethod
     public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
+        addFluidPipes(m, maxFluidTemperature, throughput, gasProof, false, false, false);
+    }
+
+    @ZenMethod
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
         if (checkFrozen("add fluid pipes to a material")) return;
         if (m.hasProperty(PropertyKey.FLUID_PIPE)) {
             m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
             m.getProperty(PropertyKey.FLUID_PIPE).setThroughput(throughput);
             m.getProperty(PropertyKey.FLUID_PIPE).setGasProof(gasProof);
-        } else m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof));
+            m.getProperty(PropertyKey.FLUID_PIPE).setAcidProof(acidProof);
+            m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
+            m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
+        } else {
+            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+        }
     }
 
     @ZenMethod
