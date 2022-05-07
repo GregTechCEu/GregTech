@@ -25,6 +25,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -405,7 +406,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<AbstractMapIngredient> wr = fluidIngredients.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<Recipe, RecipeMap.Branch> result = branchMap.nodes.get(t);
+            Either<Recipe, RecipeMap.Branch> result = branchMap.getNodes().get(t);
             if (result != null) {
                 if (result.left().isPresent() && count == fluidIngredients.size() - 1) {
                     return true;
@@ -476,11 +477,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (AbstractMapIngredient t : wr) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
             if (t.oreDict()) {
-                targetMap = branchMap.oreDictNodes;
+                targetMap = branchMap.getOreDictNodes();
             }else if (t.conditionalNBT()) {
-                targetMap = branchMap.NBTrestrictedNodes;
+                targetMap = branchMap.getNBTrestrictedNodes();
             } else {
-                targetMap = branchMap.nodes;
+                targetMap = branchMap.getNodes();
             }
             Either<Recipe, RecipeMap.Branch> result = targetMap.get(t);
             if (result != null) {
@@ -648,12 +649,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (AbstractMapIngredient obj : current) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
             if (obj.oreDict()) {
-                targetMap = branchMap.oreDictNodes;
+                targetMap = branchMap.getOreDictNodes();
             }
             else if (obj.conditionalNBT()) {
-                targetMap = branchMap.NBTrestrictedNodes;
+                targetMap = branchMap.getNBTrestrictedNodes();
             } else {
-                targetMap = branchMap.nodes;
+                targetMap = branchMap.getNodes();
             }
 
             // Either add the recipe or create a branch.
@@ -860,12 +861,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             for (AbstractMapIngredient obj : current) {
                 Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
                 if (obj.oreDict()) {
-                    targetMap = branchMap.oreDictNodes;
+                    targetMap = branchMap.getOreDictNodes();
                 }
                 else if (obj.conditionalNBT()) {
-                    targetMap = branchMap.NBTrestrictedNodes;
+                    targetMap = branchMap.getNBTrestrictedNodes();
                 } else {
-                    targetMap = branchMap.nodes;
+                    targetMap = branchMap.getNodes();
                 }
                 if (ingredients.size() == 0) return null;
                 Recipe r = removeDive(recipeToRemove, ingredients.subList(1, ingredients.size()), targetMap, obj, depth);
@@ -962,16 +963,56 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected static class Branch {
 
-        private final Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes = new Object2ObjectOpenHashMap<>();
-        private final Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTrestrictedNodes = new Object2ObjectOpenHashMap<>();
-        public final Map<AbstractMapIngredient, Either<Recipe, Branch>> oreDictNodes = new Object2ObjectOpenHashMap<>();
+        private Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes;
+        private Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTrestrictedNodes;
+        private Map<AbstractMapIngredient, Either<Recipe, Branch>> oreDictNodes;
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = Stream.concat(oreDictNodes.values().stream(),Stream.concat(nodes.values().stream(), NBTrestrictedNodes.values().stream())).flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
+            Stream<Recipe> stream = null;
+            if (nodes != null) {
+                stream = nodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
+            }
+            if (NBTrestrictedNodes != null) {
+                if (stream == null) {
+                    stream = NBTrestrictedNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
+                } else {
+                    stream = Stream.concat(stream, NBTrestrictedNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
+                }
+            } if (oreDictNodes != null) {
+                if (stream == null) {
+                    stream = oreDictNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
+                } else {
+                    stream = Stream.concat(stream, oreDictNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
+                }
+            }
+            if (stream == null) {
+                return Stream.empty();
+            }
             if (filterHidden) {
                 stream = stream.filter(t -> !t.isHidden());
             }
             return stream;
+        }
+
+        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getOreDictNodes() {
+            if (oreDictNodes == null) {
+                oreDictNodes = new Object2ObjectOpenHashMap<>(2);
+            }
+            return oreDictNodes;
+        }
+
+        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getNBTrestrictedNodes() {
+            if (NBTrestrictedNodes == null) {
+                NBTrestrictedNodes = new Object2ObjectOpenHashMap<>(2);
+            }
+            return NBTrestrictedNodes;
+        }
+
+        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getNodes() {
+            if (nodes == null) {
+                nodes = new Object2ObjectOpenHashMap<>(2);
+            }
+            return nodes;
         }
     }
 

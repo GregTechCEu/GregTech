@@ -14,6 +14,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CountableIngredient {
 
@@ -134,7 +135,7 @@ public class CountableIngredient {
 
     @Override
     public String toString() {
-        return "CountableIngredient{" + "ingredient=" + Arrays.toString(ingredient.getMatchingStacks()) + ", count=" + count + '}';
+        return "CountableIngredient{" + "ingredient=" + Arrays.stream(ingredient.getMatchingStacks()).map(ItemStack::getDisplayName).collect(Collectors.toList()) + ", count=" + count + '}';
     }
 
 }
