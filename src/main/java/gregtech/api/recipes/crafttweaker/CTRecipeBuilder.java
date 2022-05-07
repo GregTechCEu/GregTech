@@ -6,11 +6,13 @@ import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
+import crafttweaker.api.oredict.IOreDictEntry;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.oredict.OreIngredient;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -49,16 +51,30 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
-                .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()))
-                .collect(Collectors.toList()));
+                .map(s -> {
+                    CountableIngredient ci;
+                    if (s instanceof IOreDictEntry) {
+                        ci = CountableIngredient.from(((IOreDictEntry) s).getName(), s.getAmount());
+                    } else {
+                        ci = new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount());
+                    }
+                    return ci;
+                }).collect(Collectors.toList()));
         return this;
     }
 
     @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
-                .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()).setNonConsumable())
-                .collect(Collectors.toList()));
+                .map(s -> {
+                    CountableIngredient ci;
+                    if (s instanceof IOreDictEntry) {
+                        ci = CountableIngredient.from(((IOreDictEntry) s).getName(), s.getAmount()).setNonConsumable();
+                    } else {
+                        ci = new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()).setNonConsumable();
+                    }
+                    return ci;
+                }).collect(Collectors.toList()));
         return this;
     }
 
@@ -204,6 +220,16 @@ public class CTRecipeBuilder {
             //because CT is dump enough to compare stack sizes by default...
             itemStack.setCount(ingredient.getAmount());
             return ingredient.matches(CraftTweakerMC.getIItemStack(itemStack));
+        }
+    }
+
+    public static class CraftTweakerOreIngredientWrapper extends OreIngredient {
+
+        private final IIngredient ingredient;
+
+        public CraftTweakerOreIngredientWrapper(IOreDictEntry ingredient) {
+            super(ingredient.getName());
+            this.ingredient = ingredient;
         }
     }
 
