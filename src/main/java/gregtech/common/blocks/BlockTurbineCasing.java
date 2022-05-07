@@ -22,7 +22,6 @@ public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineC
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 2);
         setDefaultState(getState(TurbineCasingType.BRONZE_GEARBOX));
     }
 

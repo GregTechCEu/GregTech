@@ -28,7 +28,6 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         setHardness(4.0f);
         setResistance(8.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 2);
         setDefaultState(getState(SteamCasingType.BRONZE_HULL));
     }
 
