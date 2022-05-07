@@ -25,7 +25,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -294,13 +293,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
-        Recipe r = find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs));
-        if (r != null) {
-            if (exactVoltage && r.getEUt() != voltage) {
-                return null;
+        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> {
+            if (exactVoltage && a.getEUt() != voltage) {
+                return false;
             }
-        }
-        return r;
+            return a.matches(false, inputs, fluidInputs);
+        });
     }
 
     public boolean acceptsFluid(List<FluidStack> fluidInputs, FluidStack fluid) {
@@ -478,7 +476,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
             if (t.oreDict()) {
                 targetMap = branchMap.getOreDictNodes();
-            }else if (t.conditionalNBT()) {
+            } else if (t.conditionalNBT()) {
                 targetMap = branchMap.getNBTrestrictedNodes();
             } else {
                 targetMap = branchMap.getNodes();
@@ -650,8 +648,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
             if (obj.oreDict()) {
                 targetMap = branchMap.getOreDictNodes();
-            }
-            else if (obj.conditionalNBT()) {
+            } else if (obj.conditionalNBT()) {
                 targetMap = branchMap.getNBTrestrictedNodes();
             } else {
                 targetMap = branchMap.getNodes();
@@ -790,7 +787,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
     }
 
-    public AbstractMapIngredient getRelevantMapIngredient(AbstractMapIngredient search){
+    public AbstractMapIngredient getRelevantMapIngredient(AbstractMapIngredient search) {
         WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(search);
         if (cached != null && cached.get() != null) {
             return search;
@@ -862,8 +859,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
                 if (obj.oreDict()) {
                     targetMap = branchMap.getOreDictNodes();
-                }
-                else if (obj.conditionalNBT()) {
+                } else if (obj.conditionalNBT()) {
                     targetMap = branchMap.getNBTrestrictedNodes();
                 } else {
                     targetMap = branchMap.getNodes();
@@ -978,7 +974,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 } else {
                     stream = Stream.concat(stream, NBTrestrictedNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
                 }
-            } if (oreDictNodes != null) {
+            }
+            if (oreDictNodes != null) {
                 if (stream == null) {
                     stream = oreDictNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
                 } else {

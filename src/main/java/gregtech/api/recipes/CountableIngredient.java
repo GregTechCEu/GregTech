@@ -10,6 +10,7 @@ import gregtech.api.util.IngredientHashStrategy;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.common.crafting.IngredientNBT;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
@@ -24,7 +25,7 @@ public class CountableIngredient {
     private String oreDict = null;
     private boolean hasNBTMatchingCondition = false;
     private NBTcondition NBTMatchingCondition;
-    private gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher NBTMatcher;
+    private NBTMatcher NBTMatcher;
 
     public CountableIngredient(Ingredient ingredient, int count) {
         this.ingredient = ingredient;
@@ -37,26 +38,26 @@ public class CountableIngredient {
     }
 
     public static CountableIngredient from(ItemStack stack) {
-        return new CountableIngredient(Ingredient.fromStacks(stack), stack.getCount());
+        return new CountableIngredient(IngredientNBT.fromStacks(stack), stack.getCount());
     }
 
     public static CountableIngredient from(ItemStack stack, int amount) {
-        return new CountableIngredient(Ingredient.fromStacks(stack), amount);
+        return new CountableIngredient(IngredientNBT.fromStacks(stack), amount);
     }
 
-    public static CountableIngredient from(String oredict) {
-        if (ConfigHolder.misc.debug && OreDictionary.getOres(oredict).isEmpty())
-            GTLog.logger.error("Tried to access item with oredict " + oredict + ":", new IllegalArgumentException());
-        CountableIngredient ci = new CountableIngredient(new OreIngredient(oredict), 1);
-        ci.setOreDict(oredict);
+    public static CountableIngredient from(String oreDict) {
+        if (ConfigHolder.misc.debug && OreDictionary.getOres(oreDict).isEmpty())
+            GTLog.logger.error("Tried to access item with oredict " + oreDict + ":", new IllegalArgumentException());
+        CountableIngredient ci = new CountableIngredient(new OreIngredient(oreDict), 1);
+        ci.setOreDict(oreDict);
         return ci;
     }
 
-    public static CountableIngredient from(String oredict, int count) {
-        if (ConfigHolder.misc.debug && OreDictionary.getOres(oredict).isEmpty())
-            GTLog.logger.error("Tried to access item with oredict " + oredict + ":", new IllegalArgumentException());
-        CountableIngredient ci = new CountableIngredient(new OreIngredient(oredict), count);
-        ci.setOreDict(oredict);
+    public static CountableIngredient from(String oreDict, int count) {
+        if (ConfigHolder.misc.debug && OreDictionary.getOres(oreDict).isEmpty())
+            GTLog.logger.error("Tried to access item with oredict " + oreDict + ":", new IllegalArgumentException());
+        CountableIngredient ci = new CountableIngredient(new OreIngredient(oreDict), count);
+        ci.setOreDict(oreDict);
         return ci;
     }
 
@@ -89,8 +90,8 @@ public class CountableIngredient {
         return this;
     }
 
-    private void setOreDict(String oredict) {
-        this.oreDict = oredict;
+    private void setOreDict(String oreDict) {
+        this.oreDict = oreDict;
     }
 
     public boolean isOreDict() {
