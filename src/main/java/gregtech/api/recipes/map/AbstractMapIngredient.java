@@ -38,4 +38,8 @@ public abstract class AbstractMapIngredient {
     public boolean conditionalNBT() {
         return false;
     }
+
+    public boolean oreDict() {
+        return false;
+    }
 }

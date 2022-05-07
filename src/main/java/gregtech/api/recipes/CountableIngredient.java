@@ -20,6 +20,7 @@ public class CountableIngredient {
     private final Ingredient ingredient;
     private final int count;
     private boolean nonConsumable = false;
+    private String oreDict = null;
     private boolean hasNBTMatchingCondition = false;
     private NBTcondition NBTMatchingCondition;
     private gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher NBTMatcher;
@@ -45,13 +46,17 @@ public class CountableIngredient {
     public static CountableIngredient from(String oredict) {
         if (ConfigHolder.misc.debug && OreDictionary.getOres(oredict).isEmpty())
             GTLog.logger.error("Tried to access item with oredict " + oredict + ":", new IllegalArgumentException());
-        return new CountableIngredient(new OreIngredient(oredict), 1);
+        CountableIngredient ci = new CountableIngredient(new OreIngredient(oredict), 1);
+        ci.setOreDict(oredict);
+        return ci;
     }
 
     public static CountableIngredient from(String oredict, int count) {
         if (ConfigHolder.misc.debug && OreDictionary.getOres(oredict).isEmpty())
             GTLog.logger.error("Tried to access item with oredict " + oredict + ":", new IllegalArgumentException());
-        return new CountableIngredient(new OreIngredient(oredict), count);
+        CountableIngredient ci = new CountableIngredient(new OreIngredient(oredict), count);
+        ci.setOreDict(oredict);
+        return ci;
     }
 
     public static CountableIngredient from(OrePrefix prefix, Material material) {
@@ -61,7 +66,9 @@ public class CountableIngredient {
     public static CountableIngredient from(OrePrefix prefix, Material material, int count) {
         if (ConfigHolder.misc.debug && OreDictionary.getOres(new UnificationEntry(prefix, material).toString()).isEmpty())
             GTLog.logger.error("Tried to access item with oredict " + new UnificationEntry(prefix, material) + ":", new IllegalArgumentException());
-        return new CountableIngredient(new OreIngredient(new UnificationEntry(prefix, material).toString()), count);
+        CountableIngredient ci = new CountableIngredient(new OreIngredient(new UnificationEntry(prefix, material).toString()), count);
+        ci.setOreDict(new UnificationEntry(prefix, material).toString());
+        return ci;
     }
 
     public Ingredient getIngredient() {
@@ -79,6 +86,18 @@ public class CountableIngredient {
     public CountableIngredient setNonConsumable() {
         this.nonConsumable = true;
         return this;
+    }
+
+    private void setOreDict(String oredict) {
+        this.oreDict = oredict;
+    }
+
+    public boolean isOreDict() {
+        return oreDict != null;
+    }
+
+    public String getOreDict() {
+        return oreDict;
     }
 
     public boolean hasNBTMatchingCondition() {

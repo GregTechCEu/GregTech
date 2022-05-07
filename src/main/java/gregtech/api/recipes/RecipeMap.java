@@ -20,10 +20,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
-import gregtech.api.recipes.map.AbstractMapIngredient;
-import gregtech.api.recipes.map.MapFluidIngredient;
-import gregtech.api.recipes.map.MapItemStackIngredient;
-import gregtech.api.recipes.map.MapItemStackNBTIngredient;
+import gregtech.api.recipes.map.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
@@ -38,6 +35,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.oredict.OreDictionary;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -81,6 +79,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final Branch lookup = new Branch();
     private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
     private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
+
 
     private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
     protected SoundEvent sound;
@@ -349,7 +348,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         loop:
         for (ItemStack item : input) {
             for (ItemStack obj : list) {
-                if (item.isItemEqual(obj)) {
+                if (item.isItemEqual(obj) && ItemStack.areItemStackTagsEqual(item, obj)) {
                     continue loop;
                 }
             }
@@ -476,7 +475,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (t.conditionalNBT()) {
+            if (t.oreDict()) {
+                targetMap = branchMap.oreDictNodes;
+            }else if (t.conditionalNBT()) {
                 targetMap = branchMap.NBTrestrictedNodes;
             } else {
                 targetMap = branchMap.nodes;
@@ -646,7 +647,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         final Branch[] branch = new Branch[1];
         for (AbstractMapIngredient obj : current) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (obj.conditionalNBT()) {
+            if (obj.oreDict()) {
+                targetMap = branchMap.oreDictNodes;
+            }
+            else if (obj.conditionalNBT()) {
                 targetMap = branchMap.NBTrestrictedNodes;
             } else {
                 targetMap = branchMap.nodes;
@@ -730,35 +734,68 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients) {
         for (CountableIngredient r : ingredients) {
             Ingredient t = r.getIngredient();
-            List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
-            for (ItemStack stack : t.getMatchingStacks()) {
-                AbstractMapIngredient ingredient;
-                if (r.hasNBTMatchingCondition()) {
-                    ingredient = new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition());
-                } else {
-                    ingredient = new MapItemStackIngredient(stack);
-                }
+            AbstractMapIngredient ingredient;
+            if (r.isOreDict()) {
+                ingredient = new MapOreDictIngredient(r.getOreDict());
                 WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
                 if (cached != null && cached.get() != null) {
-                    inner.add(cached.get());
+                    list.add(Collections.singletonList(cached.get()));
                 } else {
                     ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                    inner.add(ingredient);
+                    list.add(Collections.singletonList(ingredient));
                 }
+            } else {
+                List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
+                for (ItemStack stack : t.getMatchingStacks()) {
+                    if (r.hasNBTMatchingCondition()) {
+                        ingredient = new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition());
+                    } else {
+                        ingredient = new MapItemStackIngredient(stack);
+                    }
+                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                    if (cached != null && cached.get() != null) {
+                        inner.add(cached.get());
+                    } else {
+                        ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
+                        inner.add(ingredient);
+                    }
+                }
+                list.add(inner);
             }
-            list.add(inner);
         }
     }
 
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
+        AbstractMapIngredient ingredient;
         for (ItemStack t : ingredients) {
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
-            ls.add(new MapItemStackIngredient(t));
-            ls.add(new MapItemStackNBTIngredient(t));
-            list.add(ls);
+            for (Integer i : OreDictionary.getOreIDs(t)) {
+                ingredient = getRelevantMapIngredient(new MapOreDictIngredient(i));
+                if (ingredient != null) {
+                    ls.add(ingredient);
+                }
+            }
+            ingredient = getRelevantMapIngredient(new MapItemStackIngredient(t));
+            if (ingredient != null) {
+                ls.add(new MapItemStackIngredient(t));
+            }
+            ingredient = getRelevantMapIngredient(new MapItemStackNBTIngredient(t));
+            if (ingredient != null) {
+                ls.add(ingredient);
+            }
+            if (ls.size() > 0) {
+                list.add(ls);
+            }
         }
     }
 
+    public AbstractMapIngredient getRelevantMapIngredient(AbstractMapIngredient search){
+        WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(search);
+        if (cached != null && cached.get() != null) {
+            return search;
+        }
+        return null;
+    }
 
     protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {
         this.specialTexturePosition = new int[]{x, y, width, height};
@@ -822,7 +859,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (List<AbstractMapIngredient> current : ingredients) {
             for (AbstractMapIngredient obj : current) {
                 Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-                if (obj.conditionalNBT()) {
+                if (obj.oreDict()) {
+                    targetMap = branchMap.oreDictNodes;
+                }
+                else if (obj.conditionalNBT()) {
                     targetMap = branchMap.NBTrestrictedNodes;
                 } else {
                     targetMap = branchMap.nodes;
@@ -924,16 +964,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         private final Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes = new Object2ObjectOpenHashMap<>();
         private final Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTrestrictedNodes = new Object2ObjectOpenHashMap<>();
+        public final Map<AbstractMapIngredient, Either<Recipe, Branch>> oreDictNodes = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = Stream.concat(nodes.values().stream(), NBTrestrictedNodes.values().stream()).flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
+            Stream<Recipe> stream = Stream.concat(oreDictNodes.values().stream(),Stream.concat(nodes.values().stream(), NBTrestrictedNodes.values().stream())).flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
             if (filterHidden) {
                 stream = stream.filter(t -> !t.isHidden());
             }
             return stream;
         }
     }
-
 
     public abstract static class Either<L, R> {
 
