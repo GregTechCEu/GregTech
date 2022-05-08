@@ -251,6 +251,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * use sparingly
      */
     public void forceRecipeRecheck() {
+        this.previousRecipe = null;
         trySearchNewRecipe();
     }
 
@@ -277,9 +278,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (currentRecipe != null && checkRecipe(currentRecipe)) {
             prepareRecipe(currentRecipe);
         }
-        // Inputs have been inspected.
-        metaTileEntity.getNotifiedItemInputList().clear();
-        metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
     /**
@@ -409,13 +407,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         // We have already trimmed fluid outputs at this time
-        if(!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         this.isOutputsFull = false;
-        return recipe.matches(true, importInventory, importFluids);
+        if (recipe.matches(true, importInventory, importFluids)) {
+            this.metaTileEntity.addNotifiedInput(importInventory);
+            return true;
+        }
+        return false;
     }
 
     protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
