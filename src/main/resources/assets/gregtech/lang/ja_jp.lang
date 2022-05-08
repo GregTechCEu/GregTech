@@ -277,6 +277,9 @@ metaitem.battery.hull.uv.tooltip=空の§3UV用§7バッテリー筐体
 
 metaitem.battery.charge_time=§a%,d%s放出可能
 metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s放出可能§7)
+metaitem.battery.charge_unit.second=秒
+metaitem.battery.charge_unit.minute=分
+metaitem.battery.charge_unit.hour=時間
 
 metaitem.battery.re.ulv.tantalum.name=タンタル製キャパシター
 metaitem.battery.re.ulv.tantalum.tooltip=充電式

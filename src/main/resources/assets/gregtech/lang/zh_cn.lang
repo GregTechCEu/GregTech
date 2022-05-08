@@ -292,6 +292,9 @@ metaitem.battery.hull.uv.tooltip=一个空的 §3UV §7电池外壳
 
 metaitem.battery.charge_time=§a可以持续供电 %,d%s
 metaitem.battery.charge_detailed=%,d/%,d EU - 等级 %s §7(§%c%,d%s 剩余§7)
+metaitem.battery.charge_unit.second=秒
+metaitem.battery.charge_unit.minute=分钟
+metaitem.battery.charge_unit.hour=小时
 
 metaitem.battery.re.ulv.tantalum.name=钽电容
 metaitem.battery.re.ulv.tantalum.tooltip=可充电电池

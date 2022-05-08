@@ -587,13 +587,13 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         String unit;
         if (duration.getSeconds() <= 180) {
             timeRemaining = duration.getSeconds();
-            unit = "sec";
+            unit = I18n.format("metaitem.battery.charge_unit.second");
         } else if (duration.toMinutes() <= 180) {
             timeRemaining = duration.toMinutes();
-            unit = "min";
+            unit = I18n.format("metaitem.battery.charge_unit.minute");
         } else {
             timeRemaining = duration.toHours();
-            unit = "hr";
+            unit = I18n.format("metaitem.battery.charge_unit.hour");
         }
         tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VNF[tier],
                 percentRemaining < 30 ? 'c' : percentRemaining < 60 ? 'e' : 'a',
