@@ -5019,6 +5019,10 @@ terminal.settings.description=GTOS的系统设置
 terminal.settings.theme=主题
 terminal.settings.theme.color=主题颜色设置
 terminal.settings.theme.wallpaper=壁纸设置
+terminal.settings.theme.wallpaper.resource=资源
+terminal.settings.theme.wallpaper.url=网址
+terminal.settings.theme.wallpaper.color=单色
+terminal.settings.theme.wallpaper.file=文件
 terminal.settings.theme.select=选择
 terminal.settings.theme.image=图像文件
 terminal.settings.home=主页按钮
@@ -5123,6 +5127,24 @@ terminal.world_prospector.color=颜色选择框
 terminal.vtank_viewer.description=永远不要再次失去任何末影流体连接覆盖板！这是一个可滚动的列表，列出了你在自己的世界中所有已连接的流体容器。
 terminal.vtank_viewer.title=虚拟容器查看器
 terminal.vtank_viewer.refresh=刷新容器指数
+
+terminal.maze.title=提修斯的逃跑
+terminal.maze.play=开始
+terminal.maze.continue=继续
+terminal.maze.pause=暂停
+terminal.maze.death.1=天啊! 你被弥诺陶洛斯吃掉了!
+terminal.maze.death.2=你在死之前破解了%s个迷宫。
+terminal.maze.death.3=再玩一次?
+terminal.maze.retry=重试
+
+terminal.minesweeper.time=%s秒经过
+terminal.minesweeper.lose=你输了。游戏将在%s秒后重新开始.
+terminal.minesweeper.win.1=你在%s秒内赢了!
+terminal.minesweeper.win.2=游戏将在%s秒后重新开始.
+
+terminal.cape_selector.empty=看来你还没有开放任何披风!
+terminal.cape_selector.select=点击已开放的披风以选择!
+terminal.cape_selector.tip=你可以经过获得困难的进度以开放披风。
 
 metaitem.cover.digital.title.mode=模式:
 metaitem.cover.digital.title.spin=自旋:

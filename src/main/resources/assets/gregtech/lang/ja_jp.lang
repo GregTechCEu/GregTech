@@ -4870,7 +4870,7 @@ gregtech.terminal.app_name.ore_prospector=鉱石探査
 gregtech.terminal.app_name.fluid_prospector=液体探査
 gregtech.terminal.app_name.pong=ポン
 gregtech.terminal.app_name.minesweeper=マインスイーパー
-gregtech.terminal.app_name.maze=テセウスの迷宮
+gregtech.terminal.app_name.maze=テセウスの脱出
 
 
 gregtech.terminal.app_name.console=GTコンソール
@@ -4952,6 +4952,10 @@ terminal.settings.description=GTOSのシステム設定.
 terminal.settings.theme=テーマ
 terminal.settings.theme.color=テーマカラーの設定
 terminal.settings.theme.wallpaper=壁紙設定
+terminal.settings.theme.wallpaper.resource=リソース
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=単色
+terminal.settings.theme.wallpaper.file=ファイル
 terminal.settings.theme.select=選択
 terminal.settings.theme.image=画像ファイル
 terminal.settings.home=ホームボタン
@@ -5056,6 +5060,24 @@ terminal.world_prospector.color=色の設定
 terminal.vtank_viewer.description=エンダーリンクの周波数を変更しても液体を失うことはありません. これがこの世界でアクセスできるすべてのバーチャルタンクのリストです.
 terminal.vtank_viewer.title=バーチャルタンクビューア
 terminal.vtank_viewer.refresh=再読み込み
+
+terminal.maze.title=テセウスの脱出
+terminal.maze.play=プレイ
+terminal.maze.continue=ゲーム再開
+terminal.maze.pause=PAUSE
+terminal.maze.death.1=なんてことだ! ミノタウロスに食われてしまった!
+terminal.maze.death.2=生きている間に%sの迷路を突破した.
+terminal.maze.death.3=再挑戦する?
+terminal.maze.retry=リトライ
+
+terminal.minesweeper.time=%s秒経過
+terminal.minesweeper.lose=失敗! %s秒後にリスタートします.
+terminal.minesweeper.win.1=%s秒で勝利しました!
+terminal.minesweeper.win.2=%s秒後にリスタートします.
+
+terminal.cape_selector.empty=まだマントを一つも持っていません！
+terminal.cape_selector.select=マントをクリックして選択してください!
+terminal.cape_selector.tip=象徴的な実績を達成することでマントを獲得できます.
 
 metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:

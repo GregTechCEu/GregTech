@@ -5005,6 +5005,10 @@ terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme
 terminal.settings.theme.color=Theme Color Settings
 terminal.settings.theme.wallpaper=Wallpaper Settings
+terminal.settings.theme.wallpaper.resource=resource
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=color
+terminal.settings.theme.wallpaper.file=file
 terminal.settings.theme.select=Select
 terminal.settings.theme.image=Image File
 terminal.settings.home=Home Button
@@ -5112,6 +5116,24 @@ terminal.vtank_viewer.refresh=Refresh tank index
 
 terminal.teleporter.dimension=Dimension:
 terminal.teleporter.spawn_portal=Engage
+
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %s mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
+
+terminal.minesweeper.time=%s seconds elapsed
+terminal.minesweeper.lose=You lost. Game will restart in %s seconds.
+terminal.minesweeper.win.1=You won in %s seconds!
+terminal.minesweeper.win.2=Game will restart in %s
+
+terminal.cape_selector.empty=It looks like you haven't unlocked any capes yet!
+terminal.cape_selector.select=Click on an unlocked cape to select it!
+terminal.cape_selector.tip=You can get these from high-level advancements.
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
