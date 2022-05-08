@@ -21,6 +21,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMaintenanceHatch {
@@ -68,7 +69,8 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         getBaseTexture().render(renderState, translation, ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
-        if (shouldRenderOverlay()) Textures.MAINTENANCE_OVERLAY_CLEANING.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        if (shouldRenderOverlay())
+            Textures.MAINTENANCE_OVERLAY_CLEANING.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
@@ -102,14 +104,18 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
             return 0;
         }
 
+        @Nonnull
         @Override
         public Set<CleanroomType> getTypes() {
             return Sets.newHashSet(CleanroomType.CLEANROOM);
         }
 
         @Override
-        public void setClean(boolean isClean) {
+        public void setCleanAmount(int amount) {
+        }
 
+        @Override
+        public void adjustCleanAmount(int amount) {
         }
     }
 }

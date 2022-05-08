@@ -8,20 +8,25 @@ import java.util.Set;
 public interface ICleanroomProvider {
 
     /**
-     *
      * @return a {@link Set} of {@link CleanroomType} which the cleanroom provides
      */
     Set<CleanroomType> getTypes();
 
     /**
-     * Sets the cleanroom's "clean" state
+     * Sets the cleanroom's clean amount
      *
-     * @param isClean the state of cleanliness
+     * @param amount the amount of cleanliness
      */
-    void setClean(boolean isClean);
+    void setCleanAmount(int amount);
 
     /**
+     * Adjust the cleanroom's clean amount
      *
+     * @param amount the amount of cleanliness to increase/decrease by
+     */
+    void adjustCleanAmount(int amount);
+
+    /**
      * @return whether the cleanroom is currently clean
      */
     boolean isClean();
@@ -35,13 +40,11 @@ public interface ICleanroomProvider {
     boolean drainEnergy(boolean simulate);
 
     /**
-     *
      * @return the amount of energy input per second
      */
     long getEnergyInputPerSecond();
 
     /**
-     *
      * @return the tier {@link gregtech.api.GTValues.V} of energy the cleanroom uses at minimum
      */
     int getEnergyTier();

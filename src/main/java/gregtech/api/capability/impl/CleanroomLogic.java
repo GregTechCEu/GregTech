@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.common.ConfigHolder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -13,13 +13,15 @@ import javax.annotation.Nonnull;
 
 public class CleanroomLogic {
 
-    public static final int MAX_PROGRESS = 1200; // One real-life minute
+    public static final int MAX_PROGRESS = 100; // five seconds
+    public static final int BASE_CLEAN_AMOUNT = 5;
 
     private int progressTime = 0;
 
     private final int minEnergyTier;
 
     private final MetaTileEntity metaTileEntity;
+    private final boolean hasMaintenance;
 
     private boolean isActive;
     private boolean isWorkingEnabled = true;
@@ -30,40 +32,40 @@ public class CleanroomLogic {
     public CleanroomLogic(MetaTileEntity metaTileEntity, int minEnergyTier) {
         this.metaTileEntity = metaTileEntity;
         this.minEnergyTier = minEnergyTier;
+        this.hasMaintenance = ConfigHolder.machines.enableMaintenance && ((IMaintenance) metaTileEntity).hasMaintenanceMechanics();
     }
 
     /**
-     * Performs the actual drilling
+     * Performs the actual cleaning
      * Call this method every tick in update
      */
     public void updateLogic() {
         if (metaTileEntity.getWorld().isRemote) return;
 
-        if (ConfigHolder.machines.enableMaintenance && ((MultiblockWithDisplayBase) metaTileEntity).hasMaintenanceMechanics() && ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() > 5) {
+        if (hasMaintenance && ((IMaintenance) metaTileEntity).getNumMaintenanceProblems() > 5) {
             return;
         }
 
         // cleanrooms which cannot work do nothing
-        if (!this.isWorkingEnabled)
-            return;
+        if (!this.isWorkingEnabled) return;
 
-        // check if running is possible
-        if (!checkCanDrainStorages())
-            return;
-
-        // actually drain the energy
+        // drain the energy
         consumeEnergy(false);
 
         if (!this.isActive) setActive(true);
 
         // increase progress
         progressTime++;
-        if (progressTime % getMaxProgress() != 0)
-            return;
+        if (progressTime % getMaxProgress() != 0) return;
         progressTime = 0;
 
-        if (!((ICleanroomProvider) metaTileEntity).isClean())
-            ((ICleanroomProvider) metaTileEntity).setClean(true);
+        int amountToClean;
+        if (hasEnoughPower()) amountToClean = BASE_CLEAN_AMOUNT * (getTierDifference() + 1);
+        else amountToClean = -BASE_CLEAN_AMOUNT;
+
+        // each maintenance problem lowers gain by 1 and increases loss by 1
+        if (hasMaintenance) amountToClean -= ((IMaintenance) metaTileEntity).getNumMaintenanceProblems();
+        ((ICleanroomProvider) metaTileEntity).adjustCleanAmount(amountToClean);
     }
 
     protected boolean consumeEnergy(boolean simulate) {
@@ -73,20 +75,14 @@ public class CleanroomLogic {
     /**
      * @return true if the cleanroom is able to drain energy, else false
      */
-    protected boolean checkCanDrainStorages() {
+    protected boolean hasEnoughPower() {
         if (!consumeEnergy(true)) {
             if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy)
-                    this.progressTime = 1;
-                else
-                    this.progressTime = Math.max(1, progressTime - 2);
+                if (ConfigHolder.machines.recipeProgressLowEnergy) this.progressTime = 1;
+                else this.progressTime = Math.max(1, progressTime - 2);
 
                 hasNotEnoughEnergy = true;
             }
-            // cannot supply enough energy, therefore it is no longer clean
-            if (((ICleanroomProvider) metaTileEntity).isClean())
-                ((ICleanroomProvider) metaTileEntity).setClean(false);
-
             return false;
         }
 
@@ -147,17 +143,7 @@ public class CleanroomLogic {
     }
 
     public int getMaxProgress() {
-        MultiblockWithDisplayBase displayBase = (MultiblockWithDisplayBase) metaTileEntity;
-        if (!ConfigHolder.machines.enableMaintenance || !displayBase.hasMaintenanceMechanics())
-            return MAX_PROGRESS;
-
-        int duration = MAX_PROGRESS;
-        if (isOverclocked()) {
-            // isOverclocked() checks division by zero
-            duration = (int) (MAX_PROGRESS / (ConfigHolder.machines.overclockDivisor * getTierDifference()));
-        }
-
-        return duration + displayBase.getNumMaintenanceProblems() * duration;
+        return MAX_PROGRESS;
     }
 
     public double getProgressPercent() {
@@ -166,10 +152,6 @@ public class CleanroomLogic {
 
     protected int getTierDifference() {
         return ((ICleanroomProvider) metaTileEntity).getEnergyTier() - minEnergyTier;
-    }
-
-    protected boolean isOverclocked() {
-        return getTierDifference() > 0;
     }
 
     /**
