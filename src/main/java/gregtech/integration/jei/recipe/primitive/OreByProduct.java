@@ -46,16 +46,20 @@ public class OreByProduct implements IRecipeWrapper {
             OrePrefix.crushedCentrifuged
     );
 
-    private static final ImmutableList<ItemStack> ALWAYS_MACHINES = ImmutableList.of(
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm(),
-            MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm(),
-            MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm(),
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm()
-    );
+    private static ImmutableList<ItemStack> ALWAYS_MACHINES;
+
+    public static void init() {
+        ALWAYS_MACHINES = ImmutableList.of(
+                MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm(),
+                MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm(),
+                MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm(),
+                MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm()
+        );
+    }
 
     private final Int2ObjectMap<ChanceEntry> chances = new Int2ObjectOpenHashMap<>();
     private final List<List<ItemStack>> inputs = new ArrayList<>();
