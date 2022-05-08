@@ -1,5 +1,7 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.IStateHarvestLevel;
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -19,7 +21,6 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 2);
         setDefaultState(getState(BlockType.ASPHALT));
     }
 
@@ -36,20 +37,27 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         }
     }
 
-    public enum BlockType implements IStringSerializable {
+    public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
-        ASPHALT("asphalt");
+        ASPHALT("asphalt", 1);
 
         private final String name;
+        private final int harvestLevel;
 
-        BlockType(String name) {
+        BlockType(String name, int harvestLevel) {
             this.name = name;
+            this.harvestLevel = harvestLevel;
         }
 
         @Nonnull
         @Override
         public String getName() {
             return this.name;
+        }
+
+        @Override
+        public int getHarvestLevel(IBlockState state) {
+            return harvestLevel;
         }
     }
 }

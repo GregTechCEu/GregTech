@@ -1,4 +1,4 @@
-package gregtech.common.blocks;
+package gregtech.api.block;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
@@ -23,7 +23,7 @@ public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends
     }
 
     @SuppressWarnings("deprecation")
-    protected IBlockState getBlockState(ItemStack stack) {
+    public IBlockState getBlockState(ItemStack stack) {
         return block.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 

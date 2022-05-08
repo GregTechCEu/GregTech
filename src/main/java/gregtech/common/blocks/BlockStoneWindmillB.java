@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -17,7 +18,7 @@ public class BlockStoneWindmillB extends VariantBlock<BlockStoneWindmillB.BlockT
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 2);
+        setHarvestLevel("pickaxe", 1);
         setDefaultState(getState(BlockType.BLACK_GRANITE));
     }
 
