@@ -380,7 +380,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        return new ThermalFluidHandlerItemStack(itemStack, maxFluidCapacity, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return new ThermalFluidHandlerItemStack(itemStack, maxFluidCapacity, Integer.MAX_VALUE, true, true, true, true);
     }
 
     @Override

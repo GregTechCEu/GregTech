@@ -228,6 +228,7 @@ metaitem.fluid_cell.empty=Empty
 metaitem.fluid_cell.name=%s Cell
 metaitem.fluid_cell.universal.empty=Empty
 metaitem.fluid_cell.universal.name=%s Universal Cell
+metaitem.fluid_cell.glass_vial.name=%s Glass Vial
 metaitem.large_fluid_cell.steel.name=%s Steel Cell
 metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell

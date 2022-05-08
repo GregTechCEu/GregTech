@@ -177,6 +177,13 @@ public class MachineRecipeLoader {
                 .duration(128).EUt(VA[LV])
                 .buildAndRegister();
 
+        EXTRUDER_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Glass)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
+                .outputs(MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm(4))
+                .duration(128).EUt(VA[LV])
+                .buildAndRegister();
+
         COMPRESSOR_RECIPES.recipeBuilder()
                 .input(OrePrefix.dust, Materials.NetherQuartz)
                 .output(OrePrefix.plate, Materials.NetherQuartz)

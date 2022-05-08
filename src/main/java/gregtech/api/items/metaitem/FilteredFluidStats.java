@@ -12,31 +12,27 @@ import java.util.function.Function;
 
 public class FilteredFluidStats implements IItemComponent, IItemCapabilityProvider {
 
-    public final int maxCapacity;
-    public final int minFluidTemperature;
-    public final int maxFluidTemperature;
-    public final boolean allowPartlyFill;
+    public final int capacity;
+    public final boolean allowPartialFill;
     private final Function<FluidStack, Boolean> fillPredicate;
 
-    public FilteredFluidStats(int maxCapacity, int minFluidTemperature, int maxFluidTemperature, boolean allowPartlyFill, Function<FluidStack, Boolean> fillPredicate) {
-        this.maxCapacity = maxCapacity;
-        this.minFluidTemperature = minFluidTemperature;
-        this.maxFluidTemperature = maxFluidTemperature;
-        this.allowPartlyFill = allowPartlyFill;
+    public FilteredFluidStats(int capacity, boolean allowPartialFill, Function<FluidStack, Boolean> fillPredicate) {
+        this.capacity = capacity;
+        this.allowPartialFill = allowPartialFill;
         this.fillPredicate = fillPredicate;
     }
 
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
-        if (allowPartlyFill) {
-            return new ThermalFluidHandlerItemStack(itemStack, maxCapacity, minFluidTemperature, maxFluidTemperature) {
+        if (allowPartialFill) {
+            return new ThermalFluidHandlerItemStack(itemStack, capacity, Integer.MAX_VALUE, true, true, true, true) {
                 @Override
                 public boolean canFillFluidType(FluidStack fluid) {
                     return super.canFillFluidType(fluid) && fillPredicate.apply(fluid);
                 }
             };
         }
-        return new SimpleThermalFluidHandlerItemStack(itemStack, maxCapacity, minFluidTemperature, maxFluidTemperature) {
+        return new SimpleThermalFluidHandlerItemStack(itemStack, capacity, Integer.MAX_VALUE, true, true, true, true) {
             @Override
             public boolean canFillFluidType(FluidStack fluid) {
                 return super.canFillFluidType(fluid) && fillPredicate.apply(fluid);
