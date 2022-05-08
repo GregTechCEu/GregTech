@@ -41,6 +41,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
@@ -55,6 +56,9 @@ import java.util.*;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
+    public static final int CLEAN_AMOUNT_THRESHOLD = 90;
+    public static final int MIN_CLEAN_AMOUNT = 0;
+
     public static final int MIN_DIAMETER = 5;
     public static final int MAX_DIAMETER = 15;
     private int width = 5;
@@ -62,7 +66,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     private int depth = 5;
 
     private CleanroomType cleanroomType = null;
-    private boolean isClean;
+    private int cleanAmount;
 
     private IEnergyContainer energyContainer;
 
@@ -94,10 +98,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         if (type instanceof BlockCleanroomCasing.CasingType) {
             BlockCleanroomCasing.CasingType casingType = (BlockCleanroomCasing.CasingType) type;
 
-            if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING))
+            if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING)) {
                 this.cleanroomType = CleanroomType.CLEANROOM;
-            else if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE))
+            } else if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE)) {
                 this.cleanroomType = CleanroomType.STERILE_CLEANROOM;
+            }
         }
     }
 
@@ -105,7 +110,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     public void invalidateStructure() {
         super.invalidateStructure();
         resetTileAbilities();
-        this.isClean = false;
+        this.cleanAmount = MIN_CLEAN_AMOUNT;
     }
 
     @Override
@@ -120,12 +125,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     protected BlockPattern createStructurePattern() {
         // these can sometimes get set to 0 when loading the game, breaking JEI
-        if (width == 0)
-            width = MIN_DIAMETER;
-        if (height == 0)
-            height = MIN_DIAMETER;
-        if (depth == 0)
-            depth = MIN_DIAMETER;
+        if (width == 0) width = MIN_DIAMETER;
+        if (height == 0) height = MIN_DIAMETER;
+        if (depth == 0) depth = MIN_DIAMETER;
 
         // build each row of the structure
         StringBuilder border = new StringBuilder("B"); //      BBBBB
@@ -334,7 +336,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
         if (!cleanroomLogic.isWorkingEnabled()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-
         } else if (cleanroomLogic.isActive()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
             int currentProgress = getProgressPercent();
@@ -348,10 +349,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         }
 
         if (isStructureFormed()) {
-            if (isClean)
-                textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
-            else
-                textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
+            if (isClean()) textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
+            else textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_amount", this.cleanAmount));
         }
     }
 
@@ -437,19 +437,25 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
-    public void setClean(boolean isClean) {
-        this.isClean = isClean;
+    public void setCleanAmount(int amount) {
+        this.cleanAmount = amount;
+    }
+
+    @Override
+    public void adjustCleanAmount(int amount) {
+        // do not allow negative cleanliness nor cleanliness above 100
+        this.cleanAmount = MathHelper.clamp(this.cleanAmount + amount, 0, 100);
     }
 
     @Override
     public boolean isClean() {
-        return this.isClean;
+        return this.cleanAmount >= CLEAN_AMOUNT_THRESHOLD;
     }
 
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(isClean ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
+        return Collections.singletonList(new TextComponentTranslation(isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
     }
 
     @Override
@@ -460,7 +466,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         if (!isActivationAllowed) // pausing sets not clean
-            setClean(false);
+            setCleanAmount(MIN_CLEAN_AMOUNT);
         this.cleanroomLogic.setWorkingEnabled(isActivationAllowed);
     }
 
@@ -531,7 +537,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         data.setInteger("width", this.width);
         data.setInteger("depth", this.depth);
         data.setInteger("height", this.height);
-        data.setBoolean("isClean", this.isClean);
+        data.setInteger("cleanAmount", this.cleanAmount);
         return this.cleanroomLogic.writeToNBT(data);
     }
 
@@ -541,7 +547,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.width = data.hasKey("width") ? data.getInteger("width") : this.width;
         this.depth = data.hasKey("depth") ? data.getInteger("depth") : this.depth;
         this.height = data.hasKey("height") ? data.getInteger("height") : this.height;
-        this.isClean = data.getBoolean("isClean");
+        this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
     }
 
@@ -551,7 +557,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         buf.writeInt(this.width);
         buf.writeInt(this.depth);
         buf.writeInt(this.height);
-        buf.writeBoolean(isClean);
+        buf.writeInt(this.cleanAmount);
         this.cleanroomLogic.writeInitialSyncData(buf);
     }
 
@@ -561,7 +567,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.width = buf.readInt();
         this.depth = buf.readInt();
         this.height = buf.readInt();
-        this.isClean = buf.readBoolean();
+        this.cleanAmount = buf.readInt();
         this.cleanroomLogic.receiveInitialSyncData(buf);
     }
 
