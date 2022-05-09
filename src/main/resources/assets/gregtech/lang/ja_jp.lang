@@ -32,6 +32,9 @@ gregtech.top.energy_stored=エネルギー:
 gregtech.top.progress=進捗:
 gregtech.top.working_disabled=停止中
 
+gregtech.top.energy_consumption=使用中:
+gregtech.top.energy_production=発電量:
+
 gregtech.top.transform_up=§c昇圧§r
 gregtech.top.transform_down=§a降圧§r
 gregtech.top.transform_input=§6入力:§r
@@ -51,6 +54,8 @@ gregtech.top.valid_structure=§a構造が完成
 gregtech.top.obstructed_structure=§cスペース不足
 gregtech.top.maintenance_fixed=§a修理は不要
 gregtech.top.maintenance_broken=§c修理が必要
+
+gregtech.top.primitive_pump_production=生産
 
 gregtech.multiblock.title=マルチブロックの構造
 gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉 (PBF) は序盤にスチールを得るためのマルチブロック機械です.  動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
@@ -277,9 +282,6 @@ metaitem.battery.hull.uv.tooltip=空の§3UV用§7バッテリー筐体
 
 metaitem.battery.charge_time=§a%,d%s放出可能
 metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s放出可能§7)
-metaitem.battery.charge_unit.second=秒
-metaitem.battery.charge_unit.minute=分
-metaitem.battery.charge_unit.hour=時間
 
 metaitem.battery.re.ulv.tantalum.name=タンタル製キャパシター
 metaitem.battery.re.ulv.tantalum.tooltip=充電式
@@ -806,6 +808,15 @@ metaitem.cover.energy.detector.name=エネルギー検出器
 metaitem.cover.energy.detector.tooltip=レッドストーン信号としてエネルギー量を検出するカバー
 metaitem.cover.player.detector.name=プレイヤー検出器
 metaitem.cover.player.detector.tooltip=レッドストーン信号として付近のプレイヤーを検出するカバー
+metaitem.cover.drain.name=ドレインカバー
+metaitem.cover.fluid.voiding.name=液体消去カバー
+metaitem.cover.fluid.voiding.tooltip=液体を消去するカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.fluid.voiding.advanced.name=発展型液体消去カバー
+metaitem.cover.fluid.voiding.advanced.tooltip=液体を消去する量を制御できるカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.item.voiding.name=アイテム消去カバー
+metaitem.cover.item.voiding.tooltip=アイテムを消去するカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.item.voiding.advanced.name=発展型アイテム消去カバー
+metaitem.cover.item.voiding.advanced.tooltip=アイテムを消去する量を制御できるカバー./n設置後にソフトハンマーで有効化する必要がある.
 
 metaitem.cover.facade.name=%sの外装
 metaitem.cover.facade.tooltip=装飾品
@@ -882,32 +893,32 @@ metaitem.brick.coke.name=コークス炉用レンガ
 metaitem.wooden_form.empty.name=木枠
 metaitem.wooden_form.brick.name=レンガ型の木枠
 
-metaitem.tool.sword.name=%sの剣
-metaitem.tool.pickaxe.name=%sのピッケル
-metaitem.tool.shovel.name=%sのシャベル
-metaitem.tool.axe.name=%sの斧
-metaitem.tool.hoe.name=%sのクワ
-metaitem.tool.saw.name=%sののこぎり
+metaitem.tool.sword.name=%s製剣
+metaitem.tool.pickaxe.name=%s製ピッケル
+metaitem.tool.shovel.name=%s製シャベル
+metaitem.tool.axe.name=%s製斧
+metaitem.tool.hoe.name=%s製クワ
+metaitem.tool.saw.name=%s製のこぎり
 metaitem.tool.saw.tooltip=氷も収集できる
-metaitem.tool.hard_hammer.name=%sのハンマー
+metaitem.tool.hard_hammer.name=%s製ハンマー
 metaitem.tool.hard_hammer.tooltip=鉱石を採掘する代わりに砕く
-metaitem.tool.soft_hammer.name=%sのソフトハンマー
-metaitem.tool.wrench.name=%sのレンチ
+metaitem.tool.soft_hammer.name=%s製ソフトハンマー
+metaitem.tool.wrench.name=%s製レンチ
 metaitem.tool.wrench.tooltip=左クリックで機械を撤去
-metaitem.tool.file.name=%sのやすり
-metaitem.tool.crowbar.name=%sのバール
+metaitem.tool.file.name=%s製やすり
+metaitem.tool.crowbar.name=%s製バール
 metaitem.tool.crowbar.tooltip=カバーの撤去やレールの回転に
-metaitem.tool.screwdriver.name=%sのスクリュードライバー
+metaitem.tool.screwdriver.name=%s製スクリュードライバー
 metaitem.tool.screwdriver.tooltip=カバーと機械の設定に
-metaitem.tool.mortar.name=%sのすり鉢
+metaitem.tool.mortar.name=%s製すり鉢
 metaitem.tool.wire_cutter.name=%sのワイヤーカッター
-metaitem.tool.branch_cutter.name=%sの枝切りばさみ
-metaitem.tool.knife.name=%sのナイフ
-metaitem.tool.butchery_knife.name=%sの肉切り包丁
+metaitem.tool.branch_cutter.name=%s製枝切りばさみ
+metaitem.tool.knife.name=%s製ナイフ
+metaitem.tool.butchery_knife.name=%s製肉切り包丁
 metaitem.tool.butchery_knife.tooltip=攻撃速度は遅い
-metaitem.tool.sense.name=%sのセンス
+metaitem.tool.sense.name=%s製センス
 metaitem.tool.sense.tooltip=鎌はセンスなさすぎ
-metaitem.tool.plunger.name=%sのラバーカップ
+metaitem.tool.plunger.name=%s製ラバーカップ
 metaitem.tool.rolling_pin.name=%sの麺棒
 metaitem.tool.drill.lv.name=LVの%s製ドリル
 metaitem.tool.drill.mv.name=MVの%s製ドリル
@@ -1074,12 +1085,13 @@ cover.filter.blacklist.disabled=ホワイトリスト
 cover.filter.blacklist.enabled=ブラックリスト
 
 cover.ore_dictionary_filter.title=鉱石辞書フィルター
-cover.ore_dictionary_filter.info=§b論理式対応/n& = AND/n| = OR/n^ = XOR/n! = NOT/n( ) 優先/n* ワイルドカード/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが, 二重プレートは該当しない
+cover.ore_dictionary_filter.info=§b論理式対応/n&=AND/n|=OR/n^=XOR/n!=NOT/n( ) 優先/n* ワイルドカード/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが, 二重プレートは該当しない
 cover.ore_dictionary_filter.test_slot.info=フィルタ式に一致するかどうかのテスト用スロット
 cover.ore_dictionary_filter.matches=適合アイテム
 cover.ore_dictionary_filter.matches_not=非適合アイテム
 
 cover.fluid_filter.title=液体フィルター
+cover.fluid_filter.config_amount=スクロールで量を調整できる./nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/n右クリックで増加, 左クリックで減少./nShiftで倍/半分./nホイールクリックで消去.
 cover.fluid_filter.mode.filter_fill=搬入フィルター
 cover.fluid_filter.mode.filter_drain=搬出フィルター
 cover.fluid_filter.mode.filter_both=搬入/搬出フィルター
@@ -1092,6 +1104,14 @@ cover.item_filter.ignore_damage.enabled=ダメージ値を無視
 cover.item_filter.ignore_damage.disabled=ダメージ値を無視しない
 cover.item_filter.ignore_nbt.enabled=NBTを無視
 cover.item_filter.ignore_nbt.disabled=NBTを無視しない
+
+cover.voiding.voiding_mode.void_any=適合消去モード
+cover.voiding.voiding_mode.void_overflow=過剰消去モード
+cover.voiding.voiding_mode.description=§e適合消去モード§rはフィルタに適合するものを消去する. /n§e過剰消去モード§はフィルタに適合する特定量を超えたものを消去する.
+cover.fluid.voiding.title=液体消去設定
+cover.fluid.voiding.advanced.title=発展型液体消去設定
+cover.item.voiding.title=アイテム消去設定
+cover.item.voiding.advanced.title=発展型アイテム消去設定
 
 cover.smart_item_filter.title=スマートアイテムフィルター
 cover.smart_item_filter.filtering_mode.electrolyzer=電解槽
@@ -1201,21 +1221,21 @@ item.material.oreprefix.rotor=%sのローター
 item.material.oreprefix.gearSmall=小さな%sの歯車
 item.material.oreprefix.gear=%sの歯車
 item.material.oreprefix.lens=%sのレンズ
-item.material.oreprefix.toolHeadSword=%sの剣刃
-item.material.oreprefix.toolHeadPickaxe=%sのピッケルヘッド
-item.material.oreprefix.toolHeadShovel=%sのシャベルヘッド
-item.material.oreprefix.toolHeadAxe=%sの斧刃
-item.material.oreprefix.toolHeadHoe=%sのクワ刃
-item.material.oreprefix.toolHeadSense=%s鎌刃
-item.material.oreprefix.toolHeadFile=%sのやすりヘッド
-item.material.oreprefix.toolHeadHammer=%sハンマーヘッド
-item.material.oreprefix.toolHeadSaw=%sののこぎり刃
-item.material.oreprefix.toolHeadBuzzSaw=%sの丸のこ刃
-item.material.oreprefix.toolHeadScrewdriver=%sのスクリュードライバーの先端
-item.material.oreprefix.toolHeadDrill=%sのドリルの先端
-item.material.oreprefix.toolHeadChainsaw=%sのチェーンソーの先端
-item.material.oreprefix.toolHeadWrench=%sのレンチの先端
-item.material.oreprefix.turbineBlade=%sのタービンブレード
+item.material.oreprefix.toolHeadSword=%s製剣刃
+item.material.oreprefix.toolHeadPickaxe=%s製ピッケルヘッド
+item.material.oreprefix.toolHeadShovel=%s製シャベルヘッド
+item.material.oreprefix.toolHeadAxe=%s製斧刃
+item.material.oreprefix.toolHeadHoe=%s製クワ刃
+item.material.oreprefix.toolHeadSense=%s製鎌刃
+item.material.oreprefix.toolHeadFile=%s製やすりヘッド
+item.material.oreprefix.toolHeadHammer=%s製ハンマーヘッド
+item.material.oreprefix.toolHeadSaw=%s製のこぎり刃
+item.material.oreprefix.toolHeadBuzzSaw=%s製丸のこ刃
+item.material.oreprefix.toolHeadScrewdriver=%s製スクリュードライバーの先端
+item.material.oreprefix.toolHeadDrill=%s製ドリルの先端
+item.material.oreprefix.toolHeadChainsaw=%s製チェーンソーの先端
+item.material.oreprefix.toolHeadWrench=%s製レンチの先端
+item.material.oreprefix.turbineBlade=%s製タービンブレード
 item.material.oreprefix.block=%sブロック
 item.material.oreprefix.frameGt=%s製の骨組み
 item.material.oreprefix.pipeTinyFluid=極細の%s製液体パイプ
@@ -2177,6 +2197,7 @@ behaviour.soft_hammer=機械のON/OFFを切り替える
 behaviour.soft_hammer.enabled=作業開始
 behaviour.soft_hammer.disabled=作業停止
 behaviour.lighter.tooltip=着火可能
+behaviour.lighter.fluid.tooltip=プロパンまたはブタンを用いて着火する
 behaviour.lighter.uses=残り使用回数: %,d
 behavior.plunger.description=機械の搬出タンクから液体を1,000 mb消去する./nスニーク中に使用すると搬入タンクから液体を1,000 mb分消去する./n搬入タンクの液体消去はGregの機械のみ!
 behavior.toggle_energy_consumer.tooltip=使うことでモード切替
@@ -3604,13 +3625,13 @@ gregtech.machine.circuit_assembler.opv.tooltip=計算機工場
 
 # Mass Fabricator
 gregtech.machine.mass_fabricator.lv.name=基本型物質製造機
-gregtech.machine.mass_fabricator.lv.tooltip=UUM = Matter * Fabrication の2乗
+gregtech.machine.mass_fabricator.lv.tooltip=UUM=Matter * Fabrication の2乗
 gregtech.machine.mass_fabricator.mv.name=発展型物質製造機
-gregtech.machine.mass_fabricator.mv.tooltip=UUM = Matter * Fabrication の2乗
+gregtech.machine.mass_fabricator.mv.tooltip=UUM=Matter * Fabrication の2乗
 gregtech.machine.mass_fabricator.hv.name=発展型物質製造機 II
-gregtech.machine.mass_fabricator.hv.tooltip=UUM = Matter * Fabrication の2乗
+gregtech.machine.mass_fabricator.hv.tooltip=UUM=Matter * Fabrication の2乗
 gregtech.machine.mass_fabricator.ev.name=発展型物質製造機 III
-gregtech.machine.mass_fabricator.ev.tooltip=UUM = Matter * Fabrication の2乗
+gregtech.machine.mass_fabricator.ev.tooltip=UUM=Matter * Fabrication の2乗
 gregtech.machine.mass_fabricator.iv.name=精鋭型物質製造機
 gregtech.machine.mass_fabricator.iv.tooltip=創世工場
 gregtech.machine.mass_fabricator.luv.name=精鋭型物質製造機 II
@@ -4807,24 +4828,31 @@ gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s%%
 
 gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s%%
 
-gregtech.command.usage=使い方: /gregtech <worldgen/util>
+gregtech.command.usage=使い方: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=使い方: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=使い方: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=configからWorldgenが正常に読み込まれました.
 gregtech.command.worldgen.reload.failed=Worldgenの読み込みに失敗しました. エラーを確認してください.
-gregtech.command.util.usage=使い方: /gregtech util <hand>
-gregtech.command.util.hand.usage=使い方: /gregtech util hand
-gregtech.command.util.hand.item_id=アイテムID: %s (メタデータ: %d)
-gregtech.command.util.hand.electric=蓄電量: %d / %d EU - Tier: %d; 電池?: %s
-gregtech.command.util.hand.fluid=液体ID: %s %d / %d mb; Can Fill: %s; Can Drain: %s
-gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
-gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.not_a_player=このコマンドはプレイヤーのみ使用できます.
-gregtech.command.util.hand.no_item=コマンドを実行する前に, 何かを手に持っておく必要があります.
-gregtech.command.util.recipecheck.usage=使用法: /gregtech recipecheck
-gregtech.command.util.recipecheck.begin=レシピの競合チェックを開始します...
-gregtech.command.util.recipecheck.end=競合チェックにより, 競合の可能性が%d個見つかりました. サーバーログで詳細を確認してください.
-gregtech.command.util.recipecheck.end_no_conflicts=レシピ競合は見つかりませんでした!
+gregtech.command.hand.usage=使い方: /gregtech hand
+gregtech.command.hand.item_id=アイテムID: %s (メタデータ: %d)
+gregtech.command.hand.electric=蓄電量: %d / %d EU - Tier: %d; バッテリー？: %s
+gregtech.command.hand.fluid=液体情報: %d / %d L; Can Fill: %s; Can Drain: %s
+gregtech.command.hand.fluid2=液体ID:
+gregtech.command.hand.material=Material Id:
+gregtech.command.hand.ore_prefix=Ore prefix:
+gregtech.command.hand.meta_item=MetaItem Id:
+gregtech.command.hand.ore_dict_entries=§3鉱石辞書名:
+gregtech.command.hand.tool_stats=Tool Stats Class: %s
+gregtech.command.hand.not_a_player=このコマンドはプレイヤーのみ使用できます.
+gregtech.command.hand.no_item=コマンドを実行するためには何かを手にもっておく必要があります.
+gregtech.command.recipecheck.usage=使い方: /gregtech recipecheck
+gregtech.command.recipecheck.begin=レシピの競合チェックを開始します...
+gregtech.command.recipecheck.end=競合チェックにより, 競合の可能性が%d個見つかりました. サーバーログで詳細を確認してください.
+gregtech.command.recipecheck.end_no_conflicts=レシピ競合は見つかりませんでした!
+gregtech.command.copy.copied_and_click=をクリップボードにコピーします. クリックで再びコピーします
+gregtech.command.copy.click_to_copy=クリックでコピー
+gregtech.command.copy.copied_start=クリップボードに [
+gregtech.command.copy.copied_end=] をコピーしました
 
 gregtech.chat.cape=§5おめでとうございます: 新しいマントを解放できました! 使用するためにはターミナルのマントセレクタのアプリをご覧ください.§r
 
@@ -4870,7 +4898,7 @@ gregtech.terminal.app_name.ore_prospector=鉱石探査
 gregtech.terminal.app_name.fluid_prospector=液体探査
 gregtech.terminal.app_name.pong=ポン
 gregtech.terminal.app_name.minesweeper=マインスイーパー
-gregtech.terminal.app_name.maze=テセウスの脱出
+gregtech.terminal.app_name.maze=テセウスの迷宮
 
 
 gregtech.terminal.app_name.console=GTコンソール
@@ -4952,10 +4980,6 @@ terminal.settings.description=GTOSのシステム設定.
 terminal.settings.theme=テーマ
 terminal.settings.theme.color=テーマカラーの設定
 terminal.settings.theme.wallpaper=壁紙設定
-terminal.settings.theme.wallpaper.resource=リソース
-terminal.settings.theme.wallpaper.url=url
-terminal.settings.theme.wallpaper.color=単色
-terminal.settings.theme.wallpaper.file=ファイル
 terminal.settings.theme.select=選択
 terminal.settings.theme.image=画像ファイル
 terminal.settings.home=ホームボタン
@@ -5060,24 +5084,6 @@ terminal.world_prospector.color=色の設定
 terminal.vtank_viewer.description=エンダーリンクの周波数を変更しても液体を失うことはありません. これがこの世界でアクセスできるすべてのバーチャルタンクのリストです.
 terminal.vtank_viewer.title=バーチャルタンクビューア
 terminal.vtank_viewer.refresh=再読み込み
-
-terminal.maze.title=テセウスの脱出
-terminal.maze.play=プレイ
-terminal.maze.continue=ゲーム再開
-terminal.maze.pause=PAUSE
-terminal.maze.death.1=なんてことだ! ミノタウロスに食われてしまった!
-terminal.maze.death.2=生きている間に%sの迷路を突破した.
-terminal.maze.death.3=再挑戦する?
-terminal.maze.retry=リトライ
-
-terminal.minesweeper.time=%s秒経過
-terminal.minesweeper.lose=失敗! %s秒後にリスタートします.
-terminal.minesweeper.win.1=%s秒で勝利しました!
-terminal.minesweeper.win.2=%s秒後にリスタートします.
-
-terminal.cape_selector.empty=まだマントを一つも持っていません！
-terminal.cape_selector.select=マントをクリックして選択してください!
-terminal.cape_selector.tip=象徴的な実績を達成することでマントを獲得できます.
 
 metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:
