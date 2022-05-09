@@ -990,7 +990,6 @@ public class CircuitRecipes {
                 .input(bolt, RedAlloy, 2)
                 .input(wireFine, Tin, 2)
                 .output(NAND_CHIP_ULV, 8)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
@@ -999,7 +998,6 @@ public class CircuitRecipes {
                 .input(bolt, RedAlloy, 2)
                 .input(wireFine, Tin, 2)
                 .output(NAND_CHIP_ULV, 12)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Microprocessor LV
@@ -1011,7 +1009,6 @@ public class CircuitRecipes {
                 .input(component, Component.Transistor, 2)
                 .input(wireFine, Copper, 2)
                 .output(MICROPROCESSOR_LV, 3)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Microprocessor LV SoC
@@ -1035,7 +1032,6 @@ public class CircuitRecipes {
                 .input(component, Component.Transistor, 4)
                 .input(wireFine, RedAlloy, 4)
                 .output(PROCESSOR_MV, 2)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // MV SoC
@@ -1058,7 +1054,6 @@ public class CircuitRecipes {
                 .input(wireFine, RedAlloy, 8)
                 .output(PROCESSOR_ASSEMBLY_HV, 2)
                 .solderMultiplier(2)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // EV
