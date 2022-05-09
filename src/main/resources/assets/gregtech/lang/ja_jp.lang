@@ -1,10 +1,11 @@
 # Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
-# Corresponding Version: 2.1.4 - beta
-# 対応バージョン: 2.1.4 - beta
+# Corresponding Version: 2.2.2 - beta
+# 対応バージョン: 2.2.2 - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
+death.attack.chemical=%s は化学に対する十分な知識を持っていなかった.
 death.attack.electric=%s は電気工事士ではなかった.
 death.attack.radiation=%s は青白い光で満ち溢れた.
 death.attack.turbine=%s はタービンで散髪しようとした.
@@ -88,6 +89,7 @@ item.invalid.name=無効なアイテム
 fluid.empty=空
 
 gregtech.tooltip.hold_shift=§aShift§7を押して詳細を表示
+gregtech.tooltip.fluid_pipe_hold_shift=§aShift§7で耐流体性能を表示
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -231,6 +233,7 @@ metaitem.fluid_cell.empty=空
 metaitem.fluid_cell.name=%sのセル
 metaitem.fluid_cell.universal.empty=空
 metaitem.fluid_cell.universal.name=%sのユニバーサルセル
+metaitem.fluid_cell.glass_vial.name=%sのガラス製バイアル
 metaitem.large_fluid_cell.steel.name=%sのスチール製セル
 metaitem.large_fluid_cell.aluminium.name=%sのアルミニウム製セル
 metaitem.large_fluid_cell.stainless_steel.name=%sのステンレススチール製セル
@@ -282,6 +285,9 @@ metaitem.battery.hull.uv.tooltip=空の§3UV用§7バッテリー筐体
 
 metaitem.battery.charge_time=§a%,d%s放出可能
 metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s放出可能§7)
+metaitem.battery.charge_unit.second=秒
+metaitem.battery.charge_unit.minute=分
+metaitem.battery.charge_unit.hour=時間
 
 metaitem.battery.re.ulv.tantalum.name=タンタル製キャパシター
 metaitem.battery.re.ulv.tantalum.tooltip=充電式
@@ -711,7 +717,7 @@ metaitem.circuit.microprocessor.tooltip=優れたシンプルな回路/n§eLV時
 
 # T3: Processor
 metaitem.circuit.processor.name=集積処理装置
-metaitem.circuit.processor.tooltip=驚きの計算速度!!/n§eNV時代の回路§r/n§eMV-tier Circuit
+metaitem.circuit.processor.tooltip=驚きの計算速度!!/n§eMV時代の回路§r/n§eMV-tier Circuit
 metaitem.circuit.assembly.name=処理演算装置
 metaitem.circuit.assembly.tooltip=驚きの計算速度!!/n§eHV時代の回路§r/n§eHV-tier Circuit
 metaitem.circuit.workstation.name=ワークステーション
@@ -1471,7 +1477,7 @@ material.saltpeter=硝酸カリウム
 material.sapphire=サファイア
 material.scheelite=灰重石
 material.sodalite=方ソーダ石
-material.aluminium_sulfite=硫化アルミニウム
+material.aluminium_sulfite=硫酸アルミニウム
 material.tantalite=タンタル石
 material.coke=コークス
 
@@ -2330,6 +2336,21 @@ tile.warning_sign.acid_hazard.name=酸危害警告ブロック
 tile.warning_sign.magic_hazard.name=魔術的危害警告ブロック
 tile.warning_sign.frost_hazard.name=降霜危害警告ブロック
 tile.warning_sign.noise_hazard.name=騒音危害警告ブロック
+tile.warning_sign.generic_hazard.name=汎用危害警告ブロック
+tile.warning_sign.high_voltage_hazard.name=高電圧危害警告ブロック
+tile.warning_sign.magnetic_hazard.name=磁力危害警告ブロック
+tile.warning_sign.antimatter_hazard.name=反物質危害警告ブロック
+tile.warning_sign.high_temperature_hazard.name=高温危害警告ブロック
+tile.warning_sign.void_hazard.name=亜空間危害警告ブロック
+tile.warning_sign_1.mob_spawner_hazard.name=スポナー危害警告ブロック
+tile.warning_sign_1.spatial_storage_hazard.name=空間ストレージ危害警告ブロック
+tile.warning_sign_1.laser_hazard.name=レーザー危害警告ブロック
+tile.warning_sign_1.mob_hazard.name=モブ侵入危害警告ブロック
+tile.warning_sign_1.boss_hazard.name=ボス危害警告ブロック
+tile.warning_sign_1.gregification_hazard.name=Greg化危害警告ブロック
+tile.warning_sign_1.causality_hazard.name=標準的因果危害警告ブロック
+tile.warning_sign_1.automated_defenses_hazard.name=自動防衛システム危害警告ブロック
+tile.warning_sign_1.high_pressure_hazard.name=高圧危害警告ブロック
 
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=ブロンズ製パイプ外装
@@ -3801,9 +3822,9 @@ gregtech.battery_buffer.average_output=Average output: %s EU/t
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=ソフトハンマーで反転. 最初は降圧
 gregtech.machine.transformer.tooltip_transform_down=降圧: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
-gregtech.machine.transformer.message_transform_down=降圧; In: %,dV %,d Amp, Out: %,dV %,d Amp
+gregtech.machine.transformer.message_transform_down=降圧;  In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=昇圧: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
-gregtech.machine.transformer.message_transform_up=昇圧; In: %,dV %,d Amp, Out: %,dV %,d Amp
+gregtech.machine.transformer.message_transform_up=昇圧; In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更. 最初は4アンペア
 gregtech.machine.transformer_adjustable.message_adjust=%dEU %dAを%dEU %dAに変圧
 
@@ -4661,7 +4682,8 @@ gregtech.fluid.plasma=%sプラズマ
 gregtech.fluid.empty=空
 gregtech.fluid.amount=§9量: %,d/%,d L
 gregtech.fluid.temperature=§c温度: %,d K
-gregtech.fluid.state_gas=§a状態: ガス
+gregtech.fluid.temperature.cryogenic=§b極低温! 取扱注意!
+gregtech.fluid.state_gas=§a状態: 気体
 gregtech.fluid.state_liquid=§a状態: 液体
 gregtech.fluid.state_plasma=§a状態: プラズマ
 gregtech.fluid.type_acid.tooltip=§6酸性! 取扱注意!
@@ -4722,10 +4744,15 @@ gregtech.cable.amperage=最大電流: §e%,d
 gregtech.cable.loss_per_block=損失/メートル/アンペア: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s ロスレス
 
-gregtech.fluid_pipe.throughput=§9運搬速度: %,d L/s
-gregtech.fluid_pipe.max_temperature=§c限界温度: %,dK
-gregtech.fluid_pipe.non_gas_proof=§aガスは運べない.
+gregtech.fluid_pipe.throughput=§b運搬速度: %,d L/t
+gregtech.fluid_pipe.capacity=§9液体容量: %,d L
+gregtech.fluid_pipe.max_temperature=§c限界温度: %,d K
 gregtech.fluid_pipe.channels=§eチャンネル: %d
+gregtech.fluid_pipe.gas_proof=§6気体を運搬可能
+gregtech.fluid_pipe.acid_proof=§6酸性の液体を運搬可能
+gregtech.fluid_pipe.cryo_proof=§6極低温の液体を運搬可能
+gregtech.fluid_pipe.plasma_proof=§6全てのプラズマを運搬可能
+gregtech.fluid_pipe.not_gas_proof=§4気体が漏れてしまう!
 
 gregtech.item_pipe.rate_items=§9運搬速度: %d items/s
 gregtech.item_pipe.rate_stacks=§9運搬速度: %d stacks/s
@@ -4898,7 +4925,7 @@ gregtech.terminal.app_name.ore_prospector=鉱石探査
 gregtech.terminal.app_name.fluid_prospector=液体探査
 gregtech.terminal.app_name.pong=ポン
 gregtech.terminal.app_name.minesweeper=マインスイーパー
-gregtech.terminal.app_name.maze=テセウスの迷宮
+gregtech.terminal.app_name.maze=テセウスの脱出
 
 
 gregtech.terminal.app_name.console=GTコンソール
@@ -4909,6 +4936,8 @@ gregtech.terminal.app_name.multiblock_ar=マルチブロックヘルパー
 gregtech.terminal.app_name.world_prospector=ワールドスキャナー
 gregtech.terminal.app_name.vtank_viewer=バーチャルタンクビューア
 gregtech.terminal.app_name.cape_selector=マントセレクタ
+
+gregtech.terminal.app_name.teleport=テレポーター
 
 
 terminal.app_name.description=説明なし.
@@ -4980,6 +5009,10 @@ terminal.settings.description=GTOSのシステム設定.
 terminal.settings.theme=テーマ
 terminal.settings.theme.color=テーマカラーの設定
 terminal.settings.theme.wallpaper=壁紙設定
+terminal.settings.theme.wallpaper.resource=リソース
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=単色
+terminal.settings.theme.wallpaper.file=ファイル
 terminal.settings.theme.select=選択
 terminal.settings.theme.image=画像ファイル
 terminal.settings.home=ホームボタン
@@ -5084,6 +5117,27 @@ terminal.world_prospector.color=色の設定
 terminal.vtank_viewer.description=エンダーリンクの周波数を変更しても液体を失うことはありません. これがこの世界でアクセスできるすべてのバーチャルタンクのリストです.
 terminal.vtank_viewer.title=バーチャルタンクビューア
 terminal.vtank_viewer.refresh=再読み込み
+
+terminal.teleporter.dimension=ディメンション:
+terminal.teleporter.spawn_portal=ゲートを設置
+
+terminal.maze.title=テセウスの脱出
+terminal.maze.play=プレイ
+terminal.maze.continue=ゲーム再開
+terminal.maze.pause=PAUSE
+terminal.maze.death.1=なんてことだ! ミノタウロスに食われてしまった!
+terminal.maze.death.2=生きている間に%sの迷路を突破した.
+terminal.maze.death.3=再挑戦する?
+terminal.maze.retry=リトライ
+
+terminal.minesweeper.time=%s秒経過
+terminal.minesweeper.lose=失敗! %s秒後にリスタートします.
+terminal.minesweeper.win.1=%s秒で勝利しました!
+terminal.minesweeper.win.2=%s秒後にリスタートします.
+
+terminal.cape_selector.empty=まだマントを一つも持っていません!
+terminal.cape_selector.select=マントをクリックして選択してください!
+terminal.cape_selector.tip=象徴的な実績を達成することでマントを獲得できます.
 
 metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:
