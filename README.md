@@ -1,5 +1,7 @@
 # GregTech CE: Unofficial
 
+[![Curseforge](http://cf.way2muchnoise.eu/full_557242_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial)  [![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_557242_all.svg)](https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial) <a title="Join us on Discord!" href="https://discord.gg/JdjKBbukFr"><img src="https://img.shields.io/discord/701354865217110096?label=GTCEu%20Discord&amp;logo=Discord&amp;style=?flat" alt="Discord"/></a>
+
 This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregtech CEu development team.
 
 ## Welcome to GregTech CE: Unofficial
