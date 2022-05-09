@@ -1,5 +1,12 @@
 ## Changelog
 
+### 2.2.3
+
+BETA RELEASE (hotfix)
+
+* Fixed crash with the Ore Byproduct JEI page initializing earlier than its displayed machines
+* Fixed crash with mods using harvest levels of GT blocks of materials without DustProperties
+
 ### 2.2.2
 
 BETA RELEASE
