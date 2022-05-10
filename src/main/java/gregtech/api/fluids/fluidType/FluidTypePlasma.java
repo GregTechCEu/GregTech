@@ -16,7 +16,7 @@ public class FluidTypePlasma extends FluidType {
     @Override
     protected void setFluidProperties(@Nonnull Fluid fluid) {
         fluid.setGaseous(true);
-        fluid.setDensity(55536);
+        fluid.setDensity(-100000);
         fluid.setViscosity(10);
         fluid.setLuminosity(15);
     }

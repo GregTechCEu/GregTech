@@ -2,12 +2,14 @@ package gregtech.api.pipenet.tile;
 
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.unification.material.Material;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> {
@@ -56,6 +58,9 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     NodeDataType getNodeData();
 
     PipeCoverableImplementation getCoverableImplementation();
+
+    @Nullable
+    Material getFrameMaterial();
 
     boolean supportsTicking();
 

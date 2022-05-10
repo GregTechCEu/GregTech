@@ -44,7 +44,7 @@ public class PipeGatherer extends PipeNetWalker {
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
+    protected PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
         return new PipeGatherer(world, nextPos, walkedBlocks, pipePredicate, pipes);
     }
 

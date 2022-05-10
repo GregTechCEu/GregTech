@@ -57,7 +57,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     /**
      * Is called when any connection of any pipe in the net changes
      */
-    protected void onPipeConnectionsUpdate() {
+    public void onPipeConnectionsUpdate() {
     }
 
     public void onNeighbourUpdate(BlockPos fromPos) {

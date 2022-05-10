@@ -5,6 +5,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -45,6 +46,9 @@ public class StoneType implements Comparable<StoneType> {
         this.predicate = predicate::test;
         this.shouldBeDroppedAsItem = shouldBeDroppedAsItem || ConfigHolder.worldgen.allUniqueStoneTypes;
         STONE_TYPE_REGISTRY.register(id, name, this);
+        if (this.shouldBeDroppedAsItem) {
+            OreByProduct.addOreByProductPrefix(this.processingPrefix);
+        }
     }
 
     @Override

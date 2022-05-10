@@ -9,8 +9,9 @@ public class GTTriggers {
     public static final GTTrigger<?> ROTOR_HOLDER_DEATH = new TriggerDeath("rotor_holder_death");
     public static final GTTrigger<?> ELECTROCUTION_DEATH = new TriggerDeath("electrocution_death");
     public static final GTTrigger<?> STEAM_VENT_DEATH = new TriggerDeath("steam_vent_death");
-    public static final GTTrigger<?> FLUID_PIPE_DEATH_HEAT = new TriggerDeath("fluid_pipe_death_heat");
-    public static final GTTrigger<?> FLUID_PIPE_DEATH_COLD = new TriggerDeath("fluid_pipe_death_cold");
+    public static final GTTrigger<?> HEAT_DEATH = new TriggerDeath("heat_death");
+    public static final GTTrigger<?> COLD_DEATH = new TriggerDeath("cold_death");
+    public static final GTTrigger<?> CHEMICAL_DEATH = new TriggerDeath("chemical_death");
     public static final GTTrigger<?> FIRST_COVER_PLACE = new BasicTrigger("first_cover_place"); // does not work
 
     // TODO Not Yet Implemented
@@ -22,8 +23,9 @@ public class GTTriggers {
             ROTOR_HOLDER_DEATH,
             ELECTROCUTION_DEATH,
             STEAM_VENT_DEATH,
-            FLUID_PIPE_DEATH_HEAT,
-            FLUID_PIPE_DEATH_COLD,
+            HEAT_DEATH,
+            COLD_DEATH,
+            CHEMICAL_DEATH,
             FIRST_COVER_PLACE,
             MACHINE_EXPLOSION,
             CABLE_BURN,

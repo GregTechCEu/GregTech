@@ -20,7 +20,7 @@ public class SecondDegreeMaterials {
                 .color(0xFAFAFA).iconSet(GLASS)
                 .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .fluidTemp(1400)
+                .fluidTemp(1200)
                 .build();
 
         Perlite = new Material.Builder(2001, "perlite")
@@ -116,7 +116,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(8.0f, 4.0f, 2560, 21)
-                .fluidPipeProperties(7568, 100, true)
+                .fluidPipeProperties(3587, 225, true)
                 .cableProperties(GTValues.V[5], 3, 2)
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
                 .build();
@@ -155,21 +155,21 @@ public class SecondDegreeMaterials {
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
-                .dust(1)
+                .dust()
                 .color(0xC8C8C8).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Calcite, 7)
                 .build();
 
         GraniteBlack = new Material.Builder(2019, "granite_black")
-                .dust(1)
+                .dust()
                 .color(0x0A0A0A).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Biotite, 1)
                 .build();
 
         GraniteRed = new Material.Builder(2020, "granite_red")
-                .dust(1)
+                .dust()
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
@@ -254,7 +254,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Concrete = new Material.Builder(2034, "concrete")
-                .dust(1).fluid()
+                .dust().fluid()
                 .color(0x646464).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Stone, 1)
@@ -278,7 +278,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
-                .fluidPipeProperties(2073, 100, true)
+                .fluidPipeProperties(2073, 50, true, true, false, false)
                 .blastTemp(1453, GasTier.LOW)
                 .fluidTemp(2073)
                 .build();
@@ -288,7 +288,7 @@ public class SecondDegreeMaterials {
                 .color(0xc99781).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Copper, 6, Tin, 2, Lead, 1)
-                .fluidPipeProperties(2023, 69, true)
+                .fluidPipeProperties(1456, 32, true)
                 .fluidTemp(1084)
                 .build();
 
@@ -301,7 +301,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Andesite = new Material.Builder(2039, "andesite")
-                .dust(1)
+                .dust()
                 .color(0xBEBEBE).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Asbestos, 4, Saltpeter, 1)

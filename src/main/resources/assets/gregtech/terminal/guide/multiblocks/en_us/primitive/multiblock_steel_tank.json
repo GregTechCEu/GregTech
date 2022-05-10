@@ -1,0 +1,64 @@
+{
+  "section": "Primitive",
+  "title": "Steel Multiblock Tank",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Steel Multiblock Tank§r is another early game multiblock for storing fluids. However, unlike the Wooden version, this structure can store gases and hot fluids."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1599,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Similar to the Wooden version, this structure has specific Multiblock Parts used for automating fluid input and output into the structure."
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": 2,
+      "y": 149,
+      "width": 52,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1598,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "card",
+      "x": 8,
+      "y": 146,
+      "width": 178,
+      "height": 32,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "x": 47,
+      "y": 149,
+      "width": 137,
+      "height": 20,
+      "content": [
+        "Tank Valve for automating structure. Maximum: 2"
+      ]
+    }
+  ],
+  "metatileentity": "tank.steel"
+}

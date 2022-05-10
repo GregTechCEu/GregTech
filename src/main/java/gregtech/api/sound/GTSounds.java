@@ -47,6 +47,10 @@ public class GTSounds {
     // Record Sounds
     public static SoundEvent SUS_RECORD;
 
+    //Entity Sounds
+    public static SoundEvent PORTAL_OPENING;
+    public static SoundEvent PORTAL_CLOSING;
+
     public static void registerSounds() {
         FORGE_HAMMER = registerSound("tick.forge_hammer");
         MACERATOR = registerSound("tick.macerator");
@@ -82,6 +86,8 @@ public class GTSounds {
         TRICORDER_TOOL = registerSound("use.tricorder");
         MORTAR_TOOL = registerSound("use.mortar");
         SUS_RECORD = registerSound("record.sus");
+        PORTAL_OPENING = registerSound("entity.portal_opening");
+        PORTAL_CLOSING = registerSound("entity.portal_closing");
     }
 
     private static SoundEvent registerSound(String soundNameIn) {

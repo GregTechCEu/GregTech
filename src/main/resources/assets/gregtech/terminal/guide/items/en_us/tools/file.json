@@ -1,0 +1,14 @@
+{
+  "section": "Tools",
+  "title": "File",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6File§r is a tool that is only used for crafting recipes. No special uses unfortunately.\n\nLike most Gregtech tools, it can be repaired in an anvil."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:9"
+}

@@ -1,0 +1,112 @@
+{
+  "section": "Primitive",
+  "title": "Steam Grinder",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Steam Grinder§r is an early game multiblock for performing macerator recipes. It can perform up to §58§r recipes in parallel, and has duration of §51.5§r times the normal macerator recipe duration.\n\nHowever, only the first output from the recipe will be output. This means that no byproducts will be recieved from any ores grinded down."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1025,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Unlike other Multiblocks, this structure has specialized hatches for handling steam that must be used."
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "card",
+      "x": 4,
+      "y": 217,
+      "width": 182,
+      "height": 81,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
+      "type": "slots",
+      "x": 11,
+      "y": 224,
+      "width": 50,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1651,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 5,
+      "y": 247,
+      "width": 62,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1652,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 10,
+      "y": 272,
+      "width": 52,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1653,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 53,
+      "y": 224,
+      "width": 117,
+      "height": 20,
+      "content": [
+        "Specialized Output bus for Steam Multiblocks"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 53,
+      "y": 250,
+      "width": 120,
+      "height": 20,
+      "content": [
+        "Specialized Input bus for Steam Multiblocks"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 53,
+      "y": 273,
+      "width": 120,
+      "height": 20,
+      "content": [
+        "Specialized Input Hatch for Steam Multiblocks"
+      ]
+    }
+  ],
+  "metatileentity": "steam_grinder"
+}

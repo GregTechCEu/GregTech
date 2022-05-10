@@ -20,7 +20,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public class CoverShutter extends CoverBehavior implements IControllable {
 
-    private boolean isWorkingAllowed;
+    private boolean isWorkingAllowed = true;
 
     public CoverShutter(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);

@@ -61,7 +61,7 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.WroughtIron, M * 8), // plate
-                new MaterialStack(Materials.Lead, M), // single cable
+                new MaterialStack(Materials.RedAlloy, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[1].getStackForm(), new ItemMaterialInfo(
@@ -86,7 +86,7 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[5].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.TungstenSteel, M * 8), // plate
-                new MaterialStack(Materials.Tungsten, M), // single cable
+                new MaterialStack(Materials.Platinum, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(

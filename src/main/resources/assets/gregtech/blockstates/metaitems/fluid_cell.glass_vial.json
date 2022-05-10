@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "inventory": {
+      "model": "forge:forgebucket",
+      "textures": {
+        "base": "gregtech:items/metaitems/glass_vial/base",
+        "fluid": "gregtech:items/metaitems/glass_vial/overlay",
+        "cover": "gregtech:items/metaitems/glass_vial/base"
+      },
+      "transform": "forge:default-item"
+    }
+  }
+}

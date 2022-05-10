@@ -1,11 +1,12 @@
-death.attack.heat=%s was boiled alive.
-death.attack.frost=%s explored cryogenics.
-death.attack.electric=%s was electrocuted.
-death.attack.radiation=%s glows with joy now.
-death.attack.turbine=%s put their head into a turbine.
-death.attack.explosion=%s exploded.
-death.attack.explosion.player=%s exploded with help of %s.
-death.attack.heat.player=%s was boiled alive by %s.
+death.attack.heat=%s was boiled alive
+death.attack.frost=%s explored cryogenics
+death.attack.chemical=%s had a chemical accident
+death.attack.electric=%s was electrocuted
+death.attack.radiation=%s glows with joy now
+death.attack.turbine=%s put their head into a turbine
+death.attack.explosion=%s exploded
+death.attack.explosion.player=%s exploded with help of %s
+death.attack.heat.player=%s was boiled alive by %s
 
 enchantment.disjunction=Disjunction
 
@@ -83,6 +84,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -226,6 +228,7 @@ metaitem.fluid_cell.empty=Empty
 metaitem.fluid_cell.name=%s Cell
 metaitem.fluid_cell.universal.empty=Empty
 metaitem.fluid_cell.universal.name=%s Universal Cell
+metaitem.fluid_cell.glass_vial.name=%s Glass Vial
 metaitem.large_fluid_cell.steel.name=%s Steel Cell
 metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
@@ -277,6 +280,9 @@ metaitem.battery.hull.uv.tooltip=An empty §3UV §7Battery Hull
 
 metaitem.battery.charge_time=§aHolds %,d%s of Power
 metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s remaining§7)
+metaitem.battery.charge_unit.second=sec
+metaitem.battery.charge_unit.minute=min
+metaitem.battery.charge_unit.hour=hr
 
 metaitem.battery.re.ulv.tantalum.name=Tantalum Capacitor
 metaitem.battery.re.ulv.tantalum.tooltip=Reusable Battery
@@ -2241,6 +2247,7 @@ metaitem.debug_scanner.tooltip=Tricorder
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
 behavior.tricorder.block_hardness=Hardness: %s Blast Resistance: %s
 behavior.tricorder.block_name=Name: %s MetaData: %s
+behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=Tank %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=All Tanks Empty
@@ -2336,6 +2343,21 @@ tile.warning_sign.acid_hazard.name=Acid Hazard Sign Block
 tile.warning_sign.magic_hazard.name=Magic Hazard Sign Block
 tile.warning_sign.frost_hazard.name=Frost Hazard Sign Block
 tile.warning_sign.noise_hazard.name=Noise Hazard Sign Block
+tile.warning_sign.generic_hazard.name=Generic Hazard Sign Block
+tile.warning_sign.high_voltage_hazard.name=High Voltage Hazard Sign Block
+tile.warning_sign.magnetic_hazard.name=Magnetic Hazard Sign Block
+tile.warning_sign.antimatter_hazard.name=Antimatter Hazard Sign Block
+tile.warning_sign.high_temperature_hazard.name=High Temperature Hazard Sign Block
+tile.warning_sign.void_hazard.name=Void Hazard Sign Block
+tile.warning_sign_1.mob_spawner_hazard.name=Mob Spawner Hazard Sign Block
+tile.warning_sign_1.spatial_storage_hazard.name=Spatial Storage Hazard Sign Block
+tile.warning_sign_1.laser_hazard.name=Laser Hazard Sign Block
+tile.warning_sign_1.mob_hazard.name=Mob Infestation Hazard Sign Block
+tile.warning_sign_1.boss_hazard.name=Boss Hazard Sign Block
+tile.warning_sign_1.gregification_hazard.name=Gregification Hazard Sign Block
+tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Block
+tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
+tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
@@ -4666,6 +4688,7 @@ gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K
+gregtech.fluid.temperature.cryogenic=§bCryogenic! Handle with care!
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
@@ -4727,10 +4750,15 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
-gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
+gregtech.fluid_pipe.capacity=§9Capacity: %,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.gas_proof=§6Can handle Gases
+gregtech.fluid_pipe.acid_proof=§6Can handle Acids
+gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
+gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
+gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
@@ -4915,6 +4943,8 @@ gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
 
+gregtech.terminal.app_name.teleport=Teleporter
+
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -4985,6 +5015,10 @@ terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme
 terminal.settings.theme.color=Theme Color Settings
 terminal.settings.theme.wallpaper=Wallpaper Settings
+terminal.settings.theme.wallpaper.resource=resource
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=color
+terminal.settings.theme.wallpaper.file=file
 terminal.settings.theme.select=Select
 terminal.settings.theme.image=Image File
 terminal.settings.home=Home Button
@@ -5089,6 +5123,27 @@ terminal.world_prospector.color=Select box color
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
+
+terminal.teleporter.dimension=Dimension:
+terminal.teleporter.spawn_portal=Engage
+
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %s mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
+
+terminal.minesweeper.time=%s seconds elapsed
+terminal.minesweeper.lose=You lost. Game will restart in %s seconds.
+terminal.minesweeper.win.1=You won in %s seconds!
+terminal.minesweeper.win.2=Game will restart in %s
+
+terminal.cape_selector.empty=It looks like you haven't unlocked any capes yet!
+terminal.cape_selector.select=Click on an unlocked cape to select it!
+terminal.cape_selector.tip=You can get these from high-level advancements.
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:

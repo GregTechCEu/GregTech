@@ -1,0 +1,14 @@
+{
+  "section": "Tools",
+  "title": "Mining Hammer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Mining Hammer§r is an Early Game alternative to the §6Drill§r, which does not require a source of power. It mines in a simple 3x3 area, and will mine in a 1x1 area when sneaking. Make sure to make some before going mining.\n\nLike most Gregtech tools, it can be repaired in an anvil."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:19"
+}

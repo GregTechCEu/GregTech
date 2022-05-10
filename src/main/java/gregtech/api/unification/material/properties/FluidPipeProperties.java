@@ -4,22 +4,29 @@ import java.util.Objects;
 
 public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties> {
 
-    private int maxFluidTemperature;
     private int throughput;
-    private boolean gasProof;
     private final int tanks;
 
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof) {
-        this(maxFluidTemperature, throughput, gasProof, 1);
+    private int maxFluidTemperature;
+    private boolean gasProof;
+    private boolean acidProof;
+    private boolean cryoProof;
+    private boolean plasmaProof;
+
+    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+        this(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof, 1);
     }
 
     /**
      * Should only be called from {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
      */
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, int tanks) {
+    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof, int tanks) {
         this.maxFluidTemperature = maxFluidTemperature;
         this.throughput = throughput;
         this.gasProof = gasProof;
+        this.acidProof = acidProof;
+        this.cryoProof = cryoProof;
+        this.plasmaProof = plasmaProof;
         this.tanks = tanks;
     }
 
@@ -27,7 +34,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
      * Default property constructor.
      */
     public FluidPipeProperties() {
-        this(300, 1, false);
+        this(300, 1, false, false, false, false);
     }
 
     @Override
@@ -39,14 +46,6 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
                     "Material " + properties.getMaterial() +
                             " has both Fluid and Item Pipe Property, which is not allowed!");
         }
-    }
-
-    public int getMaxFluidTemperature() {
-        return maxFluidTemperature;
-    }
-
-    public void setMaxFluidTemperature(int maxFluidTemperature) {
-        this.maxFluidTemperature = maxFluidTemperature;
     }
 
     public int getTanks() {
@@ -61,12 +60,44 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         this.throughput = throughput;
     }
 
+    public int getMaxFluidTemperature() {
+        return maxFluidTemperature;
+    }
+
+    public void setMaxFluidTemperature(int maxFluidTemperature) {
+        this.maxFluidTemperature = maxFluidTemperature;
+    }
+
     public boolean isGasProof() {
         return gasProof;
     }
 
     public void setGasProof(boolean gasProof) {
         this.gasProof = gasProof;
+    }
+
+    public boolean isAcidProof() {
+        return acidProof;
+    }
+
+    public void setAcidProof(boolean acidProof) {
+        this.acidProof = acidProof;
+    }
+
+    public boolean isCryoProof() {
+        return cryoProof;
+    }
+
+    public void setCryoProof(boolean cryoProof) {
+        this.cryoProof = cryoProof;
+    }
+
+    public boolean isPlasmaProof() {
+        return plasmaProof;
+    }
+
+    public void setPlasmaProof(boolean plasmaProof) {
+        this.plasmaProof = plasmaProof;
     }
 
     @Override
@@ -89,6 +120,9 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
                 "maxFluidTemperature=" + maxFluidTemperature +
                 ", throughput=" + throughput +
                 ", gasProof=" + gasProof +
+                ", acidProof=" + acidProof +
+                ", cryoProof=" + cryoProof +
+                ", plasmaProof=" + plasmaProof +
                 ", tanks=" + tanks +
                 '}';
     }

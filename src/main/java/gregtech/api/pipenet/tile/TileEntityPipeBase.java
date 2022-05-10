@@ -1,12 +1,14 @@
 package gregtech.api.pipenet.tile;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.util.TaskScheduler;
+import gregtech.api.unification.material.Material;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,6 +39,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
+    @Nullable
+    private Material frameMaterial;
 
     public TileEntityPipeBase() {
     }
@@ -55,12 +59,25 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.paintingColor = tileEntity.getPaintingColor();
         this.connections = tileEntity.getConnections();
         if (tileEntity instanceof TileEntityPipeBase) {
-            this.updateEntries.addAll(((TileEntityPipeBase<?, ?>) tileEntity).updateEntries);
+            this.updates.putAll(((TileEntityPipeBase<?, ?>) tileEntity).updates);
         }
         tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
     }
 
     public abstract Class<PipeType> getPipeTypeClass();
+
+    @Nullable
+    @Override
+    public Material getFrameMaterial() {
+        return frameMaterial;
+    }
+
+    public void setFrameMaterial(@Nullable Material frameMaterial) {
+        this.frameMaterial = frameMaterial;
+        if (world != null && world.isRemote) {
+            writeCustomData(UPDATE_FRAME_MATERIAL, buf -> buf.writeVarInt(frameMaterial == null ? -1 : GregTechAPI.MATERIAL_REGISTRY.getIDForObject(frameMaterial)));
+        }
+    }
 
     @Override
     public boolean supportsTicking() {
@@ -208,6 +225,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 buf.writeVarInt(blockedConnections);
             });
             markDirty();
+            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+            PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
+            if (net != null) {
+                net.onPipeConnectionsUpdate();
+            }
         }
     }
 
@@ -308,6 +330,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (isPainted()) {
             compound.setInteger("InsulationColor", paintingColor);
         }
+        compound.setString("FrameMaterial", frameMaterial == null ? "" : frameMaterial.toString());
         this.coverableImplementation.writeToNBT(compound);
         return compound;
     }
@@ -337,6 +360,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
         }
+        String frameMaterialName = compound.getString("FrameMaterial");
+        if (!frameMaterialName.isEmpty()) {
+            this.frameMaterial = GregTechAPI.MATERIAL_REGISTRY.getObject(frameMaterialName);
+        }
         this.coverableImplementation.readFromNBT(compound);
     }
 
@@ -360,6 +387,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         buf.writeVarInt(connections);
         buf.writeVarInt(blockedConnections);
         buf.writeInt(paintingColor);
+        buf.writeVarInt(frameMaterial == null ? -1 : GregTechAPI.MATERIAL_REGISTRY.getIDForObject(frameMaterial));
         this.coverableImplementation.writeInitialSyncData(buf);
     }
 
@@ -369,6 +397,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.connections = buf.readVarInt();
         this.blockedConnections = buf.readVarInt();
         this.paintingColor = buf.readInt();
+        int frameMaterialId = buf.readVarInt();
+        this.frameMaterial = frameMaterialId < 0 ? null : GregTechAPI.MATERIAL_REGISTRY.getObjectById(frameMaterialId);
         this.coverableImplementation.readInitialSyncData(buf);
     }
 
@@ -387,6 +417,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             scheduleChunkForRenderUpdate();
         } else if (discriminator == UPDATE_BLOCKED_CONNECTIONS) {
             this.blockedConnections = buf.readVarInt();
+            scheduleChunkForRenderUpdate();
+        } else if (discriminator == UPDATE_FRAME_MATERIAL) {
+            int frameMaterialId = buf.readVarInt();
+            this.frameMaterial = frameMaterialId < 0 ? null : GregTechAPI.MATERIAL_REGISTRY.getObjectById(frameMaterialId);
             scheduleChunkForRenderUpdate();
         }
     }

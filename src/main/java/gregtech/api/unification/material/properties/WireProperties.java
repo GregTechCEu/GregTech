@@ -20,7 +20,7 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     }
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
-        this(voltage, baseAmperage, lossPerBlock, false, 0);
+        this(voltage, baseAmperage, lossPerBlock, isSuperCon, 0);
     }
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon, int criticalTemperature) {

@@ -9,6 +9,8 @@ import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +33,9 @@ public class DummyWorld extends World {
         this.calculateInitialSkylight();
         this.calculateInitialWeather();
         this.getWorldBorder().setSize(30000000);
+        // De-allocate lightUpdateBlockList, checkLightFor uses this
+        ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
+                FMLLaunchHandler.isDeobfuscatedEnvironment() ? "lightUpdateBlockList" : "field_72994_J");
     }
 
     @Override
@@ -78,5 +83,11 @@ public class DummyWorld extends World {
     @Override
     protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
         return chunkProvider.isChunkGeneratedAt(x, z);
+    }
+
+    @Override
+    // De-allocated lightUpdateBlockList, default return
+    public boolean checkLightFor(EnumSkyBlock lightType, BlockPos pos) {
+        return true;
     }
 }

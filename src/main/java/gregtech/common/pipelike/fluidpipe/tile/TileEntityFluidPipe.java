@@ -12,7 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.WorldServer;
 
 import java.lang.ref.WeakReference;
 
@@ -33,28 +33,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public int getCapacityPerTank() {
         return getNodeData().getThroughput() * 20;
-    }
-
-    public void checkAndDestroy(FluidStack stack) {
-        boolean burning = getNodeData().getMaxFluidTemperature() < stack.getFluid().getTemperature(stack);
-        boolean leaking = !getNodeData().isGasProof() && stack.getFluid().isGaseous(stack);
-        if (burning || leaking) {
-            destroyPipe(burning, leaking);
-        }
-    }
-
-    public void destroyPipe(boolean isBurning, boolean isLeaking) {
-        if (isBurning) {
-            world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP,
-                    EnumParticleTypes.FLAME, 3 + GTValues.RNG.nextInt(2));
-            if (GTValues.RNG.nextInt(4) == 0)
-                TileEntityFluidPipe.setNeighboursToFire(world, pos);
-        } else
-            world.setBlockToAir(pos);
-        if (isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
-            this.doExplosion(1.0f + GTValues.RNG.nextFloat());
-        }
     }
 
     public FluidPipeNet getFluidPipeNet() {
@@ -85,14 +63,16 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public static void spawnParticles(World worldIn, BlockPos pos, EnumFacing direction, EnumParticleTypes particleType, int particleCount) {
-        for (int i = 0; i < particleCount; i++) {
-            worldIn.spawnParticle(particleType,
-                    pos.getX() + 0.5 - direction.getXOffset() / 1.8,
-                    pos.getY() + 0.5 - direction.getYOffset() / 1.8,
-                    pos.getZ() + 0.5 - direction.getZOffset() / 1.8,
+        if (worldIn instanceof WorldServer) {
+            ((WorldServer) worldIn).spawnParticle(particleType,
+                    pos.getX() + 0.5,
+                    pos.getY() + 0.5,
+                    pos.getZ() + 0.5,
+                    particleCount,
                     direction.getXOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
                     direction.getYOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
-                    direction.getZOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1);
+                    direction.getZOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    0.1);
         }
     }
 }

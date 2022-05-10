@@ -1,0 +1,55 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all"
+  },
+  "variants": {
+    "variant": {
+      "mob_spawner_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_mobspawnhazard"
+        }
+      },
+      "spatial_storage_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_spatialhazard"
+        }
+      },
+      "laser_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_laserhazard"
+        }
+      },
+      "mob_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_mobhazard"
+        }
+      },
+      "boss_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_bosshazard"
+        }
+      },
+      "gregification_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_gregificationhazard"
+        }
+      },
+      "causality_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_causalityhazard"
+        }
+      },
+      "automated_defenses_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_turrethazard"
+        }
+      },
+      "high_pressure_hazard": {
+        "textures": {
+          "all": "gregtech:blocks/casings/signs/machine_casing_highpressurehazard"
+        }
+      }
+    }
+  }
+}

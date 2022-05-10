@@ -13,7 +13,7 @@
   },
   "criteria": {
     "fluid_pipe_death_heat": {
-      "trigger": "gregtech:fluid_pipe_death_heat"
+      "trigger": "gregtech:heat_death"
     }
   },
   "parent": "gregtech:steam/4_bronze_boiler"

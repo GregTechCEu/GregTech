@@ -13,6 +13,7 @@ import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
@@ -155,4 +156,15 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         return voidingMode;
     }
 
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setInteger("VoidMode", voidingMode.ordinal());
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidMode")];
+    }
 }

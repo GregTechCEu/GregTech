@@ -97,7 +97,7 @@ public class OrganicChemistryMaterials {
                 .color(0x2D2D2D)
                 .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, NO_SMASHING, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE)
                 .components(Carbon, 20, Hydrogen, 12, Nitrogen, 4)
-                .fluidPipeProperties(1000, 100, true)
+                .fluidPipeProperties(1000, 350, true)
                 .fluidTemp(1450)
                 .build();
 
@@ -113,7 +113,7 @@ public class OrganicChemistryMaterials {
                 .color(0xC8C8C8)
                 .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4)
-                .fluidPipeProperties(350, 60, true)
+                .fluidPipeProperties(370, 50, true)
                 .fluidTemp(408)
                 .build();
 
@@ -140,7 +140,7 @@ public class OrganicChemistryMaterials {
                 .color(0x646464)
                 .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FOIL, FLAMMABLE)
                 .components(Carbon, 2, Fluorine, 4)
-                .fluidPipeProperties(600, 80, true)
+                .fluidPipeProperties(600, 100, true, true, false, false)
                 .fluidTemp(600)
                 .build();
 

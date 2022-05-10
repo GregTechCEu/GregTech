@@ -74,7 +74,7 @@ public class MetaFluids {
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
             if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
-                int temperature = (fluidProperty == null ? 0 : fluidProperty.getFluidTemperature()) + 30000;
+                int temperature = (fluidProperty == null ? 0 : fluidProperty.getFluidTemperature()) + 10000;
                 Fluid fluid = registerFluid(material, FluidTypes.PLASMA, temperature, false);
                 plasmaProperty.setPlasma(fluid);
             }

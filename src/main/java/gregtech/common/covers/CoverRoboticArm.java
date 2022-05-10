@@ -143,6 +143,13 @@ public class CoverRoboticArm extends CoverConveyor {
         return transferMode;
     }
 
+    private boolean shouldDisplayAmountSlider() {
+        if (transferMode == TransferMode.TRANSFER_ANY) {
+            return false;
+        }
+        return itemFilterContainer.showGlobalTransferLimitSlider();
+    }
+
     @Override
     protected String getUITitle() {
         return "cover.robotic_arm.title";
@@ -155,7 +162,7 @@ public class CoverRoboticArm extends CoverConveyor {
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
                 .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> itemFilterContainer.getFilterWrapper().getItemFilter() == null && transferMode != TransferMode.TRANSFER_ANY);
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
         stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
 
         stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)

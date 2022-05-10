@@ -20,8 +20,12 @@ import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.FrameItemBlock;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -276,14 +280,29 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (rayTraceResult == null || pipeTile == null) {
             return false;
         }
-        return onPipeActivated(worldIn, pos, playerIn, hand, rayTraceResult, pipeTile);
+        return onPipeActivated(worldIn, state, pos, playerIn, hand, rayTraceResult, pipeTile);
     }
 
-    public boolean onPipeActivated(World world, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public boolean onPipeActivated(World world, IBlockState state, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
         ItemStack itemStack = entityPlayer.getHeldItem(hand);
+
+        if (pipeTile.getFrameMaterial() == null && pipeTile instanceof TileEntityPipeBase && itemStack.getItem() instanceof FrameItemBlock && pipeTile.getPipeType().getThickness() < 1) {
+            Material material = ((BlockFrame) ((FrameItemBlock) itemStack.getItem()).getBlock()).getGtMaterial(itemStack.getMetadata());
+            ((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile).setFrameMaterial(material);
+            if (!entityPlayer.capabilities.isCreativeMode) {
+                itemStack.shrink(1);
+            }
+            return true;
+        }
+
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
-        if (coverSide == null)
+        if (coverSide == null) {
+            if (pipeTile.getFrameMaterial() != null) {
+                BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
+                return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
+            }
             return false;
+        }
 
         if (!(hit.cuboid6.data instanceof CoverSideData)) {
             switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer)) {
@@ -295,8 +314,13 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
 
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
-        if (coverBehavior == null)
+        if (coverBehavior == null) {
+            if (pipeTile.getFrameMaterial() != null) {
+                BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
+                return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
+            }
             return false;
+        }
 
         IScrewdriverItem screwdriver = itemStack.getCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null);
         if (screwdriver != null) {
@@ -311,6 +335,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
         if (result == EnumActionResult.PASS) {
+            if (pipeTile.getFrameMaterial() != null) {
+                BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
+                return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
+            }
             return entityPlayer.isSneaking() && entityPlayer.getHeldItemMainhand().isEmpty() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
         }
         return true;
@@ -357,6 +385,16 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
     }
 
+    @Override
+    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && pipeTile.getFrameMaterial() != null) {
+            // make pipe with frame climbable
+            BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
+            blockFrame.onEntityCollision(worldIn, pos, state, entityIn);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void harvestBlock(@Nonnull World worldIn, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack) {
@@ -369,12 +407,24 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
         IPipeTile<PipeType, NodeDataType> pipeTile = tileEntities.get() == null ? getPipeTileEntity(world, pos) : tileEntities.get();
         if (pipeTile == null) return;
+        if (pipeTile.getFrameMaterial() != null) {
+            BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
+            drops.add(blockFrame.getItem(pipeTile.getFrameMaterial()));
+        }
         drops.add(getDropItem(pipeTile));
     }
 
     @Override
     public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
         // This iterator causes some heap memory overhead
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && pipeTile.getFrameMaterial() != null) {
+            AxisAlignedBB box = BlockFrame.COLLISION_BOX.offset(pos);
+            if (box.intersects(entityBox)) {
+                collidingBoxes.add(box);
+            }
+            return;
+        }
         for (Cuboid6 axisAlignedBB : getCollisionBox(worldIn, pos, entityIn)) {
             AxisAlignedBB offsetBox = axisAlignedBB.aabb().offset(pos);
             if (offsetBox.intersects(entityBox)) collidingBoxes.add(offsetBox);
@@ -457,6 +507,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
         if (pipeTile == null) {
             return Collections.emptyList();
+        }
+        if (pipeTile.getFrameMaterial() != null) {
+            return Collections.singletonList(FULL_CUBE_COLLISION);
         }
         PipeType pipeType = pipeTile.getPipeType();
         if (pipeType == null) {

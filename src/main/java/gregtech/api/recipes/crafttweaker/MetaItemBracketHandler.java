@@ -87,7 +87,11 @@ public class MetaItemBracketHandler implements IBracketHandler {
         if((item = metaBlockNames.get(name)) != null) {
             return new MCItemStack(item);
         }
-        return MetaTileEntityBracketHandler.getMetaTileEntityItem(name);
+        IItemStack iItemStack = MetaTileEntityBracketHandler.getMetaTileEntityItem(name);
+        if (iItemStack == null) {
+            CraftTweakerAPI.logError("Could not find meta item with name " + name);
+        }
+        return iItemStack;
     }
 
     @Override

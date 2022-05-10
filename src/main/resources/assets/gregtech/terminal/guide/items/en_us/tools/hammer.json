@@ -1,0 +1,14 @@
+{
+  "section": "Tools",
+  "title": "Hammer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Hammer§r is a tool mainly used in crafting recipes.\n\nHowever, it has one special use outside of crafting recipes. When Right Clicked on a machine, it will mute the sounds of the machine running. Simply Right Click again to unmute.\n\nLike most Gregtech tools, it can be repaired in an anvil."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_tool:6"
+}

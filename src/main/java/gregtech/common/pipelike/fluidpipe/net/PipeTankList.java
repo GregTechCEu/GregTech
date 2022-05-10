@@ -86,6 +86,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
                 if (doFill) {
                     currentFluid.amount += toAdd;
                     pipe.receivedFrom(facing);
+                    pipe.checkAndDestroy(currentFluid);
                 }
                 return toAdd;
             }

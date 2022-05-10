@@ -351,7 +351,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (getWorld().isRemote)
+        if (getWorld().isRemote || !this.isStructureFormed())
             return true;
 
         if (!this.minerLogic.isActive()) {

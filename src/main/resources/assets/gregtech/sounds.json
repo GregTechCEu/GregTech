@@ -304,5 +304,23 @@
         "stream": true
       }
     ]
+  },
+  "entity.portal_opening": {
+    "category": "block",
+      "sounds": [
+        {
+          "name": "gregtech:portal_opening",
+          "stream": false
+        }
+      ]
+    },
+  "entity.portal_closing": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:portal_closing",
+        "stream": false
+      }
+    ]
   }
 }

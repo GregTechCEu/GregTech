@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors;
 
+import com.google.common.collect.UnmodifiableIterator;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.*;
@@ -17,6 +18,8 @@ import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -89,6 +92,19 @@ public class TricorderBehavior implements IItemBehaviour {
                 new TextComponentTranslation(GTUtility.formatNumbers(block.blockHardness)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                 new TextComponentTranslation(GTUtility.formatNumbers(block.getExplosionResistance(player))).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
+
+        if (debugLevel > 2) {
+            IBlockState state = world.getBlockState(pos);
+            UnmodifiableIterator<IProperty<?>> propertyItr = state.getProperties().keySet().iterator();
+            IProperty prop;
+            while (propertyItr.hasNext()) {
+                prop = propertyItr.next();
+                list.add(new TextComponentTranslation("behavior.tricorder.state",
+                        new TextComponentTranslation(prop.getName()),
+                        new TextComponentTranslation(state.getValue(prop).toString()).setStyle(new Style().setColor(TextFormatting.AQUA))
+                ));
+            }
+        }
 
         MetaTileEntity metaTileEntity;
         if (tileEntity instanceof IGregTechTileEntity) {

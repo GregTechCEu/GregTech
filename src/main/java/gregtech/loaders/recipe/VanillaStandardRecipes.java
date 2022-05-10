@@ -606,11 +606,13 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
                     .buildAndRegister();
 
-            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
-                    .inputs(new ItemStack(Blocks.CONCRETE))
-                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
-                    .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
-                    .buildAndRegister();
+            if(i != 0) {
+                CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
+                        .inputs(new ItemStack(Blocks.CONCRETE))
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
+                        .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
+                        .buildAndRegister();
+            }
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                     .inputs(new ItemStack(Blocks.HARDENED_CLAY))
@@ -630,11 +632,13 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
                     .buildAndRegister();
 
-            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
-                    .inputs(new ItemStack(Blocks.WOOL))
-                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
-                    .outputs(new ItemStack(Blocks.WOOL, 1, i))
-                    .buildAndRegister();
+            if(i != 0) {
+                CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
+                        .inputs(new ItemStack(Blocks.WOOL))
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                        .outputs(new ItemStack(Blocks.WOOL, 1, i))
+                        .buildAndRegister();
+            }
 
             CUTTER_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                     .inputs(new ItemStack(Blocks.WOOL, 2, i))

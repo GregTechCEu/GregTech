@@ -17,8 +17,8 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -267,7 +267,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
             return;
         }
         pushFluidsIntoNearbyHandlers(getFrontFacing());
-        fillContainerFromInternalTank(importItems, exportItems, 0, 0);
+        fillContainerFromInternalTank();
 
         //do not do anything without enough energy supplied
         if (energyContainer.getEnergyStored() < GTValues.V[getTier()] * 2) {

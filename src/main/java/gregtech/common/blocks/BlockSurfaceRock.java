@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
+import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;

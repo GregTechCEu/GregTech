@@ -1,5 +1,7 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.block.VariantItemBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.block.SoundType;
@@ -44,7 +46,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
         lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.coilTemperature));
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             int coilTier = coilType.ordinal();
             lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
             lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));

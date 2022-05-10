@@ -23,12 +23,14 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -66,6 +68,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     private final String name;
     private EnumBlockRenderType blockRenderType;
     private static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
+    private static final Cuboid6 FRAME_RENDER_CUBOID = new Cuboid6(0.001, 0.001, 0.001, 0.999, 0.999, 0.999);
 
     public PipeRenderer(String name, ModelResourceLocation modelLocation) {
         this.name = name;
@@ -157,6 +160,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 renderContext.color = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(pipeMaterial, paintingColor));
                 buildRenderer(renderContext, blockPipe, pipeTile, pipeType, pipeMaterial);
                 renderPipeBlock(renderState, renderContext);
+                renderFrame(pipeTile, pos, renderState, connectedSidesMap);
             }
 
             ICoverable coverable = pipeTile.getCoverableImplementation();
@@ -164,6 +168,30 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             Textures.RENDER_STATE.set(null);
         }
         return true;
+    }
+
+    private void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState, int connections) {
+        Material frameMaterial = pipeTile.getFrameMaterial();
+        if (frameMaterial != null) {
+            ResourceLocation rl = MaterialIconType.frameGt.getBlockPath(frameMaterial.getMaterialIconSet());
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString());
+            IVertexOperation[] pipeline = {
+                    new Translation(pos),
+                    renderState.lightMatrix,
+                    new IconTransformation(sprite),
+                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(frameMaterial.getMaterialRGB()))
+            };
+
+            for (EnumFacing side : EnumFacing.VALUES) {
+                // only render frame if it doesn't have a cover
+                if ((connections & 1 << (12 + side.getIndex())) == 0) {
+                    BlockRenderer.BlockFace blockFace = blockFaces.get();
+                    blockFace.loadCuboidFace(FRAME_RENDER_CUBOID, side.getIndex());
+                    renderState.setPipeline(blockFace, 0, blockFace.verts.length, pipeline);
+                    renderState.render();
+                }
+            }
+        }
     }
 
     private int getPipeColor(Material material, int paintingColor) {

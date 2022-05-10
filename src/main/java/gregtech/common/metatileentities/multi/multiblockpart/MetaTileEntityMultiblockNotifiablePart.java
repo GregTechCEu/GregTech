@@ -77,7 +77,7 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
         super.removeFromMultiBlock(controllerBase);
         List<INotifiableHandler> handlerList = getPartHandlers();
         for (INotifiableHandler handler : handlerList) {
-            handler.removeNotifiableMetaTileEntity(this);
+            handler.removeNotifiableMetaTileEntity(controllerBase);
         }
     }
 }

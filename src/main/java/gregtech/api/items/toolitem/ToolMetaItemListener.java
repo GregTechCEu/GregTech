@@ -60,7 +60,7 @@ public class ToolMetaItemListener {
             double materialForFullRepair = toolValueItem.getAmountOfMaterialToRepair(firstStack);
             int durabilityPerUnit = (int) Math.ceil(toolMetaItem.getMaxItemDamage(firstStack) / materialForFullRepair);
             int materialUnitsRequired = Math.min(secondStack.getCount(), (int) Math.ceil(toolDamage * materialForFullRepair));
-            int repairCost = (MathHelper.clamp(toolMaterial.getHarvestLevel(), 2, 3) - 1) * materialUnitsRequired;
+            int repairCost = (MathHelper.clamp(toolMaterial.getToolHarvestLevel(), 2, 3) - 1) * materialUnitsRequired;
 
             if (toolDamage > 0.0 && materialUnitsRequired > 0 && unificationEntry != null &&
                     unificationEntry.material == toolMaterial && unificationEntry.orePrefix == solidPrefix) {

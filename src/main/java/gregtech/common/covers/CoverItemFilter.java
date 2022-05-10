@@ -14,8 +14,8 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.ItemFilter;
 import gregtech.common.covers.filter.ItemFilterWrapper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -88,7 +88,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
                 GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
                 () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
         this.itemFilter.initUI(45, filterGroup::addWidget);
-
+        this.itemFilter.blacklistUI(45, filterGroup::addWidget, () -> true);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
                 .widget(filterGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)

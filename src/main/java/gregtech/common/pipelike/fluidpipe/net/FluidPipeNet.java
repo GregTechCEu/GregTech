@@ -16,6 +16,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         tagCompound.setInteger("max_temperature", nodeData.getMaxFluidTemperature());
         tagCompound.setInteger("throughput", nodeData.getThroughput());
         tagCompound.setBoolean("gas_proof", nodeData.isGasProof());
+        tagCompound.setBoolean("acid_proof", nodeData.isAcidProof());
+        tagCompound.setBoolean("cryo_proof", nodeData.isCryoProof());
+        tagCompound.setBoolean("plasma_proof", nodeData.isPlasmaProof());
         tagCompound.setInteger("channels", nodeData.getTanks());
     }
 
@@ -24,7 +27,10 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         int maxTemperature = tagCompound.getInteger("max_temperature");
         int throughput = tagCompound.getInteger("throughput");
         boolean gasProof = tagCompound.getBoolean("gas_proof");
+        boolean acidProof = tagCompound.getBoolean("acid_proof");
+        boolean cryoProof = tagCompound.getBoolean("cryo_proof");
+        boolean plasmaProof = tagCompound.getBoolean("plasma_proof");
         int channels = tagCompound.getInteger("channels");
-        return new FluidPipeProperties(maxTemperature, throughput, gasProof, channels);
+        return new FluidPipeProperties(maxTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof, channels);
     }
 }

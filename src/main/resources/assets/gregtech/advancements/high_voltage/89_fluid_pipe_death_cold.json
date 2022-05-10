@@ -13,7 +13,7 @@
   },
   "criteria": {
     "fluid_pipe_death_cold": {
-      "trigger": "gregtech:fluid_pipe_death_cold"
+      "trigger": "gregtech:cold_death"
     }
   },
   "parent": "gregtech:high_voltage/41_vacuum_freezer"
