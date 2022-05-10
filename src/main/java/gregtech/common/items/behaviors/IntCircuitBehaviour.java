@@ -1,6 +1,7 @@
 package gregtech.common.items.behaviors;
 
 import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Size;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
@@ -64,27 +65,28 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
         return ModularWindow.builder(new Size(176, 60))
                 .widget(GuiTextures.BACKGROUND.asWidget().fillParent())
                 .widget(new TextWidget(new Text("metaitem.circuit.integrated.gui").localise())
-                        .setPos(9, 8))
+                        .setPos(6, 6))
                 .widget(TextWidget.dynamicString(() -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(buildContext.getPlayer())))
+                        .setTextAlignment(Alignment.Center)
                         .setPos(82, 30))
                 .widget(new ButtonWidget()
                         .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -5))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-5"))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-5").color(0xFFFFFF))
                         .setSize(20, 20)
                         .setPos(15, 24))
                 .widget(new ButtonWidget()
                         .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -1))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-1"))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-1").color(0xFFFFFF))
                         .setSize(20, 20)
                         .setPos(50, 24))
                 .widget(new ButtonWidget()
                         .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), 1))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("1"))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("1").color(0xFFFFFF))
                         .setSize(20, 20)
                         .setPos(104, 24))
                 .widget(new ButtonWidget()
                         .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), 5))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("5"))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("5").color(0xFFFFFF))
                         .setSize(20, 20)
                         .setPos(141, 24))
                 .build();

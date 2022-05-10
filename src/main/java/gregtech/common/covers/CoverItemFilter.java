@@ -107,7 +107,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
                 .setBackground(GuiTextures.BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 83))
                 .widget(new TextWidget(new Text(titleLocale).localise())
-                        .setPos(10, 5))
+                        .setPos(6, 6))
                 .widget(new CycleButtonWidget()
                         .setForEnum(ItemFilterMode.class, this::getFilterMode, this::setFilterMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))

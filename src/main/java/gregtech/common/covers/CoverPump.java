@@ -11,10 +11,8 @@ import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
-import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
-import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -228,21 +226,21 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
         builder.setBackground(gregtech.api.gui.GuiTextures.BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
-                        .setPos(7, 6))
+                        .setPos(6, 6))
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 121))
                 .widget(new TextWidget(new Text("container.inventory").localise())
                         .setPos(8, 111))
                 .widget(new Column()
-                        .widget(new TextWidget("Transfer rate:")
+                        .widget(new TextWidget(new Text("cover.transfer_rate").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
                                 .setSize(80, 12))
-                        .widget(new TextWidget("Mode:")
+                        .widget(new TextWidget(new Text("cover.mode").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
                                 .setSize(80, 12))
-                        .widget(new TextWidget("Manual IO Mode:")
+                        .widget(new TextWidget(new Text("cover.mode.manual_io").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
                                 .setSize(80, 12))
-                        .widget(new TextWidget("Bucket Mode:")
+                        .widget(new TextWidget(new Text("cover.pump.mode.bucket").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
                                 .setSize(80, 12))
                         .setPos(7, 18)
@@ -250,8 +248,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                 .widget(new Column()
                         .widget(new Row()
                                 .widget(new ButtonWidget()
-                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferRate))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferRate))
+                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
                                         .setGetterInt(() -> transferRate)
@@ -262,8 +260,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                                         .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
-                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferRate))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferRate))
+                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12)))
                         .widget(new CycleButtonWidget()
                                 .setForEnum(PumpMode.class, this::getPumpMode, this::setPumpMode)

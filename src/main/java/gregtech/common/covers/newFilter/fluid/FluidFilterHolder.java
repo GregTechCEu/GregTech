@@ -44,7 +44,7 @@ public class FluidFilterHolder extends FilterHolder<FluidStack, FluidFilter> {
 
         return widget.addChild(filterSlot.setPos(144, 0))
                 .addChild(filterWidget)
-                .addChild(new TextWidget(new Text("Filter"))
+                .addChild(new TextWidget(new Text("cover.filter.label").localise())
                         .setTextAlignment(Alignment.CenterLeft)
                         .setPos(1, 0)
                         .setSize(36, 20))

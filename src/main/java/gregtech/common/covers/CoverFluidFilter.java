@@ -21,7 +21,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.newFilter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
@@ -86,7 +85,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
                 .setBackground(GuiTextures.BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 83))
                 .widget(new TextWidget(new Text(titleLocale).localise())
-                        .setPos(10, 5))
+                        .setPos(6, 6))
                 .widget(new CycleButtonWidget()
                         .setForEnum(FluidFilterMode.class, this::getFilterMode, this::setFilterMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))
