@@ -3,11 +3,10 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
 import javax.annotation.Nonnull;
 
-public class SimpleThermalFluidHandlerItemStack extends FluidHandlerItemStackSimple implements IThermalFluidHandlerItemStack {
+public class SimpleThermalFluidHandlerItemStack extends GTSimpleFluidHandlerItemStack implements IThermalFluidHandlerItemStack {
 
     public final int maxFluidTemperature;
     private final boolean gasProof;
@@ -26,6 +25,11 @@ public class SimpleThermalFluidHandlerItemStack extends FluidHandlerItemStackSim
         this.acidProof = acidProof;
         this.cryoProof = cryoProof;
         this.plasmaProof = plasmaProof;
+    }
+
+    @Override
+    public boolean canFillFluidType(FluidStack fluid) {
+        return IThermalFluidHandlerItemStack.super.canFillFluidType(fluid);
     }
 
     @Override
@@ -51,25 +55,5 @@ public class SimpleThermalFluidHandlerItemStack extends FluidHandlerItemStackSim
     @Override
     public boolean isPlasmaProof() {
         return plasmaProof;
-    }
-
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        FluidStack drained = super.drain(resource, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack drained = super.drain(maxDrain, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    private void removeTagWhenEmpty(Boolean doDrain) {
-        if (doDrain && this.getFluid() == null) {
-            this.container.setTagCompound(null);
-        }
     }
 }
