@@ -1,20 +1,21 @@
 package gregtech.api.pattern;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.block.IHeatingCoilBlock;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
-import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -42,10 +43,18 @@ public class TraceabilityPredicate {
             return true;
         }
         return false;
-    }, () -> ArrayUtils.addAll(
-            Arrays.stream(BlockWireCoil.CoilType.values()).map(type -> new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new)))
-            .addTooltips("gregtech.multiblock.pattern.error.coils");
-
+    }, () -> {
+        List<BlockInfo> info = new ArrayList<>();
+        for (ResourceLocation location : GregTechAPI.HEATING_COIL_REGISTRY.getKeys()) {
+            IHeatingCoilBlock<?> value = GregTechAPI.HEATING_COIL_REGISTRY.getObject(location);
+            if (value != null) {
+                info.addAll(Arrays.stream(value.getCoilTypeEnum().getEnumConstants())
+                        .map(type -> new BlockInfo(value.getState(type), null))
+                        .collect(Collectors.toList()));
+            }
+        }
+        return info.toArray(new BlockInfo[0]);
+    }).addTooltips("gregtech.multiblock.pattern.error.coils");
 
     public final List<SimplePredicate> common = new ArrayList<>();
     public final List<SimplePredicate> limited = new ArrayList<>();

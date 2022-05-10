@@ -3,6 +3,7 @@ package gregtech;
 import codechicken.lib.CodeChickenLib;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
+import gregtech.api.block.IHeatingCoilBlock;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
@@ -15,9 +16,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -37,6 +38,7 @@ import gregtech.common.worldgen.LootTableHelper;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
@@ -169,6 +171,13 @@ public class GregTechMod {
         MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(COVER_REGISTRY, CoverDefinition.class));
         COVER_REGISTRY.freeze();
         /* End Cover Definition Registration */
+
+        /* Start Heating Coil Registration */
+        HEATING_COIL_REGISTRY.unfreeze();
+        HEATING_COIL_REGISTRY.register(0, new ResourceLocation(GTValues.MODID, "wire_coil"), MetaBlocks.WIRE_COIL);
+        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(HEATING_COIL_REGISTRY, IHeatingCoilBlock.class));
+        HEATING_COIL_REGISTRY.freeze();
+        /* End Heating Coil Registration */
 
         DungeonLootLoader.init();
     }

@@ -2,6 +2,7 @@ package gregtech.api;
 
 import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.block.IHeatingCoilBlock;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
@@ -32,6 +33,7 @@ public class GregTechAPI {
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
+    public static final GTControlledRegistry<ResourceLocation, IHeatingCoilBlock> HEATING_COIL_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
     public static final MaterialRegistry MATERIAL_REGISTRY = new MaterialRegistry();
 
     public static BlockMachine MACHINE;
