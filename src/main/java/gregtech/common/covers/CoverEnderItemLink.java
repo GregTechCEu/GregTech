@@ -33,6 +33,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -238,10 +239,6 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     public void updateContainerLink() {
         linkedContainer.changeInventory(VirtualContainerRegistry.getContainerCreate(makeContainerName(), getContainerUUID()));
-        /*GTLog.logger.warn(
-                "\nRetrieved container" +
-                "\nContainer name: " + makeContainerName() +
-                "\nContainer UUID: " + getContainerUUID());*/
         coverHolder.markDirty();
     }
 

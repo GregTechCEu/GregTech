@@ -3,30 +3,26 @@ package gregtech.api.util;
 import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerSwitchShim implements IItemHandlerModifiable{
+public class ItemContainerSwitchShim implements IItemHandler {
 
-    // private static final IInventory container;
-    // protected ItemStack[] items;
-    protected IItemHandlerModifiable container;
+    protected ItemStackHandler container;
     private boolean isDirty = false;
 
-    public ItemContainerSwitchShim(IItemHandlerModifiable container) {
+    public ItemContainerSwitchShim(IItemHandler container) {
         changeInventory(container);
     }
 
-    public void changeInventory(IItemHandlerModifiable container)
-    {
+    public void changeInventory(IItemHandler container) {
         if (container == null) {
             throw new IllegalArgumentException("Shim container must be an IItemHandler!");
         }
-        this.container = container;
+        this.container = (ItemStackHandler) container;
     }
 
     @Override
@@ -56,9 +52,10 @@ public class ItemContainerSwitchShim implements IItemHandlerModifiable{
     public int getSlotLimit(int slot) {
         return this.container.getSlotLimit(slot);
     }
-
+/*
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
         this.container.setStackInSlot(slot, itemStack);
     }
+*/
 }

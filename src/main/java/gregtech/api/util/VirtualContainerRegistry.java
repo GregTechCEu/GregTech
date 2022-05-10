@@ -4,24 +4,23 @@ import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.CoverConveyor;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemCarrotOnAStick;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +30,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
     private static final int DEFAULT_SIZE = 27; // 27 slots
     private static final String DATA_ID = GTValues.MODID + ".vcontainer_data";
 
-    protected static Map<UUID, Map<String, VirtualContainer>> containerMap = new HashMap<>();
+    protected static Map<UUID, Map<String, ItemStackHandler>> containerMap = new HashMap<>();
 
     public VirtualContainerRegistry(){
         super(DATA_ID);
@@ -48,7 +47,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param uuid The uuid of the player the container is private to, or null if the container is public
      * @return The container object
      */
-    public static VirtualContainer getContainer(String key, UUID uuid) {
+    public static ItemStackHandler getContainer(String key, UUID uuid) {
         return containerMap.get(uuid).get(key);
     }
 
@@ -56,7 +55,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @return the internal Map of containers.
      * Do not use to modify the map!
      */
-    public static Map<UUID, Map<String, VirtualContainer>> getContainerMap() {
+    public static Map<UUID, Map<String, ItemStackHandler>> getContainerMap() {
         return containerMap;
     }
 
@@ -67,7 +66,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param size The initial size of the container
      * @return The container object
      */
-    public static VirtualContainer getContainerCreate(String key, UUID uuid, int size) {
+    public static ItemStackHandler getContainerCreate(String key, UUID uuid, int size) {
         if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
             addContainer(key, uuid, size);
         }
@@ -80,7 +79,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param uuid The uuid of the player the container is private to, or null if the container is public
      * @return The container object
      */
-    public static VirtualContainer getContainerCreate(String key, UUID uuid) {
+    public static IItemHandler getContainerCreate(String key, UUID uuid) {
         return getContainerCreate(key, uuid, DEFAULT_SIZE);
     }
 
@@ -96,7 +95,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
         } else if (!containerMap.containsKey(uuid)) {
             containerMap.put(uuid, new HashMap<>());
         }
-        containerMap.get(uuid).put(key, new VirtualContainer(size));
+        containerMap.get(uuid).put(key, new ItemStackHandler(new VirtualContainer(size).getItems()));
     }
 
     /**
@@ -116,7 +115,17 @@ public class VirtualContainerRegistry extends WorldSavedData{
      */
     public static void delContainer(String key, UUID uuid, boolean removeContainer) {
         if (containerMap.containsKey(uuid) && containerMap.get(uuid).containsKey(key)) {
-            if (removeContainer || containerMap.get(uuid).get(key).isEmpty()) {
+            boolean isEmpty = true;
+            IItemHandler container = containerMap.get(uuid).get(key);
+
+            for (int i = 0; i < container.getSlots(); i++) {
+                if (!container.getStackInSlot(i).isEmpty()) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+
+            if (removeContainer || isEmpty) {
                 containerMap.get(uuid).remove(key);
                 if (containerMap.get(uuid).size() <= 0) {
                     containerMap.remove(uuid);
@@ -127,6 +136,10 @@ public class VirtualContainerRegistry extends WorldSavedData{
         }
     }
 
+    public static void clearMaps() {
+        containerMap.clear();
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("Public")) {
@@ -135,11 +148,13 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
                 int size = containerCompound.getInteger("Size");
                 VirtualContainerRegistry.addContainer(key, null, size);
-                GTUtility.readItems(
+                getContainerCreate(key, null, size).deserializeNBT(containerCompound);
+                /*GTUtility.readItems(
                         getContainerCreate(key, null, size),
                         "Slots",
                         containerCompound
                 );
+                 */
             }
         }
         if (nbt.hasKey("Private")) {
@@ -149,13 +164,15 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
+                    int size = containerCompound.getInteger("Size");
+                    getContainerCreate(key, uuid, size).deserializeNBT(containerCompound);
                     // NBTTagCompound itemCompound = containerCompound.getCompoundTag("Container");
-                    GTUtility.readItems(
+                    /* GTUtility.readItems(
                             getContainerCreate(key, uuid, containerCompound.getInteger("Size")),
                             "Slots",
                             containerCompound
                     );
-
+                     */
                 }
             }
         }
@@ -170,11 +187,13 @@ public class VirtualContainerRegistry extends WorldSavedData{
             map.forEach( (key, container) -> {
                 NBTTagCompound containerCompound = new NBTTagCompound();
                 containerCompound.setInteger("Size", container.getSlots());
-                GTUtility.writeItems(
+                containerCompound.setTag("Items", container.serializeNBT());
+                /*GTUtility.writeItems(
                         container,
                         "Slots",
                         containerCompound
                 );
+                 */
                 mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
@@ -210,15 +229,13 @@ public class VirtualContainerRegistry extends WorldSavedData{
     protected static class VirtualContainer implements IItemHandlerModifiable {
 
         protected int size;
-        protected ArrayList<ItemStack> items;
+        protected NonNullList<ItemStack> items;
 
         public VirtualContainer(int size){
             this.size = size;
             // items = new ArrayList<>(this.size);
-            items = new ArrayList<>(this.size);
-            for (int slot = 0; slot < this.size; slot++) {
-                items.add(slot, ItemStack.EMPTY);
-            }
+            items = NonNullList.withSize(this.size, ItemStack.EMPTY);
+
             GTLog.logger.debug("Virtual Container of size: " + size + " (" + items.size() + ") " + " has been constructed");
         }
 
@@ -229,7 +246,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
         @Override
         public ItemStack getStackInSlot(int i) {
-            return items.get(i) != ItemStack.EMPTY ? items.get(i) : ItemStack.EMPTY;
+            return items.get(i);
         }
 
         /**
@@ -257,11 +274,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 items.get(slot).setCount(itemStack.getCount());
 
             }
-            /*GTLog.logger.warn(
-                    "\nItem to be inserted: " + itemStack +
-                    "\nAmount to be inserted: " + itemStack.getCount() +
-                    "\nItem to return: " + itemStack.getDisplayName() + " count: " + remainder +
-                    "\nSimulate: " + simulate);*/
+
             if (remainder <= 0) { // not enough or exactly for a full stack
                 return ItemStack.EMPTY;
             }
@@ -290,12 +303,6 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
             if (!simulate) // extracted all item in slot
                 items.set(slot, ItemStack.EMPTY);
-
-            /*GTLog.logger.warn(
-                    "\nItem to be extracted: " + items.get(slot) +
-                    "\nAmount to extract: " + amtToExtract +
-                    "\nItem to return: " + returnable +
-                    "\nSimulate: " + simulate);*/
             return returnable;
         }
 
@@ -304,17 +311,21 @@ public class VirtualContainerRegistry extends WorldSavedData{
             return items.get(slot).getMaxStackSize();
         }
 
-        @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
-            items.set(slot, itemStack);
-        }
-
         public boolean isEmpty(){
             for (ItemStack item : items) {
                 if (!item.isEmpty())
                     return false;
             }
             return true;
+        }
+
+        @Override
+        public void setStackInSlot(int i, @Nonnull ItemStack itemStack) {
+            items.set(i, itemStack);
+        }
+
+        public NonNullList<ItemStack> getItems() {
+            return items;
         }
     }
 }
