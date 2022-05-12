@@ -48,7 +48,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
         useItemDurability(player, hand, stack, empty.copy());
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSounds.SPRAY_CAN_TOOL, SoundCategory.PLAYERS, 100, 0);
+        world.playSound(null, player.posX, player.posY, player.posZ, GTSounds.SPRAY_CAN_TOOL, SoundCategory.PLAYERS, 1.0f, 1.0f);
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
