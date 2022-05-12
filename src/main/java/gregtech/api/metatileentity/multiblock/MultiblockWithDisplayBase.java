@@ -1,5 +1,14 @@
 package gregtech.api.metatileentity.multiblock;
 
+import com.cleanroommc.modularui.api.ModularUITextures;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.api.math.Size;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.IWidgetBuilder;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMaintenanceHatch;
@@ -16,6 +25,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,9 +46,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -283,7 +295,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
         } else {
             if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-                addMaintenanceText(textList);
+                //addMaintenanceText(textList);
             }
             if (hasMufflerMechanics() && !isMufflerFaceFree())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
@@ -293,14 +305,135 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
     }
 
-    protected void addMaintenanceText(List<ITextComponent> textList) {
+
+
+    /**
+     * Called on serverside when client is clicked on the specific text component
+     * with special click event handler
+     * Data is the data specified in the component
+     */
+    protected void handleDisplayClick(String componentData, ClickData clickData) {
+    }
+
+    @Override
+    public boolean useOldGui() {
+        return false;
+    }
+
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = ModularUI.extendedBuilder();
+        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
+        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(156)
+                .setClickHandler(this::handleDisplayClick));
+        if(shouldShowVoidingModeButton()) {
+            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+                    4, this::getVoidingMode, this::setVoidingMode)
+                    .setTooltipHoverString(this::getVoidingModeTooltip));
+        }
+        builder.bindPlayerInventory(entityPlayer.inventory, 134);
+        return builder;
+    }
+
+    @Nullable
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+
+        // Create the Builder
+        ModularWindow.Builder builder = ModularWindow.builder(176, 216);
+
+        // Create a Column for the text information display on the screen
+        Column column = new Column();
+
+        // Create a synced window for maintenance issues display
+        buildContext.addSyncedWindow(1, this::createMaintenanceWindow);
+
+        // Populate the column with the required information text
+        addInformationText(column);
+
+        builder.setBackground(gregtech.api.gui.GuiTextures.DISPLAY)
+                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 134))
+                .widget(new TabContainer()
+                        .setButtonSize(new Size(16, 16))
+                        .addTabButton(new TabButton(0)
+                                //todo, render of the MB controller
+                                .setBackground(false, ModularUITextures.VANILLA_TAB_TOP_START.getSubArea(0, 0, 1f, 0.5f))
+                                .setBackground(true, ModularUITextures.VANILLA_TAB_TOP_START.getSubArea(0, 0.5f, 1f, 1f))
+                                .setPos(0, -16))
+                        .addTabButton(new TabButton(1)
+                                //todo, size up this icon
+                                .setBackground(false, gregtech.api.gui.GuiTextures.INFO_ICON)
+                                .setBackground(true, gregtech.api.gui.GuiTextures.INFO_ICON)
+                                .setPos(16, -16))
+                        .addPage(new MultiChildWidget()
+                                .addChild(new TextWidget(new Text(getMetaFullName()).localise()).setPos(11, 9))
+                                .addChild(column.setPos(7, 19)))
+                        .addPage(new TextWidget(this.getDescription()[0])));
+
+
+        return builder.build();
+    }
+
+    /**
+     * Handles creating and populating the Column for displaying Text Information in Multiblock's GUIs
+     * Not to be overridden directly, always use the various specific methods
+     *
+     * @param <T> The Column of Multiblock Text Information
+     */
+    private <T extends Widget & IWidgetBuilder<T>> void addInformationText(T builder) {
+
+        if(!isStructureFormed()) {
+            addDeformedInformationText(builder);
+        }
+        else {
+            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
+                addMaintenanceText(builder);
+            }
+            if (hasMufflerMechanics() && !isMufflerFaceFree()) {
+                addMufflerText(builder);
+            }
+
+            addAdditionalInformation(builder);
+        }
+    }
+
+    /**
+     * Displays information when the multiblock structure is not formed.
+     * Override to display custom messages and hover tooltips.
+     *
+     * @param builder The Modular UI builder creating the Text display
+     */
+    protected <T extends Widget & IWidgetBuilder<T>> void addDeformedInformationText(T builder) {
+
+        builder.widget(new TextWidget(new Text("gregtech.multiblock.invalid_structure").localise().color(0xff0000)))
+                .addTooltip(new Text("gregtech.multiblock.invalid_structure.tooltip").localise().color(0xff0000));
+    }
+
+    /**
+     * Displays information when the multiblock has maintenance issues.
+     * Also creates the maintenance fix window.
+     * Override for custom behavior
+     *
+     * @param builder The Modular UI builder creating the Text display
+     */
+    protected <T extends Widget & IWidgetBuilder<T>> void addMaintenanceText(T builder) {
         if (!hasMaintenanceProblems()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
-                    .setStyle(new Style().setColor(TextFormatting.GREEN))
-            );
+            builder.widget(new TextWidget(new Text("gregtech.multiblock.universal.no_problems").localise().color(0xff0000)));
         } else {
 
-            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems_header")
+            builder.widget(new Row()
+                    .widget(new TextWidget(new Text("Click button to fix issues")))
+                    .widget(new ButtonWidget()
+                            .setOnClick(((clickData, widget) -> {
+                                if(!widget.isClient()) {
+                                    widget.getContext().openSyncedWindow(1);
+                                }
+                            }))
+                            .setBackground(ModularUITextures.VANILLA_BACKGROUND, new Text("Fix"))
+                            .setSize(20, 10)));
+
+          /*  ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems_header")
                     .setStyle(new Style().setColor(TextFormatting.GRAY));
 
             if (((this.maintenance_problems) & 1) == 0)
@@ -324,32 +457,61 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             TextComponentTranslation textTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
 
             textList.add(textTranslation.setStyle(new Style().setColor(TextFormatting.RED)
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation))));
+                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation)))); */
         }
+    }
+
+    protected ModularWindow createMaintenanceWindow(EntityPlayer player) {
+        return ModularWindow.builder(100, 100)
+                .setBackground(ModularUITextures.VANILLA_BACKGROUND)
+                .widget(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> {
+                            if (!widget.isClient())
+                                widget.getWindow().closeWindow();
+                        })
+                        .setBackground(ModularUITextures.VANILLA_BACKGROUND, new Text("x"))
+                        .setSize(12, 12)
+                        .setPos(85, 5))
+                .widget(new Column()
+                        //todo, hide these widgets based on if there are issues requiring the tool
+                        .widget(new TextWidget(new Text("gregtech.multiblock.universal.problem.wrench").localise().color((this.maintenance_problems & 1) == 0 ? 0xfc0313 : 0x30fc03)))
+                        .widget(new TextWidget(new Text("gregtech.multiblock.universal.problem.screwdriver").localise().color(((this.maintenance_problems >> 1) & 1) == 0 ? 0xfc0313 : 0x30fc03)))
+                        .widget(new TextWidget(new Text("gregtech.multiblock.universal.problem.soft_mallet").localise().color(((this.maintenance_problems >> 2) & 1) == 0 ? 0xfc0313 : 0x30fc03)))
+                        .widget(new TextWidget(new Text("gregtech.multiblock.universal.problem.hard_hammer").localise().color(((this.maintenance_problems >> 3) & 1) == 0 ? 0xfc0313 : 0x30fc03)))
+                        .widget(new TextWidget(new Text("gregtech.multiblock.universal.problem.wire_cutter").localise().color(((this.maintenance_problems >> 4) & 1) == 0 ? 0xfc0313 : 0x30fc03)))
+                        .widget(new TextWidget(new Text("gregtech.multiblock.universal.problem.crowbar").localise().color(((this.maintenance_problems >> 5) & 1) == 0 ? 0xfc0313 : 0x30fc03))))
+                .widget(new ButtonWidget().setOnClick(((clickData, widget) -> {
+                    if(!this.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty()) {
+                        for(IMultiblockPart part : this.getMultiblockParts()) {
+                            if(part instanceof MetaTileEntityMaintenanceHatch) {
+                                ((MetaTileEntityMaintenanceHatch) part).fixMaintenanceProblems(player);
+                            }
+                        }
+                    }}))
+                        .setBackground(ModularUITextures.VANILLA_BACKGROUND, new Text("Fix")))
+                .build();
     }
 
     /**
-     * Called on serverside when client is clicked on the specific text component
-     * with special click event handler
-     * Data is the data specified in the component
+     * Displays information when the multiblock has muffler issues.
+     * Override for custom behavior
+     *
+     * @param builder The Modular UI builder creating the Text display
      */
-    protected void handleDisplayClick(String componentData, ClickData clickData) {
+    protected <T extends Widget & IWidgetBuilder<T>> void addMufflerText(T builder) {
+
+        builder.widget(new TextWidget(new Text("gregtech.multiblock.universal.muffler_obstructed").localise().color(0xff0000))
+                .addTooltip(new Text("gregtech.multiblock.universal.muffler_obstructed.tooltip").localise()));
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(156)
-                .setClickHandler(this::handleDisplayClick));
-        if(shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
-                    4, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(this::getVoidingModeTooltip));
-        }
-        builder.bindPlayerInventory(entityPlayer.inventory, 134);
-        return builder;
+    /**
+     * A stub method for multiblocks to display additional information besides that handled in this class
+     * Override for custom behavior
+     *
+     * @param builder The Modular UI builder creating the Text display
+     */
+    protected <T extends Widget & IWidgetBuilder<T>> void addAdditionalInformation(T builder) {
+
     }
 
     protected boolean shouldShowVoidingModeButton() {
@@ -380,10 +542,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return VoidingMode.VALUES[mode].getName();
     }
 
-    @Override
+   /* @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer).build(getHolder(), entityPlayer);
-    }
+    } */
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {

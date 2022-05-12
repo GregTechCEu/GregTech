@@ -42,7 +42,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
             if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
-                addMaintenanceText(textList);
+                //addMaintenanceText(textList);
 
             if (hasMufflerMechanics() && !isMufflerFaceFree())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
