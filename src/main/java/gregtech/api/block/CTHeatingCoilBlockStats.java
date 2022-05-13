@@ -27,6 +27,7 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
      * @param coilTemperature the temperature of the Heating Coil
      * @param level           the level of the Heating Coil - used for Multismelter parallel amount
      * @param energyDiscount  the energy discount of the Heating Coil
+     * @param tier            the tier of the Heating Coil - used for cracker pyrolyse discounts
      * @param material        the {@link Material} of the Heating Coil, use null for no specific material
      */
     public CTHeatingCoilBlockStats(String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
@@ -70,7 +71,7 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
         return this.material;
     }
 
-    @ZenMethod()
+    @ZenMethod
     public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
         GregTechAPI.HEATING_COILS.put((net.minecraft.block.state.IBlockState) state.getInternal(), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
     }

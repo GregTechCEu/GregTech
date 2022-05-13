@@ -39,7 +39,7 @@ public interface IHeatingCoilBlockStats {
     int getEnergyDiscount();
 
     /**
-     * This is used for the energy discount in the cracking unit
+     * This is used for the energy discount in the cracking unit and pyrolyse oven
      *
      * @return the tier of the coil
      */
