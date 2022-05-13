@@ -2,6 +2,7 @@ package gregtech.api.block;
 
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlockState;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -73,11 +74,11 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
 
     @ZenMethod
     public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
-        GregTechAPI.HEATING_COILS.put((net.minecraft.block.state.IBlockState) state.getInternal(), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
+        GregTechAPI.HEATING_COILS.put(CraftTweakerMC.getBlockState(state), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
     }
 
     @ZenMethod
     public static void remove(@Nonnull IBlockState state) {
-        GregTechAPI.HEATING_COILS.remove((net.minecraft.block.state.IBlockState) state.getInternal());
+        GregTechAPI.HEATING_COILS.remove(CraftTweakerMC.getBlockState(state));
     }
 }
