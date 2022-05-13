@@ -10,7 +10,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@ZenClass("mods.gregtech.blocks.HeatingCoil")
+@ZenClass("mods.gregtech.blocks.HeatingCoils")
 @ZenRegister
 @SuppressWarnings("unused")
 public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
@@ -64,7 +64,12 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
     }
 
     @ZenMethod()
-    public static void register(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, @Nullable Material material) {
+    public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, @Nullable Material material) {
         GregTechAPI.HEATING_COILS.put((net.minecraft.block.state.IBlockState) state.getInternal(), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, material));
+    }
+
+    @ZenMethod
+    public static void remove(@Nonnull IBlockState state) {
+        GregTechAPI.HEATING_COILS.remove((net.minecraft.block.state.IBlockState) state.getInternal());
     }
 }

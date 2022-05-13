@@ -136,6 +136,13 @@ public class GregTechMod {
 
         MetaEntities.init();
 
+        /* Start Heating Coil Registration */
+        for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
+            IBlockState state = MetaBlocks.WIRE_COIL.getState(type);
+            HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
+        }
+        /* End Heating Coil Registration */
+
         proxy.onPreLoad();
         KeyBind.init();
         OreByProduct.init();
@@ -177,12 +184,6 @@ public class GregTechMod {
         COVER_REGISTRY.freeze();
         /* End Cover Definition Registration */
 
-        /* Start Heating Coil Registration */
-        for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
-            HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
-        }
-        /* End Heating Coil Registration */
-
         DungeonLootLoader.init();
     }
 
@@ -196,6 +197,7 @@ public class GregTechMod {
         proxy.onPostLoad();
         BedrockFluidVeinHandler.recalculateChances(true);
         // registers coil types for the BlastTemperatureProperty used in Blast Furnace Recipes
+        // runs AFTER craftTweaker
         for (Map.Entry<IBlockState, IHeatingCoilBlockStats> entry : GregTechAPI.HEATING_COILS.entrySet()) {
             IHeatingCoilBlockStats value = entry.getValue();
             if (value != null) {
