@@ -114,6 +114,11 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return energyDiscount;
         }
 
+        @Override
+        public int getTier() {
+            return this.ordinal();
+        }
+
         @Nullable
         @Override
         public Material getMaterial() {

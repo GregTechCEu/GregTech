@@ -138,7 +138,6 @@ public class GregTechMod {
 
         /* Start Heating Coil Registration */
         for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
-            IBlockState state = MetaBlocks.WIRE_COIL.getState(type);
             HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
         }
         /* End Heating Coil Registration */

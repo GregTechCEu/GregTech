@@ -39,6 +39,13 @@ public interface IHeatingCoilBlockStats {
     int getEnergyDiscount();
 
     /**
+     * This is used for the energy discount in the cracking unit
+     *
+     * @return the tier of the coil
+     */
+    int getTier();
+
+    /**
      * Used for {@link TemperatureProperty#registerCoilType(int, Material, String)}
      *
      * @return the {@link Material} of the Heating Coil if it has one, otherwise {@code null}

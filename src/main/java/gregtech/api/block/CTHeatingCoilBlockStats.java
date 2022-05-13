@@ -19,6 +19,7 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
     private final int coilTemperature;
     private final int level;
     private final int energyDiscount;
+    private final int tier;
     private final Material material;
 
     /**
@@ -28,44 +29,50 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
      * @param energyDiscount  the energy discount of the Heating Coil
      * @param material        the {@link Material} of the Heating Coil, use null for no specific material
      */
-    public CTHeatingCoilBlockStats(String name, int coilTemperature, int level, int energyDiscount, @Nullable Material material) {
+    public CTHeatingCoilBlockStats(String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
         this.name = name;
         this.coilTemperature = coilTemperature;
         this.level = level;
         this.energyDiscount = energyDiscount;
+        this.tier = tier;
         this.material = material;
     }
 
     @Nonnull
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public int getCoilTemperature() {
-        return coilTemperature;
+        return this.coilTemperature;
     }
 
     @Override
     public int getLevel() {
-        return level;
+        return this.level;
     }
 
     @Override
     public int getEnergyDiscount() {
-        return energyDiscount;
+        return this.energyDiscount;
+    }
+
+    @Override
+    public int getTier() {
+        return this.tier;
     }
 
     @Nullable
     @Override
     public Material getMaterial() {
-        return material;
+        return this.material;
     }
 
     @ZenMethod()
-    public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, @Nullable Material material) {
-        GregTechAPI.HEATING_COILS.put((net.minecraft.block.state.IBlockState) state.getInternal(), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, material));
+    public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
+        GregTechAPI.HEATING_COILS.put((net.minecraft.block.state.IBlockState) state.getInternal(), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
     }
 
     @ZenMethod
