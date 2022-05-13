@@ -38,7 +38,7 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     @Override
     @Nonnull
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
