@@ -2,8 +2,6 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.IHeatingCoilBlock;
-import gregtech.api.block.IHeatingCoilBlockType;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
@@ -12,7 +10,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -45,7 +42,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
@@ -272,20 +268,6 @@ public class CommonProxy {
     //ore dictionary and recipes will get recipes accessible in time
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        // registers coil types for the BlastTemperatureProperty used in Blast Furnace Recipes
-        for (ResourceLocation location : GregTechAPI.HEATING_COIL_REGISTRY.getKeys()) {
-            IHeatingCoilBlock<?> value = GregTechAPI.HEATING_COIL_REGISTRY.getObject(location);
-            if (value != null) {
-                for (Object blockType : value.getCoilTypeEnum().getEnumConstants()) {
-                    if (blockType instanceof IHeatingCoilBlockType) {
-                        IHeatingCoilBlockType heatingCoilBlockType = (IHeatingCoilBlockType) value;
-                        TemperatureProperty.registerCoilType(heatingCoilBlockType.getCoilTemperature(), heatingCoilBlockType.getMaterial(),
-                                String.format("tile.wire_coil.%s.name", heatingCoilBlockType.getName()));
-                    }
-                }
-            }
-        }
-
         //Registers Fusion tiers for the FusionEUToStartProperty
         FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
         FusionEUToStartProperty.registerFusionTier(7, "(MK2)");

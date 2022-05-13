@@ -1,7 +1,6 @@
 package gregtech.common.blocks;
 
-import gregtech.api.block.IHeatingCoilBlock;
-import gregtech.api.block.IHeatingCoilBlockType;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.unification.material.Material;
@@ -24,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> implements IHeatingCoilBlock<BlockWireCoil.CoilType> {
+public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     public BlockWireCoil() {
         super(net.minecraft.block.material.Material.IRON);
@@ -67,18 +66,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
         return false;
     }
 
-    @Nonnull
-    @Override
-    public Class<BlockWireCoil.CoilType> getCoilTypeEnum() {
-        return CoilType.class;
-    }
-
-    @Override
-    public IBlockState getState(IHeatingCoilBlockType type) {
-        return getState((CoilType) type);
-    }
-
-    public enum CoilType implements IStringSerializable, IHeatingCoilBlockType {
+    public enum CoilType implements IStringSerializable, IHeatingCoilBlockStats {
 
         CUPRONICKEL("cupronickel", 1800, 1, 1, Materials.Cupronickel),
         KANTHAL("kanthal", 2700, 2, 1, Materials.Kanthal),

@@ -8,41 +8,39 @@ import javax.annotation.Nullable;
 
 /**
  * Implement this interface on the Block Enum for your Heating Coil block
- * 
+ *
  * @see gregtech.common.blocks.BlockWireCoil.CoilType
  */
-public interface IHeatingCoilBlockType {
+public interface IHeatingCoilBlockStats {
 
     /**
-     * 
      * @return The Unique Name of the Heating Coil
      */
     @Nonnull
     String getName();
 
     /**
-     * 
      * @return the temperature the Heating Coil provides
      */
     int getCoilTemperature();
 
     /**
      * This is used for the amount of parallel recipes in the multi smelter
-     * 
-     * @return the level of the Heating Coil 
+     *
+     * @return the level of the Heating Coil
      */
     int getLevel();
 
     /**
      * This is used for the energy discount in the multi smelter
-     * 
+     *
      * @return the energy discount of the Heating Coil
      */
     int getEnergyDiscount();
 
     /**
      * Used for {@link TemperatureProperty#registerCoilType(int, Material, String)}
-     * 
+     *
      * @return the {@link Material} of the Heating Coil if it has one, otherwise {@code null}
      */
     @Nullable
