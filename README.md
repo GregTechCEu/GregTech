@@ -58,4 +58,6 @@ Certificate of Not Being a Noob Anymore is from **[Crops++](https://www.cursefor
 
 Clipboard is from **[BiblioCraft](https://www.curseforge.com/minecraft/mc-mods/bibliocraft)**.
 
+NanoMuscle and QuarkTech Suite are from **[Nukepowered Utils](https://www.curseforge.com/minecraft/mc-mods/nukepowered-utils)**.
+
 See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here
