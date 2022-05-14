@@ -46,12 +46,16 @@ Know how to mod or at least code? Then don't hesitate and jump to Discord channe
 Anything else? Sure come to [Discord](https://discord.gg/bWSWuYvURP).
 
 ## Credited Works
-Heating Coil Textures are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
+Heating Coil Textures, Energy Hatch Coil Textures, Hardmode Vanilla Recipes, Hardmode EBF Recipe, Wooden Forms, World Accelerator and Extreme Combustion Engine are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
 
-Primitive Water Pump is from the **[Impact: GregTech Edition Modpack](https://gtimpact.space/)**.
+Primitive Water Pump and Super Tank GUI are from the **[IMPACT: GREGTECH EDITION Modpack](https://gtimpact.space/)**.
 
-Ender Fluid Link Cover is from **[TecTech](https://github.com/Technus/TecTech)**.
+Ender Fluid Link Cover and Auto-Maintenance Hatch Texture are from **[TecTech](https://github.com/Technus/TecTech)**.
 
-Steam Grinder is from **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**.
+Steam Grinder, Potin Fluid Pipe are from **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**.
+
+Certificate of Not Being a Noob Anymore is from **[Crops++](https://www.curseforge.com/minecraft/mc-mods/berries)**.
+
+Clipboard is from **[BiblioCraft](https://www.curseforge.com/minecraft/mc-mods/bibliocraft)**.
 
 See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here
