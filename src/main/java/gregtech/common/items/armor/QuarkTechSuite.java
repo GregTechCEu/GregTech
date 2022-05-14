@@ -221,6 +221,10 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = Integer.MAX_VALUE;
+        if (SLOT == EntityEquipmentSlot.FEET && source == DamageSource.FALL) {
+            return new ArmorProperties(10, 1, damageLimit);
+        }
+
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item == null) {
             return new ArmorProperties(0, 0, damageLimit);
@@ -228,22 +232,12 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         if (energyPerUse > 0) {
             damageLimit = (int) Math.min(damageLimit, 25.0D * item.getCharge() / (energyPerUse * 100.0D));
         }
-
-        if (source == DamageSource.FALL) {
-            if (SLOT == EntityEquipmentSlot.FEET) {
-                return new ArmorProperties(10, 1.0D, damageLimit);
-            }
-
-            if (SLOT == EntityEquipmentSlot.LEGS) {
-                return new ArmorProperties(9, 0.8D, damageLimit);
-            }
-        }
         return new ArmorProperties(8, getDamageAbsorption() * getAbsorption(armor), damageLimit);
     }
 
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
-        return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE && source != DamageSource.OUT_OF_WORLD;
+        return source != DamageSource.DROWN && source != DamageSource.STARVE && source != DamageSource.OUT_OF_WORLD;
     }
 
     @Override
