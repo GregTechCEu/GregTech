@@ -165,7 +165,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                 .build(this, player);
     }
 
-    private void updateColor(String str) {
+    public void updateColor(String str) {
         if (str.length() == 8) {
             isColorTemp = false;
             // stupid java not having actual unsigned ints
@@ -181,7 +181,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         }
     }
 
-    private String getColorStr() {
+    public String getColorStr() {
         return isColorTemp ? tempColorStr : Integer.toHexString(this.color).toUpperCase();
     }
 
