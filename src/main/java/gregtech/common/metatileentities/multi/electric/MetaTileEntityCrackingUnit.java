@@ -110,8 +110,8 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
-            int[] overclock = super.performOverclocking(recipe, negativeEU);
+        protected int[] performOverclocking(Recipe recipe) {
+            int[] overclock = super.performOverclocking(recipe);
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
             if (coilTier <= 0)

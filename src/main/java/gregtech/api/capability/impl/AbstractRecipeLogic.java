@@ -31,14 +31,13 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.recipes.logic.OverclockingLogic.*;
+
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
-    public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
-    public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
     private final RecipeMap<?> recipeMap;
 
@@ -451,12 +450,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * calculates the overclocked EUt and duration
+     * Calculates the overclocked Recipe's final duration and EU/t
      *
      * @param recipe the recipe to run
+     *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+
         int recipeEUt = recipe.getEUt();
         int recipeDuration = recipe.getDuration();
         // Cannot overclock, keep recipe the same
@@ -467,7 +468,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         boolean negativeEU = recipeEUt < 0;
 
         // perform the actual overclocking
-        int[] overclockResult = performOverclocking(recipe, negativeEU);
+        int[] overclockResult = performOverclocking(recipe);
 
         // make the EU negative after it has been made further away from 0
         if (negativeEU)
@@ -478,6 +479,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * @param recipeEUt the EU/t of the recipe attempted to be run
+     *
      * @return true if the recipe is able to overclock, else false
      */
     protected boolean checkCanOverclock(int recipeEUt) {
@@ -494,45 +496,34 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * determines the maximum amount of overclocks for the recipe
+     * Determines the maximum number of overclocks that can be performed for a recipe.
+     * Then performs overclocking on the Recipe.
      *
      * @param recipe the recipe to overclock
+     *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
+    protected int[] performOverclocking(Recipe recipe) {
         int maxOverclocks = getOverclockingTier(getOverclockVoltage()) - 1; // exclude ULV overclocking
 
-        return runOverclockingLogic(recipe, negativeEU, maxOverclocks);
+        return runOverclockingLogic(recipe.getRecipePropertyStorage(), recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks);
     }
 
     /**
-     * converts the recipe's values into ones used for overclocking
-     * @param recipe the recipe to overclock
-     * @param maxOverclocks the maximum amount of overclocks to perform
-     * @return an int array of {OverclockedEUt, OverclockedDuration}
-     */
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return overclockRecipe(recipe.getRecipePropertyStorage(),
-                recipe.getEUt(),
-                negativeEU,
-                getMaxVoltage(),
-                recipe.getDuration(),
-                maxOverclocks
-        );
-    }
-
-    /**
-     * actually runs the overclocking logic
+     * Calls the desired overclocking logic to be run for the recipe.
+     * Performs the actual overclocking on the provided recipe.
+     * Override this to call custom overclocking mechanics
+     *
      * @param propertyStorage the recipe's property storage
      * @param recipeEUt the EUt of the recipe
-     * @param negativeEU whether the EU is negative or not
      * @param maxVoltage the maximum voltage the recipe is allowed to be run at
      * @param duration the duration of the recipe
      * @param maxOverclocks the maximum amount of overclocks to perform
+     *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] overclockRecipe(RecipePropertyStorage propertyStorage, int recipeEUt, boolean negativeEU, long maxVoltage, int duration, int maxOverclocks) {
-        return standardOverclockingLogic(recipeEUt * (negativeEU ? -1 : 1),
+    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+        return standardOverclockingLogic(Math.abs(recipeEUt),
                 maxVoltage,
                 duration,
                 getOverclockingDurationDivisor(),
@@ -553,53 +544,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected double getOverclockingVoltageMultiplier() {
         return STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER;
-    }
-
-    /**
-     * applies standard logic for overclocking, where each overclock modifies energy and duration
-     *
-     * @param recipeEUt         the EU/t of the recipe to overclock
-     * @param maximumVoltage    the maximum voltage the recipe is allowed to be run at
-     * @param recipeDuration    the duration of the recipe to overclock
-     * @param durationDivisor   the value to divide the duration by for each overclock
-     * @param voltageMultiplier the value to multiply the voltage by for each overclock
-     * @param maxOverclocks     the maximum amount of overclocks allowed
-     * @return an int array of {OverclockedEUt, OverclockedDuration}
-     */
-    public static int[] standardOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
-        int overclockedEUt = recipeEUt;
-        double overclockedDuration = recipeDuration;
-
-        while (overclockedEUt * voltageMultiplier <= GTValues.V[GTUtility.getTierByVoltage(maximumVoltage)] && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
-            overclockedEUt *= voltageMultiplier;
-            overclockedDuration /= durationDivisor;
-            maxOverclocks--;
-        }
-        return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
-    }
-
-    /**
-     * Identical to {@link AbstractRecipeLogic#standardOverclockingLogic(int, long, int, double, double, int)}, except
-     * it does not enforce "maximumVoltage" being in-line with a voltage-tier.
-     *
-     * @param recipeEUt the EU/t of the recipe to overclock
-     * @param maximumVoltage the maximum voltage the recipe is allowed to be run at
-     * @param recipeDuration the duration of the recipe to overclock
-     * @param durationDivisor the value to divide the duration by for each overclock
-     * @param voltageMultiplier the value to multiply the voltage by for each overclock
-     * @param maxOverclocks the maximum amount of overclocks allowed
-     * @return an int array of {OverclockedEUt, OverclockedDuration}
-     */
-    public static int[] unlockedVoltageOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
-        int overclockedEUt = recipeEUt;
-        double overclockedDuration = recipeDuration;
-
-        while (overclockedEUt * voltageMultiplier <= maximumVoltage && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
-            overclockedEUt *= voltageMultiplier;
-            overclockedDuration /= durationDivisor;
-            maxOverclocks--;
-        }
-        return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
     }
 
     /**
@@ -708,7 +652,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     public void setAllowOverclocking(boolean allowOverclocking) {
         this.allowOverclocking = allowOverclocking;
-        this.overclockVoltage = allowOverclocking ? getMaxVoltage() : 0;
+        this.overclockVoltage = allowOverclocking ? getOverclockVoltage() : 0;
         metaTileEntity.markDirty();
     }
 
@@ -830,7 +774,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.overclockVoltage = compound.getLong(OVERCLOCK_VOLTAGE);
         } else {
             // Calculate overclock voltage based on old allow flag
-            this.overclockVoltage = this.allowOverclocking ? getMaxVoltage() : 0;
+            this.overclockVoltage = this.allowOverclocking ? getOverclockVoltage() : 0;
         }
         this.isActive = false;
         if (progressTime > 0) {
