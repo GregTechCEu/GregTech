@@ -2475,7 +2475,7 @@ gregtech.machine.drum.stainless_steel.name=不锈钢桶
 gregtech.machine.drum.titanium.name=钛桶
 gregtech.machine.drum.tungstensteel.name=钨钢桶
 
-gregtech.machine.drum.enable_output=将液体排到垂直相邻的容器
+gregtech.machine.drum.enable_output=将液体排到下方相邻的容器
 gregtech.machine.drum.disable_output=不会排出液体
 
 # Crates
@@ -2673,9 +2673,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=融合炉
 gregtech.machine.steam_alloy_smelter_steel.name=高压蒸汽合金炉
 gregtech.machine.steam_alloy_smelter_steel.tooltip=融合炉
 gregtech.machine.steam_rock_breaker_bronze.name=蒸汽碎岩机
-gregtech.machine.steam_rock_breaker_bronze.tooltip=在相邻处放置水和熔岩
+gregtech.machine.steam_rock_breaker_bronze.tooltip=在水平相邻处放置水和熔岩
 gregtech.machine.steam_rock_breaker_steel.name=高压蒸汽碎岩机
-gregtech.machine.steam_rock_breaker_steel.tooltip=在相邻处放置水和熔岩
+gregtech.machine.steam_rock_breaker_steel.tooltip=在水平相邻处放置水和熔岩
 gregtech.machine.steam_miner.name=蒸汽采矿机
 gregtech.machine.steam_miner.tooltip=只开采矿机下面的矿石!
 gregtech.machine.steam_miner.description=工作范围: §b%dx%d§7 方块，挖掘一个方块需要 §b%ds§7。蒸汽消耗速率为 §b16mB/t§7。
@@ -4092,13 +4092,13 @@ gregtech.machine.gas_collector.opv.tooltip=根据尺寸大小，以消耗能量�
 
 # 碎岩机 Rock Breakers
 gregtech.machine.rock_breaker.lv.name=基础碎岩机
-gregtech.machine.rock_breaker.lv.tooltip=在机器相邻处放置熔岩和水
+gregtech.machine.rock_breaker.lv.tooltip=在机器水平相邻处放置熔岩和水
 gregtech.machine.rock_breaker.mv.name=进阶碎岩机
-gregtech.machine.rock_breaker.mv.tooltip=在机器相邻处放置熔岩和水
+gregtech.machine.rock_breaker.mv.tooltip=在机器水平相邻处放置熔岩和水
 gregtech.machine.rock_breaker.hv.name=进阶碎岩机 II
-gregtech.machine.rock_breaker.hv.tooltip=在机器相邻处放置熔岩和水
+gregtech.machine.rock_breaker.hv.tooltip=在机器水平相邻处放置熔岩和水
 gregtech.machine.rock_breaker.ev.name=进阶碎岩机 III
-gregtech.machine.rock_breaker.ev.tooltip=在机器相邻处放置熔岩和水
+gregtech.machine.rock_breaker.ev.tooltip=在机器水平相邻处放置熔岩和水
 gregtech.machine.rock_breaker.iv.name=精英碎岩机
 gregtech.machine.rock_breaker.iv.tooltip=低温岩浆固化器 R-8200
 gregtech.machine.rock_breaker.luv.name=精英碎岩机 II

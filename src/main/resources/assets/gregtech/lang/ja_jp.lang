@@ -2409,7 +2409,7 @@ gregtech.machine.drum.stainless_steel.name=ステンレススチール製ドラ�
 gregtech.machine.drum.titanium.name=チタン製ドラム
 gregtech.machine.drum.tungstensteel.name=タングステンスチール製ドラム
 
-gregtech.machine.drum.enable_output=垂直に隣接するタンクに液体を排出.
+gregtech.machine.drum.enable_output=下方向に隣接するタンクに液体を排出.
 gregtech.machine.drum.disable_output=液体を排出しない.
 
 # Crates
@@ -2607,9 +2607,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=合体製錬
 gregtech.machine.steam_alloy_smelter_steel.name=高圧蒸気式合金精錬機
 gregtech.machine.steam_alloy_smelter_steel.tooltip=合体製錬
 gregtech.machine.steam_rock_breaker_bronze.name=蒸気式破砕機
-gregtech.machine.steam_rock_breaker_bronze.tooltip=水と溶岩に隣接させて
+gregtech.machine.steam_rock_breaker_bronze.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.steam_rock_breaker_steel.name=高圧蒸気式破砕機
-gregtech.machine.steam_rock_breaker_steel.tooltip=水と溶岩に隣接させて
+gregtech.machine.steam_rock_breaker_steel.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.steam_miner.name=蒸気式採掘機
 gregtech.machine.steam_miner.tooltip=採掘機より下§bのみ§7採掘!
 gregtech.machine.steam_miner.description=採掘範囲: §b%dx%d§7 ブロック. 1ブロックにつき§b%d秒§7. 蒸気を §b16mB/t§7消費.
@@ -4028,13 +4028,13 @@ gregtech.machine.gas_collector.opv.tooltip=宇宙からディメンション依�
 
 # Rock Breaker
 gregtech.machine.rock_breaker.lv.name=基本型破砕機
-gregtech.machine.rock_breaker.lv.tooltip=水と溶岩に隣接させて設置
+gregtech.machine.rock_breaker.lv.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.rock_breaker.mv.name=発展型破砕機
-gregtech.machine.rock_breaker.mv.tooltip=水と溶岩に隣接させて設置
+gregtech.machine.rock_breaker.mv.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.rock_breaker.hv.name=発展型破砕機 II
-gregtech.machine.rock_breaker.hv.tooltip=水と溶岩に隣接させて設置
+gregtech.machine.rock_breaker.hv.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.rock_breaker.ev.name=発展型破砕機 III
-gregtech.machine.rock_breaker.ev.tooltip=水と溶岩に隣接させて設置
+gregtech.machine.rock_breaker.ev.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.rock_breaker.iv.name=精鋭型破砕機
 gregtech.machine.rock_breaker.iv.tooltip=極低温マグマ凝固装置 R-8200
 gregtech.machine.rock_breaker.luv.name=精鋭型破砕機 II
