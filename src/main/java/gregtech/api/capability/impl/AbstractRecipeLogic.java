@@ -196,6 +196,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
         else {
             this.invalidInputsForRecipes = false;
+            this.metaTileEntity.getNotifiedItemInputList().clear();
         }
         return true;
     }
