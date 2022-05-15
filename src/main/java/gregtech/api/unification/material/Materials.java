@@ -272,7 +272,7 @@ public class Materials {
     public static Material AnnealedCopper;
     public static Material Asbestos;
     public static Material Ash;
-    public static Material BandedIron;
+    public static Material Hematite;
     public static Material BatteryAlloy;
     public static Material BlueTopaz;
     public static Material Bone;
@@ -464,18 +464,19 @@ public class Materials {
     public static Material Pyrochlore;
 
     // New Ore Processing Additions
-    public static Material CopperSulfate; // Blue Vitriol
-    public static Material IronSulfate; // Green Vitriol
-    public static Material CobaltSulfate; // Red Vitriol
-    public static Material MagnesiumSulfate; // Pink Vitriol
-    public static Material NickelSulfate; // Cyan Vitriol
-    public static Material ZincSulfate; // White Vitriol
-    public static Material ManganeseSulfate; // Gray Vitriol
-    public static Material AluminiumSulfate; // Vitriol of Clay
-    public static Material ChloroauricAcid; // TODO Maybe remove?? Probably worth it but *maybe* not
-    public static Material ChloroplatinicAcid; // TODO Definitely keep this one
-    public static Material StannicChloride; // TODO Remove, maybe. Probably not worth it
+    public static Material BlueVitriol;
+    public static Material GreenVitriol;
+    public static Material RedVitriol;
+    public static Material PinkVitriol;
+    public static Material CyanVitriol;
+    public static Material WhiteVitriol;
+    public static Material GrayVitriol;
+    public static Material ClayVitriol;
+    public static Material ChloroauricAcid;
+    public static Material ChloroplatinicAcid;
     public static Material Alumina;
+    public static Material GraniticMineralSand;
+    public static Material BasalticMineralSand;
 
     /**
      * Organic chemistry
@@ -752,7 +753,6 @@ public class Materials {
     public static Material RedSteel;
     public static Material BlueSteel;
     public static Material Basalt;
-    public static Material GraniticMineralSand;
     public static Material Redrock;
     public static Material GarnetSand;
     public static Material HSSG;
@@ -767,7 +767,6 @@ public class Materials {
      */
     public static Material RedAlloy;
     public static Material BlueAlloy;
-    public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;
 }

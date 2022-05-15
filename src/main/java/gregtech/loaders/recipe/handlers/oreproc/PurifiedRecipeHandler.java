@@ -78,7 +78,7 @@ public class PurifiedRecipeHandler {
         // Chemical Bath recipe (if applicable)
         // Purified Ore -> Refined Ore (+ chance to double, + Vitriol)
         if (property.getVitriol() != null) {
-            if (property.getVitriol() == AluminiumSulfate) { // handle this one differently since it is a different composition
+            if (property.getVitriol() == ClayVitriol) { // handle this one differently since it is a different composition
                 CHEMICAL_BATH_RECIPES.recipeBuilder()
                         .input(crushedPurified, material)
                         .fluidInputs(SulfuricAcid.getFluid(1500))

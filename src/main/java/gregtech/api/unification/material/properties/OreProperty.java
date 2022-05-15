@@ -69,7 +69,11 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         this.emissive = emissive;
     }
 
-    // TODO Constructors for doGenerateBlock
+    public OreProperty(int oreMultiplier, boolean emissive, boolean doGenerateBlock) {
+        this.oreMultiplier = oreMultiplier;
+        this.emissive = emissive;
+        this.doGenerateBlock = doGenerateBlock;
+    }
 
     /**
      * Default values constructor.

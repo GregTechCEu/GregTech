@@ -19,7 +19,6 @@ public class FirstDegreeMaterials {
 
         // ID 250 RESERVED: Almandine
 
-        // TODO?
         Andradite = new Material.Builder(251, "andradite")
                 .gem(1)
                 .color(0x967800).iconSet(RUBY)
@@ -45,8 +44,7 @@ public class FirstDegreeMaterials {
                 .components(Carbon, 1)
                 .build();
 
-        // TODO Hematite?
-        BandedIron = new Material.Builder(255, "banded_iron")
+        Hematite = new Material.Builder(255, "hematite")
                 .dust().ore()
                 .color(0x915A5A)
                 .components(Iron, 2, Oxygen, 3)
@@ -91,7 +89,6 @@ public class FirstDegreeMaterials {
                 .fluidTemp(1357)
                 .build();
 
-        // TODO Fe vitriol?
         BrownLimonite = new Material.Builder(261, "brown_limonite")
                 .dust(1).ore()
                 .color(0xC86400).iconSet(METALLIC)
@@ -159,9 +156,8 @@ public class FirstDegreeMaterials {
                 .fluidTemp(85)
                 .build();
 
-        // TODO Ore mult?
         Coal = new Material.Builder(271, "coal")
-                .gem(1, 1600).ore(2) //default coal burn time in vanilla
+                .gem(0, 1600).ore(2) //default coal burn time in vanilla
                 .color(0x464646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
@@ -265,7 +261,7 @@ public class FirstDegreeMaterials {
                 .components(Titanium, 1, Oxygen, 2)
                 .build();
 
-        // todo new processing??
+        // TODO new processing??
         Bauxite = new Material.Builder(286, "bauxite")
                 .dust(1).ore()
                 .color(0xC86400)
@@ -306,7 +302,7 @@ public class FirstDegreeMaterials {
         Magnalium = new Material.Builder(290, "magnalium")
                 .ingot().fluid()
                 .color(0xC8BEFF)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Aluminium, 2)
                 .rotorStats(6.0f, 2.0f, 256)
                 .itemPipeProperties(1024, 2)
@@ -929,14 +925,19 @@ public class FirstDegreeMaterials {
 
         // ID 382 RESERVED: Lepidolite
 
-        // Free ID 383
-
-        // TODO All of this (remove?)
-        GlauconiteSand = new Material.Builder(384, "glauconite_sand")
-                .dust().ore() // used  to be 3
-                .color(0x82B43C).iconSet(SAND)
-                .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
+        Alumina = new Material.Builder(383, "alumina")
+                .dust()
+                .color(0x78C3EB).iconSet(METALLIC)
+                .flags()
+                .components(Aluminium, 2, Oxygen, 3)
                 .build();
+
+        GlauconiteSand = new Material.Builder(384, "glauconite_sand")
+                .dust().ore() // used to be 3
+                .color(0x82B43C).iconSet(SAND)
+                .components(Potassium, 1, Magnesium, 2, Alumina, 10, Hydrogen, 2, Oxygen, 6)
+                .build()
+                .setFormula("KMg2(Al2O3)2H2O6", true);
 
         Malachite = new Material.Builder(385, "malachite")
                 .gem().ore()
@@ -945,12 +946,12 @@ public class FirstDegreeMaterials {
                 .components(Copper, 2, Carbon, 1, Hydrogen, 2, Oxygen, 5)
                 .build();
 
-        // todo comp
         Mica = new Material.Builder(386, "mica")
                 .dust().ore()
                 .color(0xC3C3CD).iconSet(FINE)
-                .components(Potassium, 1, Aluminium, 3, Silicon, 3, Fluorine, 2, Oxygen, 10)
-                .build();
+                .components(Potassium, 1, Alumina, 5, SiliconDioxide, 3, Fluorine, 2, Oxygen, 3)
+                .build()
+                .setFormula("KAl2O3(SiO2)F2O3", true);
 
         Barite = new Material.Builder(387, "barite")
                 .dust().ore()
@@ -958,12 +959,12 @@ public class FirstDegreeMaterials {
                 .components(Barium, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        // todo comp
         Alunite = new Material.Builder(388, "alunite")
                 .dust().ore()
                 .color(0xE1B441).iconSet(METALLIC)
-                .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
-                .build();
+                .components(Potassium, 1, Alumina, 10, Sulfur, 2, Oxygen, 2)
+                .build()
+                .setFormula("KAl4(SO4)2", true);
 
         PotassiumBisulfate = new Material.Builder(389, "potassium_bisulfate")
                 .dust()
@@ -1407,56 +1408,56 @@ public class FirstDegreeMaterials {
                 .fluidTemp(4)
                 .build();
 
-        CopperSulfate = new Material.Builder(450, "copper_sulfate")
+        BlueVitriol = new Material.Builder(450, "blue_vitriol")
                 .fluid()
                 .color(0x4242DE)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        IronSulfate = new Material.Builder(451, "iron_sulfate")
+        GreenVitriol = new Material.Builder(451, "green_vitriol")
                 .fluid()
                 .color(0x42DE42)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iron, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        CobaltSulfate = new Material.Builder(452, "cobalt_sulfate")
+        RedVitriol = new Material.Builder(452, "red_vitriol")
                 .fluid()
                 .color(0xDE4242)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Cobalt, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        MagnesiumSulfate = new Material.Builder(453, "magnesium_sulfate")
+        PinkVitriol = new Material.Builder(453, "pink_vitriol")
                 .fluid()
                 .color(0xDE6F6F)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        NickelSulfate = new Material.Builder(454, "nickel_sulfate")
+        CyanVitriol = new Material.Builder(454, "cyan_vitriol")
                 .fluid()
                 .color(0x6FDEDE)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nickel, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        ZincSulfate = new Material.Builder(455, "zinc_sulfate")
+        WhiteVitriol = new Material.Builder(455, "white_vitriol")
                 .fluid()
                 .color(0xDEDEDE)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zinc, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        ManganeseSulfate = new Material.Builder(456, "manganese_sulfate")
+        GrayVitriol = new Material.Builder(456, "gray_vitriol")
                 .fluid()
                 .color(0x6F6F6F)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Manganese, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        AluminiumSulfate = new Material.Builder(457, "aluminium_sulfate")
+        ClayVitriol = new Material.Builder(457, "clay_vitriol")
                 .fluid()
                 .color(0x42DEDE)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1478,18 +1479,18 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Platinum, 1, Chlorine, 6)
                 .build();
 
-        StannicChloride = new Material.Builder(460, "stannic_chloride")
-                .fluid()
-                .color(0xD2FAFA)
+        GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
+                .dust(1).ore()
+                .color(0x283C3C).iconSet(SAND)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Tin, 1, Chlorine, 4)
+                .components(Iron, 3, Oxygen, 4)
                 .build();
 
-        Alumina = new Material.Builder(461, "alumina")
-                .dust()
-                .color(0x78C3EB).iconSet(METALLIC)
-                .flags()
-                .components(Aluminium, 2, Oxygen, 3)
+        BasalticMineralSand = new Material.Builder(2518, "basaltic_mineral_sand")
+                .dust(1).ore()
+                .color(0x283228).iconSet(SAND)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iron, 3, Oxygen, 4)
                 .build();
     }
 }

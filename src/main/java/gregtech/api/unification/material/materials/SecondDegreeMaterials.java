@@ -40,7 +40,7 @@ public class SecondDegreeMaterials {
                 .gem(3).ore()
                 .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Alumina, 1, Silicon, 1, Oxygen, 2, Fluorine, 2, Water, 1)
+                .components(Alumina, 5, Silicon, 1, Fluorine, 2, Water, 1)
                 .toolStats(7.0f, 3.0f, 256, 15)
                 .build().setFormula("(Al2O3)(SiO2)F2(H2O)", true);
 
@@ -67,10 +67,10 @@ public class SecondDegreeMaterials {
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Alumina, 5, Chrome, 1)
                 .toolStats(8.5f, 3.0f, 256, 33)
-                .build().setFormula("Al2O3Cr", true);
+                .build().setFormula("(Al2O3)Cr", true);
 
         Spessartine = new Material.Builder(321, "spessartine")
                 .gem().ore()
@@ -98,24 +98,22 @@ public class SecondDegreeMaterials {
                 .components(Alumina, 2, Potassium, 1, Lithium, 3, Fluorine, 2, Oxygen, 6)
                 .build();
 
-        // todo mg vitriol?
         Talc = new Material.Builder(392, "talc")
                 .dust().ore()
                 .color(0x5AB45A).iconSet(FINE)
                 .components(Magnesium, 3, SiliconDioxide, 4, Water, 1, Oxygen, 3)
                 .build();
 
-        // todo mg vitriol?
         Soapstone = new Material.Builder(393, "soapstone")
                 .dust(1).ore()
                 .color(0x5F915F)
                 .components(Magnesium, 3, SiliconDioxide, 4, Water, 1, Oxygen, 3)
                 .build();
 
-        // todo Al vitriol?
         Kyanite = new Material.Builder(394, "kyanite")
                 .dust().ore()
                 .color(0x6E6EFA).iconSet(FLINT)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Alumina, 1, SiliconDioxide, 1)
                 .build();
 
@@ -169,7 +167,7 @@ public class SecondDegreeMaterials {
         Amethyst = new Material.Builder(2006, "amethyst")
                 .gem(3).ore()
                 .color(0xD232D2).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .build();
 
@@ -284,9 +282,10 @@ public class SecondDegreeMaterials {
         GraniteRed = new Material.Builder(2020, "granite_red")
                 .dust()
                 .color(0xFF0080).iconSet(ROUGH)
-                .flags(NO_SMASHING)
-                .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
-                .build();
+                .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Alumina, 5, PotassiumFeldspar, 1)
+                .build()
+                .setFormula("Al2O3(KAlSiO8)", true);
 
         // Free ID 2021
 
@@ -312,18 +311,9 @@ public class SecondDegreeMaterials {
 
         // Free ID 2025
 
-        // TODO move these 2
-        Bentonite = new Material.Builder(2026, "bentonite")
-                .dust().ore()
-                .color(0xF5D7D2).iconSet(ROUGH)
-                //.components(SodiumHydroxide, 1, Clay, 13)
-                .build();
+        // ID 2026 RESERVED: Bentonite
 
-        FullersEarth = new Material.Builder(2027, "fullers_earth")
-                .dust().ore()
-                .color(0xA0A078).iconSet(FINE)
-                //.components(Magnesium, 1, Clay, 13)
-                .build();
+        // ID 2027 RESERVED: FullersEarth
 
         Pitchblende = new Material.Builder(2028, "pitchblende")
                 .dust(3).ore(true)
@@ -356,7 +346,7 @@ public class SecondDegreeMaterials {
         Gypsum = new Material.Builder(2032, "gypsum")
                 .dust(1).ore()
                 .color(0xE6E6FA)
-                .components(Calcium, 1, Sulfur, 1, Water, 2, Oxygen, 4)
+                .components(Calcium, 1, Sulfur, 1, Oxygen, 4, Water, 2)
                 .build();
 
         Zeolite = new Material.Builder(2033, "zeolite")
@@ -596,6 +586,20 @@ public class SecondDegreeMaterials {
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
                 .fluidTemp(500)
+                .build();
+
+        Bentonite = new Material.Builder(2026, "bentonite")
+                .dust().ore()
+                .color(0xF5D7D2).iconSet(ROUGH)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(SodiumHydroxide, 1, Clay, 13)
+                .build();
+
+        FullersEarth = new Material.Builder(2027, "fullers_earth")
+                .dust().ore()
+                .color(0xA0A078).iconSet(FINE)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Magnesium, 1, Clay, 13)
                 .build();
     }
 }

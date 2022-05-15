@@ -28,11 +28,10 @@ public class HigherDegreeMaterials {
         ////////////////////////////
 
 
-        // TODO This still needs a better solution
         Electrotine = new Material.Builder(2507, "electrotine")
-                .dust().ore(2, 1, true)
+                .dust().ore(1, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Redstone, 1, Electrum, 1)
                 .build();
 
@@ -45,7 +44,7 @@ public class HigherDegreeMaterials {
         Diatomite = new Material.Builder(2509, "diatomite")
                 .dust(1).ore()
                 .color(0xE1E1E1)
-                .components(Flint, 8, BandedIron, 1, Sapphire, 1)
+                .components(Flint, 8, Hematite, 1, Sapphire, 1)
                 .build();
 
         RedSteel = new Material.Builder(2510, "red_steel")
@@ -75,13 +74,7 @@ public class HigherDegreeMaterials {
                 .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
                 .build();
 
-        // todo processing, move to first degree
-        GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
-                .dust(1).ore()
-                .color(0x283C3C).iconSet(SAND)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Iron, 3, Oxygen, 4)
-                .build();
+        // ID 2513 RESERVED: GraniticMineralSand
 
         Redrock = new Material.Builder(2514, "redrock")
                 .dust(1)
@@ -90,7 +83,6 @@ public class HigherDegreeMaterials {
                 .components(Calcite, 2, Flint, 1)
                 .build();
 
-        // todo processing
         GarnetSand = new Material.Builder(2515, "garnet_sand")
                 .dust(1).ore()
                 .color(0xC86400).iconSet(SAND)
@@ -117,13 +109,7 @@ public class HigherDegreeMaterials {
                 .fluidTemp(1400)
                 .build();
 
-        // todo processing, move to first degree
-        BasalticMineralSand = new Material.Builder(2518, "basaltic_mineral_sand")
-                .dust(1).ore()
-                .color(0x283228).iconSet(SAND)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Iron, 3, Oxygen, 4)
-                .build();
+        // ID 2518 RESERVED: BasalticMineralSand
 
         HSSE = new Material.Builder(2519, "hsse")
                 .ingot(4).fluid()

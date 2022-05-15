@@ -5,7 +5,7 @@
   "min_height": 10,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "banded_iron"
+    "material": "hematite"
   },
   "generator": {
     "type": "layered",
@@ -24,7 +24,7 @@
         "secondary": "ore:yellow_limonite"
       },
       {
-        "between": "ore:banded_iron"
+        "between": "ore:hematite"
       },
       {
         "sporadic": "ore:malachite"

@@ -27,52 +27,79 @@ public class SpecialRecipeHandler {
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPurified, Cassiterite)
-                .fluidInputs(AquaRegia.getFluid(1000))
+                .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(crushedRefined, Cassiterite)
                 .chancedOutput(crushedRefined, Zinc, 5000, 0)
-                .fluidOutputs(StannicChloride.getFluid(500))
-                .fluidOutputs(NitricOxide.getFluid(1000))
-                .fluidOutputs(Water.getFluid(2000))
+                .fluidOutputs(WhiteVitriol.getFluid(500))
+                .fluidOutputs(Hydrogen.getFluid(1000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPurified, CassiteriteSand)
-                .fluidInputs(AquaRegia.getFluid(1000))
+                .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(crushedRefined, CassiteriteSand)
                 .chancedOutput(crushedRefined, Zinc, 5000, 0)
-                .fluidOutputs(StannicChloride.getFluid(500))
-                .fluidOutputs(NitricOxide.getFluid(1000))
-                .fluidOutputs(Water.getFluid(2000))
+                .fluidOutputs(WhiteVitriol.getFluid(500))
+                .fluidOutputs(Hydrogen.getFluid(1000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPurified, Tin)
-                .fluidInputs(AquaRegia.getFluid(1000))
+                .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(crushedRefined, Tin)
                 .chancedOutput(crushedRefined, Zinc, 5000, 0)
-                .fluidOutputs(StannicChloride.getFluid(500))
-                .fluidOutputs(NitricOxide.getFluid(1000))
-                .fluidOutputs(Water.getFluid(2000))
+                .fluidOutputs(WhiteVitriol.getFluid(500))
+                .fluidOutputs(Hydrogen.getFluid(1000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPurified, Copper)
-                .fluidInputs(AquaRegia.getFluid(1000))
+                .fluidInputs(AquaRegia.getFluid(6000))
                 .output(crushedRefined, Copper)
                 .chancedOutput(crushedRefined, Cobalt, 5000, 0)
                 .fluidOutputs(ChloroauricAcid.getFluid(500))
-                .fluidOutputs(NitricOxide.getFluid(1000))
+                .fluidOutputs(NitrogenDioxide.getFluid(2000))
                 .fluidOutputs(Water.getFluid(2000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPurified, Gold)
-                .fluidInputs(AquaRegia.getFluid(1000))
+                .fluidInputs(AquaRegia.getFluid(6000))
                 .output(crushedRefined, Gold)
                 .chancedOutput(crushedRefined, Copper, 5000, 0)
                 .fluidOutputs(ChloroauricAcid.getFluid(500))
-                .fluidOutputs(NitricOxide.getFluid(1000))
+                .fluidOutputs(NitrogenDioxide.getFluid(2000))
                 .fluidOutputs(Water.getFluid(2000))
+                .duration(400).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(crushedPurified, Cooperite)
+                .fluidInputs(AquaRegia.getFluid(9000))
+                .output(crushedRefined, Cooperite)
+                .chancedOutput(dust, PlatinumGroupSludge, 2, 5000, 0)
+                .fluidOutputs(ChloroplatinicAcid.getFluid(500))
+                .fluidOutputs(NitrogenDioxide.getFluid(3000))
+                .fluidOutputs(Water.getFluid(3000))
+                .duration(400).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(crushedPurified, Platinum)
+                .fluidInputs(AquaRegia.getFluid(9000))
+                .output(crushedRefined, Platinum)
+                .chancedOutput(dust, PlatinumGroupSludge, 2, 5000, 0)
+                .fluidOutputs(ChloroplatinicAcid.getFluid(500))
+                .fluidOutputs(NitrogenDioxide.getFluid(3000))
+                .fluidOutputs(Water.getFluid(3000))
+                .duration(400).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(crushedPurified, Palladium)
+                .fluidInputs(AquaRegia.getFluid(9000))
+                .output(crushedRefined, Palladium)
+                .chancedOutput(dust, PlatinumGroupSludge, 2, 5000, 0)
+                .fluidOutputs(ChloroplatinicAcid.getFluid(500))
+                .fluidOutputs(NitrogenDioxide.getFluid(3000))
+                .fluidOutputs(Water.getFluid(3000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         // Roasting Recipes
@@ -114,8 +141,6 @@ public class SpecialRecipeHandler {
 
         // Special Decomposition Recipes
 
-        // 3 Red Sand == 3/4ths of an Iron
-
         // Granitic Mineral Sand
         SIFTER_RECIPES.recipeBuilder().EUt(30).duration(100)
                 .input(dust, GraniticMineralSand, 9)
@@ -130,7 +155,7 @@ public class SpecialRecipeHandler {
                 .input(dust, GraniticMineralSand, 9)
                 .chancedOutput(dust, GraniteBlack, 6, 7500, 0)
                 .chancedOutput(dust, Magnetite, 3, 5000, 0)
-                .chancedOutput(nugget, Vanadium, 6, 2500, 0)
+                .chancedOutput(dustTiny, Vanadium, 6, 2500, 0)
                 .chancedOutput(nugget, Lead, 6, 2500, 0)
                 .chancedOutput(nugget, Cobalt, 3, 2500, 0)
                 .buildAndRegister();
@@ -158,7 +183,7 @@ public class SpecialRecipeHandler {
                 .input(dust, BasalticMineralSand, 9)
                 .chancedOutput(dust, Basalt, 6, 7500, 0)
                 .chancedOutput(dust, Magnetite, 3, 5000, 0)
-                .chancedOutput(nugget, Vanadium, 6, 2500, 0)
+                .chancedOutput(dustTiny, Vanadium, 6, 2500, 0)
                 .chancedOutput(nugget, Copper, 6, 2500, 0)
                 .chancedOutput(nugget, Nickel, 3, 2500, 0)
                 .buildAndRegister();
@@ -170,6 +195,27 @@ public class SpecialRecipeHandler {
                 .chancedOutput(nugget, Gold, 12, 2500, 0)
                 .chancedOutput(nugget, Copper, 6, 2500, 0)
                 .chancedOutput(nugget, Nickel, 6, 2500, 0)
+                .buildAndRegister();
+
+        // Glauconite Sand
+        SIFTER_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, GlauconiteSand, 9)
+                .chancedOutput(dust, Mica, 3, 7500, 0)
+                .chancedOutput(dust, Gypsum, 6, 5000, 0)
+                .chancedOutput(dustTiny, Monazite, 6, 2500, 0)
+                .chancedOutput(dustTiny, Barium, 12, 2500, 0)
+                .chancedOutput(dustTiny, Rutile, 3, 2500, 0)
+                .buildAndRegister();
+
+        // Garnet Sand
+        SIFTER_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, GarnetSand)
+                .chancedOutput(gem, Almandine, 1, 2000, 0)
+                .chancedOutput(gem, Andradite, 1, 2000, 0)
+                .chancedOutput(gem, Grossular, 1, 2000, 0)
+                .chancedOutput(gem, Pyrope, 1, 2000, 0)
+                .chancedOutput(gem, Spessartine, 1, 2000, 0)
+                .chancedOutput(gem, Uvarovite, 1, 2000, 0)
                 .buildAndRegister();
     }
 

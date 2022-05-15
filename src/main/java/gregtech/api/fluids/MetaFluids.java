@@ -158,7 +158,7 @@ public class MetaFluids {
     }
 
     private static void setCustomTooltips() {
-        // TODO Vitriols
+
     }
 
     /**

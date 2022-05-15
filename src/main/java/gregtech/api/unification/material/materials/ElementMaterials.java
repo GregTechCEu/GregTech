@@ -751,7 +751,7 @@ public class ElementMaterials {
                 .fluidTemp(505)
                 .build();
 
-        Titanium = new Material.Builder(113, "titanium") // todo Ore? Look at EBF recipe here if we do Ti ores
+        Titanium = new Material.Builder(113, "titanium")
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_FRAME)

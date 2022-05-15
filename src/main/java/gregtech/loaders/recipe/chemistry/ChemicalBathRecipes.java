@@ -66,7 +66,7 @@ public class ChemicalBathRecipes {
                 .input(dust, Ilmenite, 5)
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, Rutile, 3)
-                .fluidOutputs(IronSulfate.getFluid(1000))
+                .fluidOutputs(GreenVitriol.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(200).EUt(VA[HV]).buildAndRegister();
 
