@@ -1,6 +1,8 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -165,6 +167,15 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
+
+        for(Material material : oreByProducts) {
+            if (!material.hasProperty(PropertyKey.DUST) && !material.hasProperty(PropertyKey.FLUID)) {
+                if (ConfigHolder.misc.debug) {
+                    GTLog.logger.error("Attempted to add Ore Byproduct of hidden material {} for material {}", material, properties.getMaterial());
+                }
+            }
+        }
+
         properties.ensureSet(PropertyKey.DUST, true);
 
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.DUST, true);
