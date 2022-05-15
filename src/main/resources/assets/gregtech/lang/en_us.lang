@@ -4656,7 +4656,7 @@ gregtech.universal.tooltip.amperage_out_till=Amperage OUT up to: §e%,d
 gregtech.universal.tooltip.item_storage_capacity=Item Slots: %,d
 gregtech.universal.tooltip.fluid_storage_capacity=Fluid Capacity: %,d L
 gregtech.universal.tooltip.max_voltage_in=Max Voltage IN: §a%,d (§r%s§a)
-gregtech.universal.tooltip.environment_resist=This machine will not explode in rain, fire, water or lava
+gregtech.universal.tooltip.environment_resist=This Machine will not explode in Rain, Fire, Water or Lava
 
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
