@@ -33,7 +33,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
     }
 
     @Override
-    public boolean conditionalNBT() {
+    public boolean isSpecialIngredient() {
         return false;
     }
 }

@@ -474,13 +474,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (t.oreDict()) {
-                targetMap = branchMap.getOreDictNodes();
-            } else if (t.conditionalNBT()) {
-                targetMap = branchMap.getNBTrestrictedNodes();
+            if (t.isSpecialIngredient()) {
+                targetMap = branchMap.getSpecialNodes();
             } else {
                 targetMap = branchMap.getNodes();
             }
+
             Either<Recipe, RecipeMap.Branch> result = targetMap.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
@@ -643,13 +642,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Loop through NUMBER_OF_INGREDIENTS times.
         List<AbstractMapIngredient> current = ingredients.get(index);
         Either<Recipe, Branch> r;
-        final Branch[] branch = new Branch[1];
         for (AbstractMapIngredient obj : current) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (obj.oreDict()) {
-                targetMap = branchMap.getOreDictNodes();
-            } else if (obj.conditionalNBT()) {
-                targetMap = branchMap.getNBTrestrictedNodes();
+            if (obj.isSpecialIngredient()) {
+                targetMap = branchMap.getSpecialNodes();
             } else {
                 targetMap = branchMap.getNodes();
             }
@@ -673,10 +669,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     }
                     return v;
                 } else if (v == null) {
-                    if (branch[0] == null) {
-                        branch[0] = new Branch();
-                    }
-                    v = Either.right(branch[0]);
+                    v = Either.right(new Branch());
                 }
                 return v;
             });
@@ -686,9 +679,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     if (count == ingredients.size() - 1) {
                         targetMap.remove(obj);
                     } else {
-                        Either<Recipe, Branch> result = targetMap.get(obj);
-                        if (!result.left().isPresent() && !result.right().isPresent()) {
-                            targetMap.remove(obj, result);
+                        if (targetMap.get(obj).right().isPresent()) {
+                            Branch branch = targetMap.get(obj).right().get();
+                            if (branch.isEmptyBranch()) {
+                                targetMap.remove(obj);
+                            }
                         }
                     }
                 });
@@ -828,21 +823,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Adds a recipe to the map. (recursive part)
+     * Removes a recipe from the map. (recursive part)
      *
      * @param recipeToRemove the recipe to add.
      * @param ingredients    list of input ingredients.
      * @param branchMap      the current branch in the recursion.
      */
     Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int depth) {
-        Recipe found = null;
         for (List<AbstractMapIngredient> current : ingredients) {
             for (AbstractMapIngredient obj : current) {
                 Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-                if (obj.oreDict()) {
-                    targetMap = branchMap.getOreDictNodes();
-                } else if (obj.conditionalNBT()) {
-                    targetMap = branchMap.getNBTrestrictedNodes();
+                if (obj.isSpecialIngredient()) {
+                    targetMap = branchMap.getSpecialNodes();
                 } else {
                     targetMap = branchMap.getNodes();
                 }
@@ -852,20 +844,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     if (ingredients.size() == 1) {
                         targetMap.remove(obj);
                     } else {
-                        Either<Recipe, Branch> result = targetMap.get(obj);
-                        if (!result.left().isPresent() && !result.right().isPresent()) {
-                            targetMap.remove(obj, result);
+                        if (targetMap.get(obj).right().isPresent() ) {
+                            Branch branch = targetMap.get(obj).right().get();
+                            if (branch.isEmptyBranch()) {
+                                targetMap.remove(obj);
+                            }
                         }
-                    }
-                    if (depth == 0) {
-                        found = r;
-                        continue;
                     }
                     return r;
                 }
             }
         }
-        return found;
+        return null;
     }
 
     Recipe removeDive(Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap, AbstractMapIngredient obj, int depth) {
@@ -940,29 +930,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     protected static class Branch {
-
+        // Keys on this have *(should)* unique hashcodes.
         private Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes;
-        private Map<AbstractMapIngredient, Either<Recipe, Branch>> NBTrestrictedNodes;
-        private Map<AbstractMapIngredient, Either<Recipe, Branch>> oreDictNodes;
+        // Keys on this have collisions, and must be differentiated by equality.
+        private Map<AbstractMapIngredient, Either<Recipe, Branch>> specialNodes;
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
             Stream<Recipe> stream = null;
             if (nodes != null) {
                 stream = nodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
-            }
-            if (NBTrestrictedNodes != null) {
-                if (stream == null) {
-                    stream = NBTrestrictedNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
-                } else {
-                    stream = Stream.concat(stream, NBTrestrictedNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
-                }
-            }
-            if (oreDictNodes != null) {
-                if (stream == null) {
-                    stream = oreDictNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
-                } else {
-                    stream = Stream.concat(stream, oreDictNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
-                }
             }
             if (stream == null) {
                 return Stream.empty();
@@ -973,18 +949,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             return stream;
         }
 
-        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getOreDictNodes() {
-            if (oreDictNodes == null) {
-                oreDictNodes = new Object2ObjectOpenHashMap<>(2);
-            }
-            return oreDictNodes;
-        }
-
-        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getNBTrestrictedNodes() {
-            if (NBTrestrictedNodes == null) {
-                NBTrestrictedNodes = new Object2ObjectOpenHashMap<>(2);
-            }
-            return NBTrestrictedNodes;
+        boolean isEmptyBranch() {
+            return (nodes == null || nodes.isEmpty()) && (specialNodes == null || specialNodes.isEmpty());
         }
 
         public Map<AbstractMapIngredient, Either<Recipe, Branch>> getNodes() {
@@ -992,6 +958,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 nodes = new Object2ObjectOpenHashMap<>(2);
             }
             return nodes;
+        }
+
+        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getSpecialNodes() {
+            if (specialNodes == null) {
+                specialNodes = new Object2ObjectOpenHashMap<>(2);
+            }
+            return specialNodes;
         }
     }
 
