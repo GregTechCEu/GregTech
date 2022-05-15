@@ -18,6 +18,10 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.worldgen.LootTableHelper;
@@ -36,9 +40,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -142,19 +146,23 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private void updateDisplayUnlockComponents() {
-        ItemStack[] unlockComponents = getUnlockComponents();
+        IGTRecipeInput[] unlockComponents = getUnlockComponents();
         for (int i = 0; i < Math.min(this.unlockComponents.getSlots(), unlockComponents.length); i++) {
-            this.unlockComponents.setStackInSlot(i, unlockComponents[i]);
+            if (unlockComponents[i].isOreDict()){
+                this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
+            } else {
+                this.unlockComponents.setStackInSlot(i, unlockComponents[i].getInputStack());
+            }
         }
     }
 
-    private ItemStack[] getUnlockComponents() {
+    private IGTRecipeInput[] getUnlockComponents() {
         if (ALLOWED_COMPONENTS == null)
             ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
 
         Random random = new Random(unlockComponentsSeed);
-        return new ItemStack[]{(ItemStack) CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier),
-                (ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier),
+        return new IGTRecipeInput[]{GTRecipeOreInput.getOrCreate(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
+                GTRecipeItemInput.getOrCreate((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
         };
     }
 
@@ -172,11 +180,11 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         }
         boolean isRequiredItem = false;
         int amountRequired = 0;
-        ItemStack[] unlockComponents = getUnlockComponents();
-        for (ItemStack stack : unlockComponents) {
+        IGTRecipeInput[] unlockComponents = getUnlockComponents();
+        for (IGTRecipeInput stack : unlockComponents) {
             if (stack == null) continue;
-            if (!ItemStack.areItemsEqual(itemStack, stack) && ItemStack.areItemStackTagsEqual(itemStack,stack)) continue;
-            amountRequired = stack.getCount();
+            if (!stack.acceptsStack(itemStack)) continue;
+            amountRequired = stack.getAmount();
             isRequiredItem = true;
             break;
         }
@@ -193,14 +201,14 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private boolean checkUnlockedItems() {
-        ItemStack[] unlockComponents = getUnlockComponents();
-        for (ItemStack stack : unlockComponents) {
+        IGTRecipeInput[] unlockComponents = getUnlockComponents();
+        for (IGTRecipeInput stack : unlockComponents) {
             if (stack == null) continue;
-            int itemLeftToCheck = stack.getCount();
+            int itemLeftToCheck = stack.getAmount();
             for (int i = 0; i < unlockInventory.getSlots(); i++) {
                 ItemStack otherStack = unlockInventory.getStackInSlot(i);
                 if (otherStack.isEmpty()) continue;
-                if (!ItemStack.areItemsEqual(otherStack, stack) && ItemStack.areItemStackTagsEqual(otherStack,stack)) continue;
+                if (stack.acceptsStack(otherStack)) continue;
                 itemLeftToCheck -= otherStack.getCount();
             }
             if (itemLeftToCheck > 0) return false;
