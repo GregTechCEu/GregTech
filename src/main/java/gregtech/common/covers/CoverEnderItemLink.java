@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable{
+public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
     private final int TRANSFER_RATE = 64;
 
@@ -82,7 +82,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        // TODO update to ender item link
+        // TODO update to ender item link instead of using ender fluid link
         Textures.ENDER_FLUID_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
@@ -203,11 +203,11 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_item_link.iomode.disabled", "cover.ender_item_link.iomode.enabled"));
         this.itemFilter.initUI(65, widgetGroup::addWidget);
 
-        AbstractWidgetGroup containerGroup = new AbstractWidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
+        WidgetGroup containerGroup = new WidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
         int slot = 0;
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 3; col++) {
-                containerGroup.widgets.add(new SlotWidget(this.linkedContainer, slot++, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+                containerGroup.addWidget(new SlotWidget(this.linkedContainer.GetContainer(), slot++, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
             }
         }
         return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
@@ -240,6 +240,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     public void updateContainerLink() {
         linkedContainer.changeInventory(VirtualContainerRegistry.getContainerCreate(makeContainerName(), getContainerUUID()));
         coverHolder.markDirty();
+        GTLog.logger.warn("cover: " + coverHolder.getPos() + " container link updated to: " + makeContainerName() + " and uuid: " + getContainerUUID());
     }
 
     @Override
@@ -293,7 +294,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     }
 
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(linkedContainer);
         }
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {

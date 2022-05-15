@@ -5,16 +5,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
 public class ItemContainerSwitchShim implements IItemHandler {
 
-    protected ItemStackHandler container;
-    private boolean isDirty = false;
+    IItemHandlerModifiable container;
 
-    public ItemContainerSwitchShim(IItemHandler container) {
+    public ItemContainerSwitchShim(IItemHandlerModifiable container) {
         changeInventory(container);
     }
 
@@ -22,7 +22,8 @@ public class ItemContainerSwitchShim implements IItemHandler {
         if (container == null) {
             throw new IllegalArgumentException("Shim container must be an IItemHandler!");
         }
-        this.container = (ItemStackHandler) container;
+        this.container = (IItemHandlerModifiable) container;
+        GTLog.logger.warn("container switch shim has changed!");
     }
 
     @Override
@@ -52,7 +53,11 @@ public class ItemContainerSwitchShim implements IItemHandler {
     public int getSlotLimit(int slot) {
         return this.container.getSlotLimit(slot);
     }
-/*
+
+    public IItemHandler GetContainer(){
+        return this.container;
+    }
+    /*
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
         this.container.setStackInSlot(slot, itemStack);
