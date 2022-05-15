@@ -14,7 +14,9 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -23,6 +25,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEnergyChangeListener, ITieredMetaTileEntity {
 
@@ -59,6 +65,13 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     @SideOnly(Side.CLIENT)
     protected SimpleSidedCubeRenderer getBaseRenderer() {
         return Textures.VOLTAGE_CASINGS[tier];
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        if (ConfigHolder.machines.doEnvironmentExplosion && getEnvironmentResistance())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.environment_resist"));
     }
 
     @Override
@@ -106,9 +119,9 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     }
 
     /**
-     * Whether this tile entity has waterproof, lavaproof, fireproof and rainproof
+     * Whether this tile entity not explode in rain, fire, water or lava
      *
-     * @return true if tile entity should not be exploded by these sources
+     * @return true if tile entity should not explode in these sources
      */
     public boolean getEnvironmentResistance() {
         return false;

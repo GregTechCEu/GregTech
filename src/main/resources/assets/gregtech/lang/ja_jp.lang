@@ -4659,6 +4659,7 @@ gregtech.universal.tooltip.amperage_out_till=最大出力電流: §e%,d
 gregtech.universal.tooltip.item_storage_capacity=アイテムスロット数: %,d
 gregtech.universal.tooltip.fluid_storage_capacity=液体容量: %,d mb
 gregtech.universal.tooltip.max_voltage_in=最大許容入力電圧: §a%,d §7(§a%s§7)
+gregtech.universal.tooltip.environment_resist=この機械は雨・火・水または溶岩で爆発しません
 
 gregtech.recipe.total=合計: %,d EU
 gregtech.recipe.eu=消費: %,d EU/t (%s§r)

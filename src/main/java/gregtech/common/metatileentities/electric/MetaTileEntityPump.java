@@ -299,6 +299,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.environment_resist"));
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip_rate", GTValues.V[getTier()] * 2, getPumpingCycleLength()));
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip_range", getMaxPumpRange(), getMaxPumpRange()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
@@ -307,7 +308,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean getEnvironmentResistance(){
+    public boolean getEnvironmentResistance() {
         return true;
     }
 }

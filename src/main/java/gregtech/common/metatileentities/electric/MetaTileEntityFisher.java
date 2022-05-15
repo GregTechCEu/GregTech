@@ -60,7 +60,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
         int rowSize = (int) Math.sqrt(inventorySize);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
+                        18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName())
                 .widget(new SlotWidget(importItems, 0, 18, 18, true, true)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.STRING_SLOT_OVERLAY));
@@ -140,6 +140,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fisher.tooltip"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.environment_resist"));
         tooltip.add(I18n.format("gregtech.machine.fisher.speed", fishingTicks));
         tooltip.add(I18n.format("gregtech.machine.fisher.requirement", (int) Math.sqrt(WATER_CHECK_SIZE), (int) Math.sqrt(WATER_CHECK_SIZE)));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
@@ -147,7 +148,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean getEnvironmentResistance(){
+    public boolean getEnvironmentResistance() {
         return true;
     }
 }
