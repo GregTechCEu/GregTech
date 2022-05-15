@@ -30,7 +30,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
     private static final int DEFAULT_SIZE = 27; // 27 slots
     private static final String DATA_ID = GTValues.MODID + ".vcontainer_data";
 
-    protected static Map<UUID, Map<String, ItemStackHandler>> containerMap = new HashMap<>();
+    protected static Map<UUID, Map<String, IItemHandler>> containerMap = new HashMap<>();
 
     public VirtualContainerRegistry(){
         super(DATA_ID);
@@ -47,15 +47,15 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param uuid The uuid of the player the container is private to, or null if the container is public
      * @return The container object
      */
-    public static ItemStackHandler getContainer(String key, UUID uuid) {
-        return containerMap.get(uuid).get(key);
+    public static IItemHandlerModifiable getContainer(String key, UUID uuid) {
+        return (IItemHandlerModifiable) containerMap.get(uuid).get(key);
     }
 
     /**
      * @return the internal Map of containers.
      * Do not use to modify the map!
      */
-    public static Map<UUID, Map<String, ItemStackHandler>> getContainerMap() {
+    public static Map<UUID, Map<String, IItemHandler>> getContainerMap() {
         return containerMap;
     }
 
@@ -66,7 +66,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param size The initial size of the container
      * @return The container object
      */
-    public static ItemStackHandler getContainerCreate(String key, UUID uuid, int size) {
+    public static IItemHandlerModifiable getContainerCreate(String key, UUID uuid, int size) {
         if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
             addContainer(key, uuid, size);
         }
@@ -79,7 +79,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param uuid The uuid of the player the container is private to, or null if the container is public
      * @return The container object
      */
-    public static IItemHandler getContainerCreate(String key, UUID uuid) {
+    public static IItemHandlerModifiable getContainerCreate(String key, UUID uuid) {
         return getContainerCreate(key, uuid, DEFAULT_SIZE);
     }
 
@@ -146,15 +146,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
             NBTTagCompound publicContainers = nbt.getCompoundTag("Public");
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
-                int size = containerCompound.getInteger("Size");
-                VirtualContainerRegistry.addContainer(key, null, size);
-                getContainerCreate(key, null, size).deserializeNBT(containerCompound);
-                /*GTUtility.readItems(
-                        getContainerCreate(key, null, size),
-                        "Slots",
-                        containerCompound
-                );
-                 */
+                GTUtility.readItems(getContainerCreate(key, null, containerCompound.getInteger("Size")), "Slots", containerCompound);
+                GTLog.logger.warn("public container: " + key + " read from NBT");
             }
         }
         if (nbt.hasKey("Private")) {
@@ -164,15 +157,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-                    int size = containerCompound.getInteger("Size");
-                    getContainerCreate(key, uuid, size).deserializeNBT(containerCompound);
-                    // NBTTagCompound itemCompound = containerCompound.getCompoundTag("Container");
-                    /* GTUtility.readItems(
-                            getContainerCreate(key, uuid, containerCompound.getInteger("Size")),
-                            "Slots",
-                            containerCompound
-                    );
-                     */
+                    GTUtility.readItems(getContainerCreate(key, uuid, containerCompound.getInteger("Size")), "Slots", containerCompound);
+                    GTLog.logger.warn("private container: " + key + " read from NBT");
                 }
             }
         }
@@ -187,13 +173,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
             map.forEach( (key, container) -> {
                 NBTTagCompound containerCompound = new NBTTagCompound();
                 containerCompound.setInteger("Size", container.getSlots());
-                containerCompound.setTag("Items", container.serializeNBT());
-                /*GTUtility.writeItems(
-                        container,
-                        "Slots",
-                        containerCompound
-                );
-                 */
+                GTUtility.writeItems(container, "Slots", containerCompound);
+                GTLog.logger.warn("container: " + key + " written to NBT");
                 mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
@@ -233,10 +214,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
         public VirtualContainer(int size){
             this.size = size;
-            // items = new ArrayList<>(this.size);
             items = NonNullList.withSize(this.size, ItemStack.EMPTY);
-
-            GTLog.logger.debug("Virtual Container of size: " + size + " (" + items.size() + ") " + " has been constructed");
+            GTLog.logger.warn("Virtual Container of size: " + size + " (" + items.size() + ") " + " has been constructed");
         }
 
         @Override
