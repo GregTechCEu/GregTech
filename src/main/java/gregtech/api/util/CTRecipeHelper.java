@@ -5,9 +5,9 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ingredients.IGTRecipeInput;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
@@ -65,7 +65,7 @@ public class CTRecipeHelper {
 
         if (recipe.getInputs().size() > 0) {
             builder.append("[");
-            for (CountableIngredient ci : recipe.getInputs()) {
+            for (IGTRecipeInput ci : recipe.getInputs()) {
                 String ingredient = getCtItemString(ci);
                 if (ingredient != null)
                     builder.append(ingredient);
@@ -78,14 +78,14 @@ public class CTRecipeHelper {
 
         if (recipe.getFluidInputs().size() > 0) {
             builder.append("[");
-            for (FluidStack fluidStack : recipe.getFluidInputs()) {
+            for (IGTRecipeInput fluidStack : recipe.getFluidInputs()) {
                 builder.append("<liquid:")
-                        .append(fluidStack.getFluid().getName())
+                        .append(fluidStack.getInputFluidStack().getFluid().getName())
                         .append(">");
 
-                if (fluidStack.amount > 1) {
+                if (fluidStack.getAmount() > 1) {
                     builder.append(" * ")
-                            .append(fluidStack.amount);
+                            .append(fluidStack.getAmount());
                 }
 
                 builder.append(", ");
@@ -113,21 +113,19 @@ public class CTRecipeHelper {
         return output;
     }
 
-    public static String getCtItemString(CountableIngredient ci) {
+    public static String getCtItemString(IGTRecipeInput ci) {
         StringBuilder builder = new StringBuilder();
         ItemStack itemStack = null;
         String itemId = null;
-        for (ItemStack item : ci.getIngredient().getMatchingStacks()) {
-            itemId = getMetaItemId(item);
-            if (itemId != null) {
-                builder.append("<metaitem:")
-                        .append(itemId)
-                        .append(">");
-                itemStack = item;
-                break;
-            } else if (itemStack == null) {
-                itemStack = item;
-            }
+        ItemStack item = ci.getInputStack();
+        itemId = getMetaItemId(item);
+        if (itemId != null) {
+            builder.append("<metaitem:")
+                    .append(itemId)
+                    .append(">");
+            itemStack = item;
+        } else if (itemStack == null) {
+            itemStack = item;
         }
         if (itemStack != null) {
             if (itemId == null) {
@@ -150,9 +148,9 @@ public class CTRecipeHelper {
             }
         }
 
-        if (ci.getCount() > 1) {
+        if (ci.getAmount() > 1) {
             builder.append(" * ")
-                    .append(ci.getCount());
+                    .append(ci.getAmount());
         }
         builder.append(", ");
         return builder.toString();

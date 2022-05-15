@@ -20,6 +20,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.recipes.ingredients.IGTRecipeInput;
 import gregtech.api.recipes.map.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -29,7 +30,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -356,12 +356,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list.toArray(new ItemStack[0]);
     }
 
-    public static List<CountableIngredient> uniqueCountableIngredientsList(List<CountableIngredient> input) {
-        List<CountableIngredient> list = new ObjectArrayList<>(input.size());
+    public static List<IGTRecipeInput> uniqueIngredientsList(List<IGTRecipeInput> input) {
+        List<IGTRecipeInput> list = new ObjectArrayList<>(input.size());
         loop:
-        for (CountableIngredient item : input) {
-            for (CountableIngredient obj : list) {
-                if (IngredientHashStrategy.INSTANCE.equals(item.getIngredient(), obj.getIngredient())) {
+        for (IGTRecipeInput item : input) {
+            for (IGTRecipeInput obj : list) {
+                if (item.equals(obj)) {
                     continue loop;
                 }
             }
@@ -698,10 +698,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return true;
     }
 
-    protected void buildFromRecipeFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
-        for (FluidStack t : ingredients) {
+    protected void buildFromRecipeFluids(List<List<AbstractMapIngredient>> builder, List<IGTRecipeInput> fluidInputs) {
+        for (IGTRecipeInput fluidInput : fluidInputs) {
             AbstractMapIngredient ingredient;
-            ingredient = new MapFluidIngredient(t);
+            ingredient = new MapFluidIngredient(fluidInput);
             WeakReference<AbstractMapIngredient> cached = fluidIngredientRoot.get(ingredient);
             if (cached != null && cached.get() != null) {
                 builder.add(Collections.singletonList(cached.get()));
@@ -721,7 +721,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>((r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
-            buildFromRecipeItems(list, uniqueCountableIngredientsList(r.getInputs()));
+            buildFromRecipeItems(list, uniqueIngredientsList(r.getInputs()));
         }
         if (r.getFluidInputs().size() > 0) {
             buildFromRecipeFluids(list, r.getFluidInputs());
@@ -729,9 +729,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list;
     }
 
-    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients) {
-        for (CountableIngredient r : ingredients) {
-            Ingredient t = r.getIngredient();
+    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<IGTRecipeInput> ingredients) {
+        for (IGTRecipeInput r : ingredients) {
             AbstractMapIngredient ingredient;
             if (r.isOreDict()) {
                 ingredient = new MapOreDictIngredient(r.getOreDict());
@@ -743,20 +742,19 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     list.add(Collections.singletonList(ingredient));
                 }
             } else {
-                List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
-                for (ItemStack stack : t.getMatchingStacks()) {
-                    if (r.hasNBTMatchingCondition()) {
-                        ingredient = new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition());
-                    } else {
-                        ingredient = new MapItemStackIngredient(stack);
-                    }
-                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
-                    if (cached != null && cached.get() != null) {
-                        inner.add(cached.get());
-                    } else {
-                        ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                        inner.add(ingredient);
-                    }
+                List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
+                ItemStack stack = r.getInputStack();
+                if (r.hasNBTMatchingCondition()) {
+                    ingredient = new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition());
+                } else {
+                    ingredient = new MapItemStackIngredient(stack);
+                }
+                WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                if (cached != null && cached.get() != null) {
+                    inner.add(cached.get());
+                } else {
+                    ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
+                    inner.add(ingredient);
                 }
                 list.add(inner);
             }
@@ -766,33 +764,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
         AbstractMapIngredient ingredient;
         for (ItemStack t : ingredients) {
-            List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
+            List<AbstractMapIngredient> ls = new ObjectArrayList<>(1);
+            ls.add(new MapItemStackIngredient(t));
             for (Integer i : OreDictionary.getOreIDs(t)) {
-                ingredient = getRelevantMapIngredient(new MapOreDictIngredient(i));
-                if (ingredient != null) {
-                    ls.add(ingredient);
-                }
-            }
-            ingredient = getRelevantMapIngredient(new MapItemStackIngredient(t));
-            if (ingredient != null) {
-                ls.add(new MapItemStackIngredient(t));
-            }
-            ingredient = getRelevantMapIngredient(new MapItemStackNBTIngredient(t));
-            if (ingredient != null) {
+                ingredient = new MapOreDictIngredient(i);
                 ls.add(ingredient);
             }
+            ls.add(new MapItemStackNBTIngredient(t));
             if (ls.size() > 0) {
                 list.add(ls);
             }
         }
-    }
-
-    public AbstractMapIngredient getRelevantMapIngredient(AbstractMapIngredient search) {
-        WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(search);
-        if (cached != null && cached.get() != null) {
-            return search;
-        }
-        return null;
     }
 
     protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {

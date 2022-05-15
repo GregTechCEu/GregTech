@@ -7,12 +7,9 @@ import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.oredict.IOreDictEntry;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraftforge.oredict.OreIngredient;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -52,13 +49,13 @@ public class CTRecipeBuilder {
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
                 .map(s -> {
-                    CountableIngredient ci;
+                    IGTRecipeInput ri;
                     if (s instanceof IOreDictEntry) {
-                        ci = CountableIngredient.from(((IOreDictEntry) s).getName(), s.getAmount());
+                        ri = GTRecipeOreInput.getOrCreate(((IOreDictEntry) s).getName(), s.getAmount());
                     } else {
-                        ci = new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount());
+                        ri = GTRecipeItemInput.getOrCreate(new CraftTweakerItemInputWrapper(s), s.getAmount());
                     }
-                    return ci;
+                    return ri;
                 }).collect(Collectors.toList()));
         return this;
     }
@@ -67,13 +64,13 @@ public class CTRecipeBuilder {
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
                 .map(s -> {
-                    CountableIngredient ci;
+                    IGTRecipeInput ri;
                     if (s instanceof IOreDictEntry) {
-                        ci = CountableIngredient.from(((IOreDictEntry) s).getName(), s.getAmount()).setNonConsumable();
+                        ri = GTRecipeOreInput.getOrCreate(((IOreDictEntry) s).getName(), s.getAmount()).setNonConsumable();
                     } else {
-                        ci = new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()).setNonConsumable();
+                        ri = GTRecipeItemInput.getOrCreate(new CraftTweakerItemInputWrapper(s), s.getAmount()).setNonConsumable();
                     }
-                    return ci;
+                    return ri;
                 }).collect(Collectors.toList()));
         return this;
     }
@@ -96,8 +93,7 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
-                .map(CraftTweakerMC::getLiquidStack)
-                .collect(Collectors.toList()));
+                .map(CraftTweakerMC::getLiquidStack).map(fluidStack -> GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount)).collect(Collectors.toList()));
         return this;
     }
 
@@ -200,19 +196,17 @@ public class CTRecipeBuilder {
         return this.backingBuilder.toString();
     }
 
-    public static class CraftTweakerIngredientWrapper extends Ingredient {
+    public static class CraftTweakerItemInputWrapper extends GTRecipeItemInput {
 
         private final IIngredient ingredient;
 
-        public CraftTweakerIngredientWrapper(IIngredient ingredient) {
-            super(ingredient.getItems().stream()
-                    .map(CraftTweakerMC::getItemStack)
-                    .toArray(ItemStack[]::new));
+        public CraftTweakerItemInputWrapper(IIngredient ingredient) {
+            super(CraftTweakerMC.getItemStack(ingredient.getItems().get(0)));
             this.ingredient = ingredient;
         }
 
         @Override
-        public boolean apply(@Nullable ItemStack itemStack) {
+        public boolean acceptsStack(@Nullable ItemStack itemStack) {
             if (itemStack == null) {
                 return false;
             }
@@ -220,16 +214,6 @@ public class CTRecipeBuilder {
             //because CT is dump enough to compare stack sizes by default...
             itemStack.setCount(ingredient.getAmount());
             return ingredient.matches(CraftTweakerMC.getIItemStack(itemStack));
-        }
-    }
-
-    public static class CraftTweakerOreIngredientWrapper extends OreIngredient {
-
-        private final IIngredient ingredient;
-
-        public CraftTweakerOreIngredientWrapper(IOreDictEntry ingredient) {
-            super(ingredient.getName());
-            this.ingredient = ingredient;
         }
     }
 

@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.ingredients.*;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTcondition;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
@@ -21,7 +22,6 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
@@ -44,11 +44,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
-    protected final List<CountableIngredient> inputs;
-    protected final NonNullList<ItemStack> outputs;
+    protected final List<IGTRecipeInput> inputs;
+    protected final List<ItemStack> outputs;
     protected final List<ChanceEntry> chancedOutputs;
 
-    protected final List<FluidStack> fluidInputs;
+    protected final List<IGTRecipeInput> fluidInputs;
     protected final List<FluidStack> fluidOutputs;
 
     protected int duration, EUt;
@@ -81,7 +81,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.outputs.addAll(GTUtility.copyStackList(recipe.getOutputs()));
         this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs());
 
-        this.fluidInputs = GTUtility.copyFluidList(recipe.getFluidInputs());
+        this.fluidInputs = new ArrayList<>(recipe.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
 
         this.duration = recipe.getDuration();
@@ -98,7 +98,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.outputs.addAll(GTUtility.copyStackList(recipeBuilder.getOutputs()));
         this.chancedOutputs = new ArrayList<>(recipeBuilder.chancedOutputs);
 
-        this.fluidInputs = GTUtility.copyFluidList(recipeBuilder.getFluidInputs());
+        this.fluidInputs = new ArrayList<>(recipeBuilder.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipeBuilder.getFluidOutputs());
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
@@ -144,27 +144,27 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         inputs.forEach(stack -> {
             if (!(stack == null || stack.isEmpty())) {
-                this.inputs.add(CountableIngredient.from(stack));
+                this.inputs.add(GTRecipeItemInput.getOrCreate(stack));
             }
         });
         return (R) this;
     }
 
     public R input(String oredict, int count) {
-        return inputs(CountableIngredient.from(oredict, count));
+        return inputs(GTRecipeOreInput.getOrCreate(oredict, count));
     }
 
     public R input(Enum<?> oredict, int count) {
-        return inputs(CountableIngredient.from(oredict.name(), count));
+        return inputs(GTRecipeOreInput.getOrCreate(oredict.name(), count));
     }
 
 
     public R input(OrePrefix orePrefix, Material material) {
-        return inputs(CountableIngredient.from(orePrefix, material, 1));
+        return inputs(GTRecipeOreInput.getOrCreate(orePrefix, material, 1));
     }
 
     public R input(OrePrefix orePrefix, Material material, int count) {
-        return inputs(CountableIngredient.from(orePrefix, material, count));
+        return inputs(GTRecipeOreInput.getOrCreate(orePrefix, material, count));
     }
 
     public R input(Item item) {
@@ -206,7 +206,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R input(MetaItem<?>.MetaValueItem item, NBTMatcher nbtMatcher, NBTcondition nbtCondition) {
-        return inputs(CountableIngredient.from(item.getStackForm()).setNBTMatchingCondition(nbtCondition, nbtMatcher));
+        return inputs(GTRecipeItemInput.getOrCreate(item.getStackForm()).setNBTMatchingCondition(nbtMatcher, nbtCondition));
     }
 
     public R input(MetaTileEntity mte) {
@@ -217,21 +217,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(mte.getStackForm(amount));
     }
 
-    public R inputs(CountableIngredient... inputs) {
-        List<CountableIngredient> ingredients = new ArrayList<>();
-        for (CountableIngredient input : inputs) {
-            if (input.getCount() < 0) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getCount());
+    public R inputs(IGTRecipeInput... inputs) {
+        List<IGTRecipeInput> ingredients = new ArrayList<>();
+        for (IGTRecipeInput input : inputs) {
+            if (input.getAmount() < 0) {
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
                 GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             } else {
                 ingredients.add(input);
             }
         }
-
         return inputsIngredients(ingredients);
     }
 
-    public R inputsIngredients(Collection<CountableIngredient> ingredients) {
+    public R inputsIngredients(Collection<IGTRecipeInput> ingredients) {
         this.inputs.addAll(ingredients);
         return (R) this;
     }
@@ -241,13 +240,18 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R notConsumable(IGTRecipeInput gtRecipeIngredient) {
+        return inputs(GTRecipeItemInput.getOrCreate(gtRecipeIngredient)
+                .setNonConsumable());
+    }
+
     public R notConsumable(ItemStack itemStack) {
-        return inputs(CountableIngredient.from(itemStack, itemStack.getCount())
+        return inputs(GTRecipeItemInput.getOrCreate(itemStack, itemStack.getCount())
                 .setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material, int amount) {
-        return inputs(CountableIngredient.from(prefix, material, amount)
+        return inputs(GTRecipeOreInput.getOrCreate(prefix, material, amount)
                 .setNonConsumable());
     }
 
@@ -255,33 +259,21 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return notConsumable(prefix, material, 1);
     }
 
-    public R notConsumable(Ingredient ingredient) {
-        return inputs(new CountableIngredient(ingredient, 1)
-                .setNonConsumable());
-    }
-
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(CountableIngredient.from(item.getStackForm(), 1)
+        return inputs(GTRecipeItemInput.getOrCreate(item.getStackForm(), 1)
                 .setNonConsumable());
     }
 
     public R notConsumable(Fluid fluid, int amount) {
-        FluidStack ncf = new FluidStack(fluid, amount, new NBTTagCompound());
-        ncf.tag.setBoolean("nonConsumable", true);
-        return fluidInputs(ncf);
+        return fluidInputs(GTRecipeFluidInput.getOrCreate(fluid, amount).setNonConsumable());
     }
 
     public R notConsumable(Fluid fluid) {
-        return notConsumable(fluid, 1);
+        return fluidInputs(GTRecipeFluidInput.getOrCreate(fluid, 1).setNonConsumable());
     }
 
     public R notConsumable(FluidStack fluidStack) {
-        FluidStack ncf = fluidStack.copy();
-        if (ncf.tag == null) {
-            ncf.tag = new NBTTagCompound();
-        }
-        ncf.tag.setBoolean("nonConsumable", true);
-        return fluidInputs(ncf);
+        return fluidInputs(GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount).setNonConsumable());
     }
 
     public R output(OrePrefix orePrefix, Material material) {
@@ -344,18 +336,30 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R fluidInputs(FluidStack... inputs) {
-        return fluidInputs(Arrays.asList(inputs));
+    public R fluidInputs(Collection<IGTRecipeInput> fluidIngredients) {
+        this.fluidInputs.addAll(fluidIngredients);
+        return (R) this;
     }
 
-    public R fluidInputs(Collection<FluidStack> inputs) {
-        if (inputs.contains(null)) {
-            GTLog.logger.error("Fluid input cannot contain null FluidStacks. Inputs: {}", inputs);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
-            recipeStatus = EnumValidationResult.INVALID;
+    public R fluidInputs(IGTRecipeInput fluidIngredient) {
+        this.fluidInputs.add(fluidIngredient);
+        return (R) this;
+    }
+
+    public R fluidInputs(FluidStack... fluidStacks) {
+        ArrayList<IGTRecipeInput> fluidIngredients = new ArrayList<>();
+        for (FluidStack fluidStack : fluidStacks) {
+            if (fluidStack != null && fluidStack.amount > 0) {
+                fluidIngredients.add(GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount));
+            } else if (fluidStack != null) {
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", fluidStack.amount);
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            }
+            else {
+                GTLog.logger.error("FluidStack cannot be null.");
+            }
         }
-        this.fluidInputs.addAll(inputs);
-        this.fluidInputs.removeIf(Objects::isNull);
+        this.fluidInputs.addAll(fluidIngredients);
         return (R) this;
     }
 
@@ -457,8 +461,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
 
         // Create holders for the various parts of the new multiplied Recipe
-        List<CountableIngredient> newRecipeInputs = new ArrayList<>();
-        List<FluidStack> newFluidInputs = new ArrayList<>();
+        List<IGTRecipeInput> newRecipeInputs = new ArrayList<>();
+        List<IGTRecipeInput> newFluidInputs = new ArrayList<>();
         List<ItemStack> outputItems = new ArrayList<>();
         List<FluidStack> outputFluids = new ArrayList<>();
 
@@ -481,31 +485,29 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    protected static void multiplyInputsAndOutputs(List<CountableIngredient> newRecipeInputs,
-                                                   List<FluidStack> newFluidInputs,
+    protected static void multiplyInputsAndOutputs(List<IGTRecipeInput> newRecipeInputs,
+                                                   List<IGTRecipeInput> newFluidInputs,
                                                    List<ItemStack> outputItems,
                                                    List<FluidStack> outputFluids,
                                                    Recipe recipe,
                                                    int numberOfOperations) {
-        recipe.getInputs().forEach(ci -> {
-            if (ci.isNonConsumable()) {
-                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount()).setNonConsumable());
+        recipe.getInputs().forEach(ri -> {
+            if (ri.isNonConsumable()) {
+                newRecipeInputs.add(GTRecipeItemInput.getOrCreate(ri,
+                        ri.getAmount() * numberOfOperations).setNonConsumable());
             } else {
-                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount() * numberOfOperations));
+                newRecipeInputs.add(GTRecipeItemInput.getOrCreate(ri,
+                        ri.getAmount() * numberOfOperations));
             }
         });
 
-        recipe.getFluidInputs().forEach(fluidStack -> {
-            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
-                FluidStack fs = new FluidStack(fluidStack.getFluid(), fluidStack.amount, new NBTTagCompound());
-                fs.tag.setBoolean("nonConsumable", true);
-                newFluidInputs.add(fs);
+        recipe.getFluidInputs().forEach(fi -> {
+            if (fi.isNonConsumable()) {
+                newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, (fi.getAmount() * numberOfOperations)).setNonConsumable());
             } else {
-                newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
-                        fluidStack.amount * (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable") ? 1 : numberOfOperations)));
+                newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, (fi.getAmount() * numberOfOperations)));
             }
+            ;
         });
 
         recipe.getOutputs().forEach(itemStack ->
@@ -620,7 +622,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     //    Getters    //
     ///////////////////
 
-    public List<CountableIngredient> getInputs() {
+    public List<IGTRecipeInput> getInputs() {
         return inputs;
     }
 
@@ -645,7 +647,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return stacks;
     }
 
-    public List<FluidStack> getFluidInputs() {
+    public List<IGTRecipeInput> getFluidInputs() {
         return fluidInputs;
     }
 

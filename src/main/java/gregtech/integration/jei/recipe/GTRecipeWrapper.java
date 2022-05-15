@@ -2,17 +2,16 @@ package gregtech.integration.jei.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.IGTRecipeInput;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
-import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JEIHelpers;
 import gregtech.integration.jei.utils.JeiButton;
@@ -24,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -53,11 +53,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
-            for (CountableIngredient ci : recipe.getInputs()) {
-                matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
-                        .sorted(OreDictUnifier.getItemStackComparator())
-                        .map(is -> GTUtility.copyAmount(ci.getCount(), is))
-                        .collect(Collectors.toList()));
+            for (IGTRecipeInput recipeInput : recipe.getInputs()) {
+                if (recipeInput.isOreDict()) {
+                    matchingInputs.add(OreDictionary.getOres(OreDictionary.getOreName(recipeInput.getOreDict())).stream()
+                            .sorted(OreDictUnifier.getItemStackComparator())
+                            .map(ItemStack::copy).collect(Collectors.toList()));
+                } else {
+                    matchingInputs.add(Collections.singletonList(recipeInput.getInputStack().copy()));
+                }
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
         }
@@ -66,17 +69,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getFluidInputs().isEmpty()) {
             List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
 
-            for (FluidStack fs : recipe.getFluidInputs()) {
-                if (fs.tag != null && fs.tag.hasKey("nonConsumable")) {
-                    FluidStack fluidCopy = GTUtility.copyAmount(fs.amount, fs);
-                    fluidCopy.tag.removeTag("nonConsumable");
-                    if (fluidCopy.tag.isEmpty()) {
-                        fluidCopy.tag = null;
-                    }
-                    matchingFluidInputs.add(fluidCopy);
-                } else {
-                    matchingFluidInputs.add(fs);
-                }
+            for (IGTRecipeInput fluidInput : recipe.getFluidInputs()) {
+                FluidStack fluidStack = fluidInput.getInputFluidStack();
+                Collections.addAll(matchingFluidInputs, fluidStack);
             }
             ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
         }
@@ -177,7 +172,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public boolean isNotConsumedFluid(int slot) {
         if (slot >= recipe.getFluidInputs().size()) return false;
-        return recipe.getFluidInputs().get(slot).tag != null && recipe.getFluidInputs().get(slot).tag.hasKey("nonConsumable");
+        return recipe.getFluidInputs().get(slot).isNonConsumable();
     }
 
     private int getPropertyListHeight() {

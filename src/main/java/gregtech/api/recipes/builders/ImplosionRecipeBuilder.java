@@ -1,9 +1,9 @@
 package gregtech.api.recipes.builders;
 
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.recipeproperties.ImplosionExplosiveProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -91,7 +91,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
         } else {
             this.explosivesType = new ItemStack(explosivesType.getItem(), explosivesAmount, explosivesType.getMetadata());
         }
-        inputs.add(CountableIngredient.from(explosivesType));
+        inputs.add(GTRecipeItemInput.getOrCreate(explosivesType));
 
 
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,

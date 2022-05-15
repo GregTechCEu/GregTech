@@ -3,6 +3,7 @@ package gregtech.api.recipes;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.recipes.ingredients.IGTRecipeInput;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -39,14 +41,14 @@ public class Recipe {
         return String.format("%.2f", outputChance / (getMaxChancedValue() * 1.0) * 100);
     }
 
-    private final List<CountableIngredient> inputs;
+    private final List<IGTRecipeInput> inputs;
     private final NonNullList<ItemStack> outputs;
 
     /**
      * A chance of 10000 equals 100%
      */
     private final List<ChanceEntry> chancedOutputs;
-    private final List<FluidStack> fluidInputs;
+    private final List<IGTRecipeInput> fluidInputs;
     private final List<FluidStack> fluidOutputs;
 
     private final int duration;
@@ -71,8 +73,8 @@ public class Recipe {
 
     private final int hashCode;
 
-    public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
-                  List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
+    public Recipe(List<IGTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
+                  List<IGTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
                   int duration, int EUt, boolean hidden, boolean isCTRecipe) {
         this.recipePropertyStorage = new RecipePropertyStorage();
         this.inputs = NonNullList.create();
@@ -206,17 +208,12 @@ public class Recipe {
             itemAmountInSlot[i] = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
         }
 
-        for (CountableIngredient ingredient : this.inputs) {
-            int ingredientAmount = ingredient.getCount();
+        for (IGTRecipeInput ingredient : this.inputs) {
+            int ingredientAmount = ingredient.getAmount();
             for (int i = 0; i < inputs.size(); i++) {
                 ItemStack inputStack = inputs.get(i);
-                if (inputStack.isEmpty() || !ingredient.getIngredient().apply(inputStack))
+                if (inputStack.isEmpty() || !ingredient.acceptsStack(inputStack))
                     continue;
-                if (ingredient.hasNBTMatchingCondition()) {
-                    if (!ingredient.getNBTMatcher().evaluate(inputStack, ingredient.getNBTMatchingCondition())){
-                        continue;
-                    }
-                }
                 int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
                 if (!ingredient.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;
@@ -237,16 +234,15 @@ public class Recipe {
             fluidAmountInTank[i] = fluidInTank == null ? 0 : fluidInTank.amount;
         }
 
-        for (FluidStack fluid : this.fluidInputs) {
-            int fluidAmount = fluid.amount;
-            boolean isNotConsumed = (fluid.tag != null && fluid.tag.hasKey("nonConsumable"));
+        for (IGTRecipeInput fluid : this.fluidInputs) {
+            int fluidAmount = fluid.getAmount();
             for (int i = 0; i < fluidInputs.size(); i++) {
                 FluidStack tankFluid = fluidInputs.get(i);
-                if (tankFluid == null || tankFluid.getFluid() != fluid.getFluid())
+                if (tankFluid == null || tankFluid.getFluid() != fluid.getInputFluidStack().getFluid())
                     continue;
                 int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
                 fluidAmount -= fluidAmountToConsume;
-                if (!isNotConsumed) fluidAmountInTank[i] -= fluidAmountToConsume;
+                if (!fluid.isNonConsumable()) fluidAmountInTank[i] -= fluidAmountToConsume;
                 if (fluidAmount == 0) break;
             }
             if (fluidAmount > 0)
@@ -277,9 +273,13 @@ public class Recipe {
 
     private int hashInputs() {
         int hash = 0;
-        for (CountableIngredient countableIngredient : this.inputs) {
-            for (ItemStack is : countableIngredient.getIngredient().getMatchingStacks()) {
+        for (IGTRecipeInput recipeIngredient : this.inputs) {
+            if (!recipeIngredient.isOreDict()) {
+                ItemStack is = recipeIngredient.getInputStack();
                 hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
+
+            } else {
+                hash = 31 * hash + recipeIngredient.getOreDict();
             }
         }
         return hash;
@@ -288,19 +288,25 @@ public class Recipe {
     private boolean hasSameInputs(Recipe otherRecipe) {
         if (this.inputs.size() != otherRecipe.inputs.size()) return false;
         for (int i = 0; i < inputs.size(); i++) {
-            for (int j = 0; j < this.inputs.get(i).getIngredient().getMatchingStacks().length; j++) {
-                if (!hashStrategy.equals(this.inputs.get(i).getIngredient().getMatchingStacks()[j],
-                        otherRecipe.inputs.get(i).getIngredient().getMatchingStacks()[j])) {
+            if (!inputs.get(i).isOreDict() && !otherRecipe.inputs.get(i).isOreDict()) {
+                    if (!hashStrategy.equals(this.inputs.get(i).getInputStack(),
+                            otherRecipe.inputs.get(i).getInputStack())) {
+                        return false;
+                    }} else if (inputs.get(i).isOreDict() && otherRecipe.inputs.get(i).isOreDict()) {
+                if (inputs.get(i).getOreDict() != otherRecipe.inputs.get(i).getOreDict()) {
                     return false;
                 }
+            } else {
+                return false;
             }
         }
         return true;
     }
 
-    public int hashFluidList(List<FluidStack> fluids) {
+    public int hashFluidList(List<IGTRecipeInput> fluids) {
         int hash = 0;
-        for (FluidStack fluidStack : fluids) {
+        for (IGTRecipeInput fluidInput : fluids) {
+            FluidStack fluidStack = fluidInput.getInputFluidStack();
             hash = 31 * hash + new FluidKey(fluidStack).hashCode();
             hash = 31 * hash + fluidStack.amount;
         }
@@ -310,7 +316,7 @@ public class Recipe {
     private boolean hasSameFluidInputs(Recipe otherRecipe) {
         if (this.fluidInputs.size() != otherRecipe.fluidInputs.size()) return false;
         for (int i = 0; i < fluidInputs.size(); i++) {
-            if (!fluidInputs.get(i).isFluidStackIdentical(otherRecipe.fluidInputs.get(i))) {
+            if (fluidInputs.get(i).getAmount() != otherRecipe.fluidInputs.get(i).getAmount() || !fluidInputs.get(i).equals(otherRecipe.fluidInputs.get(i))) {
                 return false;
             }
         }
@@ -336,7 +342,7 @@ public class Recipe {
     //    Getters    //
     ///////////////////
 
-    public List<CountableIngredient> getInputs() {
+    public List<IGTRecipeInput> getInputs() {
         return inputs;
     }
 
@@ -441,20 +447,14 @@ public class Recipe {
         return chancedOutputs;
     }
 
-    public List<FluidStack> getFluidInputs() {
+    public List<IGTRecipeInput> getFluidInputs() {
         return fluidInputs;
     }
 
     public boolean hasInputFluid(FluidStack fluid) {
-        for (FluidStack fluidStack : fluidInputs) {
+        for (IGTRecipeInput fluidInput : fluidInputs) {
+            FluidStack fluidStack = fluidInput.getInputFluidStack();
             if (fluid.getFluid() == fluidStack.getFluid()) {
-                if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
-                    fluidStack = fluidStack.copy();
-                    fluidStack.tag.removeTag("nonConsumable");
-                    if (fluidStack.tag.isEmpty()) {
-                        fluidStack.tag = null;
-                    }
-                }
                 return fluidStack.isFluidEqual(fluid);
             }
         }
@@ -495,12 +495,19 @@ public class Recipe {
     }
 
     public boolean hasValidInputsForDisplay() {
-        boolean hasValidInputs = true;
-        for (CountableIngredient ingredient : inputs) {
-            ItemStack[] matchingItems = ingredient.getIngredient().getMatchingStacks();
-            hasValidInputs &= Arrays.stream(matchingItems).anyMatch(s -> !s.isEmpty());
+        for (IGTRecipeInput ingredient : inputs) {
+            if (ingredient.isOreDict()) {
+                if (OreDictionary.getOres(OreDictionary.getOreName(ingredient.getOreDict())).stream()
+                        .anyMatch(s -> !s.isEmpty())) {
+                    return true;
+                }
+            }
+            ItemStack stack = ingredient.getInputStack();
+            if (!stack.isEmpty()) {
+                return true;
+            }
         }
-        return hasValidInputs;
+        return false;
     }
 
     ///////////////////////////////////////////////////////////

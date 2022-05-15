@@ -190,7 +190,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
-            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0)) && fluidStack.amount > 0) {
+            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0).getInputFluidStack()) && fluidStack.amount > 0) {
                 currentRecipe = previousRecipe;
                 return;
             } else if (fluidStack != null) {
@@ -207,7 +207,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
 
     public FluidStack getFuel() {
         if (currentRecipe != null)
-            return currentRecipe.getFluidInputs().get(0);
+            return currentRecipe.getFluidInputs().get(0).getInputFluidStack();
 
         return null;
     }

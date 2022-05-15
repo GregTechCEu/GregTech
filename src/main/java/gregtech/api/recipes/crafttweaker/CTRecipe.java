@@ -62,7 +62,7 @@ public class CTRecipe {
     @ZenGetter("fluidInputs")
     public List<ILiquidStack> getFluidInputs() {
         return this.backingRecipe.getFluidInputs().stream()
-                .map(MCLiquidStack::new)
+                .map(fi -> new MCLiquidStack(fi.getInputFluidStack()))
                 .collect(Collectors.toList());
     }
 
