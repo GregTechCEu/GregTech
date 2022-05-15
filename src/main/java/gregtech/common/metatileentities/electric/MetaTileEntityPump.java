@@ -305,4 +305,9 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", exportFluids.getTankAt(0).getCapacity()));
     }
+
+    @Override
+    public boolean getEnvironmentResistance(){
+        return true;
+    }
 }

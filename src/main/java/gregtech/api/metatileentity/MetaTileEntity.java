@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -1357,10 +1358,19 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return null;
     }
 
-    public void doExplosion(float explosionPower) {
+    public void doExplosion(float explosionPower, boolean damageTerrain) {
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                explosionPower, ConfigHolder.machines.doExplosions);
+                explosionPower, damageTerrain);
+    }
+
+    public void setOnFire() {
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (getWorld().isAirBlock(getPos().offset(side))) {
+                getWorld().setBlockState(getPos().offset(side), Blocks.FIRE.getDefaultState(), 11);
+                return;
+            }
+        }
     }
 
     public boolean doTickProfileMessage() {

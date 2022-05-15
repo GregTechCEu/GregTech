@@ -221,11 +221,11 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        if(amps >= getInputAmperage()) return 0;
+        if (amps >= getInputAmperage()) return 0;
         long canAccept = getEnergyCapacity() - getEnergyStored();
         if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage), ConfigHolder.machines.doExplosions);
                 return Math.min(amperage, getInputAmperage() - amps);
             }
             if (canAccept >= voltage) {

@@ -11,9 +11,14 @@ import gregtech.api.capability.impl.EnergyContainerHandler.IEnergyChangeListener
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -66,6 +71,47 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (ConfigHolder.machines.doEnvironmentExplosion) {
+            checkEnvironmentExplosion();
+        }
+    }
+
+    public void checkEnvironmentExplosion() {
+        World world = getWorld();
+        if (!world.isRemote && !getEnvironmentResistance() && energyContainer.getEnergyStored() != 0) {
+            if (world.rand.nextInt(1000) == 0) {
+                for (EnumFacing side : EnumFacing.VALUES) {
+                    Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
+                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                        doExplosion(tier, true);
+                        return;
+                    }
+                }
+            }
+            if (world.rand.nextInt(1000) == 0) {
+                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
+                    if (world.isThundering() && world.rand.nextInt(3) == 0) {
+                        doExplosion(tier, true);
+                    } else if (world.rand.nextInt(10) == 0) {
+                        doExplosion(tier, true);
+                    } else setOnFire();
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether this tile entity has waterproof, lavaproof, fireproof and rainproof
+     *
+     * @return true if tile entity should not be exploded by these sources
+     */
+    public boolean getEnvironmentResistance() {
+        return false;
     }
 
     /**
