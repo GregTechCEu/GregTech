@@ -174,7 +174,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
                 for (EnumFacing side : EnumFacing.VALUES) {
                     Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
                     if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-                        doExplosion(getTier(), true);
+                        doExplosion(getTier());
                         return;
                     }
                 }
@@ -182,9 +182,9 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
             if (world.rand.nextInt(1000) == 0) {
                 if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
                     if (world.isThundering() && world.rand.nextInt(3) == 0) {
-                        doExplosion(getTier(), true);
+                        doExplosion(getTier());
                     } else if (world.rand.nextInt(10) == 0) {
-                        doExplosion(getTier(), true);
+                        doExplosion(getTier());
                     } else setOnFire();
                 }
             }
@@ -192,11 +192,11 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public void doExplosion(float explosionPower, boolean damageTerrain) {
+    public void doExplosion(float explosionPower) {
         if (getController() != null)
-            getController().explodeMultiblock(true);
+            getController().explodeMultiblock();
         else {
-            super.doExplosion(explosionPower, damageTerrain);
+            super.doExplosion(explosionPower);
         }
     }
 }

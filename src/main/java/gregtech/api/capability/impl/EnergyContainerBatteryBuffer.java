@@ -42,7 +42,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
         if (side == null || inputsEnergy(side)) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage), ConfigHolder.machines.doExplosions);
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return usedAmps;
             }
 

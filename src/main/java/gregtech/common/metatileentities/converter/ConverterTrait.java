@@ -6,7 +6,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -160,7 +159,7 @@ public class ConverterTrait extends MTETrait {
                 return 0;
             if (usedAmps >= amps) return 0;
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage), ConfigHolder.machines.doExplosions);
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return Math.min(amperage, amps - usedAmps);
             }
 

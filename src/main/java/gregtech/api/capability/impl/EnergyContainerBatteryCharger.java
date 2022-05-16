@@ -40,7 +40,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
 
         if (side == null || inputsEnergy(side)) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage), ConfigHolder.machines.doExplosions);
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
             }
 
             //Prioritizes as many packets as available from the buffer

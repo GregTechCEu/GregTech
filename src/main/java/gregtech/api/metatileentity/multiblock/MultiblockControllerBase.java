@@ -6,7 +6,6 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -401,9 +400,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return 0xFFFFFF;
     }
 
-    public void explodeMultiblock(boolean damageTerrain) {
+    public void explodeMultiblock() {
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
-        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8, damageTerrain));
-        doExplosion(8, damageTerrain);
+        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
+        doExplosion(8);
     }
 }

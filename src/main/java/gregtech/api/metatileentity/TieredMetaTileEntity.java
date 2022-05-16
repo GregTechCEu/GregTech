@@ -101,7 +101,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
                 for (EnumFacing side : EnumFacing.VALUES) {
                     Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
                     if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-                        doExplosion(tier, true);
+                        doExplosion(tier);
                         return;
                     }
                 }
@@ -109,9 +109,9 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
             if (world.rand.nextInt(1000) == 0) {
                 if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
                     if (world.isThundering() && world.rand.nextInt(3) == 0) {
-                        doExplosion(tier, true);
+                        doExplosion(tier);
                     } else if (world.rand.nextInt(10) == 0) {
-                        doExplosion(tier, true);
+                        doExplosion(tier);
                     } else setOnFire();
                 }
             }
