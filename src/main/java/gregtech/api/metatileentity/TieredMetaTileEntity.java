@@ -70,8 +70,8 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        if (ConfigHolder.machines.doEnvironmentExplosion && getEnvironmentResistance())
-            tooltip.add(I18n.format("gregtech.universal.tooltip.environment_resist"));
+        if (ConfigHolder.machines.doTerrainExplosion && getTerrainResistance())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
     }
 
     @Override
@@ -89,14 +89,14 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     @Override
     public void update() {
         super.update();
-        if (ConfigHolder.machines.doEnvironmentExplosion) {
-            checkEnvironmentExplosion();
+        if (ConfigHolder.machines.doTerrainExplosion) {
+            checkTerrainExplosion();
         }
     }
 
-    public void checkEnvironmentExplosion() {
+    public void checkTerrainExplosion() {
         World world = getWorld();
-        if (!world.isRemote && !getEnvironmentResistance() && energyContainer.getEnergyStored() != 0) {
+        if (!world.isRemote && !getTerrainResistance() && energyContainer.getEnergyStored() != 0) {
             if (world.rand.nextInt(1000) == 0) {
                 for (EnumFacing side : EnumFacing.VALUES) {
                     Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
@@ -123,7 +123,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
      *
      * @return true if tile entity should not explode in these sources
      */
-    public boolean getEnvironmentResistance() {
+    public boolean getTerrainResistance() {
         return false;
     }
 

@@ -65,8 +65,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     @Override
     public void update() {
         super.update();
-        if (ConfigHolder.machines.doEnvironmentExplosion) {
-            checkEnvironmentExplosion();
+        if (ConfigHolder.machines.doTerrainExplosion) {
+            checkTerrainExplosion();
         }
     }
 
@@ -167,7 +167,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         }
     }
 
-    public void checkEnvironmentExplosion() {
+    public void checkTerrainExplosion() {
         World world = getWorld();
         if (!world.isRemote && energyContainer.getEnergyStored() != 0) {
             if (world.rand.nextInt(1000) == 0) {

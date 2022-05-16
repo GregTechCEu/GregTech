@@ -78,8 +78,8 @@ public class ConfigHolder {
                 "Note machines or boilers always explode when overloaded with power or met special conditions regardless this config.", "Default: true"})
         public boolean doExplosionDamagesTerrain = true;
 
-        @Config.Comment({"Whether machines should explode when hits any fluid such as rain or sets on fire.", "Default: false"})
-        public boolean doEnvironmentExplosion = false;
+        @Config.Comment({"Whether machines explode in terrain damage such as rain or fire.", "Default: false"})
+        public boolean doTerrainExplosion = false;
 
         @Config.Comment({"Energy use multiplier for electric items.", "Default: 100"})
         public int energyUsageMultiplier = 100;

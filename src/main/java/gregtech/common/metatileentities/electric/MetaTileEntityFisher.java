@@ -141,8 +141,8 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fisher.tooltip"));
-        if (ConfigHolder.machines.doEnvironmentExplosion)
-            tooltip.add(I18n.format("gregtech.universal.tooltip.environment_resist"));
+        if (ConfigHolder.machines.doTerrainExplosion)
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
         tooltip.add(I18n.format("gregtech.machine.fisher.speed", fishingTicks));
         tooltip.add(I18n.format("gregtech.machine.fisher.requirement", (int) Math.sqrt(WATER_CHECK_SIZE), (int) Math.sqrt(WATER_CHECK_SIZE)));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
@@ -150,7 +150,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean getEnvironmentResistance() {
+    public boolean getTerrainResistance() {
         return true;
     }
 }
