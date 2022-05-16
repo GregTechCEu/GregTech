@@ -23,8 +23,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     public FuelMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier) {
         super(metaTileEntityId, recipeMap);
         this.recipeMapWorkable = new MultiblockFuelRecipeLogic(this);
-        this.recipeMapWorkable.enableOverclockVoltage();
-        this.recipeMapWorkable.setOverclockTier(tier);
+        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
     }
 
     @Override

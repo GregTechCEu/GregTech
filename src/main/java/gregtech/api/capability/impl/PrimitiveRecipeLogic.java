@@ -2,11 +2,8 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
 
@@ -56,7 +53,7 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getOverclockVoltage() {
+    public long getMaximumOverclockVoltage() {
         return GTValues.V[GTValues.LV];
     }
 

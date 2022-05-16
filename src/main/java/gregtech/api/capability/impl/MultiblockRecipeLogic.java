@@ -1,10 +1,6 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.IMultiblockController;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IMultipleRecipeMaps;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -15,7 +11,6 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -284,7 +279,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getOverclockVoltage() {
+    public long getMaximumOverclockVoltage() {
         return getMaxVoltage();
     }
 

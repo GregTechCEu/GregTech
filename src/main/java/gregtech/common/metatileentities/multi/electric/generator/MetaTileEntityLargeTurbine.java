@@ -53,8 +53,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         this.frontOverlay = frontOverlay;
         this.tier = tier;
         this.recipeMapWorkable = new LargeTurbineWorkableHandler(this, tier);
-        this.recipeMapWorkable.enableOverclockVoltage();
-        this.recipeMapWorkable.setOverclockTier(tier);
+        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
     }
 
     @Override
