@@ -350,18 +350,20 @@ public class VanillaStandardRecipes {
                 .chancedOutput(dust, Wood, 8000, 680)
                 .buildAndRegister();
 
-        LATHE_RECIPES.recipeBuilder()
-                .input(plank, Wood)
-                .output(stick, Wood, 2)
-                .duration(10).EUt(VA[ULV])
-                .buildAndRegister();
+        if (ConfigHolder.recipes.WoodCraftingNumber > 0) {
+            LATHE_RECIPES.recipeBuilder()
+                    .input(plank, Wood)
+                    .output(stick, Wood, Math.max(1, ConfigHolder.recipes.WoodCraftingNumber / 2))
+                    .duration(10).EUt(VA[ULV])
+                    .buildAndRegister();
 
-        LATHE_RECIPES.recipeBuilder()
-                .input(log, Wood)
-                .output(stickLong, Wood, 4)
-                .output(dust, Wood, 2)
-                .duration(160).EUt(VA[ULV])
-                .buildAndRegister();
+            LATHE_RECIPES.recipeBuilder()
+                    .input(log, Wood)
+                    .output(stickLong, Wood, ConfigHolder.recipes.WoodCraftingNumber)
+                    .output(dust, Wood, Math.max(1, ConfigHolder.recipes.WoodCraftingNumber / 2))
+                    .duration(160).EUt(VA[ULV])
+                    .buildAndRegister();
+        }
 
         LATHE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
@@ -606,7 +608,7 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
                     .buildAndRegister();
 
-            if(i != 0) {
+            if (i != 0) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                         .inputs(new ItemStack(Blocks.CONCRETE))
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
@@ -632,7 +634,7 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
                     .buildAndRegister();
 
-            if(i != 0) {
+            if (i != 0) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                         .inputs(new ItemStack(Blocks.WOOL))
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))

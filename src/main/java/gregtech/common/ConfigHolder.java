@@ -136,8 +136,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to make Glass related recipes harder. Default: true"})
         public boolean hardGlassRecipes = true;
 
-        @Config.Comment({"Whether to nerf Wood crafting to 2 Planks from 1 Log, and 2 Sticks from 2 Planks.", "Default: false"})
-        public boolean nerfWoodCrafting = false;
+        @Config.Comment({"Whether to nerf/Buff Wood crafting to X Planks from 1 Log, and X Sticks from 2 Planks.", "Default: 4"})
+        @Config.RangeInt(min = 0, max = 42)
+        public int WoodCraftingNumber = 4;
 
         @Config.Comment({"Whether to nerf the Paper crafting recipe.", "Default: true"})
         public boolean nerfPaperCrafting = true;

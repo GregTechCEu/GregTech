@@ -51,10 +51,12 @@ public class VanillaOverrideRecipes {
     }
 
     private static void woodRecipes() {
-        if (ConfigHolder.recipes.nerfWoodCrafting) {
+        if (ConfigHolder.recipes.WoodCraftingNumber != 4) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stick"));
-            ModHandler.addShapedRecipe("stick_saw", new ItemStack(Items.STICK, 4), "s", "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-            ModHandler.addShapedRecipe("stick_normal", new ItemStack(Items.STICK, 2), "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+            if (ConfigHolder.recipes.WoodCraftingNumber > 0) {
+                ModHandler.addShapedRecipe("stick_saw", new ItemStack(Items.STICK, (int) (ConfigHolder.recipes.WoodCraftingNumber * 1.5)), "s", "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+                ModHandler.addShapedRecipe("stick_normal", new ItemStack(Items.STICK, ConfigHolder.recipes.WoodCraftingNumber), "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+            }
         }
 
         if (ConfigHolder.recipes.nerfPaperCrafting) {

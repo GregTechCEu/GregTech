@@ -24,6 +24,7 @@ public class WoodMachineRecipes {
 
     public static void init() {
         registerPyrolyseOvenRecipes();
+        registerTreatedWoodRecipes();
     }
 
     public static void postInit() {
@@ -38,36 +39,37 @@ public class WoodMachineRecipes {
         for (ItemStack stack : allWoodLogs) {
             Pair<IRecipe, ItemStack> outputPair = ModHandler.getRecipeOutput(null, stack);
             ItemStack plankStack = outputPair.getValue();
-            int originalOutput = plankStack.getCount();
             if (plankStack.isEmpty()) {
                 continue;
             }
             IRecipe outputRecipe = outputPair.getKey();
 
             //wood nerf
-            if (ConfigHolder.recipes.nerfWoodCrafting) {
+            if (ConfigHolder.recipes.WoodCraftingNumber != 4) {
                 //remove the old recipe
                 ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
 
                 // new wood recipes
                 //noinspection ConstantConditions
-                ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
-                        GTUtility.copyAmount(Math.max(1, originalOutput / 2), plankStack), stack);
+                if (ConfigHolder.recipes.WoodCraftingNumber > 0) {
+                    ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
+                            GTUtility.copyAmount(ConfigHolder.recipes.WoodCraftingNumber, plankStack), stack);
 
-                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                        GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
+                    ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
+                            GTUtility.copyAmount((int) (ConfigHolder.recipes.WoodCraftingNumber * 1.5), plankStack), "s", "L", 'L', stack);
+                }
             } else {
                 //noinspection ConstantConditions
                 ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                        GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), "s", "L", 'L', stack);
+                        GTUtility.copyAmount((int) (ConfigHolder.recipes.WoodCraftingNumber * 1.5), plankStack), "s", "L", 'L', stack);
             }
 
-
-            CUTTER_RECIPES.recipeBuilder().inputs(stack)
-                    .fluidInputs(Lubricant.getFluid(1))
-                    .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))
-                    .duration(200).EUt(VA[ULV])
-                    .buildAndRegister();
+            if (ConfigHolder.recipes.WoodCraftingNumber > 0)
+                CUTTER_RECIPES.recipeBuilder().inputs(stack)
+                        .fluidInputs(Lubricant.getFluid(1))
+                        .outputs(GTUtility.copyAmount((int) (ConfigHolder.recipes.WoodCraftingNumber * 1.5), plankStack), OreDictUnifier.get(dust, Wood, Math.max(1, ConfigHolder.recipes.WoodCraftingNumber / 2)))
+                        .duration(200).EUt(VA[ULV])
+                        .buildAndRegister();
 
             ItemStack doorStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE,
                     plankStack, plankStack, null,
@@ -290,5 +292,16 @@ public class WoodMachineRecipes {
                 .fluidOutputs(CoalTar.getFluid(4000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
+    }
+
+    private static void registerTreatedWoodRecipes() {
+        // new treated wood recipes
+        if (ConfigHolder.recipes.WoodCraftingNumber > 0) {
+            LATHE_RECIPES.recipeBuilder()
+                    .input(plank, TreatedWood)
+                    .output(stick, TreatedWood, Math.max(1, ConfigHolder.recipes.WoodCraftingNumber / 2))
+                    .duration(10).EUt(VA[ULV])
+                    .buildAndRegister();
+        }
     }
 }
