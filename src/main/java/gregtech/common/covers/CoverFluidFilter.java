@@ -49,7 +49,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         this.fluidFilter.setFluidFilter(fluidFilter);
     }
 
-    protected void setFilterMode(FluidFilterMode filterMode) {
+    public void setFilterMode(FluidFilterMode filterMode) {
         this.filterMode = filterMode;
         this.coverHolder.markDirty();
     }

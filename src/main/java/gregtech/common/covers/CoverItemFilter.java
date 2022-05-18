@@ -49,7 +49,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         this.itemFilter.setMaxStackSize(1);
     }
 
-    protected void setFilterMode(ItemFilterMode filterMode) {
+    public void setFilterMode(ItemFilterMode filterMode) {
         this.filterMode = filterMode;
         coverHolder.markDirty();
     }

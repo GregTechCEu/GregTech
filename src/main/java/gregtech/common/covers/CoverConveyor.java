@@ -67,7 +67,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
 
-    protected void setTransferRate(int transferRate) {
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
 
@@ -85,11 +85,15 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
     }
 
+    public int getTransferRate() {
+        return transferRate;
+    }
+
     protected void adjustTransferRate(int amount) {
         setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
     }
 
-    protected void setConveyorMode(ConveyorMode conveyorMode) {
+    public void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
         writeUpdateData(1, buf -> buf.writeEnumValue(conveyorMode));
         coverHolder.markDirty();

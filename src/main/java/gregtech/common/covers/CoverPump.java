@@ -74,9 +74,13 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return false;
     }
 
-    protected void setTransferRate(int transferRate) {
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
+    }
+
+    public int getTransferRate() {
+        return transferRate;
     }
 
     protected void adjustTransferRate(int amount) {
