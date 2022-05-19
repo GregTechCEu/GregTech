@@ -94,6 +94,17 @@ public class RGNode extends WidgetGroup implements IDraggable {
                                     }
                                 }
                                 phantom.setObject(itemStack);
+
+                                // Reset any children nodes, now that the parent has changed
+                                for (Set<RGNode> childs : children.values()) {
+                                    for (RGNode child : childs) {
+                                        child.removeParent(this);
+                                    }
+                                }
+                                children.clear();
+
+                                // Clear the Inputs for the replaced parent
+                                this.inputsGroup.widgets.clear();
                             }
                         }).setClientSide().open()));
         } else {
