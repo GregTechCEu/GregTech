@@ -1,16 +1,17 @@
 # Chinese translate by rentommy & 落樱之鱼 & Kasumi_Nova.
 # 中文翻译由 rentommy & 落樱之鱼 & Kasumi_Nova 翻译。
-# Corresponding Version: 2.2.1 - beta
-# 对应版本: 2.2.1 - beta
+# Corresponding Version: 2.2.3 - beta
+# 对应版本: 2.2.3 - beta
 
-death.attack.heat=%s 被煮熟了.
-death.attack.frost=%s 被冻死了.
-death.attack.electric=%s 被电死了.
-death.attack.radiation=%s 被辐射致死.
-death.attack.turbine=%s 将他的头伸进了涡轮机里.
-death.attack.explosion=%s 爆炸了.
-death.attack.explosion.player=%s 被 %s 炸死了.
-death.attack.heat.player=%s 被 %s煮熟了.
+death.attack.heat=%s 被煮熟了
+death.attack.frost=%s 被冻死了
+death.attack.chemical=%s 发生了化学事故
+death.attack.electric=%s 被电死了
+death.attack.radiation=%s 被辐射致死
+death.attack.turbine=%s 将他的头伸进了涡轮机里
+death.attack.explosion=%s 爆炸了
+death.attack.explosion.player=%s 被 %s 炸死了
+death.attack.heat.player=%s 被 %s煮熟了
 
 enchantment.disjunction=末影离析
 
@@ -88,6 +89,7 @@ item.invalid.name=无效物品
 fluid.empty=空
 
 gregtech.tooltip.hold_shift=按住 §aShift§7 获得更多信息
+gregtech.tooltip.fluid_pipe_hold_shift=按住 §aShift§7 以获取流体信息
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - 等级 %s
@@ -239,6 +241,7 @@ metaitem.fluid_cell.empty=空
 metaitem.fluid_cell.name=%s单元
 metaitem.fluid_cell.universal.empty=空
 metaitem.fluid_cell.universal.name=%s通用单元
+metaitem.fluid_cell.glass_vial.name=%s玻璃单元
 metaitem.large_fluid_cell.steel.name=%s钢单元
 metaitem.large_fluid_cell.aluminium.name=%s铝单元
 metaitem.large_fluid_cell.stainless_steel.name=%s不锈钢单元
@@ -293,8 +296,8 @@ metaitem.battery.hull.uv.tooltip=一个空的 §3UV §7电池外壳
 metaitem.battery.charge_time=§a可以持续供电 %,d%s
 metaitem.battery.charge_detailed=%,d/%,d EU - 等级 %s §7(§%c%,d%s 剩余§7)
 metaitem.battery.charge_unit.second=秒
-metaitem.battery.charge_unit.minute=分钟
-metaitem.battery.charge_unit.hour=小时
+metaitem.battery.charge_unit.minute=分
+metaitem.battery.charge_unit.hour=时
 
 metaitem.battery.re.ulv.tantalum.name=钽电容
 metaitem.battery.re.ulv.tantalum.tooltip=可充电电池
@@ -770,7 +773,7 @@ metaitem.circuit.wetware_assembly.tooltip=可以运行 Minecraft/n§5ZPM-等级
 metaitem.circuit.wetware_computer.name=湿件超级计算机
 metaitem.circuit.wetware_computer.tooltip=肉体和机器的终极融合/n§5UV-等级
 metaitem.circuit.wetware_mainframe.name=湿件电脑主机
-metaitem.circuit.wetware_mainframe.tooltip=他是我见过的最好的男人/n§5UHV-等级
+metaitem.circuit.wetware_mainframe.tooltip=他是我见过最强的人/n§5UHV-等级
 
 metaitem.stem_cells.name=干细胞
 metaitem.stem_cells.tooltip=智慧的原料
@@ -798,11 +801,11 @@ metaitem.quantumstar.tooltip=量子之星
 metaitem.gravistar.name=重力之星
 metaitem.gravistar.tooltip=终极下界之星
 
-metaitem.item_filter.name=物品过滤
+metaitem.item_filter.name=物品过滤卡
 metaitem.item_filter.tooltip=过滤物品的输入/输出（作覆盖板时）/n亦可用于升级传送带覆盖板
 metaitem.ore_dictionary_filter.name=矿物词典过滤卡
 metaitem.ore_dictionary_filter.tooltip=以矿物词典过滤物品的输入/输出（作覆盖板时）/n亦可用于升级控制物品传输的覆盖板
-metaitem.fluid_filter.name=流体过滤
+metaitem.fluid_filter.name=流体过滤卡
 metaitem.fluid_filter.tooltip=过滤流体的输入/输出（作覆盖板时）/n亦可用于升级控制流体传输的覆盖板
 metaitem.smart_item_filter.name=先进物品过滤卡
 metaitem.smart_item_filter.tooltip=以特定机器的配方为依据过滤物品（作覆盖板时）/n可作为传送带的升级
@@ -1941,7 +1944,7 @@ material.naquadria_solution=硅岩溶液
 material.acidic_naquadria_solution=硫酸硅岩溶液
 material.naquadria_waste=硅岩废料
 material.pyrochlore=烧绿石
-material.electrotine=蓝石粉
+material.electrotine=蓝石
 material.blue_alloy=蓝色合金
 material.lapotron=兰波顿
 material.aluminium_sulfite=亚硫酸铝
@@ -2279,12 +2282,13 @@ metaitem.debug_scanner.name=调试扫描仪
 metaitem.debug_scanner.tooltip=三录仪
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
 behavior.tricorder.block_hardness=硬度: %s 防爆抗性: %s
-behavior.tricorder.block_name=Name: %s 元数据: %s
+behavior.tricorder.block_name=名称: %s 元数据: %s
+behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=储罐 %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=所有储罐空
-behavior.tricorder.muffled=抑爆.
-behavior.tricorder.machine_disabled=禁用.
+behavior.tricorder.muffled=防爆。
+behavior.tricorder.machine_disabled=禁用。
 behavior.tricorder.machine_power_loss=由于停电而关闭。
 behavior.tricorder.machine_progress=进度/加载: %s / %s
 behavior.tricorder.energy_container_in=最大输入: %s (%s) EU 在 %s A
@@ -2375,7 +2379,21 @@ tile.warning_sign.acid_hazard.name=强酸危险警示方块
 tile.warning_sign.magic_hazard.name=魔力危险警示方块
 tile.warning_sign.frost_hazard.name=低温危险警示方块
 tile.warning_sign.noise_hazard.name=噪声危险警示方块
-
+tile.warning_sign.generic_hazard.name=通用危险警示方块
+tile.warning_sign.high_voltage_hazard.name=高压危险警示方块
+tile.warning_sign.magnetic_hazard.name=磁性危险警示方块
+tile.warning_sign.antimatter_hazard.name=反物质危险警示方块
+tile.warning_sign.high_temperature_hazard.name=高温危险警示方块
+tile.warning_sign.void_hazard.name=虚空危险警示方块
+tile.warning_sign_1.mob_spawner_hazard.name=刷怪笼危险警示方块
+tile.warning_sign_1.spatial_storage_hazard.name=空间存储警示方块
+tile.warning_sign_1.laser_hazard.name=激光危险警示方块
+tile.warning_sign_1.mob_hazard.name=怪物侵扰警示方块
+tile.warning_sign_1.boss_hazard.name=BOSS 危险警示方块
+tile.warning_sign_1.gregification_hazard.name=格雷化警示方块
+tile.warning_sign_1.causality_hazard.name=非标准因果关系警示方块
+tile.warning_sign_1.automated_defenses_hazard.name=自动防御警示方块
+tile.warning_sign_1.high_pressure_hazard.name=高压危险警示方块
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=青铜管道方块
 tile.boiler_casing.steel_pipe.name=钢管道方块
@@ -4702,6 +4720,7 @@ gregtech.fluid.plasma=%s 等离子
 gregtech.fluid.empty=空
 gregtech.fluid.amount=§9总量: %,d/%,d L
 gregtech.fluid.temperature=§c温度: %,d K
+gregtech.fluid.temperature.cryogenic=§b低温！小心轻放！
 gregtech.fluid.state_gas=§a状态：气态
 gregtech.fluid.state_liquid=§a状态：液态
 gregtech.fluid.state_plasma=§a状态: 等离子态
@@ -4760,8 +4779,14 @@ gregtech.cable.loss_per_block=线损: §c%d§7 EU-V
 gregtech.cable.superconductor=§d%s 超导体
 
 gregtech.fluid_pipe.throughput=§9传输效率: %,d L/s
-gregtech.fluid_pipe.max_temperature=§c温度范围: %,dK
-gregtech.fluid_pipe.channels=§e频道: %d
+gregtech.fluid_pipe.capacity=§9内容物: %,d L
+gregtech.fluid_pipe.max_temperature=§c温度范围: %,d K
+gregtech.fluid_pipe.channels=§ee频道: %d
+gregtech.fluid_pipe.gas_proof=§6可以传输气体
+gregtech.fluid_pipe.acid_proof=§6可以传输酸性液体
+gregtech.fluid_pipe.cryo_proof=§6可以传输低温液体
+gregtech.fluid_pipe.plasma_proof=§6可以传输等离子体
+gregtech.fluid_pipe.not_gas_proof=§4气体可能泄漏！
 
 gregtech.item_pipe.rate_items=§9传输效率: %d 物品/s
 gregtech.item_pipe.rate_stacks=§9传输效率: %d 组/s
@@ -4838,7 +4863,7 @@ gregtech.multiblock.turbine.efficiency=涡轮效率: %s%%
 gregtech.multiblock.turbine.energy_per_tick=能量输出: %s/%s EU/t
 gregtech.multiblock.turbine.energy_per_tick_maxed=能量输出: %s EU/t
 gregtech.multiblock.turbine.obstructed=涡轮有阻碍
-gregtech.multiblock.turbine.voltage_tooltip=基础生产: §e%s§7 EU/t
+gregtech.multiblock.turbine.voltage_tooltip=基础发电量: §e%s§7 EU/t
 gregtech.multiblock.turbine.efficiency_tooltip=转子支架等级超过 %s§7 时，每级增加 §610%%§7 的效率。
 
 gregtech.multiblock.large_boiler.efficiency=效率: %s
@@ -4948,6 +4973,8 @@ gregtech.terminal.app_name.multiblock_ar=多方块结构助手
 gregtech.terminal.app_name.world_prospector=世界勘探
 gregtech.terminal.app_name.vtank_viewer=虚拟容器查看器
 gregtech.terminal.app_name.cape_selector=披风选择器
+
+gregtech.terminal.app_name.teleport=传送器
 
 
 terminal.app_name.description=.没有描述
@@ -5128,13 +5155,16 @@ terminal.vtank_viewer.description=永远不要再次失去任何末影流体连�
 terminal.vtank_viewer.title=虚拟容器查看器
 terminal.vtank_viewer.refresh=刷新容器指数
 
+terminal.teleporter.dimension=维度:
+terminal.teleporter.spawn_portal=建立传送门
+
 terminal.maze.title=提修斯的逃跑
 terminal.maze.play=开始
 terminal.maze.continue=继续
 terminal.maze.pause=暂停
-terminal.maze.death.1=天啊! 你被弥诺陶洛斯吃掉了!
+terminal.maze.death.1=天啊! 你被弥诺陶洛斯吃掉了！
 terminal.maze.death.2=你在死之前破解了%s个迷宫。
-terminal.maze.death.3=再玩一次?
+terminal.maze.death.3=再玩一次？
 terminal.maze.retry=重试
 
 terminal.minesweeper.time=%s秒经过
