@@ -30,7 +30,7 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple {
         return drained;
     }
 
-    private void removeTagWhenEmpty(Boolean doDrain) {
+    private void removeTagWhenEmpty(boolean doDrain) {
         if (doDrain && this.getFluid() == null) {
             this.container.setTagCompound(null);
         }
