@@ -2449,7 +2449,7 @@ gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 
-gregtech.machine.drum.enable_output=Will drain Fluid to vertically adjacent Tanks
+gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid
 
 # Crates
@@ -2647,9 +2647,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
 gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
@@ -4068,13 +4068,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
