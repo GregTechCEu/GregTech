@@ -114,8 +114,8 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getOverclockVoltage() {
-        return 0;
+    public boolean isAllowOverclocking() {
+        return false;
     }
 
     @Override
