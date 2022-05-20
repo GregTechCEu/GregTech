@@ -131,7 +131,6 @@ public class GregTechMod {
 
         proxy.onPreLoad();
         KeyBind.init();
-        OreByProduct.init();
     }
 
     @Mod.EventHandler
