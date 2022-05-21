@@ -25,7 +25,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        int hash = fluid.hashCode();
+        int hash = 31 + fluid.hashCode();
         if (tag != null) {
             return 31 * hash + tag.hashCode();
         }

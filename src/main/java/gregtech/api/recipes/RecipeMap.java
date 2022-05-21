@@ -302,6 +302,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public boolean acceptsFluid(List<FluidStack> fluidInputs, FluidStack fluid) {
+        if (canInputFluidForce(fluid.getFluid())) { return true; }
         if (fluidInputs.isEmpty()) {
             return fluidIngredientRoot.get(new MapFluidIngredient(fluid)) != null;
         }
