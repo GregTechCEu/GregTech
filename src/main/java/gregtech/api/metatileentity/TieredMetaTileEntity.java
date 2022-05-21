@@ -70,7 +70,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        if (ConfigHolder.machines.doTerrainExplosion && getTerrainResistance())
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
             tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
     }
 
@@ -90,41 +90,8 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     public void update() {
         super.update();
         if (ConfigHolder.machines.doTerrainExplosion) {
-            checkTerrainExplosion();
+            checkWeatherOrTerrainExplosion(tier, tier * 10, energyContainer);
         }
-    }
-
-    public void checkTerrainExplosion() {
-        World world = getWorld();
-        if (!world.isRemote && !getTerrainResistance() && energyContainer.getEnergyStored() != 0) {
-            if (world.rand.nextInt(1000) == 0) {
-                for (EnumFacing side : EnumFacing.VALUES) {
-                    Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
-                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-                        doExplosion(tier);
-                        return;
-                    }
-                }
-            }
-            if (world.rand.nextInt(1000) == 0) {
-                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
-                    if (world.isThundering() && world.rand.nextInt(3) == 0) {
-                        doExplosion(tier);
-                    } else if (world.rand.nextInt(10) == 0) {
-                        doExplosion(tier);
-                    } else setOnFire();
-                }
-            }
-        }
-    }
-
-    /**
-     * Whether this tile entity not explode in rain, fire, water or lava
-     *
-     * @return true if tile entity should not explode in these sources
-     */
-    public boolean getTerrainResistance() {
-        return false;
     }
 
     /**

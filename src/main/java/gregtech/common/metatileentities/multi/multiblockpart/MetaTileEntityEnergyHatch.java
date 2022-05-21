@@ -16,13 +16,10 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
-import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -66,7 +63,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     public void update() {
         super.update();
         if (ConfigHolder.machines.doTerrainExplosion) {
-            checkTerrainExplosion();
+            checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
         }
     }
 
@@ -163,30 +160,6 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
             }
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_OUTPUT_HATCH_16A) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
-            }
-        }
-    }
-
-    public void checkTerrainExplosion() {
-        World world = getWorld();
-        if (!world.isRemote && energyContainer.getEnergyStored() != 0) {
-            if (world.rand.nextInt(1000) == 0) {
-                for (EnumFacing side : EnumFacing.VALUES) {
-                    Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
-                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-                        doExplosion(getTier());
-                        return;
-                    }
-                }
-            }
-            if (world.rand.nextInt(1000) == 0) {
-                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
-                    if (world.isThundering() && world.rand.nextInt(3) == 0) {
-                        doExplosion(getTier());
-                    } else if (world.rand.nextInt(10) == 0) {
-                        doExplosion(getTier());
-                    } else setOnFire();
-                }
             }
         }
     }

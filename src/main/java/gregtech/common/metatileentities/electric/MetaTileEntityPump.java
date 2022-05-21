@@ -310,7 +310,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean getTerrainResistance() {
+    public boolean getIsWeatherOrTerrainResistant() {
         return true;
     }
 }

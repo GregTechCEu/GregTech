@@ -103,7 +103,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     @Override
-    public boolean getTerrainResistance(){
+    public boolean getIsWeatherOrTerrainResistant(){
         return true;
     }
 }

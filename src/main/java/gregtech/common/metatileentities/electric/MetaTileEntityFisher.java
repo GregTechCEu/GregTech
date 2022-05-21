@@ -150,7 +150,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean getTerrainResistance() {
+    public boolean getIsWeatherOrTerrainResistant() {
         return true;
     }
 }
