@@ -19,7 +19,7 @@ gregtech.machine.steam_grinder.name=蒸汽打粉机
 gregtech.machine.steam_grinder.tooltip=每次合成最多粉碎8个物品,需要1.5倍的处理时间, 不受物品数量的影响。要求§e蒸汽舱和总线
 gregtech.multiblock.steam_grinder.description=一个蒸汽时代的多方块打粉机.需要至少14个青铜机器外壳形成。不能使用正常的输入/输出总线，也不能使用除蒸汽舱以外的流体舱。
 gregtech.multiblock.steam.low_steam=没有足够的蒸汽运行!
-gregtech.multiblock.steam.steam_stored=蒸汽: %s / %s mb
+gregtech.multiblock.steam.steam_stored=蒸汽: %s / %s mB
 gregtech.machine.steam_hatch.name=蒸汽仓
 gregtech.machine.steam.steam_hatch.tooltip=接受流体: §e蒸汽
 gregtech.machine.steam_import_bus.name=输入总线 (蒸汽)
@@ -60,7 +60,7 @@ gregtech.top.primitive_pump_production=产出:
 
 gregtech.multiblock.title=多方块结构
 gregtech.multiblock.primitive_blast_furnace.bronze.description=土高炉是一种用来在游戏前期生产钢的多方块结构. 尽管它不是很快, 却能为你的发展提供钢.
-gregtech.multiblock.coke_oven.description=焦炉是一种用来在游戏前期获取焦煤和杂酚油的多方块结构. 它不需要燃料且有32000mb杂酚油的液体内存. 可以通过焦炉仓访问内部库存.
+gregtech.multiblock.coke_oven.description=焦炉是一种用来在游戏前期获取焦煤和杂酚油的多方块结构. 它不需要燃料且有32000mB杂酚油的液体内存. 可以通过焦炉仓访问内部库存.
 gregtech.multiblock.vacuum_freezer.description=真空冷冻机是一种主要用于将热金属锭冷却至普通金属锭的多方块结构. 但是, 它也能冷却其他东西, 比如水.
 gregtech.multiblock.implosion_compressor.description=聚爆压缩机是一种使用爆炸物将宝石粉压缩为相应宝石的多方块结构.
 gregtech.multiblock.pyrolyse_oven.description=热解炉是一种用于将原木处理为木炭、杂酚油、灰烬或重油的多方块结构.
@@ -1165,7 +1165,7 @@ cover.pump.fluid_filter.title=流体过滤
 cover.bucket.mode.bucket=kL/s
 cover.bucket.mode.milli_bucket=L/s
 cover.fluid_regulator.title=流体校准器设置 (%s)
-cover.fluid_regulator.transfer_mode.description=§e任意传输§r - 在此模式下，覆盖板将传输任何与过滤器匹配的液体./n§e精确供应-在此模式下，覆盖板将按此按钮下方窗口中指定的部分供应液体.  如果液体量小于分量大小，则液体将不会移动./n§e保持精确-在此模式下，覆盖板将在目标容器中保持指定数量的液体，如有需要，可提供额外数量的液体./n§7提示:shift点击将增加/减少数量乘以10,点击ctrl将增加/减少数量乘以100。
+cover.fluid_regulator.transfer_mode.description=§e任意传输§r - 在此模式下，覆盖板将传输任何与过滤器匹配的液体。/n§e精确供应-在此模式下，覆盖板将按此按钮下方窗口中指定的部分供应液体。  如果液体量小于分量大小，则液体将不会移动。/n§e保持精确-在此模式下，覆盖板将在目标容器中保持指定数量的液体，如有需要，可提供额外数量的液体。/n§7提示:Shift点击将增加/减少数量乘以10，点击Ctrl将增加/减少数量乘以100。
 cover.fluid_regulator.supply_exact=精确供应：%s
 cover.fluid_regulator.keep_exact=保持供应：%s
 
@@ -1187,7 +1187,7 @@ cover.ender_fluid_link.iomode.enabled=I/O 启用
 cover.ender_fluid_link.iomode.disabled=I/O 禁用
 cover.ender_fluid_link.private.tooltip.disabled=切换到私人储罐模式私人模式使用的玩家原来放置的覆盖板
 cover.ender_fluid_link.private.tooltip.enabled=切换到公用储罐模式
-cover.ender_fluid_link.incomplete_hex=输入颜色不完整!/n它将被应用一旦完成(所有8十六进制数字)/n关闭gui将失去编辑!
+cover.ender_fluid_link.incomplete_hex=输入颜色不完整!/n它将被应用一旦完成(所有8十六进制数字)/n关闭GUI将失去编辑!
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=花岗岩%s矿石
@@ -4455,7 +4455,7 @@ gregtech.machine.miner.multi.tooltip=最大工作区域: §b%dx%d§7 区块
 gregtech.machine.miner.multi.production=比研磨机产生 §b3x§7 倍以上的粉碎矿石
 gregtech.machine.miner.multi.description=一种占地面积大、产矿量大的多方块结构采矿机。
 #Small ores lang: gregtech.machine.miner.multi.production=比研磨机生产3倍以上的粉碎矿石. 贫矿时运 §b%d§7.
-gregtech.machine.miner.fluid_usage=消耗 §b%dmb§7 在 §e%s§7 每刻。每次超频都会使液体消耗量加倍。
+gregtech.machine.miner.fluid_usage=消耗 §b%dmB§7 在 §e%s§7 每刻。每次超频都会使液体消耗量加倍。
 gregtech.machine.miner.overclock=需要 %s§7 能量。可以超频到 %s§7。
 gregtech.gui.fluid_voiding_partial.tooltip.enabled=流体虚空模式 (大于 %d%%) §a启用
 gregtech.gui.fluid_voiding_partial.tooltip.disabled=流体虚空模式 (大于 %d%%) §c禁用
@@ -4710,10 +4710,10 @@ gregtech.recipe.explosive=爆炸物: %s
 gregtech.recipe.eu_to_start=启动耗电: %sEU
 gregtech.recipe.dimensions=维度: %s
 
-gregtech.fluid.click_to_fill=§7单击流体容器可 §b填充 §7这个容器 (shift单击可以得到整组)。
-gregtech.fluid.click_combined=§7单击流体容器可 §c清空 §7或 §b填充 §7这个容器 (shift单击可以得到整组)。
+gregtech.fluid.click_to_fill=§7单击流体容器可 §b填充 §7这个容器 (Shift单击可以得到整组)。
+gregtech.fluid.click_combined=§7单击流体容器可 §c清空 §7或 §b填充 §7这个容器 (Shift单击可以得到整组)。
 
-gregtech.fluid.click_to_empty=§7单击流体容器可 §c清空 §7容器 (shift单击可以得到整组)。
+gregtech.fluid.click_to_empty=§7单击流体容器可 §c清空 §7容器 (Shift单击可以得到整组)。
 
 gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%s 等离子
