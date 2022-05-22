@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 
 public class MapItemStackIngredient extends AbstractMapIngredient {
 
-    public final ItemStack stack;
+    protected ItemStack stack;
 
     public MapItemStackIngredient(ItemStack stack) {
         this.stack = stack;

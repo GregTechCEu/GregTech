@@ -14,10 +14,11 @@ public class MapOreDictIngredient extends AbstractMapIngredient {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other instanceof MapOreDictIngredient) {
-            return ore == ((MapOreDictIngredient)other).ore;
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            return ore == ((MapOreDictIngredient) obj).ore;
         }
         return false;
     }
+
 }

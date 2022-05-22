@@ -6,24 +6,21 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class MapItemStackNBTIngredient extends AbstractMapIngredient {
-
-    public final ItemStack stack;
+public class MapItemStackNBTIngredient extends MapItemStackIngredient {
     @Nullable
-    public final NBTcondition condition;
+    protected NBTcondition condition = null;
     @Nullable
-    public final NBTMatcher matcher;
+    protected NBTMatcher matcher = null;
 
     public MapItemStackNBTIngredient(ItemStack stack, @Nullable NBTMatcher matcher, @Nullable NBTcondition condition) {
-        this.stack = stack;
+        super(stack);
         this.matcher = matcher;
         this.condition = condition;
     }
 
     public MapItemStackNBTIngredient(ItemStack stack) {
+        super(stack);
         this.stack = stack;
-        this.matcher = null;
-        this.condition = null;
     }
 
     @Override
@@ -34,9 +31,12 @@ public class MapItemStackNBTIngredient extends AbstractMapIngredient {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (super.equals(o)) {
-            MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof MapItemStackNBTIngredient) {
+            MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
             //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
             //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
             return ItemStack.areItemsEqual(stack, other.stack) && other.matcher.evaluate(this.stack, other.condition);

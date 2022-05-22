@@ -58,25 +58,14 @@ public class NBTMatcher {
         }
     };
 
-    public boolean hasKey(ItemStack stack, String nbtKey) {
-        if (stack.hasTagCompound()) {
-            NBTTagCompound nbt = stack.getTagCompound();
-            if (nbt != null) {
-                return nbt.hasKey(nbtKey);
-            }
+    public boolean hasKey(NBTTagCompound nbtTagCompound, String nbtKey) {
+        if (nbtTagCompound != null) {
+            return nbtTagCompound.hasKey(nbtKey);
         }
         return false;
     }
 
-    public boolean hasKey(FluidStack stack, String nbtKey) {
-        if (stack.tag != null) {
-            NBTTagCompound nbt = stack.tag;
-            return nbt.hasKey(nbtKey);
-        }
-        return false;
-    }
-
-    public long getKeyValue(Object stack, String nbtKey) {
+        public long getKeyValue(Object stack, String nbtKey) {
         NBTTagCompound nbt = null;
         if (stack instanceof ItemStack) {
             nbt = ((ItemStack)stack).getTagCompound();
@@ -90,11 +79,15 @@ public class NBTMatcher {
     }
 
     public boolean evaluate(ItemStack stack, NBTcondition NBTcondition) {
-        return hasKey(stack, NBTcondition.nbtKey) && keyValueMatches(stack, NBTcondition.nbtKey, NBTcondition.value);
+        return hasKey(stack.getTagCompound(), NBTcondition.nbtKey) && keyValueMatches(stack, NBTcondition.nbtKey, NBTcondition.value);
     }
 
     public boolean evaluate(FluidStack stack, NBTcondition NBTcondition) {
-        return hasKey(stack, NBTcondition.nbtKey) && keyValueMatches(stack, NBTcondition.nbtKey, NBTcondition.value);
+        return hasKey(stack.tag, NBTcondition.nbtKey) && keyValueMatches(stack, NBTcondition.nbtKey, NBTcondition.value);
+    }
+
+    public boolean evaluate(NBTTagCompound nbtTagCompound, NBTcondition NBTcondition) {
+        return hasKey(nbtTagCompound, NBTcondition.nbtKey) && keyValueMatches(nbtTagCompound, NBTcondition.nbtKey, NBTcondition.value);
     }
 
     public boolean keyValueMatches(Object stack, String nbtKey, Long value) {

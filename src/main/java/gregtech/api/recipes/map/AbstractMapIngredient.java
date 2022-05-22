@@ -2,7 +2,7 @@ package gregtech.api.recipes.map;
 
 public abstract class AbstractMapIngredient {
 
-    private final Class<? extends AbstractMapIngredient> objClass;
+    protected final Class<? extends AbstractMapIngredient> objClass;
 
     private int hash;
     private boolean hashed = false;

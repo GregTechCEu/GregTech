@@ -293,7 +293,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
-        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> {
+        return find(inputs, fluidInputs, a -> {
             if (exactVoltage && a.getEUt() != voltage) {
                 return false;
             }
@@ -313,25 +313,28 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @Nullable
-    public Recipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, @Nonnull Predicate<Recipe> canHandle) {
+    public Recipe find(@Nonnull List<ItemStack> items, @Nonnull List<FluidStack> fluids, @Nonnull Predicate<Recipe> canHandle) {
         // First, check if items and fluids are valid.
-        if (items.length + fluids.length > Long.SIZE) {
+        if (items.size() + fluids.size() > Long.SIZE) {
             return null;
         }
-        if (items.length == 0 && fluids.length == 0) {
+        if (items.size() == 0 && fluids.size() == 0) {
             return null;
         }
         // Filter out empty fluids.
 
         // Build input.
-        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.length + fluids.length);
-        if (items.length > 0) {
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.size() + fluids.size());
+        if (items.size() > 0) {
             buildFromItemStacks(list, uniqueItems(items));
         }
-        if (fluids.length > 0) {
-            List<FluidStack> stack = new ObjectArrayList<>(fluids.length);
+        if (fluids.size() > 0) {
+            List<FluidStack> stack = new ObjectArrayList<>(fluids.size());
             for (FluidStack f : fluids) {
-                if (!(f.amount == 0)) stack.add(f);
+                if (f == null || f.amount == 0) {
+                    continue;
+                }
+                stack.add(f);
             }
             if (stack.size() > 0) {
                 buildFromFluidStacks(list, stack);
@@ -343,10 +346,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
     }
 
-    public static ItemStack[] uniqueItems(ItemStack[] input) {
-        List<ItemStack> list = new ObjectArrayList<>(input.length);
+    public static ItemStack[] uniqueItems(Collection<ItemStack> input) {
+        List<ItemStack> list = new ObjectArrayList<>(input.size());
         loop:
         for (ItemStack item : input) {
+            if (item.isEmpty()) {
+                continue;
+            }
             for (ItemStack obj : list) {
                 if (item.isItemEqual(obj) && ItemStack.areItemStackTagsEqual(item, obj)) {
                     continue loop;
@@ -729,7 +735,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (GTRecipeInput r : ingredients) {
             AbstractMapIngredient ingredient;
             if (r.isOreDict()) {
-                ingredient = new MapOreDictIngredient(r.getOreDict());
+                if (r.hasNBTMatchingCondition()) {
+                    ingredient = new MapOreDictNBTIngredient(r.getOreDict(), r.getNBTMatcher(), r.getNBTMatchingCondition());
+                } else {
+                    ingredient = new MapOreDictIngredient(r.getOreDict());
+                }
                 WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
                 if (cached != null && cached.get() != null) {
                     list.add(Collections.singletonList(cached.get()));
@@ -764,6 +774,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             ls.add(new MapItemStackIngredient(t));
             for (Integer i : OreDictionary.getOreIDs(t)) {
                 ingredient = new MapOreDictIngredient(i);
+                ls.add(ingredient);
+                ingredient = new MapOreDictNBTIngredient(i, t.getTagCompound());
                 ls.add(ingredient);
             }
             ls.add(new MapItemStackNBTIngredient(t));
