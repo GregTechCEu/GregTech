@@ -84,9 +84,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        ItemStack stacks = this.inputStack;
-        if (stacks.getItem() == input.getItem() && stacks.getMetadata() == input.getMetadata()) {
-            return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(stacks, input) : nbtMatcher.evaluate(stacks, nbtCondition));
+        if (this.inputStack.getItem() == input.getItem() && this.inputStack.getMetadata() == input.getMetadata()) {
+            return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(this.inputStack, input) : nbtMatcher.evaluate(input, nbtCondition));
         }
         return false;
     }
