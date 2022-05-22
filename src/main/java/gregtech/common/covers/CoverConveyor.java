@@ -451,13 +451,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(176, 212);
+        ModularWindow.Builder builder = ModularWindow.builder(176, 192);
         builder.setBackground(GuiTextures.BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
-                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 129))
+                .bindPlayerInventory(buildContext.getPlayer(), 7)
                 .widget(new TextWidget(new Text("container.inventory").localise())
-                        .setPos(8, 119))
+                        .setPos(8, 99))
                 .widget(new Column()
                         .widget(new TextWidget(new Text("cover.transfer_rate").localise())
                                 .setTextAlignment(Alignment.CenterLeft)

@@ -1,14 +1,18 @@
 package gregtech.common.covers.newFilter;
 
+import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.math.Color;
+import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.api.math.Size;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
-import com.cleanroommc.modularui.common.widget.ChangeableWidget;
-import com.cleanroommc.modularui.common.widget.MultiChildWidget;
-import com.cleanroommc.modularui.common.widget.SlotWidget;
-import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.*;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -39,6 +43,49 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
     }
 
     public Widget createFilterUI(UIBuildContext buildContext) {
+        buildContext.addSyncedWindow(1, this::openFilterWindow);
+        return new MultiChildWidget()
+                .addChild(new TextWidget("Filter")
+                        .setPos(0, 4))
+                .addChild(new SlotWidget(filterInventory, filterSlotIndex)
+                        .setFilter(item -> getFilterOf(item) != null)
+                        .setChangeListener(slotWidget -> {
+                            checkFilter(filterInventory.getStackInSlot(filterSlotIndex));
+                            if (!slotWidget.isClient()) {
+                                if (slotWidget.getContext().isWindowOpen(1)) {
+                                    slotWidget.getContext().closeWindow(1);
+                                }
+                                if (this.currentFilter != null) {
+                                    slotWidget.getContext().openSyncedWindow(1);
+                                }
+                            }
+                        })
+                        .setPos(62, 0))
+                .addChild(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> {
+                            if (!widget.isClient())
+                                widget.getContext().openSyncedWindow(1);
+                        })
+                        .setTicker(widget -> widget.setEnabled(currentFilter != null))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("Open Settings").color(Color.WHITE.normal))
+                        .setPos(82, 0)
+                        .setSize(80, 18));
+    }
+
+    public ModularWindow openFilterWindow(EntityPlayer player) {
+        ModularWindow.Builder builder = ModularWindow.builder(150, 100);
+        builder.setBackground(ModularUITextures.VANILLA_BACKGROUND)
+                .setPos((screenSize, mainWindow) -> new Pos2d(screenSize.width / 2 - 75, mainWindow.getPos().y + 5))
+                .widget(new TextWidget("Filter Settings")
+                        .setPos(5, 5))
+                .widget(ButtonWidget.closeWindowButton(true)
+                        .setPos(133, 5))
+                .widget(currentFilter.createFilterUI(null)
+                        .setPos(0, 20));
+        return builder.build();
+    }
+
+    public Widget createFilterUI2(UIBuildContext buildContext) {
         MultiChildWidget widget = new MultiChildWidget();
         ChangeableWidget filterWidget = new ChangeableWidget(() -> currentFilter == null ? null : currentFilter.createFilterUI(buildContext).setDebugLabel("Filter"));
         SlotWidget filterSlot = new SlotWidget(filterInventory, filterSlotIndex);
