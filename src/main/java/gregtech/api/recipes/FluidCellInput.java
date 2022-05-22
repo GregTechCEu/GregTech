@@ -43,6 +43,9 @@ public class FluidCellInput extends GTRecipeItemInput {
 
     @Override
     public boolean acceptsStack(@Nullable ItemStack itemStack) {
+        if (itemStack == null || itemStack.isEmpty()) {
+            return false;
+        }
         IFluidHandlerItem stackFluid = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         FluidStack drained = stackFluid == null ? null : stackFluid.getTankProperties()[0].getContents();
         return MetaItems.FLUID_CELL.isItemEqual(itemStack) && drained != null && drained.getFluid() == fluid && drained.amount == 1000;

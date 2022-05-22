@@ -238,7 +238,7 @@ public class Recipe {
             int fluidAmount = fluid.getAmount();
             for (int i = 0; i < fluidInputs.size(); i++) {
                 FluidStack tankFluid = fluidInputs.get(i);
-                if (tankFluid == null || tankFluid.getFluid() != fluid.getInputFluidStack().getFluid())
+                if (tankFluid == null || !fluid.acceptsFluid(tankFluid))
                     continue;
                 int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
                 fluidAmount -= fluidAmountToConsume;
@@ -306,9 +306,7 @@ public class Recipe {
     public int hashFluidList(List<GTRecipeInput> fluids) {
         int hash = 0;
         for (GTRecipeInput fluidInput : fluids) {
-            FluidStack fluidStack = fluidInput.getInputFluidStack();
-            hash = 31 * hash + new FluidKey(fluidStack).hashCode();
-            hash = 31 * hash + fluidStack.amount;
+            hash = 31 * hash + fluidInput.hashCode();
         }
         return hash;
     }

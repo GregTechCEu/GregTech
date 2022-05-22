@@ -1,29 +1,28 @@
 package gregtech.api.recipes.ingredients;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 public class GTRecipeFluidInput extends GTRecipeInput {
-    FluidStack inputStacks;
+    FluidStack inputStack;
 
-    public GTRecipeFluidInput(FluidStack inputStacks) {
-        this.inputStacks = inputStacks;
-        this.amount = inputStacks.amount;
+    public GTRecipeFluidInput(FluidStack inputStack) {
+        this.inputStack = inputStack;
+        this.amount = inputStack.amount;
     }
 
-    public GTRecipeFluidInput(FluidStack inputStacks, int amount) {
-        this.inputStacks = inputStacks;
+    public GTRecipeFluidInput(FluidStack inputStack, int amount) {
+        this.inputStack = inputStack;
         this.amount = amount;
     }
 
     public static GTRecipeFluidInput getOrCreate(FluidStack fluidStack, int amount) {
-        fluidStack.amount = amount;
-        return getFromCache(new GTRecipeFluidInput(fluidStack));
+        return getFromCache(new GTRecipeFluidInput(fluidStack, amount));
     }
 
     public static GTRecipeFluidInput getOrCreate(Fluid fluid, int amount) {
@@ -50,7 +49,7 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     protected GTRecipeFluidInput copy() {
-        GTRecipeFluidInput copy = new GTRecipeFluidInput(this.inputStacks, this.amount);
+        GTRecipeFluidInput copy = new GTRecipeFluidInput(this.inputStack, this.amount);
         copy.isConsumable = this.isConsumable;
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;
@@ -64,7 +63,7 @@ public class GTRecipeFluidInput extends GTRecipeInput {
 
     @Override
     public FluidStack getInputFluidStack() {
-        return inputStacks;
+        return inputStack;
     }
 
     @Override
@@ -73,7 +72,13 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     @Override
-    public boolean acceptsStack(@Nullable ItemStack input) {
+    public boolean acceptsFluid(@Nullable FluidStack input) {
+        if (input == null || input.amount == 0) {
+            return false;
+        }
+        if (inputStack.getFluid() == input.getFluid()) {
+            return (nbtMatcher == null ? FluidStack.areFluidStackTagsEqual(inputStack, input) : nbtMatcher.evaluate(input, nbtCondition));
+        }
         return false;
     }
 
@@ -88,11 +93,14 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         if (this.isConsumable != other.isConsumable) return false;
         if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
         if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
-        return this.inputStacks.isFluidEqual(other.inputStacks);
+        return this.inputStack.isFluidEqual(other.inputStack);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        if (nbtMatcher == null) {
+            return Objects.hash(inputStack.getFluid(), this.amount, this.nbtMatcher, this.nbtCondition, inputStack.tag);
+        }
+        return Objects.hash(inputStack.getFluid(), this.amount, this.nbtMatcher, this.nbtCondition, 0);
     }
 }

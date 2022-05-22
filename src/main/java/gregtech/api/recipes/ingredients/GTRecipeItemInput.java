@@ -8,15 +8,15 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 
 public class GTRecipeItemInput extends GTRecipeInput {
-    ItemStack inputStacks;
+    ItemStack inputStack;
 
     protected GTRecipeItemInput(ItemStack stack) {
-        this.inputStacks = stack;
+        this.inputStack = stack;
         amount = stack.getCount();
     }
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
-        this.inputStacks = stack;
+        this.inputStack = stack;
         this.amount = amount;
     }
 
@@ -52,7 +52,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     protected GTRecipeItemInput copy() {
-        GTRecipeItemInput copy = new GTRecipeItemInput(this.inputStacks, this.amount);
+        GTRecipeItemInput copy = new GTRecipeItemInput(this.inputStack, this.amount);
         copy.isConsumable = this.isConsumable;
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;
@@ -66,7 +66,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     @Override
     public ItemStack getInputStack() {
-        return this.inputStacks;
+        return this.inputStack;
     }
 
     @Override
@@ -81,26 +81,22 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     @Override
     public boolean acceptsStack(ItemStack input) {
-        if (input == null) {
+        if (input == null || input.isEmpty()) {
             return false;
         }
-        ItemStack stacks = this.inputStacks;
-        if (stacks.getItem() == input.getItem()) {
-            int i = stacks.getMetadata();
-            if (i == 32767 || i == input.getMetadata()) {
-                return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(stacks, input) : nbtMatcher.evaluate(stacks, nbtCondition));
-            }
+        ItemStack stacks = this.inputStack;
+        if (stacks.getItem() == input.getItem() && stacks.getMetadata() == input.getMetadata()) {
+            return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(stacks, input) : nbtMatcher.evaluate(stacks, nbtCondition));
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        ItemStack stack = getInputStack();
         if (nbtMatcher == null) {
-            return Objects.hash(stack.getItem(), stack.getMetadata(), this.amount, this.nbtMatcher, this.nbtCondition, stack.getTagCompound());
+            return Objects.hash(inputStack.getItem(), inputStack.getMetadata(), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, inputStack.getTagCompound());
         }
-        return Objects.hash(stack.getItem(), stack.getMetadata(), this.amount, this.nbtMatcher, this.nbtCondition, 0);
+        return Objects.hash(inputStack.getItem(), inputStack.getMetadata(), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, 0);
     }
 
     @Override

@@ -95,12 +95,18 @@ public class GTRecipeOreInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        return Arrays.stream(OreDictionary.getOreIDs(input)).anyMatch(id -> id == ore);
+        if (Arrays.stream(OreDictionary.getOreIDs(input)).noneMatch(id -> id == ore)) {
+            return false;
+        }
+        if (nbtMatcher != null) {
+            return nbtMatcher.evaluate(input, nbtCondition);
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(amount, ore);
+        return Objects.hash(amount, ore, isConsumable, nbtMatcher, nbtCondition);
     }
 
     @Override
