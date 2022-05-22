@@ -786,7 +786,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
 
     public Collection<Recipe> getRecipeList() {
-        return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toCollection(LinkedHashSet::new));
+        return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toCollection(ObjectArrayList::new));
     }
 
     public SoundEvent getSound() {
