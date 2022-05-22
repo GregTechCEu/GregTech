@@ -15,4 +15,8 @@ public class NBTcondition {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return nbtKey + ":" + value;
+    }
 }

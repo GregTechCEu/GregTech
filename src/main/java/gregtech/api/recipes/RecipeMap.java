@@ -953,6 +953,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             if (nodes != null) {
                 stream = nodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
             }
+            if (specialNodes != null) {
+                if (stream == null) {
+                    stream = specialNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
+                } else {
+                    stream = Stream.concat(stream, specialNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
+                }
+            }
             if (stream == null) {
                 return Stream.empty();
             }

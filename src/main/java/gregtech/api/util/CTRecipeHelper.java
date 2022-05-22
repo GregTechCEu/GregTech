@@ -145,6 +145,8 @@ public class CTRecipeHelper {
                 if (nbt.length() > 0) {
                     builder.append(".withTag(").append(nbt).append(")");
                 }
+            } else if (ci.hasNBTMatchingCondition()) {
+                builder.append(".withTag(").append(ci.getNBTMatchingCondition().toString()).append(")");
             }
         }
 
