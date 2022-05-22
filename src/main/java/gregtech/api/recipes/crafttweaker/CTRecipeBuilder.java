@@ -49,7 +49,7 @@ public class CTRecipeBuilder {
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
                 .map(s -> {
-                    IGTRecipeInput ri;
+                    GTRecipeInput ri;
                     if (s instanceof IOreDictEntry) {
                         ri = GTRecipeOreInput.getOrCreate(((IOreDictEntry) s).getName(), s.getAmount());
                     } else {
@@ -64,7 +64,7 @@ public class CTRecipeBuilder {
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
                 .map(s -> {
-                    IGTRecipeInput ri;
+                    GTRecipeInput ri;
                     if (s instanceof IOreDictEntry) {
                         ri = GTRecipeOreInput.getOrCreate(((IOreDictEntry) s).getName(), s.getAmount()).setNonConsumable();
                     } else {

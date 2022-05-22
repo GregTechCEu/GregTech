@@ -3,7 +3,7 @@ package gregtech.api.recipes.logic;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.*;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
@@ -270,9 +270,9 @@ public class ParallelLogic {
         int minMultiplier = Integer.MAX_VALUE;
         //map the recipe ingredients to account for duplicated and notConsumable ingredients.
         //notConsumable ingredients are not counted towards the max ratio
-        Object2IntOpenHashMap<IGTRecipeInput> notConsumableMap = new Object2IntOpenHashMap<>();
-        Object2IntOpenHashMap<IGTRecipeInput> countableMap = new Object2IntOpenHashMap<>();
-        for (IGTRecipeInput recipeIngredient : recipe.getInputs()) {
+        Object2IntOpenHashMap<GTRecipeInput> notConsumableMap = new Object2IntOpenHashMap<>();
+        Object2IntOpenHashMap<GTRecipeInput> countableMap = new Object2IntOpenHashMap<>();
+        for (GTRecipeInput recipeIngredient : recipe.getInputs()) {
 
             int ingredientCount = recipeIngredient.getAmount();
             if (recipeIngredient.isNonConsumable()) {
@@ -285,7 +285,7 @@ public class ParallelLogic {
         }
 
         // Iterate through the recipe inputs, excluding the not consumable ingredients from the inventory map
-        for (Map.Entry<IGTRecipeInput, Integer> recipeInputEntry : notConsumableMap.entrySet()) {
+        for (Map.Entry<GTRecipeInput, Integer> recipeInputEntry : notConsumableMap.entrySet()) {
             int needed = recipeInputEntry.getValue();
             int available = 0;
             // For every stack in the ingredients gathered from the input bus.
@@ -318,7 +318,7 @@ public class ParallelLogic {
         }
 
         // Iterate through the recipe inputs
-        for (Map.Entry<IGTRecipeInput, Integer> recipeInputEntry : countableMap.entrySet()) {
+        for (Map.Entry<GTRecipeInput, Integer> recipeInputEntry : countableMap.entrySet()) {
             int needed = recipeInputEntry.getValue();
             int available = 0;
             // For every stack in the ingredients gathered from the input bus.
@@ -353,7 +353,7 @@ public class ParallelLogic {
         //so their sum is counted against the total of fluids available in the input
         Map<FluidKey, Integer> fluidCountMap = new HashMap<>();
         Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
-        for (IGTRecipeInput fluidStack : recipe.getFluidInputs()) {
+        for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
             int fluidAmount = fluidStack.getAmount();
             if (fluidStack.isNonConsumable()) {
                 notConsumableMap.computeIfPresent(new FluidKey(fluidStack.getInputFluidStack()), (k, v) -> v + fluidAmount);
@@ -482,7 +482,7 @@ public class ParallelLogic {
                     Collections.singletonList(currentInputItem),
                     Collections.emptyList(), 0);
 
-            IGTRecipeInput inputIngredient;
+            GTRecipeInput inputIngredient;
             if (matchingRecipe != null) {
                 inputIngredient = matchingRecipe.getInputs().get(0);
                 if (recipeBuilder == null) {

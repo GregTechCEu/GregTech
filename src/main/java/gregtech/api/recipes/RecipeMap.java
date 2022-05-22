@@ -20,7 +20,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.map.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -357,11 +357,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list.toArray(new ItemStack[0]);
     }
 
-    public static List<IGTRecipeInput> uniqueIngredientsList(List<IGTRecipeInput> input) {
-        List<IGTRecipeInput> list = new ObjectArrayList<>(input.size());
+    public static List<GTRecipeInput> uniqueIngredientsList(List<GTRecipeInput> input) {
+        List<GTRecipeInput> list = new ObjectArrayList<>(input.size());
         loop:
-        for (IGTRecipeInput item : input) {
-            for (IGTRecipeInput obj : list) {
+        for (GTRecipeInput item : input) {
+            for (GTRecipeInput obj : list) {
                 if (item.equals(obj)) {
                     continue loop;
                 }
@@ -694,8 +694,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return true;
     }
 
-    protected void buildFromRecipeFluids(List<List<AbstractMapIngredient>> builder, List<IGTRecipeInput> fluidInputs) {
-        for (IGTRecipeInput fluidInput : fluidInputs) {
+    protected void buildFromRecipeFluids(List<List<AbstractMapIngredient>> builder, List<GTRecipeInput> fluidInputs) {
+        for (GTRecipeInput fluidInput : fluidInputs) {
             AbstractMapIngredient ingredient;
             ingredient = new MapFluidIngredient(fluidInput);
             WeakReference<AbstractMapIngredient> cached = fluidIngredientRoot.get(ingredient);
@@ -725,8 +725,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list;
     }
 
-    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<IGTRecipeInput> ingredients) {
-        for (IGTRecipeInput r : ingredients) {
+    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<GTRecipeInput> ingredients) {
+        for (GTRecipeInput r : ingredients) {
             AbstractMapIngredient ingredient;
             if (r.isOreDict()) {
                 ingredient = new MapOreDictIngredient(r.getOreDict());

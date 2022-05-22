@@ -5,7 +5,7 @@ import crafttweaker.api.item.*;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.player.IPlayer;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 
@@ -17,7 +17,7 @@ public class InputIngredient implements IIngredient {
 
     private final IIngredient iingredient;
 
-    public InputIngredient(IGTRecipeInput backingIngredient) {
+    public InputIngredient(GTRecipeInput backingIngredient) {
         iingredient = CraftTweakerMC
                 .getIIngredient(backingIngredient)
                 .amount(backingIngredient.getAmount());

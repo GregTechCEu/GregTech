@@ -9,7 +9,8 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -96,15 +97,15 @@ public class CommandRecipeCheck extends CommandBase {
     /**
      * Recursively check all combinations of item inputs until one is mismatched or there are no more
      */
-    private MismatchEntry checkRecipe(Recipe recipe, RecipeMap<?> recipeMap, List<FluidStack> fluidInputs, List<IGTRecipeInput> itemInputs, int startIndex) {
+    private MismatchEntry checkRecipe(Recipe recipe, RecipeMap<?> recipeMap, List<FluidStack> fluidInputs, List<GTRecipeInput> itemInputs, int startIndex) {
         // if we have not yet bottomed out the input list
         if (startIndex < itemInputs.size()) {
-            IGTRecipeInput ingredient = itemInputs.get(startIndex);
+            GTRecipeInput ingredient = itemInputs.get(startIndex);
 
             // check each possible input for this level
             ItemStack stack = ingredient.getInputStack();
             // shallow copy the input list to avoid editing it
-            List<IGTRecipeInput> reducedIngredients = new ArrayList<>(itemInputs);
+            List<GTRecipeInput> reducedIngredients = new ArrayList<>(itemInputs);
             // reduce the current level to only the current ItemStack
             reducedIngredients.set(startIndex, GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()));
             // go one level deeper into the input list
@@ -154,7 +155,7 @@ public class CommandRecipeCheck extends CommandBase {
 
         if (recipe.getInputs().size() > 0) {
             output.append("Item inputs:\n");
-            for (IGTRecipeInput ingredient : recipe.getInputs()) {
+            for (GTRecipeInput ingredient : recipe.getInputs()) {
                 output.append("    ")
                         .append(prettyPrintCountableIngredient(ingredient))
                         .append("\n");
@@ -163,7 +164,7 @@ public class CommandRecipeCheck extends CommandBase {
 
         if (recipe.getFluidInputs().size() > 0) {
             output.append("Fluid inputs:\n");
-            for (IGTRecipeInput fluid : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluid : recipe.getFluidInputs()) {
                 output.append("    ")
                         .append(fluid.getInputFluidStack().getUnlocalizedName())
                         .append(" * ")
@@ -208,9 +209,9 @@ public class CommandRecipeCheck extends CommandBase {
         return output.toString();
     }
 
-    public String prettyPrintCountableIngredient(IGTRecipeInput recipeIngredient) {
+    public String prettyPrintCountableIngredient(GTRecipeInput recipeIngredient) {
         StringBuilder output = new StringBuilder();
-        if (recipeIngredient instanceof OreIngredient) {
+        if (recipeIngredient instanceof GTRecipeOreInput) {
             output.append("(OreDict) ");
         }
         output.append("{");

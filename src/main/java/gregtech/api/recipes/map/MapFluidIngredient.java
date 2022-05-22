@@ -1,6 +1,6 @@
 package gregtech.api.recipes.map;
 
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -12,7 +12,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
     public final Fluid fluid;
     public final NBTTagCompound tag;
 
-    public MapFluidIngredient(IGTRecipeInput fluidInput) {
+    public MapFluidIngredient(GTRecipeInput fluidInput) {
         FluidStack fluidStack = fluidInput.getInputFluidStack();
         this.fluid = fluidStack.getFluid();
         this.tag = fluidStack.tag;

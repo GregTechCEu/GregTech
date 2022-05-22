@@ -1,7 +1,5 @@
 package gregtech.api.recipes.ingredients;
 
-import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTcondition;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -13,16 +11,18 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.WeakHashMap;
 
-public class GTRecipeOreInput implements IGTRecipeInput {
-    int amount;
-    boolean isConsumable = true;
-    NBTMatcher nbtMatcher;
-    NBTcondition nbtCondition;
+public class GTRecipeOreInput extends GTRecipeInput {
     int ore;
 
     protected GTRecipeOreInput(String ore, int amount) {
         this.ore = OreDictionary.getOreID(ore);
+        this.amount = amount;
+    }
+
+    protected GTRecipeOreInput(int ore, int amount) {
+        this.ore = ore;
         this.amount = amount;
     }
 
@@ -43,50 +43,31 @@ public class GTRecipeOreInput implements IGTRecipeInput {
     }
 
     private static GTRecipeOreInput getFromCache(GTRecipeOreInput realIngredient) {
-        if (GTIngredientCache.ORE_INSTANCES.get(realIngredient) == null) {
-            GTIngredientCache.ORE_INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
+        WeakHashMap<GTRecipeOreInput, WeakReference<GTRecipeOreInput>> cache;
+        if (realIngredient.isNonConsumable()) {
+            cache = GTIngredientCache.NON_CONSUMABLE_ORE_INSTANCES;
         } else {
-            realIngredient = GTIngredientCache.ORE_INSTANCES.get(realIngredient).get();
+            cache = GTIngredientCache.ORE_INSTANCES;
+        }
+        if (cache.get(realIngredient) == null) {
+            cache.put(realIngredient, new WeakReference<>(realIngredient));
+        } else {
+            realIngredient = cache.get(realIngredient).get();
         }
         return realIngredient;
     }
 
-    @Override
-    public int getAmount() {
-        return this.amount;
+    protected GTRecipeOreInput copy() {
+        GTRecipeOreInput copy = new GTRecipeOreInput(ore, amount);
+        copy.isConsumable = this.isConsumable;
+        copy.nbtMatcher = this.nbtMatcher;
+        copy.nbtCondition = this.nbtCondition;
+        return copy;
     }
 
     @Override
-    public IGTRecipeInput setNonConsumable() {
-        this.isConsumable = false;
-        return this;
-    }
-
-    @Override
-    public IGTRecipeInput setNBTMatchingCondition(NBTMatcher nbtMatcher, NBTcondition nbtCondition) {
-        this.nbtMatcher = nbtMatcher;
-        this.nbtCondition = nbtCondition;
-        return this;
-    }
-
-    @Override
-    public boolean hasNBTMatchingCondition() {
-        return this.nbtMatcher != null;
-    }
-
-    @Override
-    public NBTMatcher getNBTMatcher() {
-        return nbtMatcher;
-    }
-
-    @Override
-    public NBTcondition getNBTMatchingCondition() {
-        return nbtCondition;
-    }
-
-    @Override
-    public boolean isNonConsumable() {
-        return !isConsumable;
+    GTRecipeInput getFromCache(GTRecipeInput recipeInput) {
+        return getFromCache((GTRecipeOreInput) recipeInput);
     }
 
     @Override
@@ -124,10 +105,15 @@ public class GTRecipeOreInput implements IGTRecipeInput {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) return true;
         if (!(obj instanceof GTRecipeOreInput)) {
             return false;
         }
         GTRecipeOreInput other = (GTRecipeOreInput) obj;
-        return amount == other.amount && ore == other.ore;
+        if (this.amount != other.amount) return false;
+        if (this.isConsumable != other.isConsumable) return false;
+        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
+        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        return ore == other.ore;
     }
 }

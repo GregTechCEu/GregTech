@@ -7,7 +7,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
@@ -65,7 +65,7 @@ public class CTRecipeHelper {
 
         if (recipe.getInputs().size() > 0) {
             builder.append("[");
-            for (IGTRecipeInput ci : recipe.getInputs()) {
+            for (GTRecipeInput ci : recipe.getInputs()) {
                 String ingredient = getCtItemString(ci);
                 if (ingredient != null)
                     builder.append(ingredient);
@@ -78,7 +78,7 @@ public class CTRecipeHelper {
 
         if (recipe.getFluidInputs().size() > 0) {
             builder.append("[");
-            for (IGTRecipeInput fluidStack : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
                 builder.append("<liquid:")
                         .append(fluidStack.getInputFluidStack().getFluid().getName())
                         .append(">");
@@ -113,7 +113,7 @@ public class CTRecipeHelper {
         return output;
     }
 
-    public static String getCtItemString(IGTRecipeInput ci) {
+    public static String getCtItemString(GTRecipeInput ci) {
         StringBuilder builder = new StringBuilder();
         ItemStack itemStack = null;
         String itemId = null;

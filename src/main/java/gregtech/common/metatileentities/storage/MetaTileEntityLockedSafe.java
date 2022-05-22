@@ -20,8 +20,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
-import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.worldgen.LootTableHelper;
@@ -146,7 +145,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private void updateDisplayUnlockComponents() {
-        IGTRecipeInput[] unlockComponents = getUnlockComponents();
+        GTRecipeInput[] unlockComponents = getUnlockComponents();
         for (int i = 0; i < Math.min(this.unlockComponents.getSlots(), unlockComponents.length); i++) {
             if (unlockComponents[i].isOreDict()){
                 this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
@@ -156,12 +155,12 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         }
     }
 
-    private IGTRecipeInput[] getUnlockComponents() {
+    private GTRecipeInput[] getUnlockComponents() {
         if (ALLOWED_COMPONENTS == null)
             ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
 
         Random random = new Random(unlockComponentsSeed);
-        return new IGTRecipeInput[]{GTRecipeOreInput.getOrCreate(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
+        return new GTRecipeInput[]{GTRecipeOreInput.getOrCreate(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
                 GTRecipeItemInput.getOrCreate((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
         };
     }
@@ -180,8 +179,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         }
         boolean isRequiredItem = false;
         int amountRequired = 0;
-        IGTRecipeInput[] unlockComponents = getUnlockComponents();
-        for (IGTRecipeInput stack : unlockComponents) {
+        GTRecipeInput[] unlockComponents = getUnlockComponents();
+        for (GTRecipeInput stack : unlockComponents) {
             if (stack == null) continue;
             if (!stack.acceptsStack(itemStack)) continue;
             amountRequired = stack.getAmount();
@@ -201,8 +200,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private boolean checkUnlockedItems() {
-        IGTRecipeInput[] unlockComponents = getUnlockComponents();
-        for (IGTRecipeInput stack : unlockComponents) {
+        GTRecipeInput[] unlockComponents = getUnlockComponents();
+        for (GTRecipeInput stack : unlockComponents) {
             if (stack == null) continue;
             int itemLeftToCheck = stack.getAmount();
             for (int i = 0; i < unlockInventory.getSlots(); i++) {

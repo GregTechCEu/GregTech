@@ -3,7 +3,7 @@ package gregtech.api.recipes;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
@@ -41,14 +41,14 @@ public class Recipe {
         return String.format("%.2f", outputChance / (getMaxChancedValue() * 1.0) * 100);
     }
 
-    private final List<IGTRecipeInput> inputs;
+    private final List<GTRecipeInput> inputs;
     private final NonNullList<ItemStack> outputs;
 
     /**
      * A chance of 10000 equals 100%
      */
     private final List<ChanceEntry> chancedOutputs;
-    private final List<IGTRecipeInput> fluidInputs;
+    private final List<GTRecipeInput> fluidInputs;
     private final List<FluidStack> fluidOutputs;
 
     private final int duration;
@@ -73,8 +73,8 @@ public class Recipe {
 
     private final int hashCode;
 
-    public Recipe(List<IGTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
-                  List<IGTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
+    public Recipe(List<GTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
+                  List<GTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
                   int duration, int EUt, boolean hidden, boolean isCTRecipe) {
         this.recipePropertyStorage = new RecipePropertyStorage();
         this.inputs = NonNullList.create();
@@ -208,7 +208,7 @@ public class Recipe {
             itemAmountInSlot[i] = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
         }
 
-        for (IGTRecipeInput ingredient : this.inputs) {
+        for (GTRecipeInput ingredient : this.inputs) {
             int ingredientAmount = ingredient.getAmount();
             for (int i = 0; i < inputs.size(); i++) {
                 ItemStack inputStack = inputs.get(i);
@@ -234,7 +234,7 @@ public class Recipe {
             fluidAmountInTank[i] = fluidInTank == null ? 0 : fluidInTank.amount;
         }
 
-        for (IGTRecipeInput fluid : this.fluidInputs) {
+        for (GTRecipeInput fluid : this.fluidInputs) {
             int fluidAmount = fluid.getAmount();
             for (int i = 0; i < fluidInputs.size(); i++) {
                 FluidStack tankFluid = fluidInputs.get(i);
@@ -273,7 +273,7 @@ public class Recipe {
 
     private int hashInputs() {
         int hash = 0;
-        for (IGTRecipeInput recipeIngredient : this.inputs) {
+        for (GTRecipeInput recipeIngredient : this.inputs) {
             if (!recipeIngredient.isOreDict()) {
                 ItemStack is = recipeIngredient.getInputStack();
                 hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
@@ -303,9 +303,9 @@ public class Recipe {
         return true;
     }
 
-    public int hashFluidList(List<IGTRecipeInput> fluids) {
+    public int hashFluidList(List<GTRecipeInput> fluids) {
         int hash = 0;
-        for (IGTRecipeInput fluidInput : fluids) {
+        for (GTRecipeInput fluidInput : fluids) {
             FluidStack fluidStack = fluidInput.getInputFluidStack();
             hash = 31 * hash + new FluidKey(fluidStack).hashCode();
             hash = 31 * hash + fluidStack.amount;
@@ -342,7 +342,7 @@ public class Recipe {
     //    Getters    //
     ///////////////////
 
-    public List<IGTRecipeInput> getInputs() {
+    public List<GTRecipeInput> getInputs() {
         return inputs;
     }
 
@@ -447,12 +447,12 @@ public class Recipe {
         return chancedOutputs;
     }
 
-    public List<IGTRecipeInput> getFluidInputs() {
+    public List<GTRecipeInput> getFluidInputs() {
         return fluidInputs;
     }
 
     public boolean hasInputFluid(FluidStack fluid) {
-        for (IGTRecipeInput fluidInput : fluidInputs) {
+        for (GTRecipeInput fluidInput : fluidInputs) {
             FluidStack fluidStack = fluidInput.getInputFluidStack();
             if (fluid.getFluid() == fluidStack.getFluid()) {
                 return fluidStack.isFluidEqual(fluid);
@@ -495,7 +495,7 @@ public class Recipe {
     }
 
     public boolean hasValidInputsForDisplay() {
-        for (IGTRecipeInput ingredient : inputs) {
+        for (GTRecipeInput ingredient : inputs) {
             if (ingredient.isOreDict()) {
                 if (OreDictionary.getOres(OreDictionary.getOreName(ingredient.getOreDict())).stream()
                         .anyMatch(s -> !s.isEmpty())) {

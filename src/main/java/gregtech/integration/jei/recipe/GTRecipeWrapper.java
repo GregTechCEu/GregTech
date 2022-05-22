@@ -6,7 +6,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.IGTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -53,7 +53,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
-            for (IGTRecipeInput recipeInput : recipe.getInputs()) {
+            for (GTRecipeInput recipeInput : recipe.getInputs()) {
                 if (recipeInput.isOreDict()) {
                     matchingInputs.add(OreDictionary.getOres(OreDictionary.getOreName(recipeInput.getOreDict())).stream()
                             .sorted(OreDictUnifier.getItemStackComparator())
@@ -69,7 +69,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getFluidInputs().isEmpty()) {
             List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
 
-            for (IGTRecipeInput fluidInput : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
                 FluidStack fluidStack = fluidInput.getInputFluidStack();
                 Collections.addAll(matchingFluidInputs, fluidStack);
             }
