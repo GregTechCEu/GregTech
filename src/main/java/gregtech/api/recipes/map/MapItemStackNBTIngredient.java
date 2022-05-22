@@ -37,6 +37,16 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         }
         if (obj instanceof MapItemStackNBTIngredient) {
             MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
+            if (this.matcher != null && other.matcher != null) {
+                if (!this.matcher.equals(other.matcher)) {
+                    return false;
+                }
+            }
+            if (this.condition != null && other.condition != null) {
+                if (!this.condition.equals(other.condition)) {
+                    return false;
+                }
+            }
             //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
             //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
             return ItemStack.areItemsEqual(stack, other.stack) && other.matcher.evaluate(this.stack, other.condition);

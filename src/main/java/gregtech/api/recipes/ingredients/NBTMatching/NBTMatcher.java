@@ -17,80 +17,87 @@ public class NBTMatcher {
      * Return true without checking if the NBT actually tags match or exists.
      */
     public static NBTMatcher ANY = new NBTMatcher() {
+
         @Override
-        public boolean evaluate(ItemStack stack, NBTcondition NBTcondition) {
+        public boolean evaluate(NBTTagCompound nbtTagCompound, NBTcondition NBTcondition) {
             return true;
         }
+
     };
 
     public static NBTMatcher LESS_THAN = new NBTMatcher() {
         @Override
-        public boolean keyValueMatches(Object stack, String nbtKey, Long value) {
-            return getKeyValue(stack, nbtKey) < value;
+        public boolean keyValueMatches(NBTTagCompound tagCompound, String nbtKey, Long value) {
+            return getKeyValue(tagCompound, nbtKey) < value;
         }
     };
 
     public static NBTMatcher LESS_THAN_OR_EQUALS = new NBTMatcher() {
         @Override
-        public boolean keyValueMatches(Object stack, String nbtKey, Long value) {
-            return getKeyValue(stack, nbtKey) <= value;
+        public boolean keyValueMatches(NBTTagCompound tagCompound, String nbtKey, Long value) {
+            return getKeyValue(tagCompound, nbtKey) <= value;
         }
     };
 
     public static NBTMatcher EQUALS = new NBTMatcher() {
         @Override
-        public boolean keyValueMatches(Object stack, String nbtKey, Long value) {
-            return getKeyValue(stack, nbtKey) == value;
+        public boolean keyValueMatches(NBTTagCompound tagCompound, String nbtKey, Long value) {
+            return getKeyValue(tagCompound, nbtKey) == value;
+        }
+    };
+
+    public static NBTMatcher NO_TAG_OR_EQUALS_ZERO = new NBTMatcher() {
+
+        @Override
+        public boolean evaluate(NBTTagCompound tagCompound, NBTcondition NBTcondition) {
+            if (tagCompound == null) {
+                return true;
+            }
+            return tagCompound.hasKey(NBTcondition.nbtKey) && tagCompound.getLong(NBTcondition.nbtKey) == 0L;
         }
     };
 
     public static NBTMatcher GREATER_THAN_OR_EQUALS = new NBTMatcher() {
         @Override
-        public boolean keyValueMatches(Object stack, String nbtKey, Long value) {
-            return getKeyValue(stack, nbtKey) >= value;
+        public boolean keyValueMatches(NBTTagCompound tagCompound, String nbtKey, Long value) {
+            return getKeyValue(tagCompound, nbtKey) >= value;
         }
     };
 
     public static NBTMatcher GREATER_THAN = new NBTMatcher() {
         @Override
-        public boolean keyValueMatches(Object stack, String nbtKey, Long value) {
-            return getKeyValue(stack, nbtKey) > value;
+        public boolean keyValueMatches(NBTTagCompound tagCompound, String nbtKey, Long value) {
+            return getKeyValue(tagCompound, nbtKey) > value;
         }
     };
 
-    public boolean hasKey(NBTTagCompound nbtTagCompound, String nbtKey) {
-        if (nbtTagCompound != null) {
-            return nbtTagCompound.hasKey(nbtKey);
+    public boolean hasKey(NBTTagCompound tagCompound, String nbtKey) {
+        if (tagCompound != null) {
+            return tagCompound.hasKey(nbtKey);
         }
         return false;
     }
 
-        public long getKeyValue(Object stack, String nbtKey) {
-        NBTTagCompound nbt = null;
-        if (stack instanceof ItemStack) {
-            nbt = ((ItemStack)stack).getTagCompound();
-        } else if (stack instanceof FluidStack) {
-            nbt = ((FluidStack)stack).tag;
-        }
-        if (nbt != null) {
-            return nbt.getLong(nbtKey);
+    public long getKeyValue(NBTTagCompound tagCompound, String nbtKey) {
+        if (tagCompound != null) {
+            return tagCompound.getLong(nbtKey);
         }
         return 0;
     }
 
     public boolean evaluate(ItemStack stack, NBTcondition NBTcondition) {
-        return hasKey(stack.getTagCompound(), NBTcondition.nbtKey) && keyValueMatches(stack, NBTcondition.nbtKey, NBTcondition.value);
+        return evaluate(stack.getTagCompound(), NBTcondition);
     }
 
     public boolean evaluate(FluidStack stack, NBTcondition NBTcondition) {
-        return hasKey(stack.tag, NBTcondition.nbtKey) && keyValueMatches(stack, NBTcondition.nbtKey, NBTcondition.value);
+        return evaluate(stack.tag, NBTcondition);
     }
 
     public boolean evaluate(NBTTagCompound nbtTagCompound, NBTcondition NBTcondition) {
         return hasKey(nbtTagCompound, NBTcondition.nbtKey) && keyValueMatches(nbtTagCompound, NBTcondition.nbtKey, NBTcondition.value);
     }
 
-    public boolean keyValueMatches(Object stack, String nbtKey, Long value) {
+    public boolean keyValueMatches(NBTTagCompound tagCompound, String nbtKey, Long value) {
         return false;
     }
 }

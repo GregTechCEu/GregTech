@@ -33,6 +33,16 @@ public class MapOreDictNBTIngredient extends MapOreDictIngredient {
         }
         if (obj instanceof MapOreDictNBTIngredient) {
             MapOreDictNBTIngredient other = (MapOreDictNBTIngredient) obj;
+            if (this.matcher != null && other.matcher != null) {
+                if (!this.matcher.equals(other.matcher)) {
+                    return false;
+                }
+            }
+            if (this.condition != null && other.condition != null) {
+                if (!this.condition.equals(other.condition)) {
+                    return false;
+                }
+            }
             if (ore == other.ore) {
                 return other.matcher.evaluate(this.nbtTagCompound, other.condition);
             }

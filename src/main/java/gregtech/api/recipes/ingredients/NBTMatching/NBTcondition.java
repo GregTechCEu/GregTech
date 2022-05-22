@@ -8,7 +8,7 @@ public class NBTcondition {
     String nbtKey;
     long value;
 
-    public static NBTcondition ANY;
+    public static NBTcondition ANY = new NBTcondition("ANY", 0);
 
     public NBTcondition(String nbtKey, long value) {
         this.nbtKey = nbtKey;
@@ -17,6 +17,6 @@ public class NBTcondition {
 
     @Override
     public String toString() {
-        return nbtKey + ":" + value;
+        return nbtKey + ": " + value;
     }
 }

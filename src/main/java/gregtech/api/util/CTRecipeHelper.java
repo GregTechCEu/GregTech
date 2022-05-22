@@ -8,6 +8,7 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
@@ -145,8 +146,8 @@ public class CTRecipeHelper {
                 if (nbt.length() > 0) {
                     builder.append(".withTag(").append(nbt).append(")");
                 }
-            } else if (ci.hasNBTMatchingCondition()) {
-                builder.append(".withTag(").append(ci.getNBTMatchingCondition().toString()).append(")");
+            } else if (ci.hasNBTMatchingCondition() && ci.getNBTMatcher() != NBTMatcher.ANY) {
+                builder.append(".withTag({").append(ci.getNBTMatchingCondition().toString()).append("})");
             }
         }
 
