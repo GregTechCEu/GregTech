@@ -104,4 +104,16 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         }
         return Objects.hash(inputStack.getFluid(), this.amount, this.nbtMatcher, this.nbtCondition, 0);
     }
+
+    @Override
+    public boolean equalIgnoreAmount(GTRecipeInput input) {
+        if (this == input) return true;
+        if (!(input instanceof GTRecipeFluidInput)) {
+            return false;
+        }
+        GTRecipeFluidInput other = (GTRecipeFluidInput) input;
+        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
+        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        return this.inputStack.isFluidEqual(other.inputStack);
+    }
 }

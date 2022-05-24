@@ -142,4 +142,19 @@ public class GTRecipeItemInput extends GTRecipeInput {
         }
         return true;
     }
+
+    @Override
+    public boolean equalIgnoreAmount(GTRecipeInput input) {
+        if (this == input) return true;
+        if (!(input instanceof GTRecipeItemInput)) return false;
+        GTRecipeItemInput other = (GTRecipeItemInput) input;
+
+        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
+        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+
+        if (this.inputStacks.length != other.inputStacks.length) return false;
+        for (int i = 0; i < this.inputStacks.length; i++) {
+            if (!ItemStack.areItemStacksEqual(this.inputStacks[i], other.inputStacks[i])) return false;
+        }
+        return true;    }
 }

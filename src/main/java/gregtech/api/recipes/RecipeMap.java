@@ -31,7 +31,6 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -370,7 +369,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         loop:
         for (GTRecipeInput item : input) {
             for (GTRecipeInput obj : list) {
-                if (item.equals(obj)) {
+                if (item.equalIgnoreAmount(obj)) {
                     continue loop;
                 }
             }

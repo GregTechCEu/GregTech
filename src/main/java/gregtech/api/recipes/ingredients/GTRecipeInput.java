@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Definition of ItemStacks, Ore dicts, of ingredients for
@@ -95,4 +96,13 @@ public abstract class GTRecipeInput {
     public boolean acceptsFluid(@Nullable FluidStack input) {
         return false;
     }
+
+    /**
+     * @return true if the input matches another input, while ignoring its amount field and
+     * non-consumable status.
+     *
+     * used for unique input matching in RecipeMap
+     * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(List) (GTRecipeInput)
+     */
+    public abstract boolean equalIgnoreAmount(GTRecipeInput input);
 }

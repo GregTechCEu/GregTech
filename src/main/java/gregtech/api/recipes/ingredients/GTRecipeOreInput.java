@@ -72,6 +72,8 @@ public class GTRecipeOreInput extends GTRecipeInput {
         return getFromCache((GTRecipeOreInput) recipeInput);
     }
 
+    //The items returned here are not updated after its first call, so they are not suitable for use while recipes are being processed and
+    //the OreDicts being modified.
     @Override
     public ItemStack[] getInputStacks() {
         if (this.inputStacks == null) {
@@ -127,6 +129,18 @@ public class GTRecipeOreInput extends GTRecipeInput {
         GTRecipeOreInput other = (GTRecipeOreInput) obj;
         if (this.amount != other.amount) return false;
         if (this.isConsumable != other.isConsumable) return false;
+        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
+        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        return ore == other.ore;
+    }
+
+    @Override
+    public boolean equalIgnoreAmount(GTRecipeInput input) {
+        if (this == input) return true;
+        if (!(input instanceof GTRecipeOreInput)) {
+            return false;
+        }
+        GTRecipeOreInput other = (GTRecipeOreInput) input;
         if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
         if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
         return ore == other.ore;
