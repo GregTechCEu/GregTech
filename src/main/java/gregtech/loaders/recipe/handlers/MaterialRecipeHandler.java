@@ -196,12 +196,12 @@ public class MaterialRecipeHandler {
                 dustStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
-                .inputs(GTRecipeItemInput.getOrCreate(new IntCircuitIngredient(1), 0).setNonConsumable())
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(dustStack)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .inputs(GTRecipeItemInput.getOrCreate(new IntCircuitIngredient(1)).setNonConsumable())
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(GTUtility.copyAmount(9, tinyDustStack))
                 .buildAndRegister();
     }
