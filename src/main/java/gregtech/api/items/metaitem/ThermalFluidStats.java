@@ -7,7 +7,7 @@ import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public class FluidStats implements IItemComponent, IItemCapabilityProvider {
+public class ThermalFluidStats implements IItemComponent, IItemCapabilityProvider {
 
     public final int capacity;
     public final int maxFluidTemperature;
@@ -17,7 +17,7 @@ public class FluidStats implements IItemComponent, IItemCapabilityProvider {
     private final boolean plasmaProof;
     public final boolean allowPartialFill;
 
-    public FluidStats(int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof, boolean allowPartialFill) {
+    public ThermalFluidStats(int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof, boolean allowPartialFill) {
         this.capacity = capacity;
         this.maxFluidTemperature = maxFluidTemperature;
         this.gasProof = gasProof;

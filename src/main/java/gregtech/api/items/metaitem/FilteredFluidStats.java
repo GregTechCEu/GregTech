@@ -1,7 +1,7 @@
 package gregtech.api.items.metaitem;
 
-import gregtech.api.capability.impl.SimpleThermalFluidHandlerItemStack;
-import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
+import gregtech.api.capability.impl.GTFluidHandlerItemStack;
+import gregtech.api.capability.impl.GTSimpleFluidHandlerItemStack;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.item.ItemStack;
@@ -25,14 +25,14 @@ public class FilteredFluidStats implements IItemComponent, IItemCapabilityProvid
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
         if (allowPartialFill) {
-            return new ThermalFluidHandlerItemStack(itemStack, capacity, Integer.MAX_VALUE, true, true, true, true) {
+            return new GTFluidHandlerItemStack(itemStack, capacity) {
                 @Override
                 public boolean canFillFluidType(FluidStack fluid) {
                     return super.canFillFluidType(fluid) && fillPredicate.apply(fluid);
                 }
             };
         }
-        return new SimpleThermalFluidHandlerItemStack(itemStack, capacity, Integer.MAX_VALUE, true, true, true, true) {
+        return new GTSimpleFluidHandlerItemStack(itemStack, capacity) {
             @Override
             public boolean canFillFluidType(FluidStack fluid) {
                 return super.canFillFluidType(fluid) && fillPredicate.apply(fluid);
