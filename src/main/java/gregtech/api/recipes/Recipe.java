@@ -275,9 +275,9 @@ public class Recipe {
         int hash = 0;
         for (GTRecipeInput recipeIngredient : this.inputs) {
             if (!recipeIngredient.isOreDict()) {
-                ItemStack is = recipeIngredient.getInputStack();
-                hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
-
+                for (ItemStack is : recipeIngredient.getInputStacks()) {
+                    hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
+                }
             } else {
                 hash = 31 * hash + recipeIngredient.getOreDict();
             }
@@ -289,10 +289,13 @@ public class Recipe {
         if (this.inputs.size() != otherRecipe.inputs.size()) return false;
         for (int i = 0; i < inputs.size(); i++) {
             if (!inputs.get(i).isOreDict() && !otherRecipe.inputs.get(i).isOreDict()) {
-                    if (!hashStrategy.equals(this.inputs.get(i).getInputStack(),
-                            otherRecipe.inputs.get(i).getInputStack())) {
+                for (int j = 0; i < inputs.get(i).getInputStacks().length; i++) {
+                    if (!hashStrategy.equals(this.inputs.get(i).getInputStacks()[j],
+                            otherRecipe.inputs.get(i).getInputStacks()[j])) {
                         return false;
-                    }} else if (inputs.get(i).isOreDict() && otherRecipe.inputs.get(i).isOreDict()) {
+                    }
+                }
+            } else if (inputs.get(i).isOreDict() && otherRecipe.inputs.get(i).isOreDict()) {
                 if (inputs.get(i).getOreDict() != otherRecipe.inputs.get(i).getOreDict()) {
                     return false;
                 }
@@ -500,10 +503,7 @@ public class Recipe {
                     return true;
                 }
             }
-            ItemStack stack = ingredient.getInputStack();
-            if (!stack.isEmpty()) {
-                return true;
-            }
+            return Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty());
         }
         return false;
     }

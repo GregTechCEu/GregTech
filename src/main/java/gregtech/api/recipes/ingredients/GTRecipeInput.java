@@ -64,7 +64,7 @@ public abstract class GTRecipeInput {
         return !isConsumable;
     }
 
-    public ItemStack getInputStack() {
+    public ItemStack[] getInputStacks() {
         return null;
     }
 

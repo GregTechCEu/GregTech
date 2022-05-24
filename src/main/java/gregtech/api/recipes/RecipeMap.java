@@ -751,14 +751,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             } else {
                 List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
-                NonNullList<ItemStack> lst = NonNullList.create();
-                ItemStack stack = r.getInputStack();
-                if (stack.getMetadata() == GTValues.W ) {
-                    stack.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
-                } else{
-                    lst.add(stack);
-                }
-                for (ItemStack s : lst) {
+
+                for (ItemStack s : r.getInputStacks()) {
                     if (r.hasNBTMatchingCondition()) {
                         ingredient = new MapItemStackNBTIngredient(s, r.getNBTMatcher(), r.getNBTMatchingCondition());
                     } else {

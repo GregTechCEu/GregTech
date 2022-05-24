@@ -150,7 +150,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             if (unlockComponents[i].isOreDict()){
                 this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
             } else {
-                this.unlockComponents.setStackInSlot(i, unlockComponents[i].getInputStack());
+                this.unlockComponents.setStackInSlot(i, (unlockComponents[i].getInputStacks()[0]));
             }
         }
     }

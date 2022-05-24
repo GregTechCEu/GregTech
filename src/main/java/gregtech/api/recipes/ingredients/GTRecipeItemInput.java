@@ -2,24 +2,40 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.GTValues;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 public class GTRecipeItemInput extends GTRecipeInput {
-    ItemStack inputStack;
-
-    protected GTRecipeItemInput(ItemStack stack) {
-        this.inputStack = stack;
-        amount = stack.getCount();
-    }
+    ItemStack[] inputStacks;
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
-        this.inputStack = stack;
-        this.inputStack.setCount(amount);
         this.amount = amount;
+        NonNullList<ItemStack> lst = NonNullList.create();
+        if (stack.getMetadata() == GTValues.W ) {
+            stack.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
+        } else{
+            lst.add(stack);
+        }
+        this.inputStacks = lst.stream().peek(is -> is.setCount(this.amount)).toArray(ItemStack[]::new);
+    }
+
+    protected GTRecipeItemInput(ItemStack[] stack, int amount) {
+        this.amount = amount;
+        this.inputStacks = Arrays.stream(stack).map(is -> {
+            is = is.copy();
+            is.setCount(this.amount);
+            return is;
+        }).toArray(ItemStack[]::new);
+    }
+
+    protected GTRecipeItemInput(ItemStack... stack) {
+        this(stack, stack[0].getCount());
     }
 
     public static GTRecipeItemInput getOrCreate(ItemStack stack, int amount) {
@@ -42,11 +58,11 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return getFromCache(new GTRecipeItemInput(ri.getInputStack(), i));
+        return getFromCache(new GTRecipeItemInput(ri.getInputStacks(), i));
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri) {
-        return getFromCache(new GTRecipeItemInput(ri.getInputStack()));
+        return getFromCache(new GTRecipeItemInput(ri.getInputStacks()));
     }
 
     public static GTRecipeInput getOrCreate(ItemStack ri) {
@@ -54,7 +70,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     protected GTRecipeItemInput copy() {
-        GTRecipeItemInput copy = new GTRecipeItemInput(this.inputStack, this.amount);
+        GTRecipeItemInput copy = new GTRecipeItemInput(this.inputStacks, this.amount);
         copy.isConsumable = this.isConsumable;
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;
@@ -67,8 +83,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     @Override
-    public ItemStack getInputStack() {
-        return this.inputStack;
+    public ItemStack[] getInputStacks() {
+        return this.inputStacks;
     }
 
     @Override
@@ -86,10 +102,10 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        if (this.inputStack.getItem() == input.getItem()) {
-            int meta = inputStack.getMetadata();
+        if (this.inputStacks[0].getItem() == input.getItem()) {
+            int meta = inputStacks[0].getMetadata();
             if (meta == GTValues.W || meta == input.getMetadata()) {
-                return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(this.inputStack, input) : nbtMatcher.evaluate(input, nbtCondition));
+                return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(this.inputStacks[0], input) : nbtMatcher.evaluate(input, nbtCondition));
             }
         }
         return false;
@@ -98,9 +114,15 @@ public class GTRecipeItemInput extends GTRecipeInput {
     @Override
     public int hashCode() {
         if (nbtMatcher == null) {
-            return Objects.hash(inputStack.getItem(), inputStack.getMetadata(), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, inputStack.getTagCompound());
+            return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem),
+                    Arrays.stream(inputStacks).map(ItemStack::getMetadata),
+                    this.amount, this.nbtMatcher, this.nbtCondition, isConsumable,
+                    Arrays.stream(inputStacks).map(ItemStack::getTagCompound));
         }
-        return Objects.hash(inputStack.getItem(), inputStack.getMetadata(), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, 0);
+        return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem),
+                Arrays.stream(inputStacks).map(ItemStack::getMetadata),
+                this.amount, this.nbtMatcher, this.nbtCondition, isConsumable,
+                0);
     }
 
     @Override
@@ -114,6 +136,10 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
         if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
 
-        return this.getInputStack().isItemEqual(other.getInputStack()) && ItemStack.areItemStackTagsEqual(this.getInputStack(), other.getInputStack());
+        if (this.inputStacks.length != other.inputStacks.length) return false;
+        for (int i = 0; i < this.inputStacks.length; i++) {
+            if (!ItemStack.areItemStacksEqual(this.inputStacks[i], other.inputStacks[i])) return false;
+        }
+        return true;
     }
 }

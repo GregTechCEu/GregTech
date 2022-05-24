@@ -12,9 +12,11 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 public class GTRecipeOreInput extends GTRecipeInput {
     int ore;
+    ItemStack[] inputStacks;
 
     protected GTRecipeOreInput(String ore, int amount) {
         this.ore = OreDictionary.getOreID(ore);
@@ -71,8 +73,15 @@ public class GTRecipeOreInput extends GTRecipeInput {
     }
 
     @Override
-    public ItemStack getInputStack() {
-        return ItemStack.EMPTY;
+    public ItemStack[] getInputStacks() {
+        if (this.inputStacks == null) {
+            inputStacks = (OreDictionary.getOres(OreDictionary.getOreName(ore)).stream().map(is -> {
+                is = is.copy();
+                is.setCount(this.amount);
+                return is;
+            })).toArray(ItemStack[]::new);
+        }
+        return inputStacks;
     }
 
     @Override

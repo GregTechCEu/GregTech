@@ -118,15 +118,17 @@ public class CTRecipeHelper {
         StringBuilder builder = new StringBuilder();
         ItemStack itemStack = null;
         String itemId = null;
-        ItemStack item = ci.getInputStack();
-        itemId = getMetaItemId(item);
-        if (itemId != null) {
-            builder.append("<metaitem:")
-                    .append(itemId)
-                    .append(">");
-            itemStack = item;
-        } else if (itemStack == null) {
-            itemStack = item;
+        for (ItemStack item : ci.getInputStacks()) {
+            itemId = getMetaItemId(item);
+            if (itemId != null) {
+                builder.append("<metaitem:")
+                        .append(itemId)
+                        .append(">");
+                itemStack = item;
+                break;
+            } else if (itemStack == null) {
+                itemStack = item;
+            }
         }
         if (itemStack != null) {
             if (itemId == null) {
@@ -146,8 +148,6 @@ public class CTRecipeHelper {
                 if (nbt.length() > 0) {
                     builder.append(".withTag(").append(nbt).append(")");
                 }
-            } else if (ci.hasNBTMatchingCondition() && ci.getNBTMatcher() != NBTMatcher.ANY) {
-                builder.append(".withTag({").append(ci.getNBTMatchingCondition().toString()).append("})");
             }
         }
 

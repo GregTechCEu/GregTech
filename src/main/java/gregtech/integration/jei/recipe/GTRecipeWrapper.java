@@ -54,17 +54,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
             for (GTRecipeInput recipeInput : recipe.getInputs()) {
-                if (recipeInput.isOreDict()) {
-                    matchingInputs.add(OreDictionary.getOres(OreDictionary.getOreName(recipeInput.getOreDict())).stream()
-                            .sorted(OreDictUnifier.getItemStackComparator())
-                            .map( is -> {
-                                is = is.copy();
-                                is.setCount(recipeInput.getAmount());
-                                return is;
-                            }).collect(Collectors.toList()));
-                } else {
-                    matchingInputs.add(Collections.singletonList(recipeInput.getInputStack().copy()));
-                }
+                matchingInputs.add(Arrays.stream(recipeInput.getInputStacks())
+                        .map(ItemStack::copy)
+                        .collect(Collectors.toList()));
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
         }
