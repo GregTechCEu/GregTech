@@ -1,5 +1,6 @@
 package gregtech.api.recipes.ingredients;
 
+import gregtech.api.GTValues;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -17,6 +18,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
         this.inputStack = stack;
+        this.inputStack.setCount(amount);
         this.amount = amount;
     }
 
@@ -84,8 +86,11 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        if (this.inputStack.getItem() == input.getItem() && this.inputStack.getMetadata() == input.getMetadata()) {
-            return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(this.inputStack, input) : nbtMatcher.evaluate(input, nbtCondition));
+        if (this.inputStack.getItem() == input.getItem()) {
+            int meta = inputStack.getMetadata();
+            if (meta == GTValues.W || meta == input.getMetadata()) {
+                return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(this.inputStack, input) : nbtMatcher.evaluate(input, nbtCondition));
+            }
         }
         return false;
     }

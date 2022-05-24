@@ -30,6 +30,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -749,18 +751,26 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             } else {
                 List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
+                NonNullList<ItemStack> lst = NonNullList.create();
                 ItemStack stack = r.getInputStack();
-                if (r.hasNBTMatchingCondition()) {
-                    ingredient = new MapItemStackNBTIngredient(stack, r.getNBTMatcher(), r.getNBTMatchingCondition());
-                } else {
-                    ingredient = new MapItemStackIngredient(stack);
+                if (stack.getMetadata() == GTValues.W ) {
+                    stack.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
+                } else{
+                    lst.add(stack);
                 }
-                WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
-                if (cached != null && cached.get() != null) {
-                    inner.add(cached.get());
-                } else {
-                    ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                    inner.add(ingredient);
+                for (ItemStack s : lst) {
+                    if (r.hasNBTMatchingCondition()) {
+                        ingredient = new MapItemStackNBTIngredient(s, r.getNBTMatcher(), r.getNBTMatchingCondition());
+                    } else {
+                        ingredient = new MapItemStackIngredient(s);
+                    }
+                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                    if (cached != null && cached.get() != null) {
+                        inner.add(cached.get());
+                    } else {
+                        ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
+                        inner.add(ingredient);
+                    }
                 }
                 list.add(inner);
             }
@@ -770,15 +780,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
         AbstractMapIngredient ingredient;
         for (ItemStack t : ingredients) {
+            int meta = t.getMetadata();
+            NBTTagCompound nbt = t.getTagCompound();
+
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(1);
-            ls.add(new MapItemStackIngredient(t));
+            ls.add(new MapItemStackIngredient(t, meta, nbt));
             for (Integer i : OreDictionary.getOreIDs(t)) {
                 ingredient = new MapOreDictIngredient(i);
                 ls.add(ingredient);
-                ingredient = new MapOreDictNBTIngredient(i, t.getTagCompound());
+                ingredient = new MapOreDictNBTIngredient(i, nbt);
                 ls.add(ingredient);
             }
-            ls.add(new MapItemStackNBTIngredient(t));
+            ls.add(new MapItemStackNBTIngredient(t, meta, nbt));
             if (ls.size() > 0) {
                 list.add(ls);
             }

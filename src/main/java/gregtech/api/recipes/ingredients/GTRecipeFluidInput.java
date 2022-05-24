@@ -18,6 +18,7 @@ public class GTRecipeFluidInput extends GTRecipeInput {
 
     public GTRecipeFluidInput(FluidStack inputStack, int amount) {
         this.inputStack = inputStack;
+        this.inputStack.amount = amount;
         this.amount = amount;
     }
 

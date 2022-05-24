@@ -3,6 +3,7 @@ package gregtech.api.recipes.map;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTcondition;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 
@@ -18,15 +19,14 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         this.condition = condition;
     }
 
-    public MapItemStackNBTIngredient(ItemStack stack) {
-        super(stack);
-        this.stack = stack;
+    public MapItemStackNBTIngredient(ItemStack stack, int meta, NBTTagCompound tag) {
+        super(stack, meta, tag);
     }
 
     @Override
     protected int hash() {
         int hash = stack.getItem().hashCode() * 31;
-        hash += 31 * stack.getMetadata();
+        hash += 31 * meta;
         return hash;
     }
 

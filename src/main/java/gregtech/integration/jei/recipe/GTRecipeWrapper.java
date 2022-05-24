@@ -57,7 +57,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 if (recipeInput.isOreDict()) {
                     matchingInputs.add(OreDictionary.getOres(OreDictionary.getOreName(recipeInput.getOreDict())).stream()
                             .sorted(OreDictUnifier.getItemStackComparator())
-                            .map(ItemStack::copy).collect(Collectors.toList()));
+                            .map( is -> {
+                                is = is.copy();
+                                is.setCount(recipeInput.getAmount());
+                                return is;
+                            }).collect(Collectors.toList()));
                 } else {
                     matchingInputs.add(Collections.singletonList(recipeInput.getInputStack().copy()));
                 }
