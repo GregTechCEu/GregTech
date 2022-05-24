@@ -13,12 +13,12 @@ import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
-import gregtech.client.utils.TrackedDummyWorld;
-import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.ItemStackKey;
+import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
+import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TrackedDummyWorld;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
@@ -252,10 +252,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         List<ItemStack> parts = this.patterns[currentRendererPage].parts;
         int limit = Math.min(parts.size(), MAX_PARTS);
-        for (int i = 0; i < limit; ++i)
+        for (int i = 0; i < limit; ++i) {
             itemStackGroup.set(i, parts.get(i));
-        for (int i = parts.size(); i < limit; ++i)
+        }
+        for (int i = parts.size(); i < MAX_PARTS; ++i) {
             itemStackGroup.set(i, (ItemStack) null);
+        }
     }
 
     @Override
