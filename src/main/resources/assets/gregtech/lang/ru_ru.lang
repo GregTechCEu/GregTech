@@ -508,68 +508,68 @@ metaitem.circuit.good_electronic.name=Хорошая электронная ми
 metaitem.circuit.good_electronic.tooltip=Ваша вторая микросхема/n§cMV уровень
 
 # T2: Integrated
-metaitem.circuit.basic_integrated.name=Базовая электросхема
-metaitem.circuit.basic_integrated.tooltip=Меньше и мощнее/n§6LV-Tier
-metaitem.circuit.good_integrated.name=Хорошая интегральная микросхема
-metaitem.circuit.good_integrated.tooltip=Меньше и мощнее/n§6MV-Tier
-metaitem.circuit.advanced_integrated.name=Продвинутая интегральная микросхема
-metaitem.circuit.advanced_integrated.tooltip=Меньше и мощнее/n§6HV-Tier
+metaitem.circuit.basic_integrated.name=Обычная интегральная схема
+metaitem.circuit.basic_integrated.tooltip=Меньше и мощнее/n§6LV уровень
+metaitem.circuit.good_integrated.name=Хорошая интегральная схема
+metaitem.circuit.good_integrated.tooltip=Меньше и мощнее/n§6MV уровень
+metaitem.circuit.advanced_integrated.name=Улучшенная интегральная схема
+metaitem.circuit.advanced_integrated.tooltip=Меньше и мощнее/n§6HV уровень
 
 # Misc
-metaitem.circuit.nand_chip.name=NAND Chip
-metaitem.circuit.nand_chip.tooltip=Превосходная простая микросхема/n§6ULV-Tier
+metaitem.circuit.nand_chip.name=NAND чип
+metaitem.circuit.nand_chip.tooltip=Превосходная простая микросхема/n§6ULV уровень
 metaitem.circuit.microprocessor.name=Микропроцессор
-metaitem.circuit.microprocessor.tooltip=Улучшенная обычная микросхема/n§eLV-Tier
+metaitem.circuit.microprocessor.tooltip=Улучшенная обычная микросхема/n§eLV уровень
 
 # T3: Processor
-metaitem.circuit.processor.name=Интегрированный процессор
-metaitem.circuit.processor.tooltip=Удивительная скорость вычислений!/n§eMV-Tier
+metaitem.circuit.processor.name=Интегриральный микропроцессор
+metaitem.circuit.processor.tooltip=Удивительная скорость вычислений!/n§eMV уровень
 metaitem.circuit.assembly.name=Вычислительный блок
-metaitem.circuit.assembly.tooltip=Невероятная скорость вычислений!/n§eHV-Tier
-metaitem.circuit.workstation.name=Workstation
-metaitem.circuit.workstation.tooltip=Невероятная скорость вычислений!/n§eEV-Tier
+metaitem.circuit.assembly.tooltip=Невероятная скорость вычислений!/n§eHV уровень
+metaitem.circuit.workstation.name=Суперкомпьютер
+metaitem.circuit.workstation.tooltip=Невероятная скорость вычислений!/n§eEV уровень
 metaitem.circuit.mainframe.name=Мейнфрейм
-metaitem.circuit.mainframe.tooltip=Удивительная скорость вычислений!/n§eIV-Tier
+metaitem.circuit.mainframe.tooltip=Удивительная скорость вычислений!/n§eIV уровень
 
 # T4: Nano
 metaitem.circuit.nano_processor.name=Нанопроцессор
-metaitem.circuit.nano_processor.tooltip=Меньше, чем когда-либо/n§bHV-Tier
+metaitem.circuit.nano_processor.tooltip=Меньше, чем когда-либо/n§bHV уровень
 metaitem.circuit.nano_assembly.name=Нанопроцессорный вычислительный блок
-metaitem.circuit.nano_assembly.tooltip=Меньше, чем когда-либо/n§bEV-Tier
-metaitem.circuit.nano_computer.name=Нано Суперкомпьютер
-metaitem.circuit.nano_computer.tooltip=Меньше, чем когда-либо/n§bIV-Tier
+metaitem.circuit.nano_assembly.tooltip=Меньше, чем когда-либо/n§bEV уровень
+metaitem.circuit.nano_computer.name=Наносуперкомпьютер
+metaitem.circuit.nano_computer.tooltip=Меньше, чем когда-либо/n§bIV уровень
 metaitem.circuit.nano_mainframe.name=Нанопроцессорный мейнфрейм
-metaitem.circuit.nano_mainframe.tooltip=Меньше, чем когда-либо/n§bLuV-Tier
+metaitem.circuit.nano_mainframe.tooltip=Меньше, чем когда-либо/n§bLuV уровень
 
 # T5: Quantum
 metaitem.circuit.quantum_processor.name=Квантовый процессор
-metaitem.circuit.quantum_processor.tooltip=Квантовые вычисления оживают!/n§aEV-Tier
+metaitem.circuit.quantum_processor.tooltip=Квантовые вычисления оживают!/n§aEV уровень
 metaitem.circuit.quantum_assembly.name=Квантовый вычислительный блок
-metaitem.circuit.quantum_assembly.tooltip=Квантовые вычисления оживают!/n§aIV-Tier
+metaitem.circuit.quantum_assembly.tooltip=Квантовые вычисления оживают!/n§aIV уровень
 metaitem.circuit.quantum_computer.name=Квантовый cуперкомпьютер
-metaitem.circuit.quantum_computer.tooltip=Квантовые вычисления оживают!/n§aLuV-Tier
-metaitem.circuit.quantum_mainframe.name=Квантовопроцессорный мейнфрейм
-metaitem.circuit.quantum_mainframe.tooltip=Квантовые вычисления оживают!/n§aZPM-Tier
+metaitem.circuit.quantum_computer.tooltip=Квантовые вычисления оживают!/n§aLuV уровень
+metaitem.circuit.quantum_mainframe.name=Квантовый мейнфрейм
+metaitem.circuit.quantum_mainframe.tooltip=Квантовые вычисления оживают!/n§aZPM уровень
 
 # T6: Crystal
 metaitem.circuit.crystal_processor.name=Кристальный процессор
-metaitem.circuit.crystal_processor.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9IV-Tier
-metaitem.circuit.crystal_assembly.name=Кристально-процессорный вычислительный блок
-metaitem.circuit.crystal_assembly.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9LuV-Tier
+metaitem.circuit.crystal_processor.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9IV уровень
+metaitem.circuit.crystal_assembly.name=Кристальный вычислительный блок
+metaitem.circuit.crystal_assembly.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9LuV уровень
 metaitem.circuit.crystal_computer.name=Кристальный суперкомпьютер
-metaitem.circuit.crystal_computer.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9ZPM-Tier
-metaitem.circuit.crystal_mainframe.name=Кристально-процессорный мейнфрейм
-metaitem.circuit.crystal_mainframe.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9UV-Tier
+metaitem.circuit.crystal_computer.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9ZPM уровень
+metaitem.circuit.crystal_mainframe.name=Кристальный мейнфрейм
+metaitem.circuit.crystal_mainframe.tooltip=Воспользуйтесь преимуществом гравировки кристаллов/n§9UV уровень
 
 # T7: Wetware
-metaitem.circuit.wetware_processor.name=Нейронный процессор
-metaitem.circuit.wetware_processor.tooltip=Вам кажется, что он наблюдает за вами/n§4LuV-Tier
-metaitem.circuit.wetware_assembly.name=Нейронный вычислительный блок
-metaitem.circuit.wetware_assembly.tooltip=Может запускать Minecraft/n§4ZPM-Tier
-metaitem.circuit.wetware_computer.name=Нейронный суперкомпьютер
-metaitem.circuit.wetware_computer.tooltip=Окончательное слияние Плоти и Машины/n§4UV-Tier
-metaitem.circuit.wetware_mainframe.name=Нейронный мейнфрейм
-metaitem.circuit.wetware_mainframe.tooltip=Лучший человек, которого когда-либо видел/n§4UHV-Tier
+metaitem.circuit.wetware_processor.name=Органический процессор
+metaitem.circuit.wetware_processor.tooltip=Вам кажется, что он наблюдает за вами/n§4LuV уровень
+metaitem.circuit.wetware_assembly.name=Органический вычислительный блок
+metaitem.circuit.wetware_assembly.tooltip=Может запускать Minecraft/n§4ZPM уровень
+metaitem.circuit.wetware_computer.name=Органический суперкомпьютер
+metaitem.circuit.wetware_computer.tooltip=Окончательное слияние Плоти и Машины/n§4UV уровень
+metaitem.circuit.wetware_mainframe.name=Органический мейнфрейм
+metaitem.circuit.wetware_mainframe.tooltip=Лучшее, что когда-либо видел человек/n§4UHV уровень
 metaitem.stem_cells.name=Стволовые клетки
 metaitem.stem_cells.tooltip=Сырой интеллект
 metaitem.processor.neuro.name=Блок нейропроцессинга
