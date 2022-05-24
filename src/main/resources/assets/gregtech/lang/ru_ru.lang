@@ -502,10 +502,10 @@ metaitem.plate.system_on_chip.name=SoC
 metaitem.plate.system_on_chip.tooltip=Система в чипе
 
 # T1: Electronic
-metaitem.circuit.electronic.name=Базовая микросхема
-metaitem.circuit.electronic.tooltip=Ваша первая микросхема/n§cLV-уровень
-metaitem.circuit.good_electronic.name=Хорошая электросхема
-metaitem.circuit.good_electronic.tooltip=Ваша вторая микросхема/n§cMV-Tier
+metaitem.circuit.electronic.name=Обычная электронная микросхема
+metaitem.circuit.electronic.tooltip=Ваша первая микросхема/n§cLV уровень
+metaitem.circuit.good_electronic.name=Хорошая электронная микросхема
+metaitem.circuit.good_electronic.tooltip=Ваша вторая микросхема/n§cMV уровень
 
 # T2: Integrated
 metaitem.circuit.basic_integrated.name=Базовая электросхема
@@ -1942,16 +1942,16 @@ gregtech.machine.transformer.zpm.name=Трансформатор (§fZPM§r)
 gregtech.machine.transformer.uv.name=Трансформатор (§3UV§r)
 
 # Зарядники
-gregtech.machine.charger.ulv.name=Зарядное устройство очень низкого напряжения (ULV)
-gregtech.machine.charger.lv.name=Зарядное устройство низкого напряжения (LV)
-gregtech.machine.charger.mv.name=Зарядное устройство среднего напряжения (MV)
-gregtech.machine.charger.hv.name=Зарядное устройство высокого напряжения (HV)
-gregtech.machine.charger.ev.name=Зарядное устройство экстремального напряжения (EV)
-gregtech.machine.charger.iv.name=Зарядное устройство безумного напряжения (IV)
-gregtech.machine.charger.luv.name=Зарядное устройство абсурдного напряжения (LuV)
-gregtech.machine.charger.zpm.name=Зарядное устройство напряжения модуля нулевой точки (ZPM)
-gregtech.machine.charger.uv.name=Зарядное устройство предельного напряжения (UV)
-gregtech.machine.charger.max.name=Зарядное устройство максимального напряжения (MAX)
+gregtech.machine.charger.ulv.name=Зарядное устройство (§8ULV§r)
+gregtech.machine.charger.lv.name=Зарядное устройство (§7LV§r)
+gregtech.machine.charger.mv.name=Зарядное устройство (§bMV§r)
+gregtech.machine.charger.hv.name=Зарядное устройство (§6HV§r)
+gregtech.machine.charger.ev.name=Зарядное устройство (§5EV§r)
+gregtech.machine.charger.iv.name=Зарядное устройство (§1IV§r)
+gregtech.machine.charger.luv.name=Зарядное устройство (§dLuV§r)
+gregtech.machine.charger.zpm.name=Зарядное устройство (§fZPM§r)
+gregtech.machine.charger.uv.name=Зарядное устройство (§3UV§r)
+gregtech.machine.charger.max.name=Зарядное устройство (§cMAX§r)
 
 # Насосы
 gregtech.machine.pump.tooltip_range=Зона действия: %dx%d
@@ -2817,11 +2817,11 @@ gregtech.machine.transformer.uev.name=Трансформатор (§aUEV§r)
 gregtech.machine.transformer.uiv.name=Трансформатор (§2UIV§r)
 gregtech.machine.transformer.umv.name=UMV Voltage Transformer
 gregtech.machine.transformer.uxv.name=Трансформатор (§eUXV§r)
-gregtech.machine.charger.uhv.name=UHV Voltage Battery Charger
-gregtech.machine.charger.uev.name=UEV Voltage Battery Charger
-gregtech.machine.charger.uiv.name=UIV Voltage Battery Charger
+gregtech.machine.charger.uhv.name=Зарядное устройство (§4UHV§R)
+gregtech.machine.charger.uev.name=Зарядное устройство (§aUEV§r)
+gregtech.machine.charger.uiv.name=Зарядное устройство (§2UIV§r)
 gregtech.machine.charger.umv.name=UMV Voltage Battery Charger
-gregtech.machine.charger.uxv.name=UXV Voltage Battery Charger
+gregtech.machine.charger.uxv.name=Зарядное устройство (§eUXV§r)
 gregtech.machine.pump.iv.name=Превосходный насос
 gregtech.machine.pump.luv.name=Превосходный насос II
 gregtech.machine.pump.zpm.name=Elite Pump III
@@ -4391,3 +4391,21 @@ gregtech.machine.transformer.adjustable.opv.name=Трансформатор (§9
 
 # Diodes
 gregtech.machine.diode.message=Макс. пропускная способность: %s
+gregtech.machine.diode.tooltip_general=Простой диод, пропускающий электричество лишь в одном направлении.
+gregtech.machine.diode.tooltip_tool_usage=Ударьте Киянкой, чтобы изменить силу тока.
+gregtech.machine.diode.ulv.name=Диод (§8ULV§r)
+gregtech.machine.diode.lv.name=Диод (§7LV§r)
+gregtech.machine.diode.mv.name=Диод (§bMV§r)
+gregtech.machine.diode.hv.name=Диод (§6HV§r)
+gregtech.machine.diode.ev.name=Диод (§5EV§r)
+gregtech.machine.diode.iv.name=Диод (§1IV§r)
+gregtech.machine.diode.luv.name=Диод (§dLuV§r)
+gregtech.machine.diode.zpm.name=Диод (§fZPM§r)
+gregtech.machine.diode.uv.name=Диод (§3UV§r)
+gregtech.machine.diode.uhv.name=Диод (§4UHV§R)
+gregtech.machine.diode.uev.name=Диод (§aUEV§r)
+gregtech.machine.diode.uiv.name=Диод (§2UIV§r)
+gregtech.machine.diode.uxv.name=Диод (§eUXV§r)
+gregtech.machine.diode.opv.name=Диод (§9OpV§r)
+gregtech.machine.diode.max.name=Диод (MAX)
+gregtech.machine.charger.opv.name=Зарядное устройство (§9OpV§r)
