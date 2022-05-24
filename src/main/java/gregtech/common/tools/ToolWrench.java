@@ -43,8 +43,7 @@ public class ToolWrench extends ToolBase {
                 || blockState.getMaterial() == Material.PISTON
                 || block == Blocks.HOPPER
                 || block == Blocks.DISPENSER
-                || block == Blocks.DROPPER
-                || blockState.getMaterial() == Material.IRON;
+                || block == Blocks.DROPPER;
     }
 
     @Override
