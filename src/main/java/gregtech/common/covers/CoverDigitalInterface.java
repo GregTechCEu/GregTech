@@ -212,7 +212,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public void onAttached(ItemStack itemStack) { // called when cover placed.
+    public void onAttached(ItemStack itemStack, EntityPlayer player) { // called when cover placed.
         if (getFluidCapability() != null) {
             fluids = new FluidTankProperties[getFluidCapability().getTankProperties().length];
             this.mode = MODE.FLUID;
@@ -224,6 +224,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         } else if (getMachineCapability() != null) {
             this.mode = MODE.MACHINE;
         }
+        this.spin = player.getHorizontalFacing();
     }
 
     @Override
