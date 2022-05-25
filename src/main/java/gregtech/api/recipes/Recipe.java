@@ -289,6 +289,7 @@ public class Recipe {
         if (this.inputs.size() != otherRecipe.inputs.size()) return false;
         for (int i = 0; i < inputs.size(); i++) {
             if (!inputs.get(i).isOreDict() && !otherRecipe.inputs.get(i).isOreDict()) {
+                if (inputs.get(i).getInputStacks().length != otherRecipe.inputs.get(i).getInputStacks().length) return false;
                 for (int j = 0; j < inputs.get(i).getInputStacks().length; j++) {
                     if (!hashStrategy.equals(this.inputs.get(i).getInputStacks()[j],
                             otherRecipe.inputs.get(i).getInputStacks()[j])) {
