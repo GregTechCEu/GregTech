@@ -39,11 +39,6 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
 
     @Override
     public String toString() {
-        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + '}';
-    }
-
-    @Override
-    public boolean isSpecialIngredient() {
-        return false;
+        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + "} {meta=" + meta + "} {tag=" + tag + "}";
     }
 }

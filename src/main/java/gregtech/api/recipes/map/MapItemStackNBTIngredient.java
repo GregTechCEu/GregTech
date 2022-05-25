@@ -56,7 +56,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
 
     @Override
     public String toString() {
-        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + '}';
+        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + "}" + "{meta=" + meta + "} {matcher=" + matcher + "}" + "{condition=" + condition + "}";
     }
 
     @Override

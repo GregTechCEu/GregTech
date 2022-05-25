@@ -44,8 +44,6 @@ public class MapFluidIngredient extends AbstractMapIngredient {
     @Override
     public String toString() {
         return "MapFluidIngredient{" +
-                "fluid=" + fluid.getName() +
-                ", tag=" + tag +
-                '}';
+                "{fluid=" + fluid.getName() + "} {tag=" + tag + "}";
     }
 }
