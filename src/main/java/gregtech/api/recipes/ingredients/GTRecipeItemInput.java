@@ -15,23 +15,20 @@ public class GTRecipeItemInput extends GTRecipeInput {
     ItemStack[] inputStacks;
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
-        this.amount = amount;
-        NonNullList<ItemStack> lst = NonNullList.create();
-        if (stack.getMetadata() == GTValues.W ) {
-            stack.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
-        } else{
-            lst.add(stack);
-        }
-        this.inputStacks = lst.stream().peek(is -> is.setCount(this.amount)).toArray(ItemStack[]::new);
+        this(new ItemStack[]{stack}, amount);
     }
 
     protected GTRecipeItemInput(ItemStack[] stack, int amount) {
         this.amount = amount;
-        this.inputStacks = Arrays.stream(stack).map(is -> {
-            is = is.copy();
-            is.setCount(this.amount);
-            return is;
-        }).toArray(ItemStack[]::new);
+        NonNullList<ItemStack> lst = NonNullList.create();
+        for (ItemStack is : stack) {
+            if (is.getMetadata() == GTValues.W ) {
+                is.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
+            } else{
+                lst.add(is);
+            }
+        }
+        this.inputStacks = lst.stream().peek(is -> is.setCount(this.amount)).toArray(ItemStack[]::new);
     }
 
     protected GTRecipeItemInput(ItemStack... stack) {
