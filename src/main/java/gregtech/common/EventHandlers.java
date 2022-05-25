@@ -4,8 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
@@ -123,10 +123,12 @@ public class EventHandlers {
         if (event.canHarvest()) {
             ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
             String tool = event.getTargetBlock().getBlock().getHarvestTool(event.getTargetBlock());
-            if ("wrench".equals(tool))
-                tool = "pickaxe";
+            if (!canMineWithPick(tool)) {
+                return;
+            }
+            tool = "pickaxe";
             int harvestLevel = event.getTargetBlock().getBlock().getHarvestLevel(event.getTargetBlock());
-            if (tool != null && !item.isEmpty() && harvestLevel > item.getItem().getHarvestLevel(item, tool, event.getEntityPlayer(), event.getTargetBlock())) {
+            if (!item.isEmpty() && harvestLevel > item.getItem().getHarvestLevel(item, tool, event.getEntityPlayer(), event.getTargetBlock())) {
                 event.setCanHarvest(false);
             }
         }
@@ -136,13 +138,13 @@ public class EventHandlers {
     public static void onDestroySpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
         ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
         String tool = event.getState().getBlock().getHarvestTool(event.getState());
-        if (tool != null && !item.isEmpty() && tool.equals("wrench") && item.getItem().getToolClasses(item).contains("pickaxe")) {
-            if (event.getNewSpeed() <= 0) {
-                event.setNewSpeed(event.getOriginalSpeed() * 0.75f);
-            } else {
-                event.setNewSpeed(event.getNewSpeed() * 0.75f);
-            }
+        if (tool != null && !item.isEmpty() && canMineWithPick(tool) && item.getItem().getToolClasses(item).contains("pickaxe")) {
+            event.setNewSpeed(event.getNewSpeed() * 0.75f);
         }
+    }
+
+    public static boolean canMineWithPick(String tool) {
+        return "wrench".equals(tool) || "cutter".equals(tool);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
