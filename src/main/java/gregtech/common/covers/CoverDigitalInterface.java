@@ -302,7 +302,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             lastClickUUID = playerIn.getPersistentID();
             if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
                 if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
-                    int maxSlotLimit = 0;
+                    int maxSlotLimit = Integer.MAX_VALUE;
                     if(this.coverHolder instanceof MetaTileEntity) {
                         maxSlotLimit = this.mode == MODE.ITEM ? ((MetaTileEntity) this.coverHolder).getImportItems().getSlots() :
                                 ((MetaTileEntity) this.coverHolder).getImportFluids().getTanks();
