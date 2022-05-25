@@ -650,6 +650,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Loop through NUMBER_OF_INGREDIENTS times.
         List<AbstractMapIngredient> current = ingredients.get(index);
         Either<Recipe, Branch> r;
+        final Branch branchRight = new Branch();
         for (AbstractMapIngredient obj : current) {
             Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
             if (obj.isSpecialIngredient()) {
@@ -677,7 +678,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     }
                     return v;
                 } else if (v == null) {
-                    v = Either.right(new Branch());
+                    v = Either.right(branchRight);
                 }
                 return v;
             });

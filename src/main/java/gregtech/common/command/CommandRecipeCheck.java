@@ -225,9 +225,12 @@ public class CommandRecipeCheck extends CommandBase {
     public String prettyPrintCountableIngredient(GTRecipeInput recipeInput) {
         StringBuilder output = new StringBuilder();
         if (recipeInput.isOreDict()) {
-            output.append("(OreDict) ");
+            output.append("(OreDict: ")
+                    .append("\"")
+                    .append(OreDictionary.getOreName(recipeInput.getOreDict()))
+                    .append("\")");
         }
-        output.append("{");
+        output.append(" { ");
 
         ItemStack[] matchingStacks = recipeInput.getInputStacks();
 
