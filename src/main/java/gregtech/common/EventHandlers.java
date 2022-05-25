@@ -10,9 +10,11 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.armor.IStepAssist;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -28,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -43,12 +46,16 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
 
     private static final String HAS_TERMINAL = GTValues.MODID + ".terminal";
+    private static ItemStack lastFeetEquip = ItemStack.EMPTY;
 
     @SubscribeEvent
     public static void onEndermanTeleportEvent(EnderTeleportEvent event) {
@@ -162,11 +169,12 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event) {
-        if (event.getFrom().isEmpty())
+        EntityEquipmentSlot slot = event.getSlot();
+        if (event.getFrom().isEmpty() || slot == EntityEquipmentSlot.MAINHAND || slot == EntityEquipmentSlot.OFFHAND)
             return;
 
         ItemStack stack = event.getFrom();
-        if (!(stack.getItem() instanceof ArmorMetaItem))
+        if (!(stack.getItem() instanceof ArmorMetaItem) || stack.getItem().equals(event.getTo().getItem()))
             return;
 
         ArmorMetaItem<?> armorMetaItem = (ArmorMetaItem<?>) stack.getItem();
@@ -179,7 +187,22 @@ public class EventHandlers {
                 armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
             event.getEntity().isImmuneToFire = false;
         }
+    }
 
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() && !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
+            ItemStack feetEquip = event.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            if (lastFeetEquip.getItem().equals(feetEquip.getItem())) {
+                return;
+            } else {
+                if ((lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) && ((ArmorMetaItem<?>) lastFeetEquip.getItem()).getItem(lastFeetEquip).getArmorLogic() instanceof IStepAssist)
+                    event.player.stepHeight = 0.6f;
+
+                lastFeetEquip = feetEquip.copy();
+            }
+        }
     }
 
     @SubscribeEvent
