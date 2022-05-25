@@ -174,6 +174,11 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
                     GTLog.logger.error("Attempted to add Ore Byproduct of hidden material {} for material {}", material, properties.getMaterial());
                 }
             }
+            else if(material.hasProperty(PropertyKey.FLUID) && !material.hasProperty(PropertyKey.DUST)) {
+                if(ConfigHolder.misc.debug) {
+                    GTLog.logger.error("Attempted to add a Ore Byproduct of material with only fluid property {} for material {}. Things might not behave correctly", material, properties.getMaterial());
+                }
+            }
         }
 
         properties.ensureSet(PropertyKey.DUST, true);
