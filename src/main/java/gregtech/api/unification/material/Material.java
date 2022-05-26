@@ -89,9 +89,13 @@ public class Material implements Comparable<Material> {
         return this;
     }
 
-    @ZenGetter("components")
     public ImmutableList<MaterialStack> getMaterialComponents() {
         return materialInfo.componentList;
+    }
+
+    @ZenGetter("components")
+    public MaterialStack[] getMaterialComponentsCt() {
+        return getMaterialComponents().toArray(new MaterialStack[0]);
     }
 
     private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties, @Nonnull MaterialFlags flags) {
