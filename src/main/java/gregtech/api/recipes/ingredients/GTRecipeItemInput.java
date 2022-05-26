@@ -8,8 +8,6 @@ import net.minecraftforge.fluids.FluidStack;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.WeakHashMap;
-import java.util.stream.Collectors;
 
 public class GTRecipeItemInput extends GTRecipeInput {
     ItemStack[] inputStacks;
@@ -40,16 +38,10 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     private static GTRecipeItemInput getFromCache(GTRecipeItemInput realIngredient) {
-        WeakHashMap<GTRecipeItemInput, WeakReference<GTRecipeItemInput>> cache;
-        if (realIngredient.isNonConsumable()) {
-            cache = GTIngredientCache.NON_CONSUMABLE_INSTANCES;
+        if (INSTANCES.get(realIngredient) == null) {
+            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
         } else {
-            cache = GTIngredientCache.INSTANCES;
-        }
-        if (cache.get(realIngredient) == null) {
-            cache.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = cache.get(realIngredient).get();
+            realIngredient = (GTRecipeItemInput) INSTANCES.get(realIngredient).get();
         }
         return realIngredient;
     }

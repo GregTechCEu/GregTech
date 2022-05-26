@@ -8,7 +8,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
@@ -59,31 +58,38 @@ public class CommandRecipeCheck extends CommandBase {
             mismatchedRecipes.put(recipeMap, new Object2ObjectOpenHashMap<>());
             GTLog.logger.info("Checking Recipe Map: " + recipeMap.unlocalizedName);
             for (Recipe currentRecipe : recipeMap.getRecipeList()) {
-                List<ItemStack> in = new ArrayList<>();
-                currentRecipe.getInputs().stream().map(GTRecipeInput::getInputStacks).forEach(i -> Arrays.stream(i).forEach(o -> {
+                // multiply amount of itemstacks by 10000 to detect conflicts only occurring if batching the recipe
+                List<ItemStack> inputs = currentRecipe.getInputs().stream().map(GTRecipeInput::getInputStacks).flatMap(Arrays::stream).map(o -> {
                     o = o.copy();
-                    o.setCount(o.getCount() * 100);
-                    in.add(o);
-                }));
+                    o.setCount(o.getCount() * 10000);
+                    return o;
+                }).collect(Collectors.toList());
 
-                Set<Recipe> recipes = recipeMap.findRecipeCollisions(
-                        in,
-                        currentRecipe.getFluidInputs()
-                                // multiply volume of fluids by 10000 to detect conflicts only occurring if batching the recipe
-                                .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), stack.getAmount() * 10000))
-                                .collect(Collectors.toList()));
-                if (recipes == null) {
-                    GTLog.logger.info("??????????");
+                List<FluidStack> fluidInputs  = currentRecipe.getFluidInputs()
+                        // multiply volume of fluids by 10000 to detect conflicts only occurring if batching the recipe
+                        .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), stack.getAmount() * 10000))
+                        .collect(Collectors.toList());
+
+                Set<Recipe> collidingRecipeSet = recipeMap.findRecipeCollisions(
+                        inputs,fluidInputs);
+
+                if (collidingRecipeSet == null) {
+                    GTLog.logger.info("This recipe map does not map items nor fluids to recipes.");
                     continue;
                 }
-                if (recipes.size() > 1) {
-                    recipes.remove(currentRecipe);
+                if (collidingRecipeSet.size() > 1) {
+                    // remove the current recipe from the list of recipes, as it's not a conflict
+                    collidingRecipeSet.remove(currentRecipe);
                     Object2ObjectOpenHashMap<Recipe, Set<Recipe>> conflictingRecipeMap = mismatchedRecipes.get(recipeMap);
-                    recipes.removeIf(cf -> conflictingRecipeMap.get(cf) != null && conflictingRecipeMap.get(cf).contains(currentRecipe));
-                    mismatchedRecipes.get(recipeMap).put(currentRecipe, recipes);
+                    // if the conflicting recipe was iterated over before, and the current recipe is in the list, remove it
+                    collidingRecipeSet.removeIf(cf -> conflictingRecipeMap.get(cf) != null && conflictingRecipeMap.get(cf).contains(currentRecipe));
+                    if (collidingRecipeSet.size() > 0) {
+                        mismatchedRecipes.get(recipeMap).put(currentRecipe, collidingRecipeSet);
+                    }
                 }
             }
             if (mismatchedRecipes.get(recipeMap).isEmpty()) {
+                GTLog.logger.info("No mismatched recipes found for recipe map: " + recipeMap.unlocalizedName);
                 mismatchedRecipes.remove(recipeMap);
             }
         }
@@ -91,25 +97,22 @@ public class CommandRecipeCheck extends CommandBase {
         GTLog.logger.info("[Recipe Checker] Completed recipe check!");
         int count = 0;
         if (mismatchedRecipes.size() == 0) {
-            GTLog.logger.info("No recipe conflicts found!");
+            GTLog.logger.info("No recipe conflicts found in all recipe maps!");
         } else {
-            for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> m : mismatchedRecipes.entrySet()) {
-                for (Map.Entry<Recipe, Set<Recipe>> recipeSetEntry : m.getValue().entrySet()) {
-                    count += recipeSetEntry.getValue().size();
-                }
-            }
+            count = (int) mismatchedRecipes.values().stream().mapToLong(s -> s.values().size()).sum();
             GTLog.logger.info("[Recipe Checker] Found " + count + " potential conflicts");
             for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> recipeMap : mismatchedRecipes.entrySet()) {
                 GTLog.logger.error(
-                        "\nIn map " + recipeMap.getKey().unlocalizedName);
+                        "\nIn map [" + recipeMap.getKey().unlocalizedName + "]");
                 for (Map.Entry<Recipe, Set<Recipe>> reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
-                    GTLog.logger.error(
-                            "\nTried: " + prettyPrintRecipe(reciper.getKey()));
+                    String conflictingRecipes =
+                            "\n[Tried matching]: " + prettyPrintRecipe(reciper.getKey());
                     for (Recipe c : reciper.getValue()) {
                         GTLog.logger.error(
-                                "\nFound: " + prettyPrintRecipe(c)
+                                "\n[Also Found]: " + prettyPrintRecipe(c)
                         );
                     }
+                    GTLog.logger.error(conflictingRecipes);
                 }
             }
         }
@@ -140,7 +143,7 @@ public class CommandRecipeCheck extends CommandBase {
             output.append("Item inputs:\n");
             for (GTRecipeInput ingredient : recipe.getInputs()) {
                 output.append("    ")
-                        .append(prettyPrintCountableIngredient(ingredient))
+                        .append(prettyPrintRecipeInput(ingredient))
                         .append("\n");
             }
         }
@@ -192,7 +195,7 @@ public class CommandRecipeCheck extends CommandBase {
         return output.toString();
     }
 
-    public String prettyPrintCountableIngredient(GTRecipeInput recipeInput) {
+    public String prettyPrintRecipeInput(GTRecipeInput recipeInput) {
         StringBuilder output = new StringBuilder();
         if (recipeInput.isOreDict()) {
             output.append("(OreDict: ")
@@ -203,7 +206,6 @@ public class CommandRecipeCheck extends CommandBase {
         output.append(" { ");
 
         ItemStack[] matchingStacks = recipeInput.getInputStacks();
-
 
         for (ItemStack stack : matchingStacks) {
             output.append(" ")

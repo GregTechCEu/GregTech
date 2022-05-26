@@ -45,16 +45,10 @@ public class GTRecipeOreInput extends GTRecipeInput {
     }
 
     private static GTRecipeOreInput getFromCache(GTRecipeOreInput realIngredient) {
-        WeakHashMap<GTRecipeOreInput, WeakReference<GTRecipeOreInput>> cache;
-        if (realIngredient.isNonConsumable()) {
-            cache = GTIngredientCache.NON_CONSUMABLE_ORE_INSTANCES;
+        if (INSTANCES.get(realIngredient) == null) {
+            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
         } else {
-            cache = GTIngredientCache.ORE_INSTANCES;
-        }
-        if (cache.get(realIngredient) == null) {
-            cache.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = cache.get(realIngredient).get();
+            realIngredient = (GTRecipeOreInput) INSTANCES.get(realIngredient).get();
         }
         return realIngredient;
     }

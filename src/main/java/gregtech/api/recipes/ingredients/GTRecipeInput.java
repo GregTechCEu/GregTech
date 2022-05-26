@@ -6,7 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Definition of ItemStacks, Ore dicts, of ingredients for
@@ -18,15 +20,16 @@ import java.util.List;
  * The behavior of the ingredient is determined by the GTingredient used.
  */
 public abstract class GTRecipeInput {
+    public static final WeakHashMap<GTRecipeInput, WeakReference<GTRecipeInput>> INSTANCES = new WeakHashMap<>();
     /**
      * All items will initially match the with is NBT (OreDicts have a null tag?)
      * but this behavior can be changed by using a NBTMatcher and an appropriate NBTCondition.
      */
 
-    public int amount;
-    boolean isConsumable = true;
-    NBTMatcher nbtMatcher;
-    NBTcondition nbtCondition;
+    protected int amount;
+    protected boolean isConsumable = true;
+    protected NBTMatcher nbtMatcher;
+    protected NBTcondition nbtCondition;
 
     public int getAmount() {
         return amount;

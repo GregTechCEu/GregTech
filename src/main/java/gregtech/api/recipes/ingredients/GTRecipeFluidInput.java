@@ -31,16 +31,10 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     private static GTRecipeFluidInput getFromCache(GTRecipeFluidInput realIngredient) {
-        WeakHashMap<GTRecipeFluidInput, WeakReference<GTRecipeFluidInput>> cache;
-        if (realIngredient.isNonConsumable()) {
-            cache = GTIngredientCache.NON_CONSUMABLE_FLUID_INSTANCES;
+        if (INSTANCES.get(realIngredient) == null) {
+            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
         } else {
-            cache = GTIngredientCache.FLUID_INSTANCES;
-        }
-        if (cache.get(realIngredient) == null) {
-            cache.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = cache.get(realIngredient).get();
+            realIngredient = (GTRecipeFluidInput) INSTANCES.get(realIngredient).get();
         }
         return realIngredient;
     }
@@ -58,7 +52,7 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     @Override
-    GTRecipeFluidInput getFromCache(GTRecipeInput recipeInput) {
+    GTRecipeInput getFromCache(GTRecipeInput recipeInput) {
         return GTRecipeFluidInput.getFromCache((GTRecipeFluidInput) recipeInput);
     }
 
