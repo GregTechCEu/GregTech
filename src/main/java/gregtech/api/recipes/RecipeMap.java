@@ -517,6 +517,92 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
+    @Nullable
+    public Set<Recipe> findRecipeCollisions(List<ItemStack> items, List<FluidStack> fluids) {
+        // First, check if items and fluids are valid.
+        if (items.size() + fluids.size() > Long.SIZE) {
+            return null;
+        }
+        if (items.size() == 0 && fluids.size() == 0) {
+            return null;
+        }
+        // Filter out empty fluids.
+
+        // Build input.
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.size() + fluids.size());
+        if (items.size() > 0) {
+            buildFromItemStacks(list, uniqueItems(items));
+        }
+        if (fluids.size() > 0) {
+            List<FluidStack> stack = new ObjectArrayList<>(fluids.size());
+            for (FluidStack f : fluids) {
+                if (f == null || f.amount == 0) {
+                    continue;
+                }
+                stack.add(f);
+            }
+            if (stack.size() > 0) {
+                buildFromFluidStacks(list, stack);
+            }
+        }
+        if (list.size() == 0) {
+            return null;
+        }
+        Set<Recipe> collidingRecipes = new HashSet<>();
+        return recurseIngredientTreeFindRecipeCollisions(list, lookup, collidingRecipes);
+    }
+
+    Set<Recipe> recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchRoot, Set<Recipe> collidingRecipes) {
+        // Try each ingredient as a starting point, adding it to the skiplist.
+        for (int i = 0; i < ingredients.size(); i++) {
+            recurseIngredientTreeFindRecipeCollisions(ingredients, branchRoot, i, 0, (1L << i), collidingRecipes);
+        }
+        return collidingRecipes;
+    }
+
+    Recipe recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int index, int count, long skip, Set<Recipe> collidingRecipes) {
+        if (count == ingredients.size()) {
+            return null;
+        }
+        List<AbstractMapIngredient> wr = ingredients.get(index);
+        // Iterate over current level of nodes.
+        for (AbstractMapIngredient t : wr) {
+            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
+            if (t.isSpecialIngredient()) {
+                targetMap = branchMap.getSpecialNodes();
+            } else {
+                targetMap = branchMap.getNodes();
+            }
+
+            Either<Recipe, RecipeMap.Branch> result = targetMap.get(t);
+            if (result != null) {
+                // Either return recipe or continue branch.
+                Recipe r =result.map(recipe -> recipe , right -> diveIngredientTreeFindRecipeCollisions(ingredients, right, index, count, skip, collidingRecipes));
+                if (r != null) {
+                    collidingRecipes.add(r);
+                }
+            }
+        }
+        return null;
+    }
+
+    private Recipe diveIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, int index, int count, long skip, Set<Recipe> collidingRecipes) {
+        // We loop around ingredients.size() if we reach the end.
+        int counter = (index + 1) % ingredients.size();
+        while (counter != index) {
+            // Have we already used this ingredient? If so, skip this one.
+            if (((skip & (1L << counter)) == 0)) {
+                // Recursive call.
+                Recipe r = recurseIngredientTreeFindRecipeCollisions(ingredients, map, counter, count + 1, skip | (1L << counter), collidingRecipes);
+                if (r != null) {
+                    return r;
+                }
+            }
+            counter = (counter + 1) % ingredients.size();
+        }
+        return null;
+    }
+
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
