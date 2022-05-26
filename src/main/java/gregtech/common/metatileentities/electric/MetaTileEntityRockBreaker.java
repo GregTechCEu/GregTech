@@ -32,9 +32,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final RecipeLogicEnergy result = new RockBreakerRecipeLogic(this, RecipeMaps.ROCK_BREAKER_RECIPES, () -> energyContainer);
-        result.enableOverclockVoltage();
-        return result;
+        return new RockBreakerRecipeLogic(this, RecipeMaps.ROCK_BREAKER_RECIPES, () -> energyContainer);
     }
 
     @Override

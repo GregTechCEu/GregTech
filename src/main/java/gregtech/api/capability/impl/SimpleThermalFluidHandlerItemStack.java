@@ -1,50 +1,59 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
 import javax.annotation.Nonnull;
 
-public class SimpleThermalFluidHandlerItemStack extends FluidHandlerItemStackSimple {
+public class SimpleThermalFluidHandlerItemStack extends GTSimpleFluidHandlerItemStack implements IThermalFluidHandlerItemStack {
 
-    public final int minFluidTemperature;
     public final int maxFluidTemperature;
+    private final boolean gasProof;
+    private final boolean acidProof;
+    private final boolean cryoProof;
+    private final boolean plasmaProof;
 
     /**
      * @param container The container itemStack, data is stored on it directly as NBT.
      * @param capacity  The maximum capacity of this fluid tank.
      */
-    public SimpleThermalFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, int minFluidTemperature, int maxFluidTemperature) {
+    public SimpleThermalFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
         super(container, capacity);
-        this.minFluidTemperature = minFluidTemperature;
         this.maxFluidTemperature = maxFluidTemperature;
+        this.gasProof = gasProof;
+        this.acidProof = acidProof;
+        this.cryoProof = cryoProof;
+        this.plasmaProof = plasmaProof;
     }
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        int liquidTemperature = fluid.getFluid().getTemperature();
-        return liquidTemperature >= minFluidTemperature && liquidTemperature <= maxFluidTemperature;
-    }
-
-
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        FluidStack drained = super.drain(resource, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
+        return IThermalFluidHandlerItemStack.super.canFillFluidType(fluid);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack drained = super.drain(maxDrain, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
+    public int getMaxFluidTemperature() {
+        return maxFluidTemperature;
     }
 
-    private void removeTagWhenEmpty(Boolean doDrain) {
-        if (doDrain && this.getFluid() == null) {
-            this.container.setTagCompound(null);
-        }
+    @Override
+    public boolean isGasProof() {
+        return gasProof;
+    }
+
+    @Override
+    public boolean isAcidProof() {
+        return acidProof;
+    }
+
+    @Override
+    public boolean isCryoProof() {
+        return cryoProof;
+    }
+
+    @Override
+    public boolean isPlasmaProof() {
+        return plasmaProof;
     }
 }

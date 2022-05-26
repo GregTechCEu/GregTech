@@ -20,16 +20,19 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.CubeRendererState;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
-import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -96,7 +99,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         if (recipeMapWorkable.isActive() && isStructureFormed()) {
             EnumFacing back = getFrontFacing().getOpposite();
             Matrix4 offset = translation.copy().translate(back.getXOffset(), -0.3, back.getZOffset());
-            CubeRendererState op =Textures.RENDER_STATE.get();
+            CubeRendererState op = Textures.RENDER_STATE.get();
             Textures.RENDER_STATE.set(new CubeRendererState(op.layer, CubeRendererState.PASS_MASK, op.world));
             Textures.renderFace(renderState, offset,
                     ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)),
@@ -120,8 +123,12 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     public void update() {
         super.update();
 
-        if (getWorld().isRemote && this.isActive()) {
-            pollutionParticles();
+        if (this.isActive()) {
+            if (getWorld().isRemote) {
+                pollutionParticles();
+            } else {
+                damageEntities();
+            }
         }
     }
 
@@ -134,5 +141,11 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
         float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
         runMufflerEffect(xPos, yPos, zPos, 0, ySpd, 0);
+    }
+
+    private void damageEntities() {
+        BlockPos middlePos = this.getPos();
+        middlePos = middlePos.offset(getFrontFacing().getOpposite());
+        this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(middlePos)).forEach(entity -> entity.attackEntityFrom(DamageSource.LAVA, 3.0f));
     }
 }

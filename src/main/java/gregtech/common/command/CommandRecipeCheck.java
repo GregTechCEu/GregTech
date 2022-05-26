@@ -50,7 +50,7 @@ public class CommandRecipeCheck extends CommandBase {
 
     @Override
     public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
-        sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.begin"));
+        sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.begin"));
 
         List<MismatchEntry> mismatchedRecipes = new ArrayList<>();
 
@@ -86,10 +86,10 @@ public class CommandRecipeCheck extends CommandBase {
         }
 
         if (mismatchedRecipes.size() == 0) {
-            sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.end_no_conflicts")
+            sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.end_no_conflicts")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));
         } else {
-            sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.end", mismatchedRecipes.size()));
+            sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.end", mismatchedRecipes.size()));
         }
     }
 

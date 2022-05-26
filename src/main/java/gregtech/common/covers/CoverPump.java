@@ -79,9 +79,13 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return false;
     }
 
-    protected void setTransferRate(int transferRate) {
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
+    }
+
+    public int getTransferRate() {
+        return transferRate;
     }
 
     protected void adjustTransferRate(int amount) {
@@ -357,6 +361,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
             IFluidHandler delegate = (IFluidHandler) defaultValue;
             if (fluidHandlerWrapper == null || fluidHandlerWrapper.delegate != delegate) {
                 this.fluidHandlerWrapper = new CoverableFluidHandlerWrapper(delegate);

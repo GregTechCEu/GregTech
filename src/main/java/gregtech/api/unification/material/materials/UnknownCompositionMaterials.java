@@ -263,7 +263,7 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Stone = new Material.Builder(1599, "stone")
-                .dust(1)
+                .dust(2)
                 .color(0xCDCDCD).iconSet(ROUGH)
                 .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING, NO_SMELTING)
                 .build();

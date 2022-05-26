@@ -277,6 +277,9 @@ metaitem.battery.hull.uv.tooltip=Пустой §3UV §7корпус батаре
 
 metaitem.battery.charge_time=§aДержит заряд %,d%s
 metaitem.battery.charge_detailed=%,d/%,d EU– Tier %s §7(§%c%,d%s осталось§7)
+metaitem.battery.charge_unit.second=sec
+metaitem.battery.charge_unit.minute=min
+metaitem.battery.charge_unit.hour=hr
 
 metaitem.battery.re.ulv.tantalum.name=Танталовый конденсатор
 metaitem.battery.re.ulv.tantalum.tooltip=Аккумулятор
@@ -4956,6 +4959,10 @@ terminal.settings.description=Системные настройки для те�
 terminal.settings.theme=Тема
 terminal.settings.theme.color=Настройка цветов терминала
 terminal.settings.theme.wallpaper=Настройка фона
+terminal.settings.theme.wallpaper.resource=resource
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=color
+terminal.settings.theme.wallpaper.file=file
 terminal.settings.theme.select=Выбрать изображение
 terminal.settings.theme.image=Изображение
 terminal.settings.home=Кнопка домой
@@ -5060,6 +5067,24 @@ terminal.world_prospector.color=Изменить цвет подстветки
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Виртуальный просмотр резервуаров
 terminal.vtank_viewer.refresh=Обновить
+
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %s mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
+
+terminal.minesweeper.time=%s seconds elapsed
+terminal.minesweeper.lose=You lost. Game will restart in %s seconds.
+terminal.minesweeper.win.1=You won in %s seconds!
+terminal.minesweeper.win.2=Game will restart in %s
+
+terminal.cape_selector.empty=It looks like you haven't unlocked any capes yet!
+terminal.cape_selector.select=Click on an unlocked cape to select it!
+terminal.cape_selector.tip=You can get these from high-level advancements.
 
 metaitem.cover.digital.title.mode=Режим:
 metaitem.cover.digital.title.spin=Поворот:

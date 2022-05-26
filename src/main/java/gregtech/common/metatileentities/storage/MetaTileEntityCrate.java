@@ -64,7 +64,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     @Override
     public String getHarvestTool() {
-        return material.toString().contains("wood") ? "axe" : "pickaxe";
+        return ModHandler.isMaterialWood(material) ? "axe" : "wrench";
     }
 
     @Override

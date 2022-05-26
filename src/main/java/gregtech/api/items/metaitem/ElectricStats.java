@@ -131,13 +131,13 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         String unit;
         if (duration.getSeconds() <= 180) {
             chargeTime = duration.getSeconds();
-            unit = "sec";
+            unit = I18n.format("metaitem.battery.charge_unit.second");
         } else if (duration.toMinutes() <= 180) {
             chargeTime = duration.toMinutes();
-            unit = "min";
+            unit = I18n.format("metaitem.battery.charge_unit.minute");
         } else {
             chargeTime = duration.toHours();
-            unit = "hr";
+            unit = I18n.format("metaitem.battery.charge_unit.hour");
         }
         tooltip.add(I18n.format("metaitem.battery.charge_time", chargeTime, unit, GTValues.VNF[tier]));
     }

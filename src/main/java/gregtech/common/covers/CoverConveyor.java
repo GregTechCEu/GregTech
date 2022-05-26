@@ -81,7 +81,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return transferRate;
     }
 
-    protected void setTransferRate(int transferRate) {
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
 
@@ -99,11 +99,15 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
     }
 
+    public int getTransferRate() {
+        return transferRate;
+    }
+
     protected void adjustTransferRate(int amount) {
         setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
     }
 
-    protected void setConveyorMode(ConveyorMode conveyorMode) {
+    public void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
         writeUpdateData(1, buf -> buf.writeEnumValue(conveyorMode));
         coverHolder.markDirty();
@@ -433,6 +437,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
             IItemHandler delegate = (IItemHandler) defaultValue;
             if (itemHandlerWrapper == null || itemHandlerWrapper.delegate != delegate) {
                 this.itemHandlerWrapper = new CoverableItemHandlerWrapper(delegate);

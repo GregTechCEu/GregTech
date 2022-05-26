@@ -36,6 +36,7 @@ import gregtech.common.covers.newFilter.FilterRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
+import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraft.world.World;

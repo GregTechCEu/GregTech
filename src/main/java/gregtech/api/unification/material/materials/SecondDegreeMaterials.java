@@ -20,7 +20,7 @@ public class SecondDegreeMaterials {
                 .color(0xFAFAFA).iconSet(GLASS)
                 .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .fluidTemp(1400)
+                .fluidTemp(1200)
                 .build();
 
         Perlite = new Material.Builder(2001, "perlite")
@@ -155,21 +155,21 @@ public class SecondDegreeMaterials {
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
-                .dust(1)
+                .dust()
                 .color(0xC8C8C8).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Calcite, 7)
                 .build();
 
         GraniteBlack = new Material.Builder(2019, "granite_black")
-                .dust(1)
+                .dust()
                 .color(0x0A0A0A).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Biotite, 1)
                 .build();
 
         GraniteRed = new Material.Builder(2020, "granite_red")
-                .dust(1)
+                .dust()
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
@@ -254,7 +254,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Concrete = new Material.Builder(2034, "concrete")
-                .dust(1).fluid()
+                .dust().fluid()
                 .color(0x646464).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Stone, 1)
@@ -301,7 +301,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Andesite = new Material.Builder(2039, "andesite")
-                .dust(1)
+                .dust()
                 .color(0xBEBEBE).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Asbestos, 4, Saltpeter, 1)

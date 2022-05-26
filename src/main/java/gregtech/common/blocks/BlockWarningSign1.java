@@ -1,12 +1,13 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nonnull;
 
-public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType>{
+public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType> {
 
     public BlockWarningSign1() {
         super(Material.IRON);
@@ -29,8 +30,6 @@ public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType>{
         CAUSALITY_HAZARD("causality_hazard"),
         AUTOMATED_DEFENSES_HAZARD("automated_defenses_hazard"),
         HIGH_PRESSURE_HAZARD("high_pressure_hazard");
-
-
 
         private final String name;
 

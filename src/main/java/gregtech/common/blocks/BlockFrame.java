@@ -2,6 +2,9 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.DelayedStateBlock;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;

@@ -80,7 +80,7 @@ public class OrganicChemistryMaterials {
         PolyphenyleneSulfide = new Material.Builder(1008, "polyphenylene_sulfide")
                 .ingot().fluid()
                 .color(0xAA8800)
-                .flags(EXT_METAL, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE)
+                .flags(EXT_METAL, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE, NO_SMASHING)
                 .components(Carbon, 6, Hydrogen, 4, Sulfur, 1)
                 .fluidTemp(500)
                 .build();
@@ -528,7 +528,7 @@ public class OrganicChemistryMaterials {
         PolyvinylButyral = new Material.Builder(1074, "polyvinyl_butyral")
                 .ingot().fluid()
                 .color(0x347D41)
-                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION, NO_SMASHING)
                 .components(Butyraldehyde, 1, PolyvinylAcetate, 1)
                 .build();
     }

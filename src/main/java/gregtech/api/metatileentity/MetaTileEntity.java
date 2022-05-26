@@ -956,6 +956,38 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return false;
     }
 
+    public void fillInternalTankFromFluidContainer() {
+        for (int i = 0; i < importItems.getSlots(); i++) {
+            ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
+            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, false);
+            if (result.isSuccess()) {
+                ItemStack remainingItem = result.getResult();
+                if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
+                    continue; //do not fill if item stacks match
+                if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
+                    continue; //do not fill if can't put remaining item
+                FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, true);
+                importItems.extractItem(i, 1, false);
+                GTTransferUtils.insertItem(exportItems, remainingItem, false);
+            }
+        }
+    }
+
+    public void fillContainerFromInternalTank() {
+        for (int i = 0; i < importItems.getSlots(); i++) {
+            ItemStack emptyContainer = importItems.extractItem(i, 1, true);
+            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, false);
+            if (result.isSuccess()) {
+                ItemStack remainingItem = result.getResult();
+                if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
+                    continue;
+                FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, true);
+                importItems.extractItem(i, 1, false);
+                GTTransferUtils.insertItem(exportItems, remainingItem, false);
+            }
+        }
+    }
+
     public void pushFluidsIntoNearbyHandlers(EnumFacing... allowedFaces) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing nearbyFacing : allowedFaces) {

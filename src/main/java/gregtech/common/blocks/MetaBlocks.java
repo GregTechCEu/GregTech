@@ -11,6 +11,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
@@ -457,7 +459,9 @@ public class MetaBlocks {
         OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES, 1, GTValues.W), "treeLeaves");
         OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING, 1, GTValues.W), "treeSapling");
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), OrePrefix.plank, Materials.Wood);
+        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.Wood, GTValues.M)));
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), OrePrefix.plank, Materials.TreatedWood);
+        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.TreatedWood, GTValues.M)));
         GameRegistry.addSmelting(RUBBER_LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {

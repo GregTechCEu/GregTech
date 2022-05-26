@@ -297,11 +297,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
         if (coverSide == null) {
-            if (pipeTile.getFrameMaterial() != null) {
-                BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
-                return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
-            }
-            return false;
+            return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
         if (!(hit.cuboid6.data instanceof CoverSideData)) {
@@ -315,11 +311,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
         if (coverBehavior == null) {
-            if (pipeTile.getFrameMaterial() != null) {
-                BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
-                return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
-            }
-            return false;
+            return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
         IScrewdriverItem screwdriver = itemStack.getCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null);
@@ -335,13 +327,20 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
         if (result == EnumActionResult.PASS) {
-            if (pipeTile.getFrameMaterial() != null) {
-                BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
-                return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
+            if (activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile)) {
+                return true;
             }
             return entityPlayer.isSneaking() && entityPlayer.getHeldItemMainhand().isEmpty() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
         }
         return true;
+    }
+
+    private boolean activateFrame(World world, IBlockState state, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
+        if (pipeTile.getFrameMaterial() != null && !(entityPlayer.getHeldItem(hand).getItem() instanceof ItemBlockPipe)) {
+            BlockFrame blockFrame = MetaBlocks.FRAMES.get(pipeTile.getFrameMaterial());
+            return blockFrame.onBlockActivated(world, pos, state, entityPlayer, hand, hit.sideHit, (float) hit.hitVec.x, (float) hit.hitVec.y, (float) hit.hitVec.z);
+        }
+        return false;
     }
 
     /**

@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -19,10 +20,10 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
         // no overclocking happens other than parallelization,
         // so return the recipe's values, with EUt made positive for it to be made negative later
-        return new int[]{recipe.getEUt() * -1, recipe.getDuration()};
+        return new int[]{recipeEUt * -1, recipeDuration};
     }
 
     @Override

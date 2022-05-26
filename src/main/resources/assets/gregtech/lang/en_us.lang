@@ -228,6 +228,7 @@ metaitem.fluid_cell.empty=Empty
 metaitem.fluid_cell.name=%s Cell
 metaitem.fluid_cell.universal.empty=Empty
 metaitem.fluid_cell.universal.name=%s Universal Cell
+metaitem.fluid_cell.glass_vial.name=%s Glass Vial
 metaitem.large_fluid_cell.steel.name=%s Steel Cell
 metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
@@ -279,6 +280,9 @@ metaitem.battery.hull.uv.tooltip=An empty §3UV §7Battery Hull
 
 metaitem.battery.charge_time=§aHolds %,d%s of Power
 metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s remaining§7)
+metaitem.battery.charge_unit.second=sec
+metaitem.battery.charge_unit.minute=min
+metaitem.battery.charge_unit.hour=hr
 
 metaitem.battery.re.ulv.tantalum.name=Tantalum Capacitor
 metaitem.battery.re.ulv.tantalum.tooltip=Reusable Battery
@@ -2455,7 +2459,7 @@ gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 
-gregtech.machine.drum.enable_output=Will drain Fluid to vertically adjacent Tanks
+gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid
 
 # Crates
@@ -2653,9 +2657,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
 gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
@@ -4074,13 +4078,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
@@ -5012,6 +5016,10 @@ terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme
 terminal.settings.theme.color=Theme Color Settings
 terminal.settings.theme.wallpaper=Wallpaper Settings
+terminal.settings.theme.wallpaper.resource=resource
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=color
+terminal.settings.theme.wallpaper.file=file
 terminal.settings.theme.select=Select
 terminal.settings.theme.image=Image File
 terminal.settings.home=Home Button
@@ -5119,6 +5127,24 @@ terminal.vtank_viewer.refresh=Refresh tank index
 
 terminal.teleporter.dimension=Dimension:
 terminal.teleporter.spawn_portal=Engage
+
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %s mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
+
+terminal.minesweeper.time=%s seconds elapsed
+terminal.minesweeper.lose=You lost. Game will restart in %s seconds.
+terminal.minesweeper.win.1=You won in %s seconds!
+terminal.minesweeper.win.2=Game will restart in %s
+
+terminal.cape_selector.empty=It looks like you haven't unlocked any capes yet!
+terminal.cape_selector.select=Click on an unlocked cape to select it!
+terminal.cape_selector.tip=You can get these from high-level advancements.
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:

@@ -2,8 +2,8 @@ package gregtech.api.block;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.SPacketBlockParticle;
 import gregtech.api.net.NetworkUtils;
+import gregtech.api.net.packets.SPacketBlockParticle;
 import gregtech.api.util.ParticleHandlerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
@@ -60,7 +60,6 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public boolean addRunningEffects(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         if (world.isRemote) {
             Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(world, pos);
