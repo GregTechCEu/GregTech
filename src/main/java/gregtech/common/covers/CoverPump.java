@@ -228,7 +228,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 204);
 
-        builder.setBackground(gregtech.api.gui.GuiTextures.BACKGROUND)
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 121))

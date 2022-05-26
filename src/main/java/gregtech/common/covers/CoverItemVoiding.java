@@ -85,7 +85,7 @@ public class CoverItemVoiding extends CoverConveyor {
     public ModularWindow createWindow(UIBuildContext buildContext) {
         return ModularWindow.builder(176, 166)
                 .bindPlayerInventory(buildContext.getPlayer())
-                .setBackground(GuiTextures.BACKGROUND)
+                .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(Text.localised(getUITitle()))
                         .setPos(10, 5))
                 .widget(filterHolder.createFilterUI(buildContext)

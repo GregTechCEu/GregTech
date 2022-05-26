@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
@@ -455,7 +456,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 192);
-        builder.setBackground(GuiTextures.BACKGROUND)
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
                 .bindPlayerInventory(buildContext.getPlayer(), 7)

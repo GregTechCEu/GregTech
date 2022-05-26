@@ -192,7 +192,7 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 236);
-        builder.setBackground(GuiTextures.BACKGROUND)
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 153))

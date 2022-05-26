@@ -63,7 +63,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         return ModularWindow.builder(new Size(176, 60))
-                .widget(GuiTextures.BACKGROUND.asWidget().fillParent())
+                .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text("metaitem.circuit.integrated.gui").localise())
                         .setPos(6, 6))
                 .widget(TextWidget.dynamicString(() -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(buildContext.getPlayer())))

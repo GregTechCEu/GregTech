@@ -436,7 +436,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 178)
-                .setBackground(GuiTextures.BACKGROUND)
+                .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new TextWidget(Text.localised("metaitem.cover.digital.name"))
                         .setPos(10, 5))

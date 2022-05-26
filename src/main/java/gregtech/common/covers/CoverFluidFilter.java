@@ -82,7 +82,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         return ModularWindow.builder(176, 166)
-                .setBackground(GuiTextures.BACKGROUND)
+                .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 83))
                 .widget(new TextWidget(new Text(titleLocale).localise())
                         .setPos(6, 6))
