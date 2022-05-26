@@ -507,6 +507,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return !ItemStack.areItemStacksEqual(oldStack, newStack);
     }
 
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        T metaItem = getItem(stack);
+        return metaItem == null ? getTranslationKey() : getTranslationKey() + "." + metaItem.unlocalizedName;
+    }
+
     @Nonnull
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
