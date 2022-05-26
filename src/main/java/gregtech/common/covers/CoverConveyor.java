@@ -99,10 +99,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
     }
 
-    public int getTransferRate() {
-        return transferRate;
-    }
-
     protected void adjustTransferRate(int amount) {
         setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
     }
