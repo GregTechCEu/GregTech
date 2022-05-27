@@ -15,7 +15,7 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
         setHardness(2.0f);
         setResistance(3.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 1);
+        setHarvestLevel("wrench", 1);
         setDefaultState(getState(SignType.YELLOW_STRIPES));
     }
 

@@ -15,7 +15,7 @@ public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType> 
         setHardness(2.0f);
         setResistance(3.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 1);
+        setHarvestLevel("wrench", 1);
         setDefaultState(getState(SignType.MOB_SPAWNER_HAZARD));
     }
 
