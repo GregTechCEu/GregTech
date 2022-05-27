@@ -124,7 +124,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         }
     }
 
-    private boolean consumeFuel(EntityPlayer entity, ItemStack stack) {
+    public boolean consumeFuel(EntityPlayer entity, ItemStack stack) {
         if (entity != null && entity.isCreative())
             return true;
 
