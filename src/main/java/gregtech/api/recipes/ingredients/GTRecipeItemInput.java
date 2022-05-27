@@ -1,7 +1,11 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.GTValues;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -11,6 +15,9 @@ import java.util.Objects;
 
 public class GTRecipeItemInput extends GTRecipeInput {
     ItemStack[] inputStacks;
+    //TODO: figure out how to make this or something like it more efficient in memory. currently
+    //eating 10MB on nomi.
+    Object2ObjectOpenHashMap<Item, Int2ObjectOpenHashMap<Object2ObjectOpenHashMap<NBTTagCompound, ItemStack>>> itemMap;
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
         this(new ItemStack[]{stack}, amount);
@@ -18,12 +25,34 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     protected GTRecipeItemInput(ItemStack[] stack, int amount) {
         this.amount = amount;
+
         NonNullList<ItemStack> lst = NonNullList.create();
         for (ItemStack is : stack) {
             if (is.getMetadata() == GTValues.W ) {
                 is.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
             } else{
                 lst.add(is);
+            }
+        }
+
+        for (ItemStack is : lst) {
+            if (!is.isEmpty()) {
+                if (itemMap == null) {
+                    itemMap = new Object2ObjectOpenHashMap<>(2,1F);
+                }
+                itemMap.compute(is.getItem(), (k, v) -> {
+                    if (v == null) {
+                        v = new Int2ObjectOpenHashMap<>(2,1F);
+                    }
+                    v.compute(is.getMetadata(), (k2, v2) -> {
+                        if (v2 == null) {
+                            v2 = new Object2ObjectOpenHashMap<>(2,1F);
+                        }
+                        v2.put(is.getTagCompound(), is);
+                        return v2;
+                    });
+                    return v;
+                });
             }
         }
         this.inputStacks = lst.stream().peek(is -> is.setCount(this.amount)).toArray(ItemStack[]::new);
@@ -91,10 +120,17 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        if (this.inputStacks[0].getItem() == input.getItem()) {
-            int meta = inputStacks[0].getMetadata();
-            if (meta == GTValues.W || meta == input.getMetadata()) {
-                return (nbtMatcher == null ? ItemStack.areItemStackTagsEqual(this.inputStacks[0], input) : nbtMatcher.evaluate(input, nbtCondition));
+        Int2ObjectOpenHashMap<Object2ObjectOpenHashMap<NBTTagCompound, ItemStack>> map = itemMap.get(input.getItem());
+        if (map != null) {
+            Object2ObjectOpenHashMap<NBTTagCompound, ItemStack> map2 = map.get(input.getMetadata());
+            if (map2 != null) {
+                if (nbtMatcher == null) {
+                    ItemStack returned = map2.get(input.getTagCompound());
+                    if (returned != null) {
+                        return returned.areCapsCompatible(input);
+                    }
+                }
+                return nbtMatcher.evaluate(input, nbtCondition);
             }
         }
         return false;
