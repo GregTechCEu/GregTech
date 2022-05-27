@@ -74,7 +74,7 @@ public class CommandRecipeCheck extends CommandBase {
                         inputs,fluidInputs);
 
                 if (collidingRecipeSet == null) {
-                    GTLog.logger.info("This recipe map does not map items nor fluids to recipes.");
+                    GTLog.logger.error("This recipe returned null for findRecipeCollisions: " + prettyPrintRecipe(currentRecipe));
                     continue;
                 }
                 if (collidingRecipeSet.size() > 1) {
@@ -105,14 +105,12 @@ public class CommandRecipeCheck extends CommandBase {
                 GTLog.logger.error(
                         "\nIn map [" + recipeMap.getKey().unlocalizedName + "]");
                 for (Map.Entry<Recipe, Set<Recipe>> reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
-                    String conflictingRecipes =
-                            "\n[Tried matching]: " + prettyPrintRecipe(reciper.getKey());
+                    StringBuilder conflictingRecipes = new StringBuilder();
+                    conflictingRecipes.append("\n[Tried matching]: ").append(prettyPrintRecipe(reciper.getKey()));
                     for (Recipe c : reciper.getValue()) {
-                        GTLog.logger.error(
-                                "\n[Also Found]: " + prettyPrintRecipe(c)
-                        );
+                        conflictingRecipes.append("\n[Also Found]: ").append(prettyPrintRecipe(c));
                     }
-                    GTLog.logger.error(conflictingRecipes);
+                    GTLog.logger.error(conflictingRecipes.toString());
                 }
             }
         }

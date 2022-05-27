@@ -520,7 +520,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Nullable
     public Set<Recipe> findRecipeCollisions(List<ItemStack> items, List<FluidStack> fluids) {
         // First, check if items and fluids are valid.
-        if (items.size() + fluids.size() > Long.SIZE) {
+        if (items.size() + fluids.size() == Integer.MAX_VALUE) {
             return null;
         }
         if (items.size() == 0 && fluids.size() == 0) {
