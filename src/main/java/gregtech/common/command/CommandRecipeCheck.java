@@ -91,6 +91,8 @@ public class CommandRecipeCheck extends CommandBase {
             if (mismatchedRecipes.get(recipeMap).isEmpty()) {
                 GTLog.logger.info("No mismatched recipes found for recipe map: " + recipeMap.unlocalizedName);
                 mismatchedRecipes.remove(recipeMap);
+            } else {
+                GTLog.logger.error("Mismatched recipes found for recipe map: " + recipeMap.unlocalizedName);
             }
         }
 
@@ -103,7 +105,7 @@ public class CommandRecipeCheck extends CommandBase {
             GTLog.logger.info("[Recipe Checker] Found " + count + " potential conflicts");
             for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> recipeMap : mismatchedRecipes.entrySet()) {
                 GTLog.logger.error(
-                        "\nIn map [" + recipeMap.getKey().unlocalizedName + "]");
+                        "\n[In Recipe map] :\"" + recipeMap.getKey().unlocalizedName + "\"");
                 for (Map.Entry<Recipe, Set<Recipe>> reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
                     StringBuilder conflictingRecipes = new StringBuilder();
                     conflictingRecipes.append("\n[Tried matching]: ").append(prettyPrintRecipe(reciper.getKey()));

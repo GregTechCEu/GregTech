@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -16,7 +15,7 @@ import java.util.Objects;
 
 public class GTRecipeItemInput extends GTRecipeInput {
     ItemStack[] inputStacks;
-    List<Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>>> itemList = new ObjectArrayList<>(1);
+    List<ItemToMetaList> itemList = new ObjectArrayList<>();
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
         this(new ItemStack[]{stack}, amount);
@@ -37,29 +36,20 @@ public class GTRecipeItemInput extends GTRecipeInput {
         outer:
         for (ItemStack is : lst) {
             if (!is.isEmpty()) {
-                for (Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>> item : this.itemList) {
-                    if (item.getLeft() == is.getItem()) {
-                        for (Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta : item.getRight()) {
-                            if (meta.getLeft() == is.getMetadata()) {
-                                meta.getRight().add(Pair.of(is.getTagCompound(), is));
+                for (ItemToMetaList item : this.itemList) {
+                    if (item.getItem() == is.getItem()) {
+                        List<MetaToTAGList> metaList = item.getMetaToTAGList();
+                        for (MetaToTAGList meta : metaList) {
+                            if (meta.getMeta() == is.getMetadata()) {
+                                meta.addStackToList(is);
                                 continue outer;
                             }
                         }
-                        Pair<NBTTagCompound, ItemStack> nbt = Pair.of(is.getTagCompound(), is);
-                        Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta = Pair.of(is.getMetadata(), new ObjectArrayList<>(1));
-
-                        item.getRight().add(meta);
-                        meta.getRight().add(nbt);
+                        item.addStackToLists(is);
                         continue outer;
                     }
                 }
-                Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>> item = Pair.of(is.getItem(), new ObjectArrayList<>(1));
-                Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta = Pair.of(is.getMetadata(), new ObjectArrayList<>(1));
-                Pair<NBTTagCompound, ItemStack> nbt = Pair.of(is.getTagCompound(), is);
-
-                this.itemList.add(item);
-                item.getRight().add(meta);
-                meta.getRight().add(nbt);
+                this.itemList.add(new ItemToMetaList(is));
             }
         }
 
@@ -130,16 +120,16 @@ public class GTRecipeItemInput extends GTRecipeInput {
         }
 
         final Item inputItem = input.getItem();
-        for (Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>> item : this.itemList) {
-            if (item.getLeft() == inputItem) {
+        for (ItemToMetaList item : this.itemList) {
+            if (item.getItem() == inputItem) {
                 final int inputMeta = input.getMetadata();
-                for (Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta : item.getRight()) {
-                    if (meta.getLeft() == inputMeta) {
+                for (MetaToTAGList meta : item.getMetaToTAGList()) {
+                    if (meta.getMeta() == inputMeta) {
                         final NBTTagCompound inputNBT = input.getTagCompound();
-                        for (Pair<NBTTagCompound, ItemStack> nbt : meta.getRight()) {
+                        for (TagToStack nbt : meta.getTagToStack()) {
                             if (nbtMatcher == null) {
-                                if (inputNBT == null && nbt.getLeft() == null || inputNBT != null && inputNBT.equals(nbt.getLeft())) {
-                                    return nbt.getRight().areCapsCompatible(input);
+                                if (inputNBT == null && nbt.getTag() == null || inputNBT != null && inputNBT.equals(nbt.getTag())) {
+                                    return nbt.getStack().areCapsCompatible(input);
                                 }
                             } else {
                                 return nbtMatcher.evaluate(inputNBT, nbtCondition);
