@@ -78,6 +78,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public final boolean isHidden;
 
     private final Branch lookup = new Branch();
+    private boolean hasOreDictedInputs = false;
+    private boolean hasNBTMatcherInputs = false;
     private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
     private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
 
@@ -823,7 +825,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (GTRecipeInput r : ingredients) {
             AbstractMapIngredient ingredient;
             if (r.isOreDict()) {
+                hasOreDictedInputs = true;
                 if (r.hasNBTMatchingCondition()) {
+                    hasNBTMatcherInputs = true;
                     ingredient = new MapOreDictNBTIngredient(r.getOreDict(), r.getNBTMatcher(), r.getNBTMatchingCondition());
                 } else {
                     ingredient = new MapOreDictIngredient(r.getOreDict());
@@ -840,6 +844,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
                 for (ItemStack s : r.getInputStacks()) {
                     if (r.hasNBTMatchingCondition()) {
+                        hasNBTMatcherInputs = true;
                         ingredient = new MapItemStackNBTIngredient(s, r.getNBTMatcher(), r.getNBTMatchingCondition());
                     } else {
                         ingredient = new MapItemStackIngredient(s);
@@ -865,13 +870,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(1);
             ls.add(new MapItemStackIngredient(t, meta, nbt));
-            for (Integer i : OreDictionary.getOreIDs(t)) {
-                ingredient = new MapOreDictIngredient(i);
-                ls.add(ingredient);
-                ingredient = new MapOreDictNBTIngredient(i, nbt);
-                ls.add(ingredient);
+            if (hasOreDictedInputs) {
+                for (Integer i : OreDictionary.getOreIDs(t)) {
+                    ingredient = new MapOreDictIngredient(i);
+                    ls.add(ingredient);
+                    ingredient = new MapOreDictNBTIngredient(i, nbt);
+                    ls.add(ingredient);
+                }
             }
-            ls.add(new MapItemStackNBTIngredient(t, meta, nbt));
+            if (hasNBTMatcherInputs) {
+                ls.add(new MapItemStackNBTIngredient(t, meta, nbt));
+            }
             if (ls.size() > 0) {
                 list.add(ls);
             }
