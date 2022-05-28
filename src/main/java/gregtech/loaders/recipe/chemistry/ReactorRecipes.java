@@ -606,12 +606,6 @@ public class ReactorRecipes {
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(Benzene.getFluid(1000))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(Phenol.getFluid(1000))
-                .duration(400).EUt(2000).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(MethylAcetate.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .notConsumable(OreDictUnifier.get(dust, SodiumHydroxide))
