@@ -100,13 +100,15 @@ public class GTRecipeOreInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        if (Arrays.stream(OreDictionary.getOreIDs(input)).noneMatch(id -> id == ore)) {
-            return false;
+        for (int i : OreDictionary.getOreIDs(input)) {
+            if (i == ore) {
+                if (nbtMatcher != null) {
+                    return nbtMatcher.evaluate(input, nbtCondition);
+                }
+                return true;
+            }
         }
-        if (nbtMatcher != null) {
-            return nbtMatcher.evaluate(input, nbtCondition);
-        }
-        return true;
+        return false;
     }
 
     @Override

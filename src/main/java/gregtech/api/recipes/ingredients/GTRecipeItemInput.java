@@ -1,23 +1,22 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.GTValues;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class GTRecipeItemInput extends GTRecipeInput {
     ItemStack[] inputStacks;
-    //TODO: figure out how to make this or something like it more efficient in memory. currently
-    //eating 10MB on nomi.
-    Object2ObjectOpenHashMap<Item, Int2ObjectOpenHashMap<Object2ObjectOpenHashMap<NBTTagCompound, ItemStack>>> itemMap;
+    List<Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>>> itemList = new ObjectArrayList<>(1);
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
         this(new ItemStack[]{stack}, amount);
@@ -28,33 +27,42 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
         NonNullList<ItemStack> lst = NonNullList.create();
         for (ItemStack is : stack) {
-            if (is.getMetadata() == GTValues.W ) {
+            if (is.getMetadata() == GTValues.W) {
                 is.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
-            } else{
+            } else {
                 lst.add(is);
             }
         }
 
+        outer:
         for (ItemStack is : lst) {
             if (!is.isEmpty()) {
-                if (itemMap == null) {
-                    itemMap = new Object2ObjectOpenHashMap<>(2,1F);
-                }
-                itemMap.compute(is.getItem(), (k, v) -> {
-                    if (v == null) {
-                        v = new Int2ObjectOpenHashMap<>(2,1F);
-                    }
-                    v.compute(is.getMetadata(), (k2, v2) -> {
-                        if (v2 == null) {
-                            v2 = new Object2ObjectOpenHashMap<>(2,1F);
+                for (Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>> item : this.itemList) {
+                    if (item.getLeft() == is.getItem()) {
+                        for (Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta : item.getRight()) {
+                            if (meta.getLeft() == is.getMetadata()) {
+                                meta.getRight().add(Pair.of(is.getTagCompound(), is));
+                                continue outer;
+                            }
                         }
-                        v2.put(is.getTagCompound(), is);
-                        return v2;
-                    });
-                    return v;
-                });
+                        Pair<NBTTagCompound, ItemStack> nbt = Pair.of(is.getTagCompound(), is);
+                        Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta = Pair.of(is.getMetadata(), new ObjectArrayList<>(1));
+
+                        item.getRight().add(meta);
+                        meta.getRight().add(nbt);
+                        continue outer;
+                    }
+                }
+                Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>> item = Pair.of(is.getItem(), new ObjectArrayList<>(1));
+                Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta = Pair.of(is.getMetadata(), new ObjectArrayList<>(1));
+                Pair<NBTTagCompound, ItemStack> nbt = Pair.of(is.getTagCompound(), is);
+
+                this.itemList.add(item);
+                item.getRight().add(meta);
+                meta.getRight().add(nbt);
             }
         }
+
         this.inputStacks = lst.stream().peek(is -> is.setCount(this.amount)).toArray(ItemStack[]::new);
     }
 
@@ -120,17 +128,25 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        Int2ObjectOpenHashMap<Object2ObjectOpenHashMap<NBTTagCompound, ItemStack>> map = itemMap.get(input.getItem());
-        if (map != null) {
-            Object2ObjectOpenHashMap<NBTTagCompound, ItemStack> map2 = map.get(input.getMetadata());
-            if (map2 != null) {
-                if (nbtMatcher == null) {
-                    ItemStack returned = map2.get(input.getTagCompound());
-                    if (returned != null) {
-                        return returned.areCapsCompatible(input);
+
+        final Item inputItem = input.getItem();
+        for (Pair<Item, List<Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>>>> item : this.itemList) {
+            if (item.getLeft() == inputItem) {
+                final int inputMeta = input.getMetadata();
+                for (Pair<Integer, List<Pair<NBTTagCompound, ItemStack>>> meta : item.getRight()) {
+                    if (meta.getLeft() == inputMeta) {
+                        final NBTTagCompound inputNBT = input.getTagCompound();
+                        for (Pair<NBTTagCompound, ItemStack> nbt : meta.getRight()) {
+                            if (nbtMatcher == null) {
+                                if (inputNBT == null && nbt.getLeft() == null || inputNBT != null && inputNBT.equals(nbt.getLeft())) {
+                                    return nbt.getRight().areCapsCompatible(input);
+                                }
+                            } else {
+                                return nbtMatcher.evaluate(inputNBT, nbtCondition);
+                            }
+                        }
                     }
                 }
-                return nbtMatcher.evaluate(input, nbtCondition);
             }
         }
         return false;
@@ -139,15 +155,9 @@ public class GTRecipeItemInput extends GTRecipeInput {
     @Override
     public int hashCode() {
         if (nbtMatcher == null) {
-            return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem),
-                    Arrays.stream(inputStacks).map(ItemStack::getMetadata),
-                    this.amount, this.nbtMatcher, this.nbtCondition, isConsumable,
-                    Arrays.stream(inputStacks).map(ItemStack::getTagCompound));
+            return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem), Arrays.stream(inputStacks).map(ItemStack::getMetadata), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, Arrays.stream(inputStacks).map(ItemStack::getTagCompound));
         }
-        return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem),
-                Arrays.stream(inputStacks).map(ItemStack::getMetadata),
-                this.amount, this.nbtMatcher, this.nbtCondition, isConsumable,
-                0);
+        return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem), Arrays.stream(inputStacks).map(ItemStack::getMetadata), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, 0);
     }
 
     @Override
@@ -181,5 +191,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
         for (int i = 0; i < this.inputStacks.length; i++) {
             if (!ItemStack.areItemStacksEqual(this.inputStacks[i], other.inputStacks[i])) return false;
         }
-        return true;    }
+        return true;
+    }
 }
