@@ -102,6 +102,92 @@ public class CTRecipeHelper {
         return builder.toString();
     }
 
+    public static String getRecipeAddLine(RecipeMap<?> recipeMap, Recipe recipe) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(recipeMap.unlocalizedName)
+                .append(".recipeBuilder()")
+                .append(".inputs(");
+
+        if (recipe.getInputs().size() > 0) {
+            builder.append("[");
+            for (GTRecipeInput ci : recipe.getInputs()) {
+                String ingredient = getCtItemString(ci);
+                if (ingredient != null)
+                    builder.append(ingredient);
+            }
+            builder.delete(builder.length() - 2, builder.length())
+                    .append("])");
+        }
+
+        if (recipe.getFluidInputs().size() > 0) {
+            builder.append(".fluidInputs(");
+            builder.append("[");
+            for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
+
+                builder.append("<liquid:")
+                        .append(fluidStack.getInputFluidStack().getFluid().getName())
+                        .append(">");
+
+                if (fluidStack.getAmount() > 1) {
+                    builder.append(" * ")
+                            .append(fluidStack.getAmount());
+                }
+
+                builder.append(", ");
+            }
+            builder.delete(builder.length() - 2, builder.length())
+                    .append("])");
+        }
+
+        if (recipe.getOutputs().size() > 0) {
+            builder.append(".outputs(");
+            builder.append("[");
+            for (ItemStack itemStack : recipe.getOutputs()) {
+                String itemId = getMetaItemId(itemStack);
+                if (itemId != null) {
+                    builder.append("<metaitem:")
+                            .append(itemId)
+                            .append(">");
+                } else {
+                    builder.append("<")
+                            .append(itemStack.getItem().getRegistryName().toString())
+                            .append(":")
+                            .append(itemStack.getItemDamage())
+                            .append(">");
+                }
+
+                if (itemStack.serializeNBT().hasKey("tag")) {
+                    String nbt = NBTConverter.from(itemStack.serializeNBT().getCompoundTag("tag"), false).toString();
+                    if (nbt.length() > 0) {
+                        builder.append(".withTag(").append(nbt).append(")");
+                    }
+                }
+            }
+            builder.delete(builder.length() - 2, builder.length())
+                    .append("])");
+        }
+
+        if (recipe.getFluidOutputs().size() > 0) {
+            builder.append(".fluidOutputs(");
+            builder.append("[");
+            for (FluidStack fluidStack : recipe.getFluidOutputs()) {
+                builder.append("<liquid:")
+                        .append(fluidStack.getFluid().getName())
+                        .append(">");
+                if (fluidStack.amount > 1) {
+                    builder.append(" * ")
+                            .append(fluidStack.amount);
+                }
+            }
+            builder.delete(builder.length() - 2, builder.length())
+                    .append("])");
+
+        }
+
+        builder.append("....");
+        return builder.toString();
+    }
+
     public static String getFirstOutputString(Recipe recipe) {
         String output = "";
         if (!recipe.getOutputs().isEmpty()) {
@@ -114,11 +200,11 @@ public class CTRecipeHelper {
         return output;
     }
 
-    public static String getCtItemString(GTRecipeInput ci) {
+    public static String getCtItemString(GTRecipeInput recipeInput) {
         StringBuilder builder = new StringBuilder();
         ItemStack itemStack = null;
         String itemId = null;
-        for (ItemStack item : ci.getInputStacks()) {
+        for (ItemStack item : recipeInput.getInputStacks()) {
             itemId = getMetaItemId(item);
             if (itemId != null) {
                 builder.append("<metaitem:")
@@ -151,9 +237,9 @@ public class CTRecipeHelper {
             }
         }
 
-        if (ci.getAmount() > 1) {
+        if (recipeInput.getAmount() > 1) {
             builder.append(" * ")
-                    .append(ci.getAmount());
+                    .append(recipeInput.getAmount());
         }
         builder.append(", ");
         return builder.toString();

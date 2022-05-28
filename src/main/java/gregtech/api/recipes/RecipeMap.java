@@ -349,6 +349,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
     }
 
+    /**
+     * Builds a list of unique ItemStacks from the given Collection of ItemStacks.
+     * Used to reduce the number inputs, if for example there is more than one of the same input,
+     * pack them into one.
+     * This uses a strict comparison, so it will not pack the same item with different NBT tags,
+     * to allow the presence of, for example, more than one configured circuit in the input.
+     * @param input The Collection of GTRecipeInputs.
+     * @return an array of unique itemstacks.
+     */
+
     public static ItemStack[] uniqueItems(Collection<ItemStack> input) {
         List<ItemStack> list = new ObjectArrayList<>(input.size());
         loop:
@@ -366,6 +376,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list.toArray(new ItemStack[0]);
     }
 
+    /**
+     * Builds a list of unique inputs from the given list GTRecipeInputs.
+     * Used to reduce the number inputs, if for example there is more than one of the same input,
+     * pack them into one.
+     * @param input The list of GTRecipeInputs.
+     * @return The list of unique inputs.
+     */
+
     public static List<GTRecipeInput> uniqueIngredientsList(List<GTRecipeInput> input) {
         List<GTRecipeInput> list = new ObjectArrayList<>(input.size());
         loop:
@@ -381,7 +399,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Returns a boolean indicating whether the given group of fluids in a valid recipe are potentially valid.
+     * Returns a boolean indicating whether the given group of fluids resolve to a valid branch or recipe.
      *
      * @param fluidIngredients the ingredients part
      * @param map              the root branch to search from.
@@ -408,7 +426,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param count            how deep we are in recursion, < ingredients.length
      * @param skip             bitmap of ingredients to skip, i.e. which ingredients are used in the
      *                         recursion.
-     * @return a recipe
+     * @return True if the current fluid ingredients resolve to a valid branch or recipe. False otherwise.
      */
     boolean recurseFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
         List<AbstractMapIngredient> wr = fluidIngredients.get(index);
@@ -518,6 +536,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         return null;
     }
+
+    /**
+     * Exaustively gathers all recipes that can be crafted with the given ingredients, into a Set.
+     * @param items the ingredients, in the form of a List of List of ItemStack. Usually the inputs of a Recipe
+     * @param fluids the ingredients, in the form of a List of List of FluidStack. Usually the inputs of a Recipe
+     * @return a Set of recipes that can be crafted with the given ingredients
+     */
 
     @Nullable
     public Set<Recipe> findRecipeCollisions(List<ItemStack> items, List<FluidStack> fluids) {
@@ -755,7 +780,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                             return v;
                         } else {
                             if (recipe.getIsCTRecipe()) {
-                                CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", recipe, this.unlocalizedName));
+                                CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", CTRecipeHelper.getRecipeAddLine(this, recipe), this.unlocalizedName));
                             }
                             if (ConfigHolder.misc.debug) {
                                 GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
