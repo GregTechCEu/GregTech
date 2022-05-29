@@ -2191,6 +2191,8 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
 
+tile.brittle_charcoal.name=Brittle Charcoal
+
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
@@ -4409,6 +4411,13 @@ gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 throu
 gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
 gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
 gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
+
+gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
+gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
+gregtech.machine.charcoal_pile.tooltip.2=Pyrolysis occurs in up to a §b9x4x9§7 space beneath
+gregtech.machine.charcoal_pile.tooltip.3=Logs must be §eAnaerobic§7!
+gregtech.machine.charcoal_pile.tooltip.4=Place Logs on a floor of §aBricks§7
+gregtech.machine.charcoal_pile.tooltip.5=Cover Logs with §aSoils§7 or §aSands§7
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power

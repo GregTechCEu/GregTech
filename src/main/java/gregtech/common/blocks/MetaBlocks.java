@@ -126,6 +126,8 @@ public class MetaBlocks {
     public static BlockRubberSapling RUBBER_SAPLING;
     public static BlockGregPlanks PLANKS;
 
+    public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
+
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
     public static final Collection<BlockOre> ORES = new ReferenceArrayList<>();
@@ -227,6 +229,8 @@ public class MetaBlocks {
         RUBBER_SAPLING.setRegistryName("rubber_sapling");
         PLANKS = new BlockGregPlanks();
         PLANKS.setRegistryName("planks");
+        BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
+        BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
@@ -350,6 +354,7 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
         registerItemModel(PLANKS);
+        registerItemModel(BRITTLE_CHARCOAL);
 
         BOILER_FIREBOX_CASING.onModelRegister();
         WIRE_COIL.onModelRegister();

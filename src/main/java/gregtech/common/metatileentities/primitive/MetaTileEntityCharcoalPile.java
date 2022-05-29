@@ -4,6 +4,8 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -18,10 +20,12 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemFireball;
@@ -34,8 +38,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,16 +62,15 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
         WALL_BLOCKS.add(Blocks.GRASS);
         WALL_BLOCKS.add(Blocks.GRASS_PATH);
         WALL_BLOCKS.add(Blocks.SAND);
-        WALL_BLOCKS.add(Blocks.GRAVEL);
     }
 
     private int lDist = 0;
     private int rDist = 0;
     private int hDist = 0;
 
-    private boolean isActive = false;
-    private int progressTime = 1;
-    private int maxProgress = 1;
+    private boolean isActive;
+    private int progressTime = 0;
+    private int maxProgress = 0;
 
     public MetaTileEntityCharcoalPile(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -78,7 +84,7 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.ROCK_BREAKER_OVERLAY.renderOrientedState(renderState, translation, pipeline, EnumFacing.UP, isActive, true);
+        Textures.CHARCOAL_PILE_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, true);
     }
 
     @Override
@@ -86,6 +92,7 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
         super.invalidateStructure();
         setActive(false);
         this.progressTime = 0;
+        this.maxProgress = 0;
     }
 
     @Override
@@ -184,39 +191,6 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
         });
     }
 
-    @Override
-    public boolean onRightClick(@Nonnull EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!getWorld().isRemote && !playerIn.isSneaking()) {
-            if (isStructureFormed()) {
-                ItemStack stack = playerIn.getHeldItem(hand);
-                // see if the item is able to ignite blocks
-                if (!stack.isEmpty()) {
-                    if (stack.getItem() instanceof MetaItem) {
-                        // handle lighters, matches, etc
-                        for (IItemBehaviour behaviour : ((MetaItem<?>) stack.getItem()).getBehaviours(stack)) {
-                            if (behaviour instanceof LighterBehaviour) {
-                                if (!((LighterBehaviour) behaviour).consumeFuel(playerIn, stack)) return false;
-                            }
-                        }
-                    } else if (stack.getItem() instanceof ItemFlintAndSteel || stack.getItem() instanceof ItemFireball) {
-                        // handle flint and steel items or fire charge items
-                        if (stack.getItem().isDamageable()) stack.damageItem(1, playerIn);
-                        else stack.setCount(Math.max(0, stack.getCount() - 1));
-                    } else {
-                        // cannot ignite things to our knowledge, so do nothing charcoal pile related
-                        return super.onRightClick(playerIn, hand, facing, hitResult);
-                    }
-                    // successfully ignited the charcoal pile, so start running
-                    startWorking();
-                    setActive(true);
-                }
-            }
-            playerIn.swingArm(hand);
-        }
-
-        return false;
-    }
-
     private void updateStructureDimensions() {
         World world = getWorld();
         EnumFacing left = getFrontFacing().getOpposite().rotateYCCW();
@@ -259,20 +233,58 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
         return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
     }
 
-    private void setActive(boolean active) {
-        this.isActive = active;
+    @Override
+    public boolean onRightClick(@Nonnull EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote && !playerIn.isSneaking()) {
+            if (!isStructureFormed()) reinitializeStructurePattern();
+
+            if (isStructureFormed()) {
+                ItemStack stack = playerIn.getHeldItem(hand);
+                // see if the item is able to ignite blocks
+                if (!stack.isEmpty()) {
+                    if (stack.getItem() instanceof MetaItem) {
+                        // handle lighters, matches, etc
+                        for (IItemBehaviour behaviour : ((MetaItem<?>) stack.getItem()).getBehaviours(stack)) {
+                            if (behaviour instanceof LighterBehaviour) {
+                                if (!((LighterBehaviour) behaviour).consumeFuel(playerIn, stack)) return false;
+                            }
+                        }
+                    } else if (stack.getItem() instanceof ItemFlintAndSteel || stack.getItem() instanceof ItemFireball) {
+                        // handle flint and steel items or fire charge items
+                        if (stack.getItem().isDamageable()) stack.damageItem(1, playerIn);
+                        else stack.setCount(Math.max(0, stack.getCount() - 1));
+                    } else {
+                        // cannot ignite things to our knowledge, so do nothing charcoal pile related
+                        return super.onRightClick(playerIn, hand, facing, hitResult);
+                    }
+                    // successfully ignited the charcoal pile, so start running
+                    updateMaxProgressTime();
+                    setActive(true);
+                }
+            }
+            playerIn.swingArm(hand);
+        }
+
+        return false;
     }
 
-    private void startWorking() {
-        this.maxProgress = 1;
+    private void setActive(boolean active) {
+        this.isActive = active;
+        writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(this.isActive));
+    }
+
+    private void updateMaxProgressTime() {
+        this.maxProgress = Math.max(1, (int) Math.sqrt(logPositions.size() * 240_000));
     }
 
     @Override
     protected void updateFormedValid() {
-        if (isActive) {
-            if (++progressTime % maxProgress == 0) {
+        if (isActive && maxProgress > 0) {
+            if (++progressTime == maxProgress) {
                 progressTime = 0;
+                maxProgress = 0;
                 convertLogBlocks();
+                setActive(false);
             }
         }
     }
@@ -280,7 +292,7 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     private void convertLogBlocks() {
         World world = getWorld();
         for (BlockPos pos : logPositions) {
-            world.setBlockState(pos, Blocks.COAL_BLOCK.getDefaultState());
+            world.setBlockState(pos, MetaBlocks.BRITTLE_CHARCOAL.getDefaultState());
         }
     }
 
@@ -300,6 +312,20 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     }
 
     @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.1"));
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.2"));
+            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.3"));
+            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.4"));
+            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.5"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+        }
+    }
+
+    @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Collections.singletonList(MultiblockShapeInfo.builder()
                 .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
@@ -307,7 +333,7 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
                 .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
                 .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
                 .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                .where('S', MetaTileEntities.CHARCOAL_PIT, EnumFacing.NORTH)
+                .where('S', MetaTileEntities.CHARCOAL_PILE, EnumFacing.NORTH)
                 .where('B', Blocks.BRICK_BLOCK.getDefaultState())
                 .where('X', Blocks.DIRT.getDefaultState())
                 .where('D', Blocks.GRASS.getDefaultState())
@@ -360,6 +386,15 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
         this.isActive = buf.readBoolean();
     }
 
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+            this.isActive = buf.readBoolean();
+            scheduleRenderUpdate();
+        }
+    }
+
     /**
      * Add a block to the valid Charcoal Pile valid wall/roof blocks
      * @param block the block to add
@@ -375,7 +410,9 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     }
 
     @Override
-    public void setWorkingEnabled(boolean isActivationAllowed) { /*No Op*/ }
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+
+    }
 
     @Override
     public int getProgress() {
@@ -390,5 +427,16 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     @Override
     public boolean isActive() {
         return this.isActive;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE) {
+            return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
+        }
+
+        return super.getCapability(capability, side);
     }
 }
