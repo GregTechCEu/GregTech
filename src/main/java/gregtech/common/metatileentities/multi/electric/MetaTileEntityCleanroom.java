@@ -483,7 +483,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     public int getProgressPercent() {
-        return (int) (cleanroomLogic.getProgressPercent() * 100);
+        return cleanroomLogic.getProgressPercent();
     }
 
     @Override

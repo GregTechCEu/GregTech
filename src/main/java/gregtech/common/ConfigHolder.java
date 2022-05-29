@@ -100,7 +100,7 @@ public class ConfigHolder {
         public boolean enableCleanroom = true;
 
         @Config.Comment({"Whether multiblocks are able to run cleanroom recipes outside the cleanroom.",
-                "This does nothing is B:enableCleanroom is false.",
+                "This does nothing if B:enableCleanroom is false.",
                 "Default: false"})
         public boolean cleanMultiblocks = false;
     }

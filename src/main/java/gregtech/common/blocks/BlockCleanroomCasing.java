@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -19,7 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.CasingType> {
+public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.CasingType> implements IStateHarvestLevel {
 
     public BlockCleanroomCasing() {
         super(Material.IRON);
@@ -27,7 +28,6 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
         setHardness(2.0f);
         setResistance(8.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 1);
         setDefaultState(getState(CasingType.PLASCRETE));
     }
 
@@ -61,6 +61,11 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
         }
     }
 
+    @Override
+    public int getHarvestLevel(IBlockState state) {
+        return state == getState(CasingType.PLASCRETE) ? 2 : 1;
+    }
+
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
@@ -68,7 +73,7 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING))) tooltip.add(I18n.format("tile.cleanroom_casing.filter.tooltip"));
         if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING_STERILE))) tooltip.add(I18n.format("tile.cleanroom_casing.filter_sterile.tooltip"));

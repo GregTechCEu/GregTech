@@ -11,8 +11,6 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -37,7 +35,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
 
-public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements EnergyContainerHandler.IEnergyChangeListener {
+public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart {
 
     protected IEnergyContainer energyContainer;
 
@@ -112,10 +110,6 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
         this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8, tierVoltage, amps, tierVoltage, amps);
         ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
         ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
-    }
-
-    @Override
-    public void onEnergyChanged(IEnergyContainer container, boolean isInitialChange) {
     }
 
     @Override
