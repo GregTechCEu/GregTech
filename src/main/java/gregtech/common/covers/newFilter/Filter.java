@@ -35,7 +35,7 @@ public abstract class Filter<T> {
                 .setTexture(GuiTextures.BUTTON_BLACKLIST)
                 .setBackground(GuiTextures.BASE_BUTTON)
                 .setSize(18, 18)
-                .setPos(126, 0);
+                .setPos(121, 0);
     }
 
     public void writeToNBT(NBTTagCompound nbt) {

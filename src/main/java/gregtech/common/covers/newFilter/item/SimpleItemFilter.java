@@ -89,19 +89,19 @@ public class SimpleItemFilter extends ItemFilter {
                         .setTexture(GuiTextures.BUTTON_FILTER_DAMAGE)
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .addTooltip(new Text("cover.item_filter.ignore_damage").localise())
-                        .setPos(90, 0)
+                        .setPos(85, 0)
                         .setSize(18, 18))
                 .addChild(new CycleButtonWidget()
                         .setToggle(() -> ignoreNBT, this::setIgnoreNBT)
                         .setTexture(GuiTextures.BUTTON_FILTER_NBT)
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .addTooltip(new Text("cover.item_filter.ignore_nbt").localise())
-                        .setPos(108, 0)
+                        .setPos(103, 0)
                         .setSize(18, 18))
                 .addChild(createBlacklistButton(buildContext));
         for (int i = 0; i < 9; i++) {
             widget.addChild(SlotWidget.phantom(itemFilterSlots, i)
-                    .setPos(i * 18, 19));
+                    .setPos(i % 3 * 18, i / 3 * 18 + 1));
         }
         return widget;
     }

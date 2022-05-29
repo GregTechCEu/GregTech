@@ -455,13 +455,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(176, 192);
+        ModularWindow.Builder builder = ModularWindow.builder(176, 172);
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
                 .bindPlayerInventory(buildContext.getPlayer(), 7)
-                .widget(new TextWidget(new Text("container.inventory").localise())
-                        .setPos(8, 99))
                 .widget(new Column()
                         .widget(new TextWidget(new Text("cover.transfer_rate").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
@@ -474,14 +472,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                 .setSize(80, 12))
                         .widget(new TextWidget(new Text("cover.conveyor.distribution_mode").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
-                                .setSize(80, 20))
+                                .setSize(80, 12))
                         .setPos(7, 18)
-                        .setSize(80, 56))
+                        .setSize(80, 48))
                 .widget(new Column()
                         .widget(new Row()
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, -512, this::adjustTransferRate))
-                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF).shadow())
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
                                         .setGetterInt(() -> transferRate)
@@ -493,7 +491,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
-                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF).shadow())
                                         .setSize(12, 12)))
                         .widget(new CycleButtonWidget()
                                 .setForEnum(ConveyorMode.class, this::getConveyorMode, this::setConveyorMode)
@@ -503,19 +501,23 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                         .widget(new CycleButtonWidget()
                                 .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
-                                .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                                .addTooltip(0, Text.localised(ManualImportExportMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(ManualImportExportMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(ManualImportExportMode.values()[2].localeTooltip))
                                 .setBackground(GuiTextures.BASE_BUTTON)
                                 .setSize(80, 12))
                         .widget(new CycleButtonWidget()
                                 .setForEnum(DistributionMode.class, this::getDistributionMode, this::setDistributionMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(DistributionMode.class))
+                                .addTooltip(0, Text.localised(DistributionMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(DistributionMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(DistributionMode.values()[2].localeTooltip))
                                 .setBackground(GuiTextures.BASE_BUTTON)
-                                .addTooltip(new Text("cover.conveyor.distribution.description").localise())
-                                .setSize(80, 20))
+                                .setSize(80, 12))
                         .setPos(89, 18)
-                        .setSize(80, 56))
+                        .setSize(80, 48))
                 .widget(filterHolder.createFilterUI(buildContext)
-                        .setPos(7, 78));
+                        .setPos(7, 66));
         return builder.build();
     }
 

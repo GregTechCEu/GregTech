@@ -67,21 +67,21 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                                 widget.getContext().openSyncedWindow(1);
                         })
                         .setTicker(widget -> widget.setEnabled(currentFilter != null))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("Open Settings").color(Color.WHITE.normal))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("Open Settings").color(Color.WHITE.normal).shadow())
                         .setPos(82, 0)
                         .setSize(80, 18));
     }
 
     public ModularWindow openFilterWindow(EntityPlayer player) {
-        ModularWindow.Builder builder = ModularWindow.builder(150, 100);
+        ModularWindow.Builder builder = ModularWindow.builder(150, 90);
         builder.setBackground(ModularUITextures.VANILLA_BACKGROUND)
-                .setPos((screenSize, mainWindow) -> new Pos2d(screenSize.width / 2 - 75, mainWindow.getPos().y + 5))
+                .setPos((screenSize, mainWindow) -> new Pos2d(screenSize.width / 2 - 75, mainWindow.getPos().y - 5))
                 .widget(new TextWidget("Filter Settings")
                         .setPos(5, 5))
                 .widget(ButtonWidget.closeWindowButton(true)
                         .setPos(133, 5))
                 .widget(currentFilter.createFilterUI(null)
-                        .setPos(0, 20));
+                        .setPos(5, 20));
         return builder.build();
     }
 

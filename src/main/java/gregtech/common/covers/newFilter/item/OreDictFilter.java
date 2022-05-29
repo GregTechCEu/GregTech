@@ -1,23 +1,27 @@
 package gregtech.common.covers.newFilter.item;
 
 import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.drawable.shapes.Rectangle;
 import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.math.Color;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.ScrollBar;
 import com.cleanroommc.modularui.common.widget.SlotWidget;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OreDictExprFilter;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class OreDictFilter extends ItemFilter {
@@ -34,7 +38,8 @@ public class OreDictFilter extends ItemFilter {
     private static final Pattern pattern = Pattern.compile("[(!]* *[0-9a-zA-Z*]* *\\)*( *[&|^]? *[(!]* *[0-9a-zA-Z*]* *\\)*)*");
 
     private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
-    private final Map<ItemStack, Boolean> recentlyChecked = new HashMap<>();
+    private static final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
+    private final Object2BooleanOpenCustomHashMap<ItemStack> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
 
     protected void setOreDictFilterExpression(String oreDictFilterExpression) {
         this.oreDictFilterExpression = oreDictFilterExpression;
@@ -54,11 +59,11 @@ public class OreDictFilter extends ItemFilter {
                 .addChild(GuiTextures.INFO_ICON.asWidget()
                         .addTooltip(new Text("cover.ore_dictionary_filter.info").localise())
                         .setSize(18, 18)
-                        .setPos(39, 0))
+                        .setPos(0, 0))
                 .addChild(createBlacklistButton(buildContext))
                 .addChild(SlotWidget.phantom(testSlot, 0)
                         .setChangeListener(this::updateTestMsg)
-                        .setPos(58, 0))
+                        .setPos(20, 0))
                 .addChild(TextWidget.dynamicText(() -> {
                     if (testMsg.isEmpty()) {
                         return new Text("");
@@ -66,7 +71,7 @@ public class OreDictFilter extends ItemFilter {
                     return new Text(testMsg)
                             .color(testResult ? 0x13610C : 0x801212)
                             .localise();
-                }).setPos(78, 0).setSize(53, 18))
+                }).setPos(40, 0).setSize(80, 18))
                 .addChild(new TextFieldWidget()
                         .setSetter(val -> {
                             setOreDictFilterExpression(val);
@@ -75,11 +80,12 @@ public class OreDictFilter extends ItemFilter {
                         .setGetter(() -> oreDictFilterExpression)
                         .setValidator(this::validateInput)
                         .setPattern(pattern)
-                        .setSynced(false, false)
+                        .setScrollBar(new ScrollBar().setBarTexture(new Rectangle()))
                         .setTextAlignment(Alignment.CenterLeft)
-                        .setBackground(GuiTextures.DISPLAY)
-                        .setPos(0, 19)
-                        .setSize(162, 18));
+                        .setTextColor(Color.WHITE.normal)
+                        .setBackground(GuiTextures.DISPLAY.withFixedSize(140, 22, -2, -2))
+                        .setPos(2, 21)
+                        .setSize(136, 14));
     }
 
     private void updateTestMsg() {
@@ -99,13 +105,12 @@ public class OreDictFilter extends ItemFilter {
 
     @Override
     public Object matchItemStack(ItemStack itemStack) {
-        Boolean b = recentlyChecked.get(itemStack);
-        if (b != null) {
-            return b ? Boolean.TRUE : null;
+        if (recentlyChecked.containsKey(itemStack)) {
+            return recentlyChecked.getBoolean(itemStack) ? true : null;
         }
         if (OreDictExprFilter.matchesOreDict(matchRules, itemStack)) {
             recentlyChecked.put(itemStack, true);
-            return Boolean.TRUE;
+            return true;
         }
         recentlyChecked.put(itemStack, false);
         return null;
