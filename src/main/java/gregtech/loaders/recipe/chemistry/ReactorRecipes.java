@@ -183,6 +183,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Quicklime, 2)
                 .fluidInputs(AceticAcid.getFluid(2000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(DissolvedCalciumAcetate.getFluid(1000))
                 .duration(400).EUt(380).buildAndRegister();
 
