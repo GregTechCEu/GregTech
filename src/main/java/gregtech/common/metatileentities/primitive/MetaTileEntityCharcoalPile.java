@@ -41,19 +41,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implements IWorkable {
+public class MetaTileEntityCharcoalPile extends MultiblockControllerBase implements IWorkable {
 
     private static final int MIN_RADIUS = 1;
     private static final int MIN_DEPTH = 2;
 
-    private static final Set<Block> ROOF_BLOCKS = new ObjectOpenHashSet<>();
+    private static final Set<Block> WALL_BLOCKS = new ObjectOpenHashSet<>();
+
+    private final Set<BlockPos> logPositions = new ObjectOpenHashSet<>();
 
     static {
-        ROOF_BLOCKS.add(Blocks.DIRT);
-        ROOF_BLOCKS.add(Blocks.GRASS);
-        ROOF_BLOCKS.add(Blocks.GRASS_PATH);
-        ROOF_BLOCKS.add(Blocks.SAND);
-        ROOF_BLOCKS.add(Blocks.GRAVEL);
+        WALL_BLOCKS.add(Blocks.DIRT);
+        WALL_BLOCKS.add(Blocks.GRASS);
+        WALL_BLOCKS.add(Blocks.GRASS_PATH);
+        WALL_BLOCKS.add(Blocks.SAND);
+        WALL_BLOCKS.add(Blocks.GRAVEL);
     }
 
     private int lDist = 0;
@@ -61,15 +63,16 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
     private int hDist = 0;
 
     private boolean isActive = false;
-    private int progressTime = 0;
+    private int progressTime = 1;
+    private int maxProgress = 1;
 
-    public MetaTileEntityCharcoalPit(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityCharcoalPile(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCharcoalPit(metaTileEntityId);
+        return new MetaTileEntityCharcoalPile(metaTileEntityId);
     }
 
     @Override
@@ -87,19 +90,23 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
 
     @Override
     protected BlockPattern createStructurePattern() {
+        // update the structure's dimensions just before we create it
+        if (getWorld() != null) updateStructureDimensions();
+
         // sometimes these can get reset
         if (lDist < 1) lDist = MIN_RADIUS;
         if (rDist < 1) rDist = MIN_RADIUS;
         if (hDist < 2) hDist = MIN_DEPTH;
 
         StringBuilder wallBuilder = new StringBuilder();       // " XXX "
+        StringBuilder floorBuilder = new StringBuilder();      // " BBB "
         StringBuilder cornerBuilder = new StringBuilder();     // "     "
-        StringBuilder roofBuilder = new StringBuilder();       // " DDD "
-        StringBuilder ctrlBuilder = new StringBuilder();       // " DSD "
+        StringBuilder ctrlBuilder = new StringBuilder();       // " XSX "
         StringBuilder woodBuilder = new StringBuilder();       // "XCCCX"
 
+        // everything to the left of the controller
         wallBuilder.append(" ");
-        roofBuilder.append(" ");
+        floorBuilder.append(" ");
         ctrlBuilder.append(" ");
         woodBuilder.append("X");
 
@@ -107,30 +114,32 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
             cornerBuilder.append(" ");
             if (i > 0) {
                 wallBuilder.append("X");
-                roofBuilder.append("D");
-                ctrlBuilder.append("D");
+                floorBuilder.append("B");
+                ctrlBuilder.append("X");
                 woodBuilder.append("C");
             }
         }
 
+        // everything in-line with the controller
         wallBuilder.append("X");
+        floorBuilder.append("B");
         cornerBuilder.append(" ");
-        roofBuilder.append("D");
         ctrlBuilder.append("S");
         woodBuilder.append("C");
 
+        // everything to the right of the controller
         for (int i = 0; i < rDist; i++) {
             cornerBuilder.append(" ");
             if (i < rDist - 1) {
                 wallBuilder.append("X");
-                roofBuilder.append("D");
-                ctrlBuilder.append("D");
+                floorBuilder.append("B");
+                ctrlBuilder.append("X");
                 woodBuilder.append("C");
             }
         }
 
         wallBuilder.append(" ");
-        roofBuilder.append(" ");
+        floorBuilder.append(" ");
         ctrlBuilder.append(" ");
         woodBuilder.append("X");
 
@@ -139,14 +148,15 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
         wall[0] = cornerBuilder.toString();
         wall[wall.length - 1] = cornerBuilder.toString();
 
-        String[] slice = new String[hDist + 1]; // " XXX ", "XCCCX", " DDD "
+        String[] slice = new String[hDist + 1]; // " BBB ", "XCCCX", " XXX "
         Arrays.fill(slice, woodBuilder.toString());
-        slice[0] = wallBuilder.toString();
+        slice[0] = floorBuilder.toString();
 
-        String[] center = Arrays.copyOf(slice, slice.length); // " XXX ", "XCCCX", " DSD "
+        String[] center = Arrays.copyOf(slice, slice.length); // " BBB ", "XCCCX", " XSX "
         center[center.length - 1] = ctrlBuilder.toString();
 
-        slice[slice.length - 1] = roofBuilder.toString();
+        // slice is finished after center, so we can re-use it a bit more
+        slice[slice.length - 1] = wallBuilder.toString();
 
         return FactoryBlockPattern.start()
                 .aisle(wall)
@@ -155,21 +165,28 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
                 .aisle(slice).setRepeatable(0, 4)
                 .aisle(wall)
                 .where('S', selfPredicate())
-                .where('X', blocks(Blocks.BRICK_BLOCK))
-                .where('D', blocks(ROOF_BLOCKS.toArray(new Block[0])))
+                .where('B', blocks(Blocks.BRICK_BLOCK))
+                .where('X', blocks(WALL_BLOCKS.toArray(new Block[0])))
                 .where('C', logPredicate())
                 .where(' ', any())
                 .build();
     }
 
     @Nonnull
-    private static TraceabilityPredicate logPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isWood(blockWorldState.getWorld(), blockWorldState.getPos()));
+    private TraceabilityPredicate logPredicate() {
+        return new TraceabilityPredicate(blockWorldState -> {
+            if (blockWorldState.getBlockState().getBlock().isWood(blockWorldState.getWorld(), blockWorldState.getPos())) {
+                // store the position of every log, so we can easily turn them into charcoal
+                logPositions.add(blockWorldState.getPos());
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
     public boolean onRightClick(@Nonnull EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!getWorld().isRemote) {
+        if (!getWorld().isRemote && !playerIn.isSneaking()) {
             if (isStructureFormed()) {
                 ItemStack stack = playerIn.getHeldItem(hand);
                 // see if the item is able to ignite blocks
@@ -186,30 +203,26 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
                         if (stack.getItem().isDamageable()) stack.damageItem(1, playerIn);
                         else stack.setCount(Math.max(0, stack.getCount() - 1));
                     } else {
-                        // cannot ignite things to our knowledge, so do nothing charcoal pit related
+                        // cannot ignite things to our knowledge, so do nothing charcoal pile related
                         return super.onRightClick(playerIn, hand, facing, hitResult);
                     }
-                    // successfully ignited the charcoal pit, so start running
-                    calculateTime();
+                    // successfully ignited the charcoal pile, so start running
+                    startWorking();
                     setActive(true);
                 }
-            } else {
-                updateStructureDimensions();
-                reinitializeStructurePattern();
-                checkStructurePattern();
             }
             playerIn.swingArm(hand);
         }
 
-        return true;
+        return false;
     }
 
     private void updateStructureDimensions() {
         World world = getWorld();
-        EnumFacing right = getFrontFacing().rotateY();
-        EnumFacing left = getFrontFacing().rotateYCCW();
+        EnumFacing left = getFrontFacing().getOpposite().rotateYCCW();
+        EnumFacing right = left.getOpposite();
 
-        // l and r move down 1 block because the top layer has no bricks
+        // l, r move down 1 block because the top layer has no bricks
         BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(getPos()).move(EnumFacing.DOWN);
         BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(getPos()).move(EnumFacing.DOWN);
         BlockPos.MutableBlockPos hPos = new BlockPos.MutableBlockPos(getPos());
@@ -221,38 +234,53 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
         int hDist = 0;
 
         // find the left, right, height distances for the structure pattern
-        // maximum size is 11x11x6, so check 5 block radius around the controller for blocks
+        // maximum size is 11x11x6 including walls, so check 5 block radius around the controller for blocks
         for (int i = 1; i < 6; i++) {
             if (lDist != 0 && rDist != 0 && hDist != 0) break;
-
-            lPos.move(left);
-            if (lDist == 0 && world.getBlockState(lPos).getBlock() == Blocks.BRICK_BLOCK) lDist = i;
-
-            rPos.move(right);
-            if (rDist == 0 && world.getBlockState(rPos).getBlock() == Blocks.BRICK_BLOCK) rDist = i;
-
-            hPos.move(EnumFacing.DOWN);
-            if (hDist == 0 && world.getBlockState(hPos).getBlock() == Blocks.BRICK_BLOCK) hDist = i;
+            if (lDist == 0 && isBlockWall(world, lPos, left)) lDist = i;
+            if (rDist == 0 && isBlockWall(world, rPos, right)) rDist = i;
+            if (hDist == 0 && isBlockFloor(world, hPos)) hDist = i;
         }
-        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) invalidateStructure();
+
+        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) {
+            invalidateStructure();
+        }
 
         this.lDist = lDist;
         this.rDist = rDist;
         this.hDist = hDist;
     }
 
+    private static boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
+        return WALL_BLOCKS.contains(world.getBlockState(pos.move(direction)).getBlock());
+    }
+
+    private static boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos) {
+        return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
+    }
+
     private void setActive(boolean active) {
         this.isActive = active;
     }
 
-    private void calculateTime() {
-        //TODO
+    private void startWorking() {
+        this.maxProgress = 1;
     }
 
     @Override
     protected void updateFormedValid() {
         if (isActive) {
+            if (++progressTime % maxProgress == 0) {
+                progressTime = 0;
+                convertLogBlocks();
+            }
+        }
+    }
 
+    private void convertLogBlocks() {
+        World world = getWorld();
+        for (BlockPos pos : logPositions) {
+            world.setBlockState(pos, Blocks.COAL_BLOCK.getDefaultState());
         }
     }
 
@@ -275,12 +303,13 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Collections.singletonList(MultiblockShapeInfo.builder()
                 .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                .aisle(" XXX ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                .aisle(" XXX ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
-                .aisle(" XXX ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
+                .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
+                .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
+                .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
                 .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
                 .where('S', MetaTileEntities.CHARCOAL_PIT, EnumFacing.NORTH)
-                .where('X', Blocks.BRICK_BLOCK.getDefaultState())
+                .where('B', Blocks.BRICK_BLOCK.getDefaultState())
+                .where('X', Blocks.DIRT.getDefaultState())
                 .where('D', Blocks.GRASS.getDefaultState())
                 .where('C', Blocks.LOG.getDefaultState())
                 .build());
@@ -289,47 +318,55 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("lDist", lDist);
-        data.setInteger("rDist", rDist);
-        data.setInteger("hDist", hDist);
-        data.setBoolean("isActive", isActive);
+        data.setInteger("lDist", this.lDist);
+        data.setInteger("rDist", this.rDist);
+        data.setInteger("hDist", this.hDist);
+        data.setInteger("progressTime", this.progressTime);
+        data.setInteger("maxProgress", this.maxProgress);
+        data.setBoolean("isActive", this.isActive);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        lDist = data.getInteger("lDist");
-        rDist = data.getInteger("rDist");
-        hDist = data.getInteger("hDist");
-        isActive = data.getBoolean("isActive");
+        this.lDist = data.getInteger("lDist");
+        this.rDist = data.getInteger("rDist");
+        this.hDist = data.getInteger("hDist");
+        this.progressTime = data.getInteger("progressTime");
+        this.maxProgress = data.getInteger("maxProgress");
+        this.isActive = data.getBoolean("isActive");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(lDist);
-        buf.writeInt(rDist);
-        buf.writeInt(hDist);
-        buf.writeBoolean(isActive);
+        buf.writeInt(this.lDist);
+        buf.writeInt(this.rDist);
+        buf.writeInt(this.hDist);
+        buf.writeInt(this.progressTime);
+        buf.writeInt(this.maxProgress);
+        buf.writeBoolean(this.isActive);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        lDist = buf.readInt();
-        rDist = buf.readInt();
-        hDist = buf.readInt();
-        isActive = buf.readBoolean();
+        this.lDist = buf.readInt();
+        this.rDist = buf.readInt();
+        this.hDist = buf.readInt();
+        this.progressTime = buf.readInt();
+        this.maxProgress = buf.readInt();
+        this.isActive = buf.readBoolean();
     }
 
     /**
-     * Add a block to the valid Charcoal Pit roof blocks
+     * Add a block to the valid Charcoal Pile valid wall/roof blocks
      * @param block the block to add
      */
     @SuppressWarnings("unused")
-    public static void addRoofBlock(@Nonnull Block block) {
-        ROOF_BLOCKS.add(block);
+    public static void addWallBlock(@Nonnull Block block) {
+        WALL_BLOCKS.add(block);
     }
 
     @Override
@@ -338,7 +375,7 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
     }
 
     @Override
-    public void setWorkingEnabled(boolean isActivationAllowed) { }
+    public void setWorkingEnabled(boolean isActivationAllowed) { /*No Op*/ }
 
     @Override
     public int getProgress() {
@@ -347,7 +384,7 @@ public class MetaTileEntityCharcoalPit extends MultiblockControllerBase implemen
 
     @Override
     public int getMaxProgress() {
-        return 1; //TODO
+        return maxProgress;
     }
 
     @Override
