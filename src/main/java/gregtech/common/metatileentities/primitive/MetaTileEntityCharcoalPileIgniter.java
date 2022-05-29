@@ -4,37 +4,31 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemFireball;
-import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -48,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class MetaTileEntityCharcoalPile extends MultiblockControllerBase implements IWorkable {
+public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase implements IWorkable {
 
     private static final int MIN_RADIUS = 1;
     private static final int MIN_DEPTH = 2;
@@ -72,13 +66,13 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     private int progressTime = 0;
     private int maxProgress = 0;
 
-    public MetaTileEntityCharcoalPile(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityCharcoalPileIgniter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCharcoalPile(metaTileEntityId);
+        return new MetaTileEntityCharcoalPileIgniter(metaTileEntityId);
     }
 
     @Override
@@ -93,6 +87,14 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
         setActive(false);
         this.progressTime = 0;
         this.maxProgress = 0;
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        // start the machine on formation
+        updateMaxProgressTime();
+        setActive(true);
     }
 
     @Override
@@ -235,36 +237,8 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
 
     @Override
     public boolean onRightClick(@Nonnull EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!getWorld().isRemote && !playerIn.isSneaking()) {
-            if (!isStructureFormed()) reinitializeStructurePattern();
-
-            if (isStructureFormed()) {
-                ItemStack stack = playerIn.getHeldItem(hand);
-                // see if the item is able to ignite blocks
-                if (!stack.isEmpty()) {
-                    if (stack.getItem() instanceof MetaItem) {
-                        // handle lighters, matches, etc
-                        for (IItemBehaviour behaviour : ((MetaItem<?>) stack.getItem()).getBehaviours(stack)) {
-                            if (behaviour instanceof LighterBehaviour) {
-                                if (!((LighterBehaviour) behaviour).consumeFuel(playerIn, stack)) return false;
-                            }
-                        }
-                    } else if (stack.getItem() instanceof ItemFlintAndSteel || stack.getItem() instanceof ItemFireball) {
-                        // handle flint and steel items or fire charge items
-                        if (stack.getItem().isDamageable()) stack.damageItem(1, playerIn);
-                        else stack.setCount(Math.max(0, stack.getCount() - 1));
-                    } else {
-                        // cannot ignite things to our knowledge, so do nothing charcoal pile related
-                        return super.onRightClick(playerIn, hand, facing, hitResult);
-                    }
-                    // successfully ignited the charcoal pile, so start running
-                    updateMaxProgressTime();
-                    setActive(true);
-                }
-            }
-            playerIn.swingArm(hand);
-        }
-
+        // update the structure on right click, since finding edges happens to late after initial placement
+        if (!getWorld().isRemote && !playerIn.isSneaking() && !isStructureFormed()) reinitializeStructurePattern();
         return false;
     }
 
@@ -275,6 +249,21 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
 
     private void updateMaxProgressTime() {
         this.maxProgress = Math.max(1, (int) Math.sqrt(logPositions.size() * 240_000));
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (getWorld() != null && getWorld().isRemote && isActive) {
+            BlockPos pos = getPos();
+            EnumFacing facing = EnumFacing.UP;
+            float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.5F;
+            float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
+            float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.5F;
+            float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
+
+            getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, 0, ySpd, 0);
+        }
     }
 
     @Override
@@ -315,11 +304,12 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.2"));
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.2"));
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.3"));
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.4"));
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.5"));
+            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.6"));
         } else {
             tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
         }
@@ -333,7 +323,7 @@ public class MetaTileEntityCharcoalPile extends MultiblockControllerBase impleme
                 .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
                 .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
                 .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                .where('S', MetaTileEntities.CHARCOAL_PILE, EnumFacing.NORTH)
+                .where('S', MetaTileEntities.CHARCOAL_PILE_IGNITER, EnumFacing.NORTH)
                 .where('B', Blocks.BRICK_BLOCK.getDefaultState())
                 .where('X', Blocks.DIRT.getDefaultState())
                 .where('D', Blocks.GRASS.getDefaultState())
