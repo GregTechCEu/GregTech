@@ -4,9 +4,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
 import java.util.Objects;
-import java.util.WeakHashMap;
 
 public class GTRecipeFluidInput extends GTRecipeInput {
     FluidStack inputStack;
@@ -22,24 +20,15 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         this.amount = amount;
     }
 
-    public static GTRecipeFluidInput getOrCreate(FluidStack fluidStack, int amount) {
+    public static GTRecipeInput getOrCreate(FluidStack fluidStack, int amount) {
         return getFromCache(new GTRecipeFluidInput(fluidStack, amount));
     }
 
-    public static GTRecipeFluidInput getOrCreate(Fluid fluid, int amount) {
+    public static GTRecipeInput getOrCreate(Fluid fluid, int amount) {
         return getFromCache(new GTRecipeFluidInput(new FluidStack(fluid, amount)));
     }
 
-    private static GTRecipeFluidInput getFromCache(GTRecipeFluidInput realIngredient) {
-        if (INSTANCES.get(realIngredient) == null) {
-            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = (GTRecipeFluidInput) INSTANCES.get(realIngredient).get();
-        }
-        return realIngredient;
-    }
-
-    public static GTRecipeFluidInput getOrCreate(GTRecipeInput ri, int i) {
+    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
         return getFromCache(new GTRecipeFluidInput(ri.getInputFluidStack(), i));
     }
 
@@ -49,11 +38,6 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;
         return copy;
-    }
-
-    @Override
-    GTRecipeInput getFromCache(GTRecipeInput recipeInput) {
-        return GTRecipeFluidInput.getFromCache((GTRecipeFluidInput) recipeInput);
     }
 
     @Override

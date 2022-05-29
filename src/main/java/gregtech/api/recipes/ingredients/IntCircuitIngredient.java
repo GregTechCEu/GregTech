@@ -11,6 +11,12 @@ import javax.annotation.Nullable;
 public class IntCircuitIngredient extends GTRecipeItemInput {
 
     public static final int CIRCUIT_MAX = 32;
+    private final int matchingConfigurations;
+
+    public IntCircuitIngredient(int matchingConfigurations) {
+        super(getIntegratedCircuit(matchingConfigurations));
+        this.matchingConfigurations = matchingConfigurations;
+    }
 
     public static ItemStack getIntegratedCircuit(int configuration) {
         ItemStack stack = MetaItems.INTEGRATED_CIRCUIT.getStackForm();
@@ -58,13 +64,6 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
         configuration += amount;
         configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
         IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
-    }
-
-    private final int matchingConfigurations;
-
-    public IntCircuitIngredient(int matchingConfigurations) {
-        super(getIntegratedCircuit(matchingConfigurations));
-        this.matchingConfigurations = matchingConfigurations;
     }
 
     @Override

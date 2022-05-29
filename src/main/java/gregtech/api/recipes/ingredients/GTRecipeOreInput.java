@@ -8,11 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.WeakHashMap;
-import java.util.stream.Collectors;
 
 public class GTRecipeOreInput extends GTRecipeInput {
     int ore;
@@ -28,29 +24,20 @@ public class GTRecipeOreInput extends GTRecipeInput {
         this.amount = amount;
     }
 
-    public static GTRecipeOreInput getOrCreate(String ore, int amount) {
+    public static GTRecipeInput getOrCreate(String ore, int amount) {
         return getFromCache(new GTRecipeOreInput(ore, amount));
     }
 
-    public static GTRecipeOreInput getOrCreate(String ore) {
+    public static GTRecipeInput getOrCreate(String ore) {
         return getFromCache(new GTRecipeOreInput(ore, 1));
     }
 
-    public static GTRecipeOreInput getOrCreate(OrePrefix prefix, Material material, int amount) {
+    public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material, int amount) {
         return getOrCreate(new UnificationEntry(prefix, material).toString(), amount);
     }
 
-    public static GTRecipeOreInput getOrCreate(OrePrefix prefix, Material material) {
+    public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material) {
         return getOrCreate(new UnificationEntry(prefix, material).toString(), 1);
-    }
-
-    private static GTRecipeOreInput getFromCache(GTRecipeOreInput realIngredient) {
-        if (INSTANCES.get(realIngredient) == null) {
-            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = (GTRecipeOreInput) INSTANCES.get(realIngredient).get();
-        }
-        return realIngredient;
     }
 
     protected GTRecipeOreInput copy() {
@@ -59,11 +46,6 @@ public class GTRecipeOreInput extends GTRecipeInput {
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;
         return copy;
-    }
-
-    @Override
-    GTRecipeInput getFromCache(GTRecipeInput recipeInput) {
-        return getFromCache((GTRecipeOreInput) recipeInput);
     }
 
     //The items returned here are not updated after its first call, so they are not suitable for use while recipes are being processed and

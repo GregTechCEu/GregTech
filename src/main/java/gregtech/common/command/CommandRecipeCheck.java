@@ -101,7 +101,7 @@ public class CommandRecipeCheck extends CommandBase {
         if (mismatchedRecipes.size() == 0) {
             GTLog.logger.info("No recipe conflicts found in all recipe maps!");
         } else {
-            count = (int) mismatchedRecipes.values().stream().mapToLong(s -> s.values().size()).sum();
+            count = (int) mismatchedRecipes.values().stream().mapToLong(s -> s.values().stream().mapToLong(Set::size).sum()).sum();
             GTLog.logger.info("[Recipe Checker] Found " + count + " potential conflicts");
             for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> recipeMap : mismatchedRecipes.entrySet()) {
                 GTLog.logger.error(

@@ -3,7 +3,6 @@ package gregtech.api.recipes.builders;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -54,7 +53,7 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     @Override
     protected EnumValidationResult finalizeAndValidate() {
         if (circuitMeta >= 0) {
-            inputs.add(GTRecipeItemInput.getOrCreate(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
+            inputs.add(IntCircuitIngredient.getOrCreate(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
         }
         return super.finalizeAndValidate();
     }

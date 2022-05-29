@@ -35,13 +35,24 @@ public abstract class GTRecipeInput {
     protected NBTMatcher nbtMatcher;
     protected NBTcondition nbtCondition;
 
+    static GTRecipeInput getFromCache(GTRecipeInput realIngredient) {
+        if (INSTANCES.get(realIngredient) == null) {
+            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
+        } else {
+            realIngredient = INSTANCES.get(realIngredient).get();
+        }
+        return realIngredient;
+    }
+
+    public static GTRecipeInput getOrCreate(GTRecipeInput gtRecipeIngredient) {
+        return getFromCache(gtRecipeIngredient);
+    }
+
     public int getAmount() {
         return amount;
     }
 
     abstract GTRecipeInput copy();
-
-    abstract GTRecipeInput getFromCache(GTRecipeInput recipeInput);
 
     public GTRecipeInput setNonConsumable() {
         GTRecipeInput copy = copy();

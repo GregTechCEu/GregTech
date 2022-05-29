@@ -8,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -60,17 +59,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
         this(stack, stack[0].getCount());
     }
 
-    public static GTRecipeItemInput getOrCreate(ItemStack stack, int amount) {
+    public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
         return getFromCache(new GTRecipeItemInput(stack, amount));
-    }
-
-    private static GTRecipeItemInput getFromCache(GTRecipeItemInput realIngredient) {
-        if (INSTANCES.get(realIngredient) == null) {
-            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = (GTRecipeItemInput) INSTANCES.get(realIngredient).get();
-        }
-        return realIngredient;
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
@@ -91,11 +81,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;
         return copy;
-    }
-
-    @Override
-    GTRecipeInput getFromCache(GTRecipeInput recipeInput) {
-        return getFromCache((GTRecipeItemInput) recipeInput);
     }
 
     @Override
