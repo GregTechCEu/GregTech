@@ -50,7 +50,17 @@ public class CleanroomLogic {
         if (!this.isWorkingEnabled) return;
 
         // drain the energy
-        consumeEnergy(false);
+        if (consumeEnergy(true)) {
+            consumeEnergy(false);
+        } else {
+            if (progressTime >= 2) {
+                if (ConfigHolder.machines.recipeProgressLowEnergy) this.progressTime = 1;
+                else this.progressTime = Math.max(1, progressTime - 2);
+
+                hasNotEnoughEnergy = true;
+            }
+            return;
+        }
 
         if (!this.isActive) setActive(true);
 
@@ -76,16 +86,6 @@ public class CleanroomLogic {
      * @return true if the cleanroom is able to drain energy, else false
      */
     protected boolean hasEnoughPower() {
-        if (!consumeEnergy(true)) {
-            if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy) this.progressTime = 1;
-                else this.progressTime = Math.max(1, progressTime - 2);
-
-                hasNotEnoughEnergy = true;
-            }
-            return false;
-        }
-
         if (this.hasNotEnoughEnergy && ((ICleanroomProvider) metaTileEntity).getEnergyInputPerSecond() > 19L * GTValues.VA[((ICleanroomProvider) metaTileEntity).getEnergyTier()]) {
             this.hasNotEnoughEnergy = false;
         }
@@ -118,6 +118,7 @@ public class CleanroomLogic {
      */
     public void setWorkingEnabled(boolean workingEnabled) {
         this.isWorkingEnabled = workingEnabled;
+        metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
         metaTileEntity.markDirty();
     }
 
@@ -146,8 +147,8 @@ public class CleanroomLogic {
         return MAX_PROGRESS;
     }
 
-    public double getProgressPercent() {
-        return getProgressTime() * 1.0 / getMaxProgress();
+    public int getProgressPercent() {
+        return getProgressTime() / getMaxProgress() * 100;
     }
 
     protected int getTierDifference() {
