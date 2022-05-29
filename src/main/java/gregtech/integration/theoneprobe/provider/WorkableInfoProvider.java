@@ -1,51 +1,52 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
-import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+
+import javax.annotation.Nonnull;
 
 public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
 
+    @Override
+    public String getID() {
+        return GTValues.MODID + ":workable_provider";
+    }
+
+    @Nonnull
     @Override
     protected Capability<IWorkable> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_WORKABLE;
     }
 
     @Override
-    public String getID() {
-        return "gregtech:workable_provider";
-    }
+    protected void addProbeInfo(@Nonnull IWorkable capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+        if (!capability.isActive()) return;
 
-    @Override
-    protected void addProbeInfo(IWorkable capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
         int currentProgress = capability.getProgress();
         int maxProgress = capability.getMaxProgress();
-        String suffix;
+        String text;
 
         if (maxProgress < 20) {
-            currentProgress = capability.getProgress();
-            maxProgress = capability.getMaxProgress();
-            suffix = " t / " + maxProgress + " t";
+            text = " / " + maxProgress + " t";
         } else {
-            currentProgress = (int) Math.round(currentProgress / 20.0);
-            maxProgress = (int) Math.round(maxProgress / 20.0);
-            suffix = " s / " + maxProgress + " s";
+            currentProgress = Math.round(currentProgress / 20.0F);
+            maxProgress = Math.round(maxProgress / 20.0F);
+            text = " / " + maxProgress + " s";
         }
 
         if (maxProgress > 0) {
-            IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-            horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.progress*} ");
-            horizontalPane.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
-                    .suffix(suffix)
-                    .borderColor(0x00000000)
-                    .backgroundColor(0x00000000)
-                    .filledColor(0xFF000099)
-                    .alternateFilledColor(0xFF000077));
+            int color = capability.isWorkingEnabled() ? 0xFF4CBB17 : 0xFFBB1C28;
+            probeInfo.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
+                    .suffix(text)
+                    .filledColor(color)
+                    .alternateFilledColor(color)
+                    .borderColor(0xFF555555));
         }
     }
 }

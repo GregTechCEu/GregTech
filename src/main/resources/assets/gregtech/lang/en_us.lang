@@ -24,32 +24,34 @@ gregtech.machine.steam_oven.name=Steam Oven
 gregtech.machine.steam_oven.tooltip=Smelts up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items. Requires §eSteam Hatches and Buses
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
 
-gregtech.top.energy_stored=Energy:
-gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
-gregtech.top.energy_consumption=Usage:
-gregtech.top.energy_production=Output:
+gregtech.top.energy_consumption=Using
+gregtech.top.energy_production=Producing
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
 gregtech.top.transform_output=§9Output:§r
 
-gregtech.top.convert_eu=§eConverting EU§r
-gregtech.top.convert_fe=§cConverting FE§r
+gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
+gregtech.top.convert_fe=Converting §cFE§r -> §eEU§r
 
-gregtech.top.fuel_burn=for
-gregtech.top.fuel_time=secs
-gregtech.top.fuel_min_consume=needs
-gregtech.top.fuel_name=Fuel:
+gregtech.top.fuel_min_consume=Needs
 gregtech.top.fuel_none=No fuel
 
-gregtech.top.invalid_structure=§cStructure Incomplete
-gregtech.top.valid_structure=§aStructure Formed
-gregtech.top.obstructed_structure=§cStructure Obstructed
-gregtech.top.maintenance_fixed=§aMaintenance Fine
-gregtech.top.maintenance_broken=§cNeeds Maintenance
+gregtech.top.invalid_structure=Structure Incomplete
+gregtech.top.valid_structure=Structure Formed
+gregtech.top.obstructed_structure=Structure Obstructed
+
+gregtech.top.maintenance_fixed=Maintenance Fine
+gregtech.top.maintenance_broken=Needs Maintenance
+gregtech.top.maintenance.wrench=Pipe is loose
+gregtech.top.maintenance.screwdriver=Screws are loose
+gregtech.top.maintenance.soft_mallet=Something is stuck
+gregtech.top.maintenance.hard_hammer=Plating is dented
+gregtech.top.maintenance.wire_cutter=Wires burned out
+gregtech.top.maintenance.crowbar=That doesn't belong there
 
 gregtech.top.primitive_pump_production=Production:
 

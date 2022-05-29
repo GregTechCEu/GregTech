@@ -15,11 +15,11 @@ import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
     @Override
@@ -28,16 +28,16 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
     }
 
     @Override
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
         if (mode == ProbeMode.DEBUG && ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity instanceof IGregTechTileEntity) {
                 MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if (metaTileEntity != null) {
-                    ArrayList<String> arrayList = new ArrayList<>();
-                    arrayList.add("MetaTileEntity Id: " + metaTileEntity.metaTileEntityId);
-                    metaTileEntity.addDebugInfo(arrayList);
-                    arrayList.forEach(probeInfo::text);
+                    List<String> list = new ArrayList<>();
+                    list.add("MetaTileEntity Id: " + metaTileEntity.metaTileEntityId);
+                    metaTileEntity.addDebugInfo(list);
+                    list.forEach(probeInfo::text);
                 }
             }
             if (tileEntity instanceof TileEntityPipeBase) {
@@ -48,19 +48,20 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     probeInfo.text("Net: " + pipeNet.hashCode());
                     probeInfo.text("Node Info: ");
                     StringBuilder builder = new StringBuilder();
-                    Map<BlockPos, ? extends Node<?>> nodeMap = pipeNet.getAllNodes();
-                    Node<?> node = nodeMap.get(data.getPos());
-                    builder.append("{").append("active: ").append(node.isActive)
+                    Node<?> node = pipeNet.getAllNodes().get(data.getPos());
+                    builder.append("{")
+                            .append("active: ").append(node.isActive)
                             .append(", mark: ").append(node.mark)
-                            .append(", open: ").append(node.openConnections).append("}");
+                            .append(", open: ").append(node.openConnections)
+                            .append("}");
                     probeInfo.text(builder.toString());
                 }
                 probeInfo.text("tile open: " + pipeTile.getConnections());
-                /*if (blockPipe instanceof BlockFluidPipe) {
-                    if (pipeTile instanceof TileEntityFluidPipeTickable) {
-                        probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
-                    }
-                }*/
+//                if (blockPipe instanceof BlockFluidPipe) {
+//                    if (pipeTile instanceof TileEntityFluidPipeTickable) {
+//                        probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
+//                    }
+//                }
             }
         }
     }
