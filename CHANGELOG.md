@@ -1,5 +1,12 @@
 ## Changelog
 
+### 2.3.1
+
+BETA RELEASE (hotifx)
+
+Featured Changes:
+* Fixed Frameboxes and Casings not being mineable with the Wrench Requirement config enabled
+
 ### 2.3.0
 
 BETA RELEASE
