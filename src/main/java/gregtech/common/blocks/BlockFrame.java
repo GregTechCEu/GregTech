@@ -88,7 +88,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         if (ModHandler.isMaterialWood(material)) {
             return "axe";
         }
-        return "pickaxe";
+        return "wrench";
     }
 
     @Nonnull
