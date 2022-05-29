@@ -55,7 +55,7 @@ gregtech.top.maintenance.crowbar=That doesn't belong there
 
 gregtech.top.primitive_pump_production=Production:
 
-gregtech.top.filter.label=Filter
+gregtech.top.filter.label=Filter:
 
 gregtech.top.mode.export=Exporting
 gregtech.top.mode.import=Importing

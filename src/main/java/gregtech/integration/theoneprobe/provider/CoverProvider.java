@@ -66,6 +66,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             CoverRoboticArm roboticArm = (CoverRoboticArm) conveyor;
             transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, roboticArm.getItemFilterContainer().getTransferStackSize());
         }
+        itemFilterText(probeInfo, conveyor.getItemFilterContainer().getFilterWrapper().getItemFilter());
     }
 
     /**
@@ -108,6 +109,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             CoverFluidRegulator regulator = (CoverFluidRegulator) pump;
             transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount());
         }
+        fluidFilterText(probeInfo, pump.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
     }
 
     /**
