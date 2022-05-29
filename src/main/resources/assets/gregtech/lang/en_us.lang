@@ -55,6 +55,15 @@ gregtech.top.maintenance.crowbar=That doesn't belong there
 
 gregtech.top.primitive_pump_production=Production:
 
+gregtech.top.filter.label=Filter
+
+gregtech.top.mode.export=Exporting
+gregtech.top.mode.import=Importing
+
+gregtech.top.unit.items=Items
+gregtech.top.unit.fluid_milibuckets=L
+gregtech.top.unit.fluid_buckets=kL
+
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
 gregtech.multiblock.coke_oven.description=The Coke Oven is a multiblock structure used for getting coke and creosote in the early game. It doesn't require fuel and has an internal tank of 32 buckets for creosote. Its inventory can be accessed via its Coke Oven Hatch.
