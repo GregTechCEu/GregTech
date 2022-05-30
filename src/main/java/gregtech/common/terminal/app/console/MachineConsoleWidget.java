@@ -76,7 +76,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                 mte = ((IGregTechTileEntity) te).getMetaTileEntity();
                 initWidgets();
                 if (isRemote()) {
-                    writeClientAction(5, buf->{
+                    writeClientAction(5, buf -> {
                         buf.writeBlockPos(pos);
                         buf.writeByte(facing.getIndex());
                     });
@@ -92,7 +92,7 @@ public class MachineConsoleWidget extends WidgetGroup {
             uiWidgetGroup.setVisible(false);
             Size size = getSize();
             addWidget(new ImageWidget(0, 0, size.width, size.height, GuiTextures.BACKGROUND));
-            addWidget(new SimpleTextWidget(size.width / 2, 12, "", -1, ()->facing.toString().toUpperCase()).setShadow(true));
+            addWidget(new SimpleTextWidget(size.width / 2, 12, "", -1, () -> facing.toString().toUpperCase()).setShadow(true));
             int y = 20;
             if (mte.hasFrontFacing()) {
                 addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
@@ -110,7 +110,7 @@ public class MachineConsoleWidget extends WidgetGroup {
             IControllable controllable = mte.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, facing);
             if (controllable != null) {
                 addWidget(new RectButtonWidget(10, y, 20, 20, 1)
-                        .setToggleButton(GuiTextures.BUTTON_WORKING_ENABLE.getSubArea(0, 0, 1, 0.5), (c, p)->{
+                        .setToggleButton(GuiTextures.BUTTON_WORKING_ENABLE.getSubArea(0, 0, 1, 0.5), (c, p) -> {
                             if (!isRemote()) {
                                 controllable.setWorkingEnabled(p);
                             }
@@ -147,7 +147,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                 SimpleMachineMetaTileEntity simpleMTE = (SimpleMachineMetaTileEntity) mte;
                 // items output
                 if (simpleMTE.getExportItems().getSlots() > 0) {
-                    addWidget(new ImageWidget(10, y, 20 ,20, new ItemStackTexture(Items.GLOWSTONE_DUST)));
+                    addWidget(new ImageWidget(10, y, 20, 20, new ItemStackTexture(Items.GLOWSTONE_DUST)));
                     addWidget(new RectButtonWidget(33, y, 50, 20, 1)
                             .setClickListener(clickData -> {
                                 if (!isRemote() && mte.getFrontFacing() != facing) {
@@ -156,9 +156,9 @@ public class MachineConsoleWidget extends WidgetGroup {
                             })
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                             .setHoverText("terminal.console.items"));
-                    addWidget(new SimpleTextWidget(58, y + 10, "", -1, ()->simpleMTE.getOutputFacingItems().toString()));
+                    addWidget(new SimpleTextWidget(58, y + 10, "", -1, () -> simpleMTE.getOutputFacingItems().toString()));
                     addWidget(new RectButtonWidget(83, y, 20, 20, 1)
-                            .setToggleButton(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            .setToggleButton(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                                 if (!isRemote()) {
                                     simpleMTE.setAutoOutputItems(p);
                                 }
@@ -169,7 +169,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                             .setHoverText("terminal.console.auto_output")
                             .setIcon(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0, 1, 0.5)));
                     addWidget(new RectButtonWidget(103, y, 20, 20, 1)
-                            .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                                 if (!isRemote()) {
                                     simpleMTE.setAllowInputFromOutputSideItems(p);
                                 }
@@ -184,7 +184,7 @@ public class MachineConsoleWidget extends WidgetGroup {
 
                 // fluids output
                 if (simpleMTE.getExportFluids().getTanks() > 0) {
-                    addWidget(new ImageWidget(10, y, 20 ,20, new ItemStackTexture(Items.WATER_BUCKET)));
+                    addWidget(new ImageWidget(10, y, 20, 20, new ItemStackTexture(Items.WATER_BUCKET)));
                     addWidget(new RectButtonWidget(33, y, 50, 20, 1)
                             .setClickListener(clickData -> {
                                 if (!isRemote() && simpleMTE.getFrontFacing() != facing) {
@@ -193,9 +193,9 @@ public class MachineConsoleWidget extends WidgetGroup {
                             })
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                             .setHoverText("terminal.console.fluids"));
-                    addWidget(new SimpleTextWidget(58, y + 10, "", -1, ()->simpleMTE.getOutputFacingFluids().toString()));
+                    addWidget(new SimpleTextWidget(58, y + 10, "", -1, () -> simpleMTE.getOutputFacingFluids().toString()));
                     addWidget(new RectButtonWidget(83, y, 20, 20, 1)
-                            .setToggleButton(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            .setToggleButton(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                                 if (!isRemote()) {
                                     simpleMTE.setAutoOutputFluids(p);
                                 }
@@ -206,7 +206,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                             .setHoverText("terminal.console.auto_output")
                             .setIcon(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0, 1, 0.5)));
                     addWidget(new RectButtonWidget(103, y, 20, 20, 1)
-                            .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                                 if (!isRemote()) {
                                     simpleMTE.setAllowInputFromOutputSideFluids(p);
                                 }
@@ -224,7 +224,7 @@ public class MachineConsoleWidget extends WidgetGroup {
             // MetaTileEntityQuantumTank
             if (mte instanceof MetaTileEntityQuantumChest) {
                 MetaTileEntityQuantumChest chest = (MetaTileEntityQuantumChest) mte;
-                addWidget(new ImageWidget(10, y, 20 ,20, new ItemStackTexture(Items.GLOWSTONE_DUST)));
+                addWidget(new ImageWidget(10, y, 20, 20, new ItemStackTexture(Items.GLOWSTONE_DUST)));
                 addWidget(new RectButtonWidget(33, y, 50, 20, 1)
                         .setClickListener(clickData -> {
                             if (!isRemote() && mte.getFrontFacing() != facing) {
@@ -233,9 +233,9 @@ public class MachineConsoleWidget extends WidgetGroup {
                         })
                         .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                         .setHoverText("terminal.console.items"));
-                addWidget(new SimpleTextWidget(58, y + 10, "", -1, ()->chest.getOutputFacing().toString()));
+                addWidget(new SimpleTextWidget(58, y + 10, "", -1, () -> chest.getOutputFacing().toString()));
                 addWidget(new RectButtonWidget(83, y, 20, 20, 1)
-                        .setToggleButton(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                        .setToggleButton(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                             if (!isRemote()) {
                                 chest.setAutoOutputItems(p);
                             }
@@ -246,7 +246,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                         .setHoverText("terminal.console.auto_output")
                         .setIcon(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0, 1, 0.5)));
                 addWidget(new RectButtonWidget(103, y, 20, 20, 1)
-                        .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                        .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                             if (!isRemote()) {
                                 chest.setAllowInputFromOutputSide(p);
                             }
@@ -259,7 +259,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                 y += 25;
             } else if (mte instanceof MetaTileEntityQuantumTank) {
                 MetaTileEntityQuantumTank tank = (MetaTileEntityQuantumTank) mte;
-                addWidget(new ImageWidget(10, y, 20 ,20, new ItemStackTexture(Items.WATER_BUCKET)));
+                addWidget(new ImageWidget(10, y, 20, 20, new ItemStackTexture(Items.WATER_BUCKET)));
                 addWidget(new RectButtonWidget(33, y, 50, 20, 1)
                         .setClickListener(clickData -> {
                             if (!isRemote() && tank.getFrontFacing() != facing) {
@@ -268,9 +268,9 @@ public class MachineConsoleWidget extends WidgetGroup {
                         })
                         .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                         .setHoverText("terminal.console.fluids"));
-                addWidget(new SimpleTextWidget(58, y + 10, "", -1, ()->tank.getOutputFacing().toString()));
+                addWidget(new SimpleTextWidget(58, y + 10, "", -1, () -> tank.getOutputFacing().toString()));
                 addWidget(new RectButtonWidget(83, y, 20, 20, 1)
-                        .setToggleButton(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                        .setToggleButton(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                             if (!isRemote()) {
                                 tank.setAutoOutputFluids(p);
                             }
@@ -281,7 +281,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                         .setHoverText("terminal.console.auto_output")
                         .setIcon(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0, 1, 0.5)));
                 addWidget(new RectButtonWidget(103, y, 20, 20, 1)
-                        .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                        .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p) -> {
                             if (!isRemote()) {
                                 tank.setAllowInputFromOutputSide(p);
                             }
@@ -300,9 +300,9 @@ public class MachineConsoleWidget extends WidgetGroup {
                 if (mte instanceof MetaTileEntityMaintenanceHatch) {
                     addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
                             .setClickListener(clickData -> {
-                              if (!isRemote()) {
-                                  ((MetaTileEntityMaintenanceHatch) mte).fixAllMaintenanceProblems();
-                              }
+                                if (!isRemote()) {
+                                    ((MetaTileEntityMaintenanceHatch) mte).fixAllMaintenanceProblems();
+                                }
                             })
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                             .setIcon(new TextTexture("terminal.console.maintenance", -1)));
@@ -316,19 +316,23 @@ public class MachineConsoleWidget extends WidgetGroup {
                 this.addWidget(new SlotWidget(new ItemStackHandler(NonNullList.withSize(1, cover.getPickItem())), 0,
                         10, y, false, false));
                 addWidget(new SimpleTextWidget(58, y + 10, "terminal.console.cover_rs", -1,
-                        ()-> String.valueOf(cover.getRedstoneSignalOutput())).setShadow(true).setCenter(true));
-                if (cover instanceof CoverWithUI) {
+                        () -> String.valueOf(cover.getRedstoneSignalOutput())).setShadow(true).setCenter(true));
+                // TODO for terminal rework
+                /*if (cover instanceof CoverWithUI) {
                     addWidget(new RectButtonWidget(83, y, 40, 20, 1)
                             .setClickListener(clickData -> uiWidgetGroup.openUI(((CoverWithUI) cover).createUI(gui.entityPlayer)))
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                             .setIcon(new TextTexture("terminal.console.cover_gui", -1)));
-                }
+                }*/
                 y += 25;
             }
-            addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
-                    .setClickListener(clickData -> uiWidgetGroup.openUI(mte.getModularUI(gui.entityPlayer)))
-                    .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
-                    .setIcon(new TextTexture("terminal.console.gui", -1)));
+            if (mte.useOldGui()) {
+                addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
+                        .setClickListener(clickData -> uiWidgetGroup.openUI(mte.getModularUI(gui.entityPlayer)))
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
+                        .setIcon(new TextTexture("terminal.console.gui", -1)));
+            }
+
 
             addWidget(uiWidgetGroup);
         }
@@ -351,7 +355,7 @@ public class MachineConsoleWidget extends WidgetGroup {
         super.drawInForeground(mouseX, mouseY);
     }
 
-    private static class UIWidgetGroup extends WidgetGroup{
+    private static class UIWidgetGroup extends WidgetGroup {
         private IGuiTexture background;
 
         public void clearUI() {
