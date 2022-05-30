@@ -28,6 +28,7 @@ import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
@@ -283,6 +284,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         if (metaTileEntity instanceof FuelMultiblockController) return true;
         if (metaTileEntity instanceof MetaTileEntityLargeMiner) return true;
         if (metaTileEntity instanceof MetaTileEntityFluidDrill) return true;
+        if (metaTileEntity instanceof MetaTileEntityCentralMonitor) return true;
         if (metaTileEntity.equals(MetaTileEntities.COKE_OVEN)) return true;
         if (metaTileEntity.equals(MetaTileEntities.PRIMITIVE_BLAST_FURNACE)) return true;
         return metaTileEntity.equals(MetaTileEntities.PRIMITIVE_WATER_PUMP);
@@ -338,8 +340,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         } else if (cleanroomLogic.isActive()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-            int currentProgress = getProgressPercent();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
         } else {
             textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
         }
@@ -422,7 +423,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.cleanroomLogic.isActive(), this.cleanroomLogic.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(), isWorkingEnabled());
     }
 
     @Nonnull
@@ -456,6 +457,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
+    }
+
+    @Override
+    public boolean isActive() {
+        return super.isActive() && this.cleanroomLogic.isActive();
     }
 
     @Override
@@ -527,8 +533,16 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             this.depth = buf.readInt();
             this.height = buf.readInt();
             this.reinitializeStructurePattern();
+        } else if (dataId == GregtechDataCodes.IS_WORKING) {
+            this.cleanroomLogic.setActive(buf.readBoolean());
+            scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+            this.cleanroomLogic.setActive(buf.readBoolean());
+            scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.cleanroomLogic.setWorkingEnabled(buf.readBoolean());
+            scheduleRenderUpdate();
         }
-        this.cleanroomLogic.receiveCustomData(dataId, buf);
     }
 
     @Override
