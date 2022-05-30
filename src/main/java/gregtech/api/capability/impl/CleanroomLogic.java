@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.common.ConfigHolder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
@@ -97,7 +98,7 @@ public class CleanroomLogic {
      * @return true if the cleanroom is active
      */
     public boolean isActive() {
-        return this.isActive;
+        return this.isActive && isWorkingEnabled();
     }
 
     /**
@@ -107,8 +108,9 @@ public class CleanroomLogic {
         if (this.isActive != active) {
             this.isActive = active;
             this.metaTileEntity.markDirty();
-            if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
+            World world = this.metaTileEntity.getWorld();
+            if (world != null && !world.isRemote) {
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
             }
         }
     }
@@ -118,8 +120,11 @@ public class CleanroomLogic {
      */
     public void setWorkingEnabled(boolean workingEnabled) {
         this.isWorkingEnabled = workingEnabled;
-        metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
-        metaTileEntity.markDirty();
+        this.metaTileEntity.markDirty();
+        World world = this.metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+        }
     }
 
     /**
@@ -148,7 +153,7 @@ public class CleanroomLogic {
     }
 
     public int getProgressPercent() {
-        return getProgressTime() / getMaxProgress() * 100;
+        return (int) ((1.0F * getProgressTime() / getMaxProgress()) * 100);
     }
 
     protected int getTierDifference() {
