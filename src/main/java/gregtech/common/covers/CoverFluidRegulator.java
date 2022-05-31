@@ -2,7 +2,6 @@ package gregtech.common.covers;
 
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
@@ -294,13 +293,11 @@ public class CoverFluidRegulator extends CoverPump {
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(176, 228);
+        ModularWindow.Builder builder = ModularWindow.builder(176, 196);
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
-                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 145))
-                .widget(new TextWidget(new Text("container.inventory").localise())
-                        .setPos(8, 135))
+                .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new Column()
                         .widget(new TextWidget(new Text("cover.transfer_rate").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
@@ -330,9 +327,9 @@ public class CoverFluidRegulator extends CoverPump {
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setGetterInt(() -> transferRate)
-                                        .setSetterInt(this::setTransferRate)
-                                        .setNumbers(() -> 1, () -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                                        .setGetterInt(() -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferRate))
+                                        .setSetterInt(val -> setTransferRate(bucketMode.convertTo(BucketMode.MILLI_BUCKET, val)))
+                                        .setNumbers(() -> 1, () -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, maxFluidTransferRate))
                                         .setTextAlignment(Alignment.Center)
                                         .setTextColor(0xFFFFFF)
                                         .setBackground(GuiTextures.DISPLAY_SMALL)
@@ -356,7 +353,6 @@ public class CoverFluidRegulator extends CoverPump {
                                 .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(BucketMode.class))
                                 .setBackground(GuiTextures.BASE_BUTTON)
-                                .addTooltip(new Text("cover.conveyor.distribution.description").localise())
                                 .setSize(80, 12))
                         .widget(new CycleButtonWidget()
                                 .setForEnum(TransferMode.class, this::getTransferMode, this::setTransferMode)
@@ -370,9 +366,9 @@ public class CoverFluidRegulator extends CoverPump {
                                         .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setGetterInt(this::getTransferAmount)
-                                        .setSetterInt(this::setTransferAmount)
-                                        .setNumbers(() -> 1, () -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
+                                        .setGetterInt(() -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferAmount))
+                                        .setSetterInt(val -> setTransferAmount(bucketMode.convertTo(BucketMode.MILLI_BUCKET, val)))
+                                        .setNumbers(() -> 1, () -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
                                         .setTextAlignment(Alignment.Center)
                                         .setTextColor(0xFFFFFF)
                                         .setBackground(GuiTextures.DISPLAY_SMALL)
@@ -385,7 +381,7 @@ public class CoverFluidRegulator extends CoverPump {
                         .setPos(89, 18)
                         .setSize(80, 72))
                 .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
-                        .setPos(7, 94));
+                        .setPos(7, 90));
         return builder.build();
     }
 

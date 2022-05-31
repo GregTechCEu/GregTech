@@ -9,18 +9,13 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
-import com.cleanroommc.modularui.common.widget.ButtonWidget;
-import com.cleanroommc.modularui.common.widget.MultiChildWidget;
-import com.cleanroommc.modularui.common.widget.Row;
-import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -95,8 +90,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     private void adjustTransferSize(int amount) {
-        if (bucketMode == BucketMode.BUCKET)
-            amount *= 1000;
+        amount = bucketMode.convertTo(BucketMode.MILLI_BUCKET, amount);
         if (this.voidingMode == VoidingMode.VOID_OVERFLOW) {
             setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, Integer.MAX_VALUE));
         }
@@ -138,107 +132,61 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        /*WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-
-        primaryGroup.addWidget(new SlotWidget(filterHolder.getFilterInventory(), 0, 10, 15)
-                .setBackgroundTexture(gregtech.api.guiOld.GuiTextures.SLOT, gregtech.api.guiOld.GuiTextures.FILTER_SLOT_OVERLAY));
-        //this.fluidFilter.getFilterWrapper().initUI(20, primaryGroup::addWidget);
-        //this.fluidFilter.getFilterWrapper().blacklistUI(32, primaryGroup::addWidget, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
-
-        primaryGroup.addWidget(new CycleButtonWidget(92, 14, 75, 18,
-                VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
-                .setTooltipHoverString("cover.voiding.voiding_mode.description"));
-
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(110, 72, 38, 18, gregtech.api.guiOld.GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 72, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 72, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(111, 78, 36, 11, this::getTransferAmountString, val -> {
-            if (val != null && !val.isEmpty()) {
-                int amount = Integer.parseInt(val);
-                if (this.bucketMode == BucketMode.BUCKET) {
-                    amount *= 1000;
-                }
-                setTransferAmount(amount);
-            }
-        })
-                .setCentered(true)
-                .setNumbersOnly(1, Integer.MAX_VALUE)
-                .setMaxLength(10)
-                .setScale(0.6f));
-
-        stackSizeGroup.addWidget(new CycleButtonWidget(115, 35, 30, 20,
-                BucketMode.class, this::getBucketMode, mode -> {
-            if (mode != bucketMode) {
-                setBucketMode(mode);
-            }
-        }));
-
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 86, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
-
-        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 100 + 82)
-                .widget(primaryGroup)
-                .widget(stackSizeGroup)
-                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 100);
-        return buildUI(builder, player);*/
-        return null;
-    }
-
-    @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        return ModularWindow.builder(176, 166)
+        return ModularWindow.builder(176, 160)
                 .bindPlayerInventory(buildContext.getPlayer())
                 .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(Text.localised(getUITitle()))
                         .setPos(10, 5))
-                .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
-                        .setForEnum(VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(VoidingMode.class))
-                        .setBackground(GuiTextures.BASE_BUTTON)
-                        .setPos(91, 16)
-                        .setSize(75, 20))
-                .widget(new MultiChildWidget()
-                        .addChild(new Row()
+                .widget(new Column()
+                        .widget(new TextWidget(Text.localised("cover.voiding.voiding_mode.name"))
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(Text.localised("cover.voiding.voiding_amount.name"))
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(Text.localised("cover.pump.mode.bucket"))
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .setPos(7, 18)
+                        .setSize(80, 36))
+                .widget(new Column()
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(VoidingMode.class))
+                                .addTooltip(0, Text.localised(VoidingMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(VoidingMode.values()[1].localeTooltip))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new Row()
                                 .widget(new ButtonWidget()
-                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferSize))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, -512, this::adjustTransferSize))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
-                                        .setGetterInt(() -> this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount)
-                                        .setSetterInt(val -> setTransferAmount(this.bucketMode == BucketMode.BUCKET ? val * 1000 : val))
+                                        .setGetterInt(() -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, getTransferAmount()))
+                                        .setSetterInt(val -> setTransferAmount(bucketMode.convertTo(BucketMode.MILLI_BUCKET, val)))
                                         .setNumbers(1, Integer.MAX_VALUE)
                                         .setTextAlignment(Alignment.Center)
                                         .setTextColor(0xFFFFFF)
-                                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
-                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferSize))
-                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferSize))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
-                                .setPos(7, 20))
-                        .addChild(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
-                                .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
-                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(VoidingMode.class))
                                 .setTicker(this::checkShowLimitSlider)
+                                .setPos(7, 20))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(BucketMode.class))
                                 .setBackground(GuiTextures.BASE_BUTTON)
-                                .setPos(115, 35)
-                                .setSize(30, 20))
-                        .addChild(TextWidget.dynamicText(() -> Text.localised(bucketMode.localeName))
-                                .setScale(0.6f)
-                                .setPos(129, 86))
-                        .setTicker(this::checkShowLimitSlider))
+                                .setTicker(this::checkShowLimitSlider)
+                                .setSize(80, 12))
+                        .setPos(89, 18)
+                        .setSize(80, 36))
                 .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
-                        .setPos(7, 42))
+                        .setPos(7, 54))
                 .build();
     }
 

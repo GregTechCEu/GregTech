@@ -114,8 +114,6 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .setPos(10, 14)
                         .setSize(110, 20))
-                .widget(itemFilter.createBlacklistButton(buildContext.getPlayer())
-                        .setPos(133, 40))
                 .widget(itemFilter.createFilterUI(buildContext.getPlayer())
                         .setPos(7, 40))
                 .build();

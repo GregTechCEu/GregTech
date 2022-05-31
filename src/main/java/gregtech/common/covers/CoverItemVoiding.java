@@ -11,11 +11,7 @@ import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.LabelWidget;
-import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -69,27 +65,14 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-
-        //this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
-
-        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 123 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 123);
-        return builder.build(this, player);
-    }
-
-    @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        return ModularWindow.builder(176, 166)
+        return ModularWindow.builder(176, 126)
                 .bindPlayerInventory(buildContext.getPlayer())
                 .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(Text.localised(getUITitle()))
                         .setPos(10, 5))
                 .widget(filterHolder.createFilterUI(buildContext)
-                        .setPos(7, 42))
+                        .setPos(7, 20))
                 .build();
     }
 

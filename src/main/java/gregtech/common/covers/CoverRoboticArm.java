@@ -6,7 +6,6 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
@@ -153,51 +152,13 @@ public class CoverRoboticArm extends CoverConveyor {
         return "cover.robotic_arm.title";
     }
 
-    /*@Override
-    protected ModularUI buildUI(Builder builder, EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(91, 45, 75, 20,
-                TransferMode.class, this::getTransferMode, this::setTransferMode)
-                .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
-
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> !filterHolder.hasFilter() && transferMode != TransferMode.TRANSFER_ANY);
-        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, gregtech.api.guiOld.GuiTextures.DISPLAY));
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, filterHolder::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, filterHolder::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(filterHolder.getTransferStackSize()), val -> {
-                    if (val != null && !val.isEmpty())
-                        filterHolder.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
-                })
-                        .setNumbersOnly(1, transferMode.maxStackSize)
-                        .setMaxLength(4)
-                        .setScale(0.9f)
-        );
-
-        primaryGroup.addWidget(stackSizeGroup);
-
-        return super.buildUI(builder.widget(primaryGroup), player);
-        return null;
-    }*/
-
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(176, 236);
+        ModularWindow.Builder builder = ModularWindow.builder(176, 196);
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(6, 6))
-                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 153))
-                .widget(new TextWidget(new Text("container.inventory").localise())
-                        .setPos(8, 143))
+                .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new Column()
                         .widget(new TextWidget(new Text("cover.transfer_rate").localise())
                                 .setTextAlignment(Alignment.CenterLeft)
@@ -246,20 +207,26 @@ public class CoverRoboticArm extends CoverConveyor {
                         .widget(new CycleButtonWidget()
                                 .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
-                                .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                                .addTooltip(0, Text.localised(ManualImportExportMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(ManualImportExportMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(ManualImportExportMode.values()[2].localeTooltip))
                                 .setBackground(GuiTextures.BASE_BUTTON)
                                 .setSize(80, 12))
                         .widget(new CycleButtonWidget()
                                 .setForEnum(DistributionMode.class, this::getDistributionMode, this::setDistributionMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(DistributionMode.class))
+                                .addTooltip(0, Text.localised(DistributionMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(DistributionMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(DistributionMode.values()[2].localeTooltip))
                                 .setBackground(GuiTextures.BASE_BUTTON)
-                                .addTooltip(new Text("cover.conveyor.distribution.description").localise())
                                 .setSize(80, 12))
                         .widget(new CycleButtonWidget()
                                 .setForEnum(TransferMode.class, this::getTransferMode, this::setTransferMode)
                                 .setTextureGetter(GuiFunctions.enumStringTextureGetter(TransferMode.class))
+                                .addTooltip(0, Text.localised(TransferMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(TransferMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(TransferMode.values()[2].localeTooltip))
                                 .setBackground(GuiTextures.BASE_BUTTON)
-                                .addTooltip(new Text("cover.robotic_arm.transfer_mode.description").localise())
                                 .setSize(80, 12))
                         .widget(new Row()
                                 .widget(new ButtonWidget()
@@ -282,7 +249,7 @@ public class CoverRoboticArm extends CoverConveyor {
                         .setPos(89, 18)
                         .setSize(80, 72))
                 .widget(filterHolder.createFilterUI(buildContext)
-                        .setPos(7, 102));
+                        .setPos(7, 90));
         return builder.build();
     }
 

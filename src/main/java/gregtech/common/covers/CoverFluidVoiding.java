@@ -53,13 +53,13 @@ public class CoverFluidVoiding extends CoverPump {
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        return ModularWindow.builder(176, 166)
+        return ModularWindow.builder(176, 126)
                 .bindPlayerInventory(buildContext.getPlayer())
                 .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(Text.localised(getUITitle()))
                         .setPos(10, 5))
                 .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
-                        .setPos(7, 42))
+                        .setPos(7, 20))
                 .build();
     }
 

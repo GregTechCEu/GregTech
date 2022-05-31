@@ -62,9 +62,9 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < 9; i++) {
             widget.addChild(FluidSlotWidget.phantom(tanks[i], true)
                     .setTicker(controlsAmountHandler)
-                    .setPos(i * 18, 19));
+                    .setPos(i % 3 * 18, i / 3 * 18));
         }
-        return widget;
+        return widget.setSize(140, 54);
     }
 
     @Override

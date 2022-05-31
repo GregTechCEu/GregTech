@@ -1,6 +1,5 @@
 package gregtech.common.covers.newFilter;
 
-import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import gregtech.api.gui.GuiTextures;
