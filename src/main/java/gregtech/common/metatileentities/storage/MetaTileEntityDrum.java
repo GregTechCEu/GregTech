@@ -8,10 +8,11 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
-import gregtech.api.guiOld.ModularUI;
+import gregtech.api.cover.CoverBehavior;
 import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.guiOld.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
@@ -26,6 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -221,7 +223,20 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        return getWorld().isRemote || (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
+        if (!getWorld().isRemote && !playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank)) {
+            return true;
+        }
+        if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+            EnumFacing hitFacing = hitResult.sideHit;
+
+            CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
+
+            EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
+                    coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
+
+            return coverResult == EnumActionResult.SUCCESS;
+        }
+        return false;
     }
 
     @Override
@@ -250,7 +265,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        if(isMaterialWood(material)) {
+        if (isMaterialWood(material)) {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
             int color = ColourRGBA.multiply(
@@ -263,7 +278,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if(isMaterialWood(material)) {
+        if (isMaterialWood(material)) {
             ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
         } else {
