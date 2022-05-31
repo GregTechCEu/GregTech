@@ -1,11 +1,9 @@
 package gregtech.api.unification.material;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -350,9 +348,11 @@ public class Material implements Comparable<Material> {
     }
 
     /**
+     * Builder used to construct a new Material.
+     *
      * @since GTCEu 2.0.0
      */
-    public static class Builder {
+    public static class Builder implements IMaterialBuilder {
 
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;
@@ -385,132 +385,25 @@ public class Material implements Comparable<Material> {
             flags = new MaterialFlags();
         }
 
-        /*
-         * Material Types
-         */
-
-        /**
-         * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidTypes#LIQUID}, without a Fluid Block.
-         *
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
-         */
-        public Builder fluid() {
-            properties.ensureSet(PropertyKey.FLUID);
-            return this;
-        }
-
-        /**
-         * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created without a Fluid Block.
-         *
-         * @param type The {@link FluidType} of this Material, either Fluid or Gas.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
-         */
-        public Builder fluid(FluidType type) {
-            return fluid(type, false);
-        }
-
-        /**
-         * Add a {@link FluidProperty} to this Material.
-         *
-         * @param type     The {@link FluidType} of this Material.
-         * @param hasBlock If true, create a Fluid Block for this Material.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
-         */
+        @Override
         public Builder fluid(FluidType type, boolean hasBlock) {
             properties.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
             return this;
         }
 
-        /**
-         * Add a {@link PlasmaProperty} to this Material.<br>
-         * Is not required to have a {@link FluidProperty}, and will not automatically apply one.
-         *
-         * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
-         */
+        @Override
         public Builder plasma() {
             properties.ensureSet(PropertyKey.PLASMA);
             return this;
         }
 
-        /**
-         * Add a {@link DustProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).
-         *
-         * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
-         */
-        public Builder dust() {
-            properties.ensureSet(PropertyKey.DUST);
-            return this;
-        }
-
-        /**
-         * Add a {@link DustProperty} to this Material.<br>
-         * Will be created with no Burn Time (Furnace Fuel).
-         *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining Level.
-         * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
-         */
-        public Builder dust(int harvestLevel) {
-            return dust(harvestLevel, 0);
-        }
-
-        /**
-         * Add a {@link DustProperty} to this Material.
-         *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining Level.
-         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
-         * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
-         */
+        @Override
         public Builder dust(int harvestLevel, int burnTime) {
             properties.setProperty(PropertyKey.DUST, new DustProperty(harvestLevel, burnTime));
             return this;
         }
 
-        /**
-         * Add an {@link IngotProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
-         *
-         * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
-         */
-        public Builder ingot() {
-            properties.ensureSet(PropertyKey.INGOT);
-            return this;
-        }
-
-        /**
-         * Add an {@link IngotProperty} to this Material.<br>
-         * Will be created with no Burn Time (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
-         *
-         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
-         * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
-         */
-        public Builder ingot(int harvestLevel) {
-            return ingot(harvestLevel, 0);
-        }
-
-        /**
-         * Add an {@link IngotProperty} to this Material.<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
-         *
-         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
-         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
-         *                     If this Material already had a Burn Time defined, it will be overridden.
-         * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
-         */
+        @Override
         public Builder ingot(int harvestLevel, int burnTime) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) dust(harvestLevel, burnTime);
@@ -522,44 +415,7 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        /**
-         * Add a {@link GemProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
-         *
-         * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
-         */
-        public Builder gem() {
-            properties.ensureSet(PropertyKey.GEM);
-            return this;
-        }
-
-        /**
-         * Add a {@link GemProperty} to this Material.<br>
-         * Will be created with no Burn Time (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
-         *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining level.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
-         * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
-         */
-        public Builder gem(int harvestLevel) {
-            return gem(harvestLevel, 0);
-        }
-
-        /**
-         * Add a {@link GemProperty} to this Material.<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
-         *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining level.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
-         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
-         *                     If this Material already had a Burn Time defined, it will be overridden.
-         */
+        @Override
         public Builder gem(int harvestLevel, int burnTime) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) dust(harvestLevel, burnTime);
@@ -571,6 +427,7 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        @Override
         public Builder burnTime(int burnTime) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) {
@@ -581,251 +438,146 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        /**
-         * Set the Color of this Material.<br>
-         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
-         * it will be a weighted average of the components of the Material.
-         *
-         * @param color The RGB-formatted Color.
-         */
-        public Builder color(int color) {
-            color(color, true);
-            return this;
-        }
-
-        /**
-         * Set the Color of this Material.<br>
-         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
-         * it will be a weighted average of the components of the Material.
-         *
-         * @param color         The RGB-formatted Color.
-         * @param hasFluidColor Whether the fluid should be colored or not.
-         */
+        @Override
         public Builder color(int color, boolean hasFluidColor) {
             this.materialInfo.color = color;
             this.materialInfo.hasFluidColor = hasFluidColor;
             return this;
         }
 
+        @Override
         public Builder colorAverage() {
             this.averageRGB = true;
             return this;
         }
 
-        /**
-         * Set the {@link MaterialIconSet} of this Material.<br>
-         * Defaults vary depending on if the Material has a:<br>
-         * <ul>
-         * <li> {@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
-         * <li> {@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
-         * <li> {@link FluidProperty}, it will default to either {@link MaterialIconSet#FLUID}
-         *      or {@link MaterialIconSet#GAS}, depending on the {@link FluidType}
-         * <li> {@link PlasmaProperty}, it will default to {@link MaterialIconSet#FLUID}
-         * </ul>
-         * Default will be determined by first-found Property in this order, unless specified.
-         *
-         * @param iconSet The {@link MaterialIconSet} of this Material.
-         */
+        @Override
         public Builder iconSet(MaterialIconSet iconSet) {
             materialInfo.iconSet = iconSet;
             return this;
         }
 
-        public Builder components(Object... components) {
-            Preconditions.checkArgument(
-                    components.length % 2 == 0,
-                    "Material Components list malformed!"
-            );
-
-            for (int i = 0; i < components.length; i += 2) {
-                if (components[i] == null) {
-                    throw new IllegalArgumentException("Material in Components List is null for Material "
-                            + this.materialInfo.name);
-                }
-                composition.add(new MaterialStack(
-                        (Material) components[i],
-                        (Integer) components[i + 1]
-                ));
-            }
-            return this;
-        }
-
+        @Override
         public Builder components(ImmutableList<MaterialStack> components) {
             composition = components;
             return this;
         }
 
-        /**
-         * Add {@link MaterialFlags} to this Material.<br>
-         * Dependent Flags (for example, {@link MaterialFlags#GENERATE_LONG_ROD} requiring
-         * {@link MaterialFlags#GENERATE_ROD}) will be automatically applied.
-         */
+        @Override
         public Builder flags(MaterialFlag... flags) {
             this.flags.addFlags(flags);
             return this;
         }
 
-        /**
-         * Add {@link MaterialFlags} to this Material.<br>
-         * Dependent Flags (for example, {@link MaterialFlags#GENERATE_LONG_ROD} requiring
-         * {@link MaterialFlags#GENERATE_ROD}) will be automatically applied.
-         *
-         * @param f1 A {@link Collection} of {@link MaterialFlag}. Provided this way for easy Flag presets to be applied.
-         * @param f2 An Array of {@link MaterialFlag}. If no {@link Collection} is required, use {@link Builder#flags(MaterialFlag...)}.
-         */
-        public Builder flags(Collection<MaterialFlag> f1, MaterialFlag... f2) {
-            this.flags.addFlags(f1.toArray(new MaterialFlag[0]));
-            this.flags.addFlags(f2);
-            return this;
-        }
-
+        @Override
         public Builder element(Element element) {
             this.materialInfo.element = element;
             return this;
         }
 
-        public Builder toolStats(float speed, float damage, int durability, int enchantability) {
-            return toolStats(speed, damage, durability, enchantability, false);
-        }
-
+        @Override
         public Builder toolStats(float speed, float damage, int durability, int enchantability, boolean ignoreCraftingTools) {
             properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability, ignoreCraftingTools));
             return this;
         }
 
-        public Builder blastTemp(int temp) {
-            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp));
-            return this;
-        }
-
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
-            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, -1, -1));
-            return this;
-        }
-
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
-            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, -1));
-            return this;
-        }
-
+        @Override
         public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
             properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, durationOverride));
             return this;
         }
 
-        public Builder ore() {
-            properties.ensureSet(PropertyKey.ORE);
-            return this;
-        }
-
-        public Builder ore(boolean emissive) {
-            properties.setProperty(PropertyKey.ORE, new OreProperty(1, 1, emissive));
-            return this;
-        }
-
-        public Builder ore(int oreMultiplier, int byproductMultiplier) {
-            properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier));
-            return this;
-        }
-
+        @Override
         public Builder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
             return this;
         }
 
+        @Override
         public Builder fluidTemp(int temp) {
             properties.ensureSet(PropertyKey.FLUID);
             properties.getProperty(PropertyKey.FLUID).setFluidTemperature(temp);
             return this;
         }
 
-        public Builder washedIn(Material m) {
-            properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).setWashedIn(m);
-            return this;
-        }
-
+        @Override
         public Builder washedIn(Material m, int washedAmount) {
             properties.ensureSet(PropertyKey.ORE);
             properties.getProperty(PropertyKey.ORE).setWashedIn(m, washedAmount);
             return this;
         }
 
+        @Override
         public Builder separatedInto(Material... m) {
             properties.ensureSet(PropertyKey.ORE);
             properties.getProperty(PropertyKey.ORE).setSeparatedInto(m);
             return this;
         }
 
+        @Override
         public Builder oreSmeltInto(Material m) {
             properties.ensureSet(PropertyKey.ORE);
             properties.getProperty(PropertyKey.ORE).setDirectSmeltResult(m);
             return this;
         }
 
+        @Override
         public Builder polarizesInto(Material m) {
             properties.ensureSet(PropertyKey.INGOT);
             properties.getProperty(PropertyKey.INGOT).setMagneticMaterial(m);
             return this;
         }
 
+        @Override
         public Builder arcSmeltInto(Material m) {
             properties.ensureSet(PropertyKey.INGOT);
             properties.getProperty(PropertyKey.INGOT).setArcSmeltingInto(m);
             return this;
         }
 
+        @Override
         public Builder macerateInto(Material m) {
             properties.ensureSet(PropertyKey.INGOT);
             properties.getProperty(PropertyKey.INGOT).setMacerateInto(m);
             return this;
         }
 
+        @Override
         public Builder ingotSmeltInto(Material m) {
             properties.ensureSet(PropertyKey.INGOT);
             properties.getProperty(PropertyKey.INGOT).setSmeltingInto(m);
             return this;
         }
 
+        @Override
         public Builder addOreByproducts(Material... byproducts) {
             properties.ensureSet(PropertyKey.ORE);
             properties.getProperty(PropertyKey.ORE).setOreByProducts(byproducts);
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss) {
-            cableProperties((int) voltage, amperage, loss, false);
-            return this;
-        }
-
-        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.ensureSet(PropertyKey.DUST);
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
-            return this;
-        }
-
+        @Override
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon, int criticalTemperature) {
             properties.ensureSet(PropertyKey.DUST);
             properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
             return this;
         }
 
-        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
-            return fluidPipeProperties(maxTemp, throughput, gasProof, false, false, false);
-        }
-
+        @Override
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
             properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
             return this;
         }
 
+        @Override
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
             properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
             return this;
         }
 
+        @Override
         public Builder addDefaultEnchant(Enchantment enchant, int level) {
             if (!properties.hasProperty(PropertyKey.TOOL)) // cannot assign default here
                 throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
@@ -833,10 +585,321 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        @Override
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
             return new Material(materialInfo, properties, flags);
+        }
+    }
+
+    /**
+     * Builder used to easily append onto an existing Material.
+     *
+     * @since GTCEu 2.4
+     */
+    @SuppressWarnings("unused")
+    public static class Rebuilder implements IMaterialBuilder {
+
+        private final Material material;
+
+        private boolean reaverageColor = false;
+
+        public Rebuilder(Material material) {
+            this.material = material;
+        }
+
+        @Override
+        public Rebuilder fluid(FluidType type, boolean hasBlock) {
+            if (!material.hasProperty(PropertyKey.FLUID)) {
+                material.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder plasma() {
+            if (!material.hasProperty(PropertyKey.PLASMA)) {
+                material.setProperty(PropertyKey.PLASMA, new PlasmaProperty());
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder dust(int harvestLevel, int burnTime) {
+            if (!material.hasProperty(PropertyKey.DUST)) {
+                material.setProperty(PropertyKey.DUST, new DustProperty(harvestLevel, burnTime));
+            } else {
+                DustProperty property = material.getProperty(PropertyKey.DUST);
+                property.setHarvestLevel(harvestLevel);
+                property.setBurnTime(burnTime);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder ingot(int harvestLevel, int burnTime) {
+            if (!material.hasProperty(PropertyKey.INGOT)) {
+                material.setProperty(PropertyKey.INGOT, new IngotProperty());
+            }
+            if (!material.hasProperty(PropertyKey.DUST)) {
+                DustProperty property = new DustProperty(harvestLevel, burnTime);
+                material.setProperty(PropertyKey.DUST, property);
+            } else {
+                DustProperty property = material.getProperty(PropertyKey.DUST);
+                property.setHarvestLevel(harvestLevel);
+                property.setBurnTime(burnTime);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder gem(int harvestLevel, int burnTime) {
+            if (!material.hasProperty(PropertyKey.GEM)) {
+                material.setProperty(PropertyKey.GEM, new GemProperty());
+            }
+            if (!material.hasProperty(PropertyKey.DUST)) {
+                DustProperty property = new DustProperty(harvestLevel, burnTime);
+                material.setProperty(PropertyKey.DUST, property);
+            } else {
+                DustProperty property = material.getProperty(PropertyKey.DUST);
+                property.setHarvestLevel(harvestLevel);
+                property.setBurnTime(burnTime);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder burnTime(int burnTime) {
+            if (!material.hasProperty(PropertyKey.DUST)) {
+                DustProperty property = new DustProperty(2, burnTime);
+                material.setProperty(PropertyKey.DUST, property);
+            } else {
+                DustProperty property = material.getProperty(PropertyKey.DUST);
+                property.setBurnTime(burnTime);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder color(int color, boolean hasFluidColor) {
+            material.setMaterialRGB(color);
+            material.materialInfo.hasFluidColor = hasFluidColor;
+            return this;
+        }
+
+        @Override
+        public Rebuilder colorAverage() {
+            reaverageColor = true;
+            return this;
+        }
+
+        @Override
+        public Rebuilder iconSet(MaterialIconSet iconSet) {
+            material.materialInfo.iconSet = iconSet;
+            return this;
+        }
+
+        @Override
+        public IMaterialBuilder components(ImmutableList<MaterialStack> components) {
+            material.materialInfo.componentList = components;
+            return this;
+        }
+
+        @Override
+        public Rebuilder flags(MaterialFlag... flags) {
+            material.addFlags(flags);
+            return this;
+        }
+
+        @Override
+        public Rebuilder element(Element element) {
+            material.materialInfo.element = element;
+            return this;
+        }
+
+        @Override
+        public Rebuilder toolStats(float speed, float damage, int durability, int enchantability, boolean ignoreCraftingTools) {
+            if (!material.hasProperty(PropertyKey.TOOL)) {
+                material.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability, ignoreCraftingTools));
+            } else {
+                ToolProperty property = material.getProperty(PropertyKey.TOOL);
+                property.setToolSpeed(speed);
+                property.setToolAttackDamage(damage);
+                property.setToolDurability(durability);
+                property.setToolEnchantability(enchantability);
+                property.setShouldIgnoreCraftingTools(ignoreCraftingTools);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
+            if (!material.hasProperty(PropertyKey.BLAST)) {
+                material.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, durationOverride));
+            } else {
+                BlastProperty property = material.getProperty(PropertyKey.BLAST);
+                property.setBlastTemperature(temp);
+                property.setGasTier(gasTier);
+                property.setEUtOverride(eutOverride);
+                property.setDurationOverride(durationOverride);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
+            if (!material.hasProperty(PropertyKey.ORE)) {
+                material.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
+            } else {
+                OreProperty property = material.getProperty(PropertyKey.ORE);
+                property.setOreMultiplier(oreMultiplier);
+                property.setByProductMultiplier(byproductMultiplier);
+                property.setEmissive(emissive);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder fluidTemp(int temp) {
+            if (!material.hasProperty(PropertyKey.FLUID)) {
+                FluidProperty property = new FluidProperty();
+                property.setFluidTemperature(temp);
+                material.setProperty(PropertyKey.FLUID, property);
+            } else {
+                FluidProperty property = material.getProperty(PropertyKey.FLUID);
+                property.setFluidTemperature(temp);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder washedIn(Material m, int washedAmount) {
+            if (!material.hasProperty(PropertyKey.ORE)) {
+                material.setProperty(PropertyKey.ORE, new OreProperty());
+            }
+            material.getProperty(PropertyKey.ORE).setWashedIn(m, washedAmount);
+            return this;
+        }
+
+        @Override
+        public Rebuilder separatedInto(Material... m) {
+            if (!material.hasProperty(PropertyKey.ORE)) {
+                material.setProperty(PropertyKey.ORE, new OreProperty());
+            }
+            material.getProperty(PropertyKey.ORE).setSeparatedInto(m);
+            return this;
+        }
+
+        @Override
+        public Rebuilder oreSmeltInto(Material m) {
+            if (!material.hasProperty(PropertyKey.ORE)) {
+                material.setProperty(PropertyKey.ORE, new OreProperty());
+            }
+            material.getProperty(PropertyKey.ORE).setDirectSmeltResult(m);
+            return this;
+        }
+
+        @Override
+        public Rebuilder polarizesInto(Material m) {
+            if (!material.hasProperty(PropertyKey.INGOT)) {
+                material.setProperty(PropertyKey.INGOT, new IngotProperty());
+            }
+            material.getProperty(PropertyKey.INGOT).setMagneticMaterial(m);
+            return this;
+        }
+
+        @Override
+        public Rebuilder arcSmeltInto(Material m) {
+            if (!material.hasProperty(PropertyKey.INGOT)) {
+                material.setProperty(PropertyKey.INGOT, new IngotProperty());
+            }
+            material.getProperty(PropertyKey.INGOT).setArcSmeltingInto(m);
+            return this;
+        }
+
+        @Override
+        public Rebuilder macerateInto(Material m) {
+            if (!material.hasProperty(PropertyKey.INGOT)) {
+                material.setProperty(PropertyKey.INGOT, new IngotProperty());
+            }
+            material.getProperty(PropertyKey.INGOT).setMacerateInto(m);
+            return this;
+        }
+
+        @Override
+        public Rebuilder ingotSmeltInto(Material m) {
+            if (!material.hasProperty(PropertyKey.INGOT)) {
+                material.setProperty(PropertyKey.INGOT, new IngotProperty());
+            }
+            material.getProperty(PropertyKey.INGOT).setSmeltingInto(m);
+            return this;
+        }
+
+        @Override
+        public Rebuilder addOreByproducts(Material... byproducts) {
+            if (!material.hasProperty(PropertyKey.ORE)) {
+                material.setProperty(PropertyKey.ORE, new OreProperty());
+            }
+            material.getProperty(PropertyKey.ORE).setOreByProducts(byproducts);
+            return this;
+        }
+
+        @Override
+        public Rebuilder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon, int criticalTemperature) {
+            if (!material.hasProperty(PropertyKey.WIRE)) {
+                material.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
+            } else {
+                WireProperties property = material.getProperty(PropertyKey.WIRE);
+                property.setVoltage((int) voltage);
+                property.setAmperage(amperage);
+                property.setLossPerBlock(loss);
+                property.setSuperconductor(isSuperCon);
+                property.setSuperconductorCriticalTemperature(criticalTemperature);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+            if (!material.hasProperty(PropertyKey.FLUID_PIPE)) {
+                material.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+            } else {
+                FluidPipeProperties property = material.getProperty(PropertyKey.FLUID_PIPE);
+                property.setMaxFluidTemperature(maxTemp);
+                property.setThroughput(throughput);
+                property.setGasProof(gasProof);
+                property.setAcidProof(acidProof);
+                property.setCryoProof(cryoProof);
+                property.setPlasmaProof(plasmaProof);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder itemPipeProperties(int priority, float stacksPerSec) {
+            if (!material.hasProperty(PropertyKey.ITEM_PIPE)) {
+                material.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
+            } else {
+                ItemPipeProperties property = material.getProperty(PropertyKey.ITEM_PIPE);
+                property.setPriority(priority);
+                property.setTransferRate(stacksPerSec);
+            }
+            return this;
+        }
+
+        @Override
+        public Rebuilder addDefaultEnchant(Enchantment enchant, int level) {
+            if (!material.hasProperty(PropertyKey.TOOL)) // cannot assign default here
+                throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
+            material.getProperty(PropertyKey.TOOL).addEnchantmentForTools(enchant, level);
+            return this;
+        }
+
+        @Override
+        public Material build() {
+            material.materialInfo.verifyInfo(material.properties, reaverageColor);
+            return material;
         }
     }
 

@@ -66,12 +66,24 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
         return gasTier;
     }
 
+    public void setGasTier(GasTier gasTier) {
+        this.gasTier = gasTier;
+    }
+
     public int getDurationOverride() {
         return durationOverride;
     }
 
+    public void setDurationOverride(int durationOverride) {
+        this.durationOverride = durationOverride;
+    }
+
     public int getEUtOverride() {
         return eutOverride;
+    }
+
+    public void setEUtOverride(int eutOverride) {
+        this.eutOverride = eutOverride;
     }
 
     @Override
