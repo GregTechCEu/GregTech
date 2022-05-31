@@ -67,6 +67,7 @@ public class SmartFilter extends ItemFilter {
         return cachedTransferRateValue;
     }
 
+    @Nonnull
     @Override
     public Widget createFilterUI(EntityPlayer player) {
         return new MultiChildWidget()

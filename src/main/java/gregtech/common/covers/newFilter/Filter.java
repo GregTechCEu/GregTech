@@ -7,6 +7,8 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nonnull;
+
 public abstract class Filter<T> {
 
     private IDirtyNotifiable dirtyNotifiable;
@@ -27,6 +29,14 @@ public abstract class Filter<T> {
      */
     public abstract int getTransferLimit(Object object, int globalTransferLimit);
 
+    /**
+     * Creates the filter ui. Typically a {@link com.cleanroommc.modularui.common.widget.MultiChildWidget}. <br>
+     * Ideally you manually set the size of the resulting widgets, so that covers can auto size themselves properly.
+     *
+     * @param player player who opened the ui
+     * @return the non null filter ui widget
+     */
+    @Nonnull
     public abstract Widget createFilterUI(EntityPlayer player);
 
     public Widget createBlacklistButton(EntityPlayer player) {

@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -51,6 +52,7 @@ public class OreDictFilter extends ItemFilter {
         return oreDictFilterExpression;
     }
 
+    @Nonnull
     @Override
     public Widget createFilterUI(EntityPlayer player) {
         return new MultiChildWidget()
@@ -61,6 +63,7 @@ public class OreDictFilter extends ItemFilter {
                 .addChild(createBlacklistButton(player))
                 .addChild(SlotWidget.phantom(testSlot, 0)
                         .setChangeListener(this::updateTestMsg)
+                        .addTooltip(Text.localised("cover.ore_dictionary_filter.test_slot.info"))
                         .setPos(20, 0))
                 .addChild(TextWidget.dynamicText(() -> {
                     if (testMsg.isEmpty()) {

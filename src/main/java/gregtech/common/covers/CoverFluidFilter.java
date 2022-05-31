@@ -6,10 +6,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.SlotGroup;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBehavior;
@@ -73,7 +75,6 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
-            //this.openUI((EntityPlayerMP) playerIn);
             GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
@@ -81,19 +82,25 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        return ModularWindow.builder(176, 166)
+        Widget filterUI = fluidFilter.createFilterUI(buildContext.getPlayer());
+        int x = filterUI.getSize().width > 0 ? 88 - filterUI.getSize().width / 2 : 7;
+        int height = filterUI.getSize().height > 0 ? 46 + SlotGroup.PLAYER_INVENTORY_HEIGHT + filterUI.getSize().height : 166;
+        return ModularWindow.builder(176, height)
                 .setBackground(GuiTextures.VANILLA_BACKGROUND)
-                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 83))
+                .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new TextWidget(new Text(titleLocale).localise())
                         .setPos(6, 6))
+                .widget(new TextWidget(Text.localised("cover.filter_mode.label"))
+                        .setTextAlignment(Alignment.CenterLeft)
+                        .setSize(80, 14)
+                        .setPos(7, 18))
                 .widget(new CycleButtonWidget()
                         .setForEnum(FluidFilterMode.class, this::getFilterMode, this::setFilterMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(FluidFilterMode.class))
                         .setBackground(GuiTextures.BASE_BUTTON)
-                        .setPos(10, 14)
-                        .setSize(110, 20))
-                .widget(fluidFilter.createFilterUI(buildContext.getPlayer())
-                        .setPos(7, 40))
+                        .setPos(87, 18)
+                        .setSize(80, 14))
+                .widget(filterUI.setPos(x, 34))
                 .build();
     }
 

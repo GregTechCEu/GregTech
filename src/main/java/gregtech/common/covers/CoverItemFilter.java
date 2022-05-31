@@ -6,10 +6,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.SlotGroup;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.cover.CoverBehavior;
@@ -18,10 +20,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GregTechUI;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.LabelWidget;
-import gregtech.api.guiOld.widgets.WidgetGroup;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.newFilter.item.ItemFilter;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,7 +74,6 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
-            //openUI((EntityPlayerMP) playerIn);
             GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
@@ -87,35 +84,26 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new LabelWidget(10, 5, titleLocale));
-        filterGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(10, 20, 110, 20,
-                GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
-                () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
-        //this.itemFilter.initUI(45, filterGroup::addWidget);
-        //this.itemFilter.blacklistUI(45, filterGroup::addWidget, () -> true);
-        return ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 105 + 82)
-                .widget(filterGroup)
-                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 105)
-                .build(this, player);
-    }
-
-    @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        return ModularWindow.builder(176, 166)
+        Widget filterUI = itemFilter.createFilterUI(buildContext.getPlayer());
+        int x = filterUI.getSize().width > 0 ? 88 - filterUI.getSize().width / 2 : 7;
+        int height = filterUI.getSize().height > 0 ? 46 + SlotGroup.PLAYER_INVENTORY_HEIGHT + filterUI.getSize().height : 166;
+        return ModularWindow.builder(176, height)
                 .setBackground(GuiTextures.VANILLA_BACKGROUND)
-                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 83))
+                .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new TextWidget(new Text(titleLocale).localise())
                         .setPos(6, 6))
+                .widget(new TextWidget(Text.localised("cover.filter_mode.label"))
+                        .setTextAlignment(Alignment.CenterLeft)
+                        .setSize(80, 14)
+                        .setPos(7, 18))
                 .widget(new CycleButtonWidget()
                         .setForEnum(ItemFilterMode.class, this::getFilterMode, this::setFilterMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))
                         .setBackground(GuiTextures.BASE_BUTTON)
-                        .setPos(10, 14)
-                        .setSize(110, 20))
-                .widget(itemFilter.createFilterUI(buildContext.getPlayer())
-                        .setPos(7, 40))
+                        .setPos(87, 18)
+                        .setSize(80, 14))
+                .widget(filterUI.setPos(x, 34))
                 .build();
     }
 

@@ -13,6 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
+
 public class SimpleItemFilter extends ItemFilter {
     private static final int MAX_MATCH_SLOTS = 9;
 
@@ -80,6 +82,7 @@ public class SimpleItemFilter extends ItemFilter {
         return false;
     }
 
+    @Nonnull
     @Override
     public Widget createFilterUI(EntityPlayer player) {
         MultiChildWidget widget = new MultiChildWidget();
@@ -87,15 +90,17 @@ public class SimpleItemFilter extends ItemFilter {
                 .addChild(new CycleButtonWidget()
                         .setToggle(() -> ignoreDamage, this::setIgnoreDamage)
                         .setTexture(GuiTextures.BUTTON_FILTER_DAMAGE)
+                        .addTooltip(0, Text.localised("cover.item_filter.ignore_damage.disabled"))
+                        .addTooltip(1, Text.localised("cover.item_filter.ignore_damage.enabled"))
                         .setBackground(GuiTextures.BASE_BUTTON)
-                        .addTooltip(new Text("cover.item_filter.ignore_damage").localise())
                         .setPos(85, 0)
                         .setSize(18, 18))
                 .addChild(new CycleButtonWidget()
                         .setToggle(() -> ignoreNBT, this::setIgnoreNBT)
                         .setTexture(GuiTextures.BUTTON_FILTER_NBT)
+                        .addTooltip(0, Text.localised("cover.item_filter.ignore_nbt.disabled"))
+                        .addTooltip(1, Text.localised("cover.item_filter.ignore_nbt.enabled"))
                         .setBackground(GuiTextures.BASE_BUTTON)
-                        .addTooltip(new Text("cover.item_filter.ignore_nbt").localise())
                         .setPos(103, 0)
                         .setSize(18, 18))
                 .addChild(createBlacklistButton(player));
