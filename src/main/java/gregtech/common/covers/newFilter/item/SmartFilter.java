@@ -1,6 +1,5 @@
 package gregtech.common.covers.newFilter.item;
 
-import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
@@ -11,6 +10,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.stack.ItemAndMetadata;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
@@ -68,15 +68,16 @@ public class SmartFilter extends ItemFilter {
     }
 
     @Override
-    public Widget createFilterUI(UIBuildContext buildContext) {
+    public Widget createFilterUI(EntityPlayer player) {
         return new MultiChildWidget()
-                .addChild(createBlacklistButton(buildContext))
+                .addChild(createBlacklistButton(player))
                 .addChild(new CycleButtonWidget()
                         .setForEnum(SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(SmartFilteringMode.class))
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .setSize(75, 18)
-                        .setPos(0, 19));
+                        .setPos(0, 0))
+                .setSize(140, 18);
     }
 
     @Override

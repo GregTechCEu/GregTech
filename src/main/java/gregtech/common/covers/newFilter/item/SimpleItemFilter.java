@@ -1,13 +1,13 @@
 package gregtech.common.covers.newFilter.item;
 
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
 import com.cleanroommc.modularui.common.widget.SlotWidget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
@@ -81,7 +81,7 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public Widget createFilterUI(UIBuildContext buildContext) {
+    public Widget createFilterUI(EntityPlayer player) {
         MultiChildWidget widget = new MultiChildWidget();
         widget
                 .addChild(new CycleButtonWidget()
@@ -98,12 +98,12 @@ public class SimpleItemFilter extends ItemFilter {
                         .addTooltip(new Text("cover.item_filter.ignore_nbt").localise())
                         .setPos(103, 0)
                         .setSize(18, 18))
-                .addChild(createBlacklistButton(buildContext));
+                .addChild(createBlacklistButton(player));
         for (int i = 0; i < 9; i++) {
             widget.addChild(SlotWidget.phantom(itemFilterSlots, i)
-                    .setPos(i % 3 * 18, i / 3 * 18 + 1));
+                    .setPos(i % 3 * 18, i / 3 * 18));
         }
-        return widget;
+        return widget.setSize(140, 54);
     }
 
     @Override

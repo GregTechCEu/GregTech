@@ -1,13 +1,10 @@
 package gregtech.common.covers.newFilter.item;
 
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.api.drawable.shapes.Rectangle;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Color;
-import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
-import com.cleanroommc.modularui.common.widget.ScrollBar;
 import com.cleanroommc.modularui.common.widget.SlotWidget;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
@@ -16,6 +13,7 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OreDictExprFilter;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.ItemStackHandler;
@@ -31,8 +29,8 @@ public class OreDictFilter extends ItemFilter {
     private boolean testResult;
     private final ItemStackHandler testSlot = new ItemStackHandler() {
         @Override
-        protected void onContentsChanged(int slot) {
-            OreDictFilter.this.updateTestMsg();
+        public int getSlotLimit(int slot) {
+            return 1;
         }
     };
     private static final Pattern pattern = Pattern.compile("[(!]* *[0-9a-zA-Z*]* *\\)*( *[&|^]? *[(!]* *[0-9a-zA-Z*]* *\\)*)*");
@@ -54,13 +52,13 @@ public class OreDictFilter extends ItemFilter {
     }
 
     @Override
-    public Widget createFilterUI(UIBuildContext buildContext) {
+    public Widget createFilterUI(EntityPlayer player) {
         return new MultiChildWidget()
                 .addChild(GuiTextures.INFO_ICON.asWidget()
                         .addTooltip(new Text("cover.ore_dictionary_filter.info").localise())
                         .setSize(18, 18)
                         .setPos(0, 0))
-                .addChild(createBlacklistButton(buildContext))
+                .addChild(createBlacklistButton(player))
                 .addChild(SlotWidget.phantom(testSlot, 0)
                         .setChangeListener(this::updateTestMsg)
                         .setPos(20, 0))
@@ -73,19 +71,17 @@ public class OreDictFilter extends ItemFilter {
                             .localise();
                 }).setPos(40, 0).setSize(80, 18))
                 .addChild(new TextFieldWidget()
-                        .setSetter(val -> {
-                            setOreDictFilterExpression(val);
-                            updateTestMsg();
-                        })
+                        .setSetter(this::setOreDictFilterExpression)
                         .setGetter(() -> oreDictFilterExpression)
                         .setValidator(this::validateInput)
                         .setPattern(pattern)
-                        .setScrollBar(new ScrollBar().setBarTexture(new Rectangle()))
+                        .setScrollBar(2)
                         .setTextAlignment(Alignment.CenterLeft)
                         .setTextColor(Color.WHITE.normal)
-                        .setBackground(GuiTextures.DISPLAY.withFixedSize(140, 22, -2, -2))
+                        .setBackground(GuiTextures.DISPLAY.withFixedSize(140, 18, -2, -2))
                         .setPos(2, 21)
-                        .setSize(136, 14));
+                        .setSize(136, 14))
+                .setSize(140, 37);
     }
 
     private void updateTestMsg() {

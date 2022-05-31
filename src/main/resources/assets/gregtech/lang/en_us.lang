@@ -1089,6 +1089,8 @@ cover.transfer_mode=Transfer Mode:
 cover.transfer_amount=Amount:
 
 cover.filter.label=Filter
+cover.filter.settings.label=Filter Settings
+cover.filter.settings_open.label=Open Settings
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 

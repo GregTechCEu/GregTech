@@ -1,9 +1,9 @@
 package gregtech.common.covers.newFilter.fluid;
 
-import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.FluidSlotWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -56,9 +56,9 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
-    public Widget createFilterUI(UIBuildContext buildContext, Consumer<Widget> controlsAmountHandler) {
+    public Widget createFilterUI(EntityPlayer player, Consumer<Widget> controlsAmountHandler) {
         MultiChildWidget widget = new MultiChildWidget()
-                .addChild(createBlacklistButton(buildContext));
+                .addChild(createBlacklistButton(player));
         for (int i = 0; i < 9; i++) {
             widget.addChild(FluidSlotWidget.phantom(tanks[i], true)
                     .setTicker(controlsAmountHandler)

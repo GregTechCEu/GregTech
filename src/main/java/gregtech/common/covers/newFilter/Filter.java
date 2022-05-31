@@ -5,6 +5,7 @@ import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class Filter<T> {
@@ -27,9 +28,9 @@ public abstract class Filter<T> {
      */
     public abstract int getTransferLimit(Object object, int globalTransferLimit);
 
-    public abstract Widget createFilterUI(UIBuildContext buildContext);
+    public abstract Widget createFilterUI(EntityPlayer player);
 
-    public Widget createBlacklistButton(UIBuildContext buildContext) {
+    public Widget createBlacklistButton(EntityPlayer player) {
         return new CycleButtonWidget()
                 .setToggle(this::isInverted, this::setInverted)
                 .setTexture(GuiTextures.BUTTON_BLACKLIST)

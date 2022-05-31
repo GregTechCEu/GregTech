@@ -2,14 +2,15 @@ package gregtech.common.covers.newFilter;
 
 import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Color;
 import com.cleanroommc.modularui.api.math.Pos2d;
-import com.cleanroommc.modularui.api.math.Size;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
-import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.SlotWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,7 +46,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
     public Widget createFilterUI(UIBuildContext buildContext) {
         buildContext.addSyncedWindow(1, this::openFilterWindow);
         return new MultiChildWidget()
-                .addChild(new TextWidget("Filter")
+                .addChild(new TextWidget(Text.localised("cover.filter.label"))
                         .setPos(0, 4))
                 .addChild(new SlotWidget(filterInventory, filterSlotIndex)
                         .setFilter(item -> getFilterOf(item) != null)
@@ -67,41 +68,25 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                                 widget.getContext().openSyncedWindow(1);
                         })
                         .setTicker(widget -> widget.setEnabled(currentFilter != null))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("Open Settings").color(Color.WHITE.normal).shadow())
+                        .setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.filter.settings_open.label").color(Color.WHITE.normal).shadow())
                         .setPos(82, 0)
                         .setSize(80, 18));
     }
 
     public ModularWindow openFilterWindow(EntityPlayer player) {
-        ModularWindow.Builder builder = ModularWindow.builder(150, 90);
+        Widget filterUI = currentFilter.createFilterUI(player);
+        int height = filterUI.getSize().height > 0 ? filterUI.getSize().height + 25 : 90;
+        int width = filterUI.getSize().width > 0 ? filterUI.getSize().width + 10 : 150;
+        ModularWindow.Builder builder = ModularWindow.builder(width, height);
         builder.setBackground(ModularUITextures.VANILLA_BACKGROUND)
-                .setPos((screenSize, mainWindow) -> new Pos2d(screenSize.width / 2 - 75, mainWindow.getPos().y - 5))
-                .widget(new TextWidget("Filter Settings")
+                .setPos((screenSize, mainWindow) -> new Pos2d(screenSize.width / 2 - width / 2, mainWindow.getPos().y - 5))
+                .widget(new TextWidget(Text.localised("cover.filter.settings.label"))
                         .setPos(5, 5))
                 .widget(ButtonWidget.closeWindowButton(true)
                         .setPos(133, 5))
-                .widget(currentFilter.createFilterUI(null)
+                .widget(filterUI
                         .setPos(5, 20));
         return builder.build();
-    }
-
-    public Widget createFilterUI2(UIBuildContext buildContext) {
-        MultiChildWidget widget = new MultiChildWidget();
-        ChangeableWidget filterWidget = new ChangeableWidget(() -> currentFilter == null ? null : currentFilter.createFilterUI(buildContext).setDebugLabel("Filter"));
-        SlotWidget filterSlot = new SlotWidget(filterInventory, filterSlotIndex);
-        filterSlot.setFilter(item -> getFilterOf(item) != null);
-        filterSlot.setChangeListener(() -> {
-            checkFilter(filterSlot.getMcSlot().getStack());
-            filterWidget.notifyChangeServer();
-        });
-
-        return widget.addChild(filterSlot.setPos(144, 0))
-                .addChild(filterWidget)
-                .addChild(new TextWidget(new Text("cover.filter.label").localise())
-                        .setTextAlignment(Alignment.CenterLeft)
-                        .setPos(1, 0)
-                        .setSize(36, 20))
-                .setDebugLabel("FilterHolder");
     }
 
     @Nullable
