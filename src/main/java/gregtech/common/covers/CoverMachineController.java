@@ -5,21 +5,29 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.ItemDrawable;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.math.Color;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.SliderWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.*;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -30,7 +38,6 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     private int minRedstoneStrength;
     private boolean isInverted;
     private ControllerMode controllerMode;
-    private final ItemStackHandler displayInventory = new ItemStackHandler(1);
 
     public CoverMachineController(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -67,7 +74,6 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         resetCurrentControllable();
         this.controllerMode = controllerMode;
         updateRedstoneStatus();
-        updateDisplayInventory();
         coverHolder.markDirty();
     }
 
@@ -106,27 +112,50 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+            GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        updateDisplayInventory();
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 95)
-                .image(4, 4, 16, 16, GuiTextures.COVER_MACHINE_CONTROLLER)
-                .label(24, 8, "cover.machine_controller.title")
-                .widget(new SliderWidget("cover.machine_controller.redstone", 10, 24, 156, 20, 1.0f, 15.0f,
-                        minRedstoneStrength, it -> setMinRedstoneStrength((int) it)))
-                .widget(new ClickButtonWidget(10, 48, 134, 18, "", data -> cycleNextControllerMode()))
-                .widget(new SimpleTextWidget(77, 58, "", 0xFFFFFF, () -> getControllerMode().getName()).setShadow(true))
-                .widget(new SlotWidget(displayInventory, 0, 148, 48, false, false)
-                        .setBackgroundTexture(GuiTextures.SLOT))
-                .widget(new CycleButtonWidget(48, 70, 80, 18, this::isInverted, this::setInverted,
-                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                        .setTooltipHoverString("cover.machine_controller.inverted.description"))
-                .build(this, player);
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ItemDrawable controlledItemDisplay = new ItemDrawable(getControlledItem());
+        ModularWindow.Builder builder = ModularWindow.builder(176, 85);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .widget(new TextWidget(Text.localised("cover.machine_controller.title"))
+                        .setPos(10, 5))
+                .widget(new SliderWidget()
+                        .setGetter(() -> (float) minRedstoneStrength)
+                        .setSetter(val -> setMinRedstoneStrength((int) (val + 0.5f)))
+                        .setBounds(0, 15)
+                        .setSize(156, 20)
+                        .setPos(10, 18))
+                .widget(TextWidget.dynamicText(() -> Text.localised("cover.machine_controller.redstone", minRedstoneStrength).color(Color.WHITE.normal))
+                        .setTextAlignment(Alignment.Center)
+                        .setSize(156, 20)
+                        .setPos(10, 18))
+                .widget(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> {
+                            cycleNextControllerMode();
+                            controlledItemDisplay.setItem(getControlledItem());
+                        })
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(134, 18)
+                        .setPos(10, 40))
+                .widget(TextWidget.dynamicText(() -> Text.localised(getControllerMode().getName()).color(Color.WHITE.normal).shadow())
+                        .setTextAlignment(Alignment.Center)
+                        .setSize(134, 18)
+                        .setPos(10, 40))
+                .widget(controlledItemDisplay.asWidget().setPos(148, 41))
+                .widget(new CycleButtonWidget()
+                        .setToggle(this::isInverted, this::setInverted)
+                        .setTextureGetter(val -> Text.localised(val == 0 ? "cover.machine_controller.normal" : "cover.machine_controller.inverted").color(Color.WHITE.normal).shadow())
+                        .addTooltip(0, Text.localised("cover.machine_controller.inverted.description").color(Color.WHITE.normal).shadow())
+                        .addTooltip(1, Text.localised("cover.machine_controller.normal.description").color(Color.WHITE.normal).shadow())
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(80, 18)
+                        .setPos(48, 60));
+        return builder.build();
     }
 
     @Override
@@ -157,16 +186,19 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         updateRedstoneStatus();
     }
 
-    private void updateDisplayInventory() {
-        EnumFacing controlledSide = getControllerMode().side;
-        ItemStack resultStack = ItemStack.EMPTY;
-        if (controlledSide != null) {
-            CoverBehavior coverBehavior = coverHolder.getCoverAtSide(controlledSide);
+    private ItemStack getControlledItem() {
+        EnumFacing side = getControllerMode().side;
+        if (side == null) {
+            if (this.coverHolder instanceof MetaTileEntity) {
+                return coverHolder.getStackForm();
+            }
+        } else {
+            CoverBehavior coverBehavior = coverHolder.getCoverAtSide(side);
             if (coverBehavior != null) {
-                resultStack = coverBehavior.getCoverDefinition().getDropItemStack();
+                return coverBehavior.getCoverDefinition().getDropItemStack();
             }
         }
-        this.displayInventory.setStackInSlot(0, resultStack);
+        return ItemStack.EMPTY;
     }
 
     private IControllable getControllable() {
