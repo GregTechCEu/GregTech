@@ -269,7 +269,7 @@ public interface IMaterialBuilder {
     default IMaterialBuilder flags(Collection<MaterialFlag> f1, MaterialFlag... f2) {
         Collection<MaterialFlag> copy = new ArrayList<>(f1);
         Collections.addAll(copy, f2);
-        return flags((MaterialFlag[]) copy.toArray());
+        return flags(copy.toArray(new MaterialFlag[0]));
     }
 
     /**
