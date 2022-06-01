@@ -33,7 +33,12 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
     private boolean saveFilterInventory = false;
 
     protected FilterHolder(IDirtyNotifiable dirtyNotifiable) {
-        this(new ItemStackHandler(), 0, dirtyNotifiable);
+        this(new ItemStackHandler() {
+            @Override
+            public int getSlotLimit(int slot) {
+                return 1;
+            }
+        }, 0, dirtyNotifiable);
         this.saveFilterInventory = true;
     }
 
