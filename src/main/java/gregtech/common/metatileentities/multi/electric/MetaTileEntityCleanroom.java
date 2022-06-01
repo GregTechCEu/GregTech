@@ -28,6 +28,9 @@ import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
+import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
+import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -269,9 +272,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             if (!(metaTileEntity instanceof ICleanroomReceiver))
                 return true;
 
-            // give the machine this cleanroom
+            // give the machine this cleanroom if it doesn't have this one
             ICleanroomReceiver cleanroomReceiver = (ICleanroomReceiver) metaTileEntity;
-            if (cleanroomReceiver.getCleanroom() == null)
+            if (cleanroomReceiver.getCleanroom() != this)
                 cleanroomReceiver.setCleanroom(this);
             return true;
         });
@@ -285,9 +288,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         if (metaTileEntity instanceof MetaTileEntityLargeMiner) return true;
         if (metaTileEntity instanceof MetaTileEntityFluidDrill) return true;
         if (metaTileEntity instanceof MetaTileEntityCentralMonitor) return true;
-        if (metaTileEntity.equals(MetaTileEntities.COKE_OVEN)) return true;
-        if (metaTileEntity.equals(MetaTileEntities.PRIMITIVE_BLAST_FURNACE)) return true;
-        return metaTileEntity.equals(MetaTileEntities.PRIMITIVE_WATER_PUMP);
+        if (metaTileEntity instanceof MetaTileEntityCleanroom) return true;
+        if (metaTileEntity instanceof MetaTileEntityCokeOven) return true;
+        if (metaTileEntity instanceof MetaTileEntityPrimitiveBlastFurnace) return true;
+        return metaTileEntity instanceof MetaTileEntityPrimitiveWaterPump;
     }
 
     @Override
