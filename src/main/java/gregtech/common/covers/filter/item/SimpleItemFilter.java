@@ -113,6 +113,7 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
         tagCompound.setTag("ItemFilter", itemFilterSlots.serializeNBT());
         tagCompound.setBoolean("IgnoreDamage", ignoreDamage);
         tagCompound.setBoolean("IgnoreNBT", ignoreNBT);
@@ -120,6 +121,7 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
         this.itemFilterSlots.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
         this.ignoreDamage = tagCompound.getBoolean("IgnoreDamage");
         this.ignoreNBT = tagCompound.getBoolean("IgnoreNBT");

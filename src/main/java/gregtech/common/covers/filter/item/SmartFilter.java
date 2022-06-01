@@ -88,11 +88,13 @@ public class SmartFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", filteringMode.ordinal());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
         this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
     }
 

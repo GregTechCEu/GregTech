@@ -122,11 +122,13 @@ public class OreDictFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
         tagCompound.setString("OreDictionaryFilter", oreDictFilterExpression);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
         this.oreDictFilterExpression = tagCompound.getString("OreDictionaryFilter");
         OreDictExprFilter.parseExpression(this.matchRules, this.oreDictFilterExpression);
     }
