@@ -11,8 +11,10 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Color;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
 import com.cleanroommc.modularui.common.widget.FluidSlotWidget;
 import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
@@ -20,6 +22,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GregTechUI;
 import gregtech.api.gui.GuiFunctions;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
@@ -135,19 +138,19 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 168);
         Rectangle rectangle = new Rectangle().setColor(this.color);
-        builder.setBackground(gregtech.api.gui.GuiTextures.VANILLA_BACKGROUND)
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .bindPlayerInventory(buildContext.getPlayer())
                 .widget(new TextWidget(Text.localised("cover.ender_fluid_link.title"))
                         .setPos(10, 5))
-                .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                .widget(new CycleButtonWidget()
                         .setToggle(this::isPrivate, this::setPrivate)
-                        .setTexture(gregtech.api.gui.GuiTextures.BUTTON_PUBLIC_PRIVATE)
+                        .setTexture(GuiTextures.BUTTON_PUBLIC_PRIVATE)
                         .setSize(18, 18)
                         .setPos(12, 18))
                 .widget(rectangle.asWidget()
                         .setSize(18, 18)
                         .setPos(35, 18))
-                .widget(new com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget()
+                .widget(new TextFieldWidget()
                         .setGetter(this::getColorStr)
                         .setSetter(val -> {
                             updateColor(val);
@@ -157,7 +160,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                         .setValidator(this::validate)
                         .setTextAlignment(Alignment.CenterLeft)
                         .setTextColor(Color.WHITE.normal)
-                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL.withFixedSize(58, 18, -2, -2))
+                        .setBackground(GuiTextures.DISPLAY_SMALL.withFixedSize(58, 18, -2, -2))
                         .setPos(60, 20)
                         .setSize(54, 14))
                 .widget(new FluidSlotWidget(this.linkedTank)
@@ -170,16 +173,16 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                         .setTextAlignment(Alignment.CenterLeft)
                         .setSize(80, 12)
                         .setPos(7, 50))
-                .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                .widget(new CycleButtonWidget()
                         .setForEnum(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(CoverPump.PumpMode.class))
-                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                        .setBackground(GuiTextures.BASE_BUTTON)
                         .setSize(80, 12)
                         .setPos(89, 38))
-                .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                .widget(new CycleButtonWidget()
                         .setToggle(this::isIoEnabled, this::setIoEnabled)
                         .setTextureGetter(val -> Text.localised(val == 0 ? "cover.ender_fluid_link.iomode.disabled" : "cover.ender_fluid_link.iomode.enabled").color(Color.WHITE.normal).shadow())
-                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                        .setBackground(GuiTextures.BASE_BUTTON)
                         .setSize(80, 12)
                         .setPos(89, 50))
                 .widget(filterHolder.createFilterUI(buildContext)
