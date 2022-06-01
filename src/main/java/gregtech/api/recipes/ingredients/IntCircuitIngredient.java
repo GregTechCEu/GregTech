@@ -21,6 +21,18 @@ public class IntCircuitIngredient extends Ingredient {
         return stack;
     }
 
+    public static ItemStack getIntegratedCircuit(EntityPlayer player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!isIntegratedCircuit(stack)) {
+            stack = player.getHeldItemOffhand();
+        }
+        return stack;
+    }
+
+    public static void setCircuitConfiguration(EntityPlayer player, int configuration) {
+        setCircuitConfiguration(getIntegratedCircuit(player), configuration);
+    }
+
     public static void setCircuitConfiguration(ItemStack itemStack, int configuration) {
         if (!MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack))
             throw new IllegalArgumentException("Given item stack is not an integrated circuit!");
@@ -35,11 +47,7 @@ public class IntCircuitIngredient extends Ingredient {
     }
 
     public static int getCircuitConfiguration(EntityPlayer player) {
-        ItemStack stack = player.getHeldItemMainhand();
-        if(!isIntegratedCircuit(stack)) {
-            stack = player.getHeldItemOffhand();
-        }
-        return getCircuitConfiguration(stack);
+        return getCircuitConfiguration(getIntegratedCircuit(player));
     }
 
     public static int getCircuitConfiguration(ItemStack itemStack) {

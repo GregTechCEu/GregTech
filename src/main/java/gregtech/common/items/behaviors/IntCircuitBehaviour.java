@@ -6,8 +6,11 @@ import com.cleanroommc.modularui.api.math.Size;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.Row;
 import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.ClickButtonWidget;
@@ -41,8 +44,6 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
-            //PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-            //holder.openUI();
             GregTechUI.getPlayerItemUi(hand).open(player);
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
@@ -61,34 +62,29 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public ModularWindow createWindow(UIBuildContext buildContext) {
-        return ModularWindow.builder(new Size(176, 60))
+    public ModularWindow createWindow(UIBuildContext buildContext, ItemStack item) {
+        return ModularWindow.builder(new Size(130, 39))
                 .setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new TextWidget(new Text("metaitem.circuit.integrated.gui").localise())
                         .setPos(6, 6))
-                .widget(TextWidget.dynamicString(() -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(buildContext.getPlayer())))
-                        .setTextAlignment(Alignment.Center)
-                        .setPos(82, 30))
-                .widget(new ButtonWidget()
-                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -5))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-5").color(0xFFFFFF))
-                        .setSize(20, 20)
-                        .setPos(15, 24))
-                .widget(new ButtonWidget()
-                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -1))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-1").color(0xFFFFFF))
-                        .setSize(20, 20)
-                        .setPos(50, 24))
-                .widget(new ButtonWidget()
-                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), 1))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("1").color(0xFFFFFF))
-                        .setSize(20, 20)
-                        .setPos(104, 24))
-                .widget(new ButtonWidget()
-                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), 5))
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("5").color(0xFFFFFF))
-                        .setSize(20, 20)
-                        .setPos(141, 24))
+                .widget(new Row()
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(-1, -4, -16, -32, val -> IntCircuitIngredient.adjustConfiguration(item, val)))
+                                .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                .setSize(14, 14))
+                        .widget(new TextFieldWidget()
+                                .setGetterInt(() -> IntCircuitIngredient.getCircuitConfiguration(item))
+                                .setSetterInt(val -> IntCircuitIngredient.setCircuitConfiguration(item, val))
+                                .setNumbers(0, 32)
+                                .setTextAlignment(Alignment.Center)
+                                .setTextColor(0xFFFFFF)
+                                .setBackground(GuiTextures.DISPLAY_SMALL)
+                                .setSize(56, 14))
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(1, 4, 16, 32, val -> IntCircuitIngredient.adjustConfiguration(item, val)))
+                                .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                .setSize(14, 14))
+                        .setPos(23, 18))
                 .build();
     }
 
