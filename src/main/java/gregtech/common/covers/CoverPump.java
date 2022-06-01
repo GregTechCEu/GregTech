@@ -26,7 +26,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.newFilter.fluid.FluidFilterHolder;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;

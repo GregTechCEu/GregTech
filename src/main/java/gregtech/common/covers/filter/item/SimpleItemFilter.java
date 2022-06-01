@@ -1,19 +1,21 @@
-package gregtech.common.covers.filter;
+package gregtech.common.covers.filter.item;
 
-import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.Widget;
-import gregtech.api.guiOld.widgets.PhantomSlotWidget;
-import gregtech.api.guiOld.widgets.ToggleButtonWidget;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.SlotWidget;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 public class SimpleItemFilter extends ItemFilter {
-
     private static final int MAX_MATCH_SLOTS = 9;
 
     protected final ItemStackHandler itemFilterSlots;
@@ -62,16 +64,17 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public Integer matchItemStack(ItemStack itemStack) {
+    public Object matchItemStack(ItemStack itemStack) {
         int itemFilterMatchIndex = itemFilterMatch(getItemFilterSlots(), isIgnoreDamage(), isIgnoreNBT(), itemStack);
         return itemFilterMatchIndex == -1 ? null : itemFilterMatchIndex;
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        Integer matchSlotIndex = (Integer) matchSlot;
-        ItemStack stackInFilterSlot = itemFilterSlots.getStackInSlot(matchSlotIndex);
-        return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
+    public int getTransferLimit(Object obj, int globalTransferLimit) {
+        if (obj instanceof Integer) {
+            return (int) obj;
+        }
+        return 0;
     }
 
     @Override
@@ -79,20 +82,33 @@ public class SimpleItemFilter extends ItemFilter {
         return false;
     }
 
+    @Nonnull
     @Override
-    public int getTotalOccupiedHeight() {
-        return 36;
-    }
-
-    @Override
-    public void initUIOld(Consumer<Widget> widgetGroup) {
+    public Widget createFilterUI(EntityPlayer player) {
+        MultiChildWidget widget = new MultiChildWidget();
+        widget
+                .addChild(new CycleButtonWidget()
+                        .setToggle(() -> ignoreDamage, this::setIgnoreDamage)
+                        .setTexture(GuiTextures.BUTTON_FILTER_DAMAGE)
+                        .addTooltip(0, Text.localised("cover.item_filter.ignore_damage.disabled"))
+                        .addTooltip(1, Text.localised("cover.item_filter.ignore_damage.enabled"))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setPos(85, 0)
+                        .setSize(18, 18))
+                .addChild(new CycleButtonWidget()
+                        .setToggle(() -> ignoreNBT, this::setIgnoreNBT)
+                        .setTexture(GuiTextures.BUTTON_FILTER_NBT)
+                        .addTooltip(0, Text.localised("cover.item_filter.ignore_nbt.disabled"))
+                        .addTooltip(1, Text.localised("cover.item_filter.ignore_nbt.enabled"))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setPos(103, 0)
+                        .setSize(18, 18))
+                .addChild(createBlacklistButton(player));
         for (int i = 0; i < 9; i++) {
-            widgetGroup.accept(new PhantomSlotWidget(itemFilterSlots, i, 10 + 18 * (i % 3), 18 * (i / 3)).setBackgroundTexture(GuiTextures.SLOT));
+            widget.addChild(SlotWidget.phantom(itemFilterSlots, i)
+                    .setPos(i % 3 * 18, i / 3 * 18));
         }
-        widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
-                () -> ignoreDamage, this::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));
-        widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
-                () -> ignoreNBT, this::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
+        return widget.setSize(140, 54);
     }
 
     @Override

@@ -1,6 +1,6 @@
-package gregtech.common.covers.newFilter.item;
+package gregtech.common.covers.filter.item;
 
-import gregtech.common.covers.newFilter.Filter;
+import gregtech.common.covers.filter.Filter;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;

@@ -13,12 +13,11 @@ import gregtech.api.guiOld.widgets.SimpleTextWidget;
 import gregtech.api.guiOld.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.covers.filter.item.ItemFilterHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,13 +52,13 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     private AxisAlignedBB areaBoundingBox;
     private BlockPos areaCenterPos;
     private boolean isWorking;
-    private final ItemFilterContainer itemFilter;
+    private final ItemFilterHolder itemFilter;
 
     public MetaTileEntityItemCollector(ResourceLocation metaTileEntityId, int tier, int maxItemSuckingRange) {
         super(metaTileEntityId, tier);
         this.maxItemSuckingRange = maxItemSuckingRange;
         this.itemSuckingRange = maxItemSuckingRange;
-        this.itemFilter = new ItemFilterContainer(this::markDirty);
+        this.itemFilter = new ItemFilterHolder(this::markDirty);
         initializeInventory();
     }
 
@@ -141,7 +140,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
             double distanceX = (areaCenterPos.getX() + 0.5) - entityItem.posX;
             double distanceZ = (areaCenterPos.getZ() + 0.5) - entityItem.posZ;
             double distance = MathHelper.sqrt(distanceX * distanceX + distanceZ * distanceZ);
-            if (!itemFilter.testItemStack(entityItem.getItem())) {
+            if (!itemFilter.test(entityItem.getItem())) {
                 continue;
             }
             if (distance >= 0.7) {
@@ -237,8 +236,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
                         .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
-
-        this.itemFilter.initUI(45 + rowSize * 18 + 5, builder::widget);
+        // TODO
+        //this.itemFilter.initUI(45 + rowSize * 18 + 5, builder::widget);
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 45 + rowSize * 18 + 105);
         return builder.build(getHolder(), entityPlayer);
     }

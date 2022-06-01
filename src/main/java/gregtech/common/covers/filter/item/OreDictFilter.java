@@ -1,4 +1,4 @@
-package gregtech.common.covers.newFilter.item;
+package gregtech.common.covers.filter.item;
 
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;

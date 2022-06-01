@@ -1,4 +1,4 @@
-package gregtech.common.covers.newFilter.fluid;
+package gregtech.common.covers.filter.fluid;
 
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.FluidSlotWidget;

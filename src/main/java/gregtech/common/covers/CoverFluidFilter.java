@@ -21,7 +21,7 @@ import gregtech.api.gui.GregTechUI;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.newFilter.Filter;
+import gregtech.common.covers.filter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;

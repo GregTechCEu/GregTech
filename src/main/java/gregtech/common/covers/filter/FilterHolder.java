@@ -1,4 +1,4 @@
-package gregtech.common.covers.newFilter;
+package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.Text;

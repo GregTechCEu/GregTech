@@ -1,10 +1,10 @@
-package gregtech.common.covers.newFilter;
+package gregtech.common.covers.filter;
 
 import gregtech.api.util.ItemStackKey;
-import gregtech.common.covers.newFilter.fluid.SimpleFluidFilter;
-import gregtech.common.covers.newFilter.item.OreDictFilter;
-import gregtech.common.covers.newFilter.item.SimpleItemFilter;
-import gregtech.common.covers.newFilter.item.SmartFilter;
+import gregtech.common.covers.filter.fluid.SimpleFluidFilter;
+import gregtech.common.covers.filter.item.OreDictFilter;
+import gregtech.common.covers.filter.item.SimpleItemFilter;
+import gregtech.common.covers.filter.item.SmartFilter;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 

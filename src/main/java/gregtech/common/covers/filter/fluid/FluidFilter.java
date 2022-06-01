@@ -1,7 +1,7 @@
-package gregtech.common.covers.newFilter.fluid;
+package gregtech.common.covers.filter.fluid;
 
 import com.cleanroommc.modularui.api.widget.Widget;
-import gregtech.common.covers.newFilter.Filter;
+import gregtech.common.covers.filter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fluids.FluidStack;
 

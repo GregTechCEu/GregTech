@@ -16,9 +16,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -31,12 +31,10 @@ import gregtech.common.MetaEntities;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
-import gregtech.common.covers.filter.FilterTypeRegistry;
-import gregtech.common.covers.newFilter.FilterRegistry;
+import gregtech.common.covers.filter.FilterRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
-import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraft.world.World;
@@ -163,7 +161,7 @@ public class GregTechMod {
         WorldGenRegistry.INSTANCE.initializeRegistry();
 
         LootTableHelper.initialize();
-        FilterTypeRegistry.init();
+        //FilterTypeRegistry.init();
         FilterRegistry.init();
 
         /* Start Cover Definition Registration */

@@ -1,7 +1,7 @@
-package gregtech.common.covers.newFilter.item;
+package gregtech.common.covers.filter.item;
 
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.common.covers.newFilter.FilterHolder;
+import gregtech.common.covers.filter.FilterHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;

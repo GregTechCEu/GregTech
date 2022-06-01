@@ -1,13 +1,16 @@
-package gregtech.common.covers.filter;
+package gregtech.common.covers.filter.item;
 
-import gregtech.api.guiOld.Widget;
-import gregtech.api.guiOld.widgets.CycleButtonWidget;
-import gregtech.api.recipes.*;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import gregtech.api.gui.GuiFunctions;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.stack.ItemAndMetadata;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
@@ -16,9 +19,8 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
-public class SmartItemFilter extends ItemFilter {
+public class SmartFilter extends ItemFilter {
 
     private SmartFilteringMode filteringMode = SmartFilteringMode.ELECTROLYZER;
 
@@ -32,9 +34,11 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        ItemAndMetadataAndStackSize itemAndMetadata = (ItemAndMetadataAndStackSize) matchSlot;
-        return itemAndMetadata.transferStackSize;
+    public int getTransferLimit(Object obj, int globalTransferLimit) {
+        if (obj instanceof Integer) {
+            return (int) obj;
+        }
+        return 0;
     }
 
     @Override
@@ -60,19 +64,21 @@ public class SmartItemFilter extends ItemFilter {
         if (cachedTransferRateValue == 0) {
             return null;
         }
-        return new ItemAndMetadataAndStackSize(itemAndMetadata, cachedTransferRateValue);
+        return cachedTransferRateValue;
     }
 
+    @Nonnull
     @Override
-    public void initUIOld(Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
-                SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
-                .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
-    }
-
-    @Override
-    public int getTotalOccupiedHeight() {
-        return 20;
+    public Widget createFilterUI(EntityPlayer player) {
+        return new MultiChildWidget()
+                .addChild(createBlacklistButton(player))
+                .addChild(new CycleButtonWidget()
+                        .setForEnum(SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(SmartFilteringMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(75, 18)
+                        .setPos(0, 0))
+                .setSize(140, 18);
     }
 
     @Override
@@ -88,29 +94,6 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
-    }
-
-    private static class ItemAndMetadataAndStackSize {
-        public final ItemAndMetadata itemAndMetadata;
-        public final int transferStackSize;
-
-        public ItemAndMetadataAndStackSize(ItemAndMetadata itemAndMetadata, int transferStackSize) {
-            this.itemAndMetadata = itemAndMetadata;
-            this.transferStackSize = transferStackSize;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ItemAndMetadataAndStackSize)) return false;
-            ItemAndMetadataAndStackSize that = (ItemAndMetadataAndStackSize) o;
-            return itemAndMetadata.equals(that.itemAndMetadata);
-        }
-
-        @Override
-        public int hashCode() {
-            return itemAndMetadata.hashCode();
-        }
     }
 
     public enum SmartFilteringMode implements IStringSerializable {

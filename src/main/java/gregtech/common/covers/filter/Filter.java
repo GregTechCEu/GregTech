@@ -1,4 +1,4 @@
-package gregtech.common.covers.newFilter;
+package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
@@ -23,7 +23,7 @@ public abstract class Filter<T> {
     /**
      * Determines how much can transferred based on t.
      *
-     * @param object              by default an instance of T, but can be different fe. in {@link gregtech.common.covers.newFilter.item.ItemFilter}
+     * @param object              by default an instance of T, but can be different fe. in {@link gregtech.common.covers.filter.item.ItemFilter}
      * @param globalTransferLimit transferLimit of the holder
      * @return transfer limit
      */

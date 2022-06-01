@@ -1,4 +1,4 @@
-package gregtech.common.covers.newFilter.fluid;
+package gregtech.common.covers.filter.fluid;
 
 import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ModularUITextures;
@@ -11,9 +11,8 @@ import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.api.widget.Widget;
 import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.common.covers.newFilter.FilterHolder;
+import gregtech.common.covers.filter.FilterHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
