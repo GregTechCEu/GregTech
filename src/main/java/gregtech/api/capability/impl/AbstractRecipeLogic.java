@@ -310,7 +310,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean checkRecipe(@Nonnull Recipe recipe) {
         CleanroomType requiredType = null;
-        if (previousRecipe.hasProperty(CleanroomProperty.getInstance())) {
+        if (recipe.hasProperty(CleanroomProperty.getInstance())) {
             requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
         }
 
