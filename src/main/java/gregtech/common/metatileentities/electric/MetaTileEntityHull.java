@@ -24,6 +24,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
@@ -92,7 +93,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
     @Override
     public void update() {
         super.update();
-        if (isFirstTick()) {
+        if (isFirstTick() && Loader.isModLoaded(GTValues.MODID_APPENG)) {
             getProxy().onReady();
         }
     }
