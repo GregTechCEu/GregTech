@@ -108,21 +108,27 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 this.cleanroomType = CleanroomType.STERILE_CLEANROOM;
             }
         }
+        // max progress is based on the dimensions of the structure: (x^3)-(x^2)
+        // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
+        this.cleanroomLogic.setMaxProgress(Math.max(100, (width * depth * height) - (width * depth)));
     }
 
     @Override
     public void invalidateStructure() {
         super.invalidateStructure();
         resetTileAbilities();
+        this.cleanroomLogic.invalidate();
         this.cleanAmount = MIN_CLEAN_AMOUNT;
     }
 
     @Override
     protected void updateFormedValid() {
-        this.cleanroomLogic.updateLogic();
-        if (!getWorld().isRemote && this.cleanroomLogic.wasActiveAndNeedsUpdate()) {
-            this.cleanroomLogic.setWasActiveAndNeedsUpdate(false);
-            this.cleanroomLogic.setActive(false);
+        if (!getWorld().isRemote) {
+            this.cleanroomLogic.updateLogic();
+            if (this.cleanroomLogic.wasActiveAndNeedsUpdate()) {
+                this.cleanroomLogic.setWasActiveAndNeedsUpdate(false);
+                this.cleanroomLogic.setActive(false);
+            }
         }
     }
 
@@ -487,8 +493,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public int getMaxProgress() {
-        if (getWorld().isRemote)
-            return CleanroomLogic.MAX_PROGRESS;
         return cleanroomLogic.getMaxProgress();
     }
 

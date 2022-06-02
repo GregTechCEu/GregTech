@@ -14,9 +14,9 @@ import javax.annotation.Nonnull;
 
 public class CleanroomLogic {
 
-    public static final int MAX_PROGRESS = 100; // five seconds
     public static final int BASE_CLEAN_AMOUNT = 5;
 
+    private int maxProgress = 0;
     private int progressTime = 0;
 
     private final int minEnergyTier;
@@ -41,14 +41,11 @@ public class CleanroomLogic {
      * Call this method every tick in update
      */
     public void updateLogic() {
-        if (metaTileEntity.getWorld().isRemote) return;
-
-        if (hasMaintenance && ((IMaintenance) metaTileEntity).getNumMaintenanceProblems() > 5) {
-            return;
-        }
-
         // cleanrooms which cannot work do nothing
         if (!this.isWorkingEnabled) return;
+
+        // all maintenance problems not fixed means the machine does not run
+        if (hasMaintenance && ((IMaintenance) metaTileEntity).getNumMaintenanceProblems() > 5) return;
 
         // drain the energy
         if (consumeEnergy(true)) {
@@ -92,6 +89,12 @@ public class CleanroomLogic {
         }
 
         return true;
+    }
+
+    public void invalidate() {
+        this.progressTime = 0;
+        this.maxProgress = 0;
+        setActive(false);
     }
 
     /**
@@ -148,8 +151,12 @@ public class CleanroomLogic {
         return this.progressTime;
     }
 
+    public void setMaxProgress(int maxProgress) {
+        this.maxProgress = maxProgress;
+    }
+
     public int getMaxProgress() {
-        return MAX_PROGRESS;
+        return this.maxProgress;
     }
 
     public int getProgressPercent() {
@@ -169,6 +176,7 @@ public class CleanroomLogic {
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
         data.setBoolean("wasActiveAndNeedsUpdate", this.wasActiveAndNeedsUpdate);
         data.setInteger("progressTime", progressTime);
+        data.setInteger("maxProgress", maxProgress);
         return data;
     }
 
@@ -181,6 +189,7 @@ public class CleanroomLogic {
         this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
         this.wasActiveAndNeedsUpdate = data.getBoolean("wasActiveAndNeedsUpdate");
         this.progressTime = data.getInteger("progressTime");
+        this.maxProgress = data.getInteger("maxProgress");
     }
 
     /**
@@ -192,6 +201,7 @@ public class CleanroomLogic {
         buf.writeBoolean(this.isWorkingEnabled);
         buf.writeBoolean(this.wasActiveAndNeedsUpdate);
         buf.writeInt(this.progressTime);
+        buf.writeInt(this.maxProgress);
     }
 
     /**
@@ -203,6 +213,7 @@ public class CleanroomLogic {
         setWorkingEnabled(buf.readBoolean());
         setWasActiveAndNeedsUpdate(buf.readBoolean());
         this.progressTime = buf.readInt();
+        this.maxProgress = buf.readInt();
     }
 
     /**
