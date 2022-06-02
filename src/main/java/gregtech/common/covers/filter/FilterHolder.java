@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Color;
 import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
@@ -69,7 +70,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                         .setPos(62, 0))
                 .addChild(new ButtonWidget()
                         .setOnClick((clickData, widget) -> {
-                            if (!widget.isClient())
+                            if (!widget.isClient() && hasFilter())
                                 widget.getContext().openSyncedWindow(1);
                         })
                         .setTicker(widget -> widget.setEnabled(currentFilter != null))
@@ -79,6 +80,16 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
     }
 
     public ModularWindow openFilterWindow(EntityPlayer player) {
+        if (!hasFilter()) {
+            return ModularWindow.builder(130, 20)
+                    .setBackground(GuiTextures.VANILLA_BACKGROUND)
+                    .widget(new TextWidget(new Text("An Error occurred!").color(Color.RED.normal))
+                            .setTextAlignment(Alignment.Center)
+                            .setSize(130, 20))
+                    .widget(ButtonWidget.closeWindowButton(true)
+                            .setPos(73, 4))
+                    .build();
+        }
         Widget filterUI = currentFilter.createFilterUI(player);
         int height = filterUI.getSize().height > 0 ? filterUI.getSize().height + 25 : 90;
         int width = filterUI.getSize().width > 0 ? filterUI.getSize().width + 10 : 150;
