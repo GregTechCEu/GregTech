@@ -290,20 +290,32 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (metaTileEntity == null || rayTraceResult == null) {
             return false;
         }
+        boolean toolClickResult = false;
         if (itemStack.getItem().getToolClasses(itemStack).contains("screwdriver")) {
-            metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
-            ToolHelper.damageItem(itemStack, playerIn);
-            if (itemStack.getItem() instanceof IGTTool) {
-                ((IGTTool) itemStack.getItem()).playSound(playerIn);
-            }
+            toolClickResult = metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
         } else if (itemStack.getItem().getToolClasses(itemStack).contains("wrench")) {
-            metaTileEntity.onWrenchClick(playerIn, hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
-            ToolHelper.damageItem(itemStack, playerIn);
-            if (itemStack.getItem() instanceof IGTTool) {
-                ((IGTTool) itemStack.getItem()).playSound(playerIn);
-            }
+            toolClickResult = metaTileEntity.onWrenchClick(playerIn, hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
         }
-        return metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
+        // damage the tool and play sounds
+        if (toolClickResult) postToolClick( itemStack, playerIn);
+        // if the tool did something, we don't bother with covers
+        // otherwise we handle cover clicking
+        return toolClickResult || metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
+    }
+
+    /**
+     * Handles the result of clicking the block with a tool: damage and sounds
+     *
+     * @param stack the tool used to click the block
+     * @param player the player clicking the block
+     */
+    public void postToolClick(ItemStack stack, EntityPlayer player) {
+        // damage the tool
+        ToolHelper.damageItem(stack, player);
+        // if the tool is a GT tool, play its sound
+        if (stack.getItem() instanceof IGTTool) {
+            ((IGTTool) stack.getItem()).playSound(player);
+        }
     }
 
     @Override
