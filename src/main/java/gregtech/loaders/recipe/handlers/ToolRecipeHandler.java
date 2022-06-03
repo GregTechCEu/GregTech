@@ -389,7 +389,7 @@ public class ToolRecipeHandler {
 
     public static void processHammerHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
         if (!material.hasFlag(NO_WORKING)) {
-            processSimpleToolHead(toolPrefix, material, ToolItems.HAMMER, true, "II ", "IIh", "II ");
+            processSimpleToolHead(toolPrefix, material, ToolItems.HARD_HAMMER, true, "II ", "IIh", "II ");
 
             if (!material.hasProperty(GEM))
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -401,7 +401,7 @@ public class ToolRecipeHandler {
                         .buildAndRegister();
         }
         ModHandler.addMirroredShapedRecipe(String.format("hammer_%s", material),
-                ToolItems.HAMMER.get(material),
+                ToolItems.HARD_HAMMER.get(material),
                 "XX ", "XXS", "XX ",
                 'X', new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
@@ -508,13 +508,13 @@ public class ToolRecipeHandler {
 
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.MALLET, material, 48, 1, 4F, 1F),
+                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 48, 1, 4F, 1F),
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.plank, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             } else {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.MALLET, material, 128 * (1 << i), 1, 4F, 1F),
+                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i), 1, 4F, 1F),
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.ingot, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));

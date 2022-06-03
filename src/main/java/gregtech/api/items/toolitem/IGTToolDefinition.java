@@ -57,15 +57,19 @@ public interface IGTToolDefinition {
     }
 
     default float getBaseDamage(ItemStack stack) {
-        return 1.0f;
+        return 1.0F;
     }
 
     default float getBaseEfficiency(ItemStack stack) {
-        return 1.0f;
+        return 1.0F;
+    }
+
+    default float getEfficiencyMultiplier(ItemStack stack) {
+        return 1.0F;
     }
 
     default float getAttackSpeed(ItemStack stack) {
-        return 0.0f;
+        return 0.0F;
     }
 
     default AoEDefinition getAoEDefinition(ItemStack stack) {
