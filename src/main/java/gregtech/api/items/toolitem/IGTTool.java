@@ -235,7 +235,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (toolTag.hasKey(TOOL_SPEED_KEY, Constants.NBT.TAG_FLOAT)) {
             return toolTag.getFloat(TOOL_SPEED_KEY);
         }
-        float toolSpeed = getMaterialToolSpeed(stack) + getToolStats().getBaseEfficiency(stack);
+        float toolSpeed = getToolStats().getEfficiencyMultiplier(stack) * getMaterialToolSpeed(stack) + getToolStats().getBaseEfficiency(stack);
         toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);
         return toolSpeed;
     }
