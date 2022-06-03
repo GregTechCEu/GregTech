@@ -28,7 +28,8 @@ public class ToolDefinitionBuilder {
     private int baseDurability = 0;
     private int baseQuality = 0;
     private float attackDamage = 0F;
-    private float efficiency = 4F;
+    private float baseEfficiency = 4F;
+    private float efficiencyMultiplier = 1.0F;
     private boolean isEnchantable;
     private BiPredicate<ItemStack, Enchantment> canApplyEnchantment;
     private float attackSpeed = 0F;
@@ -84,8 +85,13 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder efficiency(float efficiency) {
-        this.efficiency = efficiency;
+    public ToolDefinitionBuilder baseEfficiency(float baseEfficiency) {
+        this.baseEfficiency = baseEfficiency;
+        return this;
+    }
+
+    public ToolDefinitionBuilder efficiencyMultiplier(float efficiencyMultiplier) {
+        this.efficiencyMultiplier = efficiencyMultiplier;
         return this;
     }
 
@@ -161,7 +167,8 @@ public class ToolDefinitionBuilder {
             private final int baseDurability = ToolDefinitionBuilder.this.baseDurability;
             private final int baseQuality = ToolDefinitionBuilder.this.baseQuality;
             private final float attackDamage = ToolDefinitionBuilder.this.attackDamage;
-            private final float efficiency = ToolDefinitionBuilder.this.efficiency;
+            private final float baseEfficiency = ToolDefinitionBuilder.this.baseEfficiency;
+            private final float efficiencyMultiplier = ToolDefinitionBuilder.this.efficiencyMultiplier;
             private final boolean isEnchantable = ToolDefinitionBuilder.this.isEnchantable;
             private final BiPredicate<ItemStack, Enchantment> canApplyEnchantment = ToolDefinitionBuilder.this.canApplyEnchantment;
             private final float attackSpeed = ToolDefinitionBuilder.this.attackSpeed;
@@ -236,7 +243,12 @@ public class ToolDefinitionBuilder {
 
             @Override
             public float getBaseEfficiency(ItemStack stack) {
-                return efficiency;
+                return baseEfficiency;
+            }
+
+            @Override
+            public float getEfficiencyMultiplier(ItemStack stack) {
+                return efficiencyMultiplier;
             }
 
             @Override

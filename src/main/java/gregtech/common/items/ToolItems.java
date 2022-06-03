@@ -5,10 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.ItemGTTool;
-import gregtech.api.items.toolitem.ToolBuilder;
-import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.items.toolitem.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -35,7 +32,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -70,8 +66,8 @@ public class ToolItems {
     public static IGTTool AXE;
     public static IGTTool HOE;
     public static IGTTool SAW;
-    public static IGTTool HAMMER;
-    public static IGTTool MALLET;
+    public static IGTTool HARD_HAMMER;
+    public static IGTTool SOFT_MALLET;
     public static IGTTool MINING_HAMMER;
     public static IGTTool WRENCH;
     public static IGTTool FILE;
@@ -109,7 +105,7 @@ public class ToolItems {
                 .toolStats(b -> b.suitableForBlockBreaking())
                 .toolClasses("shovel"));
         AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().attackDamage(3.0F).attackSpeed(-2.6F).efficiency(2.0F))
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().attackDamage(3.0F).attackSpeed(-2.6F).baseEfficiency(2.0F))
                 .toolClasses("axe"));
         HOE = register(ItemGTTool.Builder.of(GTValues.MODID, "hoe")
                 .toolStats(b -> b)
@@ -118,21 +114,21 @@ public class ToolItems {
                 .toolStats(b -> b.suitableForAttacking().suitableForCrafting())
                 .oreDict("craftingToolSaw")
                 .symbol('s')
-                .toolClasses("saw", "axe"));
-        HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
+                .toolClasses("saw"));
+        HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().suitableForCrafting())
                 .oreDict("craftingToolHammer")
                 .sound(GTSounds.FORGE_HAMMER)
                 .symbol('h')
                 .toolClasses("pickaxe", "hammer"));
-        MALLET = register(ItemGTTool.Builder.of(GTValues.MODID, "mallet")
+        SOFT_MALLET = register(ItemGTTool.Builder.of(GTValues.MODID, "mallet")
                 .toolStats(b -> b.suitableForCrafting())
                 .oreDict("craftingToolMallet")
                 .sound(GTSounds.MALLET_TOOL)
                 .symbol('r')
                 .toolClasses("mallet"));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).efficiencyMultiplier(0.4F))
                 .toolClasses("pickaxe", "mining_hammer"));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse())
@@ -170,8 +166,8 @@ public class ToolItems {
                 .oreDict("craftingToolWireCutter")
                 .symbol('x')
                 .toolClasses("wire_cutter"));
-        SICKLE = register(ItemGTTool.Builder.of(GTValues.MODID, "sickle")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
+        SICKLE = register(ItemGTTool.Builder.of(GTValues.MODID, "sickle") //TODO Tools PR: Sickle AOE does not work
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().aoeDefinition(2, 2, 2))
                 .toolClasses("sickle", "scythe", "shears", "hoe"));
         KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
                 .toolStats(b -> b.suitableForCrafting())
@@ -191,47 +187,47 @@ public class ToolItems {
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(2));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(3));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(3, 3, 3).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(3, 3, 3).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(4));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(4, 4, 4).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(4, 4, 4).efficiencyMultiplier(5.0F).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(5));
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .toolClasses("chainsaw", "axe")
                 .electric(1));
         CHAINSAW_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses("chainsaw", "axe")
                 .electric(2));
         CHAINSAW_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses("chainsaw", "axe")
                 .electric(3));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDict("craftingToolWrench")
                 .toolClasses("wrench")
                 .electric(1));
         WRENCH_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDict("craftingToolWrench")
                 .toolClasses("wrench")
                 .electric(2));
         WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDict("craftingToolWrench")
                 .toolClasses("wrench")
@@ -239,7 +235,7 @@ public class ToolItems {
         BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")
                 .toolStats(b -> b.suitableForCrafting().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .oreDict("craftingToolSaw")
-                .toolClasses("buzzsaw")
+                .toolClasses("saw")
                 .electric(1));
         SCREWDRIVER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver_lv")
                 .toolStats(b -> b.suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
@@ -269,7 +265,7 @@ public class ToolItems {
                 OreDictUnifier.registerOre(new ItemStack(tool.get(), 1, GTValues.W), tool.getOreDictName());
             }
         });
-        OreDictUnifier.registerOre(new ItemStack(MALLET.get(), 1, GTValues.W), "craftingToolSoftHammer"); // Compatibility
+        OreDictUnifier.registerOre(new ItemStack(SOFT_MALLET.get(), 1, GTValues.W), "craftingToolSoftHammer"); // Compatibility
     }
 
     // Handle returning broken stacks
@@ -372,11 +368,17 @@ public class ToolItems {
                 if (mainHandTooltip.equals(tooltipIterator.previous())) {
                     tooltipIterator.next(); // Turnover
                     // Push
-                    if (tool.getToolStats().isSuitableForCrafting(stack)) {
-                        tooltipIterator.add(TextFormatting.GREEN + " " + tool.getToolStats().getToolDamagePerCraft(stack) + " Crafting Uses");
+                    IGTToolDefinition toolStats = tool.getToolStats();
+                    if (toolStats.isSuitableForCrafting(stack)) {
+                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.crafting_uses", tool.getTotalMaxDurability(stack) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
                     }
-                    tooltipIterator.add(TextFormatting.LIGHT_PURPLE + " " + tool.getTotalAttackDamage(stack) + " Mining Speed");
-                    tooltipIterator.add(TextFormatting.YELLOW + " " + tool.getTotalHarvestLevel(stack) + " Harvest Level");
+                    if (toolStats.isSuitableForAttacking(stack)) {
+                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
+                    }
+                    if (toolStats.isSuitableForBlockBreak(stack)) {
+                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));
+                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.harvest_level", tool.getTotalHarvestLevel(stack)));
+                    }
                     break; // Exit early
                 }
             }
@@ -481,10 +483,13 @@ public class ToolItems {
         }
         if (tile instanceof MetaTileEntityHolder) {
             MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
-            if (mte != null && mte.canRenderMachineGrid() &&
-                    (mainHand.getItem().getToolClasses(mainHand).contains("wrench") ||
-                            offHand.getItem().getToolClasses(offHand).contains("wrench"))) {
-                return true;
+            if (mte != null && mte.canRenderMachineGrid()) {
+                Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
+                Set<String> offToolClasses = offHand.getItem().getToolClasses(offHand);
+                if (mainToolClasses.contains("wrench") || offToolClasses.contains("wrench") ||
+                    mainToolClasses.contains("screwdriver") || offToolClasses.contains("screwdriver")) {
+                    return true;
+                }
             }
         }
         ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
