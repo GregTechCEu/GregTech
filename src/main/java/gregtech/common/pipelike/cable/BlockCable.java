@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -16,7 +17,6 @@ import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import net.minecraft.block.Block;
 import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
@@ -51,7 +51,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     public BlockCable(Insulation cableType) {
         super(cableType);
-        setHarvestLevel("cutter", 1);
+        setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 
     public void addCableMaterial(Material material, WireProperties wireProperties) {
@@ -96,7 +96,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     @Override
     public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
-        if (stack.getItem().getToolClasses(stack).contains("screwdriver")) {
+        if (stack.getItem().getToolClasses(stack).contains(ToolClasses.SCREWDRIVER)) {
             if (!entityPlayer.world.isRemote) {
                 boolean isOpen = pipeTile.isConnected(coverSide);
                 pipeTile.setConnection(coverSide, !isOpen, false);

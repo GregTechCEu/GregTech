@@ -2,6 +2,7 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
@@ -111,7 +112,11 @@ public class EventHandlers {
             if (!canMineWithPick(tool)) {
                 return;
             }
-            tool = "pickaxe";
+            if (ConfigHolder.machines.requireGTToolsForBlocks) {
+                event.setCanHarvest(false);
+                return;
+            }
+            tool = ToolClasses.PICKAXE;
             int harvestLevel = event.getTargetBlock().getBlock().getHarvestLevel(event.getTargetBlock());
             if (!item.isEmpty() && harvestLevel > item.getItem().getHarvestLevel(item, tool, event.getEntityPlayer(), event.getTargetBlock())) {
                 event.setCanHarvest(false);
@@ -123,13 +128,13 @@ public class EventHandlers {
     public static void onDestroySpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
         ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
         String tool = event.getState().getBlock().getHarvestTool(event.getState());
-        if (tool != null && !item.isEmpty() && canMineWithPick(tool) && item.getItem().getToolClasses(item).contains("pickaxe")) {
+        if (tool != null && !item.isEmpty() && canMineWithPick(tool) && item.getItem().getToolClasses(item).contains(ToolClasses.PICKAXE)) {
             event.setNewSpeed(event.getNewSpeed() * 0.75f);
         }
     }
 
     public static boolean canMineWithPick(String tool) {
-        return "wrench".equals(tool) || "cutter".equals(tool);
+        return ToolClasses.WRENCH.equals(tool) || ToolClasses.WIRE_CUTTER.equals(tool);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

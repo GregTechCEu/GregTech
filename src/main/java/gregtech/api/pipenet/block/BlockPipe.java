@@ -12,6 +12,7 @@ import gregtech.api.cover.ICoverable.CoverSideData;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
@@ -323,7 +324,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
-        if (itemStack.getItem().getToolClasses(itemStack).contains("screwdriver")) {
+        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
             if (coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
                 ToolHelper.damageItem(itemStack, entityPlayer);
                 if (itemStack.getItem() instanceof IGTTool) {
@@ -356,7 +357,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * -1 if ItemStack failed the capability check (no action done, continue checks).
      */
     public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
-        if (stack.getItem().getToolClasses(stack).contains("wrench")) {
+        if (stack.getItem().getToolClasses(stack).contains(ToolClasses.WRENCH)) {
             if (!entityPlayer.world.isRemote) {
                 if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
                     boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
@@ -554,7 +555,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     // TODO Tools PR
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, "wrench", "screwdriver") || GTUtility.isCoverBehaviorItem(stack,
+        return ToolHelper.isTool(stack, ToolClasses.WRENCH, ToolClasses.SCREWDRIVER) || GTUtility.isCoverBehaviorItem(stack,
                 () -> hasCover(getPipeTileEntity(world, pos)),
                 coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }

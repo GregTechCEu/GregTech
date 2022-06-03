@@ -9,6 +9,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -705,7 +706,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!(!playerIn.isSneaking() && ToolHelper.isTool(playerIn.getHeldItem(hand), "screwdriver"))
+        if (!(!playerIn.isSneaking() && ToolHelper.isTool(playerIn.getHeldItem(hand), ToolClasses.SCREWDRIVER))
                 && !MetaTileEntities.MONITOR_SCREEN.getStackForm().isItemEqual(playerIn.getHeldItem(hand))) {
             if (playerIn.world.getTotalWorldTime() - lastClickTime < 2 &&
                     playerIn.getPersistentID().equals(lastClickUUID)) {
