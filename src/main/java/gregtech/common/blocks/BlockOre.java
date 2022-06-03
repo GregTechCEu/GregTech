@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -60,7 +61,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     @Override
     public net.minecraft.block.material.Material getMaterial(@Nonnull IBlockState state) {
         String harvestTool = getHarvestTool(state);
-        if (harvestTool != null && harvestTool.equals("shovel")) {
+        if (harvestTool != null && harvestTool.equals(ToolClasses.SHOVEL)) {
             return net.minecraft.block.material.Material.GROUND;
         }
         return net.minecraft.block.material.Material.ROCK;

@@ -13,7 +13,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -45,7 +45,9 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -245,22 +247,22 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 proceed = true;
                 switch (index) {
                     case 0:
-                        toolsToMatch.set(0, "wrench");
+                        toolsToMatch.set(0, ToolClasses.WRENCH);
                         break;
                     case 1:
-                        toolsToMatch.set(1, "screwdriver");
+                        toolsToMatch.set(1, ToolClasses.SCREWDRIVER);
                         break;
                     case 2:
-                        toolsToMatch.set(2, "mallet");
+                        toolsToMatch.set(2, ToolClasses.SOFT_MALLET);
                         break;
                     case 3:
-                        toolsToMatch.set(3, "hammer");
+                        toolsToMatch.set(3, ToolClasses.HARD_HAMMER);
                         break;
                     case 4:
-                        toolsToMatch.set(4, "cutter");
+                        toolsToMatch.set(4, ToolClasses.WIRE_CUTTER);
                         break;
                     case 5:
-                        toolsToMatch.set(5, "crowbar");
+                        toolsToMatch.set(5, ToolClasses.CROWBAR);
                         break;
                 }
             }

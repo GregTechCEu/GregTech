@@ -9,6 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -65,7 +66,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (itemStack.getItem().getToolClasses(itemStack).contains("mallet")) {
+        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
             if (getWorld().isRemote) {
                 scheduleRenderUpdate();
                 return true;

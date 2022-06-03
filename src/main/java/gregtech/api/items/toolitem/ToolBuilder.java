@@ -50,6 +50,11 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
+    public ToolBuilder<T> toolClasses(Set<String> tools) {
+        toolClasses.addAll(tools);
+        return this;
+    }
+
     public ToolBuilder<T> oreDict(String oreDict) {
         this.oreDict = oreDict;
         return this;

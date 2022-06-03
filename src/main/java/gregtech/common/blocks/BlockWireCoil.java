@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.block.VariantItemBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.block.SoundType;
@@ -31,7 +32,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 2);
+        setHarvestLevel(ToolClasses.WRENCH, 2);
         setDefaultState(getState(CoilType.CUPRONICKEL));
     }
 
