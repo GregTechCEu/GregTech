@@ -18,6 +18,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSoundManager;
@@ -734,7 +735,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return tool required to dismantle this meta tile entity properly
      */
     public String getHarvestTool() {
-        return "wrench";
+        return ToolClasses.WRENCH;
     }
 
     /**

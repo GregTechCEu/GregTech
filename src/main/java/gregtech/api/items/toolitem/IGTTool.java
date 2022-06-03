@@ -54,7 +54,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -140,10 +140,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         Set<String> toolClasses = stack.getItem().getToolClasses(stack);
 
-        behaviourTag.setBoolean(HARVEST_ICE_KEY, toolClasses.contains("saw"));
-        behaviourTag.setBoolean(TORCH_PLACING_KEY, toolClasses.contains("pickaxe"));
-        behaviourTag.setBoolean(TREE_FELLING_KEY, toolClasses.contains("axe"));
-        behaviourTag.setBoolean(DISABLE_SHIELDS_KEY, toolClasses.contains("axe"));
+        behaviourTag.setBoolean(HARVEST_ICE_KEY, toolClasses.contains(ToolClasses.SAW));
+        behaviourTag.setBoolean(TORCH_PLACING_KEY, toolClasses.contains(ToolClasses.PICKAXE));
+        behaviourTag.setBoolean(TREE_FELLING_KEY, toolClasses.contains(ToolClasses.AXE));
+        behaviourTag.setBoolean(DISABLE_SHIELDS_KEY, toolClasses.contains(ToolClasses.AXE));
         behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, false);
 
         return stack;
@@ -291,7 +291,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
         for (String type : get().getToolClasses(stack)) {
-            if (type.equals("sword")) {
+            if (type.equals(ToolClasses.SWORD)) {
                 Block block = state.getBlock();
                 if (block instanceof BlockWeb) {
                     return 15F;
@@ -317,7 +317,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!player.world.isRemote && !player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             int result = -1;
-            if (isTool(stack, "shears")) {
+            if (isTool(stack, ToolClasses.SHEARS)) {
                 result = ToolHelper.shearBlockRoutine(playerMP, stack, pos);
             }
             if (result != 0) {
@@ -451,8 +451,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Client-side methods
     @SideOnly(Side.CLIENT)
-    default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("metaitem.tool.behaves_like", stack.getItem().getToolClasses(stack).stream().map(StringUtils::capitalize).collect(Collectors.joining(", "))));
+    default void definition$addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, ITooltipFlag flag) {
+        tooltip.add(I18n.format("metaitem.tool.behaves_like", stack.getItem().getToolClasses(stack).stream()
+                .map(s -> s.replaceAll("_", " "))
+                .map(WordUtils::capitalize)
+                .collect(Collectors.joining(", "))));
         NBTTagCompound behavioursTag = getBehavioursTag(stack);
         List<String> behaviours = new ArrayList<>();
         if (behavioursTag.getBoolean(HARVEST_ICE_KEY)) {
@@ -575,7 +578,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      */
     @Override
     default boolean canWrench(ItemStack wrench, EntityPlayer player, BlockPos pos) {
-        return get().getToolClasses(wrench).contains("wrench");
+        return get().getToolClasses(wrench).contains(ToolClasses.WRENCH);
     }
 
     // IToolWrench
@@ -589,7 +592,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      * @return true if wrenching is allowed, false if not */
     @Override
     default boolean canWrench(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
-        return get().getToolClasses(wrench).contains("wrench");
+        return get().getToolClasses(wrench).contains(ToolClasses.WRENCH);
     }
 
     /*** Callback after the wrench has been used. This can be used to decrease durability or for other purposes.
@@ -604,12 +607,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // IToolHammer
     @Override
     default boolean isUsable(ItemStack item, EntityLivingBase user, BlockPos pos) {
-        return get().getToolClasses(item).contains("wrench");
+        return get().getToolClasses(item).contains(ToolClasses.WRENCH);
     }
 
     @Override
     default boolean isUsable(ItemStack item, EntityLivingBase user, Entity entity) {
-        return get().getToolClasses(item).contains("wrench");
+        return get().getToolClasses(item).contains(ToolClasses.WRENCH);
     }
 
     @Override
@@ -621,7 +624,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // ITool
     @Override
     default boolean canUse(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
-        return get().getToolClasses(player.getHeldItem(hand)).contains("wrench");
+        return get().getToolClasses(player.getHeldItem(hand)).contains(ToolClasses.WRENCH);
     }
 
     @Override
@@ -630,7 +633,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // IHideFacades
     @Override
     default boolean shouldHideFacades(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
-        return get().getToolClasses(stack).contains("wrench");
+        return get().getToolClasses(stack).contains(ToolClasses.WRENCH);
     }
 
     // IToolGrafter

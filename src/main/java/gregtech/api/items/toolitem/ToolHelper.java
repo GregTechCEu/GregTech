@@ -383,7 +383,7 @@ public class ToolHelper {
      * Applies Forge Hammer recipes to block broken, used for hammers or tools with hard hammer enchant applied.
      */
     public static void applyHammerDropConversion(ItemStack tool, IBlockState state, List<ItemStack> drops, int fortune, float dropChance, Random random) {
-        if (tool.getItem().getToolClasses(tool).contains("hammer") || EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, tool) > 0) {
+        if (tool.getItem().getToolClasses(tool).contains(ToolClasses.HARD_HAMMER) || EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, tool) > 0) {
             ItemStack silktouchDrop = GTVisibilityHackBlock.getSilkTouchDrop(state.getBlock(), state);
             if (!silktouchDrop.isEmpty()) {
                 // Stack lists can be immutable going into Recipe#matches barring no rewrites
@@ -419,7 +419,7 @@ public class ToolHelper {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean breakBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         // This is *not* a vanilla/forge convention, Forge never added "shears" to ItemShear's tool classes.
-        if (isTool(tool, "shears") && shearBlockRoutine(player, tool, pos) == 0) {
+        if (isTool(tool, ToolClasses.SHEARS) && shearBlockRoutine(player, tool, pos) == 0) {
             return false;
         }
         World world = player.world;

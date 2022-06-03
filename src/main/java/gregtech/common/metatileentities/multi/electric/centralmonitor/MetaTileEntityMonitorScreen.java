@@ -9,6 +9,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -36,7 +37,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -701,7 +705,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!(!playerIn.isSneaking() && ToolHelper.isTool(playerIn.getHeldItem(hand), "screwdriver"))
+        if (!(!playerIn.isSneaking() && ToolHelper.isTool(playerIn.getHeldItem(hand), ToolClasses.SCREWDRIVER))
                 && !MetaTileEntities.MONITOR_SCREEN.getStackForm().isItemEqual(playerIn.getHeldItem(hand))) {
             if (playerIn.world.getTotalWorldTime() - lastClickTime < 2 &&
                     playerIn.getPersistentID().equals(lastClickUUID)) {

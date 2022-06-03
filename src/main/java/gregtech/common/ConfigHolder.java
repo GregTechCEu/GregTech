@@ -47,8 +47,8 @@ public class ConfigHolder {
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed", "Default: false"})
         public boolean recipeProgressLowEnergy = false;
 
-        @Config.Comment({"Whether to require a Wrench to break machines.", "Default: false"})
-        public boolean requireWrenchForMachines = false;
+        @Config.Comment({"Whether to require a Wrench, Wirecutter, or other GregTech tools to break machines, casings, wires, and more.", "Default: false"})
+        public boolean requireGTToolsForBlocks = false;
 
         @Config.Comment({"Whether to enable the Maintenance Hatch, required for Multiblocks.", "Default: true"})
         public boolean enableMaintenance = true;

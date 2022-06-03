@@ -1,6 +1,7 @@
 package gregtech.api.enchants;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
@@ -40,7 +41,7 @@ public class EnchantmentHardHammer extends Enchantment {
 
     @Override
     public boolean canApply(ItemStack stack) {
-        return super.canApply(stack) && stack.getItem().getToolClasses(stack).contains("pickaxe");
+        return super.canApply(stack) && stack.getItem().getToolClasses(stack).contains(ToolClasses.PICKAXE);
     }
 
     @Override

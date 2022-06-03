@@ -14,6 +14,7 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -256,7 +257,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public String getHarvestTool() {
-        return "axe";
+        return ToolClasses.AXE;
     }
 
     @Override

@@ -10,13 +10,13 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.common.ConfigHolder;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -79,7 +79,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        return ConfigHolder.machines.requireWrenchForMachines ? "wrench" : "pickaxe";
+        return ToolClasses.WRENCH;
     }
 
     @Override
@@ -272,9 +272,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             return false;
         }
         boolean toolClickResult = false;
-        if (itemStack.getItem().getToolClasses(itemStack).contains("screwdriver")) {
+        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
             toolClickResult = metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
-        } else if (itemStack.getItem().getToolClasses(itemStack).contains("wrench")) {
+        } else if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.WRENCH)) {
             toolClickResult = metaTileEntity.onWrenchClick(playerIn, hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
         }
         // damage the tool and play sounds
