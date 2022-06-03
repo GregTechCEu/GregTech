@@ -6,6 +6,7 @@ import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -87,9 +88,9 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     public String getHarvestTool(IBlockState state) {
         Material material = state.getValue(variantProperty);
         if (ModHandler.isMaterialWood(material)) {
-            return "axe";
+            return ToolClasses.AXE;
         }
-        return "wrench";
+        return ToolClasses.WRENCH;
     }
 
     @Nonnull

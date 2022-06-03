@@ -507,13 +507,13 @@ public class ToolRecipeHandler {
             Material material = softHammerMaterials[i];
 
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material),
+                ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
                         ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 48, 1, 4F, 1F),
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.plank, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             } else {
-                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material),
+                ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
                         ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i), 1, 4F, 1F),
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.ingot, material),

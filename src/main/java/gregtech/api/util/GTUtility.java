@@ -12,6 +12,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
@@ -724,7 +725,7 @@ public class GTUtility {
                     }
                 }
             }
-        } else if (item.getToolClasses(itemStack).contains("crowbar")) {
+        } else if (item.getToolClasses(itemStack).contains(ToolClasses.CROWBAR)) {
             return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
         }
         return false;

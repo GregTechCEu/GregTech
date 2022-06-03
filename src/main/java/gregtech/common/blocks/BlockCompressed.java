@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
@@ -58,11 +59,11 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     public String getHarvestTool(IBlockState state) {
         Material material = state.getValue(variantProperty);
         if (material.isSolid()) {
-            return "pickaxe";
+            return ToolClasses.PICKAXE;
         } else if (material.hasProperty(PropertyKey.DUST)) {
-            return "shovel";
+            return ToolClasses.SHOVEL;
         }
-        return "pickaxe";
+        return ToolClasses.PICKAXE;
     }
 
     @Override
