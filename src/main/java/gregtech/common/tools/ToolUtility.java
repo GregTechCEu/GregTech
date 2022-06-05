@@ -105,7 +105,7 @@ public class ToolUtility {
             inputStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
         }
         MaterialStack input = OreDictUnifier.getMaterial(inputStack);
-        if (input != null && input.material.hasProperty(PropertyKey.ORE) && GTUtility.isOre(blockState.getBlock()) && !(player instanceof FakePlayer)) {
+        if (input != null && input.material.hasProperty(PropertyKey.ORE) && GTUtility.isOre(GTUtility.toItem(blockState)) && !(player instanceof FakePlayer)) {
             drops.clear();
             OrePrefix prefix = OreDictUnifier.getPrefix(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
             int multiplier = (prefix == OrePrefix.oreEndstone || prefix == OrePrefix.oreNetherrack) ? 2 : 1;

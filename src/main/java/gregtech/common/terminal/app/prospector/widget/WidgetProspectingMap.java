@@ -10,12 +10,14 @@ import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -103,13 +105,16 @@ public class WidgetProspectingMap extends Widget {
 
             switch (mode) {
                 case ORE_PROSPECTING_MODE:
+                    BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
                             int ySize = chunk.getHeightValue(x, z);
                             for (int y = 1; y < ySize; y++) {
-                                Block block = chunk.getBlockState(x, y, z).getBlock();
-                                if (GTUtility.isOre(block)) {
-                                    packet.addBlock(x, y, z, OreDictUnifier.getOreDictionaryNames(new ItemStack(block)).stream().findFirst().get());
+                                pos.setPos(x, y, z);
+                                IBlockState state = chunk.getBlockState(pos);
+                                ItemStack itemBlock = GTUtility.toItem(state);
+                                if (GTUtility.isOre(itemBlock)) {
+                                    packet.addBlock(x, y, z, OreDictUnifier.getOreDictionaryNames(itemBlock).stream().findFirst().get());
                                 }
                             }
                         }
