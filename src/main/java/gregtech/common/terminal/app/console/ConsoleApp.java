@@ -28,10 +28,10 @@ public class ConsoleApp extends AbstractApplication {
 
     @Override
     public AbstractApplication initApp() {
-        IGregTechTileEntity MTEResult = getMTE(); // Moved to make single call
+        IGregTechTileEntity mteResult = getMTE(); // Moved to make single call
 
-        if (MTEResult == null ||
-            MTEResult.getMetaTileEntity() instanceof MetaTileEntityWorkbench) // Remove Crafting Station compat
+        if (mteResult == null ||
+            mteResult.getMetaTileEntity() instanceof MetaTileEntityWorkbench) // Remove Crafting Station compat
         { // 333 232
             TerminalDialogWidget.showInfoDialog(os,
                     "terminal.dialog.notice",
