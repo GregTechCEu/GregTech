@@ -28,7 +28,7 @@ public class ConsoleApp extends AbstractApplication {
 
     @Override
     public AbstractApplication initApp() {
-        IGregTechTileEntity mteResult = getMTE(); // Moved to make single call
+        IGregTechTileEntity mteResult = getMTE();
 
         if (mteResult == null ||
             mteResult.getMetaTileEntity() instanceof MetaTileEntityWorkbench) // Remove Crafting Station compat
