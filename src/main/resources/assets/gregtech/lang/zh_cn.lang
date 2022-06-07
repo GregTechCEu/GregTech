@@ -2261,6 +2261,8 @@ tile.rubber_sapling.name=橡胶树苗
 tile.planks.rubber.name=橡胶木板
 tile.planks.treated.name=防腐木板
 
+tile.powderbarrel.powderbarrel.name=火药桶
+
 tile.surface_rock.name=表层岩石
 
 tile.surface_rock_new.name=表层岩石
@@ -5199,3 +5201,6 @@ gregtech.key.armor_mode_switch=盔甲模式开关
 gregtech.key.armor_hover=盔甲悬停切换
 gregtech.key.armor_charging=盔甲给背包物品充电的切换
 gregtech.key.tool_aoe_change=工具范围模式开关
+
+# Entities
+entity.Powderbarrel.name=火药桶

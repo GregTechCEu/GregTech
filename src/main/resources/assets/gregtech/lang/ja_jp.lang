@@ -2225,6 +2225,8 @@ tile.rubber_sapling.name=ゴムの木の苗
 tile.planks.rubber.name=ゴムの木材
 tile.planks.treated.name=防腐木材
 
+tile.powderbarrel.powderbarrel.name=火薬樽
+
 metaitem.prospector.lv.name=LV電動探知機
 metaitem.prospector.hv.name=HV電動探知機
 metaitem.prospector.luv.name=LuV電動探知機
@@ -5159,3 +5161,6 @@ gregtech.key.armor_mode_switch=装備のモード切替
 gregtech.key.armor_hover=装備のホバーモードの切替
 gregtech.key.armor_charging=装備のインベントリ充電機能の切替
 gregtech.key.tool_aoe_change=採掘範囲の切替
+
+# Entities
+entity.Powderbarrel.name=火薬樽
