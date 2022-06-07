@@ -154,6 +154,7 @@ public class CommonProxy {
         registry.register(RUBBER_LEAVES);
         registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
+        registry.register(POWDERBARREL);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
@@ -245,6 +246,7 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
+        registry.register(createItemBlock(POWDERBARREL, VariantItemBlock::new));
 
         COMPRESSED.values()
                 .stream().distinct()

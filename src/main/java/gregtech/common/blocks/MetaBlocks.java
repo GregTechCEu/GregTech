@@ -23,10 +23,7 @@ import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
-import gregtech.common.blocks.wood.BlockGregPlanks;
-import gregtech.common.blocks.wood.BlockRubberLeaves;
-import gregtech.common.blocks.wood.BlockRubberLog;
-import gregtech.common.blocks.wood.BlockRubberSapling;
+import gregtech.common.blocks.wood.*;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -122,6 +119,7 @@ public class MetaBlocks {
     public static BlockRubberLeaves RUBBER_LEAVES;
     public static BlockRubberSapling RUBBER_SAPLING;
     public static BlockGregPlanks PLANKS;
+    public static BlockPowderBarrel POWDERBARREL;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
@@ -222,6 +220,8 @@ public class MetaBlocks {
         RUBBER_SAPLING.setRegistryName("rubber_sapling");
         PLANKS = new BlockGregPlanks();
         PLANKS.setRegistryName("planks");
+        POWDERBARREL = new BlockPowderBarrel();
+        POWDERBARREL.setRegistryName("powderbarrel");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
@@ -349,6 +349,7 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
         registerItemModel(PLANKS);
+        registerItemModel(POWDERBARREL);
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
