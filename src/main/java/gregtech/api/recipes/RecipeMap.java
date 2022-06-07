@@ -388,13 +388,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public static List<GTRecipeInput> uniqueIngredientsList(List<GTRecipeInput> input) {
         List<GTRecipeInput> list = new ObjectArrayList<>(input.size());
-        loop:
         for (GTRecipeInput item : input) {
+            boolean isEqual = false;
             for (GTRecipeInput obj : list) {
                 if (item.equalIgnoreAmount(obj)) {
-                    continue loop;
+                    isEqual = true;
+                    break;
                 }
             }
+            if (isEqual) continue;
             list.add(item);
         }
         return list;
