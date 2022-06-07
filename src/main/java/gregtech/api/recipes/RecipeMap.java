@@ -26,7 +26,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
@@ -48,10 +47,8 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
@@ -438,7 +435,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<AbstractMapIngredient> wr = fluidIngredients.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<Recipe, RecipeMap.Branch> result = branchMap.getNodes().get(t);
+            Either<Recipe, Branch> result = branchMap.getNodes().get(t);
             if (result != null) {
                 if (result.left().isPresent() && count == fluidIngredients.size() - 1) {
                     return true;
@@ -514,7 +511,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 targetMap = branchMap.getNodes();
             }
 
-            Either<Recipe, RecipeMap.Branch> result = targetMap.get(t);
+            Either<Recipe, Branch> result = targetMap.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
                 Recipe r = result.map(recipe -> canHandle.test(recipe) ? recipe : null, right -> diveIngredientTreeFindRecipe(ingredients, right, canHandle, index, count, skip));
@@ -607,7 +604,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 targetMap = branchMap.getNodes();
             }
 
-            Either<Recipe, RecipeMap.Branch> result = targetMap.get(t);
+            Either<Recipe, Branch> result = targetMap.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
                 Recipe r = result.map(recipe -> recipe, right -> diveIngredientTreeFindRecipeCollisions(ingredients, right, index, count, skip, collidingRecipes));
@@ -1005,7 +1002,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     private Recipe removeDive(Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap, AbstractMapIngredient obj, int depth) {
-        Either<Recipe, RecipeMap.Branch> result = targetMap.get(obj);
+        Either<Recipe, Branch> result = targetMap.get(obj);
         if (result != null) {
             // Either return recipe or continue branch.
             Recipe r = result.map(recipe -> recipe, right -> recurseIngredientTreeRemove(recipeToRemove, ingredients, right, depth + 1));
@@ -1075,223 +1072,4 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int chanceFor(int chance, int boostPerTier, int boostTier);
     }
 
-    protected static class Branch {
-        // Keys on this have *(should)* unique hashcodes.
-        private Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes;
-        // Keys on this have collisions, and must be differentiated by equality.
-        private Map<AbstractMapIngredient, Either<Recipe, Branch>> specialNodes;
-
-        public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = null;
-            if (nodes != null) {
-                stream = nodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
-            }
-            if (specialNodes != null) {
-                if (stream == null) {
-                    stream = specialNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden)));
-                } else {
-                    stream = Stream.concat(stream, specialNodes.values().stream().flatMap(either -> either.map(Stream::of, right -> right.getRecipes(filterHidden))));
-                }
-            }
-            if (stream == null) {
-                return Stream.empty();
-            }
-            if (filterHidden) {
-                stream = stream.filter(t -> !t.isHidden());
-            }
-            return stream;
-        }
-
-        boolean isEmptyBranch() {
-            return (nodes == null || nodes.isEmpty()) && (specialNodes == null || specialNodes.isEmpty());
-        }
-
-        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getNodes() {
-            if (nodes == null) {
-                nodes = new Object2ObjectOpenHashMap<>(2);
-            }
-            return nodes;
-        }
-
-        public Map<AbstractMapIngredient, Either<Recipe, Branch>> getSpecialNodes() {
-            if (specialNodes == null) {
-                specialNodes = new Object2ObjectOpenHashMap<>(2);
-            }
-            return specialNodes;
-        }
-    }
-
-    public abstract static class Either<L, R> {
-
-        private static final class Left<L, R> extends Either<L, R> {
-            private final L value;
-
-            public Left(final L value) {
-                this.value = value;
-            }
-
-            @Override
-            public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2) {
-                return new Left<>(f1.apply(value));
-            }
-
-            @Override
-            public <T> T map(final Function<? super L, ? extends T> l, final Function<? super R, ? extends T> r) {
-                return l.apply(value);
-            }
-
-            @Override
-            public Either<L, R> ifLeft(Consumer<? super L> consumer) {
-                consumer.accept(value);
-                return this;
-            }
-
-            @Override
-            public Either<L, R> ifRight(Consumer<? super R> consumer) {
-                return this;
-            }
-
-            @Override
-            public java.util.Optional<L> left() {
-                return java.util.Optional.of(value);
-            }
-
-            @Override
-            public java.util.Optional<R> right() {
-                return java.util.Optional.empty();
-            }
-
-            @Override
-            public String toString() {
-                return "Left[" + value + "]";
-            }
-
-            @Override
-            public boolean equals(final Object o) {
-                if (this == o) {
-                    return true;
-                }
-                if (o == null || getClass() != o.getClass()) {
-                    return false;
-                }
-                final Left<?, ?> left = (Left<?, ?>) o;
-                return Objects.equals(value, left.value);
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(value);
-            }
-        }
-
-
-        private static final class Right<L, R> extends Either<L, R> {
-            private final R value;
-
-            public Right(final R value) {
-                this.value = value;
-            }
-
-            @Override
-            public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2) {
-                return new Right<>(f2.apply(value));
-            }
-
-            @Override
-            public <T> T map(final Function<? super L, ? extends T> l, final Function<? super R, ? extends T> r) {
-                return r.apply(value);
-            }
-
-            @Override
-            public Either<L, R> ifLeft(Consumer<? super L> consumer) {
-                return this;
-            }
-
-            @Override
-            public Either<L, R> ifRight(Consumer<? super R> consumer) {
-                consumer.accept(value);
-                return this;
-            }
-
-            @Override
-            public java.util.Optional<L> left() {
-                return java.util.Optional.empty();
-            }
-
-            @Override
-            public java.util.Optional<R> right() {
-                return java.util.Optional.of(value);
-            }
-
-            @Override
-            public String toString() {
-                return "Right[" + value + "]";
-            }
-
-            @Override
-            public boolean equals(final Object o) {
-                if (this == o) {
-                    return true;
-                }
-                if (o == null || getClass() != o.getClass()) {
-                    return false;
-                }
-                final Right<?, ?> right = (Right<?, ?>) o;
-                return Objects.equals(value, right.value);
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(value);
-            }
-        }
-
-        private Either() {
-        }
-
-        public abstract <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2);
-
-        public abstract <T> T map(final Function<? super L, ? extends T> l, Function<? super R, ? extends T> r);
-
-        public abstract Either<L, R> ifLeft(final Consumer<? super L> consumer);
-
-        public abstract Either<L, R> ifRight(final Consumer<? super R> consumer);
-
-        public abstract java.util.Optional<L> left();
-
-        public abstract java.util.Optional<R> right();
-
-        public <T> Either<T, R> mapLeft(final Function<? super L, ? extends T> l) {
-            return map(t -> left(l.apply(t)), Either::right);
-        }
-
-        public <T> Either<L, T> mapRight(final Function<? super R, ? extends T> l) {
-            return map(Either::left, t -> right(l.apply(t)));
-        }
-
-        public static <L, R> Either<L, R> left(final L value) {
-            return new Left<>(value);
-        }
-
-        public static <L, R> Either<L, R> right(final R value) {
-            return new Right<>(value);
-        }
-
-        public L orThrow() {
-            return map(l -> l, r -> {
-                if (r instanceof Throwable) {
-                    throw new RuntimeException((Throwable) r);
-                }
-                throw new RuntimeException(r.toString());
-            });
-        }
-
-        public Either<R, L> swap() {
-            return map(Either::right, Either::left);
-        }
-
-        public <L2> Either<L2, R> flatMap(final Function<L, Either<L2, R>> function) {
-            return map(function, Either::right);
-        }
-    }
 }
