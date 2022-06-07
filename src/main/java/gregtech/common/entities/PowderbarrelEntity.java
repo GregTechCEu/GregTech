@@ -54,7 +54,7 @@ public class PowderbarrelEntity extends EntityTNTPrimed {
         setFuse(this.getFuse() - 1);
         if (this.getFuse() <= 0) {
             this.setDead();
-            if (!this.world.isRemote) {
+            if (!this.world.isRemote && !this.inWater) {
                 this.explode();
             }
         } else {
