@@ -32,8 +32,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
             }
         }
 
-        outer:
         for (ItemStack is : lst) {
+            boolean addedStack = false;
             if (!is.isEmpty()) {
                 for (ItemToMetaList item : this.itemList) {
                     if (item.getItem() == is.getItem()) {
@@ -41,13 +41,17 @@ public class GTRecipeItemInput extends GTRecipeInput {
                         for (MetaToTAGList meta : metaList) {
                             if (meta.getMeta() == is.getMetadata()) {
                                 meta.addStackToList(is);
-                                continue outer;
+                                addedStack = true;
+                                break;
                             }
                         }
+                        if (addedStack) break;
                         item.addStackToLists(is);
-                        continue outer;
+                        addedStack = true;
+                        break;
                     }
                 }
+                if (addedStack) continue;
                 this.itemList.add(new ItemToMetaList(is));
             }
         }
