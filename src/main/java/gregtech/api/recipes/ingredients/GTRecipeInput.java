@@ -1,7 +1,7 @@
 package gregtech.api.recipes.ingredients;
 
+import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTcondition;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,7 +33,7 @@ public abstract class GTRecipeInput {
     protected int amount;
     protected boolean isConsumable = true;
     protected NBTMatcher nbtMatcher;
-    protected NBTcondition nbtCondition;
+    protected NBTCondition nbtCondition;
 
     static GTRecipeInput getFromCache(GTRecipeInput realIngredient) {
         if (INSTANCES.get(realIngredient) == null) {
@@ -60,7 +60,7 @@ public abstract class GTRecipeInput {
         return getFromCache(copy);
     }
 
-    public GTRecipeInput setNBTMatchingCondition(NBTMatcher nbtMatcher, NBTcondition nbtCondition) {
+    public GTRecipeInput setNBTMatchingCondition(NBTMatcher nbtMatcher, NBTCondition nbtCondition) {
         GTRecipeInput copy = copy();
         copy.nbtMatcher = nbtMatcher;
         copy.nbtCondition = nbtCondition;
@@ -75,7 +75,7 @@ public abstract class GTRecipeInput {
         return nbtMatcher;
     }
 
-    public NBTcondition getNBTMatchingCondition() {
+    public NBTCondition getNBTMatchingCondition() {
         return nbtCondition;
     }
 

@@ -256,8 +256,7 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return  hasSameInputs(recipe) &&
-                hasSameFluidInputs(recipe);
+        return hasSameInputs(recipe) && hasSameFluidInputs(recipe);
     }
 
     private int makeHashCode() {

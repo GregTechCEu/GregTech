@@ -19,7 +19,7 @@ public class NBTMatcher {
     public static NBTMatcher ANY = new NBTMatcher() {
 
         @Override
-        public boolean evaluate(NBTTagCompound nbtTagCompound, NBTcondition NBTcondition) {
+        public boolean evaluate(NBTTagCompound nbtTagCompound, NBTCondition NBTcondition) {
             return true;
         }
 
@@ -49,7 +49,7 @@ public class NBTMatcher {
     public static NBTMatcher NO_TAG_OR_EQUALS_ZERO = new NBTMatcher() {
 
         @Override
-        public boolean evaluate(NBTTagCompound tagCompound, NBTcondition NBTcondition) {
+        public boolean evaluate(NBTTagCompound tagCompound, NBTCondition NBTcondition) {
             if (tagCompound == null) {
                 return true;
             }
@@ -85,15 +85,15 @@ public class NBTMatcher {
         return 0;
     }
 
-    public boolean evaluate(ItemStack stack, NBTcondition NBTcondition) {
+    public boolean evaluate(ItemStack stack, NBTCondition NBTcondition) {
         return evaluate(stack.getTagCompound(), NBTcondition);
     }
 
-    public boolean evaluate(FluidStack stack, NBTcondition NBTcondition) {
+    public boolean evaluate(FluidStack stack, NBTCondition NBTcondition) {
         return evaluate(stack.tag, NBTcondition);
     }
 
-    public boolean evaluate(NBTTagCompound nbtTagCompound, NBTcondition NBTcondition) {
+    public boolean evaluate(NBTTagCompound nbtTagCompound, NBTCondition NBTcondition) {
         return hasKey(nbtTagCompound, NBTcondition.nbtKey) && keyValueMatches(nbtTagCompound, NBTcondition.nbtKey, NBTcondition.value);
     }
 

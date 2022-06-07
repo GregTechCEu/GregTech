@@ -1,7 +1,7 @@
 package gregtech.api.recipes.map;
 
 import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTcondition;
+import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -9,11 +9,11 @@ import javax.annotation.Nullable;
 
 public class MapItemStackNBTIngredient extends MapItemStackIngredient {
     @Nullable
-    protected NBTcondition condition = null;
+    protected NBTCondition condition = null;
     @Nullable
     protected NBTMatcher matcher = null;
 
-    public MapItemStackNBTIngredient(ItemStack stack, @Nullable NBTMatcher matcher, @Nullable NBTcondition condition) {
+    public MapItemStackNBTIngredient(ItemStack stack, @Nullable NBTMatcher matcher, @Nullable NBTCondition condition) {
         super(stack);
         this.matcher = matcher;
         this.condition = condition;

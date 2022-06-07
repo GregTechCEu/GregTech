@@ -12,7 +12,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTcondition;
+import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -207,7 +207,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return input(item, 1);
     }
 
-    public R input(MetaItem<?>.MetaValueItem item, NBTMatcher nbtMatcher, NBTcondition nbtCondition) {
+    public R input(MetaItem<?>.MetaValueItem item, NBTMatcher nbtMatcher, NBTCondition nbtCondition) {
         return inputs(GTRecipeItemInput.getOrCreate(item.getStackForm()).setNBTMatchingCondition(nbtMatcher, nbtCondition));
     }
 

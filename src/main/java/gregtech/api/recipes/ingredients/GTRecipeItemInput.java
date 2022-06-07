@@ -8,9 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class GTRecipeItemInput extends GTRecipeInput {
     ItemStack[] inputStacks;
@@ -133,10 +131,19 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     @Override
     public int hashCode() {
-        if (nbtMatcher == null) {
-            return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem), Arrays.stream(inputStacks).map(ItemStack::getMetadata), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, Arrays.stream(inputStacks).map(ItemStack::getTagCompound));
+        int hash = 1;
+        for (ItemStack stack : inputStacks) {
+            hash = 31 * hash + stack.getItem().hashCode();
+            hash = 31 * hash + stack.getMetadata();
+            if (stack.hasTagCompound() && this.nbtMatcher == null) {
+                hash = 31 * hash + stack.getTagCompound().hashCode();
+            }
         }
-        return Objects.hash(Arrays.stream(inputStacks).map(ItemStack::getItem), Arrays.stream(inputStacks).map(ItemStack::getMetadata), this.amount, this.nbtMatcher, this.nbtCondition, isConsumable, 0);
+        hash = 31 * hash + this.amount;
+        hash = 31 * hash + (this.isConsumable ? 1 : 0);
+        hash = 31 * hash + (this.nbtMatcher != null ? this.nbtMatcher.hashCode() : 0);
+        hash = 31 * hash + (this.nbtCondition != null ? this.nbtCondition.hashCode() : 0);
+        return hash;
     }
 
     @Override

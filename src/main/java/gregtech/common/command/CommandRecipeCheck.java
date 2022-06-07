@@ -30,7 +30,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CommandRecipeCheck extends CommandBase {
@@ -56,7 +59,7 @@ public class CommandRecipeCheck extends CommandBase {
         GTLog.logger.info("[Recipe Checker] Starting recipe conflict check...");
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             mismatchedRecipes.put(recipeMap, new Object2ObjectOpenHashMap<>());
-            GTLog.logger.info("Checking Recipe Map: " + recipeMap.unlocalizedName);
+            GTLog.logger.info("Checking Recipe Map: {}", recipeMap.unlocalizedName);
             for (Recipe currentRecipe : recipeMap.getRecipeList()) {
                 // multiply amount of itemstacks by 10000 to detect conflicts only occurring if batching the recipe
                 List<ItemStack> inputs = currentRecipe.getInputs().stream().map(GTRecipeInput::getInputStacks).flatMap(Arrays::stream).map(o -> {
@@ -65,16 +68,16 @@ public class CommandRecipeCheck extends CommandBase {
                     return o;
                 }).collect(Collectors.toList());
 
-                List<FluidStack> fluidInputs  = currentRecipe.getFluidInputs()
+                List<FluidStack> fluidInputs = currentRecipe.getFluidInputs()
                         // multiply volume of fluids by 10000 to detect conflicts only occurring if batching the recipe
                         .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), stack.getAmount() * 10000))
                         .collect(Collectors.toList());
 
                 Set<Recipe> collidingRecipeSet = recipeMap.findRecipeCollisions(
-                        inputs,fluidInputs);
+                        inputs, fluidInputs);
 
                 if (collidingRecipeSet == null) {
-                    GTLog.logger.error("This recipe returned null for findRecipeCollisions: " + prettyPrintRecipe(currentRecipe));
+                    GTLog.logger.error("This recipe returned null for findRecipeCollisions: {}", prettyPrintRecipe(currentRecipe));
                     continue;
                 }
                 if (collidingRecipeSet.size() > 1) {
@@ -89,10 +92,10 @@ public class CommandRecipeCheck extends CommandBase {
                 }
             }
             if (mismatchedRecipes.get(recipeMap).isEmpty()) {
-                GTLog.logger.info("No mismatched recipes found for recipe map: " + recipeMap.unlocalizedName);
+                GTLog.logger.info("No mismatched recipes found for recipe map: {}", recipeMap.unlocalizedName);
                 mismatchedRecipes.remove(recipeMap);
             } else {
-                GTLog.logger.error("Mismatched recipes found for recipe map: " + recipeMap.unlocalizedName);
+                GTLog.logger.error("Mismatched recipes found for recipe map: {}", recipeMap.unlocalizedName);
             }
         }
 
@@ -102,10 +105,10 @@ public class CommandRecipeCheck extends CommandBase {
             GTLog.logger.info("No recipe conflicts found in all recipe maps!");
         } else {
             count = (int) mismatchedRecipes.values().stream().mapToLong(s -> s.values().stream().mapToLong(Set::size).sum()).sum();
-            GTLog.logger.info("[Recipe Checker] Found " + count + " potential conflicts");
+            GTLog.logger.info("[Recipe Checker] Found {} potential conflicts", count);
             for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> recipeMap : mismatchedRecipes.entrySet()) {
                 GTLog.logger.error(
-                        "\n[In Recipe map] :\"" + recipeMap.getKey().unlocalizedName + "\"");
+                        "\n[In Recipe map] :\"{}\"", recipeMap.getKey().unlocalizedName);
                 for (Map.Entry<Recipe, Set<Recipe>> reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
                     StringBuilder conflictingRecipes = new StringBuilder();
                     conflictingRecipes.append("\n[Tried matching]: ").append(prettyPrintRecipe(reciper.getKey()));
@@ -237,28 +240,28 @@ public class CommandRecipeCheck extends CommandBase {
                 return "(MetaItem) " + metaValueItem.unlocalizedName + " * " + stack.getCount();
             }
         } else if (stack.getItem() instanceof MachineItemBlock) {
-                MetaTileEntity mte = GTUtility.getMetaTileEntity(stack);
-                if (mte != null) {
-                    String id = mte.metaTileEntityId.toString();
-                    if (mte.metaTileEntityId.getNamespace().equals("gregtech"))
-                        id = mte.metaTileEntityId.getPath();
-                    return "(MetaTileEntity) " + id + " * " + stack.getCount();
-                }
-            } else {
-                Block block = Block.getBlockFromItem(stack.getItem());
-                String id = null;
-                if (block instanceof BlockCompressed) {
-                    id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
-                } else if (block instanceof BlockFrame) {
-                    id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
-                } else if (block instanceof BlockMaterialPipe) {
-                    id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stack).toCamelCaseString();
-                }
-
-                if (id != null) {
-                    return "(MetaBlock) " + id + " * " + stack.getCount();
-                }
+            MetaTileEntity mte = GTUtility.getMetaTileEntity(stack);
+            if (mte != null) {
+                String id = mte.metaTileEntityId.toString();
+                if (mte.metaTileEntityId.getNamespace().equals("gregtech"))
+                    id = mte.metaTileEntityId.getPath();
+                return "(MetaTileEntity) " + id + " * " + stack.getCount();
             }
+        } else {
+            Block block = Block.getBlockFromItem(stack.getItem());
+            String id = null;
+            if (block instanceof BlockCompressed) {
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+            } else if (block instanceof BlockFrame) {
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+            } else if (block instanceof BlockMaterialPipe) {
+                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stack).toCamelCaseString();
+            }
+
+            if (id != null) {
+                return "(MetaBlock) " + id + " * " + stack.getCount();
+            }
+        }
         //noinspection ConstantConditions
         return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
     }
