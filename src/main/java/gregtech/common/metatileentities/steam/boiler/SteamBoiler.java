@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.sound.GTSounds;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -172,7 +173,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 generateSteam();
             }
 
-            fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
+            GTTransferUtils.fillInternalTankFromFluidContainer(importFluids, containerInventory, 0, 1);
 
             if (getOffsetTimer() % 5 == 0) {
                 pushFluidsIntoNearbyHandlers(STEAM_PUSH_DIRECTIONS);

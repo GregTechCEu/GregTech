@@ -30,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -44,12 +43,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     private static final int INVENTORY_SIZE = 64000;
     private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
 
-    private final FluidTank steamFluidTank;
-
     public MetaTileEntitySteamHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 0);
-        this.steamFluidTank = new FilteredFluidHandler(INVENTORY_SIZE).setFillPredicate(ModHandler::isSteam);
-        initializeInventory();
     }
 
     @Override
@@ -69,7 +64,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            fillContainerFromInternalTank();
+            fillContainerFromInternalTank(importFluids);
             fillInternalTankFromFluidContainer();
             pullFluidsFromNearbyHandlers(getFrontFacing());
         }
@@ -99,12 +94,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, steamFluidTank);
-    }
-
-    @Override
-    protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, steamFluidTank);
+        return new FluidTankList(false, new FilteredFluidHandler(INVENTORY_SIZE).setFillPredicate(ModHandler::isSteam));
     }
 
     @Override

@@ -3,10 +3,13 @@ package gregtech.api.util;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.FluidKey;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -16,6 +19,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class GTTransferUtils {
+
+    public static int transferFluids(@Nonnull IFluidHandler sourceHandler, @Nonnull IFluidHandler destHandler) {
+        return transferFluids(sourceHandler, destHandler, Integer.MAX_VALUE, fluidStack -> true);
+    }
 
     public static int transferFluids(@Nonnull IFluidHandler sourceHandler, @Nonnull IFluidHandler destHandler, int transferLimit) {
         return transferFluids(sourceHandler, destHandler, transferLimit, fluidStack -> true);
@@ -214,5 +221,21 @@ public class GTTransferUtils {
         return stack != null && stack.amount > 0 &&
                 stack2 != null && stack2.amount > 0 &&
                 stack.isFluidEqual(stack2);
+    }
+
+    // TODO try to remove this one day
+    public static void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler, IItemHandlerModifiable itemHandler, int inputSlot, int outputSlot) {
+        ItemStack inputContainerStack = itemHandler.extractItem(inputSlot, 1, true);
+        FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, false);
+        if (result.isSuccess()) {
+            ItemStack remainingItem = result.getResult();
+            if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
+                return; //do not fill if item stacks match
+            if (!remainingItem.isEmpty() && !itemHandler.insertItem(outputSlot, remainingItem, true).isEmpty())
+                return; //do not fill if can't put remaining item
+            FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, true);
+            itemHandler.extractItem(inputSlot, 1, false);
+            itemHandler.insertItem(outputSlot, remainingItem, false);
+        }
     }
 }
