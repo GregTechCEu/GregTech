@@ -361,16 +361,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public static ItemStack[] uniqueItems(Collection<ItemStack> input) {
         List<ItemStack> list = new ObjectArrayList<>(input.size());
-        loop:
         for (ItemStack item : input) {
             if (item.isEmpty()) {
                 continue;
             }
-            for (ItemStack obj : list) {
+            boolean isEqual = false;
+            for (ItemStack obj: list) {
                 if (item.isItemEqual(obj) && ItemStack.areItemStackTagsEqual(item, obj)) {
-                    continue loop;
+                    isEqual = true;
+                    break;
                 }
             }
+            if (isEqual) continue;
             list.add(item);
         }
         return list.toArray(new ItemStack[0]);
