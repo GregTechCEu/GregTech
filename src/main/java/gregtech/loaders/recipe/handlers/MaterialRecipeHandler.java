@@ -14,6 +14,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.wood.BlockPowderBarrel;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraft.item.ItemStack;
@@ -83,6 +85,13 @@ public class MaterialRecipeHandler {
                         .inputs(GTUtility.copyAmount(4, dustStack))
                         .outputs(GTUtility.copyAmount(3, gemStack), smallDarkAshStack)
                         .explosivesType(MetaItems.DYNAMITE.getStackForm())
+                        .buildAndRegister();
+
+                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
+                        .inputs(GTUtility.copyAmount(4, dustStack))
+                        .outputs(GTUtility.copyAmount(3, gemStack), smallDarkAshStack)
+                        .explosivesType(MetaBlocks.POWDERBARREL.getItemVariant(BlockPowderBarrel.BlockType.POWDERBARREL))
+                        .explosivesAmount(4)
                         .buildAndRegister();
             }
 
