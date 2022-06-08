@@ -615,13 +615,13 @@ public class CircuitRecipes {
                 .input(gem, EnderEye)
                 .fluidInputs(Radon.getFluid(250))
                 .output(QUANTUM_EYE)
-                .duration(480).EUt(384).buildAndRegister();
+                .duration(480).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(gem, NetherStar)
                 .fluidInputs(Radon.getFluid(1250))
                 .output(QUANTUM_STAR)
-                .duration(1920).EUt(384).buildAndRegister();
+                .duration(1920).EUt(VA[HV]).buildAndRegister();
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(QUANTUM_STAR)

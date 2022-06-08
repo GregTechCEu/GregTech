@@ -15,7 +15,9 @@ public class NotifiableItemStackHandler extends ItemStackHandler implements IIte
 
     public NotifiableItemStackHandler(int slots, MetaTileEntity entityToNotify, boolean isExport) {
         super(slots);
-        this.notifiableEntities.add(entityToNotify);
+        if (entityToNotify != null) {
+            this.notifiableEntities.add(entityToNotify);
+        }
         this.isExport = isExport;
     }
 
@@ -31,6 +33,7 @@ public class NotifiableItemStackHandler extends ItemStackHandler implements IIte
 
     @Override
     public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        if (metaTileEntity == null) return;
         this.notifiableEntities.add(metaTileEntity);
     }
 

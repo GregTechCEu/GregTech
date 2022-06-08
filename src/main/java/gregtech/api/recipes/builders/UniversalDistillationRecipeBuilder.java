@@ -9,7 +9,7 @@ import gregtech.api.util.ValidationResult;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import static gregtech.api.capability.impl.AbstractRecipeLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
+import static gregtech.api.recipes.logic.OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
 
 public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalDistillationRecipeBuilder> {
 

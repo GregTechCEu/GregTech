@@ -39,6 +39,6 @@ public class MetaTileEntityUIFactory extends UIFactory<IGregTechTileEntity> {
 
     @Override
     protected void writeHolderToSyncData(PacketBuffer syncData, IGregTechTileEntity holder) {
-        syncData.writeBlockPos(holder.getPos());
+        syncData.writeBlockPos(holder.pos());
     }
 }

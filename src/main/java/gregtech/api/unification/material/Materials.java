@@ -89,7 +89,7 @@ public class Materials {
          * claimed ranges below this comment. Max value is 32767.
          *
          * - Gregicality: 3000-19999
-         * - FREE RANGE 20000-20999
+         * - Gregification: 20000-20999
          * - HtmlTech: 21000-21499
          * - GregTech Food Option: 21500-21999
          * - PCM's Ore Addon: 22000-23599

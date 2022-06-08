@@ -513,11 +513,16 @@ public class RenderUtil {
         ResourceLocation fluidStill = fluid.getStill(contents);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
         int fluidColor = fluid.getColor(contents);
-        int scaledAmount = contents.amount * heightT / tankCapacity;
+        int scaledAmount;
+        if (contents.amount == tankCapacity) {
+            scaledAmount = heightT;
+        } else {
+            scaledAmount = contents.amount * heightT / tankCapacity;
+        }
         if (contents.amount > 0 && scaledAmount < 1) {
             scaledAmount = 1;
         }
-        if (scaledAmount > heightT || contents.amount == tankCapacity) {
+        if (scaledAmount > heightT) {
             scaledAmount = heightT;
         }
         GlStateManager.enableBlend();

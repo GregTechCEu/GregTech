@@ -34,9 +34,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final RecipeLogicEnergy result = new GasCollectorRecipeLogic(this, recipeMap, () -> energyContainer);
-        result.enableOverclockVoltage();
-        return result;
+        return new GasCollectorRecipeLogic(this, recipeMap, () -> energyContainer);
     }
 
     protected boolean checkRecipe(@Nonnull Recipe recipe) {

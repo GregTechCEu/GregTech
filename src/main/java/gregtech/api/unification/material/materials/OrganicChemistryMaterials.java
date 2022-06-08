@@ -80,7 +80,7 @@ public class OrganicChemistryMaterials {
         PolyphenyleneSulfide = new Material.Builder(1008, "polyphenylene_sulfide")
                 .ingot().fluid()
                 .color(0xAA8800)
-                .flags(EXT_METAL, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE)
+                .flags(EXT_METAL, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE, NO_SMASHING)
                 .components(Carbon, 6, Hydrogen, 4, Sulfur, 1)
                 .fluidTemp(500)
                 .build();
@@ -97,7 +97,7 @@ public class OrganicChemistryMaterials {
                 .color(0x2D2D2D)
                 .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, NO_SMASHING, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE)
                 .components(Carbon, 20, Hydrogen, 12, Nitrogen, 4)
-                .fluidPipeProperties(1000, 100, true)
+                .fluidPipeProperties(1000, 350, true)
                 .fluidTemp(1450)
                 .build();
 
@@ -113,7 +113,7 @@ public class OrganicChemistryMaterials {
                 .color(0xC8C8C8)
                 .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4)
-                .fluidPipeProperties(350, 60, true)
+                .fluidPipeProperties(370, 50, true)
                 .fluidTemp(408)
                 .build();
 
@@ -140,7 +140,7 @@ public class OrganicChemistryMaterials {
                 .color(0x646464)
                 .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FOIL, FLAMMABLE)
                 .components(Carbon, 2, Fluorine, 4)
-                .fluidPipeProperties(600, 80, true)
+                .fluidPipeProperties(600, 100, true, true, false, false)
                 .fluidTemp(600)
                 .build();
 
@@ -528,7 +528,7 @@ public class OrganicChemistryMaterials {
         PolyvinylButyral = new Material.Builder(1074, "polyvinyl_butyral")
                 .ingot().fluid()
                 .color(0x347D41)
-                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION, NO_SMASHING)
                 .components(Butyraldehyde, 1, PolyvinylAcetate, 1)
                 .build();
     }

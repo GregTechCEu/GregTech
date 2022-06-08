@@ -55,7 +55,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected final FluidFilterContainer fluidFilter;
+    protected FluidFilterContainer fluidFilter;
     protected BucketMode bucketMode;
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -67,12 +67,20 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.bucketMode = BucketMode.MILLI_BUCKET;
-        this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
     }
 
-    protected void setTransferRate(int transferRate) {
+    protected boolean shouldShowTip() {
+        return false;
+    }
+
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
+    }
+
+    public int getTransferRate() {
+        return transferRate;
     }
 
     protected void adjustTransferRate(int amount) {
@@ -184,9 +192,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             }
         })
                 .setCentered(true)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(8)
-                .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
+                .setNumbersOnly(1, bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                .setMaxLength(8);
         primaryGroup.addWidget(textField);
 
         primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,
@@ -294,6 +301,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
             IFluidHandler delegate = (IFluidHandler) defaultValue;
             if (fluidHandlerWrapper == null || fluidHandlerWrapper.delegate != delegate) {
                 this.fluidHandlerWrapper = new CoverableFluidHandlerWrapper(delegate);

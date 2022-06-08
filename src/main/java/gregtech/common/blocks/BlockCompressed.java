@@ -2,13 +2,13 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
+import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -67,9 +67,8 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     @Override
     public int getHarvestLevel(IBlockState state) {
         Material material = state.getValue(variantProperty);
-        DustProperty prop = material.getProperty(PropertyKey.DUST);
-        if (prop != null) {
-            return material.getHarvestLevel();
+        if (material.hasProperty(PropertyKey.DUST)) {
+            return material.getBlockHarvestLevel();
         }
         return 0;
     }

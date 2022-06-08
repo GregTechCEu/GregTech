@@ -1,11 +1,12 @@
-death.attack.heat=%s was boiled alive.
-death.attack.frost=%s explored cryogenics.
-death.attack.electric=%s was electrocuted.
-death.attack.radiation=%s glows with joy now.
-death.attack.turbine=%s put their head into a turbine.
-death.attack.explosion=%s exploded.
-death.attack.explosion.player=%s exploded with help of %s.
-death.attack.heat.player=%s was boiled alive by %s.
+death.attack.heat=%s was boiled alive
+death.attack.frost=%s explored cryogenics
+death.attack.chemical=%s had a chemical accident
+death.attack.electric=%s was electrocuted
+death.attack.radiation=%s glows with joy now
+death.attack.turbine=%s put their head into a turbine
+death.attack.explosion=%s exploded
+death.attack.explosion.player=%s exploded with help of %s
+death.attack.heat.player=%s was boiled alive by %s
 
 enchantment.disjunction=Disjunction
 
@@ -27,6 +28,9 @@ gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
+gregtech.top.energy_consumption=Usage:
+gregtech.top.energy_production=Output:
+
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
@@ -46,6 +50,8 @@ gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
 gregtech.top.maintenance_fixed=§aMaintenance Fine
 gregtech.top.maintenance_broken=§cNeeds Maintenance
+
+gregtech.top.primitive_pump_production=Production:
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -78,6 +84,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -221,6 +228,7 @@ metaitem.fluid_cell.empty=Empty
 metaitem.fluid_cell.name=%s Cell
 metaitem.fluid_cell.universal.empty=Empty
 metaitem.fluid_cell.universal.name=%s Universal Cell
+metaitem.fluid_cell.glass_vial.name=%s Glass Vial
 metaitem.large_fluid_cell.steel.name=%s Steel Cell
 metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
@@ -272,6 +280,9 @@ metaitem.battery.hull.uv.tooltip=An empty §3UV §7Battery Hull
 
 metaitem.battery.charge_time=§aHolds %,d%s of Power
 metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s remaining§7)
+metaitem.battery.charge_unit.second=sec
+metaitem.battery.charge_unit.minute=min
+metaitem.battery.charge_unit.hour=hr
 
 metaitem.battery.re.ulv.tantalum.name=Tantalum Capacitor
 metaitem.battery.re.ulv.tantalum.tooltip=Reusable Battery
@@ -798,6 +809,15 @@ metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
+metaitem.cover.drain.name=Drain Cover
+metaitem.cover.fluid.voiding.name=Fluid Voiding Cover
+metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.fluid.voiding.advanced.name=Advanced Fluid Voiding Cover
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.name=Item Voiding Cover
+metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
+metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
@@ -1072,6 +1092,7 @@ cover.ore_dictionary_filter.matches=Item matches
 cover.ore_dictionary_filter.matches_not=Item does not match
 
 cover.fluid_filter.title=Fluid Filter
+cover.fluid_filter.config_amount=Scroll wheel up increases amount, down decreases./nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/nRight click increases amount, left click decreases./nHold shift to double/halve./nMiddle click to clear
 cover.fluid_filter.mode.filter_fill=Filter Fill
 cover.fluid_filter.mode.filter_drain=Filter Drain
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain
@@ -1084,6 +1105,14 @@ cover.item_filter.ignore_damage.enabled=Ignore Damage
 cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
 cover.item_filter.ignore_nbt.disabled=Respect NBT
+
+cover.voiding.voiding_mode.void_any=Void Matching
+cover.voiding.voiding_mode.void_overflow=Void Overflow
+cover.voiding.voiding_mode.description=§eVoid Matching§r will void anything matching the filter. /n§eVoid Overflow§r will void anything matching the filter, up to the specified amount.
+cover.fluid.voiding.title=Fluid Voiding Settings
+cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
+cover.item.voiding.title=Item Voiding Settings
+cover.item.voiding.advanced.title=Advanced Item Voiding Settings
 
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
@@ -2171,6 +2200,7 @@ behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
 behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
+behaviour.lighter.fluid.tooltip=Can light things on fire with Butane or Propane
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
@@ -2208,6 +2238,7 @@ metaitem.debug_scanner.tooltip=Tricorder
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
 behavior.tricorder.block_hardness=Hardness: %s Blast Resistance: %s
 behavior.tricorder.block_name=Name: %s MetaData: %s
+behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=Tank %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=All Tanks Empty
@@ -2303,6 +2334,21 @@ tile.warning_sign.acid_hazard.name=Acid Hazard Sign Block
 tile.warning_sign.magic_hazard.name=Magic Hazard Sign Block
 tile.warning_sign.frost_hazard.name=Frost Hazard Sign Block
 tile.warning_sign.noise_hazard.name=Noise Hazard Sign Block
+tile.warning_sign.generic_hazard.name=Generic Hazard Sign Block
+tile.warning_sign.high_voltage_hazard.name=High Voltage Hazard Sign Block
+tile.warning_sign.magnetic_hazard.name=Magnetic Hazard Sign Block
+tile.warning_sign.antimatter_hazard.name=Antimatter Hazard Sign Block
+tile.warning_sign.high_temperature_hazard.name=High Temperature Hazard Sign Block
+tile.warning_sign.void_hazard.name=Void Hazard Sign Block
+tile.warning_sign_1.mob_spawner_hazard.name=Mob Spawner Hazard Sign Block
+tile.warning_sign_1.spatial_storage_hazard.name=Spatial Storage Hazard Sign Block
+tile.warning_sign_1.laser_hazard.name=Laser Hazard Sign Block
+tile.warning_sign_1.mob_hazard.name=Mob Infestation Hazard Sign Block
+tile.warning_sign_1.boss_hazard.name=Boss Hazard Sign Block
+tile.warning_sign_1.gregification_hazard.name=Gregification Hazard Sign Block
+tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Block
+tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
+tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
@@ -2403,7 +2449,7 @@ gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 
-gregtech.machine.drum.enable_output=Will drain Fluid to vertically adjacent Tanks
+gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid
 
 # Crates
@@ -2601,9 +2647,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
 gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
@@ -4022,13 +4068,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
@@ -4321,7 +4367,7 @@ gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Oil Cracking Unit
-gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
+gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a10%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.advanced_processing_array.name=Advanced Processing Array
@@ -4633,6 +4679,7 @@ gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K
+gregtech.fluid.temperature.cryogenic=§bCryogenic! Handle with care!
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
@@ -4694,10 +4741,15 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
-gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
+gregtech.fluid_pipe.capacity=§9Capacity: %,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.gas_proof=§6Can handle Gases
+gregtech.fluid_pipe.acid_proof=§6Can handle Acids
+gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
+gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
+gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
@@ -4800,24 +4852,31 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
-gregtech.command.usage=Usage: /gregtech <worldgen/util>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
-gregtech.command.util.usage=Usage: /gregtech util <hand>
-gregtech.command.util.hand.usage=Usage: /gregtech util hand
-gregtech.command.util.hand.item_id=Item: %s (Metadata: %d)
-gregtech.command.util.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
-gregtech.command.util.hand.fluid=Fluid Info: %s %d / %d L; Can Fill: %s; Can Drain: %s
-gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
-gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.not_a_player=This command is only usable by a player.
-gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
-gregtech.command.util.recipecheck.usage=Usage: /gregtech recipecheck
-gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
-gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
-gregtech.command.util.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.hand.usage=Usage: /gregtech hand
+gregtech.command.hand.item_id=Item: %s (Metadata: %d)
+gregtech.command.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
+gregtech.command.hand.fluid=Fluid Info: %d / %d L; Can Fill: %s; Can Drain: %s
+gregtech.command.hand.fluid2=Fluid Id:
+gregtech.command.hand.material=Material Id:
+gregtech.command.hand.ore_prefix=Ore prefix:
+gregtech.command.hand.meta_item=MetaItem Id:
+gregtech.command.hand.ore_dict_entries=§3Ore dictionary entries:
+gregtech.command.hand.tool_stats=Tool Stats Class: %s
+gregtech.command.hand.not_a_player=This command is only usable by a player.
+gregtech.command.hand.no_item=You must hold something in main hand or off hand before executing this command.
+gregtech.command.recipecheck.usage=Usage: /gregtech recipecheck
+gregtech.command.recipecheck.begin=Starting recipe conflict check...
+gregtech.command.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
+gregtech.command.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
+gregtech.command.copy.click_to_copy=Click to copy
+gregtech.command.copy.copied_start=Copied [
+gregtech.command.copy.copied_end=] to the clipboard
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 
@@ -4874,6 +4933,8 @@ gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
+
+gregtech.terminal.app_name.teleport=Teleporter
 
 
 terminal.app_name.description=No description.
@@ -4945,6 +5006,10 @@ terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme
 terminal.settings.theme.color=Theme Color Settings
 terminal.settings.theme.wallpaper=Wallpaper Settings
+terminal.settings.theme.wallpaper.resource=resource
+terminal.settings.theme.wallpaper.url=url
+terminal.settings.theme.wallpaper.color=color
+terminal.settings.theme.wallpaper.file=file
 terminal.settings.theme.select=Select
 terminal.settings.theme.image=Image File
 terminal.settings.home=Home Button
@@ -5049,6 +5114,27 @@ terminal.world_prospector.color=Select box color
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
+
+terminal.teleporter.dimension=Dimension:
+terminal.teleporter.spawn_portal=Engage
+
+terminal.maze.title=Theseus's Escape
+terminal.maze.play=Play
+terminal.maze.continue=Continue
+terminal.maze.pause=Game Paused
+terminal.maze.death.1=Oh no! You were eaten by the Minotaur!
+terminal.maze.death.2=You got through %s mazes before losing.
+terminal.maze.death.3=Try again?
+terminal.maze.retry=Retry
+
+terminal.minesweeper.time=%s seconds elapsed
+terminal.minesweeper.lose=You lost. Game will restart in %s seconds.
+terminal.minesweeper.win.1=You won in %s seconds!
+terminal.minesweeper.win.2=Game will restart in %s
+
+terminal.cape_selector.empty=It looks like you haven't unlocked any capes yet!
+terminal.cape_selector.select=Click on an unlocked cape to select it!
+terminal.cape_selector.tip=You can get these from high-level advancements.
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:

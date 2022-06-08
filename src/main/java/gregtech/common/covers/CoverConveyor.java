@@ -35,7 +35,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -68,7 +67,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
 
-    protected void setTransferRate(int transferRate) {
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
 
@@ -86,11 +85,15 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
     }
 
+    public int getTransferRate() {
+        return transferRate;
+    }
+
     protected void adjustTransferRate(int amount) {
         setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
     }
 
-    protected void setConveyorMode(ConveyorMode conveyorMode) {
+    public void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
         writeUpdateData(1, buf -> buf.writeEnumValue(conveyorMode));
         coverHolder.markDirty();
@@ -432,6 +435,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
             IItemHandler delegate = (IItemHandler) defaultValue;
             if (itemHandlerWrapper == null || itemHandlerWrapper.delegate != delegate) {
                 this.itemHandlerWrapper = new CoverableItemHandlerWrapper(delegate);
@@ -467,7 +473,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, GuiTextures.DISPLAY));
         primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf(transferRate), val -> {
                     if (val != null && !val.isEmpty())
-                        setTransferRate(Integer.parseInt(val));
+                        setTransferRate(MathHelper.clamp(Integer.parseInt(val), 1, maxItemTransferRate));
                 })
                         .setNumbersOnly(1, maxItemTransferRate)
                         .setMaxLength(4)

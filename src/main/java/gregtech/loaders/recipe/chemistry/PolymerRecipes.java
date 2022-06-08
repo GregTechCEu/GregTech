@@ -50,7 +50,7 @@ public class PolymerRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Air.getFluid(7500))
                 .fluidInputs(Ethylene.getFluid(2160))
                 .fluidInputs(TitaniumTetrachloride.getFluid(100))
@@ -58,7 +58,7 @@ public class PolymerRecipes {
                 .duration(800).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Oxygen.getFluid(7500))
                 .fluidInputs(Ethylene.getFluid(2160))
                 .fluidInputs(TitaniumTetrachloride.getFluid(100))

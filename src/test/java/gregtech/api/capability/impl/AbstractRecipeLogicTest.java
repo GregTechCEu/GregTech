@@ -104,8 +104,6 @@ public class AbstractRecipeLogicTest {
         assertNotNull(arl.previousRecipe);
         assertTrue(arl.isActive);
         assertEquals(15, arl.getInputInventory().getStackInSlot(0).getCount());
-        //assert the consumption of the inputs did not mark the arl to look for a new recipe
-        assertFalse(arl.hasNotifiedInputs());
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = arl.previousRecipe;

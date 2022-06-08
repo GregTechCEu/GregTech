@@ -157,6 +157,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     private void uninsulate() {
+        int temp = temperature;
+        setTemperature(293);
         int index = getPipeType().insulationLevel;
         BlockCable newBlock = MetaBlocks.CABLES[index];
         world.setBlockState(pos, newBlock.getDefaultState());
@@ -168,7 +170,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                     newCable.setConnection(facing, true, true);
                 }
             }
-            newCable.setTemperature(temperature);
+            newCable.setTemperature(temp);
+            if (!newCable.isTicking) {
+                TaskScheduler.scheduleTask(world, newCable::update);
+                newCable.isTicking = true;
+            }
         }
     }
 

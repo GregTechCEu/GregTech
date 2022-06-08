@@ -13,10 +13,10 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -244,8 +244,6 @@ public class MultiblockRecipeLogicTest {
         assertNotNull(mbl.previousRecipe);
         assertTrue(mbl.isActive);
         assertEquals(15, mbl.getInputInventory().getStackInSlot(0).getCount());
-        //assert the consumption of the inputs did not mark the arl to look for a new recipe
-        assertFalse(mbl.hasNotifiedInputs());
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = mbl.previousRecipe;
@@ -509,13 +507,12 @@ public class MultiblockRecipeLogicTest {
         // Inputs change. did we detect it ?
         assertTrue(mbl.hasNotifiedInputs());
         assertTrue(mbl.getMetaTileEntity().getNotifiedItemInputList().contains(firstBus));
+        assertTrue(mbl.canWorkWithInputs());
         mbl.trySearchNewRecipe();
         assertFalse(mbl.invalidatedInputList.contains(firstBus));
         assertNotNull(mbl.previousRecipe);
         assertTrue(mbl.isActive);
         assertEquals(15, firstBus.getStackInSlot(0).getCount());
-        //assert the consumption of the inputs did not mark the arl to look for a new recipe
-        assertFalse(mbl.hasNotifiedInputs());
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = mbl.previousRecipe;

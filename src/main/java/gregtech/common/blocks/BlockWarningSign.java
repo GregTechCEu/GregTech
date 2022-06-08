@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
@@ -14,7 +15,7 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
         setHardness(2.0f);
         setResistance(3.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 1);
+        setHarvestLevel("wrench", 1);
         setDefaultState(getState(SignType.YELLOW_STRIPES));
     }
 
@@ -29,7 +30,13 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
         ACID_HAZARD("acid_hazard"),
         MAGIC_HAZARD("magic_hazard"),
         FROST_HAZARD("frost_hazard"),
-        NOISE_HAZARD("noise_hazard");
+        NOISE_HAZARD("noise_hazard"),
+        GENERIC_HAZARD("generic_hazard"),
+        HIGH_VOLTAGE_HAZARD("high_voltage_hazard"),
+        MAGNETIC_HAZARD("magnetic_hazard"),
+        ANTIMATTER_HAZARD("antimatter_hazard"),
+        HIGH_TEMPERATURE_HAZARD("high_temperature_hazard"),
+        VOID_HAZARD("void_hazard");
 
         private final String name;
 

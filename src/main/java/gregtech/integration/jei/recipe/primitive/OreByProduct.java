@@ -11,7 +11,6 @@ import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -31,25 +30,12 @@ import java.util.List;
 
 public class OreByProduct implements IRecipeWrapper {
 
-    private static final ImmutableList<OrePrefix> ORES;
+    private static final List<OrePrefix> ORES = new ArrayList<>();
 
-    static {
-        List<OrePrefix> prefixes = new ArrayList<>();
-        prefixes.add(OrePrefix.ore);
-        prefixes.add(OrePrefix.oreNetherrack);
-        prefixes.add(OrePrefix.oreEndstone);
-        if (ConfigHolder.worldgen.allUniqueStoneTypes) {
-            prefixes.add(OrePrefix.oreGranite);
-            prefixes.add(OrePrefix.oreDiorite);
-            prefixes.add(OrePrefix.oreAndesite);
-            prefixes.add(OrePrefix.oreBasalt);
-            prefixes.add(OrePrefix.oreBlackgranite);
-            prefixes.add(OrePrefix.oreMarble);
-            prefixes.add(OrePrefix.oreRedgranite);
-            prefixes.add(OrePrefix.oreSand);
-            prefixes.add(OrePrefix.oreRedSand);
+    public static void addOreByProductPrefix(OrePrefix orePrefix) {
+        if (!ORES.contains(orePrefix)) {
+            ORES.add(orePrefix);
         }
-        ORES = ImmutableList.copyOf(prefixes);
     }
 
     private static final ImmutableList<OrePrefix> IN_PROCESSING_STEPS = ImmutableList.of(
@@ -60,16 +46,7 @@ public class OreByProduct implements IRecipeWrapper {
             OrePrefix.crushedCentrifuged
     );
 
-    private static final ImmutableList<ItemStack> ALWAYS_MACHINES = ImmutableList.of(
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm(),
-            MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm(),
-            MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm(),
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-            MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm()
-    );
+    private static ImmutableList<ItemStack> ALWAYS_MACHINES;
 
     private final Int2ObjectMap<ChanceEntry> chances = new Int2ObjectOpenHashMap<>();
     private final List<List<ItemStack>> inputs = new ArrayList<>();
@@ -82,6 +59,18 @@ public class OreByProduct implements IRecipeWrapper {
     private int currentSlot;
 
     public OreByProduct(Material material) {
+        if (ALWAYS_MACHINES == null) {
+            ALWAYS_MACHINES = ImmutableList.of(
+                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                    MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm(),
+                    MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm(),
+                    MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm(),
+                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
+                    MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm()
+            );
+        }
         OreProperty property = material.getProperty(PropertyKey.ORE);
         int oreMultiplier = property.getOreMultiplier();
         int byproductMultiplier = property.getByProductMultiplier();
@@ -296,7 +285,7 @@ public class OreByProduct implements IRecipeWrapper {
         ingredients.setInputLists(VanillaTypes.FLUID, fluidInputs);
         ingredients.setOutputLists(VanillaTypes.ITEM, outputs);
     }
-    
+
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         if (chances.containsKey(slotIndex)) {
             ChanceEntry entry = chances.get(slotIndex);

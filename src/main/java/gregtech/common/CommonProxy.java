@@ -2,6 +2,7 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.enchants.EnchantmentHardHammer;
@@ -108,8 +109,8 @@ public class CommonProxy {
         for (BlockFluidPipe pipe : FLUID_PIPES) {
             if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
                     !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
-                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
-                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(310, 8, false));
+                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(340, 5, false, false, false, false));
+                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(340, 10, false, false, false, false));
             }
         }
 
@@ -133,6 +134,7 @@ public class CommonProxy {
         registry.register(WIRE_COIL);
         registry.register(FUSION_CASING);
         registry.register(WARNING_SIGN);
+        registry.register(WARNING_SIGN_1);
         registry.register(ASPHALT);
         registry.register(STONE_SMOOTH);
         registry.register(STONE_COBBLE);
@@ -223,6 +225,7 @@ public class CommonProxy {
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
+        registry.register(createItemBlock(WARNING_SIGN_1, VariantItemBlock::new));
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_SMOOTH, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_COBBLE, VariantItemBlock::new));

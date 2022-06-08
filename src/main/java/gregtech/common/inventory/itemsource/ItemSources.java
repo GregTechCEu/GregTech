@@ -86,17 +86,20 @@ public class ItemSources implements IItemList {
     @Override
     public int extractItem(ItemStackKey itemStack, int amount, boolean simulate) {
         Object2IntMap<ItemSource> itemSourceMap = new Object2IntOpenHashMap<>();
-        int extracted = 0;
+        int totalExtracted = 0;
         for (ItemSource itemSource : handlerInfoList) {
+            int extractedAmount = 0;
             if (itemInfoMap.get(itemStack) != null && itemInfoMap.get(itemStack).getTotalItemAmount() > 0) {
-                extracted += itemSource.extractItem(itemStack, amount, simulate, itemSourceMap);
-                if (!simulate && extracted > 0) {
-                    itemInfoMap.get(itemStack).removeFromSource(itemSource, extracted);
+                extractedAmount += itemSource.extractItem(itemStack, amount, simulate, itemSourceMap);
+                amount -= extractedAmount;
+                totalExtracted += extractedAmount;
+                if (!simulate && extractedAmount > 0) {
+                    itemInfoMap.get(itemStack).removeFromSource(itemSource, extractedAmount);
                 }
             }
-            if (extracted == amount) break;
+            if (amount == 0) break;
         }
-        return extracted;
+        return totalExtracted;
     }
 
     public void notifyPriorityUpdated() {

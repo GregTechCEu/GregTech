@@ -2,9 +2,11 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.recipes.*;
+import gregtech.api.recipes.CountableIngredient;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.stack.ItemAndMetadata;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
@@ -13,7 +15,6 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
@@ -30,7 +31,7 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
+    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
         ItemAndMetadataAndStackSize itemAndMetadata = (ItemAndMetadataAndStackSize) matchSlot;
         return itemAndMetadata.transferStackSize;
     }
