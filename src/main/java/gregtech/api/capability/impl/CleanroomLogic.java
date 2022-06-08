@@ -1,6 +1,5 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
@@ -54,8 +53,12 @@ public class CleanroomLogic {
             if (progressTime >= 2) {
                 if (ConfigHolder.machines.recipeProgressLowEnergy) this.progressTime = 1;
                 else this.progressTime = Math.max(1, progressTime - 2);
+            }
+            hasNotEnoughEnergy = true;
 
-                hasNotEnoughEnergy = true;
+            // the cleanroom does not have enough energy, so it looses cleanliness
+            if (metaTileEntity.getOffsetTimer() % maxProgress == 0) {
+                adjustCleanAmount(true);
             }
             return;
         }
@@ -67,28 +70,20 @@ public class CleanroomLogic {
         if (progressTime % getMaxProgress() != 0) return;
         progressTime = 0;
 
-        int amountToClean;
-        if (hasEnoughPower()) amountToClean = BASE_CLEAN_AMOUNT * (getTierDifference() + 1);
-        else amountToClean = -BASE_CLEAN_AMOUNT;
+        adjustCleanAmount(false);
+    }
 
-        // each maintenance problem lowers gain by 1 and increases loss by 1
+    protected void adjustCleanAmount(boolean shouldRemove) {
+        int amountToClean = BASE_CLEAN_AMOUNT * (getTierDifference() + 1);
+        if (shouldRemove) amountToClean *= -1;
+
+        // each maintenance problem lowers gain by 1
         if (hasMaintenance) amountToClean -= ((IMaintenance) metaTileEntity).getNumMaintenanceProblems();
         ((ICleanroomProvider) metaTileEntity).adjustCleanAmount(amountToClean);
     }
 
     protected boolean consumeEnergy(boolean simulate) {
         return ((ICleanroomProvider) metaTileEntity).drainEnergy(simulate);
-    }
-
-    /**
-     * @return true if the cleanroom is able to drain energy, else false
-     */
-    protected boolean hasEnoughPower() {
-        if (this.hasNotEnoughEnergy && ((ICleanroomProvider) metaTileEntity).getEnergyInputPerSecond() > 19L * GTValues.VA[((ICleanroomProvider) metaTileEntity).getEnergyTier()]) {
-            this.hasNotEnoughEnergy = false;
-        }
-
-        return true;
     }
 
     public void invalidate() {

@@ -45,7 +45,7 @@ public interface ICleanroomProvider {
     long getEnergyInputPerSecond();
 
     /**
-     * @return the tier {@link gregtech.api.GTValues.V} of energy the cleanroom uses at minimum
+     * @return the tier {@link gregtech.api.GTValues#V} of energy the cleanroom uses at minimum
      */
     int getEnergyTier();
 }
