@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTUtility;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -74,7 +75,7 @@ public class ToolHardHammer extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        ItemStack itemStack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
+        ItemStack itemStack = GTUtility.toItem(block);
         return (tool != null && HAMMER_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.ROCK ||
                 block.getMaterial() == Material.GLASS ||
