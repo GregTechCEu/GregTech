@@ -145,7 +145,7 @@ public class OrePrefix {
     // made of 2 Ingots.
     public static final OrePrefix toolHeadHoe = new OrePrefix("toolHeadHoe", M * 2, null, MaterialIconType.toolHeadHoe, ENABLE_UNIFICATION, hasToolProperty);
     // made of 3 Ingots.
-    public static final OrePrefix toolHeadSense = new OrePrefix("toolHeadSense", M * 3, null, MaterialIconType.toolHeadSense, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadSickle = new OrePrefix("toolHeadSickle", M * 3, null, MaterialIconType.toolHeadSickle, ENABLE_UNIFICATION, hasToolProperty);
     // made of 2 Ingots.
     public static final OrePrefix toolHeadFile = new OrePrefix("toolHeadFile", M * 2, null, MaterialIconType.toolHeadFile, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 6 Ingots.
@@ -235,7 +235,7 @@ public class OrePrefix {
 
     public static class Conditions {
         public static final Predicate<Material> hasToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL);
-        public static final Predicate<Material> hasNoCraftingToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL) && !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools();
+        public static final Predicate<Material> hasNoCraftingToolProperty = hasToolProperty.and(mat -> !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools());
         public static final Predicate<Material> hasOreProperty = mat -> mat.hasProperty(PropertyKey.ORE);
         public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
@@ -258,7 +258,7 @@ public class OrePrefix {
         toolHeadShovel.maxStackSize = 16;
         toolHeadAxe.maxStackSize = 16;
         toolHeadHoe.maxStackSize = 16;
-        toolHeadSense.maxStackSize = 16;
+        toolHeadSickle.maxStackSize = 16;
         toolHeadFile.maxStackSize = 16;
         toolHeadHammer.maxStackSize = 16;
         toolHeadSaw.maxStackSize = 16;

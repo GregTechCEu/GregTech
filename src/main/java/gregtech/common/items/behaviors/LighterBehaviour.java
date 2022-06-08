@@ -1,7 +1,6 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -184,11 +183,12 @@ public class LighterBehaviour implements IItemBehaviour {
         }
     }
 
-    @Override
-    public void onAddedToItem(@Nonnull MetaItem.MetaValueItem metaValueItem) {
-        if (overrideLocation != null) {
-            metaValueItem.getMetaItem().addPropertyOverride(overrideLocation,
-                    (stack, worldIn, entityIn) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
-        }
-    }
+    //TODO Reimplement onAddedToItem
+//    @Override
+//    public void onAddedToItem(@Nonnull MetaItem.MetaValueItem metaValueItem) {
+//        if (overrideLocation != null) {
+//            metaValueItem.getMetaItem().addPropertyOverride(overrideLocation,
+//                    (stack, worldIn, entityIn) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
+//        }
+//    }
 }

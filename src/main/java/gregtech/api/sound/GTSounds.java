@@ -42,7 +42,7 @@ public class GTSounds {
     public static SoundEvent TRICORDER_TOOL;
     public static SoundEvent WRENCH_TOOL;
     public static SoundEvent MORTAR_TOOL;
-    public static SoundEvent SOFT_HAMMER_TOOL;
+    public static SoundEvent MALLET_TOOL;
 
     // Record Sounds
     public static SoundEvent SUS_RECORD;
@@ -74,7 +74,7 @@ public class GTSounds {
         MINER = registerSound("tick.miner");
         SCIENCE = registerSound("tick.science");
         WRENCH_TOOL = registerSound("use.wrench");
-        SOFT_HAMMER_TOOL = registerSound("use.soft_hammer");
+        MALLET_TOOL = registerSound("use.soft_hammer");
         DRILL_TOOL = registerSound("use.drill");
         PLUNGER_TOOL = registerSound("use.plunger");
         FILE_TOOL = registerSound("use.file");

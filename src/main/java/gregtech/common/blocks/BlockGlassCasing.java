@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -26,7 +27,7 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
         setHardness(5.0f);
         setResistance(5000.0f);
         setSoundType(SoundType.GLASS);
-        setHarvestLevel("wrench", 2);
+        setHarvestLevel(ToolClasses.PICKAXE, 1);
         setDefaultState(getState(CasingType.TEMPERED_GLASS));
     }
 

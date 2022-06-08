@@ -12,6 +12,7 @@ import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
@@ -96,7 +97,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public String getHarvestTool() {
-        return isMaterialWood(material) ? "axe" : "wrench";
+        return isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
     }
 
     @Override

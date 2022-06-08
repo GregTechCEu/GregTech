@@ -2,6 +2,7 @@ package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -39,7 +40,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
 
     public BlockItemPipe(ItemPipeType itemPipeType) {
         super(itemPipeType);
-        setHarvestLevel("wrench", 1);
+        setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 
     public void addPipeMaterial(Material material, ItemPipeProperties properties) {

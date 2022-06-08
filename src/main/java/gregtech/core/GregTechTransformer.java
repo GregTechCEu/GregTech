@@ -1,6 +1,5 @@
 package gregtech.core;
 
-import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.core.util.TargetClassVisitor;
 import gregtech.core.visitors.*;
@@ -123,6 +122,15 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 } else {
                     classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
                 }
+                return classWriter.toByteArray();
+            }
+            case RenderItemVisitor.TARGET_CLASS_NAME: {
+                if (Loader.isModLoaded("enderio")) {
+                    return basicClass;
+                }
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, RenderItemVisitor.TARGET_METHOD, RenderItemVisitor::new), 0);
                 return classWriter.toByteArray();
             }
         }

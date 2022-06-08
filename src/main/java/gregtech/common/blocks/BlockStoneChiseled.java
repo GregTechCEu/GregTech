@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -18,7 +19,7 @@ public class BlockStoneChiseled extends VariantBlock<BlockStoneChiseled.BlockTyp
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 1);
+        setHarvestLevel(ToolClasses.PICKAXE, 1);
         setDefaultState(getState(BlockType.BLACK_GRANITE));
     }
 

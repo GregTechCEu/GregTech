@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +26,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         setHardness(4.0f);
         setResistance(8.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 2);
+        setHarvestLevel(ToolClasses.WRENCH, 2);
         setDefaultState(getState(MachineCasingType.ULV));
     }
 
