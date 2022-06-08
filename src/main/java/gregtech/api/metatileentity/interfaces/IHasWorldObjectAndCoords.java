@@ -1,29 +1,28 @@
 package gregtech.api.metatileentity.interfaces;
 
+import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface IHasWorldObjectAndCoords {
+public interface IHasWorldObjectAndCoords extends IDirtyNotifiable {
 
-    World getWorld();
+    World world();
 
-    BlockPos getPos();
+    BlockPos pos();
 
     default boolean isServerSide() {
-        return getWorld() != null && !getWorld().isRemote;
+        return world() != null && !world().isRemote;
     }
 
     default boolean isClientSide() {
-        return getWorld() != null && getWorld().isRemote;
+        return world() != null && world().isRemote;
     }
-
-    void markDirty();
 
     void notifyBlockUpdate();
 
     default void scheduleRenderUpdate() {
-        BlockPos pos = getPos();
-        getWorld().markBlockRangeForRenderUpdate(
+        BlockPos pos = pos();
+        world().markBlockRangeForRenderUpdate(
                 pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1,
                 pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
     }

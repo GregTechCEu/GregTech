@@ -7,7 +7,10 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
@@ -391,13 +394,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, chargerInventory);
         clearInventory(itemBuffer, circuitInventory);
-    }
-
-    @Override
-    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final RecipeLogicEnergy result = super.createWorkable(recipeMap);
-        result.enableOverclockVoltage();
-        return result;
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {

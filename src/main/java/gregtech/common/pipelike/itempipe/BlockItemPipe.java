@@ -39,7 +39,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
 
     public BlockItemPipe(ItemPipeType itemPipeType) {
         super(itemPipeType);
-        setHarvestLevel("pickaxe", 1);
+        setHarvestLevel("wrench", 1);
     }
 
     public void addPipeMaterial(Material material, ItemPipeProperties properties) {

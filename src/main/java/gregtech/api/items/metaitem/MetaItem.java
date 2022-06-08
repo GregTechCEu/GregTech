@@ -7,6 +7,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.ModularUI;
@@ -57,6 +58,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -505,6 +507,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return !ItemStack.areItemStacksEqual(oldStack, newStack);
     }
 
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        T metaItem = getItem(stack);
+        return metaItem == null ? getTranslationKey() : getTranslationKey() + "." + metaItem.unlocalizedName;
+    }
+
     @Nonnull
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
@@ -562,6 +570,19 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluid == null ? 0 : fluid.amount,
                     fluidTankProperties.getCapacity(),
                     fluid == null ? "" : fluid.getLocalizedName()));
+
+            if (fluidHandler instanceof IThermalFluidHandlerItemStack) {
+                IThermalFluidHandlerItemStack thermalFluidHandler = (IThermalFluidHandlerItemStack) fluidHandler;
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                    lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", thermalFluidHandler.getMaxFluidTemperature()));
+                    if (thermalFluidHandler.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
+                    if (thermalFluidHandler.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
+                    if (thermalFluidHandler.isCryoProof()) lines.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
+                    if (thermalFluidHandler.isPlasmaProof()) lines.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+                } else if (thermalFluidHandler.isGasProof() || thermalFluidHandler.isAcidProof() || thermalFluidHandler.isCryoProof() || thermalFluidHandler.isPlasmaProof()) {
+                    lines.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
+                }
+            }
         }
 
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
@@ -587,13 +608,13 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         String unit;
         if (duration.getSeconds() <= 180) {
             timeRemaining = duration.getSeconds();
-            unit = "sec";
+            unit = I18n.format("metaitem.battery.charge_unit.second");
         } else if (duration.toMinutes() <= 180) {
             timeRemaining = duration.toMinutes();
-            unit = "min";
+            unit = I18n.format("metaitem.battery.charge_unit.minute");
         } else {
             timeRemaining = duration.toHours();
-            unit = "hr";
+            unit = I18n.format("metaitem.battery.charge_unit.hour");
         }
         tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VNF[tier],
                 percentRemaining < 30 ? 'c' : percentRemaining < 60 ? 'e' : 'a',

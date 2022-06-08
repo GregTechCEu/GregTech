@@ -1,6 +1,6 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.common.blocks.VariantBlock;
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.util.IStringSerializable;
 

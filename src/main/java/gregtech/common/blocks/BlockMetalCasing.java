@@ -1,5 +1,7 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.IStateHarvestLevel;
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -18,7 +20,6 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 2);
         setDefaultState(getState(MetalCasingType.BRONZE_BRICKS));
     }
 
@@ -27,24 +28,26 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         return false;
     }
 
-    public enum MetalCasingType implements IStringSerializable {
+    public enum MetalCasingType implements IStringSerializable, IStateHarvestLevel {
 
-        BRONZE_BRICKS("bronze_bricks"),
-        PRIMITIVE_BRICKS("primitive_bricks"),
-        INVAR_HEATPROOF("invar_heatproof"),
-        ALUMINIUM_FROSTPROOF("aluminium_frostproof"),
-        STEEL_SOLID("steel_solid"),
-        STAINLESS_CLEAN("stainless_clean"),
-        TITANIUM_STABLE("titanium_stable"),
-        TUNGSTENSTEEL_ROBUST("tungstensteel_robust"),
-        COKE_BRICKS("coke_bricks"),
-        PTFE_INERT_CASING("ptfe_inert"),
-        HSSE_STURDY("hsse_sturdy");
+        BRONZE_BRICKS("bronze_bricks", 1),
+        PRIMITIVE_BRICKS("primitive_bricks", 1),
+        INVAR_HEATPROOF("invar_heatproof", 1),
+        ALUMINIUM_FROSTPROOF("aluminium_frostproof", 1),
+        STEEL_SOLID("steel_solid", 2),
+        STAINLESS_CLEAN("stainless_clean", 2),
+        TITANIUM_STABLE("titanium_stable", 2),
+        TUNGSTENSTEEL_ROBUST("tungstensteel_robust", 3),
+        COKE_BRICKS("coke_bricks", 1),
+        PTFE_INERT_CASING("ptfe_inert", 0),
+        HSSE_STURDY("hsse_sturdy", 3);
 
         private final String name;
+        private final int harvestLevel;
 
-        MetalCasingType(String name) {
+        MetalCasingType(String name, int harvestLevel) {
             this.name = name;
+            this.harvestLevel = harvestLevel;
         }
 
         @Nonnull
@@ -53,6 +56,15 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
             return this.name;
         }
 
+        @Override
+        public int getHarvestLevel(IBlockState state) {
+            return harvestLevel;
+        }
+
+        @Override
+        public String getHarvestTool(IBlockState state) {
+            return "wrench";
+        }
     }
 
 }

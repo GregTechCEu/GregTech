@@ -121,8 +121,8 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
-            int[] overclock = super.performOverclocking(recipe, negativeEU);
+        protected int[] performOverclocking(Recipe recipe) {
+            int[] overclock = super.performOverclocking(recipe);
 
             int coilTier = ((MetaTileEntityPyrolyseOven) metaTileEntity).getCoilTier();
             if (coilTier == -1)

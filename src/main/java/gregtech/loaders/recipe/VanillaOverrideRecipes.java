@@ -234,18 +234,6 @@ public class VanillaOverrideRecipes {
      * - Removes Glass Bottle Crafting
      */
     private static void glassRecipes() {
-        ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
-                'S', new ItemStack(Blocks.SAND));
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAND))
-                .output(OrePrefix.dust, Materials.QuartzSand)
-                .duration(30).buildAndRegister();
-
-        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
-                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
-                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
-
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
         ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));
     }

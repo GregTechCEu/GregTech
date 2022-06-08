@@ -4,7 +4,12 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
@@ -62,6 +67,16 @@ public class CrowbarBehaviour implements IItemBehaviour {
                 GTUtility.doDamageItem(stack, cost, false);
                 IToolStats.onOtherUse(stack, world, blockPos);
                 return result ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+            }
+            if (tileEntity instanceof TileEntityPipeBase && ((IPipeTile<?, ?>) tileEntity).getFrameMaterial() != null) {
+                Material frameMaterial = ((TileEntityPipeBase<?, ?>) tileEntity).getFrameMaterial();
+                ((TileEntityPipeBase<?, ?>) tileEntity).setFrameMaterial(null);
+                BlockFrame blockFrame = MetaBlocks.FRAMES.get(frameMaterial);
+                if (blockFrame != null) {
+                    Block.spawnAsEntity(world, blockPos, blockFrame.getItem(frameMaterial));
+                    return EnumActionResult.SUCCESS;
+                }
+                return EnumActionResult.FAIL;
             }
         }
         return EnumActionResult.PASS;

@@ -1,13 +1,10 @@
 package gregtech.api.metatileentity.interfaces;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Consumer;
-
-import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 /**
  * A simple compound Interface for all my TileEntities.

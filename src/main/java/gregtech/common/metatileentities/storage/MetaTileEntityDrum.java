@@ -8,12 +8,18 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
+import gregtech.api.fluids.MaterialFluid;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +34,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -36,12 +43,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.*;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT;
 import static gregtech.api.recipes.ModHandler.isMaterialWood;
 import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
@@ -56,6 +64,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
+        if (!isMaterialWood(material) && !this.material.hasProperty(PropertyKey.FLUID_PIPE)) {
+            throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
+        }
         initializeInventory();
     }
 
@@ -85,7 +96,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public String getHarvestTool() {
-        return isMaterialWood(material) ? "axe" : "pickaxe";
+        return isMaterialWood(material) ? "axe" : "wrench";
     }
 
     @Override
@@ -96,7 +107,33 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.fluidTank = new FilteredFluidHandler(tankSize).setFillPredicate(isMaterialWood(material) ? (fs -> !fs.getFluid().isGaseous() && fs.getFluid().getTemperature() > 325) : fs -> true);
+        this.fluidTank = new FilteredFluidHandler(tankSize)
+                .setFillPredicate(stack -> {
+                    if (stack == null || stack.getFluid() == null) return false;
+
+                    Fluid fluid = stack.getFluid();
+                    if (isMaterialWood(material)) {
+                        boolean meetsGTRequirements = true;
+                        if (fluid instanceof MaterialFluid) {
+                            FluidType fluidType = ((MaterialFluid) fluid).getFluidType();
+                            meetsGTRequirements = fluidType != FluidTypes.ACID && fluidType != FluidTypes.PLASMA;
+                        }
+                        return fluid.getTemperature() <= 340 && !fluid.isGaseous() && meetsGTRequirements;
+                    }
+
+                    FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
+                    if (fluid.getTemperature() > pipeProperties.getMaxFluidTemperature()) return false;
+                    // fluids less than 120K are cryogenic
+                    if (fluid.getTemperature() < 120 && !pipeProperties.isCryoProof()) return false;
+                    if (fluid.isGaseous() && !pipeProperties.isGasProof()) return false;
+
+                    if (fluid instanceof MaterialFluid) {
+                        FluidType fluidType = ((MaterialFluid) fluid).getFluidType();
+                        if (fluidType == FluidTypes.ACID && !pipeProperties.isAcidProof()) return false;
+                        if (fluidType == FluidTypes.PLASMA && !pipeProperties.isPlasmaProof()) return false;
+                    }
+                    return true;
+                });
         this.fluidInventory = fluidTank;
     }
 
@@ -122,8 +159,17 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        int maxTemperature = (material.hasFlag(FLAMMABLE) || isMaterialWood(material)) ? 325 : Integer.MAX_VALUE;
-        return new ThermalFluidHandlerItemStack(itemStack, tankSize, Integer.MIN_VALUE, maxTemperature);
+        if (isMaterialWood(material) || material.hasFlag(FLAMMABLE)) {
+            return new ThermalFluidHandlerItemStack(itemStack, tankSize, 340, false, false, false, false);
+        }
+
+        FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
+        return new ThermalFluidHandlerItemStack(itemStack, tankSize,
+                pipeProperties.getMaxFluidTemperature(),
+                pipeProperties.isGasProof(),
+                pipeProperties.isAcidProof(),
+                pipeProperties.isCryoProof(),
+                pipeProperties.isPlasmaProof());
     }
 
     @Override
@@ -240,6 +286,22 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
+
+        if (ModHandler.isMaterialWood(material)) {
+            tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", 340));
+            tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
+        } else {
+            FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
+                if (pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
+                if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
+                if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
+                if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+            } else {
+                tooltip.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
+            }
+        }
 
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null && tagCompound.hasKey("Fluid", Constants.NBT.TAG_COMPOUND)) {

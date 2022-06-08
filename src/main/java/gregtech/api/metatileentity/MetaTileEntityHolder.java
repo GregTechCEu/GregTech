@@ -281,6 +281,16 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
+    public World world() {
+        return getWorld();
+    }
+
+    @Override
+    public BlockPos pos() {
+        return getPos();
+    }
+
+    @Override
     public void markAsDirty() {
         markDirty();
     }

@@ -2,7 +2,7 @@
     "ctm": {
         "ctm_version": 1,
         "type": "CTM",
-        "layer": "TRANSLUCENT",
+        "layer": "CUTOUT",
         "textures": [
             "gregtech:blocks/casings/transparent/fusion_glass_ctm"
         ],

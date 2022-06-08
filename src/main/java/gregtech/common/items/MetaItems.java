@@ -110,6 +110,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_STAINLESS_STEEL;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_TITANIUM;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_TUNGSTEN_STEEL;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_GLASS_VIAL;
 
     public static MetaItem<?>.MetaValueItem TOOL_MATCHES;
     public static MetaItem<?>.MetaValueItem TOOL_MATCHBOX;
@@ -441,6 +442,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE_WIRELESS;
+    public static MetaItem<?>.MetaValueItem COVER_FLUID_VOIDING;
+    public static MetaItem<?>.MetaValueItem COVER_FLUID_VOIDING_ADVANCED;
+    public static MetaItem<?>.MetaValueItem COVER_ITEM_VOIDING;
+    public static MetaItem<?>.MetaValueItem COVER_ITEM_VOIDING_ADVANCED;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;

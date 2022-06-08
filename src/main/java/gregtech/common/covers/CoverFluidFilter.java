@@ -14,8 +14,8 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterWrapper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +29,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 
@@ -50,7 +49,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         this.fluidFilter.setFluidFilter(fluidFilter);
     }
 
-    protected void setFilterMode(FluidFilterMode filterMode) {
+    public void setFilterMode(FluidFilterMode filterMode) {
         this.filterMode = filterMode;
         this.coverHolder.markDirty();
     }
@@ -86,6 +85,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
                 GTUtility.mapToString(FluidFilterMode.values(), (it) -> it.localeName), () -> this.filterMode.ordinal(),
                 (newMode) -> this.setFilterMode(FluidFilterMode.values()[newMode])));
         this.fluidFilter.initUI(45, fluidFilterGroup::addWidget);
+        this.fluidFilter.blacklistUI(45, fluidFilterGroup::addWidget, () -> true);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
                 .widget(fluidFilterGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)

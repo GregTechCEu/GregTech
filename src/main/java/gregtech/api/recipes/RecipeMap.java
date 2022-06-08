@@ -187,6 +187,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recipeFluidMap.getOrDefault(new FluidKey(fluid), Collections.emptySet());
     }
 
+    public Collection<Recipe> getRecipesForFluid(FluidKey fluidKey) {
+        return recipeFluidMap.getOrDefault(fluidKey, Collections.emptySet());
+    }
+
     private static boolean foundInvalidRecipe = false;
 
     //internal usage only, use buildAndRegister()
@@ -380,7 +384,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        for (int i = priorityRecipeMap.size(); i >= 0; i--) {
+        for (int i = priorityRecipeMap.size() - 1; i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
                     if (iteratedRecipes.add(tmpRecipe)) {

@@ -48,8 +48,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, tier);
         this.recipeMapWorkable = new LargeCombustionEngineWorkableHandler(this, tier > GTValues.EV);
-        this.recipeMapWorkable.enableOverclockVoltage();
-        this.recipeMapWorkable.setOverclockTier(tier);
+        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
         this.tier = tier;
         this.isExtreme = tier > GTValues.EV;
     }

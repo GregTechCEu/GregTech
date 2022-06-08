@@ -41,13 +41,29 @@ public class ThemeSettings extends AbstractWidgetGroup {
         this.addColorButton(TerminalTheme.COLOR_B_3, "COLOR_B_3", (int) (x * 12), y);
         this.addWidget(new LabelWidget(323 / 2, 75, "terminal.settings.theme.wallpaper", -1).setXCentered(true));
         this.addWidget(new ImageWidget((int) x, 95, 150, 105, TerminalTheme.WALL_PAPER).setBorder(2, -1));
-        this.addWidget(new SelectorWidget((int) (x + 170), 95, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
+        this.addWidget(new SelectorWidget((int) (x + 170), 95, 116, 20,
+                Arrays.asList(
+                        "terminal.settings.theme.wallpaper.resource",
+                        "terminal.settings.theme.wallpaper.url",
+                        "terminal.settings.theme.wallpaper.color",
+                        "terminal.settings.theme.wallpaper.file"),
+                -1, this::getLocalizedWallpaperTypeName, true)
                 .setIsUp(true)
                 .setOnChanged(this::onModifyTextureChanged)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
                 .setBackground(TerminalTheme.COLOR_6));
         textureGroup = new WidgetGroup((int) (x + 170), 122, (int) (x * 11 - 170), 65);
         this.addWidget(textureGroup);
+    }
+
+    private String getLocalizedWallpaperTypeName(){
+        switch(TerminalTheme.WALL_PAPER.getTypeName()){
+            case "resource": return "terminal.settings.theme.wallpaper.resource";
+            case "url": return "terminal.settings.theme.wallpaper.url";
+            case "color": return "terminal.settings.theme.wallpaper.color";
+            case "file": return "terminal.settings.theme.wallpaper.file";
+        }
+        return null;
     }
 
     private void addColorButton(ColorRectTexture texture, String name, int x, int y) {
@@ -67,7 +83,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
     private void onModifyTextureChanged(String type) {
         textureGroup.clearAllWidgets();
         switch (type) {
-            case "resource":
+            case "terminal.settings.theme.wallpaper.resource":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof TextureArea)) {
                     TerminalTheme.WALL_PAPER.setTexture(new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/terminal_background.png"), 0.0, 0.0, 1.0, 1.0));
                     TerminalTheme.saveConfig();
@@ -78,7 +94,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                             TerminalTheme.saveConfig();
                         });
                 break;
-            case "url":
+            case "terminal.settings.theme.wallpaper.url":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof URLTexture)) {
                     TerminalTheme.WALL_PAPER.setTexture(new URLTexture(null));
                     TerminalTheme.saveConfig();
@@ -88,7 +104,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                     TerminalTheme.saveConfig();
                 });
                 break;
-            case "color":
+            case "terminal.settings.theme.wallpaper.color":
                 ColorRectTexture texture;
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof ColorRectTexture)) {
                     texture = new ColorRectTexture(-1);
@@ -101,7 +117,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                         .setColorSupplier(texture::getColor, true)
                         .setOnColorChanged(texture::setColor));
                 break;
-            case "file":
+            case "terminal.settings.theme.wallpaper.file":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof FileTexture)) {
                     TerminalTheme.WALL_PAPER.setTexture(new FileTexture(null));
                     TerminalTheme.saveConfig();

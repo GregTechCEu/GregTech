@@ -109,12 +109,24 @@ public class VanillaStandardRecipes {
 
     /**
      * + Adds new glass related recipes
+     * + Adds steam age manual glass recipes
      * - Removes some glass related recipes based on configs
      */
     private static void glassRecipes() {
         ModHandler.addShapedRecipe("glass_dust_hammer", OreDictUnifier.get(dust, Materials.Glass), "hG", 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W));
 
         ModHandler.addShapelessRecipe("glass_dust_handcrafting", OreDictUnifier.get(dust, Glass), "dustSand", "dustFlint");
+
+        ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m", 'S', new ItemStack(Blocks.SAND));
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.SAND))
+                .output(OrePrefix.dust, Materials.QuartzSand)
+                .duration(30).buildAndRegister();
+
+        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[ULV])
                 .input(dustSmall, Materials.Flint)
@@ -594,11 +606,13 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
                     .buildAndRegister();
 
-            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
-                    .inputs(new ItemStack(Blocks.CONCRETE))
-                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
-                    .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
-                    .buildAndRegister();
+            if(i != 0) {
+                CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
+                        .inputs(new ItemStack(Blocks.CONCRETE))
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
+                        .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
+                        .buildAndRegister();
+            }
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                     .inputs(new ItemStack(Blocks.HARDENED_CLAY))
@@ -618,11 +632,13 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
                     .buildAndRegister();
 
-            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
-                    .inputs(new ItemStack(Blocks.WOOL))
-                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
-                    .outputs(new ItemStack(Blocks.WOOL, 1, i))
-                    .buildAndRegister();
+            if(i != 0) {
+                CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
+                        .inputs(new ItemStack(Blocks.WOOL))
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                        .outputs(new ItemStack(Blocks.WOOL, 1, i))
+                        .buildAndRegister();
+            }
 
             CUTTER_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                     .inputs(new ItemStack(Blocks.WOOL, 2, i))

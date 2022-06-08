@@ -12,6 +12,7 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
@@ -27,6 +28,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.util.DyeUtil.getOredictColorName;
@@ -48,7 +50,7 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_PLATINUM = addItem(4, "credit.platinum").setRarity(EnumRarity.RARE);
         CREDIT_OSMIUM = addItem(5, "credit.osmium").setRarity(EnumRarity.RARE);
         CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setRarity(EnumRarity.EPIC);
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium") .setRarity(EnumRarity.EPIC);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4))).setRarity(EnumRarity.RARE);
@@ -118,43 +120,52 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Fluid Cells: ID 78-88
-        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
+        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, false));
 
-        FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
+        FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal").addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, true));
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
-                .addComponents(new FluidStats(8000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+                .addComponents(new ThermalFluidStats(8000, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))); // ingot * 4
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
-                .addComponents(new FluidStats(32000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+                .addComponents(new ThermalFluidStats(32000, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))); // ingot * 4
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
-                .addComponents(new FluidStats(64000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+                .addComponents(new ThermalFluidStats(64000, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true, true, false, true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))); // ingot * 6
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
-                .addComponents(new FluidStats(128000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+                .addComponents(new ThermalFluidStats(128000, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))); // ingot * 6
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
-                .addComponents(new FluidStats(512000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+                .addComponents(new ThermalFluidStats(512000, Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))); // ingot * 8
+
+        FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
+                .addComponents(new ThermalFluidStats(1000, 1200, false, true, false, false, true))
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))); // small dust
 
         // Limited-Use Items: ID 89-95
 
         TOOL_MATCHES = addItem(89, "tool.matches")
-                .addComponents(new LighterBehaviour(1));
+                .addComponents(new LighterBehaviour(false, false, false));
         TOOL_MATCHBOX = addItem(90, "tool.matchbox")
-                .addComponents(new LighterBehaviour(16)).setMaxStackSize(1);
+                .addComponents(new LighterBehaviour(false, true, false, Items.PAPER, 16)).setMaxStackSize(1);
         TOOL_LIGHTER_INVAR = addItem(91, "tool.lighter.invar")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Invar, M * 2)))
-                .addComponents(new LighterBehaviour(100)).setMaxStackSize(1);
+                .addComponents(new LighterBehaviour(new ResourceLocation(GTValues.MODID, "lighter_open"), true, true, true))
+                .addComponents(new FilteredFluidStats(100, true, fs -> fs.getFluid().equals(Materials.Butane.getFluid()) || fs.getFluid().equals(Materials.Propane.getFluid())))
+                .setMaxStackSize(1);
         TOOL_LIGHTER_PLATINUM = addItem(92, "tool.lighter.platinum")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2)))
-                .addComponents(new LighterBehaviour(1000)).setMaxStackSize(1).setRarity(EnumRarity.UNCOMMON);
+                .addComponents(new LighterBehaviour(new ResourceLocation(GTValues.MODID, "lighter_open"), true, true, true))
+                .addComponents(new FilteredFluidStats(1000, true, fs -> fs.getFluid().equals(Materials.Butane.getFluid()) || fs.getFluid().equals(Materials.Propane.getFluid())))
+                .setMaxStackSize(1)
+                .setRarity(EnumRarity.UNCOMMON);
 
         BOTTLE_PURPLE_DRINK = addItem(93, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true, new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 
@@ -336,6 +347,10 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
         COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
         COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
+        COVER_FLUID_VOIDING = addItem(314, "cover.fluid.voiding");
+        COVER_FLUID_VOIDING_ADVANCED = addItem(315, "cover.fluid.voiding.advanced");
+        COVER_ITEM_VOIDING = addItem(316, "cover.item.voiding");
+        COVER_ITEM_VOIDING_ADVANCED = addItem(317, "cover.item.voiding.advanced");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 

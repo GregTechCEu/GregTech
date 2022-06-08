@@ -61,7 +61,7 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.WroughtIron, M * 8), // plate
-                new MaterialStack(Materials.Lead, M), // single cable
+                new MaterialStack(Materials.RedAlloy, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[1].getStackForm(), new ItemMaterialInfo(
@@ -86,7 +86,7 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[5].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.TungstenSteel, M * 8), // plate
-                new MaterialStack(Materials.Tungsten, M), // single cable
+                new MaterialStack(Materials.Platinum, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
@@ -181,19 +181,19 @@ public class MaterialInfoLoader {
         else
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 2)));
 
-        OreDictUnifier.registerOre(new ItemStack(Blocks.OAK_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (15 * M) / 9))); // dust tiny
-        OreDictUnifier.registerOre(new ItemStack(Blocks.BIRCH_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (15 * M) / 9))); // dust tiny
-        OreDictUnifier.registerOre(new ItemStack(Blocks.SPRUCE_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (15 * M) / 9))); // dust tiny
-        OreDictUnifier.registerOre(new ItemStack(Blocks.JUNGLE_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (15 * M) / 9))); // dust tiny
-        OreDictUnifier.registerOre(new ItemStack(Blocks.DARK_OAK_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (15 * M) / 9))); // dust tiny
-        OreDictUnifier.registerOre(new ItemStack(Blocks.ACACIA_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (15 * M) / 9))); // dust tiny
+        OreDictUnifier.registerOre(new ItemStack(Blocks.OAK_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.BIRCH_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.SPRUCE_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.JUNGLE_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.DARK_OAK_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.ACACIA_FENCE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M))); // dust
 
-        OreDictUnifier.registerOre(new ItemStack(Blocks.OAK_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4))); // dust
-        OreDictUnifier.registerOre(new ItemStack(Blocks.BIRCH_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4))); // dust
-        OreDictUnifier.registerOre(new ItemStack(Blocks.SPRUCE_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4))); // dust
-        OreDictUnifier.registerOre(new ItemStack(Blocks.JUNGLE_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4))); // dust
-        OreDictUnifier.registerOre(new ItemStack(Blocks.DARK_OAK_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4))); // dust
-        OreDictUnifier.registerOre(new ItemStack(Blocks.ACACIA_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.OAK_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 3))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.BIRCH_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 3))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.SPRUCE_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 3))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.JUNGLE_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 3))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.DARK_OAK_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 3))); // dust
+        OreDictUnifier.registerOre(new ItemStack(Blocks.ACACIA_FENCE_GATE, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 3))); // dust
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.OAK_STAIRS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (3 * M) / 2))); // dust small
         OreDictUnifier.registerOre(new ItemStack(Blocks.BIRCH_STAIRS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (3 * M) / 2))); // dust small
@@ -227,9 +227,9 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE_SLAB, 1, 7), new ItemMaterialInfo(new MaterialStack(Materials.NetherQuartz, M * 2)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.WOODEN_SLAB, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M / 2)));
 
-        OreDictUnifier.registerOre(new ItemStack(Blocks.LEVER, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M), new MaterialStack(Materials.Wood, 1814400L)));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.WOODEN_BUTTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.STONE_BUTTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.LEVER, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M / 9), new MaterialStack(Materials.Wood, 1814400L)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.WOODEN_BUTTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M / 9)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.STONE_BUTTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M / 9)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.REDSTONE_TORCH, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M / 2), new MaterialStack(Materials.Redstone, M)));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.RAIL, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 3 / 16)));
@@ -326,7 +326,7 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.MOSSY_COBBLESTONE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.LADDER, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
 
-        OreDictUnifier.registerOre(new ItemStack(Items.BOWL, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Items.BOWL, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M / 4)));
         OreDictUnifier.registerOre(new ItemStack(Items.SIGN, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 8)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.TRAPPED_CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 8), new MaterialStack(Materials.Iron, M / 2))); // ring

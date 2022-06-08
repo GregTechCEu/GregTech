@@ -115,7 +115,10 @@ public class CoverBehaviors {
         registerBehavior(91, new ResourceLocation(GTValues.MODID, "pump.uxv"), MetaItems.ELECTRIC_PUMP_UXV, (tile, side) -> new CoverPump(tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
         registerBehavior(92, new ResourceLocation(GTValues.MODID, "pump.opv"), MetaItems.ELECTRIC_PUMP_OpV, (tile, side) -> new CoverPump(tile, side, GTValues.OpV, 1280 * 64 * 64 * 4));
 
-
+        registerBehavior(100, new ResourceLocation(GTValues.MODID, "fluid_voiding"), MetaItems.COVER_FLUID_VOIDING, CoverFluidVoiding::new);
+        registerBehavior(101, new ResourceLocation(GTValues.MODID, "fluid_voiding.advanced"), MetaItems.COVER_FLUID_VOIDING_ADVANCED, CoverFluidVoidingAdvanced::new);
+        registerBehavior(102, new ResourceLocation(GTValues.MODID, "item_voiding"), MetaItems.COVER_ITEM_VOIDING, CoverItemVoiding::new);
+        registerBehavior(103, new ResourceLocation(GTValues.MODID, "item_voiding.advanced"), MetaItems.COVER_ITEM_VOIDING_ADVANCED, CoverItemVoidingAdvanced::new);
 
     }
 
