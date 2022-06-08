@@ -124,8 +124,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
-                this.metaTileEntity.onAttached();
+                /* Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
+                * about the composition of the BlockPattern that onAttached may generate. */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
+                this.metaTileEntity.onAttached();
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
             }
