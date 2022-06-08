@@ -89,6 +89,10 @@ public class GTLaserBeamParticle extends GTParticle{
         return this;
     }
 
+    public float getAlpha() {
+        return this.alpha;
+    }
+
     /**
      * Set emit speed.
      * @param emit emit speed. from start to end.

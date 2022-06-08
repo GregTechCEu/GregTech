@@ -10,10 +10,11 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
@@ -49,7 +50,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMufflerHatch(metaTileEntityId, getTier());
     }
 
@@ -74,7 +75,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             if (calculateChance())
                 GTUtility.addStackToItemStackList(recoveryItems.get(slot), items);
         });
-        addItemsToItemHandler(inventory, false, items);
+        GTTransferUtils.addItemsToItemHandler(inventory, false, items);
     }
 
     private boolean calculateChance() {

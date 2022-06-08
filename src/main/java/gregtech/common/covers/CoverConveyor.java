@@ -18,9 +18,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackKey;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
@@ -39,7 +40,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -219,13 +219,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         //now, see how much we can insert into destination inventory
         //if we can't insert as much as itemInfo requires, and remainder is empty, abort, abort
-        ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, resultStack, true);
+        ItemStack remainder = GTTransferUtils.insertItem(targetInventory, resultStack, true);
         if (!remainder.isEmpty()) {
             return false;
         }
 
         //otherwise, perform real insertion and then remove items from the source inventory
-        ItemHandlerHelper.insertItemStacked(targetInventory, resultStack, false);
+        GTTransferUtils.insertItem(targetInventory, resultStack, false);
 
         //perform real extraction of the items from the source inventory now
         itemsLeftToExtract = itemInfo.totalCount;
@@ -260,7 +260,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
             ItemStack extractedStack = sourceInventory.extractItem(i, Math.min(itemInfo.totalCount, itemsLeftToTransfer), true);
 
-            ItemStack remainderStack = ItemHandlerHelper.insertItemStacked(targetInventory, extractedStack, true);
+            ItemStack remainderStack = GTTransferUtils.insertItem(targetInventory, extractedStack, true);
             int amountToInsert = extractedStack.getCount() - remainderStack.getCount();
 
             if (amountToInsert > 0) {
@@ -268,7 +268,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
                 if (!extractedStack.isEmpty()) {
 
-                    ItemHandlerHelper.insertItemStacked(targetInventory, extractedStack, false);
+                    GTTransferUtils.insertItem(targetInventory, extractedStack, false);
                     itemsLeftToTransfer -= extractedStack.getCount();
                     itemInfo.totalCount -= extractedStack.getCount();
 
@@ -297,13 +297,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (!itemFilterContainer.testItemStack(sourceStack)) {
                 continue;
             }
-            ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, true);
+            ItemStack remainder = GTTransferUtils.insertItem(targetInventory, sourceStack, true);
             int amountToInsert = sourceStack.getCount() - remainder.getCount();
 
             if (amountToInsert > 0) {
                 sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
                 if (!sourceStack.isEmpty()) {
-                    ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, false);
+                    GTTransferUtils.insertItem(targetInventory, sourceStack, false);
                     itemsLeftToTransfer -= sourceStack.getCount();
 
                     if (itemsLeftToTransfer == 0) {

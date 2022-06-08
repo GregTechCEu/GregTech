@@ -3,7 +3,6 @@ package gregtech.api;
 import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
@@ -124,11 +123,6 @@ public class GTValues {
     public static boolean isClientSide() {
         if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
         return isClient;
-    }
-
-    @Deprecated
-    public static boolean isModLoaded(String modid) {
-        return Loader.isModLoaded(modid);
     }
 
     /**

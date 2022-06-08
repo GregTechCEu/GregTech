@@ -5,7 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -21,6 +21,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.FluidTank;
@@ -43,23 +44,32 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityPrimitiveWaterPump(metaTileEntityId);
     }
 
     @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % 20 == 0 && !getWorld().isRemote && isStructureFormed()) {
+        if (!getWorld().isRemote && getOffsetTimer() % 20 == 0 && isStructureFormed()) {
             if (biomeModifier == 0) {
-                biomeModifier = getAmountForBiome(getWorld().getBiome(getPos()));
+                biomeModifier = getAmount();
+            } else if (biomeModifier > 0) {
+                waterTank.fill(Materials.Water.getFluid(biomeModifier * hatchModifier), true);
             }
-            waterTank.fill(Materials.Water.getFluid(biomeModifier * hatchModifier), true);
         }
     }
 
-    private static int getAmountForBiome(Biome biome) {
+    private int getAmount() {
+        WorldProvider provider = getWorld().provider;
+        if (provider.isNether() || provider.doesWaterVaporize()) {
+            return -1; // Disabled
+        }
+        Biome biome = getWorld().getBiome(getPos());
         Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
+        if (biomeTypes.contains(BiomeDictionary.Type.NETHER)) {
+            return -1; // Disabled
+        }
         if (biomeTypes.contains(BiomeDictionary.Type.WATER)) {
             return 1000;
         } else if (biomeTypes.contains(BiomeDictionary.Type.SWAMP) || biomeTypes.contains(BiomeDictionary.Type.WET)) {

@@ -6,7 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockPosFace;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
@@ -75,8 +75,8 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
         super.update();
         if (remote != null && !isRemote() && coverHolder.getOffsetTimer() % 20 == 0) {
             TileEntity te = coverHolder.getWorld().getTileEntity(remote);
-            if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
-                ((MetaTileEntityCentralMonitor) ((MetaTileEntityHolder) te).getMetaTileEntity()).addRemoteCover(new BlockPosFace(coverHolder.getPos(), attachedSide));
+            if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+                ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) te).getMetaTileEntity()).addRemoteCover(new BlockPosFace(coverHolder.getPos(), attachedSide));
             }
         }
     }

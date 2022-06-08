@@ -6,8 +6,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
@@ -34,7 +34,7 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new SteamRockBreaker(metaTileEntityId, isHighPressure);
     }
 

@@ -5,7 +5,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.input.EnumKey;
+import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +36,7 @@ public class AdvancedJetpack extends Jetpack {
         boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
 
-        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
+        if (toggleTimer == 0 && KeyBind.ARMOR_HOVER.isKeyDown(player)) {
             hoverMode = !hoverMode;
             toggleTimer = 5;
             data.setBoolean("hover", hoverMode);

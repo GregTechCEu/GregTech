@@ -9,6 +9,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
 import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.world.DummyWorld;
@@ -127,9 +128,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof MetaTileEntityHolder))
+            if (!(tileEntity instanceof IGregTechTileEntity))
                 return false;
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (predicate.apply(blockWorldState, metaTileEntity)) {
                 if (metaTileEntity instanceof IMultiblockPart) {
                     Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts", HashSet::new);
@@ -148,6 +149,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
         return ()->Arrays.stream(metaTileEntities).map(tile->{
+            // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);

@@ -2,7 +2,6 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -14,7 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -70,7 +68,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             if (fuelStack == null || ModHandler.isWater(fuelStack)) continue;
 
             Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE, MatchingMode.IGNORE_ITEMS);
+                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE);
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (dieselRecipe != null && fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER) {
                 fluidTank.drain(dieselRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER, true);
@@ -81,7 +79,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             }
 
             Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE, MatchingMode.IGNORE_ITEMS);
+                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE);
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (denseFuelRecipe != null && fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER) {
                 fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER, true);

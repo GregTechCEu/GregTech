@@ -2,6 +2,8 @@ package gregtech.api.recipes.logic;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
@@ -24,6 +26,7 @@ public class ParallelLogicTest {
     MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false);
     MetaTileEntityItemBus exportItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, true);
     MetaTileEntityFluidHatch importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false);
+    MetaTileEntityFluidHatch secondImportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false);
     MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, true);
 
     @BeforeClass
@@ -508,12 +511,29 @@ public class ParallelLogicTest {
                 .EUt(30).duration(100)
                 .build().getResult();
 
-        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 5), false);
+        // Test less than maximum limit
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 3), false);
 
         int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(4, itemRatio);
+        assertEquals(2, itemRatio);
+
+        // Test = max limit
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
+
+        int secondItemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondItemRatio);
+
+        // Test > max limit
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
+
+        int thirdItemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, thirdItemRatio);
 
     }
 
@@ -551,6 +571,373 @@ public class ParallelLogicTest {
                 recipe, parallelLimit);
 
         assertEquals(4, itemRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioItem_OnlyNonConsumedTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.STONE))
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.STONE, 1), false);
+
+
+        int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, itemRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioItem_OnlyNonConsumedWithStacksizeTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.STONE, 2))
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        // Test Parallel Limit with not enough Non-consumed items
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.STONE, 1), false);
+
+        int itemRatioFailure = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(0, itemRatioFailure);
+
+        // Test Parallel Limit by Non-consumed item amounts
+        // Add one more stone to meet the recipe NC amount
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.STONE, 1), false);
+
+        int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, itemRatio);
+
+        // Test Parallel Limit for > max
+        importItemBus.getImportItems().insertItem(1, new ItemStack(Blocks.STONE, 6), false);
+
+        int secondItemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondItemRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioFluid_RegularFluidInputsTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .fluidInputs(Materials.Water.getFluid(1000))
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        // Test Not enough fluid for 1 parallel
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(500), true);
+
+        int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(0, fluidRatioFailure);
+
+        // Test Parallel Limit with > min, < max parallels
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
+
+        int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(3, fluidRatio);
+
+        // Test Parallel Limit with > max parallels
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
+
+        int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondFluidRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioFluid_SameNonConsumedTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .fluidInputs(Materials.Water.getFluid(1000))
+                .notConsumable(Materials.Water.getFluid())
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        // Test Not enough fluid for 1 parallel
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(500), true);
+
+        int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(0, fluidRatioFailure);
+
+        // Test Parallel Limit with > min, < max parallels
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1501), true);
+
+        int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(2, fluidRatio);
+
+        // Test Parallel Limit Exactly equal inputs
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2000), true);
+
+        int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, fluidRatioExact);
+
+        // Test Parallel Limit with > max parallels
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
+
+        int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondFluidRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioFluid_DifferentNonConsumedTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                2,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .fluidInputs(Materials.Water.getFluid(1000))
+                .notConsumable(Materials.Acetone.getFluid())
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        // Test Not enough fluid for 1 parallel
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1000), true);
+
+        int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(0, fluidRatioFailure);
+
+        // Test Parallel Limit with > min, < max parallels
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1000), true);
+        secondImportFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(1), true);
+
+        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
+
+        int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
+                recipe, parallelLimit);
+
+        assertEquals(2, fluidRatio);
+
+        // Test Parallel Limit Exactly equal inputs
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2000), true);
+
+        int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, fluidRatioExact);
+
+        // Test Parallel Limit with > max parallels
+        importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
+
+        int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondFluidRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioFluid_OnlyNonConsumedTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                2,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .notConsumable(Materials.Acetone.getFluid())
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        // Test Not enough fluid for 1 parallel
+        importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(0), true);
+
+        int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(0, fluidRatioFailure);
+
+
+        // Test Parallel Limit Exactly equal inputs
+        importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(4), true);
+
+        int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, fluidRatioExact);
+
+        // Test Parallel Limit with > max parallels
+        importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(2500), true);
+
+
+        int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondFluidRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioFluid_OnlyNonConsumedWithStacksizeTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                2,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .notConsumable(Materials.Acetone.getFluid(1000))
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        // Test Not enough fluid for 1 parallel
+        importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(500), true);
+
+        int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(0, fluidRatioFailure);
+
+
+        // Test Parallel Limit Exactly equal inputs
+        importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(500), true);
+
+        int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, fluidRatioExact);
+
+        // Test Parallel Limit with > max parallels
+        importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(2500), true);
+
+
+        int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
+                recipe, parallelLimit);
+
+        assertEquals(parallelLimit, secondFluidRatio);
 
     }
 }

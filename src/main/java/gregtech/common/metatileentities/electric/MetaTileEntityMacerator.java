@@ -2,8 +2,8 @@ package gregtech.common.metatileentities.electric;
 
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMacerator(metaTileEntityId, workable.getRecipeMap(), outputAmount, renderer, getTier());
     }
 
