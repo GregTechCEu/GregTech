@@ -1,11 +1,11 @@
-death.attack.heat=%s был cварен заживо.
-death.attack.frost=%s исследовал криогенику.
-death.attack.electric=%s был шокирован.
-death.attack.radiation=%s теперь светится от радости.
-death.attack.turbine=%s заглянул в турбину.
-death.attack.explosion=%s взорвался.
-death.attack.explosion.player=%s взорвался при помощи %s.
-death.attack.heat.player=%s был сварен заживо, пытаясь убежать от %s.
+death.attack.heat=%s был cварен заживо
+death.attack.frost=%s исследовал криогенику
+death.attack.electric=%s был шокирован
+death.attack.radiation=%s теперь светится от радости
+death.attack.turbine=%s заглянул в турбину
+death.attack.explosion=%s взорвался
+death.attack.explosion.player=%s взорвался при помощи %s
+death.attack.heat.player=%s был сварен заживо, пытаясь убежать от %s
 enchantment.disjunction=Разъединение
 gregtech.top.energy_stored=Энергия:
 gregtech.top.progress=Прогресс:
@@ -173,7 +173,6 @@ metaitem.large_fluid_cell.aluminium.name=%s Алюминиевая капсул�
 metaitem.large_fluid_cell.stainless_steel.name=%s Капсула из нержавеющей стали
 metaitem.large_fluid_cell.titanium.name=%s Титановая капсула
 metaitem.large_fluid_cell.tungstensteel.name=Вольфрамостальная капсула (%s)
-
 metaitem.spray.solvent.name=Баллончик (Растворитель)
 metaitem.spray.can.dyes.white.name=Аэрозоль (Белый)
 metaitem.spray.can.dyes.orange.name=Аэрозоль (Оранжевый)
@@ -1635,10 +1634,8 @@ tile.gt.reinforced_stone.name=Армированный камень
 tile.rubber_log.name=Каучуковое дерево
 tile.rubber_leaves.name=Листья каучукового дерева
 tile.rubber_sapling.name=Саженец каучукового дерева
-
 tile.planks.rubber.name=Доски каучукового дерева
 tile.planks.treated.name=Обработанные деревянные доски
-
 metaitem.prospector.lv.name=Электрический разведочный сканер (LV)
 metaitem.prospector.hv.name=Электроразведочный сканер (HV)
 metaitem.prospector.luv.name=Электроразведочный сканер (LuV)
@@ -1647,7 +1644,6 @@ metaitem.prospector.mode.fluid=§bРежим разведки жидкости
 metaitem.prospector.tooltip.ores=Сканирует руды в радиусе %s чанка(ов)
 metaitem.prospector.tooltip.fluids=Сканирует руды и жидкости в радиусе %s чанка(ов)
 behavior.prospector.not_enough_energy=Недостаточно энергии!
-
 metaitem.tricorder_scanner.name=Портативный сканер
 metaitem.tricorder_scanner.tooltip=То что нужно
 metaitem.debug_scanner.name=Отладочный сканер
@@ -1684,20 +1680,16 @@ behavior.tricorder.debug_machine_invalid_null=Неверный! MetaTileEntity =
 behavior.tricorder.debug_machine_invalid_null=Неверный! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Средняя загрузка ЦП ~%sнс за %s тактов с худшим временем %sнс.
 behavior.tricorder.debug_lag_count=Вызвало %s предупреждений о задержке (все, что занимает больше времени, чем %sms) на сервере.
-
 metaitem.item_magnet.lv.name=Магнит (LV)
 metaitem.item_magnet.hv.name=Магнит (HV)
 behavior.item_magnet.enabled=§aМагнитное поле включено
 behavior.item_magnet.disabled=§cМагнитное поле отключено
-
 metaitem.terminal.name=Терминал
 metaitem.terminal.tooltip=Правильный инструмент для хорошей работы.
 metaitem.terminal.tooltip.creative=§bТворческий режим
 metaitem.terminal.tooltip.hardware=§aДополнений: %d
-
 metaitem.wireless.name=Беспроводной передатчик
 metaitem.camera.name=Камера
-
 metaitem.plugin.tooltips.1=Плагины могут быть добавлены на экран для большей функциональности.
 metaitem.plugin.proxy.tooltips.1=(Пожалуйста, настройте режим прокси на экране)
 metaitem.plugin.text.name=Текстовый плагин
@@ -1708,7 +1700,6 @@ metaitem.cover.digital.name=Цифровой интерфейс (улучшен�
 metaitem.cover.digital.wireless.name=Беспроводной цифровой интерфейс(улучшение)
 metaitem.coloured.leds.name=Цветные светодиоды
 metaitem.display.name=Дисплей
-
 tile.casing.ulv=Корпус машины (§8ULV§r)
 tile.casing.lv=Корпус машины (§7LV§r)
 tile.casing.mv=Корпус машины (§bMV§r)
@@ -1912,7 +1903,6 @@ gregtech.machine.steam_alloy_smelter_steel.name=Паровая печь для �
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=Требуются легковоспламеняющиеся жидкости
-
 gregtech.machine.combustion_generator.lv.name=Обычный дизельный генератор
 gregtech.machine.combustion_generator.mv.name=Улучшенный дизельный генератор
 gregtech.machine.combustion_generator.hv.name=Улучшенный дизельный генератор II
@@ -1979,7 +1969,6 @@ gregtech.machine.arc_furnace.uxv.name=Высокотехнологичная д�
 gregtech.machine.arc_furnace.uxv.tooltip=Нагреватель короткого замыкания
 gregtech.machine.arc_furnace.opv.name=Идеальная дуговая печь
 gregtech.machine.arc_furnace.opv.tooltip=Нагреватель короткого замыкания
-
 gregtech.machine.arc_furnace.lv.name=Обычная дуговая печь
 gregtech.machine.arc_furnace.mv.name=Улучшенная дуговая печь
 gregtech.machine.arc_furnace.hv.name=Улучшенная дуговая печь II
@@ -2012,7 +2001,6 @@ gregtech.machine.autoclave.uxv.name=Высокотехнологичный ав�
 gregtech.machine.autoclave.uxv.tooltip=Единица ограничения IV
 gregtech.machine.autoclave.opv.name=Идеальный автоклав
 gregtech.machine.autoclave.opv.tooltip=Единица ограничения
-
 gregtech.machine.assembler.lv.name=Обычная сборочная машина
 gregtech.machine.assembler.mv.name=Улучшенная сборочная машина
 gregtech.machine.assembler.hv.name=Улучшенная сборочная машина II
@@ -2182,7 +2170,7 @@ gregtech.machine.circuit_assembler.opv.tooltip=Высокотехнологич�
 
 # Mass Fabricator
 gregtech.machine.mass_fabricator.lv.name=Обычный генератор материи
-gregtech.machine.mass_fabricator.lv.tooltip= Материя * Фабрикация в квадрате
+gregtech.machine.mass_fabricator.lv.tooltip=Материя * Фабрикация в квадрате
 gregtech.machine.mass_fabricator.mv.name=Улучшенный генератор материи
 gregtech.machine.mass_fabricator.mv.tooltip=UUM = Материя * Фабрикация в квадрате
 gregtech.machine.mass_fabricator.hv.name=Улучшенный генератор материи II
@@ -2263,7 +2251,6 @@ gregtech.machine.scanner.uxv.name=Высокотехнологичный ска�
 gregtech.machine.scanner.uxv.tooltip=Электронный микроскоп
 gregtech.machine.scanner.opv.name=Идеальный сканнер
 gregtech.machine.scanner.opv.tooltip=Электронный микроскоп
-
 gregtech.machine.infinite_energy.name=Креативный источник GT энергии
 gregtech.machine.infinite_energy.tooltip=§8Для использования нужен §o§5К§dр§4е§cа§eт§aи§bв
 gregtech.machine.creative_chest.name=Креативный квантовый сундук
@@ -2485,8 +2472,8 @@ gregtech.machine.world_accelerator.mode_entity=RT Режим
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
-gregtech.machine.muffle.on= Глушение звука: Включено
-gregtech.machine.muffle.off= Глушение звука: Выключено
+gregtech.machine.muffle.on=Глушение звука: Включено
+gregtech.machine.muffle.off=Глушение звука: Выключено
 gregtech.machine.perfect_oc=Не теряет энергоэффективности при разгоне.
 gregtech.machine.parallel_limit=Можно запустить до §b%d§r§7 рецептов одновременно.
 
@@ -5794,3 +5781,39 @@ gregtech.cover.energy_detector.message_electricity_storage_normal=Монитор
 gregtech.cover.item_detector.message_item_storage_inverted=Мониторинг за инвертированным хранилищем
 gregtech.cover.activity_detector_advanced.message_activity_normal=Мониторинг за состоянием прогресса
 gregtech.creative.activity.on=Включить
+metaitem.fluid_cell.glass_vial.name=Пробирка (%s)
+metaitem.battery.charge_unit.second=сек.
+metaitem.battery.charge_unit.hour=ч.
+metaitem.board.multilayer.fiber_reinforced.tooltip=Превосходная плата
+material.tantalite=Танталит
+material.silicon_dioxide=Диоксид кремния
+material.soapstone=Мыльный камень
+material.spodumene=Сподумен
+material.nitrogen_dioxide=Диоксид азота
+material.potassium_feldspar=Калиевый полевой шпат
+material.raw_rubber=Необработанная резина
+material.polycaprolactam=Поликапролактам
+material.talc=Тальк
+material.kyanite=Ционит
+material.steam=Пар
+material.magnesium_chloride=Хлорид магния
+material.titanium_tetrachloride=Тетрахлорид титана
+death.attack.chemical=%s попал в химический инцидент
+gregtech.top.energy_consumption=Использует:
+gregtech.top.energy_production=Производит:
+gregtech.top.primitive_pump_production=Производит:
+metaitem.battery.charge_unit.minute=мин.
+material.realgar=Реальгар
+material.bastnasite=Бастнезит
+material.pentlandite=Пентландит
+material.lepidolite=Лепидолит
+material.glauconite_sand=Глауконитовый песок
+material.malachite=Малахит
+material.mica=Слюда
+material.barite=Барит
+material.alunite=Алунит
+material.iron_magnetic=Магнитное железо
+material.carbon_dioxide=Двуокись углерода
+material.sulfuric_acid=Серная кислота
+material.glyceryl_trinitrate=Глицерил тринитрат
+material.plastic=Полиэтилен
