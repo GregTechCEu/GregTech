@@ -60,7 +60,7 @@ public class SimpleFluidFilter extends FluidFilter {
         MultiChildWidget widget = new MultiChildWidget()
                 .addChild(createBlacklistButton(player));
         for (int i = 0; i < 9; i++) {
-            widget.addChild(FluidSlotWidget.phantom(tanks[i], true)
+            widget.addChild(FluidSlotWidget.phantom(tanks[i], false)
                     .setTicker(controlsAmountHandler)
                     .setPos(i % 3 * 18, i / 3 * 18));
         }

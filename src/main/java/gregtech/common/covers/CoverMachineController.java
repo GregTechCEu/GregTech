@@ -150,8 +150,8 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
                 .widget(new CycleButtonWidget()
                         .setToggle(this::isInverted, this::setInverted)
                         .setTextureGetter(val -> Text.localised(val == 0 ? "cover.machine_controller.normal" : "cover.machine_controller.inverted").color(Color.WHITE.normal).shadow())
-                        .addTooltip(0, Text.localised("cover.machine_controller.inverted.description").color(Color.WHITE.normal).shadow())
-                        .addTooltip(1, Text.localised("cover.machine_controller.normal.description").color(Color.WHITE.normal).shadow())
+                        .addTooltip(1, Text.localised("cover.machine_controller.inverted.description").color(Color.WHITE.normal).shadow())
+                        .addTooltip(0, Text.localised("cover.machine_controller.normal.description").color(Color.WHITE.normal).shadow())
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .setSize(80, 18)
                         .setPos(48, 60));
