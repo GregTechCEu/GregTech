@@ -72,7 +72,7 @@ dependencies {
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
     "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
-    "compile"(files("etc/modularui-1.0.jar"))
+    "compile"(files("etc/modularui-1.0.1.jar"))
 
     "deobfCompile"("zone.rong:mixinbooter:4.2")
 
