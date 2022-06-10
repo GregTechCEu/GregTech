@@ -42,33 +42,9 @@ public class FluidFilterHolder extends FilterHolder<FluidStack, FluidFilter> {
     }
 
     public Widget createFilterUI(UIBuildContext buildContext, Consumer<Widget> controlsAmountHandler) {
+        Widget widget = createFilterUI(buildContext);
         buildContext.addSyncedWindow(1, player -> openFilterWindow(player, controlsAmountHandler));
-        return new MultiChildWidget()
-                .addChild(new TextWidget(Text.localised("cover.filter.label"))
-                        .setPos(0, 4))
-                .addChild(new SlotWidget(filterInventory, filterSlotIndex)
-                        .setFilter(item -> getFilterOf(item) != null)
-                        .setChangeListener(slotWidget -> {
-                            checkFilter(filterInventory.getStackInSlot(filterSlotIndex));
-                            if (!slotWidget.isClient()) {
-                                if (slotWidget.getContext().isWindowOpen(1)) {
-                                    slotWidget.getContext().closeWindow(1);
-                                }
-                                if (hasFilter()) {
-                                    slotWidget.getContext().openSyncedWindow(1);
-                                }
-                            }
-                        })
-                        .setPos(62, 0))
-                .addChild(new ButtonWidget()
-                        .setOnClick((clickData, widget) -> {
-                            if (!widget.isClient() && hasFilter())
-                                widget.getContext().openSyncedWindow(1);
-                        })
-                        .setTicker(widget -> widget.setEnabled(hasFilter()))
-                        .setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.filter.settings_open.label").color(Color.WHITE.normal).shadow())
-                        .setPos(82, 0)
-                        .setSize(80, 18));
+        return widget;
     }
 
     public ModularWindow openFilterWindow(EntityPlayer player, Consumer<Widget> controlsAmountHandler) {
