@@ -3,7 +3,11 @@ package gregtech.api.unification.material;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.unification.Element;
+import gregtech.api.unification.material.Material.MaterialInfo;
 import gregtech.api.unification.material.info.MaterialFlag;
+import gregtech.api.unification.material.info.MaterialFlags;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.enchantment.Enchantment;
@@ -17,6 +21,10 @@ public abstract class MaterialBuilder implements IMaterialBuilder {
     protected abstract <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, T property);
 
     protected abstract <T extends IMaterialProperty<T>> T getProperty(PropertyKey<T> key);
+
+    protected abstract MaterialInfo getMaterialInfo();
+
+    protected abstract MaterialFlags getMaterialFlags();
 
     protected <T extends IMaterialProperty<T>> T getOrDefaultProperty(PropertyKey<T> key) {
         T property = getProperty(key);
@@ -152,7 +160,27 @@ public abstract class MaterialBuilder implements IMaterialBuilder {
 
     @Override
     public IMaterialBuilder color(int color) {
-        return color(color, true);
+        getMaterialInfo().color = color;
+        return this;
+    }
+
+    @Override
+    public IMaterialBuilder color(int color, boolean hasFluidColor) {
+        getMaterialInfo().color = color;
+        getMaterialInfo().hasFluidColor = hasFluidColor;
+        return this;
+    }
+
+    @Override
+    public IMaterialBuilder colorAverage() {
+        getMaterialInfo().averageRGB = true;
+        return this;
+    }
+
+    @Override
+    public IMaterialBuilder iconSet(MaterialIconSet iconSet) {
+        getMaterialInfo().iconSet = iconSet;
+        return this;
     }
 
     @Override
@@ -176,10 +204,28 @@ public abstract class MaterialBuilder implements IMaterialBuilder {
     }
 
     @Override
+    public IMaterialBuilder components(ImmutableList<MaterialStack> components) {
+        getMaterialInfo().componentList = components;
+        return this;
+    }
+
+    @Override
     public IMaterialBuilder flags(Collection<MaterialFlag> f1, MaterialFlag... f2) {
         Collection<MaterialFlag> copy = new ArrayList<>(f1);
         Collections.addAll(copy, f2);
         return flags(copy.toArray(new MaterialFlag[0]));
+    }
+
+    @Override
+    public IMaterialBuilder flags(MaterialFlag... flags) {
+        getMaterialFlags().addFlags(flags);
+        return this;
+    }
+
+    @Override
+    public IMaterialBuilder element(Element element) {
+        getMaterialInfo().element = element;
+        return this;
     }
 
     @Override

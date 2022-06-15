@@ -357,16 +357,6 @@ public class Material implements Comparable<Material> {
         private final MaterialProperties properties;
         private final MaterialFlags flags;
 
-        /*
-         * The temporary list of components for this Material.
-         */
-        private List<MaterialStack> composition = new ArrayList<>();
-
-        /*
-         * Temporary value to use to determine how to calculate default RGB
-         */
-        private boolean averageRGB = false;
-
         /**
          * Constructs a {@link Material}. This Builder replaces the old constructors, and
          * no longer uses a class hierarchy, instead using a {@link MaterialProperties} system.
@@ -385,43 +375,6 @@ public class Material implements Comparable<Material> {
         }
 
         @Override
-        public Builder color(int color, boolean hasFluidColor) {
-            this.materialInfo.color = color;
-            this.materialInfo.hasFluidColor = hasFluidColor;
-            return this;
-        }
-
-        @Override
-        public Builder colorAverage() {
-            this.averageRGB = true;
-            return this;
-        }
-
-        @Override
-        public Builder iconSet(MaterialIconSet iconSet) {
-            materialInfo.iconSet = iconSet;
-            return this;
-        }
-
-        @Override
-        public Builder components(ImmutableList<MaterialStack> components) {
-            composition = components;
-            return this;
-        }
-
-        @Override
-        public Builder flags(MaterialFlag... flags) {
-            this.flags.addFlags(flags);
-            return this;
-        }
-
-        @Override
-        public Builder element(Element element) {
-            this.materialInfo.element = element;
-            return this;
-        }
-
-        @Override
         protected <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, T property) {
             properties.setProperty(key, property);
         }
@@ -432,9 +385,18 @@ public class Material implements Comparable<Material> {
         }
 
         @Override
+        protected MaterialInfo getMaterialInfo() {
+            return materialInfo;
+        }
+
+        @Override
+        protected MaterialFlags getMaterialFlags() {
+            return flags;
+        }
+
+        @Override
         public Material build() {
-            materialInfo.componentList = ImmutableList.copyOf(composition);
-            materialInfo.verifyInfo(properties, averageRGB);
+            materialInfo.verifyInfo(properties);
             return new Material(materialInfo, properties, flags);
         }
     }
@@ -449,47 +411,8 @@ public class Material implements Comparable<Material> {
 
         private final Material material;
 
-        private boolean reaverageColor = false;
-
         public Rebuilder(Material material) {
             this.material = material;
-        }
-
-        @Override
-        public Rebuilder color(int color, boolean hasFluidColor) {
-            material.setMaterialRGB(color);
-            material.materialInfo.hasFluidColor = hasFluidColor;
-            return this;
-        }
-
-        @Override
-        public Rebuilder colorAverage() {
-            reaverageColor = true;
-            return this;
-        }
-
-        @Override
-        public Rebuilder iconSet(MaterialIconSet iconSet) {
-            material.materialInfo.iconSet = iconSet;
-            return this;
-        }
-
-        @Override
-        public IMaterialBuilder components(ImmutableList<MaterialStack> components) {
-            material.materialInfo.componentList = components;
-            return this;
-        }
-
-        @Override
-        public Rebuilder flags(MaterialFlag... flags) {
-            material.addFlags(flags);
-            return this;
-        }
-
-        @Override
-        public Rebuilder element(Element element) {
-            material.materialInfo.element = element;
-            return this;
         }
 
         @Override
@@ -503,8 +426,19 @@ public class Material implements Comparable<Material> {
         }
 
         @Override
+        protected MaterialInfo getMaterialInfo() {
+            return material.materialInfo;
+        }
+
+        @Override
+        protected MaterialFlags getMaterialFlags() {
+            return material.flags;
+        }
+
+        @Override
         public Material build() {
-            material.materialInfo.verifyInfo(material.properties, reaverageColor);
+            material.materialInfo.verifyInfo(material.properties);
+            material.verifyMaterial();
             return material;
         }
     }
@@ -512,34 +446,34 @@ public class Material implements Comparable<Material> {
     /**
      * Holds the basic info for a Material, like the name, color, id, etc..
      */
-    private static class MaterialInfo {
+    protected static class MaterialInfo {
         /**
          * The unlocalized name of this Material.
          * <p>
          * Required.
          */
-        private final String name;
+        protected final String name;
 
         /**
          * The MetaItem ID of this Material.
          * <p>
          * Required.
          */
-        private final int metaItemSubId;
+        protected final int metaItemSubId;
 
         /**
          * The color of this Material.
          * <p>
          * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
          */
-        private int color = -1;
+        protected int color = -1;
 
         /**
          * The color of this Material.
          * <p>
          * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
          */
-        private boolean hasFluidColor = true;
+        protected boolean hasFluidColor = true;
 
         /**
          * The IconSet of this Material.
@@ -548,21 +482,23 @@ public class Material implements Comparable<Material> {
          * - DULL if has DustProperty or IngotProperty.
          * - FLUID or GAS if only has FluidProperty or PlasmaProperty, depending on {@link FluidType}.
          */
-        private MaterialIconSet iconSet;
+        protected MaterialIconSet iconSet;
 
         /**
          * The components of this Material.
          * <p>
          * Default: none.
          */
-        private ImmutableList<MaterialStack> componentList;
+        protected ImmutableList<MaterialStack> componentList;
 
         /**
          * The Element of this Material, if it is a direct Element.
          * <p>
          * Default: none.
          */
-        private Element element;
+        protected Element element;
+
+        protected boolean averageRGB = false;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
@@ -571,7 +507,7 @@ public class Material implements Comparable<Material> {
             this.name = name;
         }
 
-        private void verifyInfo(MaterialProperties p, boolean averageRGB) {
+        private void verifyInfo(MaterialProperties p) {
 
             // Verify IconSet
             if (iconSet == null) {
