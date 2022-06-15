@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -14,6 +15,7 @@ import gregtech.common.items.armor.IStepAssist;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -50,6 +52,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
@@ -252,6 +256,20 @@ public class EventHandlers {
     public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
         if (ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
             event.setBurnTime(6400);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockHarvestEvent(BlockEvent.HarvestDropsEvent event) {
+
+        IBlockState state = event.getState();
+
+        if(state.getProperties().containsKey(VariantActiveBlock.ACTIVE) && state.getValue(VariantActiveBlock.ACTIVE)) {
+            List<ItemStack> drops = event.getDrops();
+            drops.clear();
+
+            IBlockState newState = state.withProperty(VariantActiveBlock.ACTIVE, false);
+            drops.add(GTUtility.toItem(newState, 1));
         }
     }
 }
