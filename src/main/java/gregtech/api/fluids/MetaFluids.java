@@ -6,6 +6,7 @@ import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.FluidProperty;
@@ -21,7 +22,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -238,13 +238,17 @@ public class MetaFluids {
             // create the new fluid
             fluid = new MaterialFluid(fluidName, material, fluidType, textureLocation);
             fluid.setTemperature(temperature);
-            if (material.hasFluidColor())
+            if (material.hasFluidColor()) {
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
-            else
+            } else {
                 fluid.setColor(0xFFFFFFFF);
+            }
 
             // set properties and register
             FluidType.setFluidProperties(fluidType, fluid);
+
+            if (material.hasFlag(MaterialFlags.STICKY)) fluid.setViscosity(2000);
+
             ((MaterialFluid) fluid).registerFluidTooltip();
             FluidRegistry.registerFluid(fluid);
         }
@@ -254,7 +258,9 @@ public class MetaFluids {
 
         // generate fluid blocks if the material has one, and the current state being handled is not plasma
         if (generateBlock && fluid.getBlock() == null && fluidType != FluidTypes.PLASMA) {
-            BlockFluidBase fluidBlock = new BlockFluidClassic(fluid, net.minecraft.block.material.Material.WATER);
+            GTFluidMaterial fluidMaterial = new GTFluidMaterial(GTUtility.getMapColor(material.getMaterialRGB()), material.hasFlag(MaterialFlags.STICKY));
+
+            BlockFluidBase fluidBlock = new MaterialFluidBlock(fluid, fluidMaterial, material);
             fluidBlock.setRegistryName("fluid." + materialName);
             MetaBlocks.FLUID_BLOCKS.add(fluidBlock);
         }
