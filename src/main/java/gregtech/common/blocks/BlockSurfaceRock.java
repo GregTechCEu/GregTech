@@ -6,6 +6,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -71,7 +72,7 @@ public class BlockSurfaceRock extends DelayedStateBlock {
     }
 
     public ItemStack getItem(IBlockState blockState) {
-        return new ItemStack(this, 1, getMetaFromState(blockState));
+        return GTUtility.toItem(blockState);
     }
 
     public ItemStack getItem(Material material) {
