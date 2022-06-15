@@ -37,11 +37,9 @@ import java.util.List;
 public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int FLUID_TANK_SIZE = 1000;
-    private final FluidTank waterTank;
 
     public MetaTileEntityPumpHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 0);
-        this.waterTank = new FluidTank(FLUID_TANK_SIZE);
         initializeInventory();
     }
 
@@ -75,13 +73,8 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false);
-    }
-
-    @Override
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, waterTank);
+        return new FluidTankList(false, new FluidTank(FLUID_TANK_SIZE));
     }
 
     @Override
@@ -106,12 +99,12 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(waterTank);
+        abilityList.add(exportFluids.getTankAt(0));
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createTankUI(waterTank, getMetaFullName(), entityPlayer)
+        return createTankUI(exportFluids.getTankAt(0), getMetaFullName(), entityPlayer)
                 .build(getHolder(), entityPlayer);
     }
 

@@ -316,8 +316,8 @@ public class MinerLogic {
                     // check every block along the x-axis
                     if (x.get() <= startX.get() + currentRadius * 2) {
                         BlockPos blockPos = new BlockPos(x.get(), y.get(), z.get());
-                        Block block = metaTileEntity.getWorld().getBlockState(blockPos).getBlock();
-                        if (block.blockHardness >= 0 && metaTileEntity.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(block)) {
+                        IBlockState state = metaTileEntity.getWorld().getBlockState(blockPos);
+                        if (state.getBlock().blockHardness >= 0 && metaTileEntity.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(GTUtility.toItem(state))) {
                             blocks.addLast(blockPos);
                         }
                         // move to the next x position
@@ -360,7 +360,7 @@ public class MinerLogic {
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
     protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
-        ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+        ItemStack itemStack = GTUtility.toItem(blockState);
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();

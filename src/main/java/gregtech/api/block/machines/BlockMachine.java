@@ -1,13 +1,13 @@
 package gregtech.api.block.machines;
 
-import codechicken.lib.block.property.unlisted.UnlistedIntegerProperty;
-import codechicken.lib.block.property.unlisted.UnlistedStringProperty;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
+import gregtech.api.block.UnlistedIntegerProperty;
+import gregtech.api.block.UnlistedStringProperty;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.IWrenchItem;

@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.IBlockOre;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
@@ -116,7 +117,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     }
 
     public ItemStack getItem(IBlockState blockState) {
-        return new ItemStack(this, 1, getMetaFromState(blockState));
+        return GTUtility.toItem(blockState);
     }
 
     @Override
