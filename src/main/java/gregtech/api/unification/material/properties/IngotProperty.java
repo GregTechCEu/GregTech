@@ -61,11 +61,6 @@ public class IngotProperty implements IMaterialProperty<IngotProperty> {
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.DUST, true);
-        if (properties.hasProperty(PropertyKey.GEM)) {
-            throw new IllegalStateException(
-                    "Material " + properties.getMaterial() +
-                            " has both Ingot and Gem Property, which is not allowed!");
-        }
 
         if (smeltInto == null) smeltInto = properties.getMaterial();
         else smeltInto.getProperties().ensureSet(PropertyKey.INGOT, true);

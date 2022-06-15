@@ -15,7 +15,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * <p>
      * Default: none, meaning only this property's Material.
      */
-    //@ZenProperty
     private final List<Material> oreByProducts = new ArrayList<>();
 
     /**
@@ -23,7 +22,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * <p>
      * Default: 1 (no multiplier).
      */
-    //@ZenProperty
     private int oreMultiplier;
 
     /**
@@ -31,7 +29,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * <p>
      * Default: 1 (no multiplier).
      */
-    //@ZenProperty
     private int byProductMultiplier;
 
     /**
@@ -39,7 +36,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * <p>
      * Default: false.
      */
-    //@ZenProperty
     private boolean emissive;
 
     /**
@@ -48,7 +44,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * Material will have a Dust Property.
      * Default: none.
      */
-    //@ZenProperty
     @Nullable
     private Material directSmeltResult;
 
@@ -58,7 +53,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * Material will have a Fluid Property.
      * Default: none.
      */
-    //@ZenProperty
     @Nullable
     private Material washedIn;
 
@@ -78,7 +72,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * Material will have a Dust Property.
      * Default: none.
      */
-    //@ZenProperty
     private final List<Material> separatedInto = new ArrayList<>();
 
     public OreProperty(int oreMultiplier, int byProductMultiplier) {

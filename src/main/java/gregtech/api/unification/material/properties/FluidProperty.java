@@ -17,7 +17,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
      */
     private Fluid fluid;
 
-    private final FluidType fluidType;
+    private FluidType fluidType;
 
     private boolean hasBlock;
     private boolean isGas;
@@ -88,6 +88,10 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     @Nonnull
     public FluidType getFluidType() {
         return this.fluidType;
+    }
+
+    public void setFluidType(FluidType type) {
+        this.fluidType = type;
     }
 
     @Override
