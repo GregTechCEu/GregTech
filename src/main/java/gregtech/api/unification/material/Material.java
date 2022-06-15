@@ -489,7 +489,7 @@ public class Material implements Comparable<Material> {
          * <p>
          * Default: none.
          */
-        protected ImmutableList<MaterialStack> componentList;
+        protected ImmutableList<MaterialStack> componentList = ImmutableList.of();
 
         /**
          * The Element of this Material, if it is a direct Element.
