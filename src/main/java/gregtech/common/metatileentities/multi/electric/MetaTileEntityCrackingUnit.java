@@ -8,7 +8,6 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -110,17 +109,14 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected int[] performOverclocking(Recipe recipe) {
-            int[] overclock = super.performOverclocking(recipe);
+        protected void performNonOverclockBonuses(int[] resultOverclock) {
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
             if (coilTier <= 0)
-                return overclock;
+                return;
 
-            overclock[0] *= 1.0f - coilTier * 0.1; // each coil above cupronickel (coilTier = 0) uses 10% less energy
-            overclock[0] = Math.max(1, overclock[0]);
-
-            return overclock;
+            resultOverclock[0] *= 1.0f - coilTier * 0.1; // each coil above cupronickel (coilTier = 0) uses 10% less energy
+            resultOverclock[0] = Math.max(1, resultOverclock[0]);
         }
     }
 }
