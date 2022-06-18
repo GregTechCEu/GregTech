@@ -87,7 +87,7 @@ public class SimpleFluidFilter extends FluidFilter {
             }
         } else if (nbt.hasKey("FluidFilter")) {
             // legacy
-            NBTTagList list = nbt.getTagList("FilterSlots", Constants.NBT.TAG_COMPOUND);
+            NBTTagList list = nbt.getTagList("FluidFilter", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.tagCount(); i++) {
                 tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
             }
