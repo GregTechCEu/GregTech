@@ -1361,7 +1361,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance, IEnergyContainer energyContainer) {
         World world = getWorld();
-        if (!world.isRemote && !getIsWeatherOrTerrainResistant() && energyContainer.getEnergyStored() != 0) {
+        if (!world.isRemote && ConfigHolder.machines.doTerrainExplosion && !getIsWeatherOrTerrainResistant() && energyContainer.getEnergyStored() != 0) {
             if (GTValues.RNG.nextInt(1000) == 0) {
                 for (EnumFacing side : EnumFacing.VALUES) {
                     Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
@@ -1386,7 +1386,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public void doExplosion(float explosionPower) {
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                explosionPower, ConfigHolder.machines.doExplosionDamagesTerrain);
+                explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
     }
 
     public void setOnFire(double additionalFireChance) {

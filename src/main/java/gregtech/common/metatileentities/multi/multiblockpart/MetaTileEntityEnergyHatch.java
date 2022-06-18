@@ -62,9 +62,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     @Override
     public void update() {
         super.update();
-        if (ConfigHolder.machines.doTerrainExplosion) {
-            checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
-        }
+        checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
     @Nonnull

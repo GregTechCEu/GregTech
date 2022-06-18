@@ -89,9 +89,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     @Override
     public void update() {
         super.update();
-        if (ConfigHolder.machines.doTerrainExplosion) {
-            checkWeatherOrTerrainExplosion(tier, tier * 10, energyContainer);
-        }
+        checkWeatherOrTerrainExplosion(tier, tier * 10, energyContainer);
     }
 
     /**

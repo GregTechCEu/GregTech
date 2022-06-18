@@ -76,7 +76,7 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether machines or boilers damage the terrain when they explode.",
                 "Note machines and boilers always explode when overloaded with power or met with special conditions, regardless of this config.", "Default: true"})
-        public boolean doExplosionDamagesTerrain = true;
+        public boolean doesExplosionDamagesTerrain = true;
 
         @Config.Comment({"Whether machines explode in rainy weather or when placed next to certain terrain, such as fire or lava", "Default: false"})
         public boolean doTerrainExplosion = false;
