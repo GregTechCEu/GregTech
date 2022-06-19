@@ -62,11 +62,12 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
         }
 
+        ItemFilterContainer filter = conveyor.getItemFilterContainer();
         if (conveyor instanceof CoverRoboticArm) {
             CoverRoboticArm roboticArm = (CoverRoboticArm) conveyor;
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, roboticArm.getItemFilterContainer().getTransferStackSize());
+            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(), filter.getFilterWrapper().getItemFilter() != null);
         }
-        itemFilterText(probeInfo, conveyor.getItemFilterContainer().getFilterWrapper().getItemFilter());
+        itemFilterText(probeInfo, filter.getFilterWrapper().getItemFilter());
     }
 
     /**
@@ -105,11 +106,12 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit, pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 : pump.getTransferRate());
         }
 
+        FluidFilterContainer filter = pump.getFluidFilterContainer();
         if (pump instanceof CoverFluidRegulator) {
             CoverFluidRegulator regulator = (CoverFluidRegulator) pump;
-            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount());
+            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filter.getFilterWrapper().getFluidFilter() != null);
         }
-        fluidFilterText(probeInfo, pump.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
+        fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
     }
 
     /**
@@ -172,10 +174,11 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param mode      the transfer mode of the cover
      * @param rateUnit  the unit of what is transferred
      * @param rate      the transfer rate of the mode
+     * @param hasFilter whether the cover has a filter installed
      */
-    private static void transferModeText(@Nonnull IProbeInfo probeInfo, @Nonnull TransferMode mode, @Nonnull String rateUnit, int rate) {
+    private static void transferModeText(@Nonnull IProbeInfo probeInfo, @Nonnull TransferMode mode, @Nonnull String rateUnit, int rate, boolean hasFilter) {
         String text = TextStyleClass.OK + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
-        if (mode != TransferMode.TRANSFER_ANY) text += TextStyleClass.LABEL + " " + rate + rateUnit;
+        if (!hasFilter && mode != TransferMode.TRANSFER_ANY) text += TextStyleClass.LABEL + " " + rate + rateUnit;
         probeInfo.text(text);
     }
 
