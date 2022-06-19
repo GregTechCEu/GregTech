@@ -75,6 +75,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     private IEnergyContainer energyContainer;
 
     private final CleanroomLogic cleanroomLogic;
+    private HashSet<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -119,6 +120,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         resetTileAbilities();
         this.cleanroomLogic.invalidate();
         this.cleanAmount = MIN_CLEAN_AMOUNT;
+        cleanroomReceivers.forEach(receiver -> receiver.setCleanroom(null));
+        cleanroomReceivers.clear();
     }
 
     @Override
@@ -280,8 +283,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
             // give the machine this cleanroom if it doesn't have this one
             ICleanroomReceiver cleanroomReceiver = (ICleanroomReceiver) metaTileEntity;
-            if (cleanroomReceiver.getCleanroom() != this)
+            if (cleanroomReceiver.getCleanroom() != this) {
                 cleanroomReceiver.setCleanroom(this);
+                cleanroomReceivers.add(cleanroomReceiver);
+            }
             return true;
         });
     }
