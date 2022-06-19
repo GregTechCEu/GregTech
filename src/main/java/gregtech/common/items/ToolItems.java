@@ -15,6 +15,7 @@ import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -333,8 +334,9 @@ public class ToolItems {
                 ToolHelper.applyHammerDropConversion(stack, event.getState(), event.getDrops(), event.getFortuneLevel(), event.getDropChance(), player.getRNG());
             }
             NBTTagCompound behaviourTag = ToolHelper.getBehavioursTag(stack);
-            if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && behaviourTag.getBoolean(ToolHelper.HARVEST_ICE_KEY)) {
-                Item iceBlock = Item.getItemFromBlock(Blocks.ICE);
+            Block block = event.getState().getBlock();
+            if (!event.isSilkTouching() && (block == Blocks.ICE || block == Blocks.PACKED_ICE) && behaviourTag.getBoolean(ToolHelper.HARVEST_ICE_KEY)) {
+                Item iceBlock = Item.getItemFromBlock(block);
                 if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
                     event.getDrops().add(new ItemStack(iceBlock));
                     final World world = event.getWorld();

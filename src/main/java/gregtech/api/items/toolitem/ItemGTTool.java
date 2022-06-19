@@ -3,6 +3,7 @@ package gregtech.api.items.toolitem;
 import com.google.common.collect.Multimap;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.LocalizationUtils;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -219,6 +220,12 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         definition$addInformation(stack, world, tooltip, flag);
+    }
+
+    @Override
+    public boolean canHarvestBlock(IBlockState state, ItemStack stack) {
+        Material material = state.getMaterial();
+        return super.canHarvestBlock(state, stack) || (toolClasses.contains(ToolClasses.PICKAXE) && material == Material.ANVIL);
     }
 
     public static class Builder extends ToolBuilder<ItemGTTool> {
