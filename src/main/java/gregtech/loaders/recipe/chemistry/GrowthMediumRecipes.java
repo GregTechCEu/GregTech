@@ -36,6 +36,7 @@ public class GrowthMediumRecipes {
                 .input(BIO_CHAFF, 4)
                 .fluidInputs(DistilledWater.getFluid(1000))
                 .fluidOutputs(Bacteria.getFluid(1000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Bacterial Sludge

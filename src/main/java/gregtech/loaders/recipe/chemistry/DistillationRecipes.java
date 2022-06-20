@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.items.MetaItems;
 
@@ -95,7 +94,6 @@ public class DistillationRecipes {
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SeedOil.getFluid(24))
                 .fluidOutputs(Lubricant.getFluid(12))
-                .cleanroom(CleanroomType.CLEANROOM)
                 .duration(16).EUt(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()

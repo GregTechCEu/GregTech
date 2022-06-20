@@ -543,8 +543,8 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.Titanium, 6).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TITANIUM_TURBINE_CASING, 2)).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.TungstenSteel, 6).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING, 2)).duration(50).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel).input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Concrete.getFluid(L)).outputs(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE, 2)).duration(200).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel).input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Glass.getFluid(L)).outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS, 2)).duration(200).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel).input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Concrete.getFluid(L)).outputs(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE, 2)).duration(100).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel).input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Glass.getFluid(L)).outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS, 2)).duration(100).buildAndRegister();
 
         // If these recipes are changed, change the values in MaterialInfoLoader.java
 
