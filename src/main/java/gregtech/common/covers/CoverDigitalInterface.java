@@ -19,8 +19,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.Position;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
@@ -212,7 +212,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public void onAttached(ItemStack itemStack) { // called when cover placed.
+    public void onAttached(ItemStack itemStack, EntityPlayer player) { // called when cover placed.
         if (getFluidCapability() != null) {
             fluids = new FluidTankProperties[getFluidCapability().getTankProperties().length];
             this.mode = MODE.FLUID;
@@ -224,6 +224,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         } else if (getMachineCapability() != null) {
             this.mode = MODE.MACHINE;
         }
+        this.spin = player.getHorizontalFacing();
     }
 
     @Override
@@ -302,6 +303,11 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             lastClickUUID = playerIn.getPersistentID();
             if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
                 if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+                    int maxSlotLimit = Integer.MAX_VALUE;
+                    if(this.coverHolder instanceof MetaTileEntity) {
+                        maxSlotLimit = this.mode == MODE.ITEM ? ((MetaTileEntity) this.coverHolder).getImportItems().getSlots() :
+                                ((MetaTileEntity) this.coverHolder).getImportFluids().getTanks();
+                    }
                     double x = 0;
                     double y = 1 - rayTraceResult.hitVec.y + rayTraceResult.getBlockPos().getY();
                     if (rayTraceResult.sideHit == EnumFacing.EAST) {
@@ -314,10 +320,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         x = 1 - rayTraceResult.hitVec.x + rayTraceResult.getBlockPos().getX();
                     }
                     if (1f / 16 < x && x < 4f / 16 && 1f / 16 < y && y < 4f / 16) {
-                        this.setMode(this.slot - 1);
+                        this.setMode(this.slot - 1 >= 0 ? this.slot - 1 : maxSlotLimit);
                         return EnumActionResult.SUCCESS;
                     } else if (12f / 16 < x && x < 15f / 16 && 1f / 16 < y && y < 4f / 16) {
-                        this.setMode(this.slot + 1);
+                        this.setMode(this.slot + 1 >= maxSlotLimit ? 0 : this.slot + 1);
                         return EnumActionResult.SUCCESS;
                     }
                 }
@@ -543,6 +549,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         if (this.mode == MODE.ENERGY || (mode == MODE.PROXY && proxyMode[2] > 0)) {
             IEnergyContainer energyContainer = this.getEnergyCapability();
             if (energyContainer != null) {
+                // TODO, figure out what to do when values exceed Long.MAX_VALUE, ie with multiple Ultimate batteries
                 if (energyStored != energyContainer.getEnergyStored() || energyCapability != energyContainer.getEnergyCapacity()) {
                     energyStored = energyContainer.getEnergyStored();
                     energyCapability = energyContainer.getEnergyCapacity();
@@ -981,7 +988,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         RenderUtil.renderLineChart(outputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFFFF2F39);
         RenderUtil.renderText(-5.7f / 16, -2.3f / 16, 0, 1.0f / 270, 0XFF03FF00, "EU I: " + energyInputPerDur + "EU/s", false);
         RenderUtil.renderText(-5.7f / 16, -1.6f / 16, 0, 1.0f / 270, 0XFFFF0000, "EU O: " + energyOutputPerDur + "EU/s", false);
-        RenderUtil.renderRect(-7f / 16, -7f / 16, energyStored * 14f / (energyCapability * 16), 3f / 16, 0.002f, 0XFFFFD817);
+        // Bandaid fix to prevent overflowing renders when dealing with items that cause long overflow, ie Ultimate Battery
+        RenderUtil.renderRect(-7f / 16, -7f / 16, Math.max(0, energyStored * 14f / (energyCapability * 16)), 3f / 16, 0.002f, 0XFFFFD817);
         RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(energyStored, MODE.ENERGY), true);
     }
 
