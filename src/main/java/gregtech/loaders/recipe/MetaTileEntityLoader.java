@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
@@ -171,6 +172,9 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "maintenance_hatch_cleaning", MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm(), "CMC", "RHR", "WCW", 'C', CIRCUIT.getIngredient(GTValues.UV), 'M', MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), 'R', ROBOT_ARM.getIngredient(GTValues.UV), 'H', MetaTileEntities.HULL[GTValues.UV].getStackForm(), 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate));
 
         ModHandler.addShapedRecipe(true, "machine_access_interface", MetaTileEntities.MACHINE_HATCH.getStackForm(), "CHS", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'H', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'S', MetaItems.SENSOR_IV.getStackForm());
+
+        ModHandler.addShapedRecipe(true, "passthrough_hatch_item", MetaTileEntities.PASSTHROUGH_HATCH_ITEM.getStackForm(), " C ", "GHG", " S ", 'C', MetaItems.CONVEYOR_MODULE_HV.getStackForm(), 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Steel), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'S', new ItemStack(Blocks.CHEST));
+        ModHandler.addShapedRecipe(true, "passthrough_hatch_fluid", MetaTileEntities.PASSTHROUGH_HATCH_FLUID.getStackForm(), " C ", "GHG", " S ", 'C', MetaItems.ELECTRIC_PUMP_HV.getStackForm(), 'G', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Steel), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'S', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS));
 
         // STEAM MACHINES
         ModHandler.addShapedRecipe(true, "bronze_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), "PPP", "PhP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze));

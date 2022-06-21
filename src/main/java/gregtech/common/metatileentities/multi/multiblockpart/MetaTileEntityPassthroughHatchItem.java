@@ -25,8 +25,6 @@ import java.util.List;
 
 public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart {
 
-    private static final int INVENTORY_SIZE = 16;
-
     private ItemStackHandler itemStackHandler;
 
     public MetaTileEntityPassthroughHatchItem(ResourceLocation metaTileEntityId, int tier) {
@@ -42,7 +40,12 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        itemInventory = itemStackHandler = new ItemStackHandler(INVENTORY_SIZE);
+        itemInventory = itemStackHandler = new ItemStackHandler(getInventorySize());
+    }
+
+    private int getInventorySize() {
+        int sizeRoot = 1 + Math.min(9, getTier());
+        return sizeRoot * sizeRoot;
     }
 
     @Override
@@ -70,17 +73,17 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(INVENTORY_SIZE, getController(), true);
+        return new NotifiableItemStackHandler(getInventorySize(), getController(), true);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(INVENTORY_SIZE, getController(), false);
+        return new NotifiableItemStackHandler(getInventorySize(), getController(), false);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(INVENTORY_SIZE);
+        int rowSize = (int) Math.sqrt(getInventorySize());
         return createUITemplate(entityPlayer, rowSize)
                 .build(getHolder(), entityPlayer);
     }
@@ -126,7 +129,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", INVENTORY_SIZE));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 }
