@@ -45,7 +45,7 @@ public class WoodMachineRecipes {
             IRecipe outputRecipe = outputPair.getKey();
 
             //wood nerf
-            if (ConfigHolder.recipes.WoodCraftingNumber != 4) {
+            if (ConfigHolder.recipes.WoodCraftingNumber < 4) {
                 //remove the old recipe
                 ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
 

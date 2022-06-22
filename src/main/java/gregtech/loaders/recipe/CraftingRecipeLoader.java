@@ -78,12 +78,15 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("clipboard", CLIPBOARD.getStackForm(), " Sd", "BWR", "PPP", 'P', Items.PAPER, 'R', new UnificationEntry(OrePrefix.springSmall, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S', new UnificationEntry(OrePrefix.screw, Iron), 'W', new UnificationEntry(OrePrefix.plate, Wood));
 
-        ModHandler.addShapelessRecipe("rubber_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, 4), new ItemStack(MetaBlocks.RUBBER_LOG));
+        if(ConfigHolder.recipes.WoodCraftingNumber > 0)
+            ModHandler.addShapelessRecipe("rubber_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.WoodCraftingNumber), new ItemStack(MetaBlocks.RUBBER_LOG));
         ModHandler.addShapedRecipe("treated_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK, 8), "PPP", "PBP", "PPP", 'P', "plankWood", 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
-        if (ConfigHolder.recipes.WoodCraftingNumber > 0)
-            ModHandler.addShapedRecipe("treated_wood_stick_saw", OreDictUnifier.get(OrePrefix.stick, TreatedWood, (int) (ConfigHolder.recipes.WoodCraftingNumber * 1.5)), "s", "L", "L", 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
-        if (ConfigHolder.recipes.WoodCraftingNumber >= 4)
+        if (ConfigHolder.recipes.WoodCraftingNumber == 4){
             ModHandler.addShapedRecipe("treated_wood_stick", OreDictUnifier.get(OrePrefix.stick, TreatedWood, ConfigHolder.recipes.WoodCraftingNumber), "L", "L", 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
+            ModHandler.addShapedRecipe("treated_wood_stick_saw", OreDictUnifier.get(OrePrefix.stick, TreatedWood, (int)(ConfigHolder.recipes.WoodCraftingNumber * 1.5)), "s", "L", "L", 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
+        }
+        else if (ConfigHolder.recipes.WoodCraftingNumber > 0)
+            ModHandler.addShapedRecipe("treated_wood_stick_saw", OreDictUnifier.get(OrePrefix.stick, TreatedWood, ConfigHolder.recipes.WoodCraftingNumber), "s", "L", "L", 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
 
         ModHandler.addShapedRecipe("rubber_ring", OreDictUnifier.get(OrePrefix.ring, Materials.Rubber), "k", "X", 'X', new UnificationEntry(OrePrefix.plate, Materials.Rubber));
         ModHandler.addShapedRecipe("silicone_rubber_ring", OreDictUnifier.get(OrePrefix.ring, Materials.SiliconeRubber), "k", "P", 'P', OreDictUnifier.get(OrePrefix.plate, Materials.SiliconeRubber));

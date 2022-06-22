@@ -51,7 +51,7 @@ public class VanillaOverrideRecipes {
     }
 
     private static void woodRecipes() {
-        if (ConfigHolder.recipes.WoodCraftingNumber != 4) {
+        if (ConfigHolder.recipes.WoodCraftingNumber < 4) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stick"));
             if (ConfigHolder.recipes.WoodCraftingNumber > 0) {
                 ModHandler.addShapedRecipe("stick_saw", new ItemStack(Items.STICK, (int) (ConfigHolder.recipes.WoodCraftingNumber * 1.5)), "s", "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));

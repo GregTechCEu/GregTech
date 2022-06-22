@@ -137,7 +137,7 @@ public class ConfigHolder {
         public boolean hardGlassRecipes = true;
 
         @Config.Comment({"Whether to nerf/Buff Wood crafting to X Planks from 1 Log, and X Sticks from 2 Planks.", "Default: 4"})
-        @Config.RangeInt(min = 0, max = 42)
+        @Config.RangeInt(min = 0, max = 4)
         public int WoodCraftingNumber = 4;
 
         @Config.Comment({"Whether to nerf the Paper crafting recipe.", "Default: true"})
