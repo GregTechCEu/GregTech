@@ -21,8 +21,8 @@ import gregtech.client.renderer.handler.MetaTileEntityTESR;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.common.blocks.foam.BlockFoam;
-import gregtech.common.blocks.foam.BlockPetrifiedFoam;
+import gregtech.common.blocks.foam.BlockConstructionFoam;
+import gregtech.common.blocks.foam.BlockConstructionFoamWet;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberLeaves;
 import gregtech.common.blocks.wood.BlockRubberLog;
@@ -113,10 +113,8 @@ public class MetaBlocks {
     public static BlockStoneWindmillB STONE_WINDMILL_B;
     public static BlockStoneBricksSquare STONE_BRICKS_SQUARE;
 
-    public static BlockFoam FOAM;
-    public static BlockFoam REINFORCED_FOAM;
-    public static BlockPetrifiedFoam PETRIFIED_FOAM;
-    public static BlockPetrifiedFoam REINFORCED_PETRIFIED_FOAM;
+    public static BlockConstructionFoamWet CONSTRUCTION_FOAM_WET;
+    public static BlockConstructionFoam CONSTRUCTION_FOAM;
 
     public static BlockRubberLog RUBBER_LOG;
     public static BlockRubberLeaves RUBBER_LEAVES;
@@ -205,14 +203,10 @@ public class MetaBlocks {
         STONE_BRICKS_SQUARE = new BlockStoneBricksSquare();
         STONE_BRICKS_SQUARE.setRegistryName("stone_bricks_square");
 
-        FOAM = new BlockFoam(false);
-        FOAM.setRegistryName("foam");
-        REINFORCED_FOAM = new BlockFoam(true);
-        REINFORCED_FOAM.setRegistryName("reinforced_foam");
-        PETRIFIED_FOAM = new BlockPetrifiedFoam(false);
-        PETRIFIED_FOAM.setRegistryName("petrified_foam");
-        REINFORCED_PETRIFIED_FOAM = new BlockPetrifiedFoam(true);
-        REINFORCED_PETRIFIED_FOAM.setRegistryName("reinforced_petrified_foam");
+        CONSTRUCTION_FOAM_WET = new BlockConstructionFoamWet();
+        CONSTRUCTION_FOAM_WET.setRegistryName("construction_foam_wet");
+        CONSTRUCTION_FOAM = new BlockConstructionFoam();
+        CONSTRUCTION_FOAM.setRegistryName("construction_foam");
 
         RUBBER_LOG = new BlockRubberLog();
         RUBBER_LOG.setRegistryName("rubber_log");
@@ -343,12 +337,24 @@ public class MetaBlocks {
         registerItemModel(STONE_WINDMILL_A);
         registerItemModel(STONE_WINDMILL_B);
         registerItemModel(STONE_BRICKS_SQUARE);
+        registerItemModel(PLANKS);
         registerItemModelWithOverride(RUBBER_LOG, ImmutableMap.of(BlockRubberLog.LOG_AXIS, EnumAxis.Y));
         registerItemModel(RUBBER_LEAVES);
         registerItemModel(RUBBER_SAPLING);
+        //noinspection ConstantConditions
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
-        registerItemModel(PLANKS);
+
+        registerItemModel(CONSTRUCTION_FOAM_WET);
+        registerItemModel(CONSTRUCTION_FOAM);
+        for (int i = 0; i < 16; i++) {
+            //noinspection ConstantConditions
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(CONSTRUCTION_FOAM_WET), i,
+                    new ModelResourceLocation(CONSTRUCTION_FOAM_WET.getRegistryName(), "inventory"));
+            //noinspection ConstantConditions
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(CONSTRUCTION_FOAM), i,
+                    new ModelResourceLocation(CONSTRUCTION_FOAM.getRegistryName(), "inventory"));
+        }
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
@@ -408,10 +414,8 @@ public class MetaBlocks {
             }
         };
 
-        ModelLoader.setCustomStateMapper(FOAM, normalStateMapper);
-        ModelLoader.setCustomStateMapper(REINFORCED_FOAM, normalStateMapper);
-        ModelLoader.setCustomStateMapper(PETRIFIED_FOAM, normalStateMapper);
-        ModelLoader.setCustomStateMapper(REINFORCED_PETRIFIED_FOAM, normalStateMapper);
+        ModelLoader.setCustomStateMapper(CONSTRUCTION_FOAM_WET, normalStateMapper);
+        ModelLoader.setCustomStateMapper(CONSTRUCTION_FOAM, normalStateMapper);
 
         BakedModelHandler modelHandler = new BakedModelHandler();
         MinecraftForge.EVENT_BUS.register(modelHandler);
@@ -422,8 +426,7 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerColors() {
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
-                FOAM_BLOCK_COLOR, FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(FOAM_BLOCK_COLOR, CONSTRUCTION_FOAM, CONSTRUCTION_FOAM_WET);
 
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(RUBBER_LEAVES_BLOCK_COLOR, RUBBER_LEAVES);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(RUBBER_LEAVES_ITEM_COLOR, RUBBER_LEAVES);

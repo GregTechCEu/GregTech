@@ -119,10 +119,6 @@ public class CommonProxy {
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
 
         registry.register(HERMETIC_CASING);
-        registry.register(FOAM);
-        registry.register(REINFORCED_FOAM);
-        registry.register(PETRIFIED_FOAM);
-        registry.register(REINFORCED_PETRIFIED_FOAM);
         registry.register(BOILER_CASING);
         registry.register(BOILER_FIREBOX_CASING);
         registry.register(METAL_CASING);
@@ -154,6 +150,8 @@ public class CommonProxy {
         registry.register(RUBBER_LEAVES);
         registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
+        registry.register(CONSTRUCTION_FOAM_WET);
+        registry.register(CONSTRUCTION_FOAM);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
@@ -242,6 +240,8 @@ public class CommonProxy {
         registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
         registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
+        registry.register(createItemBlock(CONSTRUCTION_FOAM_WET, ItemBlock::new));
+        registry.register(createItemBlock(CONSTRUCTION_FOAM, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));

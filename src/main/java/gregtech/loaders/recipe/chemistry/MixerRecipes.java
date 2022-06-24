@@ -91,10 +91,11 @@ public class MixerRecipes {
                 .duration(40).EUt(16).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-                .fluidInputs(Concrete.getFluid(576))
-                .input(dust, RawRubber)
-                .fluidOutputs(ConstructionFoam.getFluid(8000))
-                .duration(20).EUt(16).buildAndRegister();
+                .input(dust, Stone)
+                .input(dust, SiliconDioxide, 3)
+                .fluidInputs(Water.getFluid(1000))
+                .fluidOutputs(ConstructionFoam.getFluid(1000))
+                .duration(40).EUt(16).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
                 .input(dust, Stone)

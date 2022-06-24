@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ColorSprayBehaviour extends AbstractUsableBehaviour {
@@ -39,7 +40,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(@Nonnull EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
@@ -164,6 +165,10 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
         }
 
         return false;
+    }
+
+    public EnumDyeColor getColor() {
+        return this.color;
     }
 
     @Override

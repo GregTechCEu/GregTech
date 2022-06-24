@@ -94,13 +94,6 @@ public class AssemblerRecipeLoader {
                 .output(SPRAY_EMPTY)
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plate, Tin, 6)
-                .input(SPRAY_EMPTY)
-                .input(paneGlass.name(), 1)
-                .output(FOAM_SPRAYER)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
-
         // Matches/lighters recipes
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(bolt, Wood)
