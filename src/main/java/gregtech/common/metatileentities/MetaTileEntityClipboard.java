@@ -255,7 +255,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        return;
     }
 
     @Override
