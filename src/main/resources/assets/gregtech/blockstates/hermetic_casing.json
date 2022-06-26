@@ -1,11 +1,14 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "gregtech:cube_bottom_top_tintindex",
+    "model": "gregtech:hermetic_casing",
     "textures": {
-      "bottom": "gregtech:blocks/rendering_error",
-      "top": "gregtech:blocks/rendering_error",
-      "side": "gregtech:blocks/rendering_error"
+      "bot_bottom": "#bottom",
+      "bot_top": "#top",
+      "bot_side": "#side",
+      "top_side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_overlay",
+      "top_bottom": "#bottom",
+      "top_top": "#top"
     }
   },
   "variants": {
@@ -14,63 +17,63 @@
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/lv/bottom",
           "top": "gregtech:blocks/casings/voltage/lv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_lv"
+          "side": "gregtech:blocks/casings/voltage/lv/side"
         }
       },
       "hermetic_casing_mv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/mv/bottom",
           "top": "gregtech:blocks/casings/voltage/mv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_mv"
+          "side": "gregtech:blocks/casings/voltage/mv/side"
         }
       },
       "hermetic_casing_hv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/hv/bottom",
           "top": "gregtech:blocks/casings/voltage/hv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_hv"
+          "side": "gregtech:blocks/casings/voltage/hv/side"
         }
       },
       "hermetic_casing_ev": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/ev/bottom",
           "top": "gregtech:blocks/casings/voltage/ev/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_ev"
+          "side": "gregtech:blocks/casings/voltage/ev/side"
         }
       },
       "hermetic_casing_iv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/iv/bottom",
           "top": "gregtech:blocks/casings/voltage/iv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_iv"
+          "side": "gregtech:blocks/casings/voltage/iv/side"
         }
       },
       "hermetic_casing_luv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/luv/bottom",
           "top": "gregtech:blocks/casings/voltage/luv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_luv"
+          "side": "gregtech:blocks/casings/voltage/luv/side"
         }
       },
       "hermetic_casing_zpm": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/zpm/bottom",
           "top": "gregtech:blocks/casings/voltage/zpm/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_zpm"
+          "side": "gregtech:blocks/casings/voltage/zpm/side"
         }
       },
       "hermetic_casing_uv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uv/bottom",
           "top": "gregtech:blocks/casings/voltage/uv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_uv"
+          "side": "gregtech:blocks/casings/voltage/uv/side"
         }
       },
       "hermetic_casing_uhv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uhv/bottom",
           "top": "gregtech:blocks/casings/voltage/uhv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_uhv"
+          "side": "gregtech:blocks/casings/voltage/uhv/side"
         }
       }
     }
