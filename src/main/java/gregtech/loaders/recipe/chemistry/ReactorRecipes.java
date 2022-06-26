@@ -183,6 +183,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Quicklime, 2)
                 .fluidInputs(AceticAcid.getFluid(2000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(DissolvedCalciumAcetate.getFluid(1000))
                 .duration(400).EUt(380).buildAndRegister();
 
@@ -604,12 +605,6 @@ public class ReactorRecipes {
                 .fluidOutputs(Phenol.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(120).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(Benzene.getFluid(1000))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(Phenol.getFluid(1000))
-                .duration(400).EUt(2000).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(MethylAcetate.getFluid(1000))

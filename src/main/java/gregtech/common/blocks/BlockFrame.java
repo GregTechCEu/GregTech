@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
+import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -88,7 +89,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         if (ModHandler.isMaterialWood(material)) {
             return "axe";
         }
-        return "pickaxe";
+        return "wrench";
     }
 
     @Nonnull
@@ -130,7 +131,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     public ItemStack getItem(IBlockState blockState) {
-        return new ItemStack(this, 1, getMetaFromState(blockState));
+        return GTUtility.toItem(blockState);
     }
 
     public ItemStack getItem(Material material) {

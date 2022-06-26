@@ -14,7 +14,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gregtech.api.GTValues.*;
+import static gregtech.api.GTValues.ULV;
+import static gregtech.api.GTValues.VA;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -267,6 +268,14 @@ public class WoodMachineRecipes {
                 .output(gem, Coke, 16)
                 .fluidOutputs(CoalGas.getFluid(4000))
                 .duration(320).EUt(96)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(22)
+                .input(block, Coal, 8)
+                .fluidInputs(Steam.getFluid(4000))
+                .output(block, Coke, 8)
+                .fluidOutputs(CoalGas.getFluid(16000))
+                .duration(1280).EUt(96)
                 .buildAndRegister();
 
         // COAL TAR ============================================

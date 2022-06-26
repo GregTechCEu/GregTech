@@ -3,6 +3,7 @@ package gregtech.integration.jei;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.filler.BlockFiller;
@@ -166,7 +167,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
     private List<ItemStack> getStacksFromStates(Collection<IBlockState> states, List<ItemStack> list) {
         for (IBlockState state : states) {
-            list.add(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
+            list.add(GTUtility.toItem(state));
         }
         return list;
     }
@@ -233,7 +234,7 @@ public class GTOreInfo implements IRecipeWrapper {
         // Surface Block support
         else if (veinPopulator instanceof SurfaceBlockPopulator) {
             state = ((SurfaceBlockPopulator) veinPopulator).getBlockState();
-            stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+            stack = GTUtility.toItem(state);
             return stack;
         }
         //Fluid generation support

@@ -37,6 +37,8 @@ import java.util.List;
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INITIAL_INVENTORY_SIZE = 8000;
+
+    // only holding this for convenience
     private final FluidTank fluidTank;
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
@@ -68,11 +70,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            fillContainerFromInternalTank();
+            fillContainerFromInternalTank(fluidTank);
             if (isExportHatch) {
                 pushFluidsIntoNearbyHandlers(getFrontFacing());
             } else {
-                fillInternalTankFromFluidContainer();
+                fillInternalTankFromFluidContainer(fluidTank);
                 pullFluidsFromNearbyHandlers(getFrontFacing());
             }
         }
@@ -100,7 +102,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     @Override
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, fluidTank);
+        return isExportHatch ? new FluidTankList(false, fluidTank) : new FluidTankList(false);
     }
 
     @Override
@@ -120,13 +122,12 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
+        abilityList.add(fluidTank);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createTankUI((isExportHatch ? exportFluids : importFluids).getTankAt(0), getMetaFullName(), entityPlayer)
-                .build(getHolder(), entityPlayer);
+        return createTankUI(fluidTank, getMetaFullName(), entityPlayer).build(getHolder(), entityPlayer);
     }
 
     public ModularUI.Builder createTankUI(IFluidTank fluidTank, String title, EntityPlayer entityPlayer) {

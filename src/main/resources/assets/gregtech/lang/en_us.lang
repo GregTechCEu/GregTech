@@ -11,7 +11,7 @@ death.attack.heat.player=%s was boiled alive by %s
 enchantment.disjunction=Disjunction
 
 gregtech.machine.steam_grinder.name=Steam Grinder
-gregtech.machine.steam_grinder.tooltip=Macerates up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items. Requires §eSteam Hatches and Buses
+gregtech.machine.steam_grinder.tooltip=Macerates up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items./nRequires §eSteam Hatches and Buses.
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s / %s mb
@@ -21,7 +21,7 @@ gregtech.machine.steam_import_bus.name=Input Bus (Steam)
 gregtech.machine.steam_export_bus.name=Output Bus (Steam)
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
 gregtech.machine.steam_oven.name=Steam Oven
-gregtech.machine.steam_oven.tooltip=Smelts up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items. Requires §eSteam Hatches and Buses
+gregtech.machine.steam_oven.tooltip=Smelts up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items./nRequires §eSteam Hatches and Buses.
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
 
 gregtech.top.energy_stored=Energy:
@@ -4439,7 +4439,7 @@ gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
 gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
 gregtech.machine.miner.multi.production=Produces §b3x§7 more crushed ore than a macerator.
 gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
-#Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
+#Small ores lang:gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 

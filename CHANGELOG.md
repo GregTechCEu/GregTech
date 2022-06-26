@@ -1,5 +1,58 @@
 ## Changelog
 
+### 2.3.1
+
+BETA RELEASE (hotifx)
+
+Featured Changes:
+* Fixed Frameboxes and Casings not being mineable with the Wrench Requirement config enabled
+
+### 2.3.0
+
+BETA RELEASE
+
+Featured Changes:
+* MANY Bug Fixes
+    * Fixed item duplication exploits with Crafting Tweaks and GregTech MetaItems 
+    * Fixed machines overclocking too many times 
+    * Fixed bug causing machine back-stuffing lag 
+    * Fixed Item Fluid Containers accepting fluids they shouldn't be allowed to hold
+
+* Added missing Coal Gas recipe using Coal Blocks
+* Fixed Ex Nihilo hammers not working properly
+* Fixed wires/cables not dropping when mined with a pickaxe
+* Fixed crash when mining some GregTech blocks of Materials
+* Fixed translation keys in the GregTech recipe check command
+* Fixed Nano/Quark Boots providing infinite Step-Assist
+* Fixed Night Vision Goggles removing canceling night vision potions
+* Fixed incorrect tooltip on the Wooden Wall Block
+* Fixed extraneous fluid information tooltips on lighters
+* Fixed Universal Fluid Cells requiring full buckets of fluid
+* Fixed the Multiblock Preview JEI Page not clearing items when switching previews
+* Added dust extrusion recipes for Polyphenylene Sulfide and Polyvinyl Butyral
+* Fixed Rubber and Treated Wood Planks not having recycling recipes
+* Fixed GregTech transparent blocks using the wrong RenderLayer
+* Fixed machines not appearing in the JEI Ore Byproduct Page
+* Fixed crash when clicking pipes onto other framed pipes
+* Added pipe position for pipe error logging
+* Exposed Material components to CraftTweaker
+* Improved tooltips for Drums and Rock Breakers
+* Fixed the Spray Can sound being too loud
+* Fixed missing texture run particles on cables and other blocks
+* Updated ja_jp translation
+* Updated zh_cn translation
+* Internal: Exposed many Cover related methods for addons
+* Internal: Material Id Range 20000-20999 is claimed for Gregification
+* Internal: MAJOR Large refactor of AbstractRecipeLogic
+    * Overclocking logic functions were moved to `api/recipes/logic/OverclockingLogic.java`
+    * Removed `negativeEU` parameters
+    * Removed old `runOverclockingLogic()`
+    * Removed `enableOverclockVoltage()`
+    * Renamed `overclockRecipe()` -> `runOverclockingLogic()`
+    * Renamed `getOverclockingTier()` -> `getOverclockForTier()`
+    * Renamed `getOverclockVoltage()` -> `getMaximumOverclockVoltage()`
+    * Renamed `setOverclockVoltage()` -> `setMaximumOverclockVoltage()`
+
 ### 2.2.3
 
 BETA RELEASE (hotfix)

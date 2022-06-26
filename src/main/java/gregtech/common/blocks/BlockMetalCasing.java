@@ -60,6 +60,11 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         public int getHarvestLevel(IBlockState state) {
             return harvestLevel;
         }
+
+        @Override
+        public String getHarvestTool(IBlockState state) {
+            return "wrench";
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.util.ItemNBTUtils;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
@@ -183,9 +182,10 @@ public class ClientProxy extends CommonProxy {
         } else if (unificationEntry != null && unificationEntry.material != null) {
             if (unificationEntry.material.getChemicalFormula() != null && !unificationEntry.material.getChemicalFormula().isEmpty())
                 tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
-        } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
+        } else if (itemStack.hasTagCompound()) { // Test for Fluids
             // Vanilla bucket
-            tooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+            //noinspection ConstantConditions
+            tooltips = FluidTooltipUtil.getFluidTooltip(itemStack.getTagCompound().getString("FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
             if (tooltips == null || tooltips.size() == 0) {

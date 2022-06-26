@@ -65,6 +65,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -924,49 +925,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return capabilityResult;
     }
 
-    public boolean fillInternalTankFromFluidContainer(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot) {
-        ItemStack inputContainerStack = importItems.extractItem(inputSlot, 1, true);
-        FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, false);
-        if (result.isSuccess()) {
-            ItemStack remainingItem = result.getResult();
-            if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
-                return false; //do not fill if item stacks match
-            if (!remainingItem.isEmpty() && !exportItems.insertItem(outputSlot, remainingItem, true).isEmpty())
-                return false; //do not fill if can't put remaining item
-            FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, true);
-            importItems.extractItem(inputSlot, 1, false);
-            exportItems.insertItem(outputSlot, remainingItem, false);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean fillContainerFromInternalTank(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot) {
-        ItemStack emptyContainer = importItems.extractItem(inputSlot, 1, true);
-        FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, false);
-        if (result.isSuccess()) {
-            ItemStack remainingItem = result.getResult();
-            if (!remainingItem.isEmpty() && !exportItems.insertItem(outputSlot, remainingItem, true).isEmpty())
-                return false;
-            FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, true);
-            importItems.extractItem(inputSlot, 1, false);
-            exportItems.insertItem(outputSlot, remainingItem, false);
-            return true;
-        }
-        return false;
-    }
-
     public void fillInternalTankFromFluidContainer() {
+        fillInternalTankFromFluidContainer(importFluids);
+    }
+
+    public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
-            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, false);
+            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, false);
             if (result.isSuccess()) {
                 ItemStack remainingItem = result.getResult();
                 if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
                     continue; //do not fill if item stacks match
                 if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
                     continue; //do not fill if can't put remaining item
-                FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, true);
+                FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
             }
@@ -974,14 +947,18 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void fillContainerFromInternalTank() {
+        fillContainerFromInternalTank(exportFluids);
+    }
+
+    public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
-            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, false);
+            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, false);
             if (result.isSuccess()) {
                 ItemStack remainingItem = result.getResult();
                 if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
                     continue;
-                FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, true);
+                FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
             }
@@ -989,63 +966,22 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void pushFluidsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
-            if (tileEntity == null) {
-                continue;
-            }
-            IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-            //use getCoverCapability so fluid tank index filtering and fluid filtering covers will work properly
-            IFluidHandler myFluidHandler = getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
-            if (fluidHandler == null || myFluidHandler == null) {
-                continue;
-            }
-            GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, Integer.MAX_VALUE);
-        }
-        blockPos.release();
+        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, GTTransferUtils::transferFluids, allowedFaces);
     }
 
     public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
-            if (tileEntity == null) {
-                continue;
-            }
-            IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-            //use getCoverCapability so fluid tank index filtering and fluid filtering covers will work properly
-            IFluidHandler myFluidHandler = getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
-            if (fluidHandler == null || myFluidHandler == null) {
-                continue;
-            }
-            GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, Integer.MAX_VALUE);
-        }
-        blockPos.release();
+        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.transferFluids(otherCap, thisCap), allowedFaces);
     }
 
     public void pushItemsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
-            if (tileEntity == null) {
-                continue;
-            }
-            IItemHandler itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-            //use getCoverCapability so item/ore dictionary filter covers will work properly
-            IItemHandler myItemHandler = getCoverCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing);
-            if (itemHandler == null || myItemHandler == null) {
-                continue;
-            }
-            GTTransferUtils.moveInventoryItems(myItemHandler, itemHandler);
-        }
-        blockPos.release();
+        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, GTTransferUtils::moveInventoryItems, allowedFaces);
     }
 
     public void pullItemsFromNearbyHandlers(EnumFacing... allowedFaces) {
+        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.moveInventoryItems(otherCap, thisCap), allowedFaces);
+    }
+
+    private <T> void transferToNearby(Capability<T> capability, BiConsumer<T, T> transfer, EnumFacing... allowedFaces) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing nearbyFacing : allowedFaces) {
             blockPos.setPos(getPos()).move(nearbyFacing);
@@ -1053,13 +989,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (tileEntity == null) {
                 continue;
             }
-            IItemHandler itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
+            T otherCap = tileEntity.getCapability(capability, nearbyFacing.getOpposite());
             //use getCoverCapability so item/ore dictionary filter covers will work properly
-            IItemHandler myItemHandler = getCoverCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing);
-            if (itemHandler == null || myItemHandler == null) {
-                continue;
-            }
-            GTTransferUtils.moveInventoryItems(itemHandler, myItemHandler);
+            T thisCap = getCoverCapability(capability, nearbyFacing);
+            transfer.accept(thisCap, otherCap);
         }
         blockPos.release();
     }
