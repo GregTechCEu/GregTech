@@ -221,6 +221,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         return true;
     }
 
+    @Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        return false;
+    }
+
     private void breakClipboard(@Nullable EntityPlayer player) {
         if (!getWorld().isRemote) {
             BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
@@ -250,8 +255,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(frontFacing);
-        this.didSetFacing = true;
+        return;
     }
 
     @Override
