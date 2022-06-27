@@ -14,6 +14,7 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
@@ -497,14 +498,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
             if (stack.isEmpty()) {
                 // try the itemstack constructor if we're not a GT machine
-                stack = new ItemStack(block, 1, block.getMetaFromState(state));
+                stack = GTUtility.toItem(state);
             }
             if (stack.isEmpty()) {
-                // if the itemstack constructor doesn't work, try getPickBlock() with some dummy values
-                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos, new GregFakePlayer(world));
-            }
-            if (stack.isEmpty()) {
-                // as a fallback, add the first of the block's drops if the others didn't work
+                // add the first of the block's drops if the others didn't work
                 NonNullList<ItemStack> list = NonNullList.create();
                 state.getBlock().getDrops(list, world, pos, state, 0);
                 if (!list.isEmpty()) {
@@ -513,6 +510,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                         stack = is;
                     }
                 }
+            }
+            if (stack.isEmpty()) {
+                // if everything else doesn't work, try the not great getPickBlock() with some dummy values
+                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos, new GregFakePlayer(world));
             }
 
             // if we got a stack, add it to the set and map
