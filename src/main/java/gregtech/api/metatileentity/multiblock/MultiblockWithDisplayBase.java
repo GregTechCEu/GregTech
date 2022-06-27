@@ -8,7 +8,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -16,7 +15,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -151,6 +149,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 maintenanceHatch.setTaped(false);
                 timeActive = timeActive - minimumMaintenanceTime;
             }
+    }
+
+    @Override
+    public boolean isStructureObstructed() {
+        return hasMufflerMechanics() && !isMufflerFaceFree();
     }
 
     @Override

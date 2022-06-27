@@ -24,34 +24,46 @@ gregtech.machine.steam_oven.name=Steam Oven
 gregtech.machine.steam_oven.tooltip=Smelts up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items./nRequires §eSteam Hatches and Buses.
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
 
-gregtech.top.energy_stored=Energy:
-gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
-gregtech.top.energy_consumption=Usage:
-gregtech.top.energy_production=Output:
+gregtech.top.energy_consumption=Using
+gregtech.top.energy_production=Producing
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
 gregtech.top.transform_output=§9Output:§r
 
-gregtech.top.convert_eu=§eConverting EU§r
-gregtech.top.convert_fe=§cConverting FE§r
+gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
+gregtech.top.convert_fe=Converting §cFE§r -> §eEU§r
 
-gregtech.top.fuel_burn=for
-gregtech.top.fuel_time=secs
-gregtech.top.fuel_min_consume=needs
-gregtech.top.fuel_name=Fuel:
+gregtech.top.fuel_min_consume=Needs
 gregtech.top.fuel_none=No fuel
 
-gregtech.top.invalid_structure=§cStructure Incomplete
-gregtech.top.valid_structure=§aStructure Formed
-gregtech.top.obstructed_structure=§cStructure Obstructed
-gregtech.top.maintenance_fixed=§aMaintenance Fine
-gregtech.top.maintenance_broken=§cNeeds Maintenance
+gregtech.top.invalid_structure=Structure Incomplete
+gregtech.top.valid_structure=Structure Formed
+gregtech.top.obstructed_structure=Structure Obstructed
+
+gregtech.top.maintenance_fixed=Maintenance Fine
+gregtech.top.maintenance_broken=Needs Maintenance
+gregtech.top.maintenance.wrench=Pipe is loose
+gregtech.top.maintenance.screwdriver=Screws are loose
+gregtech.top.maintenance.soft_mallet=Something is stuck
+gregtech.top.maintenance.hard_hammer=Plating is dented
+gregtech.top.maintenance.wire_cutter=Wires burned out
+gregtech.top.maintenance.crowbar=That doesn't belong there
 
 gregtech.top.primitive_pump_production=Production:
+
+gregtech.top.filter.label=Filter:
+gregtech.top.link_cover.color=Color:
+
+gregtech.top.mode.export=Exporting
+gregtech.top.mode.import=Importing
+
+gregtech.top.unit.items=Items
+gregtech.top.unit.fluid_milibuckets=L
+gregtech.top.unit.fluid_buckets=kL
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -4656,6 +4668,7 @@ gregtech.universal.tooltip.amperage_out_till=Amperage OUT up to: §e%,d
 gregtech.universal.tooltip.item_storage_capacity=Item Slots: %,d
 gregtech.universal.tooltip.fluid_storage_capacity=Fluid Capacity: %,d L
 gregtech.universal.tooltip.max_voltage_in=Max Voltage IN: §a%,d (§r%s§a)
+gregtech.universal.tooltip.terrain_resist=This Machine will not explode in Rain, Fire, Water or Lava
 
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)

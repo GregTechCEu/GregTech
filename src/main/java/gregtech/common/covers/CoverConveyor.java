@@ -564,7 +564,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
-    public enum ConveyorMode implements IStringSerializable {
+    public enum ConveyorMode implements IStringSerializable, IIOMode {
         IMPORT("cover.conveyor.mode.import"),
         EXPORT("cover.conveyor.mode.export");
 
@@ -578,6 +578,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         @Override
         public String getName() {
             return localeName;
+        }
+
+        @Override
+        public boolean isImport() {
+            return this == IMPORT;
         }
     }
 

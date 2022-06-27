@@ -97,6 +97,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         coverHolder.markDirty();
     }
 
+    public int getTransferAmount() {
+        return this.transferAmount;
+    }
+
     public void setVoidingMode(VoidingMode transferMode) {
         this.voidingMode = transferMode;
         this.coverHolder.markDirty();
