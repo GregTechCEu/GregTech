@@ -233,6 +233,13 @@ public class MaterialFlags {
             .requireProps(PropertyKey.INGOT)
             .build();
 
+    /**
+     * Add this to your Material if it is a magnetized form of another Material.
+     */
+    public static final MaterialFlag IS_MAGNETIC = new MaterialFlag.Builder("is_magnetic")
+            .requireProps(PropertyKey.INGOT)
+            .build();
+
     /////////////////
     //     GEM     //
     /////////////////
