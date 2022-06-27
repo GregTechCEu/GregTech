@@ -2,6 +2,7 @@ package gregtech.api;
 
 import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
@@ -16,6 +17,8 @@ import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
@@ -36,6 +39,7 @@ public class GregTechAPI {
 
     public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
+    public static final Object2ObjectOpenHashMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
 
     public static final BaseCreativeTab TAB_GREGTECH =
             new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);

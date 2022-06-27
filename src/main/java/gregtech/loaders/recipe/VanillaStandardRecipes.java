@@ -835,7 +835,7 @@ public class VanillaStandardRecipes {
                 'P', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W)
         );
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).circuitMeta(1).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(gem, Diamond).outputs(new ItemStack(Blocks.JUKEBOX)).buildAndRegister();
     }
 
@@ -855,6 +855,7 @@ public class VanillaStandardRecipes {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(dust, Redstone)
                     .input(plate, Iron, 4)
+                    .circuitMeta(1)
                     .outputs(new ItemStack(Items.COMPASS))
                     .duration(400).EUt(4).buildAndRegister();
 
@@ -1056,7 +1057,7 @@ public class VanillaStandardRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).circuitMeta(1).input("wool", 1).inputs(new ItemStack(Items.STICK, 8)).outputs(new ItemStack(Items.PAINTING)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Items.LEATHER)).inputs(new ItemStack(Items.STICK, 8)).outputs(new ItemStack(Items.ITEM_FRAME)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).input("plankWood", 6).inputs(new ItemStack(Items.STICK)).outputs(new ItemStack(Items.SIGN, 3)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).input("plankWood", 6).inputs(new ItemStack(Items.STICK)).circuitMeta(1).outputs(new ItemStack(Items.SIGN, 3)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(10).EUt(2).inputs(new ItemStack(Items.BRICK, 3)).outputs(new ItemStack(Items.FLOWER_POT)).buildAndRegister();
 
@@ -1083,7 +1084,7 @@ public class VanillaStandardRecipes {
                 .input(OrePrefix.stick, Iron, 12)
                 .input(stick, Wood)
                 .input(dust, Redstone)
-                .circuitMeta(3)
+                .circuitMeta(4)
                 .outputs(new ItemStack(Blocks.DETECTOR_RAIL, 12))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
@@ -1091,7 +1092,7 @@ public class VanillaStandardRecipes {
                 .input(stick, Iron, 12)
                 .input(stick, Wood, 2)
                 .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                .circuitMeta(3)
+                .circuitMeta(4)
                 .outputs(new ItemStack(Blocks.ACTIVATOR_RAIL, 12))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 

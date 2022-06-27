@@ -33,13 +33,23 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         return null;
     }
 
+    public static int getRemoteDim(ItemStack itemStack) {
+        NBTTagCompound tag = itemStack.getTagCompound();
+        if (tag != null) {
+            return tag.getInteger("dimension");
+        }
+
+        return 0;
+    }
+
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
         if (entity.world.isRemote && entity instanceof EntityPlayer) {
             ItemStack held = ((EntityPlayer) entity).getHeldItemMainhand();
             if (held == itemStack) {
                 BlockPos pos = getRemotePos(itemStack);
-                if (pos != null) {
+                int dim = getRemoteDim(itemStack);
+                if (pos != null && entity.world.provider.getDimension() == dim) {
                     BlockPosHighlightRenderer.renderBlockBoxHighLight(pos, 1500);
                 }
             }
@@ -52,6 +62,10 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.setTagCompound(NBTUtil.createPosTag(pos));
+            NBTTagCompound tag = itemStack.getTagCompound();
+            if(!tag.hasKey("dimension")) {
+                tag.setInteger("dimension", world.provider.getDimension());
+            }
             return EnumActionResult.SUCCESS;
         }
         return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);

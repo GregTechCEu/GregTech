@@ -1,11 +1,11 @@
 package gregtech.api.pattern;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
-import gregtech.common.blocks.BlockWireCoil;
-import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -30,11 +29,10 @@ public class TraceabilityPredicate {
     // Allow all heating coils, and require them to have the same type.
     public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(blockWorldState -> {
         IBlockState blockState = blockWorldState.getBlockState();
-        if ((blockState.getBlock() instanceof BlockWireCoil)) {
-            BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();
-            BlockWireCoil.CoilType coilType = blockWireCoil.getState(blockState);
-            Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-            if (!currentCoilType.toString().equals(coilType.getName())) {
+        if (GregTechAPI.HEATING_COILS.containsKey(blockState)) {
+            IHeatingCoilBlockStats stats = GregTechAPI.HEATING_COILS.get(blockState);
+            Object currentCoil = blockWorldState.getMatchContext().getOrPut("CoilType", stats);
+            if (!currentCoil.equals(stats)) {
                 blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
                 return false;
             }
@@ -42,10 +40,8 @@ public class TraceabilityPredicate {
             return true;
         }
         return false;
-    }, () -> ArrayUtils.addAll(
-            Arrays.stream(BlockWireCoil.CoilType.values()).map(type -> new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new)))
+    }, () -> GregTechAPI.HEATING_COILS.keySet().stream().map(key -> new BlockInfo(key, null)).toArray(BlockInfo[]::new))
             .addTooltips("gregtech.multiblock.pattern.error.coils");
-
 
     public final List<SimplePredicate> common = new ArrayList<>();
     public final List<SimplePredicate> limited = new ArrayList<>();

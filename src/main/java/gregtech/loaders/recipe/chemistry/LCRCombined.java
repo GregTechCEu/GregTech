@@ -90,5 +90,14 @@ public class LCRCombined {
                 .fluidOutputs(Acetone.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(400).EUt(VA[HV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(4))
+                .fluidInputs(Oxygen.getFluid(7000))
+                .fluidInputs(Nitrogen.getFluid(2000))
+                .fluidInputs(Hydrogen.getFluid(6000))
+                .fluidOutputs(DinitrogenTetroxide.getFluid(1000))
+                .fluidOutputs(Water.getFluid(3000))
+                .duration(1100).EUt(VA[HV]).buildAndRegister();
     }
 }
