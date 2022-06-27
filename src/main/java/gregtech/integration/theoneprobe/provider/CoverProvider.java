@@ -42,6 +42,8 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             itemFilterInfo(probeInfo, (CoverItemFilter) coverBehavior);
         } else if (coverBehavior instanceof CoverFluidFilter) {
             fluidFilterInfo(probeInfo, (CoverFluidFilter) coverBehavior);
+        } else if (coverBehavior instanceof CoverEnderFluidLink) {
+            enderFluidLinkInfo(probeInfo, (CoverEnderFluidLink) coverBehavior);
         }
     }
 
@@ -147,6 +149,21 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
     private static void fluidFilterInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidFilter fluidFilter) {
         filterModeText(probeInfo, fluidFilter.getFilterMode());
         fluidFilterText(probeInfo, fluidFilter.getFluidFilter().getFluidFilter());
+    }
+
+    /**
+     * Displays text for {@link CoverEnderFluidLink} related covers
+     *
+     * @param probeInfo      the info to add the text to
+     * @param enderFluidLink the ender fluid link cover to get data from
+     */
+    private static void enderFluidLinkInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverEnderFluidLink enderFluidLink) {
+        transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
+        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
+
+        if (!enderFluidLink.getColorStr().isEmpty()) {
+            probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.link_cover.color*} " + enderFluidLink.getColorStr());
+        }
     }
 
 
