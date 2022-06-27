@@ -6,7 +6,6 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
@@ -72,7 +71,9 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.workingEnabled = data.getBoolean("workingEnabled");
+        if (data.hasKey("workingEnabled")) {
+            this.workingEnabled = data.getBoolean("workingEnabled");
+        }
         if (data.hasKey("ContainerInventory")) {
             MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"), 0, 1);
         }
@@ -82,7 +83,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if(workingEnabled) {
+            if (workingEnabled) {
                 fillContainerFromInternalTank(fluidTank);
                 if (isExportHatch) {
                     pushFluidsIntoNearbyHandlers(getFrontFacing());

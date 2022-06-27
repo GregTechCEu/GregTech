@@ -20,7 +20,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -58,7 +57,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     @Override
     protected void initializeInventory() {
         FluidTank[] fluidsHandlers = new FluidTank[(int) Math.pow(this.getTier(), 2)];
-        for (int i = 0; i <fluidsHandlers.length; i++) {
+        for (int i = 0; i < fluidsHandlers.length; i++) {
             fluidsHandlers[i] = new NotifiableFluidTankFromList(TANK_SIZE, this, isExportHatch, i) {
                 @Override
                 public Supplier<IMultipleTankHandler> getFluidTankList() {
@@ -75,7 +74,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if(workingEnabled) {
+            if (workingEnabled) {
                 if (isExportHatch) {
                     pushFluidsIntoNearbyHandlers(getFrontFacing());
                 } else {
@@ -129,7 +128,9 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.workingEnabled = data.getBoolean("workingEnabled");
+        if (data.hasKey("workingEnabled")) {
+            this.workingEnabled = data.getBoolean("workingEnabled");
+        }
     }
 
     @Override
@@ -189,7 +190,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = getTier();
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
+                        18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {

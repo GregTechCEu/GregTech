@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -14,9 +15,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -34,8 +33,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
-
-    private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
 
     private boolean workingEnabled;
 
@@ -54,7 +51,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            if(workingEnabled) {
+            if (workingEnabled) {
                 if (isExportHatch) {
                     pushItemsIntoNearbyHandlers(getFrontFacing());
                 } else {
@@ -139,7 +136,9 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.workingEnabled = data.getBoolean("workingEnabled");
+        if (data.hasKey("workingEnabled")) {
+            this.workingEnabled = data.getBoolean("workingEnabled");
+        }
     }
 
     @Override
@@ -156,7 +155,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize, int xOffset) {
         Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2,
-                18 + 18 * rowSize + 94)
+                        18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
