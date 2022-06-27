@@ -136,7 +136,7 @@ public class AssemblerRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(plate, Wood, 3)
-                .circuitMeta(4)
+                .circuitMeta(6)
                 .fluidInputs(Glue.getFluid(20))
                 .output(pipeNormalFluid, Wood)
                 .buildAndRegister();
