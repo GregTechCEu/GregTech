@@ -1033,7 +1033,7 @@ public class VanillaStandardRecipes {
         ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(4).duration(40).inputs(new ItemStack(Items.NETHERBRICK, 2)).inputs(new ItemStack(Items.NETHER_WART, 2)).outputs(new ItemStack(Blocks.RED_NETHER_BRICK)).buildAndRegister();
 
         if (!ConfigHolder.recipes.hardMiscRecipes) {
-            ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(6).circuitMeta(4).input("plankWood", 4).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).circuitMeta(4).input("plankWood", 4).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(stoneCobble, 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.OBSIDIAN, 4)).input(gem, Diamond, 2).inputs(new ItemStack(Items.BOOK)).outputs(new ItemStack(Blocks.ENCHANTING_TABLE)).duration(100).EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(1).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputs(new ItemStack(Items.BOW)).input(dust, Redstone).outputs(new ItemStack(Blocks.DISPENSER)).buildAndRegister();
