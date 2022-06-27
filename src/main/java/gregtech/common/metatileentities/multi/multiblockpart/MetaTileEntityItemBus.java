@@ -3,6 +3,9 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -17,20 +20,28 @@ import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
 
     private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
 
+    private boolean workingEnabled;
+
     public MetaTileEntityItemBus(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
+        this.workingEnabled = true;
         initializeInventory();
     }
 
@@ -43,12 +54,36 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            if (isExportHatch) {
-                pushItemsIntoNearbyHandlers(getFrontFacing());
-            } else {
-                pullItemsFromNearbyHandlers(getFrontFacing());
+            if(workingEnabled) {
+                if (isExportHatch) {
+                    pushItemsIntoNearbyHandlers(getFrontFacing());
+                } else {
+                    pullItemsFromNearbyHandlers(getFrontFacing());
+                }
             }
         }
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean workingEnabled) {
+        this.workingEnabled = workingEnabled;
+        World world = getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+        }
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
     }
 
     @Override
@@ -80,6 +115,31 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public MultiblockAbility<IItemHandlerModifiable> getAbility() {
         return isExportHatch ? MultiblockAbility.EXPORT_ITEMS : MultiblockAbility.IMPORT_ITEMS;
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(workingEnabled);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.workingEnabled = buf.readBoolean();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("workingEnabled", workingEnabled);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.workingEnabled = data.getBoolean("workingEnabled");
     }
 
     @Override
