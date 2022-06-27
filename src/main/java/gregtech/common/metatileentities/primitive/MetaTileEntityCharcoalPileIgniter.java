@@ -4,6 +4,9 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.block.IBlock;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -18,6 +21,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
@@ -33,15 +37,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.Optional;
 import org.lwjgl.input.Keyboard;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+@ZenClass("mods.gregtech.machines.CharcoalPileIgniter")
+@ZenRegister
 public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase implements IWorkable {
 
     private static final int MIN_RADIUS = 1;
@@ -317,18 +325,22 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        return Collections.singletonList(MultiblockShapeInfo.builder()
-                .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
-                .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                .where('S', MetaTileEntities.CHARCOAL_PILE_IGNITER, EnumFacing.NORTH)
-                .where('B', Blocks.BRICK_BLOCK.getDefaultState())
-                .where('X', Blocks.DIRT.getDefaultState())
-                .where('D', Blocks.GRASS.getDefaultState())
-                .where('C', Blocks.LOG.getDefaultState())
-                .build());
+        List<MultiblockShapeInfo> shapeInfos = new ObjectArrayList<>();
+        for (Block block : WALL_BLOCKS) {
+            shapeInfos.add(MultiblockShapeInfo.builder()
+                    .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
+                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
+                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
+                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
+                    .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
+                    .where('S', MetaTileEntities.CHARCOAL_PILE_IGNITER, EnumFacing.NORTH)
+                    .where('B', Blocks.BRICK_BLOCK.getDefaultState())
+                    .where('X', block.getDefaultState())
+                    .where('D', block.getDefaultState())
+                    .where('C', Blocks.LOG.getDefaultState())
+                    .build());
+        }
+        return shapeInfos;
     }
 
     @Override
@@ -392,6 +404,13 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @SuppressWarnings("unused")
     public static void addWallBlock(@Nonnull Block block) {
         WALL_BLOCKS.add(block);
+    }
+
+    @ZenMethod("addWallBlock")
+    @Optional.Method(modid = GTValues.MODID_CT)
+    @SuppressWarnings("unused")
+    public static void addWallBlockCT(@Nonnull IBlock block) {
+        WALL_BLOCKS.add(CraftTweakerMC.getBlock(block));
     }
 
     @Override
