@@ -392,7 +392,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
-        if (!hasEnoughPower(calculateOverclock(recipe))) {
+
+        int[] overclockResults = calculateOverclock(recipe);
+
+        performNonOverclockBonuses(overclockResults);
+
+        if (!hasEnoughPower(overclockResults)) {
             return false;
         }
 
@@ -449,6 +454,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             // Return true if we can fit at least 1A of energy into the energy output
             return getEnergyStored() - (long) power <= getEnergyCapacity();
         }
+    }
+
+    /**
+     * A stub method for modifying the overclock results.
+     * Useful for Multiblock coil bonuses
+     *
+     * @param overclockResults The overclocked recipe duration and EUt
+     */
+    protected void performNonOverclockBonuses(int[] overclockResults) {
+
     }
 
     /**
