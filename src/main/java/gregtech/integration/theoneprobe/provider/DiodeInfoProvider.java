@@ -4,11 +4,13 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.metatileentities.electric.MetaTileEntityDiode;
-import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+
+import javax.annotation.Nonnull;
 
 public class DiodeInfoProvider extends ElectricContainerInfoProvider {
 
@@ -18,20 +20,14 @@ public class DiodeInfoProvider extends ElectricContainerInfoProvider {
     }
 
     @Override
-    protected void addProbeInfo(IEnergyContainer capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
+    protected void addProbeInfo(@Nonnull IEnergyContainer capability, @Nonnull IProbeInfo probeInfo, EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
         if (tileEntity instanceof IGregTechTileEntity) {
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityDiode) {
-                long inputAmperage = capability.getInputAmperage();
-                long outputAmperage = capability.getOutputAmperage();
-                IProbeInfo horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-                String transformInfo;
-                if (capability.inputsEnergy(sideHit)) {
-                    transformInfo = "{*gregtech.top.transform_input*} " + inputAmperage + "A";
-                    horizontalPane.text(TextStyleClass.INFO + transformInfo);
-                } else if (capability.outputsEnergy(sideHit)) {
-                    transformInfo = "{*gregtech.top.transform_output*} " + outputAmperage + "A";
-                    horizontalPane.text(TextStyleClass.INFO + transformInfo);
+                if (capability.inputsEnergy(data.getSideHit())) {
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_input*} " + capability.getInputAmperage() + " A");
+                } else if (capability.outputsEnergy(data.getSideHit())) {
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_output*} " + capability.getOutputAmperage() + " A");
                 }
             }
         }

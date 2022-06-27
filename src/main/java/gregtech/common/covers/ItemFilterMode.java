@@ -1,6 +1,6 @@
 package gregtech.common.covers;
 
-public enum ItemFilterMode {
+public enum ItemFilterMode implements IFilterMode {
 
     FILTER_INSERT("cover.filter.mode.filter_insert"),
     FILTER_EXTRACT("cover.filter.mode.filter_extract"),
@@ -10,5 +10,10 @@ public enum ItemFilterMode {
 
     ItemFilterMode(String localeName) {
         this.localeName = localeName;
+    }
+
+    @Override
+    public String getName() {
+        return this.localeName;
     }
 }

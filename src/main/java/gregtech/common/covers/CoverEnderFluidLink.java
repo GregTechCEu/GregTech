@@ -35,7 +35,7 @@ import java.util.UUID;
 
 public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
-    private final int TRANSFER_RATE = 8000; // mB/t
+    public static final int TRANSFER_RATE = 8000; // mB/t
 
     protected CoverPump.PumpMode pumpMode;
     private int color;
@@ -65,6 +65,14 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     private UUID getTankUUID() {
         return isPrivate ? playerUUID : null;
+    }
+
+    public FluidFilterContainer getFluidFilterContainer() {
+        return this.fluidFilter;
+    }
+
+    public boolean isIOEnabled() {
+        return this.ioEnabled;
     }
 
     @Override

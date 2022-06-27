@@ -58,6 +58,10 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         return filterMode;
     }
 
+    public ItemFilterWrapper getItemFilter() {
+        return this.itemFilter;
+    }
+
     @Override
     public boolean canAttach() {
         return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide) != null;

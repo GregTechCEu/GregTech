@@ -17,11 +17,11 @@ public class PrimitivePumpInfoProvider implements IProbeInfoProvider {
 
     @Override
     public String getID() {
-        return String.format("%s:primitive_pump_provider", GTValues.MODID);
+        return GTValues.MODID + ":primitive_pump_provider";
     }
 
     @Override
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, @Nonnull IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
         if (blockState.getBlock().hasTileEntity(blockState)) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (!(tileEntity instanceof IGregTechTileEntity)) return;

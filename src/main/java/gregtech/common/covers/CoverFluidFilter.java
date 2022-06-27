@@ -58,6 +58,10 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return filterMode;
     }
 
+    public FluidFilterWrapper getFluidFilter() {
+        return this.fluidFilter;
+    }
+
     public boolean testFluidStack(FluidStack stack) {
         return fluidFilter.testFluidStack(stack);
     }
