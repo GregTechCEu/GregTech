@@ -73,7 +73,11 @@ public class BedrockFluidVeinHandler {
 
             int maximumYield = 0;
             if (definition != null) {
-                maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) + definition.getMinimumYield();
+                if (definition.getMaximumYield() - definition.getMinimumYield() <= 0) {
+                    maximumYield = definition.getMinimumYield();
+                } else {
+                    maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) + definition.getMinimumYield();
+                }
                 maximumYield = Math.min(maximumYield, definition.getMaximumYield());
             }
 
