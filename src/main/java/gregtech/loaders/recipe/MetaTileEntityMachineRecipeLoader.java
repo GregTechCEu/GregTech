@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe;
 
-import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
 
@@ -89,7 +88,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(HULL[LuV])
-                .input(spring, YttriumBariumCuprate, 4)
+                .input(spring, NiobiumTitanium, 4)
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(circuit, Tier.LuV)
                 .input(VOLTAGE_COIL_LuV, 2)
@@ -111,7 +110,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(HULL[UV])
-                .input(spring, NiobiumTitanium, 4)
+                .input(spring, YttriumBariumCuprate, 4)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(circuit, Tier.UV)
                 .input(VOLTAGE_COIL_UV, 2)
@@ -119,6 +118,17 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_OUTPUT_HATCH[UV])
                 .duration(800).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[UHV])
+                .input(spring, Europium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.UHV)
+                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
+                .fluidInputs(SodiumPotassium.getFluid(12000))
+                .fluidInputs(SolderingAlloy.getFluid(5760))
+                .output(ENERGY_OUTPUT_HATCH[UHV])
+                .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
         // Energy Input Hatches
 
@@ -222,6 +232,18 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_INPUT_HATCH[UV])
                 .duration(800).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[UHV])
+                .input(cableGtSingle, Europium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.UHV)
+                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
+                .fluidInputs(SodiumPotassium.getFluid(12000))
+                .fluidInputs(SolderingAlloy.getFluid(5760))
+                .output(ENERGY_INPUT_HATCH[UHV])
+                .duration(1000).EUt(VA[UHV]).buildAndRegister();
+
 
         // Adjustable Transformers
 
@@ -372,10 +394,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH_4A[3], 2)
+                .input(ENERGY_INPUT_HATCH[UHV], 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate)
                 .input(wireGtQuadruple, Europium, 2)
-                .input(plate, Neutronium, 2)
                 .output(ENERGY_INPUT_HATCH_4A[5])
                 .duration(100).EUt(VA[UV]).buildAndRegister();
 
@@ -418,10 +440,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH_16A[4], 2)
+                .input(ENERGY_INPUT_HATCH_4A[5], 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate)
                 .input(wireGtOctal, Europium, 2)
-                .input(plate, Neutronium, 4)
                 .output(ENERGY_INPUT_HATCH_16A[4])
                 .duration(200).EUt(VA[UV]).buildAndRegister();
 
@@ -473,10 +495,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH_4A[3], 2)
+                .input(ENERGY_OUTPUT_HATCH[UHV], 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate)
                 .input(wireGtQuadruple, Europium, 2)
-                .input(plate, Neutronium, 2)
                 .output(ENERGY_OUTPUT_HATCH_4A[5])
                 .duration(100).EUt(VA[UV]).buildAndRegister();
 
@@ -519,10 +541,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH_16A[4], 2)
+                .input(ENERGY_OUTPUT_HATCH_4A[5], 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate)
                 .input(wireGtOctal, Europium, 2)
-                .input(plate, Neutronium, 4)
                 .output(ENERGY_OUTPUT_HATCH_16A[4])
                 .duration(200).EUt(VA[UV]).buildAndRegister();
 
