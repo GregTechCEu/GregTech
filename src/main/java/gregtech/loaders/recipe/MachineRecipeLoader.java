@@ -404,14 +404,14 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Items.IRON_DOOR))
                 .input(OrePrefix.plate, material, 2)
                 .outputs(MetaItems.COVER_SHUTTER.getStackForm(2))
-                .EUt(16).duration(400)
+                .EUt(16).duration(100)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(WORKBENCH.getStackForm())
                 .input(plate, material)
                 .outputs(COVER_CRAFTING.getStackForm())
-                .EUt(16).duration(400)
+                .EUt(16).duration(100)
                 .buildAndRegister();
 
         for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L / 2)}) {
@@ -420,7 +420,7 @@ public class MachineRecipeLoader {
                     .input(OrePrefix.plate, material)
                     .fluidInputs(solder)
                     .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(200)
+                    .EUt(16).duration(100)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
@@ -429,7 +429,7 @@ public class MachineRecipeLoader {
                     .input(plate, material)
                     .fluidInputs(solder)
                     .outputs(COVER_ENERGY_DETECTOR.getStackForm())
-                    .EUt(16).duration(400)
+                    .EUt(16).duration(100)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
@@ -437,7 +437,7 @@ public class MachineRecipeLoader {
                     .input(plate, material)
                     .fluidInputs(solder)
                     .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
-                    .EUt(16).duration(400)
+                    .EUt(16).duration(100)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
@@ -446,7 +446,7 @@ public class MachineRecipeLoader {
                     .input(plate, Aluminium)
                     .fluidInputs(solder)
                     .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(400)
+                    .EUt(16).duration(100)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
@@ -454,7 +454,7 @@ public class MachineRecipeLoader {
                     .input(plate, material)
                     .fluidInputs(solder)
                     .outputs(COVER_FLUID_DETECTOR.getStackForm())
-                    .EUt(16).duration(400)
+                    .EUt(16).duration(100)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
@@ -462,7 +462,7 @@ public class MachineRecipeLoader {
                     .input(plate, material)
                     .fluidInputs(solder)
                     .outputs(COVER_ITEM_DETECTOR.getStackForm())
-                    .EUt(16).duration(400)
+                    .EUt(16).duration(100)
                     .buildAndRegister();
         }
 
@@ -480,7 +480,7 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Items.CAULDRON))
                 .input(circuit, MarkerMaterials.Tier.HV)
                 .output(COVER_INFINITE_WATER)
-                .EUt(VA[HV]).duration(200)
+                .EUt(VA[HV]).duration(100)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
