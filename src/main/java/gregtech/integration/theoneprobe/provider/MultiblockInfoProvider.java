@@ -29,7 +29,7 @@ public class MultiblockInfoProvider extends CapabilityInfoProvider<IMultiblockCo
     @Override
     protected void addProbeInfo(@Nonnull IMultiblockController capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
         if (capability.isStructureFormed()) {
-            probeInfo.text(TextStyleClass.LABEL + "{*gregtech.top.valid_structure*}");
+            probeInfo.text(TextStyleClass.OK + "{*gregtech.top.valid_structure*}");
             if (capability.isStructureObstructed()) {
                 probeInfo.text(TextFormatting.RED + "{*gregtech.top.obstructed_structure*}");
             }

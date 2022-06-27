@@ -91,7 +91,7 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
                             probeInfo.text(TextFormatting.RED + "{*gregtech.top.maintenance_broken*}");
                         }
                     } else {
-                        probeInfo.text(TextStyleClass.LABEL + "{*gregtech.top.maintenance_fixed*}");
+                        probeInfo.text(TextStyleClass.OK + "{*gregtech.top.maintenance_fixed*}");
                     }
                 }
             }
