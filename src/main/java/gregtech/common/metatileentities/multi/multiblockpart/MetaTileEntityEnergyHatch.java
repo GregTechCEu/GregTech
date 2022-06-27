@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -56,6 +57,12 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         if (shouldRenderOverlay()) {
             getOverlay().renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
         }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
     @Nonnull
@@ -152,6 +159,15 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_OUTPUT_HATCH_16A) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
+        }
+    }
+
+    @Override
+    public void doExplosion(float explosionPower) {
+        if (getController() != null)
+            getController().explodeMultiblock();
+        else {
+            super.doExplosion(explosionPower);
         }
     }
 }

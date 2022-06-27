@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -299,10 +300,17 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip"));
+        if (ConfigHolder.machines.doTerrainExplosion)
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip_rate", GTValues.V[getTier()] * 2, getPumpingCycleLength()));
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip_range", getMaxPumpRange(), getMaxPumpRange()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", exportFluids.getTankAt(0).getCapacity()));
+    }
+
+    @Override
+    public boolean getIsWeatherOrTerrainResistant() {
+        return true;
     }
 }

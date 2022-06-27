@@ -143,12 +143,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).map(tile->tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
-        return ()->Arrays.stream(metaTileEntities).map(tile->{
+    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
+        return () -> Arrays.stream(metaTileEntities).map(tile -> {
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
@@ -157,8 +157,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }).toArray(BlockInfo[]::new);
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates){
-        return ()->Arrays.stream(allowedStates).map(state-> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
+    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates) {
+        return () -> Arrays.stream(allowedStates).map(state -> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
     }
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
@@ -207,11 +207,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColorForRendering());
     }
-    
+
     /**
      * Override to disable Multiblock pattern from being added to Jei
      */
-    public boolean shouldShowInJei(){
+    public boolean shouldShowInJei() {
         return true;
     }
 

@@ -11,13 +11,24 @@ import gregtech.api.capability.impl.EnergyContainerHandler.IEnergyChangeListener
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEnergyChangeListener, ITieredMetaTileEntity {
 
@@ -57,6 +68,13 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     }
 
     @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
@@ -66,6 +84,12 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        checkWeatherOrTerrainExplosion(tier, tier * 10, energyContainer);
     }
 
     /**
