@@ -3,6 +3,8 @@ package gregtech;
 import codechicken.lib.CodeChickenLib;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
@@ -12,12 +14,13 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -27,6 +30,7 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
+import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
@@ -37,6 +41,7 @@ import gregtech.common.worldgen.LootTableHelper;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,6 +50,8 @@ import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
 
@@ -129,6 +136,12 @@ public class GregTechMod {
 
         MetaEntities.init();
 
+        /* Start Heating Coil Registration */
+        for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
+            HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
+        }
+        /* End Heating Coil Registration */
+
         proxy.onPreLoad();
         KeyBind.init();
     }
@@ -181,7 +194,16 @@ public class GregTechMod {
     public void onPostInit(FMLPostInitializationEvent event) {
         proxy.onPostLoad();
         BedrockFluidVeinHandler.recalculateChances(true);
-
+        // registers coil types for the BlastTemperatureProperty used in Blast Furnace Recipes
+        // runs AFTER craftTweaker
+        for (Map.Entry<IBlockState, IHeatingCoilBlockStats> entry : GregTechAPI.HEATING_COILS.entrySet()) {
+            IHeatingCoilBlockStats value = entry.getValue();
+            if (value != null) {
+                String name = entry.getKey().getBlock().getTranslationKey();
+                if (!name.endsWith(".name")) name = String.format("%s.name", name);
+                TemperatureProperty.registerCoilType(value.getCoilTemperature(), value.getMaterial(), name);
+            }
+        }
     }
 
     @Mod.EventHandler
