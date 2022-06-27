@@ -35,6 +35,12 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return getActive(getStateFromMeta(stack.getItemDamage()));
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
+    protected boolean canSilkHarvest() {
+        return false;
+    }
+
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
