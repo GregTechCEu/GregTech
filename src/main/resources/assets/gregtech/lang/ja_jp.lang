@@ -16,8 +16,8 @@ death.attack.heat.player= %s は %s の水餃子の具になった.
 enchantment.disjunction=ディスジャンクション
 
 gregtech.machine.steam_grinder.name=蒸気式破砕機
-gregtech.machine.steam_grinder.tooltip=1回につき同一アイテムを8個まで一度に粉砕. アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
-gregtech.multiblock.steam_grinder.description=蒸気時代のマルチブロック式粉砕機. ブロンズ製外装が最低14個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要.
+gregtech.machine.steam_grinder.tooltip=1回につき同一アイテムを8個まで一度に粉砕. アイテム数に関わらず所要時間が1.5倍になる./n§e蒸気用ハッチとバス§7が必要.
+gregtech.multiblock.steam_grinder.description=蒸気時代のマルチブロック式粉砕機. ブロンズ製外装が最低14個必要./n通常のハッチ/バスは使えず, 専用の蒸気用のものが必要.
 gregtech.multiblock.steam.low_steam=蒸気不足!
 gregtech.multiblock.steam.steam_stored=蒸気: %s / %s mb
 gregtech.machine.steam_hatch.name=蒸気用ハッチ
@@ -33,7 +33,7 @@ gregtech.top.energy_stored=エネルギー:
 gregtech.top.progress=進捗:
 gregtech.top.working_disabled=停止中
 
-gregtech.top.energy_consumption=使用中:
+gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
 
 gregtech.top.transform_up=§c昇圧§r
@@ -41,22 +41,36 @@ gregtech.top.transform_down=§a降圧§r
 gregtech.top.transform_input=§6入力:§r
 gregtech.top.transform_output=§9出力:§r
 
-gregtech.top.convert_eu=§eEUを変換中§r
-gregtech.top.convert_fe=§cFEを変換中§r
+gregtech.top.convert_eu=§eEU§rを§cFE§rに変換中
+gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
 
-gregtech.top.fuel_burn=あと
-gregtech.top.fuel_time=秒
 gregtech.top.fuel_min_consume=必要量
-gregtech.top.fuel_name=燃料:
 gregtech.top.fuel_none=燃料がありません
 
 gregtech.top.invalid_structure=§c構造が未完成
 gregtech.top.valid_structure=§a構造が完成
 gregtech.top.obstructed_structure=§cスペース不足
+gregtech.top.maintenance.wrench=パイプが緩い
+gregtech.top.maintenance.screwdriver=ネジが緩い
+gregtech.top.maintenance.soft_mallet=何かが詰まっている
+gregtech.top.maintenance.hard_hammer=メッキがへこんでいる
+gregtech.top.maintenance.wire_cutter=ワイヤーが焼き切れている
+gregtech.top.maintenance.crowbar=部品がずれている
+
 gregtech.top.maintenance_fixed=§a修理は不要
 gregtech.top.maintenance_broken=§c修理が必要
 
 gregtech.top.primitive_pump_production=生産
+
+gregtech.top.filter.label=フィルター:
+gregtech.top.link_cover.color=色:
+
+gregtech.top.mode.export=搬出中
+gregtech.top.mode.import=搬入中
+
+gregtech.top.unit.items=アイテム
+gregtech.top.unit.fluid_milibuckets=L
+gregtech.top.unit.fluid_buckets=kL
 
 gregtech.multiblock.title=マルチブロックの構造
 gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉 (PBF) は序盤にスチールを得るためのマルチブロック機械です.  動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
