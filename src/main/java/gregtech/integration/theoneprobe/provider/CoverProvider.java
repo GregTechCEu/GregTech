@@ -16,6 +16,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
 
@@ -55,10 +56,8 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
 
         if (conveyor instanceof CoverItemVoiding) {
             itemVoidingInfo(probeInfo, (CoverItemVoiding) conveyor);
-        }
-
-        // do not display the regular rate if the cover has a specialized rate
-        if (!(conveyor instanceof CoverItemVoiding) && (!(conveyor instanceof CoverRoboticArm) || ((CoverRoboticArm) conveyor).getTransferMode() == TransferMode.TRANSFER_ANY)) {
+        } else if (!(conveyor instanceof CoverRoboticArm) || ((CoverRoboticArm) conveyor).getTransferMode() == TransferMode.TRANSFER_ANY) {
+            // only display the regular rate if the cover does not have a specialized rate
             transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
         }
 
@@ -83,9 +82,8 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
         if (voiding instanceof CoverItemVoidingAdvanced) {
             CoverItemVoidingAdvanced advanced = (CoverItemVoidingAdvanced) voiding;
             VoidingMode mode = advanced.getVoidingMode();
-            voidingText(probeInfo, mode, unit, container.getTransferStackSize());
+            voidingText(probeInfo, mode, unit, container.getTransferStackSize(), container.getFilterWrapper().getItemFilter() != null);
         }
-        itemFilterText(probeInfo, container.getFilterWrapper().getItemFilter());
     }
 
     /**
@@ -99,10 +97,8 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
 
         if (pump instanceof CoverFluidVoiding) {
             fluidVoidingInfo(probeInfo, (CoverFluidVoiding) pump);
-        }
-
-        // do not display the regular rate if the cover has a specialized rate
-        if (!(pump instanceof CoverFluidVoiding) && (!(pump instanceof CoverFluidRegulator) || ((CoverFluidRegulator) pump).getTransferMode() == TransferMode.TRANSFER_ANY)) {
+        } else if (!(pump instanceof CoverFluidRegulator) || ((CoverFluidRegulator) pump).getTransferMode() == TransferMode.TRANSFER_ANY) {
+            // do not display the regular rate if the cover has a specialized rate
             transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit, pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 : pump.getTransferRate());
         }
 
@@ -126,9 +122,9 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
         if (voiding instanceof CoverFluidVoidingAdvanced) {
             CoverFluidVoidingAdvanced advanced = (CoverFluidVoidingAdvanced) voiding;
             VoidingMode mode = advanced.getVoidingMode();
-            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount());
+            // do not display amount in overflow when a filter is present
+            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter() != null);
         }
-        fluidFilterText(probeInfo, voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
     }
 
     /**
@@ -189,10 +185,11 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param mode      the transfer mode of the cover
      * @param unit      the unit of what is transferred
      * @param amount    the transfer rate of the mode
+     * @param hasFilter whether the cover has a filter in it or not
      */
-    private static void voidingText(@Nonnull IProbeInfo probeInfo, @Nonnull VoidingMode mode, @Nonnull String unit, int amount) {
+    private static void voidingText(@Nonnull IProbeInfo probeInfo, @Nonnull VoidingMode mode, @Nonnull String unit, int amount, boolean hasFilter) {
         String text = TextFormatting.RED + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
-        if (mode != VoidingMode.VOID_ANY) text += " " + amount + unit;
+        if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + amount + unit;
         probeInfo.text(text);
     }
 
@@ -212,10 +209,11 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void itemFilterText(@Nonnull IProbeInfo probeInfo, @Nonnull ItemFilter filter) {
+    private static void itemFilterText(@Nonnull IProbeInfo probeInfo, @Nullable ItemFilter filter) {
         String label = TextStyleClass.INFO + "{*gregtech.top.filter.label*} ";
         if (filter instanceof OreDictionaryItemFilter) {
-            probeInfo.text(label + ((OreDictionaryItemFilter) filter).getOreDictFilterExpression());
+            String expression = ((OreDictionaryItemFilter) filter).getOreDictFilterExpression();
+            if (!expression.isEmpty()) probeInfo.text(label + expression);
         } else if (filter instanceof SmartItemFilter) {
             probeInfo.text(label + IProbeInfo.STARTLOC + ((SmartItemFilter) filter).getFilteringMode().getName() + IProbeInfo.ENDLOC);
         }
@@ -227,7 +225,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void fluidFilterText(@Nonnull IProbeInfo probeInfo, @Nonnull FluidFilter filter) {
+    private static void fluidFilterText(@Nonnull IProbeInfo probeInfo, @Nullable FluidFilter filter) {
         // TODO If more unique fluid filtration is added, providers for it go here
     }
 }

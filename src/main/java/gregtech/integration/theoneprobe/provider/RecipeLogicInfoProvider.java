@@ -37,8 +37,11 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 int absEUt = Math.abs(EUt);
                 String text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN + " (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(absEUt)] + TextFormatting.GREEN + ")";
 
-                if (EUt > 0) probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
-                else if (EUt < 0) probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + text);
+                if (EUt > 0) {
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
+                } else if (EUt < 0) {
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + text);
+                }
             }
         }
     }
