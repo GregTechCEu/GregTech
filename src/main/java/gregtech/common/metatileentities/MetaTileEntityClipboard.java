@@ -255,6 +255,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        this.didSetFacing = true;
     }
 
     @Override
@@ -326,6 +328,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         y /= 14.0 / 16;
 
         return new double[]{x, y};
+    }
+
+    @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return false;
     }
 
     @Override
