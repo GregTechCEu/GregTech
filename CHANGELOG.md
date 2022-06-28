@@ -1,6 +1,13 @@
 ## Changelog
 
-## 2.3.2
+### 2.3.3
+
+BETA RELEASE (hotfix)
+
+Featured Changes:
+* Fixed game crash when transferring items or fluids from machines
+
+### 2.3.2
 
 BETA RELEASE
 
