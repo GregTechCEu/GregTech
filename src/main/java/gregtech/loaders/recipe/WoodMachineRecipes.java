@@ -50,6 +50,10 @@ public class WoodMachineRecipes {
                 //remove the old recipe
                 ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
 
+                if (ConfigHolder.recipes.moreNerfWoodCrafting) {
+                    originalOutput = 2;
+                }
+
                 // new wood recipes
                 //noinspection ConstantConditions
                 ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),

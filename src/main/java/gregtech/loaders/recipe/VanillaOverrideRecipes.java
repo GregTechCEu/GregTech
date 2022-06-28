@@ -57,6 +57,12 @@ public class VanillaOverrideRecipes {
             ModHandler.addShapedRecipe("stick_normal", new ItemStack(Items.STICK, 2), "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         }
 
+        if (ConfigHolder.recipes.moreNerfWoodCrafting) {
+            ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stick"));
+            ModHandler.addShapedRecipe("stick_saw", new ItemStack(Items.STICK, 2), "s", "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+            ModHandler.addShapedRecipe("stick_normal", new ItemStack(Items.STICK, 1), "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+        }
+
         if (ConfigHolder.recipes.nerfPaperCrafting) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:paper"));
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:sugar"));
