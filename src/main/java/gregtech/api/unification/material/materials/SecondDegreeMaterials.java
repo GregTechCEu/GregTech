@@ -263,12 +263,11 @@ public class SecondDegreeMaterials {
         SteelMagnetic = new Material.Builder(2035, "steel_magnetic")
                 .ingot()
                 .color(0x808080).iconSet(MAGNETIC)
-                .flags(GENERATE_ROD)
+                .flags(GENERATE_ROD, IS_MAGNETIC)
                 .components(Steel, 1)
                 .ingotSmeltInto(Steel)
                 .arcSmeltInto(Steel)
                 .macerateInto(Steel)
-                .blastTemp(1000) // no gas tier for steel
                 .build();
         Steel.getProperty(PropertyKey.INGOT).setMagneticMaterial(SteelMagnetic);
 
