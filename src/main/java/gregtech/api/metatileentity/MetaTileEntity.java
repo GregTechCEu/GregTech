@@ -970,6 +970,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             T otherCap = tileEntity.getCapability(capability, nearbyFacing.getOpposite());
             //use getCoverCapability so item/ore dictionary filter covers will work properly
             T thisCap = getCoverCapability(capability, nearbyFacing);
+            if (otherCap == null || thisCap == null) {
+                continue;
+            }
             transfer.accept(thisCap, otherCap);
         }
         blockPos.release();
