@@ -72,6 +72,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     private int lDist = 0;
     private int rDist = 0;
+    private int bDist = 0;
+    private int fDist = 0;
     private int hDist = 0;
 
     private CleanroomType cleanroomType = null;
@@ -114,10 +116,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 this.cleanroomType = CleanroomType.STERILE_CLEANROOM;
             }
         }
-        // max progress is based on the approximate dimensions of the structure: (x*y*z)-(y^2)
+        // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
-        this.cleanroomLogic.setMaxProgress(Math.max(100, (lDist + rDist + 1) * hDist - (hDist * hDist)));
+        this.cleanroomLogic.setMaxProgress(Math.max(100, ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
     }
 
     @Override
@@ -146,10 +148,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
      */
     public void updateStructureDimensions() {
         World world = getWorld();
-        EnumFacing left = getFrontFacing().rotateYCCW();
+        EnumFacing front = getFrontFacing();
+        EnumFacing back = front.getOpposite();
+        EnumFacing left = front.rotateYCCW();
         EnumFacing right = left.getOpposite();
-        System.out.println("Left  " + left.toString() + " " + left.getAxis() + " " + left.getAxisDirection());
-        System.out.println("Right " + right.toString() + " " + right.getAxis() + " " + right.getAxisDirection());
 
         BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(getPos());
         BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(getPos());
@@ -159,32 +161,41 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         // repeatable aisles take care of the second horizontal axis
         int lDist = 0;
         int rDist = 0;
+        int bDist = 0;
+        int fDist = 0;
         int hDist = 0;
 
-        // find the left and right distances for the structure pattern
+        // find the left, right, back, and front distances for the structure pattern
         // maximum size is 15x15x15 including walls, so check 7 block radius around the controller for blocks
         for (int i = 1; i < 8; i++) {
             if (lDist == 0 && isBlockWall(world, lPos, left)) lDist = i;
             if (rDist == 0 && isBlockWall(world, rPos, right)) rDist = i;
-            if (lDist != 0 && rDist != 0) break;
+            if (bDist == 0 && isBlockWall(world, lPos, back)) bDist = i;
+            if (fDist == 0 && isBlockWall(world, rPos, front)) fDist = i;
+            if (lDist != 0 && rDist != 0 && bDist != 0 && fDist != 0) break;
         }
 
-        // height can be a lot bigger, so it needs to be done separately
+        // height is diameter instead of radius, so it needs to be done separately
         for (int i = 1; i < 15; i++) {
             if (isBlockFloor(world, hPos, EnumFacing.DOWN)) hDist = i;
             if (hDist != 0) break;
         }
 
-        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) {
+        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || fDist < MIN_RADIUS || hDist < MIN_DEPTH) {
             invalidateStructure();
         }
 
         this.lDist = lDist;
         this.rDist = rDist;
+        this.bDist = bDist;
+        this.fDist = fDist;
         this.hDist = hDist;
+
         writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
             buf.writeInt(this.lDist);
             buf.writeInt(this.rDist);
+            buf.writeInt(this.bDist);
+            buf.writeInt(this.fDist);
             buf.writeInt(this.hDist);
         });
     }
@@ -216,6 +227,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         // these can sometimes get set to 0 when loading the game, breaking JEI
         if (lDist == 0) lDist = MIN_RADIUS;
         if (rDist == 0) rDist = MIN_RADIUS;
+        if (bDist == 0) bDist = MIN_RADIUS;
+        if (fDist == 0) fDist = MIN_RADIUS;
         if (hDist == 0) hDist = MIN_DEPTH;
 
         // build each row of the structure
@@ -278,30 +291,23 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         String[] center = Arrays.copyOf(slice, slice.length); // "BBBBB", "X   X", "X   X", "X   X", "BFSFB"
         center[center.length - 1] = controllerBuilder.toString();
 
-        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState()).setMinGlobalLimited((lDist + rDist + 1) * hDist * 3);
+        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState()).setMinGlobalLimited((((lDist + rDist + 1) * (bDist + fDist + 1) * (hDist + 1)) - ((lDist + rDist - 1) * (bDist + fDist - 1) * (hDist - 1))) * 3 / 4);
         TraceabilityPredicate casing = wallPredicate.or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)).or(autoAbilities());
-
-        System.out.println(Arrays.deepToString(wall));
-        System.out.println(Arrays.deepToString(slice));
-        System.out.println(Arrays.deepToString(center));
-        System.out.println(Arrays.deepToString(slice));
-        System.out.println(Arrays.deepToString(wall));
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
                 .aisle(wall)
-                .aisle(slice).setRepeatable(1, 6)
+                .aisle(slice).setRepeatable(bDist - 1)
                 .aisle(center)
-                .aisle(slice).setRepeatable(1, 6)
+                .aisle(slice).setRepeatable(fDist - 1)
                 .aisle(wall)
                 .where('S', selfPredicate())
                 .where('B', casing)
-                .where('X', casing
-                        .or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0))
-                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setPreviewCount(1))
-                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setPreviewCount(1))
-                        .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5).setPreviewCount(1))
-                        .or(metaTileEntities(MetaTileEntities.DIODES).setMaxGlobalLimited(5).setPreviewCount(1)))
+                .where('X', casing.or(doorPredicate().setMaxGlobalLimited(8))
+                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM))
+                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID))
+                        .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5))
+                        .or(metaTileEntities(MetaTileEntities.DIODES).setMaxGlobalLimited(5)))
                 .where('F', filterPredicate())
                 .where(' ', innerPredicate())
                 .build();
@@ -597,6 +603,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         super.writeToNBT(data);
         data.setInteger("lDist", this.lDist);
         data.setInteger("rDist", this.rDist);
+        data.setInteger("bDist", this.fDist);
+        data.setInteger("fDist", this.bDist);
         data.setInteger("hDist", this.hDist);
         data.setInteger("cleanAmount", this.cleanAmount);
         return this.cleanroomLogic.writeToNBT(data);
@@ -608,6 +616,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
         this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
         this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
+        this.bDist = data.hasKey("bDist") ? data.getInteger("bDist") : this.bDist;
+        this.fDist = data.hasKey("fDist") ? data.getInteger("fDist") : this.fDist;
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
     }
@@ -617,6 +627,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         super.writeInitialSyncData(buf);
         buf.writeInt(this.lDist);
         buf.writeInt(this.rDist);
+        buf.writeInt(this.bDist);
+        buf.writeInt(this.fDist);
         buf.writeInt(this.hDist);
         buf.writeInt(this.cleanAmount);
         this.cleanroomLogic.writeInitialSyncData(buf);
@@ -627,6 +639,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         super.receiveInitialSyncData(buf);
         this.lDist = buf.readInt();
         this.rDist = buf.readInt();
+        this.bDist = buf.readInt();
+        this.fDist = buf.readInt();
         this.hDist = buf.readInt();
         this.cleanAmount = buf.readInt();
         this.cleanroomLogic.receiveInitialSyncData(buf);
