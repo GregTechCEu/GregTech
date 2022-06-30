@@ -96,7 +96,7 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onFogColor(@Nonnull EntityViewRenderEvent.FogColors event) throws IllegalArgumentException, IllegalAccessException {
+    public static void onFogColor(@Nonnull EntityViewRenderEvent.FogColors event) {
         if (!(event.getState().getBlock() instanceof MaterialFluidBlock)) return;
 
         final MaterialFluidBlock fluidBlock = (MaterialFluidBlock) event.getState().getBlock();
@@ -195,16 +195,15 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onFogDensity(@Nonnull EntityViewRenderEvent.FogDensity event) throws IllegalArgumentException, IllegalAccessException {
+    public static void onFogDensity(@Nonnull EntityViewRenderEvent.FogDensity event) {
         if (!(event.getState().getBlock() instanceof MaterialFluidBlock)) return;
 
         final EntityRenderer renderer = event.getRenderer();
         final Entity entity = event.getEntity();
 
         // again the event is fired at a bad location...
-        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS))
-            return;
-        else if (renderer.cloudFog) return;
+        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS)) return;
+        if (renderer.cloudFog) return;
 
         GlStateManager.setFog(GlStateManager.FogMode.EXP);
 

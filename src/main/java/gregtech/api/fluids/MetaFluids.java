@@ -238,6 +238,7 @@ public class MetaFluids {
             // create the new fluid
             fluid = new MaterialFluid(fluidName, material, fluidType, textureLocation);
             fluid.setTemperature(temperature);
+            fluid.setDensity((int) (material.getMass() * 100));
             if (material.hasFluidColor()) {
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             } else {
@@ -272,8 +273,7 @@ public class MetaFluids {
     @Nullable
     public static Material getMaterialFromFluid(@Nonnull Fluid fluid) {
         Material material = fluidToMaterialMappings.get(fluid.getName());
-        if (material.hasFluid())
-            return material;
+        if (material.hasFluid()) return material;
         return null;
     }
 }
