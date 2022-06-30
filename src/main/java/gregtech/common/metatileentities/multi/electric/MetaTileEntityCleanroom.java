@@ -5,13 +5,12 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CleanroomLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -45,9 +44,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Loader;
@@ -58,16 +60,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_FRONT_FACING;
+
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
     public static final int CLEAN_AMOUNT_THRESHOLD = 90;
     public static final int MIN_CLEAN_AMOUNT = 0;
 
-    public static final int MIN_DIAMETER = 5;
-    public static final int MAX_DIAMETER = 15;
-    private int width = 5;
-    private int height = 5;
-    private int depth = 5;
+    public static final int MIN_RADIUS = 2;
+    public static final int MIN_DEPTH = 4;
+
+    private int lDist = 0;
+    private int rDist = 0;
+    private int hDist = 0;
 
     private CleanroomType cleanroomType = null;
     private int cleanAmount;
@@ -75,7 +80,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     private IEnergyContainer energyContainer;
 
     private final CleanroomLogic cleanroomLogic;
-    private HashSet<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
+    private final HashSet<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -109,9 +114,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 this.cleanroomType = CleanroomType.STERILE_CLEANROOM;
             }
         }
-        // max progress is based on the dimensions of the structure: (x^3)-(x^2)
+        // max progress is based on the approximate dimensions of the structure: (x*y*z)-(y^2)
+        // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
-        this.cleanroomLogic.setMaxProgress(Math.max(100, (width * depth * height) - (width * depth)));
+        this.cleanroomLogic.setMaxProgress(Math.max(100, (lDist + rDist + 1) * hDist - (hDist * hDist)));
     }
 
     @Override
@@ -135,71 +141,159 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         }
     }
 
+    /**
+     * Scans for blocks around the controller to update the dimensions
+     */
+    public void updateStructureDimensions() {
+        World world = getWorld();
+        EnumFacing left = getFrontFacing().rotateYCCW();
+        EnumFacing right = left.getOpposite();
+        System.out.println("Left  " + left.toString() + " " + left.getAxis() + " " + left.getAxisDirection());
+        System.out.println("Right " + right.toString() + " " + right.getAxis() + " " + right.getAxisDirection());
+
+        BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(getPos());
+        BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(getPos());
+        BlockPos.MutableBlockPos hPos = new BlockPos.MutableBlockPos(getPos());
+
+        // find the distances from the controller to the plascrete blocks on one horizontal axis and the Y axis
+        // repeatable aisles take care of the second horizontal axis
+        int lDist = 0;
+        int rDist = 0;
+        int hDist = 0;
+
+        // find the left and right distances for the structure pattern
+        // maximum size is 15x15x15 including walls, so check 7 block radius around the controller for blocks
+        for (int i = 1; i < 8; i++) {
+            if (lDist == 0 && isBlockWall(world, lPos, left)) lDist = i;
+            if (rDist == 0 && isBlockWall(world, rPos, right)) rDist = i;
+            if (lDist != 0 && rDist != 0) break;
+        }
+
+        // height can be a lot bigger, so it needs to be done separately
+        for (int i = 1; i < 15; i++) {
+            if (isBlockFloor(world, hPos, EnumFacing.DOWN)) hDist = i;
+            if (hDist != 0) break;
+        }
+
+        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) {
+            invalidateStructure();
+        }
+
+        this.lDist = lDist;
+        this.rDist = rDist;
+        this.hDist = hDist;
+        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
+            buf.writeInt(this.lDist);
+            buf.writeInt(this.rDist);
+            buf.writeInt(this.hDist);
+        });
+    }
+
+    /**
+     * @param world     the world to check
+     * @param pos       the pos to check and move
+     * @param direction the direction to move
+     * @return if a block is a valid wall block at pos moved in direction
+     */
+    public boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
+        return MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE).equals(world.getBlockState(pos.move(direction)));
+    }
+
+    /**
+     * @param world     the world to check
+     * @param pos       the pos to check and move
+     * @param direction the direction to move
+     * @return if a block is a valid floor block at pos moved in direction
+     */
+    public boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
+        return isBlockWall(world, pos, direction);
+    }
+
     @Override
     protected BlockPattern createStructurePattern() {
+        if (getWorld() != null) updateStructureDimensions();
+
         // these can sometimes get set to 0 when loading the game, breaking JEI
-        if (width == 0) width = MIN_DIAMETER;
-        if (height == 0) height = MIN_DIAMETER;
-        if (depth == 0) depth = MIN_DIAMETER;
+        if (lDist == 0) lDist = MIN_RADIUS;
+        if (rDist == 0) rDist = MIN_RADIUS;
+        if (hDist == 0) hDist = MIN_DEPTH;
 
         // build each row of the structure
-        StringBuilder border = new StringBuilder("B"); //      BBBBB
-        StringBuilder wall = new StringBuilder("B"); //        BXXXB
-        StringBuilder inside = new StringBuilder("X"); //      X   X
-        StringBuilder roof = new StringBuilder("B"); //        BFFFB
-        StringBuilder controller = new StringBuilder("B"); //  BFSFB
+        StringBuilder borderBuilder = new StringBuilder();     // BBBBB
+        StringBuilder wallBuilder = new StringBuilder();       // BXXXB
+        StringBuilder insideBuilder = new StringBuilder();     // X   X
+        StringBuilder roofBuilder = new StringBuilder();       // BFFFB
+        StringBuilder controllerBuilder = new StringBuilder(); // BFSFB
 
-        // start with block after left edge, do not include right edge with -1
-        for (int i = 1; i < width - 1; i++) {
-            border.append("B");
-            wall.append("X");
-            inside.append(" ");
-            roof.append("F");
-            if (i == width / 2) controller.append("S"); // controller is always centered
-            else controller.append("F");
+        // everything to the left of the controller
+        for (int i = 0; i < lDist; i++) {
+            borderBuilder.append("B");
+            if (i == 0) {
+                wallBuilder.append("B");
+                insideBuilder.append("X");
+                roofBuilder.append("B");
+                controllerBuilder.append("B");
+            } else {
+                insideBuilder.append(" ");
+                wallBuilder.append("X");
+                roofBuilder.append("F");
+                controllerBuilder.append("F");
+            }
         }
-        border.append("B");
-        wall.append("B");
-        inside.append("X");
-        roof.append("B");
-        controller.append("B");
+
+        // everything in-line with the controller
+        borderBuilder.append("B");
+        wallBuilder.append("X");
+        insideBuilder.append(" ");
+        roofBuilder.append("F");
+        controllerBuilder.append("S");
+
+        // everything to the right of the controller
+        for (int i = 0; i < rDist; i++) {
+            borderBuilder.append("B");
+            if (i == rDist - 1) {
+                wallBuilder.append("B");
+                insideBuilder.append("X");
+                roofBuilder.append("B");
+                controllerBuilder.append("B");
+            } else {
+                insideBuilder.append(" ");
+                wallBuilder.append("X");
+                roofBuilder.append("F");
+                controllerBuilder.append("F");
+            }
+        }
 
         // build each slice of the structure
-        String B = border.toString();
-        String W = wall.toString();
-        String I = inside.toString();
-        String R = roof.toString();
-        String C = controller.toString();
+        String[] wall = new String[hDist + 1]; // "BBBBB", "BXXXB", "BXXXB", "BXXXB", "BBBBB"
+        Arrays.fill(wall, wallBuilder.toString());
+        wall[0] = borderBuilder.toString();
+        wall[wall.length - 1] = borderBuilder.toString();
 
-        String[] frontBack = new String[height];
-        String[] inner = new String[height];
-        String[] center = new String[height];
+        String[] slice = new String[hDist + 1]; // "BBBBB", "X   X", "X   X", "X   X", "BFFFB"
+        Arrays.fill(slice, insideBuilder.toString());
+        slice[0] = borderBuilder.toString();
+        slice[slice.length - 1] = roofBuilder.toString();
 
-        // bottom and top
-        frontBack[0] = B;
-        frontBack[height - 1] = B;
-        inner[0] = B;
-        inner[height - 1] = R;
-        center[0] = B;
-        center[height - 1] = C;
+        String[] center = Arrays.copyOf(slice, slice.length); // "BBBBB", "X   X", "X   X", "X   X", "BFSFB"
+        center[center.length - 1] = controllerBuilder.toString();
 
-        // central sections
-        for (int i = 1; i < height - 1; i++) {
-            frontBack[i] = W;
-            inner[i] = I;
-            center[i] = I;
-        }
-
-        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState()).setMinGlobalLimited((width * height * depth - (width - 2) * (height - 2) * (depth - 2)) * 3 / 4);
+        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState()).setMinGlobalLimited((lDist + rDist + 1) * hDist * 3);
         TraceabilityPredicate casing = wallPredicate.or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)).or(autoAbilities());
+
+        System.out.println(Arrays.deepToString(wall));
+        System.out.println(Arrays.deepToString(slice));
+        System.out.println(Arrays.deepToString(center));
+        System.out.println(Arrays.deepToString(slice));
+        System.out.println(Arrays.deepToString(wall));
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
-                .aisle(frontBack)
-                .aisle(inner).setRepeatable((depth - 3) / 2, (depth - 3) / 2) // excludes controller row, edge rows
+                .aisle(wall)
+                .aisle(slice).setRepeatable(1, 6)
                 .aisle(center)
-                .aisle(inner).setRepeatable((depth - 3) / 2, (depth - 3) / 2)
-                .aisle(frontBack)
+                .aisle(slice).setRepeatable(1, 6)
+                .aisle(wall)
                 .where('S', selfPredicate())
                 .where('B', casing)
                 .where('X', casing
@@ -265,8 +359,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return new TraceabilityPredicate(blockWorldState -> {
             // all non-MetaTileEntities are allowed inside by default
             TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof MetaTileEntityHolder))
-                return true;
+            if (!(tileEntity instanceof MetaTileEntityHolder)) return true;
 
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
 
@@ -278,8 +371,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 return false;
 
             // the machine does not need a cleanroom, so do nothing more
-            if (!(metaTileEntity instanceof ICleanroomReceiver))
-                return true;
+            if (!(metaTileEntity instanceof ICleanroomReceiver)) return true;
 
             // give the machine this cleanroom if it doesn't have this one
             ICleanroomReceiver cleanroomReceiver = (ICleanroomReceiver) metaTileEntity;
@@ -308,43 +400,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.size", this.width, this.height, this.depth));
-        if (!isStructureFormed()) {
-            // Width Button
-            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.cleanroom.size_modify_width");
-            buttonText.appendText(" ");
-            buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[-]"), "subWidth"));
-            buttonText.appendText(" ");
-            buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[+]"), "addWidth"));
-            buttonText.setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new TextComponentTranslation("gregtech.multiblock.cleanroom.size_explanation")
-                            .setStyle(new Style().setColor(TextFormatting.GRAY)))));
-            textList.add(buttonText);
-
-            // Height Button
-            buttonText = new TextComponentTranslation("gregtech.multiblock.cleanroom.size_modify_height");
-            buttonText.appendText(" ");
-            buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[-]"), "subHeight"));
-            buttonText.appendText(" ");
-            buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[+]"), "addHeight"));
-            buttonText.setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new TextComponentTranslation("gregtech.multiblock.cleanroom.size_explanation")
-                            .setStyle(new Style().setColor(TextFormatting.GRAY)))));
-            textList.add(buttonText);
-
-            // Depth Button
-            buttonText = new TextComponentTranslation("gregtech.multiblock.cleanroom.size_modify_depth");
-            buttonText.appendText(" ");
-            buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[-]"), "subDepth"));
-            buttonText.appendText(" ");
-            buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[+]"), "addDepth"));
-            buttonText.setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new TextComponentTranslation("gregtech.multiblock.cleanroom.size_explanation")
-                            .setStyle(new Style().setColor(TextFormatting.GRAY)))));
-            textList.add(buttonText);
-            return;
-        }
-
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
             long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
             String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
@@ -360,58 +415,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
         }
 
-        if (!drainEnergy(true)) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-        }
-
         if (isStructureFormed()) {
+            if (!drainEnergy(true)) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+
             if (isClean()) textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
             else textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
             textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_amount", this.cleanAmount));
         }
-    }
-
-    @Override
-    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
-        super.handleDisplayClick(componentData, clickData);
-        switch (componentData) {
-            case "subWidth":
-                if (withinBounds(width - 2))
-                    width -= 2;
-                break;
-            case "addWidth":
-                if (withinBounds(width + 2))
-                    width += 2;
-                break;
-            case "subHeight":
-                if (withinBounds(height - 1))
-                    height--;
-                break;
-            case "addHeight":
-                if (withinBounds(height + 1))
-                    height++;
-                break;
-            case "subDepth":
-                if (withinBounds(depth - 2))
-                    depth -= 2;
-                break;
-            case "addDepth":
-                if (withinBounds(depth + 2))
-                    depth += 2;
-                break;
-        }
-
-        reinitializeStructurePattern();
-        checkStructurePattern();
-        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
-            buf.writeInt(width);
-            buf.writeInt(depth);
-            buf.writeInt(height);
-        });
-    }
-
-    protected boolean withinBounds(int size) {
-        return GTUtility.isBetweenInclusive(MIN_DIAMETER, MAX_DIAMETER, size);
     }
 
     @Override
@@ -530,6 +542,28 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        Preconditions.checkNotNull(frontFacing, "frontFacing");
+        this.frontFacing = frontFacing;
+        if (getWorld() != null && !getWorld().isRemote) {
+            notifyBlockUpdate();
+            markDirty();
+            writeCustomData(UPDATE_FRONT_FACING, buf -> buf.writeByte(frontFacing.getIndex()));
+            mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
+        }
+        if (getWorld() != null && !getWorld().isRemote) {
+            // clear cache since the cache has no concept of pre-existing facing
+            // for the controller block (or any block) in the structure
+            structurePattern.clearCache();
+            // need to reinitialize structure again since it depends on the machine's facing
+            this.reinitializeStructurePattern();
+            // recheck structure pattern immediately to avoid a slight "lag"
+            // on deforming when rotating a multiblock controller
+            checkStructurePattern();
+        }
+    }
+
+    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
@@ -542,9 +576,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
-            this.width = buf.readInt();
-            this.depth = buf.readInt();
-            this.height = buf.readInt();
+            this.lDist = buf.readInt();
+            this.rDist = buf.readInt();
+            this.hDist = buf.readInt();
             this.reinitializeStructurePattern();
         } else if (dataId == GregtechDataCodes.IS_WORKING) {
             this.cleanroomLogic.setActive(buf.readBoolean());
@@ -561,9 +595,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("width", this.width);
-        data.setInteger("depth", this.depth);
-        data.setInteger("height", this.height);
+        data.setInteger("lDist", this.lDist);
+        data.setInteger("rDist", this.rDist);
+        data.setInteger("hDist", this.hDist);
         data.setInteger("cleanAmount", this.cleanAmount);
         return this.cleanroomLogic.writeToNBT(data);
     }
@@ -571,9 +605,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.width = data.hasKey("width") ? data.getInteger("width") : this.width;
-        this.depth = data.hasKey("depth") ? data.getInteger("depth") : this.depth;
-        this.height = data.hasKey("height") ? data.getInteger("height") : this.height;
+        this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
+        this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
+        this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
     }
@@ -581,9 +615,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(this.width);
-        buf.writeInt(this.depth);
-        buf.writeInt(this.height);
+        buf.writeInt(this.lDist);
+        buf.writeInt(this.rDist);
+        buf.writeInt(this.hDist);
         buf.writeInt(this.cleanAmount);
         this.cleanroomLogic.writeInitialSyncData(buf);
     }
@@ -591,9 +625,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.width = buf.readInt();
-        this.depth = buf.readInt();
-        this.height = buf.readInt();
+        this.lDist = buf.readInt();
+        this.rDist = buf.readInt();
+        this.hDist = buf.readInt();
         this.cleanAmount = buf.readInt();
         this.cleanroomLogic.receiveInitialSyncData(buf);
     }
