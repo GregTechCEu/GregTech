@@ -63,11 +63,6 @@ public class GTRecipeOreInput extends GTRecipeInput {
     }
 
     @Override
-    public FluidStack getInputFluidStack() {
-        return null;
-    }
-
-    @Override
     public boolean isOreDict() {
         return true;
     }

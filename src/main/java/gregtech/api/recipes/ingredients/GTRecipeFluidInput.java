@@ -46,11 +46,6 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     @Override
-    public boolean isOreDict() {
-        return false;
-    }
-
-    @Override
     public boolean acceptsFluid(@Nullable FluidStack input) {
         if (input == null || input.amount == 0) {
             return false;

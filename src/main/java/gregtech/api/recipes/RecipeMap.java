@@ -308,6 +308,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (fluidInputs.isEmpty()) {
             return fluidIngredientRoot.get(new MapFluidIngredient(fluid)) != null;
         }
+        if (fluidInputs.contains(fluid)) {
+            return true;
+        }
         fluidInputs.add(fluid);
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>();
         buildFromFluidStacks(list, fluidInputs);
@@ -892,22 +895,24 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
         AbstractMapIngredient ingredient;
-        for (ItemStack t : ingredients) {
-            int meta = t.getMetadata();
-            NBTTagCompound nbt = t.getTagCompound();
+        for (ItemStack stack : ingredients) {
+            int meta = stack.getMetadata();
+            NBTTagCompound nbt = stack.getTagCompound();
 
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(1);
-            ls.add(new MapItemStackIngredient(t, meta, nbt));
+            ls.add(new MapItemStackIngredient(stack, meta, nbt));
             if (hasOreDictedInputs) {
-                for (Integer i : OreDictionary.getOreIDs(t)) {
+                for (int i : OreDictionary.getOreIDs(stack)) {
                     ingredient = new MapOreDictIngredient(i);
                     ls.add(ingredient);
-                    ingredient = new MapOreDictNBTIngredient(i, nbt);
-                    ls.add(ingredient);
+                    if (hasNBTMatcherInputs) {
+                        ingredient = new MapOreDictNBTIngredient(i, nbt);
+                        ls.add(ingredient);
+                    }
                 }
             }
             if (hasNBTMatcherInputs) {
-                ls.add(new MapItemStackNBTIngredient(t, meta, nbt));
+                ls.add(new MapItemStackNBTIngredient(stack, meta, nbt));
             }
             if (ls.size() > 0) {
                 list.add(ls);

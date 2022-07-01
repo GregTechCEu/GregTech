@@ -91,16 +91,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     @Override
-    public FluidStack getInputFluidStack() {
-        return null;
-    }
-
-    @Override
-    public boolean isOreDict() {
-        return false;
-    }
-
-    @Override
     public boolean acceptsStack(ItemStack input) {
         if (input == null || input.isEmpty()) {
             return false;
