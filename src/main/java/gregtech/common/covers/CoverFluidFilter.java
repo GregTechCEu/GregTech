@@ -22,6 +22,7 @@ import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.Filter;
+import gregtech.common.covers.filter.fluid.FluidFilter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -39,11 +40,11 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
-    protected Filter<FluidStack> fluidFilter;
+    protected FluidFilter fluidFilter;
     protected FluidFilterMode filterMode;
     protected FluidHandlerFiltered fluidHandler;
 
-    public CoverFluidFilter(ICoverable coverHolder, EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, Filter<FluidStack> fluidFilter) {
+    public CoverFluidFilter(ICoverable coverHolder, EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, FluidFilter fluidFilter) {
         super(coverHolder, attachedSide);
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
@@ -60,7 +61,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return filterMode;
     }
 
-    public FluidFilterWrapper getFluidFilter() {
+    public FluidFilter getFluidFilter() {
         return this.fluidFilter;
     }
 
@@ -100,7 +101,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
                         .setPos(7, 18))
                 .widget(new CycleButtonWidget()
                         .setForEnum(FluidFilterMode.class, this::getFilterMode, this::setFilterMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(FluidFilterMode.class))
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(FluidFilterMode.class, FluidFilterMode::getName))
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .setPos(87, 18)
                         .setSize(80, 14))

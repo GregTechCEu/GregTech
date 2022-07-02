@@ -74,8 +74,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         return isPrivate ? playerUUID : null;
     }
 
-    public FluidFilterContainer getFluidFilterContainer() {
-        return this.fluidFilter;
+    public FluidFilterHolder getFilterHolder() {
+        return this.filterHolder;
     }
 
     public boolean isIOEnabled() {

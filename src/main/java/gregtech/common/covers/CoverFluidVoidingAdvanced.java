@@ -122,10 +122,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         return this.voidingMode == VoidingMode.VOID_OVERFLOW;
     }
 
-    public int getTransferAmount() {
-        return transferAmount;
-    }
-
     public String getTransferAmountString() {
         return Integer.toString(this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount);
     }

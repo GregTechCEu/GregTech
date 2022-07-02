@@ -26,12 +26,16 @@ public class GuiFunctions {
     }
 
     public static <T extends Enum<T> & IStringSerializable> Function<Integer, IDrawable> enumStringTextureGetter(Class<T> clazz) {
+        return enumStringTextureGetter(clazz, IStringSerializable::getName);
+    }
+
+    public static <T extends Enum<T>> Function<Integer, IDrawable> enumStringTextureGetter(Class<T> clazz, Function<T, String> nameGetter) {
         return val -> {
             T[] values = clazz.getEnumConstants();
             if (val >= values.length) {
                 throw new ArrayIndexOutOfBoundsException("Tried getting enum constant of class " + clazz.getSimpleName() + " at index " + val);
             }
-            return new Text(values[val].getName())
+            return new Text(nameGetter.apply(values[val]))
                     .color(0xFFFFFF)
                     .localise()
                     .shadow();

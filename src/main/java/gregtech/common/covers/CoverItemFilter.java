@@ -61,7 +61,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         return filterMode;
     }
 
-    public ItemFilterWrapper getItemFilter() {
+    public ItemFilter getItemFilter() {
         return this.itemFilter;
     }
 
@@ -103,7 +103,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
                         .setPos(7, 18))
                 .widget(new CycleButtonWidget()
                         .setForEnum(ItemFilterMode.class, this::getFilterMode, this::setFilterMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class, ItemFilterMode::getName))
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .setPos(87, 18)
                         .setSize(80, 14))
