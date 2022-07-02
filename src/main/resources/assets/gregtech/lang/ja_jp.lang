@@ -1,4 +1,4 @@
-# Japanese translate by MrKo_no & Quarri6343beta
+# Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
 # Corresponding Version: 2.3.3 - beta
 # 対応バージョン: 2.3.3 - beta
@@ -4428,7 +4428,7 @@ gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モー
 gregtech.machine.miner.multi.tooltip=最大範囲: §b%dx%d§7チャンク.
 gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産.
 gregtech.machine.miner.multi.description=広い面積をカバーし, 大量の鉱石を生産するマルチブロック採掘機.
-#Small ores lang: gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産. Small ore Fortune §b%d§7.
+#Small ores lang:gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=§b%dmb/tick§7で§e%s§7を消費. オーバークロックごとに液体消費が2倍になる.
 gregtech.machine.miner.overclock=%s§7を要求. %s§7までオーバークロック可能.
 
@@ -5121,7 +5121,7 @@ terminal.multiblock_ar.builder.auto=自動設置
 terminal.multiblock_ar.builder.place=ブロックを設置
 terminal.multiblock_ar.builder.debug=デバッグ
 
-terminal.world_prospector.description="X-rayの視界があればなぁ"\n"お客様,申し訳ありませんがそのような超能力は販売しておりません.科学を信頼してみてください."
+terminal.world_prospector.description="X-rayの視界があればなぁ"\n"お客様,申し訳ありませんがそのような超能力は販売しておりません. 科学を信頼してみてください."
 terminal.world_prospector.tier.0=半径15m (1 スロット)
 terminal.world_prospector.tier.1=半径30m (2 スロット)
 terminal.world_prospector.tier.2=半径60m (4 スロット)
