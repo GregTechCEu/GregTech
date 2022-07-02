@@ -21,6 +21,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.terminal.app.configurator.ConfiguratorApp;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -43,6 +44,7 @@ import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -55,6 +57,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -250,6 +253,19 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+            }
+            // Check if the terminal is in the offhand and if it is, does it have the configurator app installed (or is it creative)
+            ItemStack offHand = placer.getHeldItemOffhand();
+            if (!worldIn.isRemote &&
+                    placer instanceof EntityPlayer &&
+                    offHand.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) &&
+                    offHand.hasTagCompound() &&
+                    offHand.getTagCompound().hasKey("terminal") &&
+                    (offHand.getTagCompound().getCompoundTag("terminal").getTagList("_installed", Constants.NBT.TAG_STRING).tagList.contains(new NBTTagString(ConfiguratorApp.APP_NAME)) ||
+                            offHand.getTagCompound().getCompoundTag("terminal").hasKey("_creative"))
+            ) {
+                // With app installed, attempt to paste settings
+                ConfiguratorApp.applyMachineConfiguration((EntityPlayer) placer, offHand.getTagCompound().getCompoundTag("terminal"), metaTileEntity);
             }
         }
     }

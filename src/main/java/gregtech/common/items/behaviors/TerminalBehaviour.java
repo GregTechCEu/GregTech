@@ -33,6 +33,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
         if (player.isSneaking()) {
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.getOrCreateSubCompound("terminal").removeTag("_click");
+            itemStack.getOrCreateSubCompound("terminal").setBoolean("_sneak", player.isSneaking());
             if (pos != null) {
                 itemStack.getOrCreateSubCompound("terminal").setTag("_click", NBTUtil.createPosTag(pos));
                 if (!world.isRemote) {
@@ -49,6 +50,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
         itemStack.getOrCreateSubCompound("terminal").removeTag("_click");
+        itemStack.getOrCreateSubCompound("terminal").setBoolean("_sneak", player.isSneaking());
         if (!world.isRemote) {
             PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
             holder.openUI();
