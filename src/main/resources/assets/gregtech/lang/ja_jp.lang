@@ -1,7 +1,7 @@
-# Japanese translate by MrKo_no & Quarri6343
+# Japanese translate by MrKo_no & Quarri6343beta
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
-# Corresponding Version: 2.2.3 - beta
-# 対応バージョン: 2.2.3 - beta
+# Corresponding Version: 2.3.3 - beta
+# 対応バージョン: 2.3.3 - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
@@ -1685,7 +1685,7 @@ material.dichlorobenzidine=3,3-ジクロロベンジジン
 material.nitrochlorobenzene=2-ニトロクロロベンゼン
 material.chlorobenzene=クロロベンゼン
 material.octane=オクタン
-material.ethyl_tertbutyl_ether=エチル-§otert§r-ブチルエステル
+material.ethyl_tertbutyl_ether=エチルtert-ブチルエーテル
 material.ethylbenzene=エチルベンゼン
 material.naphthalene=ナフタレン
 material.nitrobenzene=ニトロベンゼン
