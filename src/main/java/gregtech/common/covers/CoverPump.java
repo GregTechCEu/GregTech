@@ -354,7 +354,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
-    public enum PumpMode implements IStringSerializable {
+    public enum PumpMode implements IStringSerializable, IIOMode {
         IMPORT("cover.pump.mode.import"),
         EXPORT("cover.pump.mode.export");
 
@@ -368,6 +368,11 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         @Override
         public String getName() {
             return localeName;
+        }
+
+        @Override
+        public boolean isImport() {
+            return this == IMPORT;
         }
     }
 

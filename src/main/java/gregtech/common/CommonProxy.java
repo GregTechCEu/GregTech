@@ -10,7 +10,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -269,12 +268,6 @@ public class CommonProxy {
     //ore dictionary and recipes will get recipes accessible in time
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        // registers coiltypes for the BlastTemperatureProperty used in Blast Furnace Recipes
-        for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
-            TemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
-                    String.format("tile.wire_coil.%s.name", values.getName()));
-        }
-
         //Registers Fusion tiers for the FusionEUToStartProperty
         FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
         FusionEUToStartProperty.registerFusionTier(7, "(MK2)");

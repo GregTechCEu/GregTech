@@ -193,7 +193,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     public boolean isStructureObstructed() {
-        return !isRotorFaceFree();
+        return super.isStructureObstructed() || !isRotorFaceFree();
     }
 
     @Override

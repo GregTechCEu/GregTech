@@ -4,10 +4,11 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.recipes.RecipeMap;
-import mcjty.theoneprobe.api.*;
-import net.minecraft.client.resources.I18n;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
@@ -16,18 +17,20 @@ public class MultiRecipeMapInfoProvider extends CapabilityInfoProvider<IMultiple
 
     @Override
     public String getID() {
-        return String.format("%s:multi_recipemap_provider", GTValues.MODID);
+        return GTValues.MODID + ":multi_recipemap_provider";
     }
 
+    @Nonnull
     @Override
     protected Capability<IMultipleRecipeMaps> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS;
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IMultipleRecipeMaps iMultipleRecipeMaps, IProbeInfo iProbeInfo, TileEntity tileEntity, EnumFacing enumFacing) {
+    protected void addProbeInfo(@Nonnull IMultipleRecipeMaps iMultipleRecipeMaps, @Nonnull IProbeInfo iProbeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
         if (iMultipleRecipeMaps.getAvailableRecipeMaps().length == 1) return;
-        iProbeInfo.text(TextStyleClass.INFO + I18n.format("gregtech.multiblock.multiple_recipemaps.header"));
+
+        iProbeInfo.text(TextStyleClass.INFO + IProbeInfo.STARTLOC + "gregtech.multiblock.multiple_recipemaps.header" + IProbeInfo.ENDLOC);
         for (RecipeMap<?> recipeMap : iMultipleRecipeMaps.getAvailableRecipeMaps()) {
             if (recipeMap.equals(iMultipleRecipeMaps.getCurrentRecipeMap())) {
                 iProbeInfo.text("   " + TextStyleClass.INFOIMP + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*} {*<*}");

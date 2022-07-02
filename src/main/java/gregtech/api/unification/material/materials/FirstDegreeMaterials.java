@@ -1046,7 +1046,7 @@ public class FirstDegreeMaterials {
         IronMagnetic = new Material.Builder(395, "iron_magnetic")
                 .ingot()
                 .color(0xC8C8C8).iconSet(MAGNETIC)
-                .flags(GENERATE_BOLT_SCREW)
+                .flags(GENERATE_BOLT_SCREW, IS_MAGNETIC)
                 .components(Iron, 1)
                 .ingotSmeltInto(Iron)
                 .arcSmeltInto(WroughtIron)
@@ -1201,12 +1201,11 @@ public class FirstDegreeMaterials {
         NeodymiumMagnetic = new Material.Builder(418, "neodymium_magnetic")
                 .ingot()
                 .color(0x646464).iconSet(MAGNETIC)
-                .flags(GENERATE_ROD)
+                .flags(GENERATE_ROD, IS_MAGNETIC)
                 .components(Neodymium, 1)
                 .ingotSmeltInto(Neodymium)
                 .arcSmeltInto(Neodymium)
                 .macerateInto(Neodymium)
-                .blastTemp(1289, GasTier.MID)
                 .build();
         Neodymium.getProperty(PropertyKey.INGOT).setMagneticMaterial(NeodymiumMagnetic);
 
@@ -1239,12 +1238,11 @@ public class FirstDegreeMaterials {
         SamariumMagnetic = new Material.Builder(423, "samarium_magnetic")
                 .ingot()
                 .color(0xFFFFCD).iconSet(MAGNETIC)
-                .flags(GENERATE_LONG_ROD)
+                .flags(GENERATE_LONG_ROD, IS_MAGNETIC)
                 .components(Samarium, 1)
                 .ingotSmeltInto(Samarium)
                 .arcSmeltInto(Samarium)
                 .macerateInto(Samarium)
-                .blastTemp(1345, GasTier.HIGH) // todo
                 .build();
         Samarium.getProperty(PropertyKey.INGOT).setMagneticMaterial(SamariumMagnetic);
 

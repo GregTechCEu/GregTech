@@ -99,4 +99,9 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
             return hasValidFluids && super.shouldSearchForRecipes();
         }
     }
+
+    @Override
+    public boolean getIsWeatherOrTerrainResistant(){
+        return true;
+    }
 }

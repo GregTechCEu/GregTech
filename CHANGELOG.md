@@ -1,5 +1,56 @@
 ## Changelog
 
+### 2.3.3
+
+BETA RELEASE (hotfix)
+
+Featured Changes:
+* Fixed game crash when transferring items or fluids from machines
+
+### 2.3.2
+
+BETA RELEASE
+
+Featured Changes:
+* Added a Heating Coil Registry with CT Support for adding and removing Coils
+* Fixed fluid tanks being shown twice in TheOneProbe
+* Fixed machines overclocking too many times
+* Overhauled and redesigned TheOneProbe providers for GT machines
+* Overhauled Explosion Configs: machines can now explode in rain, water, and more
+
+* Fixed Electric Blast Furnace recipes of Magnetic Dusts
+* Fixed UHV Energy Hatch recipes
+* Disabled wrench rotation of the Clipboard
+* Increased machine speed of GT recipes for vanilla items and GT covers
+* Added Soft Hammer toggles for Item and Fluid I/O hatch auto-input/output
+* Allowed Steam Solar Boilers to work in the desert when raining
+* Fixed Steam Solar Boilers working in dimensions with no sun (The End)
+* Changed Hermetic Casings to use a custom model and non-hardcoded textures
+* Fixed crash with recursive nodes in the Terminal Recipe Chart App
+* Improved multiblock JEI page block list ItemBlock accuracy
+* Fixed crashes from Bedrock Fluid Veins
+* Fixed being able to Silk Touch VariantActiveBlocks, such as Heating Coils
+* Blacklisted the Crafting Station from the Terminal Console App
+* Fixed multiblock coil bonuses not applying when not overclocking
+* Fixed Wireless Digital Interface Cover creating highlight boxes in the wrong dimension
+* Fixed Prospector Scanners showing Galacticraft planet blocks as Copper Ore
+* Fixed Digital Interface Covers having unbounded slot selection
+* Fixed Digital Interface Cover energy bar overflow
+* Fixed fluids being extractable from input hatches with pipes
+* Cleaned up Steam Multiblock tooltips
+* Added fluid input minimum to Large Miners
+* Fixed Supply Exact on Robot Arms not working above 1 stack of items
+* Fixed numerous recipe conflicts in the Large Chemical Reactor
+* Updated Russian Translation
+* Internal: Updated Repository README with attribution and relevant links
+* Internal: Stopped using some helper methods from CodeChickenLib
+* Internal: Added Integer and String Block Unlisted Properties
+* Internal: Changes to fluid related methods in MetaTileEntity
+    * Added `fillInternalTankFromFluidContainer(IFluidHandler fluidHandler)`
+    * Added `fillContainerFromInternalTank(IFluidHandler fluidHandler)`
+    * Removed `fillInternalTankFromFluidContainer(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot)`
+    * Removed `fillContainerFromInternalTank(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot)`
+
 ### 2.3.1
 
 BETA RELEASE (hotifx)

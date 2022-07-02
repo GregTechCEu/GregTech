@@ -165,7 +165,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     @Override
     public boolean isStructureObstructed() {
-        return checkIntakesObstructed();
+        return super.isStructureObstructed() || checkIntakesObstructed();
     }
 
     @Override

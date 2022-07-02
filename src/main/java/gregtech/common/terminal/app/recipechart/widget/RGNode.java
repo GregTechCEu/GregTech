@@ -61,7 +61,20 @@ public class RGNode extends WidgetGroup implements IDraggable {
         init(container);
         this.head = head;
         if (isPhantom) {
-            PhantomWidget phantom = new PhantomWidget(0, 0, head).setChangeListener(object -> RGNode.this.head = object);
+            PhantomWidget phantom = new PhantomWidget(0, 0, head).setChangeListener(object -> {
+                RGNode.this.head = object;
+                // Reset any children nodes, now that the parent has changed
+                for (Set<RGNode> childs : children.values()) {
+                    for (RGNode child : childs) {
+                        child.removeParent(this);
+                    }
+                }
+                children.clear();
+
+                // Clear the Inputs for the replaced parent
+                this.inputsGroup.widgets.clear();
+
+            });
             this.addWidget(phantom);
             toolGroup.addWidget(new CircleButtonWidget(-11, 49, 8, 1, 12)
                     .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
@@ -94,6 +107,17 @@ public class RGNode extends WidgetGroup implements IDraggable {
                                     }
                                 }
                                 phantom.setObject(itemStack);
+
+                                // Reset any children nodes, now that the parent has changed
+                                for (Set<RGNode> childs : children.values()) {
+                                    for (RGNode child : childs) {
+                                        child.removeParent(this);
+                                    }
+                                }
+                                children.clear();
+
+                                // Clear the Inputs for the replaced parent
+                                this.inputsGroup.widgets.clear();
                             }
                         }).setClientSide().open()));
         } else {

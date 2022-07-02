@@ -230,7 +230,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 doExplosion(2.0f);
             } else this.hasNoWater = !hasDrainedWater;
             if (filledSteam == 0 && hasDrainedWater) {
-                if (ConfigHolder.machines.machineSounds && !this.isMuffled()){
+                if (ConfigHolder.machines.machineSounds && !this.isMuffled()) {
                     getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                             SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }

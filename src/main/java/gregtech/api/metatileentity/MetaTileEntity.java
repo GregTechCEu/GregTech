@@ -11,6 +11,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.google.common.base.Preconditions;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -36,6 +37,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -992,6 +994,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             T otherCap = tileEntity.getCapability(capability, nearbyFacing.getOpposite());
             //use getCoverCapability so item/ore dictionary filter covers will work properly
             T thisCap = getCoverCapability(capability, nearbyFacing);
+            if (otherCap == null || thisCap == null) {
+                continue;
+            }
             transfer.accept(thisCap, otherCap);
         }
         blockPos.release();
@@ -1313,10 +1318,59 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return null;
     }
 
+    public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance, IEnergyContainer energyContainer) {
+        World world = getWorld();
+        if (!world.isRemote && ConfigHolder.machines.doTerrainExplosion && !getIsWeatherOrTerrainResistant() && energyContainer.getEnergyStored() != 0) {
+            if (GTValues.RNG.nextInt(1000) == 0) {
+                for (EnumFacing side : EnumFacing.VALUES) {
+                    Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
+                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                        doExplosion(explosionPower);
+                        return;
+                    }
+                }
+            }
+            if (GTValues.RNG.nextInt(1000) == 0) {
+                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
+                    if (world.isThundering() && GTValues.RNG.nextInt(3) == 0) {
+                        doExplosion(explosionPower);
+                    } else if (GTValues.RNG.nextInt(10) == 0) {
+                        doExplosion(explosionPower);
+                    } else setOnFire(additionalFireChance);
+                }
+            }
+        }
+    }
+
     public void doExplosion(float explosionPower) {
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                explosionPower, ConfigHolder.machines.doExplosions);
+                explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
+    }
+
+    public void setOnFire(double additionalFireChance) {
+        boolean isFirstFireSpawned = false;
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (getWorld().isAirBlock(getPos().offset(side))) {
+                if (!isFirstFireSpawned) {
+                    getWorld().setBlockState(getPos().offset(side), Blocks.FIRE.getDefaultState(), 11);
+                    if (!getWorld().isAirBlock(getPos().offset(side))) {
+                        isFirstFireSpawned = true;
+                    }
+                } else if (additionalFireChance >= GTValues.RNG.nextDouble() * 100) {
+                    getWorld().setBlockState(getPos().offset(side), Blocks.FIRE.getDefaultState(), 11);
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether this tile entity not explode in rain, fire, water or lava
+     *
+     * @return true if tile entity should not explode in these sources
+     */
+    public boolean getIsWeatherOrTerrainResistant() {
+        return false;
     }
 
     public boolean doTickProfileMessage() {

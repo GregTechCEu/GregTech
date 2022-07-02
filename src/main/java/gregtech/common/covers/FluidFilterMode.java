@@ -1,10 +1,6 @@
 package gregtech.common.covers;
 
-import net.minecraft.util.IStringSerializable;
-
-import javax.annotation.Nonnull;
-
-public enum FluidFilterMode implements IStringSerializable {
+public enum FluidFilterMode implements IFilterMode {
 
     FILTER_FILL("cover.fluid_filter.mode.filter_fill"),
     FILTER_DRAIN("cover.fluid_filter.mode.filter_drain"),
@@ -16,9 +12,8 @@ public enum FluidFilterMode implements IStringSerializable {
         this.localeName = localeName;
     }
 
-    @Nonnull
     @Override
     public String getName() {
-        return localeName;
+        return this.localeName;
     }
 }

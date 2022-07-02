@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -53,9 +54,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         Object coilType = context.get("CoilType");
-        if (coilType instanceof CoilType) {
-            this.heatingCoilLevel = ((CoilType) coilType).getLevel();
-            this.heatingCoilDiscount = ((CoilType) coilType).getEnergyDiscount();
+        if (coilType instanceof IHeatingCoilBlockStats) {
+            this.heatingCoilLevel = ((IHeatingCoilBlockStats) coilType).getLevel();
+            this.heatingCoilDiscount = ((IHeatingCoilBlockStats) coilType).getEnergyDiscount();
         } else {
             this.heatingCoilLevel = CoilType.CUPRONICKEL.getLevel();
             this.heatingCoilDiscount = CoilType.CUPRONICKEL.getEnergyDiscount();
