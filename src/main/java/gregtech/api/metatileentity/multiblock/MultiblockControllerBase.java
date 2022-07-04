@@ -402,7 +402,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void explodeMultiblock() {
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
-        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
+        for (IMultiblockPart part : parts) {
+            part.removeFromMultiBlock(this);
+            ((MetaTileEntity) part).doExplosion(8);
+        }
         doExplosion(8);
     }
 }
