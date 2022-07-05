@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Fluid Drilling Rig",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oFinally, Fluid Drilling Rigs in GTCEu!§r\n\nIt is quite an investment to get to run a §3Fluid Drilling Rig§r, but it is by far the most prominent §6source of Oil§r.\nIt pumps fluids from underneath Bedrock. Note that the fluids aren\u0027t actually there, instead they are simulated.\n\nFluid veins are stored within regions of §48x8 chunks§r. Each vein has a different fluid, but they are mostly types Oil.\nYou are not able to do prospection for fluid veins §oyet§r, this will come in the §6HV§r Age.\n\nEach vein generates with a different base yield. This is typically between §d150L§r to §d300L per second§r.\n\nWhen drained, fluid veins will slowly deplete. This will cause the fluid yield to decrease over time, until it reaches its depletion yield. At that point you should move the Rig to somewhere else.\nA §3Basic Fluid Drilling Rig§r will last for 100,000 operations (with 1 second per operation) until depletion. This is enough for §6well over 10,000§r buckets of Oil. Higher tier Rigs will massively increase the yield, while also decreasing the depletion rate.\n\n\nWhat you can find in the §2Overworld§r:\n§9Oil:§r richer in §aLight Fuel§r, the most appreciated variant.\n§9Light Oil:§r richer in §aRefinery Gas§r, usable for power.\n§9Heavy Oil:§r richer in §aHeavy Fuel§r, which has uses that are more niche.\n§9Raw Oil:§r essentially a less dense version of §aOil§r, the least appreciated.\n§9Natural Gas:§r grants §aRefinery Gas§r with no distillation required.\n§9Salt Water:§r grants §aSodium§r and §aChlorine§r, useful later.\n\n§rWhat you can find in the §cNether§r:\n§9Natural Gas:§r grants §aRefinery Gas§r but with higher yield than the Overworld vein.\n§9Lava:§r you know what this is.\n\n\nFor starters you may have to tap randomly until you find something you like. Whatever you pump can be used to refuel your Fluid Rig."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "fluid_drilling_rig.mv"
+}

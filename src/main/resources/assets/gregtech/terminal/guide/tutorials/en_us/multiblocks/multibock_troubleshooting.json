@@ -1,0 +1,13 @@
+{
+  "section": "Multiblocks",
+  "title": "Multiblock Troubleshooting",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "If a multiblock is formed, but you are having troubles figuring out why it does not run:\n§9-§r Check if the Multiblock is properly plugged in (we all make these mistakes!).\n\n§9-§r Do the initial Maintenance fix.\n\n§9-§r Verify the recipe usage, the max EU/t has to be greater than that of the recipe.\n\n§9- §rCheck the special requirements the recipe may have (JEI always has some kind of indication for it).\n\n§9-§r Make sure the recipe is properly input, this is less obvious than in a regular machine because you have to juggle between Input Bus and Input Hatch.\n\n§9-§r Make sure there is space for output. Maybe the multiblock formed but you forgot a Hatch. The other biggest offender is the Output Hatches being too low tier and having too little capacity!"
+      ]
+    }
+  ],
+  "fixed": []
+}

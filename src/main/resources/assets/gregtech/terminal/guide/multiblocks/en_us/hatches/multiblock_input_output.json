@@ -1,0 +1,14 @@
+{
+  "section": "Hatches",
+  "title": "Multiblock Input/Output",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Similarly to the Steam Multiblocks (I hope you made them!), you will need §3Busses§r to move items in and out.\nFor fluids, you will need §3Hatches§r.\n\nThat is it, folks!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "item_bus.import.lv"
+}

@@ -1,7 +1,14 @@
 {
   "section": "Generator",
   "title": "Extreme Combustion Engine",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Ultimate Combustion fuel Generator!§r\n\nTo run the §3Extreme Combustion Engine§r, you will most likely want to boost it (§oelse why would you bother...§r).\nYou will want a §34A IV Dynamo Hatch§r as the output, and one §3Vacuum Freezer§r for §aLiquid Oxygen§r.\n\nYou can now harness the equivalent of 1 §dLuV§r Amp, while burning fuel at §6200% efficiency§r!\n\nDon\u0027t forge to keep it supplied with a small amount of §aLubricant§r.\n\nThe §3ECE§r is also void-free, unlike Large Turbines. Any energy that cannot be output will momentarily pause the multiblock.\n\n\n§bLore:§r The ECE comes from GT:NH. However... the story is not so great. The stats on the tooltip looked similar to this one, so far so good.\nHowever if you made calculations, you ended up realizing you needed to run around 16 whole HV Vacuum Freezers to keep up with Liquid Oxygen...\nThe one and only fuel it would accept is High Octane Gasoline, which was stated to be burned at 300% efficiency when boosted, but it was a lie! The efficiency remained 100%!\nThe GT:NH team recently decided to rework the ECE among other power options, phew!"
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "extreme_combustion_engine"
 }
