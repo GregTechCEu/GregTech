@@ -1,0 +1,14 @@
+{
+  "section": "",
+  "title": "Crafting Station",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oMaybe you thought forcing crafting with tools would make your life painful. I shall present you the solution: the Crafting Station.§r\n\nThe §3Crafting Station§r is a highly §9advanced Crafting Table§r, with inventory slots for item and tools. Put the recipes either by dropping ghost items, or using the §a+§r in §2JEI§r. Crafting the items will use the items and tools in the inventory. The 9 slots on the right are saved up recipes so you can re-use them without re-opening §2JEI§r.\n\nWhat makes the §3Crafting Station§r amazing, is the fact that §6it can use adjacent inventories§r in addition to its own inventory. If you are familiar to playing with Applied Energistics, the Crafting Station is essentially a mini ME Crafting Terminal.\n\n\n§bLore:§r The reason Omnifactory had Forestry in its modlist was primarily due to its Worktable, which serves a similar function to the Crafting Station. A couple more Forestry items were used, otherwise the whole mod\u0027s functionality was disabled! Since GTCE added the Crafting Station, Omnifactory has started working on phasing out Forestry."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "workbench"
+}

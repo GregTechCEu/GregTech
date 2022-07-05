@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Mixer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis Mixer mixes... What did you expect at this point?§r\n\nPut this machine off until you actually require it for recipes in progression.\n\n\nSome hand alloys can also be made in the mixer, except at higher yield."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "mixer.lv"
+}

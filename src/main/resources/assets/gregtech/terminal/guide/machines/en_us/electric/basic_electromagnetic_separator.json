@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Electromagnetic Separator",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "A rarely used machine. It uses magnetic fields to separate some Magnetic ores and gain additional §6Byproducts§r you would not obtain otherwise."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "electromagnetic_separator.lv"
+}

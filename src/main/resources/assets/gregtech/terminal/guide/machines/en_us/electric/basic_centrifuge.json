@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Centrifuge",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§lOutside of Ore Processing:§r\nOh boy this machine does a lot... Decomposition recipes to separate dust types, separating air and many others...\nThe list is too long, let\u0027s just say §cyou need the Centrifuge§r.\n\n\n§lFor Ore Processing:§r\nThis takes §aImpure Dust§r or §aPurified Dust§r and turns them into clean Dust plus an added tiny Dust §6Byproduct§r. This is outside of the optimal chain for Byproducts, but this is also the cheapest Ore Processing machine of this set to run and to setup on a small scale.\n\n\n§bLore:§r In base GTCE, this was the strongest Ore Processing machine as it was fairly easy to use, and gave three tiny dusts, just like the Ore Washer or the Thermal Centrifuge. We tuned it down in favor of diversity."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "centrifuge.lv"
+}

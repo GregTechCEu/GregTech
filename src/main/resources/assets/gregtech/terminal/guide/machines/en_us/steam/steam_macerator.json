@@ -1,0 +1,14 @@
+{
+  "section": "Steam",
+  "title": "Steam Macerator",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Macerator macerates... I am done with this. (He isn\u0027t)§r\n\nThis means you can stop ruining your hands and destroying mortars grinding dusts by yourself, at the cost of time.\n\nWhat this also means is §6Ore Processing§r, but that\u0027s a scary topic presented in the next quest.\n§cThe macerator will output only the first item shown in recipes from JEI!§r The other slots are locked until much later in the game (§6HV§r Age to be precise).\n\n\n§9My (important!) advice:§r it is better to §dkeep directly smelting§r ores for now! The efficiency loss is made up with fast mining."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_macerator_bronze"
+}

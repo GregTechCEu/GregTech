@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Autoclave",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The Autoclave typically is the last step of Ore Processing, to turn a few select §aGem Dusts§r back regular Gems.\n\nIt is very slow so in general it is not advised to crush gem ores at all, as the recovery process is too expensive.\n\n\n§9Note:§r In this modpack, the Autoclave is required to make Fluix Crystals to progress in Applied Energistics."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "autoclave.lv"
+}

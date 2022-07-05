@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Assembling Machine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "While this is an extremely §9important§r machine, this will §9§lnot help you immediately§r as it is expensive. Most of the recipes you want to unlock require §cfluids§r. Get a little bit more infrastructure before rushing this.\n\n\nThe §3Assembling Machine§r is core to gameplay. Consider it as important as a Crafting Table, except... well, it\u0027s a machine duh.\n\n\nWe as modpack developers also love to use this to include all sorts of custom recipes. And do you know what\u0027s the good news? It lets you unlock §dApplied Energistics§r!\n\n\nOnce you have enough Infrastructure, you will be able to make better recipes for:\n§9-§r §6Vacuum Tubes§r\n§9-§r §6Resistors§r\n§9-§r §6Circuit Boards§r\n\n\n§bLore:§r Back in the days of GregTech 2, the Assembling Machine only had two slots, and was used merely for alternate Circuit and Hull recipes."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "assembler.lv"
+}

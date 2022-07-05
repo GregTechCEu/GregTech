@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Macerator III",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Perhaps you never noticed the §9\"chance per tier\"§r when hovering over the bonus outputs in §2JEI§r?\nEach overclock above the required tier will add that bonus to the chanced output!\n\nThis means the §3EV Macerator§r yields §6more Byproducts§r!\n\nYou might ask: is it time to setup ore processing on large scale perhaps...? Nope!\nWell... Running all the ores with a maceration step into this EV Macerator is fair.\nBut I would still recommend cherry-picking whatever ores you want byproducts of."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "macerator.ev"
+}

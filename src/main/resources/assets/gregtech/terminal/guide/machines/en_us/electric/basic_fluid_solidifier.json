@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Fluid Solidifier",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Fluid Solidifier Solidifies... Or you could say it freezes stuff if you like cursedness.§r\n\nBuild this machine next to your §3Chemical Reactor§r to automatically solidify Rubber into §aRubber Sheets§r.\nThen, §dwrench§r the side of your §3Chemical Reactor§r and enable Fluid §9auto-output§r.\n\nThere will be more Fluids to solidify, so you may re-purpose your §3Fluid Solidifier§r when not crafting Rubber."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "fluid_solidifier.lv"
+}

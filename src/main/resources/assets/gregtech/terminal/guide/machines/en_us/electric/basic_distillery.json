@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Distillery",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Before we start, here\u0027s something to consider:\nWith the §aOil§r route, you will need a §3LV Distillery§r.\nWith the §aBiomass§r route, you will need a §3MV Distillery§r.\nGet §eeither§r to complete this quest.\n\n\n\nNow, let\u0027s discuss a complex topic: §9Distillation§r. This guide will help you understand how and why the §aJEI§r recipes are the way they are, so stick with me!\n\nNearly all the §3Distillery§r recipes are duplicates from the §3Distillation Tower§r, except that they only have one Fluid output, and void everything else.\nIn other words, you could argue the §3Distillery§r is an §dinferior§r §3Distillation Tower§r.\n\nThis doesn\u0027t mean that the §3Distillery§r is always inferior though. It is unlocked earlier. It is §dsmaller§r, §dcheaper§r, and §dmore energy efficient§r per recipe.\nIn many cases, you won\u0027t even mind losing the other Fluids.\n\n\n§3Distilleries§r are an essential component for power generation, whether you pick §aDiesel§r or §aBenzene§r.\nYou will probably want many of them, and as low tier as possible to avoid the energy losses from Overclocking."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "distillery.lv"
+}

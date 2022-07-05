@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Lathe",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Lathe lathes... We should probably rename these machines to avoid these terrible quest introductions!§r\n\nAn important machine to help shape metals. Thanks to it, you can turn §6one Ingot into two Rods§r, and §6one Bolt into one screw§r. That\u0027s twice the efficiency on those recipes as opposed to crafting.\n\n\n§bLore:§r The GregTech 5 Lathe produces one Rod and 2 small piles of Dust per Ingot. We also have a setting for this in GTCEu, but it\u0027s turned off by default.\nThe Gregtech 6 Lathe acts like GT5\u0027s but bolts lathe into one screw and one 1/72 pile of dust. Cursed!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "lathe.lv"
+}

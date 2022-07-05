@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Extruder",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oI hope at no point you made the LV Extruder, because only the MV Extruder is actually useful. If you did, I suggest you recycle it through the Arc Furnace.§r\n\nThe Extruder shapes solid materials into (almost!) any form using §aIngots§r. This is a great way to reduce the amount of microcrafting, as well as keeping a high conversion ratio.\n\nThe Extruder can make §6Bolts§r, §6Small Gears§r, §6Gears§r, and §6Rings§r at the highest efficiency in a single step!\nYou may also like to use it for §dPipes§r, §dLong Rods§r, and §dRotors§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "extruder.mv"
+}

@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Gas Collector",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The Gas Collector collects Air, to centrifuge into §aOxygen§r and §aNitrogen§r.\n\n\n§bLore:§r GregTech 5 players remember when they had to use a Compressor with IC2 cells to get Compressed Air... In here, cell chemistry is no more."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "gas_collector.lv"
+}

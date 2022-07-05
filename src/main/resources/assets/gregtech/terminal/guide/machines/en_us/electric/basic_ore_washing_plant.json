@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Ore Washing Plant",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis machine combines Cauldron washing for simple automation, but also advanced and precise washing for byproducts.§r\n\nWashing a §aCrushed Ore§r will grant a §aPurified Ore§r which can refined further, some useless stone, and more importantly the first §6Byproduct§r.\nAny Ore will give at §9minimum 2/3rd of a Dust§r of this Byproduct through washing! So prioritize this step the most.\n\nDistilled Water over Water cuts recipe duration in half, but is also less convenient to produce."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "ore_washer.lv"
+}

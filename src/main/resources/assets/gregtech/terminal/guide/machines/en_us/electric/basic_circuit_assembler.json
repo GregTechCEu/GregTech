@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Circuit Assembler",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oHopefully your first MV Circuit expense.§r\n\nFrom now on, all Circuits will be made in a §3Circuit Assembler§r. Use it now to make §6cheaper LV and MV circuits§r.\n\n\n§bLore:§r The Circuit Assembler appears in and out of GregTech versions. GT5 did not have it, and it was added in GT5 Unofficial. GTCE did not port it, and it was added back in GTCEu."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "circuit_assembler.lv"
+}

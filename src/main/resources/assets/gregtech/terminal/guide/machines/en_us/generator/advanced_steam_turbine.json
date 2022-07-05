@@ -1,0 +1,14 @@
+{
+  "section": "Generator",
+  "title": "Advanced Steam Turbine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Higher-tier Generators will increase their fuel consumption proportionally to their Generation rate, keeping the duration of fuels and the specific amount of energy from fuels the same. The §3Advanced Steam Turbine§r will use §d5,120 mB Steam§r per second, equivalent to §d256 mB/t§r.\n\nGet §eany§r of the generators to complete this quest, but you may prefer starting off with the §3Advanced Steam Turbine§r.\n\nThere are a few new power options available for the §bMV§r age. Selecting the Generators and pressing §4U§r will let you see which fuels count as §aCombustion§r or §aGas§r.\nQuests in the top left corner of this Chapter are for the valuable Power options.\n\nIf you stick to §9Steam§r Power generation, you will probably need a §3Large Boiler§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "steam_turbine.mv"
+}

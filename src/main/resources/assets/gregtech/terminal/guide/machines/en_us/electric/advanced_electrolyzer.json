@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Electrolyzer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oRemember the Ore Processing Quest referencing the Electrolyzer? It told you that you had to wait until MV, so here we are.§r\n\nThe Advanced Electrolyzer allows you to decompose §6all§r Dusts. This will make getting materials such as §aAluminium§o§§ a lot easier!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "electrolyzer.mv"
+}

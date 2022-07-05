@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Packager",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Packager§r compresses §aTiny Dusts§r and §aSmall Dusts§r into §afull Dusts§r into Ingots.\n\nIt can also work in reverse, change between sizes of Wires, and more...\nUnpacking Cables back into Wires and Rubber will be appreciated once you rework your Energy Network.\n\n\n§oI know...§r the compacting recipes do not sound useful because the crafting tables recipes exist. This machine exists for §9automation§r purposes.\n\nFor the §9automated§r setup, route the §aTiny Dusts§r in a buffer inventory (a chest will do) next to your §3Packager§r.\nThen, place a §3Robot Arm§r and configure it to §dImport§r, §dSupply Exact 9§r. Finally, use the Machine auto-output on another side.\n\n\n§bLore§r: In GTCE, the reverse operation required a separate machine, the Unpackager."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "packer.lv"
+}

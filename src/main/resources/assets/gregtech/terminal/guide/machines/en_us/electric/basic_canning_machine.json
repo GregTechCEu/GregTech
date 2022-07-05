@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Canning Machine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis machine does nothing exciting. It puts stuff into stuff.§r\n\nMake this machine only when you feel like it\u0027s time you invest into Batteries."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "canner.lv"
+}

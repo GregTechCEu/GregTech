@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Polarizer",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Polarizer polarizes... We\u0027re doing this again aren\u0027t we?§r\n\nOne of the cheapest - if not the cheapest - LV machine. Use this to make §6Redstone-free Magnetic Rods§r for your Motors."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "polarizer.lv"
+}

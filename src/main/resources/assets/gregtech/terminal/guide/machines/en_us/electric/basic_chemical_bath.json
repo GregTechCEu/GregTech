@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Chemical Bath",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Chemical Bath bathes... You thought the bad jokes were over didn\u0027t you?§r\n\n\n§lOutside of Ore Processing:§r\nYou can make §6Paper out of Wood§r, to throw away your §aSugar Canes§r§9*§r. I know you hate them.\nThere are some other less important recipes, such as applying colours to various items and blocks, or bleaching them.\n\n§9*§r §aSugar§r will still be appreciated as a part of §cTNT§r production in the §6HV§r age, unfortunately.\n\n\n§lFor Ore Processing:§r\nSome §aCrushed Ores§r have an alternate recipe on the way to §aPurified Ore§r, involving bathing in either §aMercury§r or §aSodium Persulfate§r. This step is not really important, unless you really want that special §6Byproduct§r. This can be a nice alternate source of Gold."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "chemical_bath.lv"
+}

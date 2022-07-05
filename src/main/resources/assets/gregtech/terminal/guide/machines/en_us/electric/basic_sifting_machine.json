@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Sifting Machine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The Sifter sifts §dGem type§r §aPurified Ores§r to find §aExquisite§r and §aFlawless§r Gems, which can be cut into normal Gems. It also finds §aPurified Dusts§r of that gem. Overall this gives a §6higher yield§r than other means.\n\nA small amount of §dFlawless Emerald§r will be required in the MV Age, and running the ores in §3Sifting Machine§r is how you obtain them.\n\nEach higher tier of §3Sifter§r increases the chance of all Gem types to be found, at the cost of more energy. More on Overclocking.\n\n§9Note:§r If you crushed Gem Ores (such as Diamond), it is critical you use this machine to recover the actual gems in non dust form. However this is a rather slow process, so you may sometimes want to smelt this type of ore directly into the Gem."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "sifter.lv"
+}

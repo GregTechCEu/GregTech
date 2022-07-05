@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Cutting Machine",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Cutting Machine... cuts... thanks to lubrification.§r\n\nFor now, you may use §9Water§r over trying to acquire Lubricant.\n\nThe §3Cutting Machine§r enables converting §6Rods into four Bolts§r.\n\nThis machine is the only way to obtain §dGem Plates§r, which are needed to craft Filters, and by extension the §3Gas Collector§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "cutter.lv"
+}
