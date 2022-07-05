@@ -171,6 +171,8 @@ public class MetaTileEntityLoader {
 
         ModHandler.addShapedRecipe(true, "machine_access_interface", MetaTileEntities.MACHINE_HATCH.getStackForm(), "CHS", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'H', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'S', MetaItems.SENSOR_IV.getStackForm());
 
+        ModHandler.addShapedRecipe(true, "charcoal_pile_igniter", MetaTileEntities.CHARCOAL_PILE_IGNITER.getStackForm(), "ERE", "EHE", "FFF", 'E', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.rotor, Materials.Iron), 'H', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'F', new ItemStack(Items.FLINT));
+
         // STEAM MACHINES
         ModHandler.addShapedRecipe(true, "bronze_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), "PPP", "PhP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze));
         ModHandler.addShapedRecipe(true, "bronze_bricks_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), "PPP", "PhP", "BBB", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B', new ItemStack(Blocks.BRICK_BLOCK));
