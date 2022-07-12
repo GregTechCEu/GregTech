@@ -505,6 +505,12 @@ public class Recipe {
             }
             return Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty());
         }
+        for (GTRecipeInput fluidInput : fluidInputs) {
+            FluidStack fluidIngredient = fluidInput.getInputFluidStack();
+            if (fluidIngredient != null && fluidIngredient.amount > 0) {
+                return true;
+            }
+        }
         return false;
     }
 

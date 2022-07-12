@@ -91,14 +91,6 @@ public abstract class GTRecipeInput {
         return null;
     }
 
-    public boolean isItem() {
-        return false;
-    }
-
-    public boolean isFluid() {
-        return false;
-    }
-
     public boolean isOreDict() {
         return false;
     }

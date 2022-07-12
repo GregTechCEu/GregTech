@@ -495,7 +495,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         recipe.getInputs().forEach(ri -> {
             if (ri.isNonConsumable()) {
                 newRecipeInputs.add(GTRecipeItemInput.getOrCreate(ri,
-                        ri.getAmount() * numberOfOperations).setNonConsumable());
+                        ri.getAmount()).setNonConsumable());
             } else {
                 newRecipeInputs.add(GTRecipeItemInput.getOrCreate(ri,
                         ri.getAmount() * numberOfOperations));
@@ -504,7 +504,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
         recipe.getFluidInputs().forEach(fi -> {
             if (fi.isNonConsumable()) {
-                newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, (fi.getAmount() * numberOfOperations)).setNonConsumable());
+                newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, fi.getAmount()).setNonConsumable());
             } else {
                 newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, (fi.getAmount() * numberOfOperations)));
             }
