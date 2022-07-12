@@ -405,7 +405,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Returns a boolean indicating whether the given group of fluids resolve to a valid branch or recipe.
+     * Returns a boolean indicating whether the given group of fluids resolves to a valid branch or recipe.
      *
      * @param fluidIngredients the ingredients part
      * @param map              the root branch to search from.
@@ -544,9 +544,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Exaustively gathers all recipes that can be crafted with the given ingredients, into a Set.
-     * @param items the ingredients, in the form of a List of List of ItemStack. Usually the inputs of a Recipe
-     * @param fluids the ingredients, in the form of a List of List of FluidStack. Usually the inputs of a Recipe
+     * Exhaustively gathers all recipes that can be crafted with the given ingredients, into a Set.
+     * @param items the ingredients, in the form of a List of ItemStack. Usually the inputs of a Recipe
+     * @param fluids the ingredients, in the form of a List of FluidStack. Usually the inputs of a Recipe
      * @return a Set of recipes that can be crafted with the given ingredients
      */
 
