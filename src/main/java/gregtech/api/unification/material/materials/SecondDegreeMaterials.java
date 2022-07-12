@@ -471,7 +471,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Redstone = new Material.Builder(2064, "redstone")
-                .dust().ore(5, 1).fluid()
+                .dust().ore(5, 1, true).fluid()
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
