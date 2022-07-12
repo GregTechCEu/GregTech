@@ -2,21 +2,21 @@ changelog:
 
   exclude:
     labels:
-      - Ignore Changelog
+      - "no changelog"
 
   categories:
     - title: Breaking Changes
       labels:
-        - "type: breaking change"
+        - "breaking change"
 
     - title: Features
       labels:
-        - "feat: feature addition"
+        - "feature"
 
     - title: Bug Fixes
       labels:
-        - "fix: bug"
-        - "fix: crash"
+        - "bug: crash"
+        - "bug: gameplay"
 
     - title: Other Changes
       labels:

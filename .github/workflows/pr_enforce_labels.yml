@@ -1,0 +1,16 @@
+# Enforces specific labels on a PR to allow/disallow merging
+name: Enforce PR labels
+
+on:
+  pull_request:
+    types: [labeled, unlabeled, opened]
+
+jobs:
+  enforce-label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yogevbd/enforce-label-action@2.1.0
+        with:
+          REQUIRED_LABELS_ANY: "bug: gameplay,bug: crash,feature,no changelog"
+          REQUIRED_LABELS_ANY_DESCRIPTION: "Pull Requests need at least one of the following labels: ['bug: gameplay', 'bug: crash', 'feature', 'no changelog']"
+          BANNED_LABELS: "no changelog"

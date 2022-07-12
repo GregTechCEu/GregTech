@@ -1,6 +1,6 @@
 name: Ask a Question
 description: Ask a question regarding this project.
-labels: ["type: question"]
+labels: ["question"]
 body:
   - type: markdown
     attributes:
