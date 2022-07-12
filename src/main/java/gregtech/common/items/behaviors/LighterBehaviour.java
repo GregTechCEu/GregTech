@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
+import gregtech.common.blocks.wood.BlockPowderBarrel;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTNT;
@@ -94,6 +95,11 @@ public class LighterBehaviour implements IItemBehaviour {
             Block block = blockState.getBlock();
             if (block instanceof BlockTNT) {
                 ((BlockTNT) block).explode(world, pos, blockState.withProperty(BlockTNT.EXPLODE, true), player);
+                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
+                return EnumActionResult.SUCCESS;
+            }
+            if (block instanceof BlockPowderBarrel) {
+                ((BlockPowderBarrel) block).explode(world, pos, player);
                 world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
                 return EnumActionResult.SUCCESS;
             }

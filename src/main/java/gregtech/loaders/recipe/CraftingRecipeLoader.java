@@ -13,6 +13,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
+import gregtech.common.blocks.wood.BlockPowderBarrel;
 import gregtech.common.crafting.FacadeRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
@@ -103,6 +104,8 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("universal_fluid_cell", FLUID_CELL_UNIVERSAL.getStackForm(), "C ", "  ", 'C', FLUID_CELL);
         ModHandler.addShapedRecipe("universal_fluid_cell_revert", FLUID_CELL.getStackForm(), "C ", "  ", 'C', FLUID_CELL_UNIVERSAL);
+
+        ModHandler.addShapedRecipe("powderbarrel", MetaBlocks.POWDERBARREL.getItemVariant(BlockPowderBarrel.BlockType.POWDERBARREL), "PSP", "GGG", "PGP", 'P', new UnificationEntry(OrePrefix.plate, Wood), 'S', new ItemStack(Items.STRING), 'G', new UnificationEntry(OrePrefix.dust, Gunpowder));
 
         ///////////////////////////////////////////////////
         //               Shapes and Molds                //

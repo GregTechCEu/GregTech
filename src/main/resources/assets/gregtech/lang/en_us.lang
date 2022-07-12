@@ -2234,6 +2234,8 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
 
+tile.powderbarrel.powderbarrel.name=Powderbarrel
+
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
@@ -5169,3 +5171,6 @@ gregtech.key.armor_mode_switch=Armor Mode Switch
 gregtech.key.armor_hover=Armor Hover Toggle
 gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
+
+# Entities
+entity.Powderbarrel.name=Powderbarrel
