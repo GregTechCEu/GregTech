@@ -5,8 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       label:
-        description: 'Prepended Label'
+        description: 'Release Label'
+        default: 'BETA RELEASE'
         required: false
+      hotfix:
+        description: 'Hotfix Release'
+        required: false
+        type: boolean
 
 jobs:
   release:
@@ -57,5 +62,5 @@ jobs:
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           files: build/libs/*.jar
-          body: "**${{ github.event.inputs.label }}**\n"
+          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
           generate_release_notes: true
