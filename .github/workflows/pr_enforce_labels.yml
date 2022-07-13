@@ -9,6 +9,11 @@ jobs:
   enforce-label:
     runs-on: ubuntu-latest
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
       - uses: yogevbd/enforce-label-action@2.1.0
         with:
           REQUIRED_LABELS_ANY: "bug: gameplay,bug: crash,feature,no changelog"
