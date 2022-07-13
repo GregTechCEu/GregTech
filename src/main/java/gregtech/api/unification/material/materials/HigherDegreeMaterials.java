@@ -14,7 +14,7 @@ public class HigherDegreeMaterials {
     public static void register() {
 
         Electrotine = new Material.Builder(2507, "electrotine")
-                .dust().ore(5, 1)
+                .dust().ore(5, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Redstone, 1, Electrum, 1)
