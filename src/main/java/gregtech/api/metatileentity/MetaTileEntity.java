@@ -71,6 +71,15 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
+    @Nullable
+    public static MetaTileEntity tryGet(World world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null && !te.isInvalid() && te instanceof IGregTechTileEntity) {
+            return ((IGregTechTileEntity) te).getMetaTileEntity();
+        }
+        return null;
+    }
+
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
