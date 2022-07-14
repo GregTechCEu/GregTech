@@ -168,10 +168,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         // find the left, right, back, and front distances for the structure pattern
         // maximum size is 15x15x15 including walls, so check 7 block radius around the controller for blocks
         for (int i = 1; i < 8; i++) {
-            if (lDist == 0 && isBlockWall(world, lPos, left)) lDist = i;
-            if (rDist == 0 && isBlockWall(world, rPos, right)) rDist = i;
-            if (bDist == 0 && isBlockWall(world, lPos, back)) bDist = i;
-            if (fDist == 0 && isBlockWall(world, rPos, front)) fDist = i;
+            if (lDist == 0 && isBlockEdge(world, lPos, left)) lDist = i;
+            if (rDist == 0 && isBlockEdge(world, rPos, right)) rDist = i;
+            if (bDist == 0 && isBlockEdge(world, lPos, back)) bDist = i;
+            if (fDist == 0 && isBlockEdge(world, rPos, front)) fDist = i;
             if (lDist != 0 && rDist != 0 && bDist != 0 && fDist != 0) break;
         }
 
@@ -206,8 +206,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
      * @param direction the direction to move
      * @return if a block is a valid wall block at pos moved in direction
      */
-    public boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
-        return MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE).equals(world.getBlockState(pos.move(direction)));
+    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
+        return world.getBlockState(pos.move(direction)) == MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
     }
 
     /**
@@ -217,7 +217,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
      * @return if a block is a valid floor block at pos moved in direction
      */
     public boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
-        return isBlockWall(world, pos, direction);
+        return isBlockEdge(world, pos, direction) || world.getBlockState(pos) == MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
     @Override
@@ -237,6 +237,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         StringBuilder insideBuilder = new StringBuilder();     // X   X
         StringBuilder roofBuilder = new StringBuilder();       // BFFFB
         StringBuilder controllerBuilder = new StringBuilder(); // BFSFB
+        StringBuilder centerBuilder = new StringBuilder();     // BXKXB
 
         // everything to the left of the controller
         for (int i = 0; i < lDist; i++) {
@@ -246,11 +247,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 insideBuilder.append("X");
                 roofBuilder.append("B");
                 controllerBuilder.append("B");
+                centerBuilder.append("B");
             } else {
                 insideBuilder.append(" ");
                 wallBuilder.append("X");
                 roofBuilder.append("F");
                 controllerBuilder.append("F");
+                centerBuilder.append("X");
             }
         }
 
@@ -260,6 +263,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         insideBuilder.append(" ");
         roofBuilder.append("F");
         controllerBuilder.append("S");
+        centerBuilder.append("K");
 
         // everything to the right of the controller
         for (int i = 0; i < rDist; i++) {
@@ -269,11 +273,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 insideBuilder.append("X");
                 roofBuilder.append("B");
                 controllerBuilder.append("B");
+                centerBuilder.append("B");
             } else {
                 insideBuilder.append(" ");
                 wallBuilder.append("X");
                 roofBuilder.append("F");
                 controllerBuilder.append("F");
+                centerBuilder.append("X");
             }
         }
 
@@ -283,16 +289,16 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         wall[0] = borderBuilder.toString();
         wall[wall.length - 1] = borderBuilder.toString();
 
-        String[] slice = new String[hDist + 1]; // "BBBBB", "X   X", "X   X", "X   X", "BFFFB"
+        String[] slice = new String[hDist + 1]; // "BXXXB", "X   X", "X   X", "X   X", "BFFFB"
         Arrays.fill(slice, insideBuilder.toString());
-        slice[0] = borderBuilder.toString();
+        slice[0] = wallBuilder.toString();
         slice[slice.length - 1] = roofBuilder.toString();
 
-        String[] center = Arrays.copyOf(slice, slice.length); // "BBBBB", "X   X", "X   X", "X   X", "BFSFB"
+        String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X   X", "X   X", "X   X", "BFSFB"
         center[center.length - 1] = controllerBuilder.toString();
+        center[0] = centerBuilder.toString();
 
-        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState()).setMinGlobalLimited((((lDist + rDist + 1) * (bDist + fDist + 1) * (hDist + 1)) - ((lDist + rDist - 1) * (bDist + fDist - 1) * (hDist - 1))) * 3 / 4);
-        TraceabilityPredicate casing = wallPredicate.or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)).or(autoAbilities());
+        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
@@ -302,12 +308,16 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .aisle(slice).setRepeatable(fDist - 1)
                 .aisle(wall)
                 .where('S', selfPredicate())
-                .where('B', casing)
-                .where('X', casing.or(doorPredicate().setMaxGlobalLimited(8))
-                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM))
-                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID))
+                .where('B', states(getCasingState())
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
+                        .or(autoAbilities()))
+                .where('X', wallPredicate
+                        .or(doorPredicate().setMaxGlobalLimited(8))
+                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setMaxGlobalLimited(10))
+                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setMaxGlobalLimited(10))
                         .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5))
                         .or(metaTileEntities(MetaTileEntities.DIODES).setMaxGlobalLimited(5)))
+                .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure dimension checks
                 .where('F', filterPredicate())
                 .where(' ', innerPredicate())
                 .build();
