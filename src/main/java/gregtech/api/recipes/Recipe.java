@@ -8,6 +8,7 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
@@ -285,25 +286,27 @@ public class Recipe {
     }
 
     private boolean hasSameInputs(Recipe otherRecipe) {
-        if (this.inputs.size() != otherRecipe.inputs.size()) return false;
-        for (int i = 0; i < inputs.size(); i++) {
-            if (!inputs.get(i).isOreDict() && !otherRecipe.inputs.get(i).isOreDict()) {
-                if (inputs.get(i).getInputStacks().length != otherRecipe.inputs.get(i).getInputStacks().length) return false;
-                for (int j = 0; j < inputs.get(i).getInputStacks().length; j++) {
-                    if (!hashStrategy.equals(this.inputs.get(i).getInputStacks()[j],
-                            otherRecipe.inputs.get(i).getInputStacks()[j])) {
-                        return false;
-                    }
-                }
-            } else if (inputs.get(i).isOreDict() && otherRecipe.inputs.get(i).isOreDict()) {
-                if (inputs.get(i).getOreDict() != otherRecipe.inputs.get(i).getOreDict()) {
-                    return false;
-                }
-            } else {
-                return false;
+        List<ItemStack> otherStackList = new ObjectArrayList<>(otherRecipe.inputs.size());
+        for (GTRecipeInput otherInputs : otherRecipe.inputs) {
+            for (ItemStack stack : otherInputs.getInputStacks()) {
+                stack = stack.copy();
+                stack.setCount(otherInputs.getAmount());
+                otherStackList.add(stack);
             }
         }
-        return true;
+        if (!this.matchesItems(otherStackList).getLeft()) {
+            return false;
+        }
+
+        List<ItemStack> thisStackList = new ObjectArrayList<>(this.inputs.size());
+        for (GTRecipeInput thisInputs : this.inputs) {
+            for (ItemStack stack : thisInputs.getInputStacks()) {
+                stack = stack.copy();
+                stack.setCount(thisInputs.getAmount());
+                thisStackList.add(stack);
+            }
+        }
+        return otherRecipe.matchesItems(thisStackList).getLeft();
     }
 
     public int hashFluidList(List<GTRecipeInput> fluids) {
@@ -315,13 +318,23 @@ public class Recipe {
     }
 
     private boolean hasSameFluidInputs(Recipe otherRecipe) {
-        if (this.fluidInputs.size() != otherRecipe.fluidInputs.size()) return false;
-        for (int i = 0; i < fluidInputs.size(); i++) {
-            if (fluidInputs.get(i).getAmount() != otherRecipe.fluidInputs.get(i).getAmount() || !fluidInputs.get(i).equals(otherRecipe.fluidInputs.get(i))) {
-                return false;
-            }
+        List<FluidStack> otherFluidList = new ObjectArrayList<>(otherRecipe.fluidInputs.size());
+        for (GTRecipeInput otherInputs : otherRecipe.fluidInputs) {
+            FluidStack fluidStack = otherInputs.getInputFluidStack().copy();
+            fluidStack.amount = otherInputs.getAmount();
+            otherFluidList.add(fluidStack);
         }
-        return true;
+        if (!this.matchesFluid(otherFluidList).getLeft()) {
+            return false;
+        }
+
+        List<FluidStack> thisFluidsList = new ObjectArrayList<>(this.fluidInputs.size());
+        for (GTRecipeInput thisFluidInputs : this.fluidInputs) {
+            FluidStack fluidStack = thisFluidInputs.getInputFluidStack().copy();
+            fluidStack.amount = thisFluidInputs.getAmount();
+            thisFluidsList.add(fluidStack);
+        }
+        return otherRecipe.matchesFluid(thisFluidsList).getLeft();
     }
 
     @Override

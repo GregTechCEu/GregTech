@@ -30,10 +30,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandRecipeCheck extends CommandBase {
@@ -61,16 +58,19 @@ public class CommandRecipeCheck extends CommandBase {
             mismatchedRecipes.put(recipeMap, new Object2ObjectOpenHashMap<>());
             GTLog.logger.info("Checking Recipe Map: {}", recipeMap.unlocalizedName);
             for (Recipe currentRecipe : recipeMap.getRecipeList()) {
-                // multiply amount of itemstacks by 10000 to detect conflicts only occurring if batching the recipe
-                List<ItemStack> inputs = currentRecipe.getInputs().stream().map(GTRecipeInput::getInputStacks).flatMap(Arrays::stream).map(o -> {
-                    o = o.copy();
-                    o.setCount(o.getCount() * 10000);
-                    return o;
-                }).collect(Collectors.toList());
+                // set amount of itemstacks to Integer.MAX_VALUE to detect conflicts only occurring if batching the recipe
+                List<ItemStack> inputs = new ArrayList<>();
+                for (GTRecipeInput input : currentRecipe.getInputs()) {
+                    for (ItemStack stack : input.getInputStacks()) {
+                        stack.copy();
+                        stack.setCount(Integer.MAX_VALUE);
+                        inputs.add(stack);
+                    }
+                }
 
                 List<FluidStack> fluidInputs = currentRecipe.getFluidInputs()
-                        // multiply volume of fluids by 10000 to detect conflicts only occurring if batching the recipe
-                        .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), stack.getAmount() * 10000))
+                        // set volume of fluids to Integer.MAX_VALUE to detect conflicts only occurring if batching the recipe
+                        .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), Integer.MAX_VALUE))
                         .collect(Collectors.toList());
 
                 Set<Recipe> collidingRecipeSet = recipeMap.findRecipeCollisions(
