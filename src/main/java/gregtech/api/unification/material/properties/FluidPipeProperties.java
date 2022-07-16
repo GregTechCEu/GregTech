@@ -40,12 +40,6 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
-
-        if (properties.hasProperty(PropertyKey.ITEM_PIPE)) {
-            throw new IllegalStateException(
-                    "Material " + properties.getMaterial() +
-                            " has both Fluid and Item Pipe Property, which is not allowed!");
-        }
     }
 
     public int getTanks() {
