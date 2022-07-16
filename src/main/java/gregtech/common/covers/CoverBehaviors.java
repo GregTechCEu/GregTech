@@ -73,6 +73,7 @@ public class CoverBehaviors {
         registerBehavior(56, new ResourceLocation(GTValues.MODID, "infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(57, new ResourceLocation(GTValues.MODID, "ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);
         registerBehavior(58, new ResourceLocation(GTValues.MODID, "cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);
+        registerBehavior(93, new ResourceLocation(GTValues.MODID, "ender_item_link"), MetaItems.COVER_ENDER_ITEM_LINK, CoverEnderItemLink::new);
 
         // Custom cover behaviour
         MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.addComponents(new CoverDigitalInterfaceWirelessPlaceBehaviour(registerCover(59, new ResourceLocation(GTValues.MODID, "cover.digital.wireless"), MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS, CoverDigitalInterfaceWireless::new)));
