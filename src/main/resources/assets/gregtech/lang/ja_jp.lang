@@ -29,10 +29,6 @@ gregtech.machine.steam_oven.name=蒸気式オーブン
 gregtech.machine.steam_oven.tooltip=1回につき同一アイテムを8個まで一度に製錬.  アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
 gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルター. ブロンズ製外装が最低6個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要. 蒸気ハッチは最下段に一つだけ置ける.
 
-gregtech.top.energy_stored=エネルギー:
-gregtech.top.progress=進捗:
-gregtech.top.working_disabled=停止中
-
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
 
@@ -46,19 +42,22 @@ gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
 
 gregtech.top.fuel_min_consume=必要量
 gregtech.top.fuel_none=燃料がありません
+gregtech.top.energy_stored=エネルギー:
+gregtech.top.progress=進捗:
+gregtech.top.working_disabled=停止中
 
-gregtech.top.invalid_structure=§c構造が未完成
-gregtech.top.valid_structure=§a構造が完成
-gregtech.top.obstructed_structure=§cスペース不足
+gregtech.top.invalid_structure=構造が未完成
+gregtech.top.valid_structure=構造が完成
+gregtech.top.obstructed_structure=スペース不足
+
+gregtech.top.maintenance_fixed=修理は不要
+gregtech.top.maintenance_broken=修理が必要
 gregtech.top.maintenance.wrench=パイプが緩い
 gregtech.top.maintenance.screwdriver=ネジが緩い
 gregtech.top.maintenance.soft_mallet=何かが詰まっている
 gregtech.top.maintenance.hard_hammer=メッキがへこんでいる
 gregtech.top.maintenance.wire_cutter=ワイヤーが焼き切れている
 gregtech.top.maintenance.crowbar=部品がずれている
-
-gregtech.top.maintenance_fixed=§a修理は不要
-gregtech.top.maintenance_broken=§c修理が必要
 
 gregtech.top.primitive_pump_production=生産
 
@@ -1908,11 +1907,11 @@ material.diorite=閃緑岩
 
 
 # Fourth Degree Materials
-material.hsse=HSS-E
 material.red_alloy=赤合金
-material.basaltic_mineral_sand=玄武岩質含鉱砂
-material.hsss=HSS-S
 material.blue_alloy=青合金
+material.basaltic_mineral_sand=玄武岩質含鉱砂
+material.hsse=HSS-E
+material.hsss=HSS-S
 
 
 # Marker Material Tiers
@@ -1931,6 +1930,7 @@ material.insane=非常識な
 material.epic=史上最高の
 material.legendary=伝説の
 material.maximum=マキシマム
+
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=ネザークォーツ鉱石
@@ -2503,6 +2503,13 @@ gregtech.multiblock.tank.tooltip=コントローラまたはタンクバルブ�
 gregtech.tank_valve.tooltip=マルチブロックタンクへの搬入と搬出に使用します. 下向きの場合は自動搬出です.
 
 gregtech.machine.clipboard.name=クリップボード
+
+# Cleanroom Casings
+tile.cleanroom_casing.plascrete.name=プラスクリート
+tile.cleanroom_casing.filter_casing.name=フィルター外装
+tile.cleanroom_casing.filter_casing_sterile.name=滅菌フィルター外装
+tile.cleanroom_casing.filter.tooltip=§a無塵§7環境を構築する
+tile.cleanroom_casing.filter_sterile.tooltip=§a滅菌§7環境を構築する
 
 # Asphalt
 tile.asphalt.asphalt.name=アスファルト
@@ -3830,8 +3837,8 @@ gregtech.machine.battery_buffer.max.4.name=MAX-V 4スロット蓄電器
 gregtech.machine.battery_buffer.max.8.name=MAX-V 8スロット蓄電器
 gregtech.machine.battery_buffer.max.16.name=MAX-V 16スロット蓄電器
 
-gregtech.battery_buffer.average_input=Average input: %s EU/t
-gregtech.battery_buffer.average_output=Average output: %s EU/t
+gregtech.battery_buffer.average_input=入力平均: %s EU/t
+gregtech.battery_buffer.average_output=出力平均: %s EU/t
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=ソフトハンマーで反転. 最初は降圧
@@ -4450,6 +4457,22 @@ gregtech.machine.fluid_drilling_rig.depletion=枯渇速度: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=%s§7を要求. %s§7までオーバークロック可能.
 gregtech.machine.fluid_drilling_rig.overclock=オーバークロックで生産が§d50%%§7上昇する.
 
+gregtech.machine.cleanroom.name=クリーンルーム
+gregtech.machine.cleanroom.tooltip.1=クリーンルームレシピで実行するために内部に機械を設置する.
+gregtech.machine.cleanroom.tooltip.2=汚いときは§a30 EU/t§7, 清潔な時は§a4 EU/t§7消費する.
+gregtech.machine.cleanroom.tooltip.3=オーバークロックで浄化サイクルが増加.
+gregtech.machine.cleanroom.tooltip.4=大きさは§b5x5x5§7から§b15x15x15§7まで.
+gregtech.machine.cleanroom.tooltip.5=天井にフィルター外装が必要 (角を除く).
+gregtech.machine.cleanroom.tooltip.6=4つまでドアを設置できる! ドアを開けたままでも清潔さを保てる.
+gregtech.machine.cleanroom.tooltip.7=発電機, マフラー, ドリル及び初歩的機械はクリーンルームにとって汚すぎる!
+gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の外装またはダイオードで送ることができる.
+gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の貫通ハッチで送ることができる.
+gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2 チャンネルs§7を壁面の外装を通して送信できる.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aAE2ネットワーク§7を壁面の外装を通して送信できる.
+gregtech.multiblock.cleanroom.clean_state=Status: §a清潔
+gregtech.multiblock.cleanroom.dirty_state=Status: §4汚染されている
+gregtech.multiblock.cleanroom.clean_amount=清潔さ: §a%s%%
+
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
 gregtech.multiblock.central_monitor.height=スクリーンの高さ:
@@ -4615,9 +4638,10 @@ gregtech.machine.maintenance_hatch_configurable.name=制御可能なメンテナ
 gregtech.machine.maintenance_hatch_configurable.tooltip=マルチブロックをより細かく制御するために./n設置した時点で故障箇所なし
 gregtech.machine.maintenance_hatch_full_auto.name=自動メンテナンスハッチ
 gregtech.machine.maintenance_hatch_full_auto.tooltip=マルチブロックの自動メンテナンスに
+gregtech.machine.maintenance_hatch_cleanroom_auto.name=フィルター付自動メンテナンスハッチ
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip=クリーニング付きマルチブロックの自動メンテナンスに!
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=故障解決のためのツールがインベントリ内にある場合, 素手でここをクリック
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=故障を解決するためにテープを挿入
-
 
 gregtech.maintenance.configurable_duration=加工時間: %fx
 gregtech.maintenance.configurable_duration.unchanged_description=レシピは通常の加工時間で実行されます. 設定を変更するとアップデートされます.
@@ -4655,6 +4679,11 @@ gregtech.machine.machine_hatch.locked=インターフェースはロックされ
 gregtech.machine.machine_hatch.tooltip=有効なアイテムのみを保持する専用アクセスバス
 gregtech.machine.machine_hatch.processing_array=§eプロセッシングアレイ§7に組み込まれた場合, §eプロセッシングアレイ§7で動作するマシンのみを保持します
 
+gregtech.machine.passthrough_hatch_item.name=アイテム貫通ハッチ
+gregtech.machine.passthrough_hatch_item.tooltip=片方のサイドからもう片方へアイテムを送る
+gregtech.machine.passthrough_hatch_fluid.name=液体貫通ハッチ
+gregtech.machine.passthrough_hatch_fluid.tooltip=片方のサイドからもう片方へ液体を送る
+
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=内容物 %s L の %s
@@ -4686,6 +4715,9 @@ gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆薬: %s
 gregtech.recipe.eu_to_start=開始エネルギー: %sEU
 gregtech.recipe.dimensions=ディメンション: %s
+gregtech.recipe.cleanroom=%s を要求
+gregtech.recipe.cleanroom.display_name=クリーンルーム
+gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 
 gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると, §b中身をタンクに移す§7 Shiftクリックで1スタック全て移す.
 gregtech.fluid.click_combined=§7液体容器でクリックすると, 液体を§c液体容器§7と§b内部タンク§7間をやり取りできる Shiftクリックで1スタック全て移す.
