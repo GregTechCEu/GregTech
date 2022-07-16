@@ -4,7 +4,6 @@ package gregtech.api.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.input.KeyBind;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -143,14 +142,28 @@ public class ArmorUtils {
      * @return result of eating food
      */
     public static ActionResult<ItemStack> canEat(EntityPlayer player, ItemStack food) {
-        if (!(food.getItem() instanceof ItemFood)) return new ActionResult<>(EnumActionResult.FAIL, food);
+        if (!(food.getItem() instanceof ItemFood)) {
+            return new ActionResult<>(EnumActionResult.FAIL, food);
+        }
+
         ItemFood foodItem = (ItemFood) food.getItem();
         if (player.getFoodStats().needFood()) {
-            food.setCount(food.getCount() - 1);
+            if(!player.isCreative()) {
+                food.setCount(food.getCount() - 1);
+            }
+
+            // Find the saturation of the food
             float saturation = foodItem.getSaturationModifier(food);
+
+            // The amount of empty food haunches of the player
             int hunger = 20 - player.getFoodStats().getFoodLevel();
+
+            // Increase the saturation of the food if the food replenishes more than the amount of missing haunches
             saturation += (hunger - foodItem.getHealAmount(food)) < 0 ? foodItem.getHealAmount(food) - hunger : 1.0F;
-            player.getFoodStats().addStats(foodItem.getHealAmount(food), saturation);
+
+            // Use this method to add stats for compat with TFC, who overrides addStats(int amount, float saturation) for their food and does nothing
+            player.getFoodStats().addStats(new ItemFood(foodItem.getHealAmount(food), saturation, foodItem.isWolfsFavoriteMeat()), food);
+
             return new ActionResult<>(EnumActionResult.SUCCESS, food);
         } else {
             return new ActionResult<>(EnumActionResult.FAIL, food);
