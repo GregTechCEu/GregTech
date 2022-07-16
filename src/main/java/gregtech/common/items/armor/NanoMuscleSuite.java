@@ -91,13 +91,8 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
-        IElectricItem container = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        int damageLimit = Integer.MAX_VALUE;
-        if (source == DamageSource.FALL && this.getEquipmentSlot(armor) == EntityEquipmentSlot.FEET) {
-            if (energyPerUse > 0 && container != null) {
-                damageLimit = (int) Math.min(damageLimit, 25.0 * container.getCharge() / (energyPerUse * 10.0D));
-            }
-            return new ArmorProperties(10, (damage < 8.0) ? 1.0 : 0.875, damageLimit);
+        if (SLOT == EntityEquipmentSlot.FEET && source == DamageSource.FALL) {
+            return new ArmorProperties(10, 1, Integer.MAX_VALUE);
         }
         return super.getProperties(player, armor, source, damage, equipmentSlot);
     }
