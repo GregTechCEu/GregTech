@@ -24,7 +24,6 @@ buildscript {
 
 plugins {
     id("com.matthewprenger.cursegradle") version "1.1.0"
-    id("maven-publish")
 }
 
 apply {
@@ -155,7 +154,7 @@ idea {
     }
 }
 
-fun getVersionFromJava(file: File): String  {
+fun getVersionFromJava(file: File): String {
     var major = "0"
     var minor = "0"
     var revision = "0"
@@ -188,4 +187,17 @@ fun getVersionFromJava(file: File): String  {
         return "$major.$minor.$revision-$extra"
     }
     return "$major.$minor.$revision"
+}
+
+task<Exec>("getVersionFromJava") {
+    commandLine("echo", version)
+}
+
+task("getLatestChangelog") {
+    fun getLatestChangelog(file: File): String {
+        var split = file.readText().split("###")
+        return split[0] + "### " + split[1].trim()
+    }
+
+    File("CHANGELOG-current.md").writeText(getLatestChangelog(file("CHANGELOG.md")))
 }

@@ -1,0 +1,59 @@
+name: Release to CurseForge
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Use Cached Gradle Packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Get Project Version
+        id: project_version
+        run: echo ::set-output name=version::$(./gradlew getVersionFromJava --q)
+
+      - name: Get Project Changelog
+        run: ./gradlew getLatestChangelog --q
+
+      - name: Create CurseForge Release
+        uses: itsmeow/curseforge-upload@v3
+        with:
+          game_versions: "Minecraft 1.12:1.12.2,Java 8,Forge"
+          game_endpoint: "minecraft"
+          release_type: "release"
+          changelog: CHANGELOG-current.md
+          changelog_type: "markdown"
+          relations: "codechicken-lib-1-8:requiredDependency,gregtech-chill-edition:incompatible,gregtechce:incompatible"
+          file_path: build/libs/gregtech-${{ steps.project_version.outputs.version }}.jar
+          project_id: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
+          token: "${{ secrets.CURSEFORGE_API_KEY }}"
+
+      - name: Cleanup Gradle Cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties

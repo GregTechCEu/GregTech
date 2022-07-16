@@ -81,3 +81,6 @@ local.properties
 run/
 
 logs/
+
+### Other ###
+CHANGELOG-current.md
