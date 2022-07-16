@@ -1088,6 +1088,9 @@ metaitem.nan.certificate.tooltip=Challenge Accepted!
 
 metaitem.fertilizer.name=Fertilizer
 
+metaitem.blacklight.name=Blacklight
+metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
@@ -2446,6 +2449,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
+tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -2499,6 +2503,13 @@ gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank v
 gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
+
+# Cleanroom Casings
+tile.cleanroom_casing.plascrete.name=Plascrete
+tile.cleanroom_casing.filter_casing.name=Filter Casing
+tile.cleanroom_casing.filter_casing_sterile.name=Sterilizing Filter Casing
+tile.cleanroom_casing.filter.tooltip=Creates a §aParticle-Free§7 environment
+tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environment
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -4446,6 +4457,22 @@ gregtech.machine.fluid_drilling_rig.depletion=Depletion Rate: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7.
 gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
 
+gregtech.machine.cleanroom.name=Cleanroom
+gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
+gregtech.machine.cleanroom.tooltip.2=Uses §a30 EU/t§7 when dirty and §a4 EU/t§7 when clean.
+gregtech.machine.cleanroom.tooltip.3=Overclocking increases cleaning per cycle.
+gregtech.machine.cleanroom.tooltip.4=Can be any size from §b5x5x5§7 to §b15x15x15§7.
+gregtech.machine.cleanroom.tooltip.5=Requires Filter Casings in the ceiling, excluding the edges.
+gregtech.machine.cleanroom.tooltip.6=Accepts up to 4 doors! Remains clean when the door is open.
+gregtech.machine.cleanroom.tooltip.7=Generators, Mufflers, Drills, and Primitive Machines are too dirty for the cleanroom!
+gregtech.machine.cleanroom.tooltip.8=Send power through hulls or diodes in the walls.
+gregtech.machine.cleanroom.tooltip.9=Send items and fluids with Passthrough Hatches in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.channels=Send §a8 AE2 Channels§7 through hulls in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through hulls in the walls.
+gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
+gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
+gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4611,6 +4638,8 @@ gregtech.machine.maintenance_hatch_configurable.name=Configurable Maintenance Ha
 gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over Multiblocks/nStarts with no Maintenance problems!
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+gregtech.machine.maintenance_hatch_cleanroom_auto.name=Automatic Filtration Maintenance Hatch
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip=For automatically maintaining Multiblocks with Cleaning!
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 
@@ -4650,6 +4679,11 @@ gregtech.machine.machine_hatch.locked=Machine Interface Locked
 gregtech.machine.machine_hatch.tooltip=Specialized Access Bus that only holds valid items
 gregtech.machine.machine_hatch.processing_array=When in the §eProcessing Array§7, only holds machines that work in the §eProcessing Array
 
+gregtech.machine.passthrough_hatch_item.name=Item Passthrough Hatch
+gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the other
+gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
+gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
+
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -4681,6 +4715,9 @@ gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
+gregtech.recipe.cleanroom=Requires %s
+gregtech.recipe.cleanroom.display_name=Cleanroom
+gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
@@ -4811,6 +4848,7 @@ gregtech.multiblock.pattern.error.limited.1=§cMinimum: %d§r
 gregtech.multiblock.pattern.error.limited.2=§cMaximum: %d per layer§r
 gregtech.multiblock.pattern.error.limited.3=§cMinimum: %d per layer§r
 gregtech.multiblock.pattern.error.coils=§cAll heating coils must be the same§r
+gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
 gregtech.multiblock.pattern.single=§6Only this block can be used§r

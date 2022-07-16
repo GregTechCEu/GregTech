@@ -180,7 +180,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected boolean checkRecipe(Recipe recipe) {
+    protected boolean checkRecipe(@Nonnull Recipe recipe) {
         return super.checkRecipe(recipe) && !this.needsVenting;
     }
 

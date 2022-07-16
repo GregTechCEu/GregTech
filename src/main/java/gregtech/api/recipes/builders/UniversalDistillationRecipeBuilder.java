@@ -63,6 +63,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
                         .fluidOutputs(this.fluidOutputs.get(i))
                         .outputs(this.outputs)
                         .duration(recipeDuration)
+                        .cleanroom(getCleanroom())
                         .buildAndRegister();
                 continue;
             }

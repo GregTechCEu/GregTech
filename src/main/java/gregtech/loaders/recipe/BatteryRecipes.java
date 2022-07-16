@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.MarkerMaterials.Color;
@@ -312,6 +313,7 @@ public class BatteryRecipes {
                 .input(LAPOTRON_CRYSTAL)
                 .notConsumable(craftingLens, Color.Blue)
                 .output(ENGRAVED_LAPOTRON_CHIP, 3)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .duration(256).EUt(VA[HV]).buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(512).EUt(1024)
@@ -323,6 +325,7 @@ public class BatteryRecipes {
                 .input(plate, Platinum, 8)
                 .output(ENERGY_LAPOTRONIC_ORB)
                 .solderMultiplier(2)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Lapotronic Energy Cluster

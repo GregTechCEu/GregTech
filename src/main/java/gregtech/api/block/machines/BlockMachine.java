@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
@@ -55,6 +56,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -250,6 +252,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+            }
+            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+                if (metaTileEntity.getProxy() != null) {
+                    metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+                }
             }
         }
     }
