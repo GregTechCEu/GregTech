@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Power",
+  "title": "Electricity Generation and Transportation",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oYes, you will need more Steam production!\nThe Steam pressure will exert a force on the Turbines. Their rotation activate the Generator, producing Electricity.§r\n\nThe §3Steam Turbine§r is the only Generator you can realistically use in the LV Age. §2Later you will unlock more Power options§r.\n\n§d2 Steam \u003d 1 EU§r\n\n\n§lIntroduction to §9§lElectric Energy Transportation§r§l:§r\n\n§1EU§r - the Energy Unit - is transported through direct connection, §aWires§r or §aCables§r.\nWires are inferior, as they will §celectrocute§r you and §close more energy§r, so you want to use Cables.\n\n§cCable loss§r means you will have to stick your Machines close to your Generators, but that kind of issue is only for the early game. If you look up ahead, you will be able to obtain §6Superconductors§r down the line.\n\nIf you use one single §3Steam Turbine§r, you may use §a1x Tin Cables§r.\nIf you upgrade to §32 Steam Turbines§r, you should use §a2x Tin Cables§r, else they may end up §cburning§r.\nThis is because of the §9Amperage§r mechanic... but that will be explained later so you can enjoy playing.\n\n\n§9Note:§r GT6-style Cables are §denabled§r. It means that placing Cables connect them only to the block they were placed against. To open more connections, use your §5Wire Cutter§r on the grid.\n§2GTCEu§r Cables now have §6native RF support§r! You can plug any RF appliance into an EU source and it will automatically convert. The ratio is §a4 : 1§r (RF : EU)."
+      ]
+    }
+  ],
+  "fixed": []
+}

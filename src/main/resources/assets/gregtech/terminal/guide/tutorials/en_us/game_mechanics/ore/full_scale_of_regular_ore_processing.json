@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Ore",
+  "title": "Full Scale of Regular Ore Processing",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oHey you! Yes you! HEY!! Why are you running away!?§r\n\nThis quest is a presentation of the §dFull Scale of regular Ore Processing§r. Why \"regular\" you may ask? Well... some ores are special but that\u0027s for much later. Oh no I\u0027m getting carried away!\n\n\nIf you haven\u0027t noticed the §aOre Byproduct§r Tab in §aJEI§r, press U on any GT ore, and it should be the second rightmost Tab.\nThis tab presents all the Ore Processing recipes! As you can see, Ores can give many §6Byproducts§r, some of which do not exist as an Ore.\n\nWhenever you want to obtain a material, refer to that page to see if you can obtain it, and select the process that you will find to be the most suitable.\n\n\nEach Quest surrounding this one presents a different machine that has some relation to Ore Processing.\n\n\n§cNote:§r Do not get too carried over with Ore Processing yet! It is slow and somewhat power hungry. Around 90% of ores are not important enough to warrant going out of your way to obtain the Byproducts."
+      ]
+    }
+  ],
+  "fixed": []
+}

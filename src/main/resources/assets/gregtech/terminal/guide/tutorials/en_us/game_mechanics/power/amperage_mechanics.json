@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Power",
+  "title": "Amperage Mechanics",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe concepts presented are for the curious players. Don\u0027t read past the TL;DR if you are not interested.§r\n\n§bLore:§r The Amperage bug, exploit or feature (call it whatever you want!) from GTCE has been §lfixed§r in GTCEu. The Energy network now works as intended.\n\n§6§lTL;DR:§r For safety, match the Amperage limit of your Cables with the max amount of Amps from Energy Producers.\n\n\nYou surely have realised by now the Energy system in §2GregTech§r is §cnot as simple§r as the §1RF§r you may be used to using in modded Minecraft!\n§1EU§r mechanics have a depth to them and are not dissimilar to real electricity. It can also be §4dangerous§r if mishandled. But it also gives a lot of §6satisfaction§r, if harnessed well.\n\nThis Quest tackles the §9Amperage§r mechanics. As for the §dVoltage§r mechanics, that will be explained once you reach §bMV§r.\n\nEach single-block Generator in GregTech is configured to produce §91 Amp§r for its voltage tier. For §7LV§r, that results in §232EU/t§r.\nIf a machine requires 16EU/t, one packet of 32EU is sent every other tick (assuming no cable loss).\n\nA Battery Buffer with §94§r Batteries can produce up to §94 Amps§r, for §2128EU/t§r as §7LV§r, which is important for the §3Electric Blast Furnace§r, or to run multiple machines simultaneously.\nGeneric machines are configured to draw up to §92 Amps§r to account for cable loss. Other machines have specific §9Amps IN§r, described in the tooltip.\n\n§aCables§r have an §9Amperage §climit§r. Attempting to transport more Amps than the limit will §4burn§r them.\n\n§9Amps§r are drawn §oonly§r through the §aCables§r connecting the Producers and Consumers directly, and §oonly§r if the Consumers are active.\nThis means you can safely step down your Cables in certain places, feel free to experiment!"
+      ]
+    }
+  ],
+  "fixed": []
+}

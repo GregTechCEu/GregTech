@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Power",
+  "title": "Overclocking",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oNow you might wonder, why is every machine duplicated across all tiers? Because you might want them for overclocking.§r\n\nOverclocking is a mechanic that happens when you try to run a recipe in a machine §dthat is higher tier than the recipe itself.§r\nEach tier above the recipe tier allows one overclock. Each overclock implies:\n§9-§r 2x recipe speed\n§9-§r 4x power consumption\n§9-\u003e§r 2x total energy cost\n\nAs you can see there are upsides and downsides. It is a game of balancing decisions: if you want to cut time duration at the cost of greater consumption.\nYou and only you can answer this question.\n§9However I will tell you this:§r for automated setups, overclock as little as possible!\n\n\nMachines have a button to set the maximum voltage tier it will Overclock to. Click on it to cycle through all the available Voltages, and set it on §dX§r to disable Overclocking.\n\n\n§bLore:§r GTCE overclocking was extremely awkward... If the recipe consumed 16EU/t or below, it would do a classic overclock. However if the recipe consumed more than 16EU/t, every Overclock would be 2.8x faster!\nGTCEu has a config to select the Overclock speed bonus, it is a very sensitive value."
+      ]
+    }
+  ],
+  "fixed": []
+}

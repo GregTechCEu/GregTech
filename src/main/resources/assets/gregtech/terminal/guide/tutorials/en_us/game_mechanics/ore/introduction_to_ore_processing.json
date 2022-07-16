@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Ore",
+  "title": "Introduction to Ore Processing",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "To its simplest form, Ore Processing in GregTech boils down to §aconverting one ore into two ingots through two dusts§r, like several other tech mods.\n\nThe added spice is the amount of steps, either optional or required. This small guide is an §dintroduction to Ore Processing§r.\nThe main purpose of GregTech Ore Processing is to provide §abyproducts§r on top of the initial outcome. At Steam Age, none of the byproducts are obtainable.\n\n§9The steps available in Steam Age go as follows:§r\nOne Ore (block) §9-\u003e§r Two Crushed Ores (Macerator)\nOne Crushed Ore §9-\u003e§r One Impure Dust (Hammer)\nOne Impure Dust §9-\u003e§r One Dust (§oIn world crafting explained below§r)\nOne Dust §9-\u003e§r One Ingot (Furnace, you should know this one)\n\nA pickaxe or mining hammer enchanted with Hammering, or a GregTech Hammer directly gives Crushed Ores from breaking Ore blocks, but only at a 1:1 ratio. The Fortune enchantment can increase this ratio, to 2x with Fortune III, which matches the Macerator.\n\nThe rule bends for ores giving more than two dusts (such as redstone), and for dusts that cannot be smelted (redstone again!). Yet you can still do direct smelting to get half the amount you would from the full processing.\n\n§dJEI does not indicate Impure Dust to Clean Dust conversion§r, so keep that in mind that you should §athrow them into filled cauldrons§r (full stacks at once to use less water).\n\nOre Processing will be explained further once you get into LV Age.\n\n\nThere, take this nice reward for your efforts learning this beautiful mess."
+      ]
+    }
+  ],
+  "fixed": []
+}

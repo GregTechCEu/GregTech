@@ -1,0 +1,13 @@
+{
+  "section": "Game Mechanics/Power",
+  "title": "Voltage and more Energy Concepts",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe concepts presented are for the curious players. Don\u0027t read past the TL;DR if you are not interested.§r\n\n§6§lTL;DR:§r For safety, match the §2Voltage§r for every Consumer and Producer, unless you like §cfireworks§r...\n\nThis Quest will go into the Energy mechanics in more detail. If you have a basic understanding of electricity in §ereal life§r, the GTEU system is not too different! An even more in-depth walkthrough will be found on the GTCEu wiki in Github.\n\nThe laws of physics:\n° §9Power§r \u003d §2Voltage§r  §l*§r §dAmperage§r\n° §1Energy§r \u003d §9Power§r  §l*§r §6Time§r\n§8Resistance§r is an excluded concept in GregTech, it is instead simulated partially with cable losses.\n\nThe units:\n- §1EU§r is the §1Energy§r.\n- §9EU/t§r is the §9Power§r.\n- §dA§r or §dAmp§r is the §dAmperage§r.\n- §2V§r would be the §2Voltage§r, but we prefer referring to it as §7LV§r, §bMV§r, §6HV§r... as those are the relevant values for gameplay (technically: §7LV§r \u003d 32V \u003d 32EU/t/A).\n\nHere comes the §4dangerous§r part:\n§9-§r §aCables§r and §aWires§r which receive §2higher Voltage§r than their rating will §cburn§r, in additions to burning from too many §dAmps§r.\n§9-§r §3Machines§r which receive §2higher Voltage§r than their Tier will §cexplode§r! Extra §dAmps§r are not affecting them, as they consume only what they need.\n\n\nEvery §6tick§r, §1EU§r §apackets§r are being attempted to be transferred from Energy Producers to Consumers. These §apackets§r have two parameters: §2Voltage§r determined by the tier of the Producer, and §dAmperage§r. This determines how much §9Power§r can actually be transferred. There are no partial Amps, and Energy is transferred only if the full Amp §apacket§r can be received.\nIn summary, Energy is transported in §apackets§r of §132EU§r for §7LV§r, §1128EU§r for §bMV§r... Energy that is actually received can be lower with cable loss.\n\nMachine Energy Input is limited by §2Voltage§r (too high and boom!), and by §dAmperage§r. Thus, a §bMV§r Machine with §d2A§r Input connected to a §7LV§r line will never accept more than §964EU/t§r.\nIt is still possible to run §bMV§r Machines on §7LV§r lines, but only if the recipes are low enough §9Power§r, or if you have a §3MV Battery§r in the charging slot. The machine will only accept §d1A§r when idle, and so the §3Battery§r will recharge only at §932EU/t§r."
+      ]
+    }
+  ],
+  "fixed": []
+}
