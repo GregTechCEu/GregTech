@@ -4523,6 +4523,11 @@ gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
+gregtech.bus.collapse_true=Bus Allowed to collapse Item Stacks
+gregtech.bus.collapse_false=Bus Prevented from collapsing Item Stacks
+gregtech.bus.collapse.error=Bus must be attacked to multiblock first
+gregtech.bus.collapse.info=Sneak Right Click with a Screwdriver to enable Item Auto Collapse mode
+
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
 gregtech.machine.fluid_hatch.import.ulv.name=ULV Input Hatch
