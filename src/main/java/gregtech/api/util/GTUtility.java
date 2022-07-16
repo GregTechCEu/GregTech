@@ -28,6 +28,7 @@ import gregtech.common.items.behaviors.CrowbarBehaviour;
 import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -1034,6 +1035,37 @@ public class GTUtility {
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof MachineItemBlock)) return null;
         return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+    }
+
+    public static MapColor getMapColor(int rgb) {
+        MapColor color = MapColor.BLACK;
+        int originalR = (rgb >> 16) & 0xFF;
+        int originalG = (rgb >> 8) & 0xFF;
+        int originalB = rgb & 0xFF;
+        int distance = Integer.MAX_VALUE;
+
+        for (MapColor mapColor : MapColor.COLORS) {
+            // why is there a null in here mojang!?
+            if (mapColor == null) continue;
+
+            int colorValue = mapColor.colorValue;
+            if (colorValue == 0) continue;
+
+            int colorR = (colorValue >> 16) & 0xFF;
+            int colorG = (colorValue >> 8) & 0xFF;
+            int colorB = colorValue & 0xFF;
+
+            int distR = Math.abs(originalR - colorR);
+            int distG = Math.abs(originalG - colorG);
+            int distB = Math.abs(originalB - colorB);
+            int dist = distR * distR + distG * distG + distB * distB;
+
+            if (dist < distance) {
+                distance = dist;
+                color = mapColor;
+            }
+        }
+        return color;
     }
 
     public static boolean canSeeSunClearly(World world, BlockPos blockPos) {

@@ -70,6 +70,11 @@ public class MaterialFlags {
      */
     public static final MaterialFlag FLAMMABLE = new MaterialFlag.Builder("flammable").build();
 
+    /**
+     * Add to material if it is some kind of sticky
+     */
+    public static final MaterialFlag STICKY = new MaterialFlag.Builder("sticky").build();
+
     //////////////////
     //     DUST     //
     //////////////////
