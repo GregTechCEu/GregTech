@@ -1,11 +1,9 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -21,15 +19,11 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.InventoryUtils;
 import gregtech.api.util.ItemStackKey;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -43,8 +37,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
 
@@ -198,7 +192,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
 
         // Gather a snapshot of the provided inventory
-        HashMap<ItemStackKey, Integer> inventoryContents = GTHashMaps.fromItemHandler(inventory);
+        Map<ItemStackKey, Integer> inventoryContents = GTHashMaps.fromItemHandler(inventory);
 
         List<ItemStack> inventoryItemContents = new ArrayList<>();
 
