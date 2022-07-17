@@ -5,6 +5,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockCleanroomCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -156,6 +158,18 @@ public class MaterialInfoLoader {
                 new MaterialStack(Materials.Rubber, M * 2), // plate
                 new MaterialStack(Materials.Iridium, M * 2), // fine wire
                 new MaterialStack(Materials.NeodymiumMagnetic, M / 2) // rod
+        ));
+
+        OreDictUnifier.registerOre(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE), new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, M * 2), // frame / 2
+                new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
+                new MaterialStack(Materials.Concrete, M / 2) // 1 block / 2
+        ));
+
+        OreDictUnifier.registerOre(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS), new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, M * 2), // frame / 2
+                new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
+                new MaterialStack(Materials.Glass, M / 2) // 1 block / 2
         ));
 
         if (ConfigHolder.recipes.hardWoodRecipes) {

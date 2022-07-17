@@ -10,12 +10,14 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.crafting.FacadeRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -103,6 +105,11 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("universal_fluid_cell", FLUID_CELL_UNIVERSAL.getStackForm(), "C ", "  ", 'C', FLUID_CELL);
         ModHandler.addShapedRecipe("universal_fluid_cell_revert", FLUID_CELL.getStackForm(), "C ", "  ", 'C', FLUID_CELL_UNIVERSAL);
+
+        ModHandler.addShapedRecipe("blacklight", BLACKLIGHT.getStackForm(), "SPS", "GRG", "CPK", 'S', new UnificationEntry(OrePrefix.screw, TungstenCarbide), 'P', new UnificationEntry(OrePrefix.plate, TungstenCarbide), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS), 'R', new UnificationEntry(OrePrefix.spring, Europium), 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'K', new UnificationEntry(OrePrefix.cableGtSingle, Platinum));
+
+        ModHandler.addShapedRecipe(true, "filter_casing", MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.FILTER_CASING, 2), "BBB", "III", "MFR", 'B', new ItemStack(Blocks.IRON_BARS), 'I', ITEM_FILTER.getStackForm(), 'M', ELECTRIC_MOTOR_MV.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Steel), 'R', new UnificationEntry(OrePrefix.rotor, Steel));
+        ModHandler.addShapedRecipe(true, "filter_casing_sterile", MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE, 2), "BEB", "ISI", "MFR", 'B', new UnificationEntry(OrePrefix.pipeLargeFluid, Polybenzimidazole), 'E', EMITTER_ZPM.getStackForm(), 'I', ITEM_FILTER.getStackForm(), 'S', BLACKLIGHT.getStackForm(), 'M', ELECTRIC_MOTOR_ZPM.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Tritanium), 'R', new UnificationEntry(OrePrefix.rotor, NaquadahAlloy));
 
         ///////////////////////////////////////////////////
         //               Shapes and Molds                //

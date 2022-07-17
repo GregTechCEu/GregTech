@@ -7,6 +7,7 @@ import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.ModularUI.Builder;
 import gregtech.api.guiOld.widgets.SlotWidget;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;

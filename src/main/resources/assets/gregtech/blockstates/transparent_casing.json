@@ -41,6 +41,18 @@
         "bot_all": "gregtech:blocks/casings/transparent/fusion_glass",
         "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
       }
+    },
+    "active=false,variant=cleanroom_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/cleanroom_glass"
+      }
+    },
+    "active=true,variant=cleanroom_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/cleanroom_glass"
+      }
     }
   }
 }

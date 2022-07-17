@@ -23,10 +23,10 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     public BlockGlassCasing() {
         super(Material.IRON);
         setTranslationKey("transparent_casing");
-        setHardness(5.0f);
-        setResistance(5000.0f);
+        setHardness(5.0F);
+        setResistance(5.0F);
         setSoundType(SoundType.GLASS);
-        setHarvestLevel("wrench", 2);
+        setHarvestLevel("pickaxe", 1);
         setDefaultState(getState(CasingType.TEMPERED_GLASS));
     }
 
@@ -67,7 +67,8 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
 
         TEMPERED_GLASS("tempered_glass"),
         FUSION_GLASS("fusion_glass"),
-        LAMINATED_GLASS("laminated_glass");
+        LAMINATED_GLASS("laminated_glass"),
+        CLEANROOM_GLASS("cleanroom_glass");
 
         private final String name;
 

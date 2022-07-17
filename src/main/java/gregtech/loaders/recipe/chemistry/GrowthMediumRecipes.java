@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -35,6 +36,7 @@ public class GrowthMediumRecipes {
                 .input(BIO_CHAFF, 4)
                 .fluidInputs(DistilledWater.getFluid(1000))
                 .fluidOutputs(Bacteria.getFluid(1000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Bacterial Sludge
@@ -42,6 +44,7 @@ public class GrowthMediumRecipes {
                 .fluidInputs(Biomass.getFluid(1000))
                 .fluidInputs(Bacteria.getFluid(1000))
                 .fluidOutputs(BacterialSludge.getFluid(1000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Enriched Bacterial Sludge
@@ -49,31 +52,29 @@ public class GrowthMediumRecipes {
                 .input(dust, Uranium238)
                 .fluidInputs(BacterialSludge.getFluid(1000))
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
                 .input(dustTiny, Uranium235)
                 .fluidInputs(BacterialSludge.getFluid(1000))
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
                 .input(dustTiny, Naquadria)
                 .fluidInputs(BacterialSludge.getFluid(1000))
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(2000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Mutagen
-        DISTILLERY_RECIPES.recipeBuilder().EUt(VA[EV]).duration(40)
-                .fluidInputs(EnrichedBacterialSludge.getFluid(10))
-                .circuitMeta(1)
-                .fluidOutputs(Mutagen.getFluid(1))
-                .buildAndRegister();
-
         DISTILLERY_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(EnrichedBacterialSludge.getFluid(1000))
-                .circuitMeta(2)
+                .circuitMeta(1)
                 .fluidOutputs(Mutagen.getFluid(100))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Collagen
@@ -83,6 +84,7 @@ public class GrowthMediumRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(dust, Collagen)
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(500))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(1600)
@@ -91,6 +93,7 @@ public class GrowthMediumRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, Collagen, 2)
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Gelatin
@@ -99,12 +102,14 @@ public class GrowthMediumRecipes {
                 .fluidInputs(PhosphoricAcid.getFluid(1000))
                 .fluidInputs(Water.getFluid(3000))
                 .fluidOutputs(GelatinMixture.getFluid(4000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(2400)
                 .fluidInputs(GelatinMixture.getFluid(6000))
                 .output(dust, Phosphorus)
                 .output(dust, Gelatin, 4)
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Agar
@@ -112,6 +117,7 @@ public class GrowthMediumRecipes {
                 .input(dust, Gelatin)
                 .fluidInputs(DistilledWater.getFluid(1000))
                 .output(dust, Agar)
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Raw Growth Medium
@@ -122,6 +128,7 @@ public class GrowthMediumRecipes {
                 .input(dust, Agar, 4)
                 .fluidInputs(Mutagen.getFluid(4000))
                 .fluidOutputs(RawGrowthMedium.getFluid(4000))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Sterile Growth Medium
@@ -129,6 +136,7 @@ public class GrowthMediumRecipes {
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(RawGrowthMedium.getFluid(100))
                 .fluidOutputs(SterileGrowthMedium.getFluid(100))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         // Stem Cells
@@ -138,6 +146,7 @@ public class GrowthMediumRecipes {
                 .fluidInputs(SterileGrowthMedium.getFluid(500))
                 .output(STEM_CELLS, 32)
                 .fluidOutputs(BacterialSludge.getFluid(500))
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
     }
 }

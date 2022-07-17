@@ -1,5 +1,13 @@
 ## Changelog
 
+### 2.3.4
+
+BETA RELEASE (hotfix)
+
+Featured Changes:
+* Fixed game crash with multiblock explosions
+* Fixed active multiblock heating coils deforming structures
+
 ### 2.3.3
 
 BETA RELEASE (hotfix)

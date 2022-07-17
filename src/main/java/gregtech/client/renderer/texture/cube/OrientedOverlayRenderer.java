@@ -139,7 +139,15 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getParticleSprite() {
-        return sprites.get(OverlayFace.FRONT).getSprite(false, false);
+        for (OrientedOverlayRenderer.ActivePredicate predicate : sprites.values()) {
+            if (predicate != null) {
+                TextureAtlasSprite sprite = predicate.getSprite(false, false);
+                if (sprite != null)
+                    return sprite;
+            }
+
+        }
+        return null;
     }
 
     @Override
