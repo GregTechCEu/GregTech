@@ -1,11 +1,11 @@
 package gregtech.common.terminal.app.multiblockhelper;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.SlotWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternError;
@@ -98,7 +98,7 @@ public class MachineBuilderWidget extends WidgetGroup {
     }
 
     /**
-     * I had to add slotWidget after parent widget be added, because of gtce's {@link gregtech.api.gui.INativeWidget} interface.
+     * I had to add slotWidget after parent widget be added, because of gtce's {@link gregtech.api.guiOld.INativeWidget} interface.
      * Hopefully one day I can remove this worse interface.
      */
     public void addPlayerInventory() {

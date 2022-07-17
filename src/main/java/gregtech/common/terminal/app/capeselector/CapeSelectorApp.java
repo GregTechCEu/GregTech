@@ -1,9 +1,9 @@
 package gregtech.common.terminal.app.capeselector;
 
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.TextureArea;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.SimpleTextWidget;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.client.renderer.texture.Textures;

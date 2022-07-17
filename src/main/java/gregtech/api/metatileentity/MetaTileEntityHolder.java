@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity;
 
+import com.cleanroommc.modularui.api.screen.ITileWithModularUI;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.util.AECableType;
@@ -12,7 +15,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketRecoverMTE;
@@ -30,11 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.*;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -54,7 +52,7 @@ import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
         @Interface(iface = "appeng.api.networking.security.IActionHost", modid = GTValues.MODID_APPENG, striprefs = true),
         @Interface(iface = "appeng.me.helpers.IGridProxyable", modid = GTValues.MODID_APPENG, striprefs = true),
 })
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder, IWorldNameable, IActionHost, IGridProxyable {
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, ITileWithModularUI, IWorldNameable, IActionHost, IGridProxyable {
 
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
@@ -404,6 +402,11 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             }
         }
         return false;
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext uiBuildContext) {
+        return null;
     }
 
     public void setCustomName(String customName) {

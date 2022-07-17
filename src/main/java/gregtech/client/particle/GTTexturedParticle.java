@@ -1,6 +1,6 @@
 package gregtech.client.particle;
 
-import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.guiOld.resources.ResourceHelper;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

@@ -1,12 +1,12 @@
 package gregtech.api.terminal.os;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.TextureArea;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.ColorWidget;

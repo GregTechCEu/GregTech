@@ -1,9 +1,9 @@
 package gregtech.api.items.behavior;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IUIHolder;
+import gregtech.api.guiOld.ModularUI;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.MetaItem;

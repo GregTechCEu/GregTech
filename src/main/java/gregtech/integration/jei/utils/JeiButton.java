@@ -1,6 +1,6 @@
 package gregtech.integration.jei.utils;
 
-import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.IGuiTexture;
 import net.minecraft.client.Minecraft;
 
 import java.util.List;

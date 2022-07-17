@@ -1,9 +1,9 @@
 package gregtech.common.gui.widget.craftingstation;
 
-import gregtech.api.gui.INativeWidget;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.ScrollableListWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.INativeWidget;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.ScrollableListWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;

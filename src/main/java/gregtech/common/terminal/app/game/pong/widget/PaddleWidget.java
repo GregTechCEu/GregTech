@@ -1,7 +1,7 @@
 package gregtech.common.terminal.app.game.pong.widget;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
 import gregtech.api.util.Position;
 import java.awt.*;
 import java.util.function.Function;

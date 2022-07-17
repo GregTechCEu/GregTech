@@ -3,15 +3,14 @@ package gregtech.common.terminal.app.guideeditor.widget.configurator;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.common.terminal.app.guide.widget.TankListWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

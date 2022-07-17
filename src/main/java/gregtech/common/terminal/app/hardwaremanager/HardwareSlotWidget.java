@@ -1,7 +1,7 @@
 package gregtech.common.terminal.app.hardwaremanager;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;

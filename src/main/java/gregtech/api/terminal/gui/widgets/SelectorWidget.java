@@ -1,8 +1,8 @@
 package gregtech.api.terminal.gui.widgets;
 
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.widgets.SimpleTextWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;

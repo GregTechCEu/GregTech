@@ -1,6 +1,6 @@
 package gregtech.common.terminal.app.guideeditor;
 
-import gregtech.api.gui.GuiTextures;
+import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.common.terminal.app.guideeditor.widget.GuideConfigEditor;

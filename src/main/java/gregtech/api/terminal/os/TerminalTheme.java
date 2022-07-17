@@ -2,9 +2,9 @@ package gregtech.api.terminal.os;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.ModifyGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.ModifyGuiTexture;
+import gregtech.api.guiOld.resources.TextureArea;
 import gregtech.api.util.FileUtility;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 

@@ -2,14 +2,12 @@ package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.SimpleTextWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-
-import java.awt.*;
 
 public class NumberConfigurator extends ConfiguratorWidget<Integer>{
 

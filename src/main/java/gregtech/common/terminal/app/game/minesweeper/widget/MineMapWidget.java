@@ -1,8 +1,8 @@
 package gregtech.common.terminal.app.game.minesweeper.widget;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.resources.TextureArea;
 import gregtech.api.util.interpolate.RGBInterpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;

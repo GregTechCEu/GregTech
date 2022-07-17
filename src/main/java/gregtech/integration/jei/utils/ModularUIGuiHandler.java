@@ -1,11 +1,11 @@
 package gregtech.integration.jei.utils;
 
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.gui.impl.ModularUIGui;
-import gregtech.api.gui.ingredient.IGhostIngredientTarget;
-import gregtech.api.gui.ingredient.IIngredientSlot;
-import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.impl.ModularUIContainer;
+import gregtech.api.guiOld.impl.ModularUIGui;
+import gregtech.api.guiOld.ingredient.IGhostIngredientTarget;
+import gregtech.api.guiOld.ingredient.IIngredientSlot;
+import gregtech.api.guiOld.ingredient.IRecipeTransferHandlerWidget;
 import mezz.jei.api.gui.IAdvancedGuiHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import mezz.jei.api.gui.IRecipeLayout;

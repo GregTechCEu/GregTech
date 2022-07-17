@@ -2,9 +2,9 @@ package gregtech.api.recipes;
 
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.widgets.ProgressWidget;
+import gregtech.api.guiOld.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.sound.GTSounds;

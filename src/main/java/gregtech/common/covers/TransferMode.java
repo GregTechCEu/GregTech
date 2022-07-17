@@ -10,10 +10,12 @@ public enum TransferMode implements IStringSerializable {
     KEEP_EXACT("cover.robotic_arm.transfer_mode.keep_exact", 1024);
 
     public final String localeName;
+    public final String localeTooltip;
     public final int maxStackSize;
 
     TransferMode(String localeName, int maxStackSize) {
         this.localeName = localeName;
+        this.localeTooltip = localeName + ".description";
         this.maxStackSize = maxStackSize;
     }
 

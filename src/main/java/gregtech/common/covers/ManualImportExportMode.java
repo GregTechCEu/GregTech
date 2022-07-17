@@ -11,9 +11,11 @@ public enum ManualImportExportMode implements IStringSerializable {
     UNFILTERED("cover.universal.manual_import_export.mode.unfiltered");
 
     public final String localeName;
+    public final String localeTooltip;
 
     ManualImportExportMode(String localeName) {
         this.localeName = localeName;
+        this.localeTooltip = localeName + ".description";
     }
 
     @Nonnull

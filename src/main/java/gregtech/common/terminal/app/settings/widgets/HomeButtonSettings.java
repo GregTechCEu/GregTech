@@ -1,11 +1,11 @@
 package gregtech.common.terminal.app.settings.widgets;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.AbstractWidgetGroup;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.TextFieldWidget;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.api.terminal.os.SystemCall;
 import gregtech.api.terminal.os.TerminalHomeButtonWidget;

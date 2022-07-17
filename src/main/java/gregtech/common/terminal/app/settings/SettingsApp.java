@@ -1,12 +1,12 @@
 package gregtech.common.terminal.app.settings;
 
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.TabGroup;
-import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
-import gregtech.api.gui.widgets.tab.ITabInfo;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.AbstractWidgetGroup;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.TabGroup;
+import gregtech.api.guiOld.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.guiOld.widgets.tab.ITabInfo;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.os.TerminalTheme;

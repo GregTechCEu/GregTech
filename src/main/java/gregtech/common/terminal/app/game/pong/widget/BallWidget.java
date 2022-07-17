@@ -1,7 +1,7 @@
 package gregtech.common.terminal.app.game.pong.widget;
 
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.guiOld.resources.TextureArea;
+import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.util.Position;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.vector.Vector2f;

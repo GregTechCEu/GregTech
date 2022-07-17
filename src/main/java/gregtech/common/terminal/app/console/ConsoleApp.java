@@ -1,8 +1,8 @@
 package gregtech.common.terminal.app.console;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;

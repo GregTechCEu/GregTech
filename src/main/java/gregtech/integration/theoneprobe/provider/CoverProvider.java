@@ -6,7 +6,12 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.*;
-import gregtech.common.covers.filter.*;
+import gregtech.common.covers.filter.fluid.FluidFilter;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
+import gregtech.common.covers.filter.item.ItemFilter;
+import gregtech.common.covers.filter.item.ItemFilterHolder;
+import gregtech.common.covers.filter.item.OreDictFilter;
+import gregtech.common.covers.filter.item.SmartFilter;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
@@ -63,12 +68,12 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
         }
 
-        ItemFilterContainer filter = conveyor.getItemFilterContainer();
+        ItemFilterHolder filterHolder = conveyor.getFilterHolder();
         if (conveyor instanceof CoverRoboticArm) {
             CoverRoboticArm roboticArm = (CoverRoboticArm) conveyor;
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(), filter.getFilterWrapper().getItemFilter() != null);
+            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filterHolder.getTransferStackSize(), filterHolder.hasFilter());
         }
-        itemFilterText(probeInfo, filter.getFilterWrapper().getItemFilter());
+        itemFilterText(probeInfo, filterHolder.getCurrentFilter());
     }
 
     /**
@@ -80,11 +85,11 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
     private static void itemVoidingInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverItemVoiding voiding) {
         String unit = " {*gregtech.top.unit.items*}";
 
-        ItemFilterContainer container = voiding.getItemFilterContainer();
+        ItemFilterHolder filterHolder = voiding.getFilterHolder();
         if (voiding instanceof CoverItemVoidingAdvanced) {
             CoverItemVoidingAdvanced advanced = (CoverItemVoidingAdvanced) voiding;
             VoidingMode mode = advanced.getVoidingMode();
-            voidingText(probeInfo, mode, unit, container.getTransferStackSize(), container.getFilterWrapper().getItemFilter() != null);
+            voidingText(probeInfo, mode, unit, filterHolder.getTransferStackSize(), filterHolder.hasFilter());
         }
     }
 
@@ -104,12 +109,12 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit, pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 : pump.getTransferRate());
         }
 
-        FluidFilterContainer filter = pump.getFluidFilterContainer();
+        FluidFilterHolder filterHolder = pump.getFilterHolder();
         if (pump instanceof CoverFluidRegulator) {
             CoverFluidRegulator regulator = (CoverFluidRegulator) pump;
-            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filter.getFilterWrapper().getFluidFilter() != null);
+            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filterHolder.hasFilter());
         }
-        fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
+        fluidFilterText(probeInfo, filterHolder.getCurrentFilter());
     }
 
     /**
@@ -125,7 +130,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
             CoverFluidVoidingAdvanced advanced = (CoverFluidVoidingAdvanced) voiding;
             VoidingMode mode = advanced.getVoidingMode();
             // do not display amount in overflow when a filter is present
-            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter() != null);
+            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFilterHolder().hasFilter());
         }
     }
 
@@ -137,7 +142,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void itemFilterInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverItemFilter itemFilter) {
         filterModeText(probeInfo, itemFilter.getFilterMode());
-        itemFilterText(probeInfo, itemFilter.getItemFilter().getItemFilter());
+        itemFilterText(probeInfo, itemFilter.getItemFilter());
     }
 
     /**
@@ -148,7 +153,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void fluidFilterInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidFilter fluidFilter) {
         filterModeText(probeInfo, fluidFilter.getFilterMode());
-        fluidFilterText(probeInfo, fluidFilter.getFluidFilter().getFluidFilter());
+        fluidFilterText(probeInfo, fluidFilter.getFluidFilter());
     }
 
     /**
@@ -159,7 +164,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void enderFluidLinkInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
-        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
+        fluidFilterText(probeInfo, enderFluidLink.getFilterHolder().getCurrentFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
             probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.link_cover.color*} " + enderFluidLink.getColorStr());
@@ -228,11 +233,11 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void itemFilterText(@Nonnull IProbeInfo probeInfo, @Nullable ItemFilter filter) {
         String label = TextStyleClass.INFO + "{*gregtech.top.filter.label*} ";
-        if (filter instanceof OreDictionaryItemFilter) {
-            String expression = ((OreDictionaryItemFilter) filter).getOreDictFilterExpression();
+        if (filter instanceof OreDictFilter) {
+            String expression = ((OreDictFilter) filter).getOreDictFilterExpression();
             if (!expression.isEmpty()) probeInfo.text(label + expression);
-        } else if (filter instanceof SmartItemFilter) {
-            probeInfo.text(label + IProbeInfo.STARTLOC + ((SmartItemFilter) filter).getFilteringMode().getName() + IProbeInfo.ENDLOC);
+        } else if (filter instanceof SmartFilter) {
+            probeInfo.text(label + IProbeInfo.STARTLOC + ((SmartFilter) filter).getFilteringMode().getName() + IProbeInfo.ENDLOC);
         }
     }
 

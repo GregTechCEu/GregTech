@@ -1,9 +1,9 @@
 package gregtech.api.terminal.gui.widgets;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;

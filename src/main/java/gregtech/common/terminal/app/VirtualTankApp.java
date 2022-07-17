@@ -1,11 +1,11 @@
 package gregtech.common.terminal.app;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.TankWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;

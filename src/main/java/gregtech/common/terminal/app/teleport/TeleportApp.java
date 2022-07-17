@@ -1,7 +1,7 @@
 package gregtech.common.terminal.app.teleport;
 
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.SystemCall;
 import gregtech.api.terminal.os.TerminalTheme;

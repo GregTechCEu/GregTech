@@ -5,7 +5,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.math.IntMath;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -13,18 +19,17 @@ import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -41,8 +46,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -55,7 +58,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected FluidFilterContainer fluidFilter;
+    protected final FluidFilterHolder filterHolder;
     protected BucketMode bucketMode;
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -67,7 +70,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.bucketMode = BucketMode.MILLI_BUCKET;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
+        this.filterHolder = new FluidFilterHolder(this);
     }
 
     protected boolean shouldShowTip() {
@@ -84,7 +87,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     }
 
     protected void adjustTransferRate(int amount) {
-        amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
+        amount = bucketMode.convertTo(BucketMode.MILLI_BUCKET, amount);
         setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxFluidTransferRate));
     }
 
@@ -118,8 +121,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         coverHolder.markDirty();
     }
 
-    public FluidFilterContainer getFluidFilterContainer() {
-        return fluidFilter;
+    public FluidFilterHolder getFilterHolder() {
+        return filterHolder;
     }
 
     @Override
@@ -148,103 +151,100 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler, int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
-            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, filterHolder::test);
         } else if (pumpMode == PumpMode.EXPORT) {
-            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, filterHolder::test);
         }
         return 0;
     }
 
     protected boolean checkInputFluid(FluidStack fluidStack) {
-        return fluidFilter.testFluidStack(fluidStack);
-    }
-
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        return builder.build(this, player);
+        return filterHolder.test(fluidStack);
     }
 
     protected String getUITitle() {
         return "cover.pump.title";
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle(), GTValues.VN[tier]));
-
-        primaryGroup.addWidget(new ImageWidget(44, 20, 62, 20, GuiTextures.DISPLAY));
-
-        primaryGroup.addWidget(new IncrementButtonWidget(136, 20, 30, 20, 1, 10, 100, 1000, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-        primaryGroup.addWidget(new IncrementButtonWidget(10, 20, 34, 20, -1, -10, -100, -1000, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-
-        TextFieldWidget2 textField = new TextFieldWidget2(45, 26, 60, 20, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate), val -> {
-            if (val != null && !val.isEmpty()) {
-                int amount = Integer.parseInt(val);
-                if (this.bucketMode == BucketMode.BUCKET) {
-                    amount = IntMath.saturatedMultiply(amount, 1000);
-                }
-                setTransferRate(amount);
-            }
-        })
-                .setCentered(true)
-                .setNumbersOnly(1, bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
-                .setMaxLength(8);
-        primaryGroup.addWidget(textField);
-
-        primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,
-                BucketMode.class, this::getBucketMode, mode -> {
-            if (mode != bucketMode) {
-                setBucketMode(mode);
-            }
-        }));
-
-        primaryGroup.addWidget(new CycleButtonWidget(10, 43, 75, 18,
-                PumpMode.class, this::getPumpMode, this::setPumpMode));
-
-        primaryGroup.addWidget(new CycleButtonWidget(7, 160, 116, 20,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
-        this.fluidFilter.initUI(88, primaryGroup::addWidget);
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184);
-        return buildUI(builder, player);
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 172);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
+                        .setPos(6, 6))
+                .bindPlayerInventory(buildContext.getPlayer())
+                .widget(new Column()
+                        .widget(new TextWidget(new Text("cover.transfer_rate").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.mode").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.mode.manual_io").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.pump.mode.bucket").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .setPos(7, 18)
+                        .setSize(80, 48))
+                .widget(new Column()
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferRate))
+                                        .addTooltip(Text.localised("modularui.decrement.tooltip", 1, 10, 100, 1000))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setGetterInt(() -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferRate))
+                                        .setSetterInt(val -> setTransferRate(bucketMode.convertTo(BucketMode.MILLI_BUCKET, val)))
+                                        .setNumbers(() -> 1, () -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, maxFluidTransferRate))
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferRate))
+                                        .addTooltip(Text.localised("modularui.increment.tooltip", 1, 10, 100, 1000))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12)))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(PumpMode.class, this::getPumpMode, this::setPumpMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(PumpMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                                .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(BucketMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .setPos(89, 18)
+                        .setSize(80, 48))
+                .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
+                        .setPos(7, 66));
+        return builder.build();
     }
 
-    public Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
-        int min = 1;
-        return val -> {
-            if (val.isEmpty()) {
-                return String.valueOf(min);
+    protected void checkControlsAmount(Widget widget) {
+        if (widget instanceof FluidSlotWidget && ((FluidSlotWidget) widget).isPhantom()) {
+            boolean show = shouldShowTip();
+            if (((FluidSlotWidget) widget).controlsAmount() != show) {
+                ((FluidSlotWidget) widget).setControlsAmount(show, true);
             }
-            int max = maxSupplier.getAsInt();
-            int num;
-            try {
-                num = Integer.parseInt(val);
-            } catch (NumberFormatException ignored) {
-                return String.valueOf(max);
-            }
-            if (num < min) {
-                return String.valueOf(min);
-            }
-            if (num > max) {
-                return String.valueOf(max);
-            }
-            return val;
-        };
+        }
     }
 
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+            //openUI((EntityPlayerMP) playerIn);
+            GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
     }
@@ -283,7 +283,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
+        MetaTileEntity.clearInventory(drops, filterHolder.getFilterInventory());
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
         }
@@ -334,7 +334,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
-        tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+        tagCompound.setTag("Filter", filterHolder.serializeNBT());
     }
 
     @Override
@@ -345,7 +345,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.filterHolder.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override
@@ -390,6 +390,12 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         @Override
         public String getName() {
             return localeName;
+        }
+
+        public int convertTo(BucketMode mode, int num) {
+            if (this == mode) return num;
+            if (mode == BUCKET) return num / 1000;
+            return num * 1000;
         }
     }
 

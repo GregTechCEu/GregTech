@@ -10,9 +10,11 @@ public enum DistributionMode implements IStringSerializable {
     INSERT_FIRST("cover.conveyor.distribution.first_insert");
 
     public final String localeName;
+    public final String localeTooltip;
 
     DistributionMode(String localeName) {
         this.localeName = localeName;
+        this.localeTooltip = localeName + ".description";
     }
 
     @Nonnull

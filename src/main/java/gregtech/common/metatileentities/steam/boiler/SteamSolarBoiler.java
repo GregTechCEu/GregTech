@@ -1,8 +1,8 @@
 package gregtech.common.metatileentities.steam.boiler;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;

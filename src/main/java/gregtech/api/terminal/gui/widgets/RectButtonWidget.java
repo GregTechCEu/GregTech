@@ -1,7 +1,7 @@
 package gregtech.api.terminal.gui.widgets;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.resources.IGuiTexture;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.network.PacketBuffer;

@@ -1,7 +1,7 @@
 package gregtech.common.terminal.app.settings.widgets;
 
-import gregtech.api.gui.resources.*;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.resources.*;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.ColorWidget;

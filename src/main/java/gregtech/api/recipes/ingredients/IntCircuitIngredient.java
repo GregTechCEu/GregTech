@@ -2,6 +2,7 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.common.items.MetaItems;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +21,18 @@ public class IntCircuitIngredient extends Ingredient {
         return stack;
     }
 
+    public static ItemStack getIntegratedCircuit(EntityPlayer player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!isIntegratedCircuit(stack)) {
+            stack = player.getHeldItemOffhand();
+        }
+        return stack;
+    }
+
+    public static void setCircuitConfiguration(EntityPlayer player, int configuration) {
+        setCircuitConfiguration(getIntegratedCircuit(player), configuration);
+    }
+
     public static void setCircuitConfiguration(ItemStack itemStack, int configuration) {
         if (!MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack))
             throw new IllegalArgumentException("Given item stack is not an integrated circuit!");
@@ -31,6 +44,10 @@ public class IntCircuitIngredient extends Ingredient {
             itemStack.setTagCompound(tagCompound);
         }
         tagCompound.setInteger("Configuration", configuration);
+    }
+
+    public static int getCircuitConfiguration(EntityPlayer player) {
+        return getCircuitConfiguration(getIntegratedCircuit(player));
     }
 
     public static int getCircuitConfiguration(ItemStack itemStack) {
@@ -52,6 +69,14 @@ public class IntCircuitIngredient extends Ingredient {
     public static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {
         adjustConfiguration(holder.getCurrentItem(), amount);
         holder.markAsDirty();
+    }
+
+    public static void adjustConfiguration(EntityPlayer player, int amount) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!isIntegratedCircuit(stack)) {
+            stack = player.getHeldItemOffhand();
+        }
+        adjustConfiguration(stack, amount);
     }
 
     public static void adjustConfiguration(ItemStack stack, int amount) {

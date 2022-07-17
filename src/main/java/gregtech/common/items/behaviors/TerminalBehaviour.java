@@ -2,8 +2,8 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.resources.IGuiTexture;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;

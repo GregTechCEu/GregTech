@@ -6,7 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.*;
-import gregtech.api.gui.Widget.ClickData;
+import gregtech.api.guiOld.Widget.ClickData;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -38,8 +38,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
-import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
+import static gregtech.api.guiOld.widgets.AdvancedTextWidget.withButton;
+import static gregtech.api.guiOld.widgets.AdvancedTextWidget.withHoverTextTranslate;
 import static net.minecraft.util.text.TextFormatting.*;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {

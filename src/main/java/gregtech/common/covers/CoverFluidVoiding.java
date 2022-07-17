@@ -4,16 +4,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilterContainer;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -29,7 +28,6 @@ public class CoverFluidVoiding extends CoverPump {
     public CoverFluidVoiding(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide, 0, Integer.MAX_VALUE);
         this.isWorkingAllowed = false;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, Integer.MAX_VALUE);
     }
 
     @Override
@@ -45,7 +43,7 @@ public class CoverFluidVoiding extends CoverPump {
         if (myFluidHandler == null) {
             return;
         }
-        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, filterHolder::test);
     }
 
     @Override
@@ -54,16 +52,15 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-
-        this.fluidFilter.initUI(20, primaryGroup::addWidget);
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100);
-        return builder.build(this, player);
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return ModularWindow.builder(176, 126)
+                .bindPlayerInventory(buildContext.getPlayer())
+                .setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .widget(new TextWidget(Text.localised(getUITitle()))
+                        .setPos(10, 5))
+                .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
+                        .setPos(7, 20))
+                .build();
     }
 
     @Override
@@ -90,7 +87,7 @@ public class CoverFluidVoiding extends CoverPump {
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (fluidFilter.testFluidStack(resource)) {
+            if (filterHolder.test(resource)) {
                 return resource.amount;
             }
             return 0;

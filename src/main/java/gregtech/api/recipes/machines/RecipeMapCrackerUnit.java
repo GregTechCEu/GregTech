@@ -2,10 +2,10 @@ package gregtech.api.recipes.machines;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.RecipeProgressWidget;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.widgets.ProgressWidget;
+import gregtech.api.guiOld.widgets.RecipeProgressWidget;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;

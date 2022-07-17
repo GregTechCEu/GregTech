@@ -1,7 +1,7 @@
 package gregtech.api.net.packets;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.gui.UIFactory;
+import gregtech.api.guiOld.UIFactory;
 import gregtech.api.net.IPacket;
 import gregtech.api.net.NetworkUtils;
 import gregtech.api.util.GTLog;

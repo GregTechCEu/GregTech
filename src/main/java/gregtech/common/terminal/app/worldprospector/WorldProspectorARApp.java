@@ -1,12 +1,12 @@
 package gregtech.common.terminal.app.worldprospector;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.ItemStackTexture;
-import gregtech.api.gui.resources.ShaderTexture;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.PhantomSlotWidget;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.ItemStackTexture;
+import gregtech.api.guiOld.resources.ShaderTexture;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.PhantomSlotWidget;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;

@@ -2,8 +2,8 @@ package gregtech.api.items.gui;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.UIFactory;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.UIFactory;
 import gregtech.api.items.metaitem.MetaItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

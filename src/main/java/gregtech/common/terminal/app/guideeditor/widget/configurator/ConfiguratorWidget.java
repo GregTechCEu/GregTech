@@ -2,9 +2,9 @@ package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.Position;
 import net.minecraft.client.Minecraft;

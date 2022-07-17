@@ -1,18 +1,23 @@
 package gregtech.common.covers;
 
-import com.google.common.math.IntMath;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
+import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.FluidFilter;
-import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.Filter;
+import gregtech.common.covers.filter.fluid.SimpleFluidFilter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
@@ -39,7 +44,6 @@ public class CoverFluidRegulator extends CoverPump {
     public CoverFluidRegulator(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
         super(coverHolder, attachedSide, tier, mbPerTick);
         this.transferMode = TransferMode.TRANSFER_ANY;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, maxFluidTransferRate * 100);
     }
 
     @Override
@@ -67,11 +71,11 @@ public class CoverFluidRegulator extends CoverPump {
         }
         switch (transferMode) {
             case TRANSFER_ANY:
-                return GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+                return GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit, filterHolder::test);
             case KEEP_EXACT:
-                return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+                return doKeepExact(transferLimit, sourceHandler, destHandler, filterHolder::test, this.transferAmount);
             case TRANSFER_EXACT:
-                return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+                return doTransferExact(transferLimit, sourceHandler, destHandler, filterHolder::test, this.transferAmount);
         }
         return 0;
     }
@@ -80,8 +84,8 @@ public class CoverFluidRegulator extends CoverPump {
         int fluidLeftToTransfer = transferLimit;
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
-                supplyAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+            if (this.filterHolder.getCurrentFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
+                supplyAmount = this.filterHolder.getCurrentFilter().getTransferLimit(sourceFluid, transferRate);
             }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
@@ -124,8 +128,8 @@ public class CoverFluidRegulator extends CoverPump {
             if (transferred >= transferLimit)
                 break;
 
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(fluidStack);
+            if (this.filterHolder.getCurrentFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
+                keepAmount = this.filterHolder.getCurrentFilter().getTransferLimit(fluidStack, transferRate);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
@@ -234,10 +238,7 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
-            return false;
-        }
-        return this.transferMode == TransferMode.TRANSFER_EXACT || this.transferMode == TransferMode.KEEP_EXACT;
+        return !this.filterHolder.hasFilter() && this.transferMode != TransferMode.TRANSFER_ANY;
     }
 
     public String getTransferAmountString() {
@@ -290,45 +291,114 @@ public class CoverFluidRegulator extends CoverPump {
         return "cover.fluid_regulator.title";
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(92, 43, 75, 18,
-                TransferMode.class, this::getTransferMode, this::setTransferMode)
-                .setTooltipHoverString("cover.fluid_regulator.transfer_mode.description"));
-
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(110, 64, 38, 18, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 64, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 64, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(111, 70, 36, 11, this::getTransferAmountString, val -> {
-            if (val != null && !val.isEmpty()) {
-                int amount = Integer.parseInt(val);
-                if (this.bucketMode == BucketMode.BUCKET) {
-                    amount = IntMath.saturatedMultiply(amount, 1000);
-                }
-                setTransferAmount(amount);
-            }
-        })
-                .setCentered(true)
-                .setNumbersOnly(1, transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
-                .setMaxLength(10)
-                .setScale(0.6f));
-
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
-
-        return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 196);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
+                        .setPos(6, 6))
+                .bindPlayerInventory(buildContext.getPlayer())
+                .widget(new Column()
+                        .widget(new TextWidget(new Text("cover.transfer_rate").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.mode").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.mode.manual_io").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.pump.mode.bucket").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.transfer_mode").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.transfer_amount").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setTicker(this::showTransferAmountField)
+                                .setSize(80, 12))
+                        .setPos(7, 18)
+                        .setSize(80, 72))
+                .widget(new Column()
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferRate))
+                                        .addTooltip(Text.localised("modularui.decrement.tooltip", 1, 10, 100, 1000))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setGetterInt(() -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferRate))
+                                        .setSetterInt(val -> setTransferRate(bucketMode.convertTo(BucketMode.MILLI_BUCKET, val)))
+                                        .setNumbers(() -> 1, () -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, maxFluidTransferRate))
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferRate))
+                                        .addTooltip(Text.localised("modularui.increment.tooltip", 1, 10, 100, 1000))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12)))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(PumpMode.class, this::getPumpMode, this::setPumpMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(PumpMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                                .addTooltip(0, Text.localised(ManualImportExportMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(ManualImportExportMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(ManualImportExportMode.values()[2].localeTooltip))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(BucketMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(TransferMode.class, this::getTransferMode, this::setTransferMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(TransferMode.class))
+                                .addTooltip(0, Text.localised(TransferMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(TransferMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(TransferMode.values()[2].localeTooltip))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferSize))
+                                        .addTooltip(Text.localised("modularui.decrement.tooltip", 1, 10, 100, 1000))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setGetterInt(() -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferAmount))
+                                        .setSetterInt(val -> setTransferAmount(bucketMode.convertTo(BucketMode.MILLI_BUCKET, val)))
+                                        .setNumbers(() -> 1, () -> BucketMode.MILLI_BUCKET.convertTo(bucketMode, transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferSize))
+                                        .addTooltip(Text.localised("modularui.increment.tooltip", 1, 10, 100, 1000))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .setTicker(this::showTransferAmountField))
+                        .setPos(89, 18)
+                        .setSize(80, 72))
+                .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
+                        .setPos(7, 90));
+        return builder.build();
     }
 
+    private void showTransferAmountField(Widget widget) {
+        boolean show = shouldDisplayAmountSlider();
+        if (widget.isEnabled() != show) {
+            widget.setEnabled(show);
+        }
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
@@ -344,9 +414,9 @@ public class CoverFluidRegulator extends CoverPump {
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
         //legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
-            FluidFilter filter = getFluidFilterContainer().getFilterWrapper().getFluidFilter();
-            if (filter != null) {
-                filter.configureFilterTanks(tagCompound.getInteger("TransferAmount"));
+            Filter<FluidStack> filter = this.filterHolder.getCurrentFilter();
+            if (filter instanceof SimpleFluidFilter) {
+                ((SimpleFluidFilter) filter).configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }
         this.transferAmount = tagCompound.getInteger("TransferAmount");

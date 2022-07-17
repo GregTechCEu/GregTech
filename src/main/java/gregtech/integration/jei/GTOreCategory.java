@@ -1,6 +1,6 @@
 package gregtech.integration.jei;
 
-import gregtech.api.gui.GuiTextures;
+import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;

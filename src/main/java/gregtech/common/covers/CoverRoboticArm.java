@@ -4,19 +4,23 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
+import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Iterator;
@@ -30,7 +34,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public CoverRoboticArm(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(coverable, attachedSide, tier, itemsPerSecond);
         this.transferMode = TransferMode.TRANSFER_ANY;
-        this.itemFilterContainer.setMaxStackSize(1);
+        this.filterHolder.setMaxStackSize(1);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class CoverRoboticArm extends CoverConveyor {
             ItemStackKey key = iterator.next();
             TypeItemInfo sourceInfo = sourceItemAmount.get(key);
             int itemAmount = sourceInfo.totalCount;
-            int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+            int itemToMoveAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot);
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
             } else {
@@ -106,7 +110,7 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+            int itemToKeepAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot);
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
                 GroupItemInfo destItemInfo = currentItemAmount.get(filterSlotIndex);
@@ -136,18 +140,11 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.coverHolder.markDirty();
-        this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
+        this.filterHolder.setMaxStackSize(transferMode.maxStackSize);
     }
 
     public TransferMode getTransferMode() {
         return transferMode;
-    }
-
-    private boolean shouldDisplayAmountSlider() {
-        if (transferMode == TransferMode.TRANSFER_ANY) {
-            return false;
-        }
-        return itemFilterContainer.showGlobalTransferLimitSlider();
     }
 
     @Override
@@ -156,36 +153,115 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    protected ModularUI buildUI(Builder builder, EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
-                TransferMode.class, this::getTransferMode, this::setTransferMode)
-                .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 196);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
+                        .setPos(6, 6))
+                .bindPlayerInventory(buildContext.getPlayer())
+                .widget(new Column()
+                        .widget(new TextWidget(new Text("cover.transfer_rate").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.mode").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.mode.manual_io").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.conveyor.distribution_mode").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.transfer_mode").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget(new Text("cover.transfer_amount").localise())
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setTicker(this::showTransferAmountField)
+                                .setSize(80, 12))
+                        .setPos(7, 18)
+                        .setSize(80, 72))
+                .widget(new Column()
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, -512, this::adjustTransferRate))
+                                        .addTooltip(Text.localised("modularui.decrement.tooltip", 1, 8, 64, 512))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setGetterInt(this::getTransferRate)
+                                        .setSetterInt(this::setTransferRate)
+                                        .setNumbers(1, maxItemTransferRate)
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
+                                        .addTooltip(Text.localised("modularui.increment.tooltip", 1, 8, 64, 512))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12)))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(ConveyorMode.class, this::getConveyorMode, this::setConveyorMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                                .addTooltip(0, Text.localised(ManualImportExportMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(ManualImportExportMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(ManualImportExportMode.values()[2].localeTooltip))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(DistributionMode.class, this::getDistributionMode, this::setDistributionMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(DistributionMode.class))
+                                .addTooltip(0, Text.localised(DistributionMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(DistributionMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(DistributionMode.values()[2].localeTooltip))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(TransferMode.class, this::getTransferMode, this::setTransferMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(TransferMode.class))
+                                .addTooltip(0, Text.localised(TransferMode.values()[0].localeTooltip))
+                                .addTooltip(1, Text.localised(TransferMode.values()[1].localeTooltip))
+                                .addTooltip(2, Text.localised(TransferMode.values()[2].localeTooltip))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, -512, getFilterHolder()::adjustTransferStackSize))
+                                        .addTooltip(Text.localised("modularui.decrement.tooltip", 1, 8, 64, 512))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setGetterInt(getFilterHolder()::getTransferStackSize)
+                                        .setSetterInt(getFilterHolder()::setTransferStackSize)
+                                        .setNumbers(1, maxItemTransferRate)
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, getFilterHolder()::adjustTransferStackSize))
+                                        .addTooltip(Text.localised("modularui.increment.tooltip", 1, 8, 64, 512))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .setTicker(this::showTransferAmountField))
+                        .setPos(89, 18)
+                        .setSize(80, 72))
+                .widget(filterHolder.createFilterUI(buildContext)
+                        .setPos(7, 90));
+        return builder.build();
+    }
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
-                    if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
-                })
-                        .setNumbersOnly(1, transferMode.maxStackSize)
-                        .setMaxLength(4)
-                        .setScale(0.9f)
-        );
-
-        primaryGroup.addWidget(stackSizeGroup);
-
-        return super.buildUI(builder.widget(primaryGroup), player);
+    private void showTransferAmountField(Widget widget) {
+        boolean show = getFilterHolder().showGlobalTransferLimitSlider() && getTransferMode() != TransferMode.TRANSFER_ANY;
+        if (widget.isEnabled() != show) {
+            widget.setEnabled(show);
+        }
     }
 
     @Override
