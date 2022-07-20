@@ -74,7 +74,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         super.formStructure(context);
         Object type = context.get("CoilType");
         if (type instanceof IHeatingCoilBlockStats)
-            this.coilTier = ((IHeatingCoilBlockStats) type).getLevel();
+            this.coilTier = ((IHeatingCoilBlockStats) type).getTier();
         else
             this.coilTier = 0;
     }
@@ -126,7 +126,9 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
             if (coilTier == -1)
                 return;
 
-            if (coilTier == 0) resultOverclock[1] *= 5.0 / 4; // 25% slower with cupronickel (coilTier = 0)
+            if (coilTier == 0) {
+                resultOverclock[1] *= 5.0 / 4; // 25% slower with cupronickel (coilTier = 0)
+            }
             else resultOverclock[1] *= 2.0f / (coilTier + 1); // each coil above kanthal (coilTier = 1) is 50% faster
 
             resultOverclock[1] = Math.max(1, resultOverclock[1]);

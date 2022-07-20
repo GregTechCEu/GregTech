@@ -46,6 +46,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
+    private int[] overclockResults;
 
     protected boolean canRecipeProgress = true;
 
@@ -419,7 +420,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
 
-        int[] overclockResults = calculateOverclock(recipe);
+        overclockResults = calculateOverclock(recipe);
 
         performNonOverclockBonuses(overclockResults);
 
@@ -635,10 +636,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to run
      */
     protected void setupRecipe(Recipe recipe) {
-        int[] resultOverclock = calculateOverclock(recipe);
         this.progressTime = 1;
-        setMaxProgress(resultOverclock[1]);
-        this.recipeEUt = resultOverclock[0];
+        setMaxProgress(overclockResults[1]);
+        this.recipeEUt = overclockResults[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
 
@@ -663,6 +663,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
+        this.overclockResults = new int[]{0, 0};
     }
 
     public double getProgressPercent() {

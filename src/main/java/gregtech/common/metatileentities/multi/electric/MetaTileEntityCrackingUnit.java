@@ -66,7 +66,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.cracking_unit.energy", 100 - 5 * coilTier));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.cracking_unit.energy", 100 - 10 * coilTier));
     }
 
     @Override
