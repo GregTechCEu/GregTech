@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -19,7 +20,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.api.block.VariantActiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -216,13 +216,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Override to disable MultiblockPart sharing for this Multiblock. (Rotor Holders always disallowed).
-     */
-    public boolean canShare() {
-        return true;
-    }
-
-    /**
      * Used if MultiblockPart Abilities need to be sorted a certain way, like
      * Distillation Tower and Assembly Line.
      */
@@ -239,7 +232,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
-                    if (!canShare() || !part.canPartShare()) {
+                    if (!part.canPartShare()) {
                         return;
                     }
                 }
