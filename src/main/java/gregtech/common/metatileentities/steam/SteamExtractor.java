@@ -10,7 +10,10 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamExtractor extends SteamMetaTileEntity {
@@ -42,5 +45,11 @@ public class SteamExtractor extends SteamMetaTileEntity {
                         GuiTextures.PROGRESS_BAR_EXTRACT_STEAM.get(isHighPressure), MoveType.HORIZONTAL, workableHandler.getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
+        getWorld().spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
     }
 }

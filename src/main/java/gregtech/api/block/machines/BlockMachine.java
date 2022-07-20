@@ -63,10 +63,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
@@ -498,5 +495,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             return super.canEntityDestroy(state, world, pos, entity);
         }
         return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(@Nonnull IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
+        super.randomDisplayTick(stateIn, worldIn, pos, rand);
+        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
+        if (metaTileEntity != null) metaTileEntity.randomDisplayTick();
     }
 }

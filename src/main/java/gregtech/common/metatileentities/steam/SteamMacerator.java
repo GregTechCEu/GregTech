@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.steam;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -10,7 +11,11 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamMacerator extends SteamMetaTileEntity {
@@ -47,5 +52,16 @@ public class SteamMacerator extends SteamMetaTileEntity {
     @Override
     public int getItemOutputLimit() {
         return 1;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (isActive()) {
+            final BlockPos pos = getPos();
+            final float horizontalOffset = GTValues.RNG.nextFloat() * 0.6F - 0.3F;
+            getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + horizontalOffset, pos.getY() + 0.52F, pos.getZ() + horizontalOffset,
+                    GTValues.RNG.nextFloat() * 0.125F,  GTValues.RNG.nextFloat() * 0.375F, GTValues.RNG.nextFloat() * 0.125F);
+        }
     }
 }
