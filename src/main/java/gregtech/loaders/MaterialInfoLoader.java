@@ -188,6 +188,14 @@ public class MaterialInfoLoader {
             OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         }
 
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 2), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 3), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 4), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 5), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+
+
         if (ConfigHolder.recipes.hardIronRecipes)
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(
                     new MaterialStack(Materials.Iron, (37 * M) / 9), // dust tiny
