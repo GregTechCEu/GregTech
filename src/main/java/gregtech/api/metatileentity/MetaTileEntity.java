@@ -231,7 +231,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     /**
      * Used to display things like particles on random display ticks
-     * This method is typically used by torches or vanilla forces, as an example use-case
+     * This method is typically used by torches or nether portals, as an example use-case
      */
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick() {
