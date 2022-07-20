@@ -11,6 +11,8 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamHammer extends SteamMetaTileEntity {
@@ -43,5 +45,11 @@ public class SteamHammer extends SteamMetaTileEntity {
                 .image(79, 41, 20, 18, GuiTextures.PROGRESS_BAR_HAMMER_BASE_STEAM.get(isHighPressure))
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        // steam hammers do not make particles
     }
 }

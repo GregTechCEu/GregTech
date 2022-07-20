@@ -11,6 +11,8 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamCompressor extends SteamMetaTileEntity {
@@ -42,5 +44,11 @@ public class SteamCompressor extends SteamMetaTileEntity {
                         GuiTextures.PROGRESS_BAR_COMPRESS_STEAM.get(isHighPressure), MoveType.HORIZONTAL, workableHandler.getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        // steam compressors do not make particles
     }
 }

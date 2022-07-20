@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.steam;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -10,7 +11,12 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamFurnace extends SteamMetaTileEntity {
@@ -47,5 +53,16 @@ public class SteamFurnace extends SteamMetaTileEntity {
                         GuiTextures.PROGRESS_BAR_ARROW_STEAM.get(isHighPressure), MoveType.HORIZONTAL, workableHandler.getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
+        y += 0.5F;
+        if (GTValues.RNG.nextDouble() < 0.1) {
+            getWorld().playSound(x, y, z, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+        }
+        getWorld().spawnParticle(smoke, x, y, z, 0, 0, 0);
+        getWorld().spawnParticle(flame, x, y, z, 0, 0, 0);
     }
 }

@@ -9,7 +9,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SteamSolarBoiler extends SteamBoiler {
 
@@ -50,5 +51,11 @@ public class SteamSolarBoiler extends SteamBoiler {
                 .progressBar(() -> GTUtility.canSeeSunClearly(getWorld(), getPos()) ? 1.0 : 0.0, 114, 44, 20, 20,
                         GuiTextures.PROGRESS_BAR_SOLAR_STEAM.get(isHighPressure), MoveType.HORIZONTAL)
                 .build(getHolder(), entityPlayer);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        // Solar boilers do not display particles
     }
 }
