@@ -162,11 +162,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         return new String[]{I18n.format("gregtech.multiblock.large_turbine.description")};
     }
 
-    @Override
-    public boolean canShare() {
-        return false;
-    }
-
     public IBlockState getCasingState() {
         return casingState;
     }
