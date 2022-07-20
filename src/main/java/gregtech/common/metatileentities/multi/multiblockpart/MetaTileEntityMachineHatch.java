@@ -59,11 +59,6 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public IItemHandlerModifiable getImportItems() {
-        return machineHandler;
-    }
-
-    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
                         18 + 18 + 94)
