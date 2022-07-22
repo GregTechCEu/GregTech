@@ -56,6 +56,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
         this.inputStacks = lst.stream().map(is -> {
             is = is.copy();
             is.setCount(this.amount);
+            return is;
         }).toArray(ItemStack[]::new);
     }
 
