@@ -293,11 +293,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
-        return find(inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()), fluidInputs.stream().filter(Objects::nonNull).collect(Collectors.toList()), a -> {
-            if (exactVoltage && a.getEUt() != voltage) {
+        return find(inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()), fluidInputs.stream().filter(Objects::nonNull).collect(Collectors.toList()), recipe -> {
+            if (exactVoltage && recipe.getEUt() != voltage) {
                 return false;
             }
-            return a.matches(false, inputs, fluidInputs);
+            return recipe.getEUt() <= voltage && recipe.matches(false, inputs, fluidInputs);
         });
     }
 
