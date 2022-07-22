@@ -17,8 +17,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
@@ -236,7 +236,8 @@ public class GTUtility {
                 continue; //if itemstacks don't match, continue
             int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
             int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
-            if (amountToInsert == 0)
+            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
+            if (amountToInsert <= 0)
                 continue; //if we can't insert anything, continue
             //shrink our stack, grow slot's stack and mark slot as changed
             if (!simulate) {
