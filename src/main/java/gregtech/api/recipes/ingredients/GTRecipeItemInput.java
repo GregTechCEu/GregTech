@@ -53,7 +53,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
                 this.itemList.add(new ItemToMetaList(is));
             }
         }
-        this.inputStacks = lst.stream().peek(is -> {
+        this.inputStacks = lst.stream().map(is -> {
             is = is.copy();
             is.setCount(this.amount);
         }).toArray(ItemStack[]::new);
