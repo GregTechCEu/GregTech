@@ -3,16 +3,15 @@ package gregtech.api.recipes.ingredients;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * Definition of ItemStacks, Ore dicts, of ingredients for
@@ -24,7 +23,14 @@ import java.util.WeakHashMap;
  * The behavior of the ingredient is determined by the GTingredient used.
  */
 public abstract class GTRecipeInput {
-    public static final WeakHashMap<GTRecipeInput, WeakReference<GTRecipeInput>> INSTANCES = new WeakHashMap<>();
+
+    /**
+     * All GTRecipeInput instances will be cached and reused through this collection.
+     * This cache will be released on FMLLoadCompleteEvent.
+     */
+
+    public static ObjectOpenHashSet<GTRecipeInput> INSTANCES = new ObjectOpenHashSet<>(15072);
+
     /**
      * All items will initially match the with is NBT (OreDicts have a null tag?)
      * but this behavior can be changed by using a NBTMatcher and an appropriate NBTCondition.
@@ -36,12 +42,11 @@ public abstract class GTRecipeInput {
     protected NBTCondition nbtCondition;
 
     static GTRecipeInput getFromCache(GTRecipeInput realIngredient) {
-        if (INSTANCES.get(realIngredient) == null) {
-            INSTANCES.put(realIngredient, new WeakReference<>(realIngredient));
-        } else {
-            realIngredient = INSTANCES.get(realIngredient).get();
+        GTRecipeInput cachedIngredient = INSTANCES.get(realIngredient);
+        if (cachedIngredient == null) {
+            INSTANCES.add(cachedIngredient = realIngredient);
         }
-        return realIngredient;
+        return cachedIngredient;
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput gtRecipeIngredient) {
