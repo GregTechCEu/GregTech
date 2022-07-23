@@ -1,0 +1,14 @@
+{
+  "section": "Cover",
+  "title": "Smart Item Filter",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis quest acts as a small tutorial to automate the Electrolyzer easily!§r\n\nThe §9Smart Item Filter§r is a filter based on Recipe Maps. Placed on the side of a machine, this Filter can be selected to §3Electrolyzer§r to allow insertion of electrolyzable Items specifically.\nNo need to filter manually!\n\nIt gets better. If combined with a §aRobot Arm§r, it will automatically supply to the machine §6exact amount§r of items corresponding the recipes.\n\nPlace the §aRobot Arm§r on your Electrolyzer, open and it place the §9smart filter§r inside its GUI.\nNext, configure it to §d§lImport§r and §d§lSupply Exact§r.\nFinally, attach any inventory (a chest will do) on the side where you placed the §aRobot Arm§r.\nTADAA! You have made automatic smart insertion to handle §6all§r Electrolyzer recipes!\n\n\n§9Note:§r The Robot Arm has to do Item transfer itself for its functionality to work! Inserting directly into the machine will ignore the Robot Arm\u0027s §dSupply Exact§r.\n\n\nNow, as for the output of the §3Electrolyzer§r, you may want to route the Fluids to several Tanks, or even §3Super Tanks§r. I highly recommend §cto not void§r the Fluids, except for Water for obvious reasons."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:293"
+}

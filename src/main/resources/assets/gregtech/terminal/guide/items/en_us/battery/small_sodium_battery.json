@@ -1,0 +1,14 @@
+{
+  "section": "Battery",
+  "title": "Small Sodium Battery",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§aBatteries§r for storing energy! They can be put into the energy slot at the bottom middle of machine GUIs, or in a §3Battery Buffer§r.\n\nBatteries in your inventory can be shift right-clicked to enable §dcharging§r your EU items.\n\n§7LV§r, §bMV§r, and §6HV§r Batteries come in three forms, allowing you to pick the one you find the best depending on materials you have. §dLithium§r has the best capacity, followed by §dCadmium§r, then §dSodium§r.\n\nMy recommendation is: find a Salt vein, and either §aelectrolyze Salt§r for §dSodium§r, or §aOre wash crushed Lepidolite§r for §dLithium§r.\n\n\nGet §eany§r Battery to complete this quest."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:735"
+}

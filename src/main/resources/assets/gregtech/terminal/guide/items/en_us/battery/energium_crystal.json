@@ -1,0 +1,14 @@
+{
+  "section": "Battery",
+  "title": "Energium Crystal",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oBatteries are cool, but you know what\u0027s cooler? Science-fiction Batteries!§r\n\n§aEnergium Crystals§r store a significant amount of §9EU§r. They are also arguably cheaper!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:741"
+}

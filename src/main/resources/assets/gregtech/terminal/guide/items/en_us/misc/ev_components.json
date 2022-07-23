@@ -1,0 +1,14 @@
+{
+  "section": "Misc",
+  "title": "EV Components",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "A lot §dKanthal§r will be required for the §aEV Motors§r. That is painful to start off, but won\u0027t be a problem later, trust me.\n\n§dNeodymium§r is the metal used for §aMagnetic Rods§r.\n\n§aAluminium Cables§r require §dPVC§r to be insulated.\n\nLastly, you will need §4Radon§r for the §dQuantum Eyes§r in the §aEmitter§r recipe."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:130"
+}

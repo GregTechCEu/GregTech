@@ -1,0 +1,14 @@
+{
+  "section": "Cover",
+  "title": "Covers Behaviour",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oCovers are ways to give your machines extra behavior without using any extra block space.§r\n\nCovers are placed by right-clicking with it on a face of a machine, and removed with a §5Crowbar§r (or by mining the machine, but that\u0027s too brutal!).\n\nPretty much any GregTech TileEntity will accept Covers, even if they provide no functionality.\n\nOpening a Cover is done by shift-right-clicking it with an §5empty hand§r. You can also right-click with a §5Screwdriver§r, or shift-right-click on another face using the grid.\n\nFor the Covers transferring Items/Fluids, you will have a button to enable/disable other forms of transfer through the cover:\n§9- §rDisabled: only the cover will be allowed to transfer on this machine side.\n§9-§r Allow Filtered (only relevant with a filter!): other transfer will be enabled only if it matches the filter\n§9-§r Allow Unfiltered: any other transfer is allowed on this machine side.\n\nPlacing a cover of a lower voltage tier on a machine is §9safe§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:308"
+}

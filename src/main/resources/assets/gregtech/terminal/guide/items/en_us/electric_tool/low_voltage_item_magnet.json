@@ -1,0 +1,14 @@
+{
+  "section": "Electric Tool",
+  "title": "Low Voltage Item Magnet",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oWhy can\u0027t these items I mine behave and enter my inventory!? This magnet should solve it, even if it makes no sense!§r\n\nCharge the Magnet while you would with a §9Battery§r, and §dsneak right-click§r when in hand to activate it. Do it again to deactivate. It will work from anywhere in your inventory.\n\n§9Note:§r If are you worried about getting overwhelmed by Cobblestone or Netherrack, open the trash can from FTB:Utilities in the top left corner to void them."
+      ]
+    }
+  ],
+  "fixed": [],
+  "item": "gregtech:meta_item_1:471"
+}
