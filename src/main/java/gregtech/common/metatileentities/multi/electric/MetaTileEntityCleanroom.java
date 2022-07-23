@@ -301,6 +301,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         center[0] = centerBuilder.toString();
 
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
+        TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
+                .setMinGlobalLimited(1).setMaxGlobalLimited(3));
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
@@ -310,10 +312,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .aisle(slice).setRepeatable(fDist - 1)
                 .aisle(wall)
                 .where('S', selfPredicate())
-                .where('B', states(getCasingState())
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
-                        .or(autoAbilities()))
-                .where('X', wallPredicate
+                .where('B', states(getCasingState()).or(basePredicate))
+                .where('X', wallPredicate.or(basePredicate)
                         .or(doorPredicate().setMaxGlobalLimited(8))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setMaxGlobalLimited(10))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setMaxGlobalLimited(10))
