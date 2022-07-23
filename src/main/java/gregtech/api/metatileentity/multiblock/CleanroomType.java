@@ -15,14 +15,14 @@ public class CleanroomType {
 
 
     private final String name;
-    private final String displayName;
+    private final String translationKey;
 
-    public CleanroomType(@Nonnull String name, @Nonnull String displayName) {
+    public CleanroomType(@Nonnull String name, @Nonnull String translationKey) {
         if (CLEANROOM_TYPES.get(name) != null)
             throw new IllegalArgumentException(String.format("CleanroomType with name %s is already registered!", name));
 
         this.name = name;
-        this.displayName = displayName;
+        this.translationKey = translationKey;
         CLEANROOM_TYPES.put(name, this);
     }
 
@@ -32,12 +32,12 @@ public class CleanroomType {
     }
 
     @Nonnull
-    public String getDisplayName() {
-        return this.displayName;
+    public String getTranslationKey() {
+        return this.translationKey;
     }
 
     @Nullable
-    public static CleanroomType getByName(String name) {
+    public static CleanroomType getByName(@Nonnull String name) {
         return CLEANROOM_TYPES.get(name);
     }
 }
