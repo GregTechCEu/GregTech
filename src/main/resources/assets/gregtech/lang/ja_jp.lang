@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
-# Corresponding Version: 2.3.3 - beta
-# 対応バージョン: 2.3.3 - beta
+# Corresponding Version: .. - beta
+# 対応バージョン: .. - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
@@ -531,22 +531,22 @@ metaitem.circuit.integrated.tooltip=使うと設定画面を開く
 metaitem.circuit.integrated.gui=プログラム回路設定
 metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます.\n番号はプログラム回路の一覧タブで選択できます.
 
-item.glass.lens=白いガラスレンズ
+item.glass.lens=白色のガラスレンズ
 metaitem.glass_lens.orange.name=橙色のガラスレンズ
 metaitem.glass_lens.magenta.name=赤紫色のガラスレンズ
 metaitem.glass_lens.light_blue.name=空色のガラスレンズ
-metaitem.glass_lens.yellow.name=黄色いガラスレンズ
+metaitem.glass_lens.yellow.name=黄色のガラスレンズ
 metaitem.glass_lens.lime.name=黄緑色のガラスレンズ
 metaitem.glass_lens.pink.name=桃色のガラスレンズ
 metaitem.glass_lens.gray.name=灰色のガラスレンズ
 metaitem.glass_lens.light_gray.name=薄灰色のガラスレンズ
 metaitem.glass_lens.cyan.name=青緑色のガラスレンズ
 metaitem.glass_lens.purple.name=紫色のガラスレンズ
-metaitem.glass_lens.blue.name=青いガラスレンズ
-metaitem.glass_lens.brown.name=茶色いガラスレンズ
+metaitem.glass_lens.blue.name=青色のガラスレンズ
+metaitem.glass_lens.brown.name=茶色のガラスレンズ
 metaitem.glass_lens.green.name=緑色のガラスレンズ
-metaitem.glass_lens.red.name=赤いガラスレンズ
-metaitem.glass_lens.black.name=黒いガラスレンズ
+metaitem.glass_lens.red.name=赤色のガラスレンズ
+metaitem.glass_lens.black.name=黒色のガラスレンズ
 
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=シリコン単結晶
@@ -4458,19 +4458,19 @@ gregtech.machine.fluid_drilling_rig.energy=%s§7を要求. %s§7までオーバ�
 gregtech.machine.fluid_drilling_rig.overclock=オーバークロックで生産が§d50%%§7上昇する.
 
 gregtech.machine.cleanroom.name=クリーンルーム
-gregtech.machine.cleanroom.tooltip.1=クリーンルームレシピで実行するために内部に機械を設置する.
-gregtech.machine.cleanroom.tooltip.2=汚いときは§a30 EU/t§7, 清潔な時は§a4 EU/t§7消費する.
+gregtech.machine.cleanroom.tooltip.1=クリーンルームが必要なレシピを実行するために, 内部に機械を設置する.
+gregtech.machine.cleanroom.tooltip.2=汚染時は§a30 EU/t§7, 清潔時は§a4 EU/t§7消費する.
 gregtech.machine.cleanroom.tooltip.3=オーバークロックで浄化サイクルが増加.
 gregtech.machine.cleanroom.tooltip.4=大きさは§b5x5x5§7から§b15x15x15§7まで.
 gregtech.machine.cleanroom.tooltip.5=天井にフィルター外装が必要 (角を除く).
 gregtech.machine.cleanroom.tooltip.6=4つまでドアを設置できる! ドアを開けたままでも清潔さを保てる.
-gregtech.machine.cleanroom.tooltip.7=発電機, マフラー, ドリル及び初歩的機械はクリーンルームにとって汚すぎる!
-gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の外装またはダイオードで送ることができる.
-gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の貫通ハッチで送ることができる.
-gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2 チャンネルs§7を壁面の外装を通して送信できる.
-gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aAE2ネットワーク§7を壁面の外装を通して送信できる.
-gregtech.multiblock.cleanroom.clean_state=Status: §a清潔
-gregtech.multiblock.cleanroom.dirty_state=Status: §4汚染されている
+gregtech.machine.cleanroom.tooltip.7=発電機, マフラー, ドリル及び初歩的な機械はクリーンルームにとって汚すぎる!
+gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の筐体またはダイオードを通して送ることができる.
+gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の貫通ハッチを通して送ることができる.
+gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2 チャンネルs§7を壁面の筐体を通して送信できる.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aAE2ネットワーク§7を壁面の筐体を通して送信できる.
+gregtech.multiblock.cleanroom.clean_state=状態: §a清潔
+gregtech.multiblock.cleanroom.dirty_state=状態: §4汚染されている
 gregtech.multiblock.cleanroom.clean_amount=清潔さ: §a%s%%
 
 gregtech.machine.central_monitor.name=セントラルモニター
@@ -4715,7 +4715,7 @@ gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆薬: %s
 gregtech.recipe.eu_to_start=開始エネルギー: %sEU
 gregtech.recipe.dimensions=ディメンション: %s
-gregtech.recipe.cleanroom=%s を要求
+gregtech.recipe.cleanroom=%sを要求
 gregtech.recipe.cleanroom.display_name=クリーンルーム
 gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 
@@ -5190,7 +5190,7 @@ metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:
 metaitem.cover.digital.wireless.tooltip.1=§eセントラルモニターを右クリックすることで無線でリンクできます.
 metaitem.cover.digital.wireless.tooltip.2=§eシフト右クリックで現在のバインドを除去します.
-metaitem.cover.digital.wireless.tooltip.3=§cBinding: (%s)
+metaitem.cover.digital.wireless.tooltip.3=§cリンク先: (%s)
 monitor.gui.title.back=戻る
 monitor.gui.title.scale=スケール:
 monitor.gui.title.argb=ARGB:
