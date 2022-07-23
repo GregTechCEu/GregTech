@@ -930,6 +930,7 @@ public class RecipeMaps {
      * Any Recipe added to the Ore Washer not specifying an <B>EUt</B> value will default to 16.
      * Any Recipe added to the Ore Washer not specifying a <B>duration</B> value will default to 400.
      */
+    @Deprecated
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 2, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)

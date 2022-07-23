@@ -2942,31 +2942,31 @@ gregtech.machine.centrifuge.opv.tooltip=分子トルネード
 
 # Chemical Bath
 gregtech.machine.chemical_bath.lv.name=基本型化学槽
-gregtech.machine.chemical_bath.lv.tooltip=薬品に鉱石を浸して分離
+gregtech.machine.chemical_bath.lv.tooltip=副産物のための鉱石洗浄
 gregtech.machine.chemical_bath.mv.name=発展型化学槽
-gregtech.machine.chemical_bath.mv.tooltip=薬品に鉱石を浸して分離
+gregtech.machine.chemical_bath.mv.tooltip=副産物のための鉱石洗浄
 gregtech.machine.chemical_bath.hv.name=発展型化学槽 II
-gregtech.machine.chemical_bath.hv.tooltip=薬品に鉱石を浸して分離
+gregtech.machine.chemical_bath.hv.tooltip=副産物のための鉱石洗浄
 gregtech.machine.chemical_bath.ev.name=発展型化学槽 III
-gregtech.machine.chemical_bath.ev.tooltip=薬品に鉱石を浸して分離
+gregtech.machine.chemical_bath.ev.tooltip=副産物のための鉱石洗浄
 gregtech.machine.chemical_bath.iv.name=精鋭型化学槽
-gregtech.machine.chemical_bath.iv.tooltip=化学含浸装置
+gregtech.machine.chemical_bath.iv.tooltip=再目的化衣類洗浄装置 I-360
 gregtech.machine.chemical_bath.luv.name=精鋭型化学槽 II
-gregtech.machine.chemical_bath.luv.tooltip=化学含浸装置
+gregtech.machine.chemical_bath.luv.tooltip=再目的化衣類洗浄装置 I-361
 gregtech.machine.chemical_bath.zpm.name=精鋭型化学槽 III
-gregtech.machine.chemical_bath.zpm.tooltip=化学含浸装置
+gregtech.machine.chemical_bath.zpm.tooltip=再目的化衣類洗浄装置 I-362
 gregtech.machine.chemical_bath.uv.name=究極型化学槽
-gregtech.machine.chemical_bath.uv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uv.tooltip=小型洗車機
 gregtech.machine.chemical_bath.uhv.name=史上最高の化学槽
-gregtech.machine.chemical_bath.uhv.tooltip=化学泡だて器
+gregtech.machine.chemical_bath.uhv.tooltip=小型洗車機
 gregtech.machine.chemical_bath.uev.name=史上最高の化学槽 II
-gregtech.machine.chemical_bath.uev.tooltip=化学泡だて器
+gregtech.machine.chemical_bath.uev.tooltip=小型洗車機
 gregtech.machine.chemical_bath.uiv.name=史上最高の化学槽 III
-gregtech.machine.chemical_bath.uiv.tooltip=C化学泡だて器
+gregtech.machine.chemical_bath.uiv.tooltip=小型洗車機
 gregtech.machine.chemical_bath.uxv.name=史上最高の化学槽 IV
-gregtech.machine.chemical_bath.uxv.tooltip=化学泡だて器
+gregtech.machine.chemical_bath.uxv.tooltip=小型洗車機
 gregtech.machine.chemical_bath.opv.name=伝説の化学槽
-gregtech.machine.chemical_bath.opv.tooltip=化学泡だて器
+gregtech.machine.chemical_bath.opv.tooltip=小型洗車機
 
 # Chemical Reactor
 gregtech.machine.chemical_reactor.lv.name=基本型化学反応器

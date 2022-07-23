@@ -2961,31 +2961,31 @@ gregtech.machine.centrifuge.opv.tooltip=Molecular Tornado
 
 # Chemical Bath
 gregtech.machine.chemical_bath.lv.name=Basic Chemical Bath
-gregtech.machine.chemical_bath.lv.tooltip=Bathing Ores in Chemicals to separate them
+gregtech.machine.chemical_bath.lv.tooltip=Getting more Byproducts from your Ores
 gregtech.machine.chemical_bath.mv.name=Advanced Chemical Bath
-gregtech.machine.chemical_bath.mv.tooltip=Bathing Ores in Chemicals to separate them
+gregtech.machine.chemical_bath.mv.tooltip=Getting more Byproducts from your Ores
 gregtech.machine.chemical_bath.hv.name=Advanced Chemical Bath II
-gregtech.machine.chemical_bath.hv.tooltip=Bathing Ores in Chemicals to separate them
+gregtech.machine.chemical_bath.hv.tooltip=Getting more Byproducts from your Ores
 gregtech.machine.chemical_bath.ev.name=Advanced Chemical Bath III
-gregtech.machine.chemical_bath.ev.tooltip=Bathing Ores in Chemicals to separate them
+gregtech.machine.chemical_bath.ev.tooltip=Getting more Byproducts from your Ores
 gregtech.machine.chemical_bath.iv.name=Elite Chemical Bath
-gregtech.machine.chemical_bath.iv.tooltip=Chemical Soaker
+gregtech.machine.chemical_bath.iv.tooltip=Repurposed Laundry-Washer I-360
 gregtech.machine.chemical_bath.luv.name=Elite Chemical Bath II
-gregtech.machine.chemical_bath.luv.tooltip=Chemical Soaker
+gregtech.machine.chemical_bath.luv.tooltip=Repurposed Laundry-Washer I-361
 gregtech.machine.chemical_bath.zpm.name=Elite Chemical Bath III
-gregtech.machine.chemical_bath.zpm.tooltip=Chemical Soaker
+gregtech.machine.chemical_bath.zpm.tooltip=Repurposed Laundry-Washer I-362
 gregtech.machine.chemical_bath.uv.name=Ultimate Chemical Bath
-gregtech.machine.chemical_bath.uv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uv.tooltip=Miniature Car Wash
 gregtech.machine.chemical_bath.uhv.name=Epic Chemical Bath
-gregtech.machine.chemical_bath.uhv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uhv.tooltip=Miniature Car Wash
 gregtech.machine.chemical_bath.uev.name=Epic Chemical Bath II
-gregtech.machine.chemical_bath.uev.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uev.tooltip=Miniature Car Wash
 gregtech.machine.chemical_bath.uiv.name=Epic Chemical Bath III
-gregtech.machine.chemical_bath.uiv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uiv.tooltip=Miniature Car Wash
 gregtech.machine.chemical_bath.uxv.name=Epic Chemical Bath IV
-gregtech.machine.chemical_bath.uxv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uxv.tooltip=Miniature Car Wash
 gregtech.machine.chemical_bath.opv.name=Legendary Chemical Bath
-gregtech.machine.chemical_bath.opv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.opv.tooltip=Miniature Car Wash
 
 # Chemical Reactor
 gregtech.machine.chemical_reactor.lv.name=Basic Chemical Reactor

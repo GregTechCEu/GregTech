@@ -3012,31 +3012,31 @@ gregtech.machine.centrifuge.opv.tooltip=分子龙卷风
 
 # 化学浸洗器 Chemical Bath
 gregtech.machine.chemical_bath.lv.name=基础化学浸洗器
-gregtech.machine.chemical_bath.lv.tooltip=用化学物质浸泡矿石来分离它们
+gregtech.machine.chemical_bath.lv.tooltip=洗涤你的矿石以得到更多的副产品
 gregtech.machine.chemical_bath.mv.name=进阶化学浸洗器
-gregtech.machine.chemical_bath.mv.tooltip=用化学物质浸泡矿石来分离它们
+gregtech.machine.chemical_bath.mv.tooltip=洗涤你的矿石以得到更多的副产品
 gregtech.machine.chemical_bath.hv.name=进阶化学浸洗器 II
-gregtech.machine.chemical_bath.hv.tooltip=用化学物质浸泡矿石来分离它们
+gregtech.machine.chemical_bath.hv.tooltip=洗涤你的矿石以得到更多的副产品
 gregtech.machine.chemical_bath.ev.name=进阶化学浸洗器 III
-gregtech.machine.chemical_bath.ev.tooltip=用化学物质浸泡矿石来分离它们
+gregtech.machine.chemical_bath.ev.tooltip=洗涤你的矿石以得到更多的副产品
 gregtech.machine.chemical_bath.iv.name=精英化学浸洗器
-gregtech.machine.chemical_bath.iv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.iv.tooltip=波轮洗矿厂 I-360
 gregtech.machine.chemical_bath.luv.name=精英化学浸洗器 II
-gregtech.machine.chemical_bath.luv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.luv.tooltip=波轮洗矿厂 I-361
 gregtech.machine.chemical_bath.zpm.name=精英化学浸洗器 III
-gregtech.machine.chemical_bath.zpm.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.zpm.tooltip=波轮洗矿厂 I-362
 gregtech.machine.chemical_bath.uv.name=终极化学浸洗器
-gregtech.machine.chemical_bath.uv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.uv.tooltip=微型洗车场
 gregtech.machine.chemical_bath.uhv.name=史诗化学浸洗器
-gregtech.machine.chemical_bath.uhv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.uhv.tooltip=微型洗车场
 gregtech.machine.chemical_bath.uev.name=史诗化学浸洗器 II
-gregtech.machine.chemical_bath.uev.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.uev.tooltip=微型洗车场
 gregtech.machine.chemical_bath.uiv.name=史诗化学浸洗器 III
-gregtech.machine.chemical_bath.uiv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.uiv.tooltip=微型洗车场
 gregtech.machine.chemical_bath.uxv.name=史诗化学浸洗器 IV
-gregtech.machine.chemical_bath.uxv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.uxv.tooltip=微型洗车场
 gregtech.machine.chemical_bath.opv.name=传奇化学浸洗器
-gregtech.machine.chemical_bath.opv.tooltip=化学浸泡器
+gregtech.machine.chemical_bath.opv.tooltip=微型洗车场
 
 # 化学反应釜 Chemical Reactor
 gregtech.machine.chemical_reactor.lv.name=基础化学反应釜

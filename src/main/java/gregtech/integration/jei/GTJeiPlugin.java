@@ -161,11 +161,9 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipes(oreByproductList, oreByProductId);
         MetaTileEntity[][] machineLists = new MetaTileEntity[][]{
                 MetaTileEntities.MACERATOR,
-                MetaTileEntities.ORE_WASHER,
                 MetaTileEntities.CENTRIFUGE,
                 MetaTileEntities.THERMAL_CENTRIFUGE,
                 MetaTileEntities.CHEMICAL_BATH,
-                MetaTileEntities.ELECTROMAGNETIC_SEPARATOR,
                 MetaTileEntities.SIFTER
         };
         for (MetaTileEntity[] machine : machineLists) {

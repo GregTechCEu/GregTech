@@ -71,24 +71,15 @@ public class CrushedRecipeHandler {
                 .output(dust, Stone)
                 .duration(400).EUt(2).buildAndRegister();
 
-        // Ore Washer recipes
+        // Chemical Bath recipe
         // Crushed Ore -> Purified Ore
-        ORE_WASHER_RECIPES.recipeBuilder()
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushed, material)
                 .fluidInputs(Water.getFluid(1000))
                 .output(crushedPurified, material)
                 .output(dustTiny, primaryByproduct)
                 .output(dust, Stone)
                 .duration(400).EUt(16).buildAndRegister();
-
-        // Thermal Centrifuge recipe
-        // Crushed Ore -> Refined Ore
-        THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
-                .input(crushed, material)
-                .output(crushedRefined, material)
-                .output(dustTiny, secondaryByproduct, 3)
-                .output(dust, Stone)
-                .duration(400).EUt(VA[LV]).buildAndRegister();
 
         // Chemical Bath recipe
         // Crushed Ore -> Purified Ore + Purified Ore Byproduct

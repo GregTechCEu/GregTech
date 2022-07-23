@@ -3,12 +3,10 @@ package gregtech.loaders.recipe.handlers.oreproc;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -107,10 +105,9 @@ public class OreRecipeHandler {
     }
 
     protected static boolean hasGem(Material material) {
-        return material.hasProperty(PropertyKey.GEM) && !gem.isIgnored(material);
+        return material.hasProperty(PropertyKey.GEM);
     }
 
-    static boolean hasPrintedName = false;
     /**
      * Adds a Smelting Recipe to the ItemStack generated from OreDictUnifier.get(inputPrefix, material), or the direct smelting result override.
      * Only adds this recipe IF:

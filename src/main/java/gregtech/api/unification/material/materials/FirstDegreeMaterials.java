@@ -261,7 +261,6 @@ public class FirstDegreeMaterials {
                 .components(Titanium, 1, Oxygen, 2)
                 .build();
 
-        // TODO new processing??
         Bauxite = new Material.Builder(286, "bauxite")
                 .dust(1).ore()
                 .color(0xC86400)

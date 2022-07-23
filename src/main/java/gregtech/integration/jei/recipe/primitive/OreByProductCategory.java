@@ -53,21 +53,14 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
             3, 25,      // macerator (ore -> crushed)
             24, 25,     // ore washer
             3, 92,      // macerator (crushed -> impure)
-            46, 110,    // thermal centrifuge (crushed/purified crushed -> refined)
             24, 47,     // chem bath (mercury)
             24, 69,     // chem bath (persulfate)
-            86, 110,    // macerator (crushed purified -> dust)
+            86, 92,     // macerator (crushed purified -> dust)
+            68, 92,     // thermal centrifuge (crushed purified -> refined)
             108, 25,    // sifter
             68, 3,      // chem bath (vitriol)
-            86, 128,    // macerator (refined -> dust)
-            24, 110     // centrifuge (impure -> dust)
-//            70, 80,     // macerator (refined -> dust)
-//            114, 48,    // macerator (crushed purified -> purified)
-//            133, 71,    // centrifuge (purified -> dust)
-//            3, 123,     // cauldron / simple washer (crushed)
-//            41, 145,    // cauldron (impure)
-//            102, 145,   // cauldron (purified)
-//            155, 71     // electro separator
+            86, 110,    // macerator (refined -> dust)
+            24, 110     // chem bath (impure -> dust)
     );
 
     protected final static ImmutableList<Integer> ITEM_OUTPUT_LOCATIONS = ImmutableList.of(
@@ -78,15 +71,15 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
             3, 128,     // byproduct
             68, 25,     // crushed -> crushed purified (water wash)
             86, 25,     // byproduct
-            46, 128,    // crushed/crushed purified -> refined (thermal centrifuge)
-            46, 146,    // byproduct
             68, 47,     // crushed -> crushed purified (mercury wash)
             86, 47,     // byproduct
             68, 69,     // crushed -> crushed purified (persulfate wash)
             86, 69,     // byproduct
-            108, 110,   // crushed purified -> dust (macerator)
-            126, 110,   // byproduct
-            144, 110,   // byproduct
+            108, 92,    // crushed purified -> dust (macerator)
+            126, 92,    // byproduct
+            144, 92,    // byproduct
+            68, 110,    // crushed purified -> refined (thermal centrifuge)
+            68, 128,    // byproduct
             108, 47,    // sifter gems...
             126, 47,    // sifter gems...
             144, 47,    // sifter gems...
@@ -95,41 +88,18 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
             144, 65,    // sifter gems...
             108, 3,     // refined (vitriol wash)
             126, 3,     // refined (vitriol wash)
-            108, 128,   // refined -> dust (macerator)
-            126, 128,   // byproduct
-            144, 128,   // byproduct
-            24, 128,    // impure dust -> dust
-            24, 146     // byproduct
-//            50, 101,    // impure -> dust
-//            50, 119    // byproduct
-//            70, 101,    // refined -> dust
-//            70, 119,    // byproduct
-//            137, 47,    // crushed purified -> purified
-//            155, 47,    // byproduct
-//            3, 105,     // crushed cauldron
-//            3, 145,     // -> purified crushed
-//            23, 145,    // impure cauldron
-//            63, 145,    // -> dust
-//            84, 145,    // purified cauldron
-//            124, 145,   // -> dust
-//            64, 48,     // crushed -> crushed purified (chem bath)
-//            82, 48,     // byproduct
-//            155, 92,    // purified -> dust (electro separator)
-//            155, 110,   // byproduct 1
-//            155, 128,   // byproduct 2
-//            119, 3,     // sifter outputs...
-//            137, 3,
-//            155, 3,
-//            119, 21,
-//            137, 21,
-//            155, 21
+            108, 110,   // refined -> dust (macerator)
+            126, 110,   // byproduct
+            144, 110,   // byproduct
+            46, 128     // impure dust -> dust
     );
 
     protected final static ImmutableList<Integer> FLUID_INPUT_LOCATIONS = ImmutableList.of(
-            46, 25,  // washer in
+            46, 25,  // water wash in
             46, 47,  // mercury bath in
             46, 69,  // persulfate bath in
-            86, 3    // acid bath in
+            86, 3,   // acid bath in
+            46, 110  // water dust wash in
     );
 
     protected final static ImmutableList<Integer> FLUID_OUTPUT_LOCATIONS = ImmutableList.of(
@@ -137,7 +107,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     );
 
     public OreByProductCategory(IGuiHelper guiHelper) {
-        super("ore_by_product", "recipemap.byproductlist.name", guiHelper.createBlankDrawable(176, 166), guiHelper);
+        super("ore_by_product", "recipemap.byproductlist.name", guiHelper.createBlankDrawable(176, 148), guiHelper);
 
         this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
         this.fluidSlot = guiHelper.drawableBuilder(GuiTextures.FLUID_SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
@@ -223,7 +193,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         if (hasMercuryBath) arrowsMercuryBath.draw(minecraft, 24, 55);
         if (hasPersulfateBath) arrowsPersulfateBath.draw(minecraft, 24, 76);
         if (hasVitriol) arrowsVitriol.draw(minecraft, 77, 10);
-        if (hasSifter) arrowsSifter.draw(minecraft, 78, 23);
+        if (hasSifter) arrowsSifter.draw(minecraft, 77, 23);
 
         // only draw slot on inputs if it is the ore
         slot.draw(minecraft, ITEM_INPUT_LOCATIONS.get(0), ITEM_INPUT_LOCATIONS.get(1));

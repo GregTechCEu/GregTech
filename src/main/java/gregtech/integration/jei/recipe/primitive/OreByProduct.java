@@ -89,11 +89,9 @@ public class OreByProduct implements IRecipeWrapper {
         // macerate ore -> crushed
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
         // water wash crushed -> crushed purified
-        addToInputs(MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm());
+        addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
         // macerate crushed -> impure dust
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
-        // thermal centrifuge crushed/purified crushed -> refined
-        addToInputs(MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm());
 
         // mercury and persulfate washing
         boolean hasMercury = false;
@@ -122,6 +120,9 @@ public class OreByProduct implements IRecipeWrapper {
         // macerate crushed purified -> dust
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
 
+        // thermal centrifuge purified crushed -> refined
+        addToInputs(MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm());
+
         // sift crushed purified -> gems
         if (material.hasProperty(PropertyKey.GEM)) {
             this.hasSifter = true;
@@ -145,7 +146,7 @@ public class OreByProduct implements IRecipeWrapper {
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
 
         // centrifuge impure dust -> dust
-        addToInputs(MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm());
+        addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
 
         // add prefixes that should count as inputs to input lists (they will not be displayed in actual page)
         for (OrePrefix prefix : IN_PROCESSING_STEPS) {
@@ -192,7 +193,6 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void crushedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         Material primaryByproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
-        Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
 
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
@@ -205,10 +205,6 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, OrePrefix.crushedPurified, 1);
         addToOutputs(primaryByproduct, OrePrefix.dustTiny, 1);
         fluidInputs.add(Collections.singletonList(Materials.Water.getFluid(1000)));
-
-        // TC crushed/crushed purified -> refined
-        addToOutputs(material, OrePrefix.crushedRefined, 1);
-        addToOutputs(secondaryByproduct, OrePrefix.dustTiny, 3);
 
         Material mercuryByproduct = null;
         Material persulfateByproduct = null;
@@ -239,6 +235,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void purifiedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
+        Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
         // macerate purified crushed -> dust
@@ -247,6 +244,10 @@ public class OreByProduct implements IRecipeWrapper {
         addChance(2500, 0);
         addToOutputs(byproduct, dust, 1);
         addChance(1400, 850);
+
+        // TC crushed purified -> refined
+        addToOutputs(material, OrePrefix.crushedRefined, 1);
+        addToOutputs(secondaryByproduct, OrePrefix.dustTiny, 3);
 
         // sifter purified ore -> gems
         if (material.hasProperty(PropertyKey.GEM)) {
@@ -332,9 +333,9 @@ public class OreByProduct implements IRecipeWrapper {
     private void dustRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         Material byproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
 
-        // centrifuge impure dust -> dust
+        // bathe impure dust -> dust
+        fluidInputs.add(Collections.singletonList(Water.getFluid(100)));
         addToOutputs(material, dust, 1);
-        addToOutputs(byproduct, dustTiny, 1);
     }
 
     @Override
