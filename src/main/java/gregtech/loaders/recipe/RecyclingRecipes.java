@@ -424,8 +424,8 @@ public class RecyclingRecipes {
         list.add(new Tuple<>(GTUtility.copyAmount(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
     }
 
-    private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust, OrePrefix.dustSmall, OrePrefix.dustTiny);
     private static final List<OrePrefix> INGOT_ORDER = ImmutableList.of(OrePrefix.block, OrePrefix.ingot, OrePrefix.chunk, OrePrefix.nugget);
+    private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust, OrePrefix.dustSmall, OrePrefix.dustTiny);
 
     private static void shrinkStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
         Material material = entry.material;
@@ -441,8 +441,7 @@ public class RecyclingRecipes {
             // Current prefix too large to "compact" into
             if (materialAmount / prefix.getMaterialAmount(material) == 0) continue;
 
-            long newAmount = materialAmount / prefix.getMaterialAmount(material);
-            tempList.put(prefix, new MaterialStack(material, newAmount * prefix.getMaterialAmount(material)));
+            tempList.put(prefix, new MaterialStack(material, materialAmount / prefix.getMaterialAmount(material)));
             materialAmount = materialAmount % prefix.getMaterialAmount(material);
         }
 
@@ -454,30 +453,44 @@ public class RecyclingRecipes {
             splitStacks(list, OreDictUnifier.get(chosenList.get(0), ms.material, (int) (ms.amount / prefix.getMaterialAmount(material))), new UnificationEntry(prefix, material));
         }
 
-        // todo here, stuff is messed up with Chunks
-        OrePrefix mediumPrefix = chosenList.get(1); // dustSmall or ingot
-        OrePrefix smallestPrefix = chosenList.get(2); // dustTiny or nugget
-        MaterialStack mediumMS = tempList.get(mediumPrefix); // dustSmall or ingot
-        MaterialStack smallestMS = tempList.get(smallestPrefix); // dustTiny or nugget
+        OrePrefix largePrefix = chosenList.get(1); // ingot or small dust
+        OrePrefix mediumPrefix = chosenList.get(2); // chunk or tiny dust
+        OrePrefix smallPrefix = chosenList.get(3); // nugget or null
+        MaterialStack largeMS = tempList.get(largePrefix); // ingot or small dust
+        MaterialStack mediumMS = tempList.get(mediumPrefix); // chunk or tiny dust
+        MaterialStack smallMS = tempList.get(smallPrefix); // nugget or null
 
-        // Try to compact the two "lower form" prefixes into one stack, if it doesn't exceed stack size
-        if (mediumMS != null && smallestMS != null) {
-            long singleStackAmount = mediumMS.amount + smallestMS.amount;
-            if (singleStackAmount / smallestPrefix.getMaterialAmount(material) <= 64) {
-                list.add(new Tuple<>(OreDictUnifier.get(smallestPrefix, material, (int) (singleStackAmount / smallestPrefix.getMaterialAmount(material))), new MaterialStack(material, singleStackAmount)));
+        // Try to compact the three "lower form" prefixes into one stack, if it doesn't exceed stack size
+        OrePrefix compactPrefix = mediumPrefix;
+        if (largeMS != null && mediumMS != null) {
+            long singleStackAmount = largeMS.amount + mediumMS.amount;
+
+            // if ingots, use and include nuggets instead of chunks
+            if (smallMS != null) {
+                compactPrefix = smallPrefix;
+                singleStackAmount += smallMS.amount;
+            }
+
+            if (singleStackAmount / compactPrefix.getMaterialAmount(material) <= 64) {
+                list.add(new Tuple<>(OreDictUnifier.get(compactPrefix, material, (int) (singleStackAmount / compactPrefix.getMaterialAmount(material))), new MaterialStack(material, singleStackAmount)));
                 return;
             }
         }
 
         // Otherwise simply add the stacks to the List if they exist
+        if (largeMS != null) list.add(new Tuple<>(
+                OreDictUnifier.get(largePrefix, material, (int) (largeMS.amount / largePrefix.getMaterialAmount(material))),
+                new MaterialStack(material, largeMS.amount)
+        ));
+
         if (mediumMS != null) list.add(new Tuple<>(
                 OreDictUnifier.get(mediumPrefix, material, (int) (mediumMS.amount / mediumPrefix.getMaterialAmount(material))),
                 new MaterialStack(material, mediumMS.amount)
         ));
 
-        if (smallestMS != null) list.add(new Tuple<>(
-                OreDictUnifier.get(smallestPrefix, material, (int) (smallestMS.amount / smallestPrefix.getMaterialAmount(material))),
-                new MaterialStack(material, smallestMS.amount)
+        if (smallMS != null) list.add(new Tuple<>(
+                OreDictUnifier.get(smallPrefix, material, (int) (smallMS.amount / smallPrefix.getMaterialAmount(material))),
+                new MaterialStack(material, smallMS.amount)
         ));
     }
 

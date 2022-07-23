@@ -1,7 +1,6 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.GTLog;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -31,11 +30,10 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      */
     private boolean emissive;
 
-    // TODO Should force an Ingot
     /**
      * Material to which smelting of this Ore will result.
      * <p>
-     * Material will have a Dust Property.
+     * Material will have an Ingot Property.
      * Default: none.
      */
     private Material directSmeltResult;
@@ -136,15 +134,11 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.DUST, true);
 
-        if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.DUST, true);
+        if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.INGOT, true);
         if (vitriol != null) vitriol.getProperties().ensureSet(PropertyKey.FLUID, true);
         for (int i = 0; i < oreByProducts.size(); i++) {
             Material byproduct = oreByProducts.get(i);
             if (i == 3 || i == oreByProducts.size() - 1) {
-                if (!byproduct.hasProperty(PropertyKey.ORE)) {
-                    // TODO Remove this logger
-                    GTLog.logger.info("Material {} is being given an Ore via OreProperty's verifyProperty()", byproduct);
-                }
                 byproduct.getProperties().ensureSet(PropertyKey.ORE, true);
             } else {
                 // Dust only needs to be set if the Ore is not set above

@@ -1,6 +1,5 @@
 package gregtech.api.unification;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.MarkerMaterial;
@@ -289,10 +288,6 @@ public class OreDictUnifier {
             return get(OrePrefix.ingot, material, (int) (materialAmount / M));
         if (materialAmount % (M / 4) == 0 || materialAmount >= M * 8) {
             int stackCount = (int) (materialAmount * 4 / M);
-            if (stackCount % 4 == 0) { // todo make sure this isn't a problem
-                // edge case with weird numbers causes Arc Furnace to output stacks of chunks that could be Ingots
-                return get(OrePrefix.ingot, material, stackCount / 4);
-            }
             return get(OrePrefix.chunk, material, stackCount);
         }
         return get(OrePrefix.nugget, material, (int) (materialAmount * 9 / M));
