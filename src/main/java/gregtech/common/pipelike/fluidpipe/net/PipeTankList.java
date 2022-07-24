@@ -98,45 +98,23 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
+        if (maxDrain <= 0) return null;
+        for (FluidTank tank : tanks) {
+            FluidStack drained = tank.drain(maxDrain, doDrain);
+            if (drained != null) return drained;
+        }
         return null;
     }
 
     @Nullable
-    public FluidStack drainInternal(FluidStack resource, boolean doDrain) {
-        int channel;
-        if (resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
-            return null;
-        return drainFromIndex(resource.amount, doDrain, channel);
-    }
-
-    public final FluidStack drainFromIndex(int maxDrain, boolean doDrain, int channel) {
-        if (channel < 0 || channel >= tanks.length)
-            return null;
-        FluidStack fluid = tanks[channel].getFluid();
-        if (fluid == null)
-            return null;
-
-        int used = maxDrain;
-        if (fluid.amount < used)
-            used = fluid.amount;
-
-        if (doDrain) {
-            fluid.amount -= used;
-        }
-
-        FluidStack drained = fluid.copy();
-        drained.amount = used;
-
-        if (fluid.amount <= 0) {
-            tanks[channel].setFluid(null);
-        }
-
-        return drained;
-    }
-
-    @Nullable
     @Override
-    public FluidStack drain(FluidStack fluidStack, boolean b) {
+    public FluidStack drain(FluidStack fluidStack, boolean doDrain) {
+        if (fluidStack == null || fluidStack.amount <= 0) return null;
+        fluidStack = fluidStack.copy();
+        for (FluidTank tank : tanks) {
+            FluidStack drained = tank.drain(fluidStack, doDrain);
+            if (drained != null) return drained;
+        }
         return null;
     }
 
