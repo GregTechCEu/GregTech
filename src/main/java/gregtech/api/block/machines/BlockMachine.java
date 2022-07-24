@@ -265,7 +265,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                             offHand.getTagCompound().getCompoundTag("terminal").hasKey("_creative"))
             ) {
                 // With app installed, attempt to paste settings
-                ConfiguratorApp.applyMachineConfiguration((EntityPlayer) placer, offHand.getTagCompound().getCompoundTag("terminal"), metaTileEntity);
+                // eventually will read logging preference from NBT instead of hardcoded "true"
+                ConfiguratorApp.applyMachineConfiguration((EntityPlayer) placer, offHand.getTagCompound().getCompoundTag("terminal"), metaTileEntity, true);
             }
         }
     }

@@ -11,6 +11,7 @@ import gregtech.common.terminal.app.VirtualTankApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
+import gregtech.common.terminal.app.configurator.ConfiguratorApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
@@ -156,6 +157,9 @@ public class TerminalRegistry {
                 .device(DeviceHardware.DEVICE.WIRELESS)
                 .build();
         AppRegistryBuilder.create(new CapeSelectorApp())
+                .battery(GTValues.ULV, 8)
+                .build();
+        AppRegistryBuilder.create(new ConfiguratorApp())
                 .battery(GTValues.ULV, 8)
                 .build();
         if (Loader.isModLoaded(GTValues.MODID_CT)) { // handle CT register

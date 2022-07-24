@@ -1,0 +1,55 @@
+{
+  "section": "Terminal",
+  "title": "Configurator App",
+  "stream": [
+    {
+      "type": "card",
+      "fill": -12337,
+      "width": 120,
+      "height": 60,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "content": [
+        ""
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lIntroduction§r\n\nTo minimize the number of clicks required to use the app all functions are contextual. To operate the app all actions will require you to Sneak + Right Click with the terminal §lAND§r then open the app. When done correctly the app will not open and the terminal will instantly close after executing the selected function."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        ""
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lFunctions§r\n\n- §lCopy§r: To copy an existing machine\u0027s configuration, §1Sneak + Right Click§0 the target machine with the terminal and open this app\n\n- §lPaste§r: To paste a previously stored machine configuration, §1Sneak + Right Click§0 the target machine with the terminal and open this app\n\n- §lClear§r: To clear the saved configuration, §1Sneak + Right Click§0 the air and open this app\n\n- §lOpen App§r: To open the app without preforming any functions, simply §1Right Click§0 the air with the terminal and open this app"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        ""
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "textbox",
+      "x": 41,
+      "y": 33,
+      "width": 117,
+      "height": 40,
+      "content": [
+        "Before reading this tutorial, please install the Configurator app from the app store."
+      ]
+    }
+  ]
+}

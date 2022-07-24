@@ -1,14 +1,22 @@
 package gregtech.common.terminal.app.configurator;
 
 import gregtech.api.cover.CoverBehavior;
+import gregtech.api.gui.resources.ColorRectTexture;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.util.GTLog;
 import gregtech.common.covers.*;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +26,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +35,7 @@ import java.util.List;
 public class ConfiguratorApp extends AbstractApplication {
     public static final String APP_NAME = "configurator";
     public static final String APP_NBT_TAG = APP_NAME + "_config";
-
+    public static boolean logging = true;
     public ConfiguratorApp() {
         super(APP_NAME);
     }
@@ -42,16 +52,21 @@ public class ConfiguratorApp extends AbstractApplication {
             // 2. Copy Config
             else {
                 writeSettingsToOsNBT(entity);
+                if (logging && isClient) {
+                    gui.entityPlayer.sendMessage(new TextComponentString("Configuration copied"));
+                }
             }
             os.shutdown(isClient);
         } else {
             // 3. Clear settings if opened while sneaking
             if (os.tabletNBT.getBoolean("_sneak")) {
                 writeSettingsToOsNBT(null);
+                if (logging && isClient) {
+                    gui.entityPlayer.sendMessage(new TextComponentString("Configuration cleared"));
+                }
                 os.shutdown(isClient);
             } // 4. Open the app to create a configuration
             else {
-                writeSettingsToOsNBT(null);
                 LaunchApp();
             }
         }
@@ -71,8 +86,47 @@ public class ConfiguratorApp extends AbstractApplication {
     }
 
     private void LaunchApp() {
+        readConfig();
         // A settings UI will go here
+        this.addWidget(new ImageWidget(5, 5, 323, 212, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
+        this.addWidget(new LabelWidget(15, 15, "To learn how this app works, visit the tutorial app", -1).setYCentered(true));
+        this.addWidget(new LabelWidget(35, 35, "Enable chat logging", -1).setYCentered(true));
+        this.addWidget(new RectButtonWidget(20, 30, 10, 10, 2)
+                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p) -> {
+                    logging = !p;
+                    saveConfig();
+                })
+                .setValueSupplier(true, () -> !logging)
+                .setColors(TerminalTheme.COLOR_B_3.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
+                        TerminalTheme.COLOR_B_3.getColor())
+                .setIcon(new ColorRectTexture(TerminalTheme.COLOR_7.getColor()))
+        ); //.setHoverText("terminal.settings.os.double_check.desc"));
         // os.shutdown(isClient);
+    }
+
+    private void readConfig() {
+        if (isClient) {
+            NBTTagCompound nbt = null;
+            try {
+                nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, "config/" + APP_NAME + ".nbt"));
+            } catch (IOException e) {
+                GTLog.logger.error("error while loading local nbt for the os settings", e);
+            }
+            logging = nbt != null && nbt.getBoolean("logging");
+        }
+    }
+
+    public void saveConfig() {
+        if (isClient) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setBoolean("logging", logging);
+            try {
+                CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, "config/" + APP_NAME + ".nbt"));
+            } catch (IOException e) {
+                GTLog.logger.error("error while saving local nbt for the configurator app's settings", e);
+            }
+        }
     }
 
     private boolean IsValidTileEntity(BlockPos TileEntityLocation) {
@@ -89,12 +143,12 @@ public class ConfiguratorApp extends AbstractApplication {
         return true;
     }
 
-    public static void applyMachineConfiguration(EntityPlayer entityPlayer, NBTTagCompound TerminalNBT, MetaTileEntity entity) {
+    public static void applyMachineConfiguration(EntityPlayer entityPlayer, NBTTagCompound TerminalNBT, MetaTileEntity entity, boolean outputLog) {
         // Make a copy of the existing entity to overwrite with the template
         MetaTileEntity templateEntity = entity.createMetaTileEntity(entity.getHolder());
         templateEntity.readFromNBT(TerminalNBT.getCompoundTag(APP_NBT_TAG));
         // Apply the template
-        applyMachineConfiguration(entityPlayer, templateEntity, entity);
+        applyMachineConfiguration(entityPlayer, templateEntity, entity, outputLog);
     }
 
     private void applyMachineConfiguration(MetaTileEntity entity) {
@@ -106,11 +160,10 @@ public class ConfiguratorApp extends AbstractApplication {
         MetaTileEntity templateEntity = entity.createMetaTileEntity(entity.getHolder());
         templateEntity.readFromNBT(os.tabletNBT.getCompoundTag(APP_NBT_TAG));
         // Apply the template
-        applyMachineConfiguration(gui.entityPlayer, templateEntity, entity);
+        applyMachineConfiguration(gui.entityPlayer, templateEntity, entity, logging);
     }
 
-    private static void applyMachineConfiguration(EntityPlayer entityPlayer, MetaTileEntity templateTileEntity, MetaTileEntity existingTileEntity) {
-        boolean logging = true;
+    private static void applyMachineConfiguration(EntityPlayer entityPlayer, MetaTileEntity templateTileEntity, MetaTileEntity existingTileEntity, boolean logging) {
         List<String> log = new ArrayList<>();
 
         // Meta Tile Entity
@@ -160,7 +213,7 @@ public class ConfiguratorApp extends AbstractApplication {
                     // if there is an existing cover, and the covers are not equal, and the player doesn't have the cover THEN
                     // Move on to the next cover
                     boolean preexistingCover = existingTileEntity.getCoverAtSide(side) != null;
-                    boolean playerHasCover = InventoryContains(entityPlayer.inventory.mainInventory, templateCoverItemStack);
+                    boolean playerHasCover = CheckInventory(entityPlayer.inventory.mainInventory, templateCoverItemStack, false);
                     boolean coversAreEqual = preexistingCover && templateCoverItemStack.isItemEqual(existingTileEntity.getCoverAtSide(side).getPickItem());
                     if ((!preexistingCover && !playerHasCover) || (preexistingCover && !coversAreEqual && !playerHasCover)) {
                         log.add("- Missing (" + templateCover.getPickItem().getDisplayName() + ")");
@@ -173,7 +226,7 @@ public class ConfiguratorApp extends AbstractApplication {
                         if (existingTileEntity.placeCoverOnSide(side, templateCoverItemStack, templateCover.getCoverDefinition(), entityPlayer)) {
                             // If filter is present, remove from player inventory or else remove from cover
                             if (!SubtractFilterIfMissing(entityPlayer.inventory.mainInventory, templateCover, existingTileEntity.getCoverAtSide(side))) {
-                                log.add("- Missing filter missing for (" + templateCover.getPickItem().getDisplayName() + ")");
+                                log.add("- Missing filter for (" + templateCover.getPickItem().getDisplayName() + ")");
                             }
                             if (!RemoveItemFromInventory(entityPlayer.inventory.mainInventory, templateCoverItemStack)) {
                                 log.add("- Missing (" + templateCover.getPickItem().getDisplayName() + ")");
@@ -185,6 +238,7 @@ public class ConfiguratorApp extends AbstractApplication {
                     } else {
                         if (!SubtractFilterIfMissing(entityPlayer.inventory.mainInventory, templateCover, existingTileEntity.getCoverAtSide(side))) {
                             log.add("- Missing filter for (" + templateCover.getPickItem().getDisplayName() + ")");
+
                         }
                     }
                 }
@@ -219,9 +273,13 @@ public class ConfiguratorApp extends AbstractApplication {
         existingTileEntity.scheduleRenderUpdate();
 
         // Print logging info
-        if (logging && !log.isEmpty()) {
-            entityPlayer.sendMessage(new TextComponentString("Not all settings were applied:"));
-            entityPlayer.sendMessage(new TextComponentString(String.join("\n", log)));
+        if (logging) {
+            if (!log.isEmpty()) {
+                entityPlayer.sendMessage(new TextComponentString("Not all settings were applied:"));
+                entityPlayer.sendMessage(new TextComponentString(String.join("\n", log)));
+            } else {
+                entityPlayer.sendMessage(new TextComponentString("Configuration Applied"));
+            }
         }
     }
 
@@ -272,7 +330,7 @@ public class ConfiguratorApp extends AbstractApplication {
             ItemStack existingFilter = existingCover == null ? ItemStack.EMPTY : ((CoverConveyor) existingCover).getItemFilterContainer().getFilterInventory().getStackInSlot(0);
             return SubtractFilterIfMissing(inventory, templateFilter, existingFilter);
         }
-        return false;
+        return true;
     }
 
     private static boolean SubtractFilterIfMissing(List<ItemStack> inventory, ItemStack templateFilter, ItemStack existingFilter) {
@@ -283,7 +341,11 @@ public class ConfiguratorApp extends AbstractApplication {
                 existingFilter.setCount(0);
                 return true;
             } else if (existingFilter.isEmpty() || !templateFilter.isItemEqual(existingFilter)) {
-                return RemoveItemFromInventory(inventory, templateFilter);
+                if (!RemoveItemFromInventory(inventory, templateFilter)) {
+                    templateFilter.setCount(0);
+                    return false;
+                }
+                return true;
             }
         }
         return true;
@@ -303,10 +365,6 @@ public class ConfiguratorApp extends AbstractApplication {
 
     private static boolean RemoveItemFromInventory(List<ItemStack> inventory, ItemStack coverItemStack) {
         return CheckInventory(inventory, coverItemStack, true);
-    }
-
-    private static boolean InventoryContains(List<ItemStack> inventory, ItemStack coverItemStack) {
-        return CheckInventory(inventory, coverItemStack, false);
     }
 
 }

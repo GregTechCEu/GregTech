@@ -4946,6 +4946,7 @@ gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
+gregtech.terminal.app_name.configurator=Configurator
 
 gregtech.terminal.app_name.teleport=Teleporter
 
@@ -4961,6 +4962,7 @@ terminal.pong.description=A classic pong game, if you're really that bored of wa
 terminal.minesweeper.description=A classic minesweeper game, if you're in class.
 terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 terminal.cape_selector.description=An app that allows you to equip GT capes that you've unlocked through advancements.
+terminal.configurator.description=An app that allows you to copy and paste machine configurations, behaviors, and covers
 
 
 texture.modify_gui_texture.missing=Missing Texture
