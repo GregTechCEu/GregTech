@@ -1,9 +1,9 @@
 package gregtech.common.terminal.app.appstore;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.*;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.resources.*;
+import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;

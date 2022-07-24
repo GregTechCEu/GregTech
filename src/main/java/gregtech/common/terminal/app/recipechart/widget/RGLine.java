@@ -1,13 +1,13 @@
 package gregtech.common.terminal.app.recipechart.widget;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.SimpleTextWidget;
+import gregtech.api.guiOld.widgets.SlotWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;

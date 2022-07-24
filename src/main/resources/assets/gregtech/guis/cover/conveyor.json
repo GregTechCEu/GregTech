@@ -1,0 +1,19 @@
+{
+  "widgets": [
+    {
+      "name": "background",
+      "type": "image",
+      "fillParent": true,
+      "src": "gregtech:gui/base/background"
+    },
+    {
+      "name": "transfer_rate_field",
+      "type": "textfield",
+      "maxWidth": 92,
+      "background": {
+        "type": "image",
+        "src": "gregtech:gui/base/display"
+      }
+    }
+  ]
+}

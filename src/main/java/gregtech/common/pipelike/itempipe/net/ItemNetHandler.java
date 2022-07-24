@@ -357,12 +357,12 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
         int rate;
         boolean isStackSpecific = false;
-        Object index = arm.getItemFilterContainer().matchItemStack(stack);
+        Object index = arm.getFilterHolder().matchItemStack(stack);
         if (index instanceof Integer) {
-            rate = arm.getItemFilterContainer().getSlotTransferLimit(index);
+            rate = arm.getFilterHolder().getSlotTransferLimit(index);
             isStackSpecific = true;
         } else
-            rate = arm.getItemFilterContainer().getTransferStackSize();
+            rate = arm.getFilterHolder().getTransferStackSize();
         int count;
         switch (arm.getTransferMode()) {
             case TRANSFER_ANY:
@@ -396,7 +396,7 @@ public class ItemNetHandler implements IItemHandler {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack slot = handler.getStackInSlot(i);
             if (slot.isEmpty()) continue;
-            if (isStackSpecific ? key.isItemStackEqual(slot) : arm.getItemFilterContainer().testItemStack(slot)) {
+            if (isStackSpecific ? key.isItemStackEqual(slot) : arm.getFilterHolder().test(slot)) {
                 count += slot.getCount();
             }
         }

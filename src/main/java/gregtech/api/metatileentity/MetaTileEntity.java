@@ -11,6 +11,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -21,7 +23,8 @@ import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.guiOld.ModularUI;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSoundManager;
@@ -341,10 +344,27 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
-    protected abstract ModularUI createUI(EntityPlayer entityPlayer);
+    @Deprecated
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    /**
+     * Temporary method to determine which method should be called
+     */
+    @Deprecated
+    public boolean useOldGui() {
+        return true;
+    }
+
+    @Nullable
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -388,7 +408,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (useOldGui()) {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                } else {
+                    GregTechUI.MTE_UI.open(playerIn, getWorld(), getPos());
+                }
             }
             return true;
         } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
@@ -1291,7 +1315,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public RecipeMap<?> getRecipeMap() {
-
         for (int i = 0; i < mteTraits.size(); i++) {
             if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
                 return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();

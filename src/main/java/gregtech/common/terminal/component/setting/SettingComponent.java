@@ -1,8 +1,8 @@
 package gregtech.common.terminal.component.setting;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 

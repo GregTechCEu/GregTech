@@ -1,10 +1,10 @@
 package gregtech.common.gui.widget;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.SizedTextureArea;
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.resources.SizedTextureArea;
+import gregtech.api.guiOld.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;

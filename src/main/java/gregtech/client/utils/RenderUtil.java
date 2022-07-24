@@ -2,7 +2,7 @@ package gregtech.client.utils;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.guiOld.resources.TextureArea;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;

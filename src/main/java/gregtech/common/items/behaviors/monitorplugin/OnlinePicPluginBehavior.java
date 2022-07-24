@@ -1,10 +1,10 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.resources.picturetexture.PictureTexture;
-import gregtech.api.gui.resources.utils.DownloadThread;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.IUIHolder;
+import gregtech.api.guiOld.resources.picturetexture.PictureTexture;
+import gregtech.api.guiOld.resources.utils.DownloadThread;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.common.gui.widget.WidgetScrollBar;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;

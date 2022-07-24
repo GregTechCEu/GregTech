@@ -1,8 +1,8 @@
 package gregtech.common.gui.widget;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.widgets.TextFieldWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.widgets.TextFieldWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.util.Position;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.network.PacketBuffer;

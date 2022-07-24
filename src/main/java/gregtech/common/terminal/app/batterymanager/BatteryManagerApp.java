@@ -1,8 +1,8 @@
 package gregtech.common.terminal.app.batterymanager;
 
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.ItemStackTexture;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.ItemStackTexture;
+import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;

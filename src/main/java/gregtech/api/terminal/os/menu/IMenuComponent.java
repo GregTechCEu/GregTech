@@ -1,8 +1,8 @@
 package gregtech.api.terminal.os.menu;
 
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.IGuiTexture;
 
 public interface IMenuComponent {
     /**

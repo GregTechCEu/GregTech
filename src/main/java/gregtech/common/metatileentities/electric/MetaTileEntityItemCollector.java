@@ -3,22 +3,26 @@ package gregtech.common.metatileentities.electric;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.Row;
+import com.cleanroommc.modularui.common.widget.SlotGroup;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.GTValues;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.covers.filter.item.ItemFilterHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +48,7 @@ import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
 public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
-    private static final int[] INVENTORY_SIZES = {4, 9, 16, 25, 25};
+    private static final int[] INVENTORY_SIZES = {9, 18, 27};
     private static final double MOTION_MULTIPLIER = 0.04;
     private static final int BASE_EU_CONSUMPTION = 6;
 
@@ -53,13 +57,13 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     private AxisAlignedBB areaBoundingBox;
     private BlockPos areaCenterPos;
     private boolean isWorking;
-    private final ItemFilterContainer itemFilter;
+    private final ItemFilterHolder itemFilter;
 
     public MetaTileEntityItemCollector(ResourceLocation metaTileEntityId, int tier, int maxItemSuckingRange) {
         super(metaTileEntityId, tier);
         this.maxItemSuckingRange = maxItemSuckingRange;
         this.itemSuckingRange = maxItemSuckingRange;
-        this.itemFilter = new ItemFilterContainer(this::markDirty);
+        this.itemFilter = new ItemFilterHolder(this::markDirty);
         initializeInventory();
     }
 
@@ -141,7 +145,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
             double distanceX = (areaCenterPos.getX() + 0.5) - entityItem.posX;
             double distanceZ = (areaCenterPos.getZ() + 0.5) - entityItem.posZ;
             double distance = MathHelper.sqrt(distanceX * distanceX + distanceZ * distanceZ);
-            if (!itemFilter.testItemStack(entityItem.getItem())) {
+            if (!itemFilter.test(entityItem.getItem())) {
                 continue;
             }
             if (distance >= 0.7) {
@@ -180,7 +184,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(INVENTORY_SIZES[MathHelper.clamp(getTier(), 0, INVENTORY_SIZES.length - 1)]);
+        return new ItemStackHandler(INVENTORY_SIZES[MathHelper.clamp(getTier() - 1, 0, INVENTORY_SIZES.length - 1)]);
     }
 
     @Override
@@ -219,27 +223,45 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(exportItems.getSlots());
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                45 + rowSize * 18 + 105 + 82)
-                .label(10, 5, getMetaFullName());
+    public boolean useOldGui() {
+        return false;
+    }
 
-        builder.widget(new ClickButtonWidget(10, 20, 20, 20, "-1", data -> adjustSuckingRange(-1)));
-        builder.widget(new ClickButtonWidget(146, 20, 20, 20, "+1", data -> adjustSuckingRange(+1)));
-        builder.widget(new ImageWidget(30, 20, 116, 20, GuiTextures.DISPLAY));
-        builder.widget(new SimpleTextWidget(88, 30, "gregtech.machine.item_collector.gui.collect_range", 0xFFFFFF, () -> Integer.toString(itemSuckingRange)));
-
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(exportItems, index, 89 - rowSize * 9 + x * 18, 45 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-
-        this.itemFilter.initUI(45 + rowSize * 18 + 5, builder::widget);
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 45 + rowSize * 18 + 105);
-        return builder.build(getHolder(), entityPlayer);
+    @Nullable
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        int rowSize = 9;
+        int rows = exportItems.getSlots() / 9;
+        ModularWindow.Builder builder = ModularWindow.builder(176, 146 + rows * 18);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .bindPlayerInventory(buildContext.getPlayer())
+                .widget(new TextWidget(Text.localised(getMetaFullName()))
+                        .setPos(10, 5))
+                .widget(new TextWidget(Text.localised("Range: "))
+                        .setTextAlignment(Alignment.CenterLeft)
+                        .setSize(80, 14)
+                        .setPos(7, 18))
+                .widget(new Row()
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(-1, -4, -16, -64, this::adjustSuckingRange))
+                                .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                .setSize(14, 14))
+                        .widget(new TextFieldWidget()
+                                .setGetterInt(() -> itemSuckingRange)
+                                .setSetterInt(this::setItemSuckingRange)
+                                .setNumbers(1, maxItemSuckingRange)
+                                .setTextAlignment(Alignment.Center)
+                                .setTextColor(0xFFFFFF)
+                                .setBackground(GuiTextures.DISPLAY_SMALL)
+                                .setSize(52, 14))
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(1, 4, 16, 64, this::adjustSuckingRange))
+                                .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                .setSize(14, 14))
+                        .setPos(89, 18))
+                .widget(SlotGroup.ofItemHandler(this.exportItems, rowSize, 0, false)
+                        .setPos(88 - rowSize * 18 / 2, 36))
+                .widget(itemFilter.createFilterUI(buildContext).setPos(7, 40 + rows * 18));
+        return builder.build();
     }
 }

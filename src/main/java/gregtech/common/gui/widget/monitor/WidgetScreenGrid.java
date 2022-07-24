@@ -1,7 +1,7 @@
 package gregtech.common.gui.widget.monitor;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;

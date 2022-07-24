@@ -1,13 +1,13 @@
 package gregtech.common.terminal.app.recipechart;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.TabGroup;
-import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
-import gregtech.api.gui.widgets.tab.ITabInfo;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.impl.ModularUIContainer;
+import gregtech.api.guiOld.ingredient.IRecipeTransferHandlerWidget;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.TabGroup;
+import gregtech.api.guiOld.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.guiOld.widgets.tab.ITabInfo;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.CustomTabListRenderer;

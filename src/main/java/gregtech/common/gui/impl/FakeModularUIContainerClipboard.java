@@ -1,9 +1,9 @@
 package gregtech.common.gui.impl;
 
 import com.google.common.collect.Lists;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.FakeModularGuiContainer;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.impl.FakeModularGuiContainer;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketClipboardUIWidgetUpdate;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;

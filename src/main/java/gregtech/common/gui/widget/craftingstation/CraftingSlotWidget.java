@@ -1,9 +1,9 @@
 package gregtech.common.gui.widget.craftingstation;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.guiOld.impl.ModularUIContainer;
+import gregtech.api.guiOld.ingredient.IRecipeTransferHandlerWidget;
+import gregtech.api.guiOld.widgets.SlotWidget;
 import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OverlayedItemHandler;

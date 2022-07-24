@@ -5,24 +5,32 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.drawable.shapes.Rectangle;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.math.Color;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.FluidSlotWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -32,6 +40,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -43,10 +52,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     private boolean isPrivate;
     private boolean workingEnabled = true;
     private boolean ioEnabled;
-    private String tempColorStr;
-    private boolean isColorTemp;
     private final FluidTankSwitchShim linkedTank;
-    protected final FluidFilterContainer fluidFilter;
+    protected final FluidFilterHolder filterHolder;
 
     public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -56,7 +63,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         playerUUID = null;
         color = 0xFFFFFFFF;
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
-        fluidFilter = new FluidFilterContainer(this);
+        filterHolder = new FluidFilterHolder(this);
     }
 
     private String makeTankName() {
@@ -67,8 +74,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         return isPrivate ? playerUUID : null;
     }
 
-    public FluidFilterContainer getFluidFilterContainer() {
-        return this.fluidFilter;
+    public FluidFilterHolder getFilterHolder() {
+        return this.filterHolder;
     }
 
     public boolean isIOEnabled() {
@@ -88,7 +95,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+            GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
     }
@@ -104,7 +111,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
+        MetaTileEntity.clearInventory(drops, filterHolder.getFilterInventory());
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
         }
@@ -120,9 +127,9 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
-            GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
+            GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, filterHolder::test);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
-            GTTransferUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, fluidFilter::testFluidStack);
+            GTTransferUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, filterHolder::test);
         }
     }
 
@@ -136,61 +143,75 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
-    public void openUI(EntityPlayerMP player) {
-        CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
-        isColorTemp = false;
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 168);
+        Rectangle rectangle = new Rectangle().setColor(this.color);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .bindPlayerInventory(buildContext.getPlayer())
+                .widget(new TextWidget(Text.localised("cover.ender_fluid_link.title"))
+                        .setPos(10, 5))
+                .widget(new CycleButtonWidget()
+                        .setToggle(this::isPrivate, this::setPrivate)
+                        .setTexture(GuiTextures.BUTTON_PUBLIC_PRIVATE)
+                        .setSize(18, 18)
+                        .setPos(12, 18))
+                .widget(rectangle.asWidget()
+                        .setSize(18, 18)
+                        .setPos(35, 18))
+                .widget(new TextFieldWidget()
+                        .setGetter(this::getColorStr)
+                        .setSetter(val -> {
+                            updateColor(val);
+                            rectangle.setColor(this.color);
+                        })
+                        .setPattern(Pattern.compile("[0-9a-fA-F]{0,8}"))
+                        .setValidator(this::validate)
+                        .setTextAlignment(Alignment.CenterLeft)
+                        .setTextColor(Color.WHITE.normal)
+                        .setBackground(GuiTextures.DISPLAY_SMALL.withFixedSize(58, 18, -2, -2))
+                        .setPos(60, 20)
+                        .setSize(54, 14))
+                .widget(new FluidSlotWidget(this.linkedTank)
+                        .setPos(123, 18))
+                .widget(new TextWidget(Text.localised("Mode:"))
+                        .setTextAlignment(Alignment.CenterLeft)
+                        .setSize(80, 12)
+                        .setPos(7, 38))
+                .widget(new TextWidget(Text.localised("I/O:"))
+                        .setTextAlignment(Alignment.CenterLeft)
+                        .setSize(80, 12)
+                        .setPos(7, 50))
+                .widget(new CycleButtonWidget()
+                        .setForEnum(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(CoverPump.PumpMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(80, 12)
+                        .setPos(89, 38))
+                .widget(new CycleButtonWidget()
+                        .setToggle(this::isIoEnabled, this::setIoEnabled)
+                        .setTextureGetter(val -> Text.localised(val == 0 ? "cover.ender_fluid_link.iomode.disabled" : "cover.ender_fluid_link.iomode.enabled").color(Color.WHITE.normal).shadow())
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(80, 12)
+                        .setPos(89, 50))
+                .widget(filterHolder.createFilterUI(buildContext)
+                        .setPos(7, 62));
+        return builder.build();
     }
 
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
-        widgetGroup.addWidget(new ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
-                this::isPrivate, this::setPrivate)
-                .setTooltipText("cover.ender_fluid_link.private.tooltip"));
-        widgetGroup.addWidget(new SyncableColorRectWidget(35, 18, 18, 18, () -> color)
-                .setBorderWidth(1)
-                .drawCheckerboard(4, 4));
-        widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
-                this::getColorStr, this::updateColor, 8)
-                .setValidator(str -> str.matches("[0-9a-fA-F]*")));
-        widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
-                .setContainerClicking(true, true)
-                .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
-        widgetGroup.addWidget(new ImageWidget(147, 19, 16, 16)
-                .setImage(GuiTextures.INFO_ICON)
-                .setPredicate(() -> isColorTemp)
-                .setTooltip("cover.ender_fluid_link.incomplete_hex")
-                .setIgnoreColor(true));
-        widgetGroup.addWidget(new CycleButtonWidget(10, 42, 75, 18,
-                CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode));
-        widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
-                this::isIoEnabled, this::setIoEnabled, "cover.ender_fluid_link.iomode.disabled", "cover.ender_fluid_link.iomode.enabled"));
-        this.fluidFilter.initUI(65, widgetGroup::addWidget);
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
-                .widget(widgetGroup)
-                .bindPlayerInventory(player.inventory, 139)
-                .build(this, player);
+    private String validate(String val) {
+        if (val.length() == 8) return val;
+        StringBuilder builder1 = new StringBuilder().append(val);
+        while (builder1.length() < 6) builder1.insert(0, "0");
+        while (builder1.length() < 8) builder1.insert(0, "F");
+        return builder1.toString();
     }
 
     public void updateColor(String str) {
-        if (str.length() == 8) {
-            isColorTemp = false;
-            // stupid java not having actual unsigned ints
-            long tmp = Long.parseLong(str, 16);
-            if (tmp > 0x7FFFFFFF) {
-                tmp -= 0x100000000L;
-            }
-            this.color = (int) tmp;
-            updateTankLink();
-        } else {
-            tempColorStr = str;
-            isColorTemp = true;
-        }
+        this.color = Integer.parseUnsignedInt(str, 16);
     }
 
     public String getColorStr() {
-        return isColorTemp ? tempColorStr : Integer.toHexString(this.color).toUpperCase();
+        return validate(Integer.toHexString(this.color).toUpperCase());
     }
 
     public void updateTankLink() {
@@ -207,7 +228,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         tagCompound.setBoolean("IOAllowed", ioEnabled);
         tagCompound.setBoolean("Private", isPrivate);
         tagCompound.setString("PlacedUUID", playerUUID.toString());
-        tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+        tagCompound.setTag("Filter", filterHolder.serializeNBT());
     }
 
     @Override
@@ -219,7 +240,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         this.ioEnabled = tagCompound.getBoolean("IOAllowed");
         this.isPrivate = tagCompound.getBoolean("Private");
         this.playerUUID = UUID.fromString(tagCompound.getString("PlacedUUID"));
-        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.filterHolder.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         updateTankLink();
     }
 

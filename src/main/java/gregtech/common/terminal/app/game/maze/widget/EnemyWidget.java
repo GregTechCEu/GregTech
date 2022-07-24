@@ -1,6 +1,6 @@
 package gregtech.common.terminal.app.game.maze.widget;
 
-import gregtech.api.gui.IRenderContext;
+import gregtech.api.guiOld.IRenderContext;
 import gregtech.api.util.Position;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 

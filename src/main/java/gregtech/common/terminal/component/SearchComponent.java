@@ -1,11 +1,11 @@
 package gregtech.common.terminal.component;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.TextFieldWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.TextureArea;
+import gregtech.api.guiOld.widgets.TextFieldWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.terminal.util.ISearch;
 import gregtech.api.terminal.util.SearchEngine;

@@ -1,12 +1,12 @@
 package gregtech.common.items.behaviors;
 
 import codechicken.lib.raytracer.RayTracer;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.widgets.ClickButtonWidget;
+import gregtech.api.guiOld.widgets.ImageCycleButtonWidget;
+import gregtech.api.guiOld.widgets.SimpleTextWidget;
+import gregtech.api.guiOld.widgets.TextFieldWidget2;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;

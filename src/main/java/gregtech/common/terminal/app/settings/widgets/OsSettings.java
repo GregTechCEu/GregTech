@@ -1,8 +1,8 @@
 package gregtech.common.terminal.app.settings.widgets;
 
-import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.guiOld.resources.ColorRectTexture;
+import gregtech.api.guiOld.widgets.AbstractWidgetGroup;
+import gregtech.api.guiOld.widgets.LabelWidget;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
