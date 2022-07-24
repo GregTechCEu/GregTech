@@ -1,6 +1,5 @@
 package gregtech.api.recipes.builders;
 
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -54,7 +53,7 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     @Override
     protected EnumValidationResult finalizeAndValidate() {
         if (circuitMeta >= 0) {
-            inputs.add(new CountableIngredient(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
+            inputs.add(IntCircuitIngredient.getOrCreate(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
         }
         return super.finalizeAndValidate();
     }

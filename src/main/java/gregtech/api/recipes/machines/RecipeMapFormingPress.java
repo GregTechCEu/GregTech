@@ -8,7 +8,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.ingredients.NBTIngredient;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
@@ -45,7 +45,7 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
                 ItemStack output = GTUtility.copyAmount(1, itemStack);
                 output.setStackDisplayName(inputs.get(0).getDisplayName());
                 return this.recipeBuilder()
-                        .notConsumable(new NBTIngredient(moldStack)) //recipe is reusable as long as mold stack matches
+                        .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
                         .inputs(GTUtility.copyAmount(1, itemStack))
                         .outputs(output)
                         .duration(40).EUt(4)

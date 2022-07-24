@@ -1,9 +1,9 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -296,7 +296,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(CountableIngredient.from("wool", 1))
+                .inputs(GTRecipeOreInput.getOrCreate("wool", 1))
                 .outputs(new ItemStack(Items.STRING, 1))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 9000, 0)
                 .chancedOutput(new ItemStack(Items.STRING, 1), 5000, 0)

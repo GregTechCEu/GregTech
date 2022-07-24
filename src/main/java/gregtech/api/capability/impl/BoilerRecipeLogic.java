@@ -70,8 +70,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE);
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (dieselRecipe != null && fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(dieselRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER, true);
+            if (dieselRecipe != null && fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+                fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
                 // divide by 2, as it is half burntime for combustion
                 setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) / FLUID_BURNTIME_TO_EU / 2))));
                 didStartRecipe = true;
@@ -81,8 +81,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE);
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (denseFuelRecipe != null && fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).amount * FLUID_DRAIN_MULTIPLIER, true);
+            if (denseFuelRecipe != null && fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+                fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
                 // multiply by 2, as it is 2x burntime for semi-fluid
                 setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(denseFuelRecipe.getEUt()) * denseFuelRecipe.getDuration() / FLUID_BURNTIME_TO_EU * 2)))));
                 didStartRecipe = true;

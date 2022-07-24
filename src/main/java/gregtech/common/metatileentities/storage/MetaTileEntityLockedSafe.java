@@ -18,19 +18,17 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.recipes.CountableIngredient;
-import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.CraftingComponent.Component;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -41,9 +39,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -147,34 +145,24 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private void updateDisplayUnlockComponents() {
-        CountableIngredient[] unlockComponents = getUnlockComponents();
+        GTRecipeInput[] unlockComponents = getUnlockComponents();
         for (int i = 0; i < Math.min(this.unlockComponents.getSlots(), unlockComponents.length); i++) {
-            this.unlockComponents.setStackInSlot(i, getItemStackForIngredient(unlockComponents[i]));
+            if (unlockComponents[i].isOreDict()){
+                this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
+            } else {
+                this.unlockComponents.setStackInSlot(i, (unlockComponents[i].getInputStacks()[0]));
+            }
         }
     }
 
-    private CountableIngredient[] getUnlockComponents() {
+    private GTRecipeInput[] getUnlockComponents() {
         if (ALLOWED_COMPONENTS == null)
             ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
 
         Random random = new Random(unlockComponentsSeed);
-        return new CountableIngredient[]{
-                new CountableIngredient(createIngredient(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier)), 1),
-                new CountableIngredient(createIngredient(ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)), 1)
+        return new GTRecipeInput[]{GTRecipeOreInput.getOrCreate(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
+                GTRecipeItemInput.getOrCreate((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
         };
-    }
-
-    private static Ingredient createIngredient(Object ingredient) {
-        return CraftingHelper.getIngredient(ModHandler.finalizeIngredient(ingredient));
-    }
-
-    private static ItemStack getItemStackForIngredient(CountableIngredient ingredient) {
-        ItemStack[] matchingStacks = ingredient.getIngredient().getMatchingStacks();
-        if (matchingStacks.length == 0) {
-            GTLog.logger.error("Ingredient " + ingredient.getIngredient() + " doesn't have matching stacks to display!");
-        }
-        ItemStack itemStack = matchingStacks.length == 0 ? new ItemStack(Blocks.STONE) : matchingStacks[0];
-        return GTUtility.copyAmount(ingredient.getCount(), itemStack);
     }
 
     private void recheckUnlockItemsAndUnlock() {
@@ -191,11 +179,11 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         }
         boolean isRequiredItem = false;
         int amountRequired = 0;
-        CountableIngredient[] unlockComponents = getUnlockComponents();
-        for (CountableIngredient ingredient : unlockComponents) {
-            if (ingredient == null) continue;
-            if (!ingredient.getIngredient().test(itemStack)) continue;
-            amountRequired = ingredient.getCount();
+        GTRecipeInput[] unlockComponents = getUnlockComponents();
+        for (GTRecipeInput stack : unlockComponents) {
+            if (stack == null) continue;
+            if (!stack.acceptsStack(itemStack)) continue;
+            amountRequired = stack.getAmount();
             isRequiredItem = true;
             break;
         }
@@ -212,14 +200,14 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private boolean checkUnlockedItems() {
-        CountableIngredient[] unlockComponents = getUnlockComponents();
-        for (CountableIngredient ingredient : unlockComponents) {
-            if (ingredient == null) continue;
-            int itemLeftToCheck = ingredient.getCount();
+        GTRecipeInput[] unlockComponents = getUnlockComponents();
+        for (GTRecipeInput stack : unlockComponents) {
+            if (stack == null) continue;
+            int itemLeftToCheck = stack.getAmount();
             for (int i = 0; i < unlockInventory.getSlots(); i++) {
                 ItemStack otherStack = unlockInventory.getStackInSlot(i);
                 if (otherStack.isEmpty()) continue;
-                if (!ingredient.getIngredient().test(otherStack)) continue;
+                if (stack.acceptsStack(otherStack)) continue;
                 itemLeftToCheck -= otherStack.getCount();
             }
             if (itemLeftToCheck > 0) return false;
