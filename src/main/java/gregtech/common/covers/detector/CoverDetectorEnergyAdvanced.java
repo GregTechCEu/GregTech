@@ -80,18 +80,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
                     outputAmount = 15;
             }
             setRedstoneSignalOutput(outputAmount);
-
-            /* GTLog.logger.warn(
-                    "\n- Storage Ratio: " + currentStorageRatio +
-                    "\n- Min Percent: " + minPercent +
-                    "\n- Max Percent: " + maxPercent
-            ); */
         }
     }
-
-    /*protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player){
-        return builder.build(this, player);
-    }*/
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
@@ -145,6 +135,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
                 );
         return builder.build();
     }
+
     private void setMinPercent(int val){
         minPercent = Math.min(maxPercent - 1, val);
     }
@@ -154,36 +145,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     private void toggleInvert(Widget.ClickData data, Widget widget){
         inverted = !inverted;
     }
-/*
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new ImageWidget(42, 22, 92, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf((minPercent)), val ->{
-                    if (val != null && !val.isEmpty()) {
-                        minPercent = Math.min(maxPercent - 1, Integer.parseInt(val));
-                    }
-                })
-            .setNumbersOnly(0, 100)
-            .setMaxLength(3)
-        );
 
-        primaryGroup.addWidget(new ImageWidget(42, 42 + 5, 92, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new TextFieldWidget2(42, 46 + 5, 92, 20, () -> String.valueOf((maxPercent)), val ->{
-            if (val != null && !val.isEmpty())
-                maxPercent = Math.max(minPercent + 1, Integer.parseInt(val));
-        })
-                .setNumbersOnly(0, 100)
-                .setMaxLength(3)
-        );
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 190);
-
-        return buildUI(builder, player);
-    }
-*/
     @Override
     public boolean canConnectRedstone() {
         return true;
