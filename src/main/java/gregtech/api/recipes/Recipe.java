@@ -288,11 +288,7 @@ public class Recipe {
     private boolean hasSameInputs(Recipe otherRecipe) {
         List<ItemStack> otherStackList = new ObjectArrayList<>(otherRecipe.inputs.size());
         for (GTRecipeInput otherInputs : otherRecipe.inputs) {
-            for (ItemStack stack : otherInputs.getInputStacks()) {
-                stack = stack.copy();
-                stack.setCount(otherInputs.getAmount());
-                otherStackList.add(stack);
-            }
+            otherStackList.addAll(Arrays.asList(otherInputs.getInputStacks()));
         }
         if (!this.matchesItems(otherStackList).getLeft()) {
             return false;
@@ -300,11 +296,7 @@ public class Recipe {
 
         List<ItemStack> thisStackList = new ObjectArrayList<>(this.inputs.size());
         for (GTRecipeInput thisInputs : this.inputs) {
-            for (ItemStack stack : thisInputs.getInputStacks()) {
-                stack = stack.copy();
-                stack.setCount(thisInputs.getAmount());
-                thisStackList.add(stack);
-            }
+            thisStackList.addAll(Arrays.asList(thisInputs.getInputStacks()));
         }
         return otherRecipe.matchesItems(thisStackList).getLeft();
     }
@@ -320,8 +312,7 @@ public class Recipe {
     private boolean hasSameFluidInputs(Recipe otherRecipe) {
         List<FluidStack> otherFluidList = new ObjectArrayList<>(otherRecipe.fluidInputs.size());
         for (GTRecipeInput otherInputs : otherRecipe.fluidInputs) {
-            FluidStack fluidStack = otherInputs.getInputFluidStack().copy();
-            fluidStack.amount = otherInputs.getAmount();
+            FluidStack fluidStack = otherInputs.getInputFluidStack();
             otherFluidList.add(fluidStack);
         }
         if (!this.matchesFluid(otherFluidList).getLeft()) {
@@ -330,8 +321,7 @@ public class Recipe {
 
         List<FluidStack> thisFluidsList = new ObjectArrayList<>(this.fluidInputs.size());
         for (GTRecipeInput thisFluidInputs : this.fluidInputs) {
-            FluidStack fluidStack = thisFluidInputs.getInputFluidStack().copy();
-            fluidStack.amount = thisFluidInputs.getAmount();
+            FluidStack fluidStack = thisFluidInputs.getInputFluidStack();
             thisFluidsList.add(fluidStack);
         }
         return otherRecipe.matchesFluid(thisFluidsList).getLeft();

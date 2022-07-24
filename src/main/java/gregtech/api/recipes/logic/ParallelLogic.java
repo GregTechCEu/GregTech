@@ -353,14 +353,14 @@ public class ParallelLogic {
         //so their sum is counted against the total of fluids available in the input
         Map<FluidKey, Integer> fluidCountMap = new HashMap<>();
         Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
-        for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
-            int fluidAmount = fluidStack.getAmount();
-            if (fluidStack.isNonConsumable()) {
-                notConsumableMap.computeIfPresent(new FluidKey(fluidStack.getInputFluidStack()), (k, v) -> v + fluidAmount);
-                notConsumableMap.putIfAbsent(new FluidKey(fluidStack.getInputFluidStack()), fluidAmount);
+        for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
+            int fluidAmount = fluidInput.getAmount();
+            if (fluidInput.isNonConsumable()) {
+                notConsumableMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()), (k, v) -> v + fluidAmount);
+                notConsumableMap.putIfAbsent(new FluidKey(fluidInput.getInputFluidStack()), fluidAmount);
             } else {
-                fluidCountMap.computeIfPresent(new FluidKey(fluidStack.getInputFluidStack()), (k, v) -> v + fluidAmount);
-                fluidCountMap.putIfAbsent(new FluidKey(fluidStack.getInputFluidStack()), fluidAmount);
+                fluidCountMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()), (k, v) -> v + fluidAmount);
+                fluidCountMap.putIfAbsent(new FluidKey(fluidInput.getInputFluidStack()), fluidAmount);
             }
         }
 

@@ -79,14 +79,14 @@ public class CTRecipeHelper {
 
         if (recipe.getFluidInputs().size() > 0) {
             builder.append("[");
-            for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
                 builder.append("<liquid:")
-                        .append(fluidStack.getInputFluidStack().getFluid().getName())
+                        .append(fluidIngredient.getInputFluidStack().getFluid().getName())
                         .append(">");
 
-                if (fluidStack.getAmount() > 1) {
+                if (fluidIngredient.getAmount() > 1) {
                     builder.append(" * ")
-                            .append(fluidStack.getAmount());
+                            .append(fluidIngredient.getAmount());
                 }
 
                 builder.append(", ");
