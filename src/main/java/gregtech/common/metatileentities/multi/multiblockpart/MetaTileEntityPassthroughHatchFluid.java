@@ -7,8 +7,8 @@ import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.TankWidget;
+// import gregtech.api.gui.ModularUI;
+// import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
@@ -81,7 +81,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     protected IItemHandlerModifiable createImportItemHandler() {
         return new NotifiableItemStackHandler(TANK_SIZE, getController(), false);
     }
-
+/*
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(getTier() + 1);
@@ -104,7 +104,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
     }
-
+*/
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);

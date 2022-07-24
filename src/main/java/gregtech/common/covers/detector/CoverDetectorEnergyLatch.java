@@ -11,8 +11,14 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.screen.ModularWindow;
+import com.cleanroommc.modularui.api.screen.UIBuildContext;
+import com.cleanroommc.modularui.api.widget.Widget;
+import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
+import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +30,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.Mod;
 import scala.Int;
 
-import javax.xml.soap.Text;
 
 public class CoverDetectorEnergyLatch extends CoverBehavior implements CoverWithUI, ITickable{
     public int minPercent, maxPercent;
@@ -78,10 +83,39 @@ public class CoverDetectorEnergyLatch extends CoverBehavior implements CoverWith
         }
     }
 
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player){
+    /*protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player){
         return builder.build(this, player);
-    }
+    }*/
 
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 105);
+        builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
+                .widget(new Column()
+                        .widget(new TextFieldWidget()
+                                .setGetterInt(() -> minPercent)
+                                .setSetterInt(val -> setMinPercent(val))
+                                .setNumbers(0, 100)
+                                .setSize(64, 20)
+                                .setPos(10, 10)
+                        )
+                        .widget(new TextFieldWidget()
+                                .setGetterInt(() -> maxPercent)
+                                .setSetterInt(val -> setMaxPercent(val))
+                                .setNumbers(0, 100)
+                                .setSize(64, 20)
+                                .setPos(10, 20)
+                        )
+                );
+        return builder.build();
+    }
+    private void setMinPercent(int val){
+        minPercent = Math.min(maxPercent - 1, val);
+    }
+    private  void setMaxPercent(int val){
+        maxPercent = Math.max(minPercent + 1, val);
+    }
+/*
     @Override
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
@@ -110,7 +144,7 @@ public class CoverDetectorEnergyLatch extends CoverBehavior implements CoverWith
 
         return buildUI(builder, player);
     }
-
+*/
     @Override
     public boolean canConnectRedstone() {
         return true;
