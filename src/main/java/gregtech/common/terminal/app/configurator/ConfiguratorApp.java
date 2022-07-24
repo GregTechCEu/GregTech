@@ -53,7 +53,7 @@ public class ConfiguratorApp extends AbstractApplication {
             else {
                 writeSettingsToOsNBT(entity);
                 if (logging && isClient) {
-                    gui.entityPlayer.sendMessage(new TextComponentString("Configuration copied"));
+                    gui.entityPlayer.sendMessage(new TextComponentString("Configuration Copied"));
                 }
             }
             os.shutdown(isClient);
@@ -62,7 +62,7 @@ public class ConfiguratorApp extends AbstractApplication {
             if (os.tabletNBT.getBoolean("_sneak")) {
                 writeSettingsToOsNBT(null);
                 if (logging && isClient) {
-                    gui.entityPlayer.sendMessage(new TextComponentString("Configuration cleared"));
+                    gui.entityPlayer.sendMessage(new TextComponentString("Configuration Cleared"));
                 }
                 os.shutdown(isClient);
             } // 4. Open the app to create a configuration
