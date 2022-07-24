@@ -435,6 +435,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_FLUID_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ENERGY_DETECTOR;
+    public static MetaItem<?>.MetaValueItem COVER_ENERGY_LATCH_DETECTOR;
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
