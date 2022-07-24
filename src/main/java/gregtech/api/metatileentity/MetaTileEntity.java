@@ -15,6 +15,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
@@ -336,6 +337,14 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
+     * Allow for wrenching of certain machines on right click without sneaking
+     * @return wrench on right click without sneak
+     */
+    protected boolean wrenchOnRightClick() {
+        return false;
+    }
+
+    /**
      * Creates a UI instance for player opening inventory of this meta tile entity
      *
      * @param entityPlayer player opening inventory
@@ -386,7 +395,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so animation will be played
      */
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!playerIn.isSneaking() && openGUIOnRightClick()) {
+        if (wrenchOnRightClick() && playerIn.getHeldItem(EnumHand.MAIN_HAND).hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null)) {
+            return false;
+        } else if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
@@ -410,7 +421,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so wrench will get damaged and animation will be played
      */
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        if (playerIn.isSneaking()) {
+        if (playerIn.isSneaking() || wrenchOnRightClick()) {
             if (wrenchSide == getFrontFacing() || !isValidFrontFacing(wrenchSide) || !hasFrontFacing()) {
                 return false;
             }
