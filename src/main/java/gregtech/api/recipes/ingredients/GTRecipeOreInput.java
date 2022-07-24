@@ -4,7 +4,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
@@ -40,7 +39,17 @@ public class GTRecipeOreInput extends GTRecipeInput {
         return getOrCreate(new UnificationEntry(prefix, material).toString(), 1);
     }
 
+    @Override
     protected GTRecipeOreInput copy() {
+        GTRecipeOreInput copy = new GTRecipeOreInput(ore, this.amount);
+        copy.isConsumable = this.isConsumable;
+        copy.nbtMatcher = this.nbtMatcher;
+        copy.nbtCondition = this.nbtCondition;
+        return copy;
+    }
+
+    @Override
+    public GTRecipeInput copyWithAmount(int amount) {
         GTRecipeOreInput copy = new GTRecipeOreInput(ore, amount);
         copy.isConsumable = this.isConsumable;
         copy.nbtMatcher = this.nbtMatcher;

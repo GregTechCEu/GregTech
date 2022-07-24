@@ -32,8 +32,18 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         return getFromCache(new GTRecipeFluidInput(ri.getInputFluidStack(), i));
     }
 
+    @Override
     protected GTRecipeFluidInput copy() {
         GTRecipeFluidInput copy = new GTRecipeFluidInput(this.inputStack, this.amount);
+        copy.isConsumable = this.isConsumable;
+        copy.nbtMatcher = this.nbtMatcher;
+        copy.nbtCondition = this.nbtCondition;
+        return copy;
+    }
+
+    @Override
+    public GTRecipeInput copyWithAmount(int amount) {
+        GTRecipeFluidInput copy = new GTRecipeFluidInput(this.inputStack, amount);
         copy.isConsumable = this.isConsumable;
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;

@@ -6,13 +6,13 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
 import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
+import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -494,19 +494,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                                                    int numberOfOperations) {
         recipe.getInputs().forEach(ri -> {
             if (ri.isNonConsumable()) {
-                newRecipeInputs.add(GTRecipeItemInput.getOrCreate(ri,
-                        ri.getAmount()).setNonConsumable());
+                newRecipeInputs.add(ri);
             } else {
-                newRecipeInputs.add(GTRecipeItemInput.getOrCreate(ri,
-                        ri.getAmount() * numberOfOperations));
+                newRecipeInputs.add(ri.copyWithAmount(ri.getAmount() * numberOfOperations));
             }
         });
 
         recipe.getFluidInputs().forEach(fi -> {
             if (fi.isNonConsumable()) {
-                newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, fi.getAmount()).setNonConsumable());
+                newFluidInputs.add(fi);
             } else {
-                newFluidInputs.add(GTRecipeFluidInput.getOrCreate(fi, (fi.getAmount() * numberOfOperations)));
+                newFluidInputs.add(fi.copyWithAmount(fi.getAmount() * numberOfOperations));
             }
         });
 

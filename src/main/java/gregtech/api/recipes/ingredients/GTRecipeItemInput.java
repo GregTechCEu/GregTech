@@ -6,7 +6,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 
@@ -80,8 +79,18 @@ public class GTRecipeItemInput extends GTRecipeInput {
         return getFromCache(new GTRecipeItemInput(ri));
     }
 
+    @Override
     protected GTRecipeItemInput copy() {
         GTRecipeItemInput copy = new GTRecipeItemInput(this.inputStacks, this.amount);
+        copy.isConsumable = this.isConsumable;
+        copy.nbtMatcher = this.nbtMatcher;
+        copy.nbtCondition = this.nbtCondition;
+        return copy;
+    }
+
+    @Override
+    public GTRecipeInput copyWithAmount(int amount) {
+        GTRecipeItemInput copy = new GTRecipeItemInput(this.inputStacks, amount);
         copy.isConsumable = this.isConsumable;
         copy.nbtMatcher = this.nbtMatcher;
         copy.nbtCondition = this.nbtCondition;

@@ -59,6 +59,15 @@ public abstract class GTRecipeInput {
 
     abstract GTRecipeInput copy();
 
+    /**
+     * Returns a copy of the ingredient with the given amount.
+     * Used by the parallel logic to multiply the amount of the ingredients.
+     * If you're not using the parallel logic, you can ignore this.
+     *
+     * @return returns a copy of the GTRecipeInput with the given amount.
+     */
+    public abstract GTRecipeInput copyWithAmount(int amount);
+
     public GTRecipeInput setNonConsumable() {
         GTRecipeInput copy = copy();
         copy.isConsumable = false;
