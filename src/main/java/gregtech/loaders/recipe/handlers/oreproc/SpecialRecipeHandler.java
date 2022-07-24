@@ -217,6 +217,30 @@ public class SpecialRecipeHandler {
                 .chancedOutput(gem, Spessartine, 1, 2000, 0)
                 .chancedOutput(gem, Uvarovite, 1, 2000, 0)
                 .buildAndRegister();
+
+        // TODO Sluice materials give oxides instead of pure metals?
+        // Sluice Juice
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(16)
+                .fluidInputs(SluiceJuice.getFluid(1000))
+                .output(dust, Stone)
+                .chancedOutput(dust, Iron, 400, 0)
+                .chancedOutput(dust, Copper, 200, 0)
+                .chancedOutput(dust, Tin, 200, 0)
+                .chancedOutput(dust, Nickel, 200, 0)
+                .chancedOutput(dust, Antimony, 200, 0)
+                .fluidOutputs(Water.getFluid(500))
+                .buildAndRegister();
+
+        // Sluice Sand
+        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder().duration(200).EUt(240)
+                .input(dust, SluiceSand)
+                .output(dust, Stone)
+                .chancedOutput(dust, Iron, 400, 0)
+                .chancedOutput(dust, Neodymium, 200, 0)
+                .chancedOutput(dust, Chrome, 200, 0)
+                .chancedOutput(dust, Manganese, 200, 0)
+                .chancedOutput(dust, Alumina, 200, 0)
+                .buildAndRegister();
     }
 
     /**

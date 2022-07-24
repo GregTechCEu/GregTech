@@ -111,6 +111,12 @@ public class MixerRecipes {
                 .output(dust, EnderPearl, 10)
                 .buildAndRegister();
 
+       MIXER_RECIPES.recipeBuilder().duration(100).EUt(16)
+               .input(dust, SluiceSand)
+               .fluidInputs(Water.getFluid(1000))
+               .fluidOutputs(SluiceJuice.getFluid(1000))
+               .buildAndRegister();
+
         // Alloys
         ModHandler.addShapelessRecipe("dust_brass", OreDictUnifier.get(dust, Brass, 3),
                 new UnificationEntry(dust, Copper),

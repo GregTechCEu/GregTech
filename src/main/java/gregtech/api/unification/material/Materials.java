@@ -687,6 +687,9 @@ public class Materials {
     public static Material Lapotron;
     public static Material UUMatter;
 
+    public static Material SluiceJuice;
+    public static Material SluiceSand;
+
     /**
      * Second Degree Compounds
      */

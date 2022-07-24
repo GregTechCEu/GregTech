@@ -184,7 +184,7 @@ public class MaterialFlagAddition {
         oreProp.setVitriol(PinkVitriol);
 
         oreProp = Magnetite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Iron, Gold);
+        oreProp.setOreByProducts(Iron, Iron, Gold);
         oreProp.setDirectSmeltResult(Iron);
         oreProp.setVitriol(GreenVitriol);
 

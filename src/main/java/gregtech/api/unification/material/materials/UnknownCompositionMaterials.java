@@ -485,5 +485,9 @@ public class UnknownCompositionMaterials {
                 .build();
 
         UUMatter = new Material.Builder(1649, "uu_matter").fluid().fluidTemp(300).build();
+
+        SluiceJuice = new Material.Builder(1650, "sluice_juice").fluid().color(0x5C3C24).build();
+
+        SluiceSand = new Material.Builder(1651, "sluice_sand").dust().color(0xA5A578).iconSet(FINE).build();
     }
 }

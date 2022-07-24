@@ -79,6 +79,7 @@ public class CrushedRecipeHandler {
                 .output(crushedPurified, material)
                 .output(dustTiny, primaryByproduct)
                 .output(dust, Stone)
+                .fluidOutputs(SluiceJuice.getFluid(1000))
                 .duration(400).EUt(16).buildAndRegister();
 
         // Chemical Bath recipe
@@ -89,7 +90,7 @@ public class CrushedRecipeHandler {
         Material mercuryByproduct = null;
         Material persulfateByproduct = null;
         for (Material byproduct : property.getOreByProducts()) {
-            // find the first byproduct in the list with one of these flags (if any)
+            // find the last byproduct in the list with one of these flags (if any)
             if (byproduct.hasFlag(WASHING_MERCURY)) mercuryByproduct = byproduct;
             if (byproduct.hasFlag(WASHING_PERSULFATE)) persulfateByproduct = byproduct;
         }
@@ -100,6 +101,7 @@ public class CrushedRecipeHandler {
                     .fluidInputs(Mercury.getFluid(100))
                     .output(crushedPurified, material)
                     .output(crushedPurified, mercuryByproduct)
+                    .output(dust, SluiceSand)
                     .output(dust, Stone)
                     .duration(400).EUt(VA[LV]).buildAndRegister();
         }
@@ -110,6 +112,7 @@ public class CrushedRecipeHandler {
                     .fluidInputs(SodiumPersulfate.getFluid(100))
                     .output(crushedPurified, material)
                     .output(crushedPurified, persulfateByproduct)
+                    .output(dust, SluiceSand)
                     .output(dust, Stone)
                     .duration(400).EUt(VA[LV]).buildAndRegister();
 
@@ -118,6 +121,7 @@ public class CrushedRecipeHandler {
                     .fluidInputs(PotassiumPersulfate.getFluid(100))
                     .output(crushedPurified, material)
                     .output(crushedPurified, persulfateByproduct)
+                    .output(dust, SluiceSand)
                     .output(dust, Stone)
                     .duration(400).EUt(VA[LV]).buildAndRegister();
         }

@@ -1878,6 +1878,11 @@ material.acidic_naquadria_solution=Acidic Naquadria Solution
 material.naquadria_waste=Naquadria Waste
 material.lapotron=Lapotron
 material.uu_matter=UU-Matter
+material.sluice_juice=Sluice Juice
+material.sluice_sand=Sluice Sand
+item.sluice_sand.dust=Sluice Sand
+item.sluice_sand.dustSmall=Small Pile of Sluice Sand
+item.sluice_sand.dustTiny=Tiny Pile of Sluice Sand
 
 
 # Second Degree Materials

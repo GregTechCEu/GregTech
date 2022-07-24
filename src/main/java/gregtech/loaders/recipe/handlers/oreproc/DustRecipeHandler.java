@@ -6,8 +6,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
-import static gregtech.api.unification.material.Materials.Stone;
-import static gregtech.api.unification.material.Materials.Water;
+import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
@@ -24,6 +23,7 @@ public class DustRecipeHandler {
                 .fluidInputs(Water.getFluid(100))
                 .output(dust, material)
                 .output(dustTiny, Stone)
+                .fluidOutputs(SluiceJuice.getFluid(100))
                 .duration(8).EUt(4).buildAndRegister();
 
         // Smelting recipe

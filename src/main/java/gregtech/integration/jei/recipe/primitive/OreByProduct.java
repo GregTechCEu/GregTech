@@ -235,7 +235,6 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void purifiedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
-        Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
         // macerate purified crushed -> dust
@@ -247,7 +246,7 @@ public class OreByProduct implements IRecipeWrapper {
 
         // TC crushed purified -> refined
         addToOutputs(material, OrePrefix.crushedRefined, 1);
-        addToOutputs(secondaryByproduct, OrePrefix.dustTiny, 3);
+        addToOutputs(byproduct, OrePrefix.dustTiny, 3);
 
         // sifter purified ore -> gems
         if (material.hasProperty(PropertyKey.GEM)) {
@@ -331,8 +330,6 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     private void dustRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
-        Material byproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
-
         // bathe impure dust -> dust
         fluidInputs.add(Collections.singletonList(Water.getFluid(100)));
         addToOutputs(material, dust, 1);
