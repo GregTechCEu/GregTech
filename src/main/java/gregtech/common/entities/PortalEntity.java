@@ -69,11 +69,14 @@ public class PortalEntity extends Entity {
         }
 
         this.onEntityUpdate();
-        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
-        for(Entity entity : list){
-            if (!(entity instanceof PortalEntity)) {
-                GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim), targetX, targetY, targetZ);
-                TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY, targetZ + entity.getLookVec().z);
+
+        if(!this.world.isRemote) {
+            List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
+            for (Entity entity : list) {
+                if (!(entity instanceof PortalEntity)) {
+                    GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim), targetX, targetY, targetZ);
+                    TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY, targetZ + entity.getLookVec().z);
+                }
             }
         }
         --timeToDespawn;
