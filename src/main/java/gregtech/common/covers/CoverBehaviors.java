@@ -65,7 +65,7 @@ public class CoverBehaviors {
 
         registerBehavior(49, new ResourceLocation(GTValues.MODID, "screen"), MetaItems.COVER_SCREEN, CoverScreen::new);
         registerBehavior(50, new ResourceLocation(GTValues.MODID, "energy_detector"), MetaItems.COVER_ENERGY_DETECTOR, CoverDetectorEnergy::new);
-        registerBehavior(73, new ResourceLocation(GTValues.MODID, "energy_latch_detector"), MetaItems.COVER_ENERGY_LATCH_DETECTOR, CoverDetectorEnergyLatch::new);
+        registerBehavior(73, new ResourceLocation(GTValues.MODID, "advanced_energy_detector"), MetaItems.COVER_ENERGY_DETECTOR_ADVANCED, CoverDetectorEnergyAdvanced::new);
         registerBehavior(51, new ResourceLocation(GTValues.MODID, "fluid_detector"), MetaItems.COVER_FLUID_DETECTOR, CoverDetectorFluid::new);
         registerBehavior(52, new ResourceLocation(GTValues.MODID, "item_detector"), MetaItems.COVER_ITEM_DETECTOR, CoverDetectorItem::new);
         registerBehavior(53, new ResourceLocation(GTValues.MODID, "activity_detector"), MetaItems.COVER_ACTIVITY_DETECTOR, CoverActivityDetector::new);
