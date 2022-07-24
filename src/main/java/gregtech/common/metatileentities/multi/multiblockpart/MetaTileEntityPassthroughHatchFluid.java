@@ -105,7 +105,6 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
     }
 
- */
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
