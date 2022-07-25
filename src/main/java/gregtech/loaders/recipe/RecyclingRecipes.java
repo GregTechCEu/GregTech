@@ -455,7 +455,7 @@ public class RecyclingRecipes {
 
         OrePrefix largePrefix = chosenList.get(1); // ingot or small dust
         OrePrefix mediumPrefix = chosenList.get(2); // chunk or tiny dust
-        OrePrefix smallPrefix = chosenList.get(3); // nugget or null
+        OrePrefix smallPrefix = GTUtility.selectItemInList(3, null, chosenList, OrePrefix.class); // nugget or null
         MaterialStack largeMS = tempList.get(largePrefix); // ingot or small dust
         MaterialStack mediumMS = tempList.get(mediumPrefix); // chunk or tiny dust
         MaterialStack smallMS = tempList.get(smallPrefix); // nugget or null
