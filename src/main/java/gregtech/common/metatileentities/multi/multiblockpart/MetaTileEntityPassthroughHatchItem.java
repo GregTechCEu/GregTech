@@ -5,8 +5,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
+// import gregtech.api.gui.ModularUI;
+// import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
@@ -80,7 +80,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     protected IItemHandlerModifiable createImportItemHandler() {
         return new NotifiableItemStackHandler(getInventorySize(), getController(), false);
     }
-
+/*
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(getInventorySize());
@@ -102,7 +102,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
     }
-
+*/
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);

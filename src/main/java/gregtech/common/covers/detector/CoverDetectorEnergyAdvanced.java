@@ -19,6 +19,7 @@ import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,15 +29,23 @@ import net.minecraft.util.*;
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable{
     public int minPercent, maxPercent;
+    public int minEU, maxEU;
     private int outputAmount;
     private boolean inverted;
+    private boolean useEU;
+    private int maxLength,  maxEnterable;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.minPercent = 10;
         this.maxPercent = 90;
+        this.minEU = 512;
+        this.maxEU = 2048;
         this.outputAmount = 0;
         this.inverted = false;
+        this.useEU = false;
+        this.maxLength = 3;
+        this.maxEnterable = 100;
     }
 
     @Override
@@ -44,6 +53,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null;
     }
 
+    // TODO: use unique texture for advanced energy detector
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.DETECTOR_ENERGY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
@@ -52,7 +62,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult){
         if (!this.coverHolder.getWorld().isRemote) {
-            // openUI((EntityPlayerMP) playerIn);
             GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
@@ -67,83 +76,129 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0){
             float currentStorageRatio = 100f * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
 
-            if (currentStorageRatio >= maxPercent){
-                if (inverted)
-                    outputAmount = 15;
-                else
-                    outputAmount = 0;
-            }
-            if (currentStorageRatio <= minPercent){
-                if (inverted)
-                    outputAmount = 0;
-                else
-                    outputAmount = 15;
+            if (useEU) {
+                compareValue((float) energyContainer.getEnergyStored(), maxEU, minEU);
+            } else {
+                compareValue(currentStorageRatio, maxPercent, minPercent);
             }
             setRedstoneSignalOutput(outputAmount);
+
+            /* GTLog.logger.warn(
+                    "\nStorage Ratio: " + currentStorageRatio +
+                    "\nMax/min percent: " + maxPercent + ", " + minPercent +
+                    "\nmax/min EU: " + maxEU + ", " + minEU +
+                    "\ninverted: " + inverted +
+                    "\nuseEU: " + useEU
+            ); */
+        }
+    }
+
+    private void compareValue (float value, int maxValue, int minValue) {
+        if (value >= maxValue){
+            outputAmount = inverted ? 15 : 0;
+        }
+
+        if (value <= minValue) {
+            outputAmount = inverted ? 0 : 15;
         }
     }
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(176, 105);
+        ModularWindow.Builder builder = ModularWindow.builder(188, 90);
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new Column()
                         .widget(new Row()
-                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.min_percent").localise())
+                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.min").localise(useEU ? "EU" : "Percent"))
                                         .setTextAlignment(Alignment.CenterLeft)
-                                        .setSize(100, 10)
+                                        .setSize(100, 16)
                                 )
                                 .widget(new TextFieldWidget()
-                                        .setGetterInt(() -> minPercent)
-                                        .setSetterInt(this::setMinPercent)
-                                        .setMaxLength(3)
-                                        .setNumbers(0, 100)
+                                        .setGetterInt(this::getMinValue)
+                                        .setSetterInt(this::setMinValue)
+                                        .setMaxLength(maxLength)
+                                        .setNumbers(0, maxEnterable)
                                         .setTextAlignment(Alignment.CenterLeft)
-                                        .setSize(20, 10)
-                                        .setPos(10, 0)
+                                        .setSize(80, 16)
                                         .setBackground(GuiTextures.DISPLAY_SMALL)
                                 )
 
                         )
                         .widget(new Row()
-                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.max_percent").localise())
+                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.max").localise(useEU ? "EU" : "Percent"))
                                         .setTextAlignment(Alignment.CenterLeft)
-                                        .setSize(100, 10)
+                                        .setSize(100, 16)
                                 )
                                 .widget(new TextFieldWidget()
-                                        .setGetterInt(() -> maxPercent)
-                                        .setSetterInt(this::setMaxPercent)
-                                        .setMaxLength(3)
-                                        .setNumbers(0, 100)
+                                        .setGetterInt(this::getMaxValue)
+                                        .setSetterInt(this::setMaxValue)
+                                        .setMaxLength(maxLength)
+                                        .setNumbers(0, maxEnterable)
                                         .setTextAlignment(Alignment.CenterLeft)
-                                        .setSize(20, 10)
-                                        .setPos(10, 0)
+                                        .setSize(80, 16)
                                         .setBackground(GuiTextures.DISPLAY_SMALL)
                                 )
-                                .setPos(0, 10)
                         )
                         .widget(new Row()
                                 .widget(new ButtonWidget()
                                         .setOnClick(this::toggleInvert)
                                         .addTooltip(Text.localised("cover.advanced_energy_detector.invert_tooltip"))
-                                        .setSize(120, 10)
-                                        .setBackground(GuiTextures.BUTTON, new Text("cover.advanced_energy_detector.invert_label").localise())
+                                        .setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.invert_label", this.inverted))
+                                        .setSize(180, 16)
                                 )
-                                .setPos(0, 10)
                         )
-                        .setPos(16, 16)
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(this::toggleEU)
+                                        .addTooltip(Text.localised("cover.advanced_energy_detector.toggle_EU_tooltip"))
+                                        .setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_EU_label", this.useEU))
+                                        .setSize(180, 16)
+                                )
+                        )
+                        .setPos(4, 4)
                 );
+
         return builder.build();
     }
 
-    private void setMinPercent(int val){
-        minPercent = Math.min(maxPercent - 1, val);
+    private int getMinValue() {
+        return useEU ? maxEU : maxPercent;
     }
-    private void setMaxPercent(int val){
-        maxPercent = Math.max(minPercent + 1, val);
+
+    private void setMinValue(int val){
+        if (useEU)
+            minEU = Math.min(maxEU - 1, val);
+        else
+            minPercent = Math.min(maxPercent - 1, val);
     }
+
+    private int getMaxValue() {
+        return useEU ? maxEU : maxPercent;
+    }
+
+    private void setMaxValue(int val){
+        if (useEU)
+            maxEU = Math.max(minEU + 1, val);
+        else
+            maxPercent = Math.max(minPercent + 1, val);
+    }
+
     private void toggleInvert(Widget.ClickData data, Widget widget){
         inverted = !inverted;
+        widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.invert_label", this.inverted));
+    }
+
+    private void toggleEU(Widget.ClickData data, Widget widget){
+        if (useEU) {
+            maxLength = 10;
+            maxEnterable = Integer.MAX_VALUE;
+        } else {
+            maxLength = 3;
+            maxEnterable = 100;
+        }
+
+        useEU = !useEU;
+        widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_EU_label", this.useEU));
     }
 
     @Override
@@ -156,7 +211,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("minPercent", this.minPercent);
         tagCompound.setInteger("maxPercent", this.maxPercent);
+        tagCompound.setInteger("maxEU", this.maxEU);
+        tagCompound.setInteger("minEU", this.minEU);
         tagCompound.setInteger("outputAmount", outputAmount);
+        tagCompound.setBoolean("inverted", this.inverted);
+        tagCompound.setBoolean("useEU", this.useEU);
     }
 
     @Override
@@ -164,20 +223,32 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         super.readFromNBT(tagCompound);
         this.minPercent = tagCompound.getInteger("minPercent");
         this.maxPercent = tagCompound.getInteger("maxPercent");
+        this.minEU = tagCompound.getInteger("minEU");
+        this.maxEU = tagCompound.getInteger("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
+        this.inverted = tagCompound.getBoolean("inverted");
+        this.useEU = tagCompound.getBoolean("useEU");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         packetBuffer.writeInt(this.minPercent);
         packetBuffer.writeInt(this.maxPercent);
+        packetBuffer.writeInt(this.minEU);
+        packetBuffer.writeInt(this.maxEU);
         packetBuffer.writeInt(this.outputAmount);
+        packetBuffer.writeBoolean(this.inverted);
+        packetBuffer.writeBoolean(this.useEU);
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         this.minPercent = packetBuffer.readInt();
         this.maxPercent = packetBuffer.readInt();
+        this.minEU = packetBuffer.readInt();
+        this.maxEU = packetBuffer.readInt();
         this.outputAmount = packetBuffer.readInt();
+        this.inverted = packetBuffer.readBoolean();
+        this.useEU = packetBuffer.readBoolean();
     }
 }
