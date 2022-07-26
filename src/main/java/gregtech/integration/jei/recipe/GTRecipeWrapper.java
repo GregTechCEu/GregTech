@@ -36,7 +36,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
-    private String lastCopiedRemoval;
 
     public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipeMap = recipeMap;
@@ -159,7 +158,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     String copyString = output + recipeLine + "\n";
                     ClipboardUtil.copyToClipboard(copyString);
                     Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
-                    this.lastCopiedRemoval = copyString;
                     return true;
                 })
                 .setActiveSupplier(creativePlayerCtPredicate));
