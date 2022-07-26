@@ -781,6 +781,7 @@ public class ElementMaterials {
                 .element(Elements.U238)
                 .toolStats(6.0f, 3.0f, 512, 21)
                 .fluidTemp(1405)
+                .nuclearMacroCrossSections(0.01, 0.00001, 3, 1)
                 .build();
 
         Uranium235 = new Material.Builder(117, "uranium_235")
@@ -790,6 +791,7 @@ public class ElementMaterials {
                 .element(Elements.U235)
                 .toolStats(6.0f, 3.0f, 512, 33)
                 .fluidTemp(1405)
+                .nuclearMacroCrossSections(1, 700, 1, 100)
                 .build();
 
         Vanadium = new Material.Builder(118, "vanadium")

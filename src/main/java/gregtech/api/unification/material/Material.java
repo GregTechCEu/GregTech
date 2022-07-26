@@ -277,6 +277,11 @@ public class Material implements Comparable<Material> {
         return prop == null ? null : prop.getPlasma(amount);
     }
 
+    public double[] getNuclearCrossSections() {
+        NuclearMaterialProperty prop = properties.getProperty(PropertyKey.NUCLEAR_MATERIAL);
+        return prop == null ? null : prop.getNuclearCrossSections();
+    }
+
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
         return GTUtility.lowerUnderscoreToUpperCamel(toString());
@@ -830,6 +835,11 @@ public class Material implements Comparable<Material> {
             if (!properties.hasProperty(PropertyKey.TOOL)) // cannot assign default here
                 throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
             properties.getProperty(PropertyKey.TOOL).addEnchantmentForTools(enchant, level);
+            return this;
+        }
+
+        public Builder nuclearMacroCrossSections(double fission_cs_HE, double fission_cs_LE, double capture_cs_HE, double capture_cs_LE){
+            properties.setProperty(PropertyKey.NUCLEAR_MATERIAL, new NuclearMaterialProperty(fission_cs_HE, fission_cs_LE, capture_cs_HE, capture_cs_LE));
             return this;
         }
 
