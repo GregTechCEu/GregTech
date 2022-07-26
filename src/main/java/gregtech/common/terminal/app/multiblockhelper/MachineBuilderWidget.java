@@ -18,6 +18,8 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockInfo;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.common.inventory.handlers.CycleItemStackHandler;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockBush;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -37,7 +39,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -186,7 +191,18 @@ public class MachineBuilderWidget extends WidgetGroup {
                     float hitX = pos.getX() + 0.5f;
                     float hitY = pos.getY() + 0.5f;
                     float hitZ = pos.getZ() + 0.5f;
-                    IBlockState state = itemBlock.getBlock().getStateFromMeta(itemBlock.getMetadata(itemStack.getMetadata()));
+                    Block block = itemBlock.getBlock();
+                    IBlockState state = block.getStateFromMeta(itemBlock.getMetadata(itemStack.getMetadata()));
+                    if(block instanceof BlockBush) {
+                        // Prevent placing lilypads, grass, etc where they should not be
+                        if(!((BlockBush) block).canBlockStay(world, offset, state)) {
+                            if(clickData.isClient) {
+                                TerminalDialogWidget.showInfoDialog(os, "terminal.component.error", "This Block cannot be placed here").setClientSide().open();
+                            }
+                            return;
+                        }
+                    }
+
                     itemBlock.placeBlockAt(itemStack, gui.entityPlayer, world, offset, facing, hitX, hitY, hitZ, state);
                     itemStack.shrink(1);
                 }
