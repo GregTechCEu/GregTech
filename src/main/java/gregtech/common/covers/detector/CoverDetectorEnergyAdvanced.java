@@ -5,6 +5,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.widget.ISyncedWidget;
+import com.cleanroommc.modularui.api.widget.IWidgetParent;
 import com.cleanroommc.modularui.api.widget.Widget;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -82,14 +84,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
                 compareValue(currentStorageRatio, maxPercent, minPercent);
             }
             setRedstoneSignalOutput(outputAmount);
-
-            /* GTLog.logger.warn(
-                    "\nStorage Ratio: " + currentStorageRatio +
-                    "\nMax/min percent: " + maxPercent + ", " + minPercent +
-                    "\nmax/min EU: " + maxEU + ", " + minEU +
-                    "\ninverted: " + inverted +
-                    "\nuseEU: " + useEU
-            ); */
         }
     }
 
@@ -110,7 +104,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new Column()
                         .widget(new Row()
-                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.min"))
+                                .widget(new TextWidget(Text.localised("cover.advanced_energy_detector.min"))
                                         .setTextAlignment(Alignment.CenterLeft)
                                         .setSize(100, 16)
                                 )
@@ -123,12 +117,10 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
                                         .setSize(80, 16)
                                         .setBackground(GuiTextures.DISPLAY_SMALL)
                                 )
-
                         )
                         .widget(new Row()
-                                .widget(new TextWidget()
+                                .widget(new TextWidget(Text.localised("cover.advanced_energy_detector.max"))
                                         .setTextAlignment(Alignment.CenterLeft)
-                                        .setBackground(new Text("cover.advanced_energy_detector.max"))
                                         .setSize(100, 16)
                                 )
                                 .widget(new TextFieldWidget()
@@ -190,14 +182,24 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.invert_label", this.inverted));
     }
 
+    private void updateFields(int val, ISyncedWidget syncedWidget) {
+        if (syncedWidget instanceof TextFieldWidget) {
+            ((TextFieldWidget) syncedWidget)
+                    .setMaxLength(maxLength)
+                    .setNumbers(0, maxEnterable);
+        }
+    }
+
     private void toggleEU(Widget.ClickData data, Widget widget){
-        if (useEU) {
+        // i have to invert useEU for some godforsaken reason
+        if (!useEU) {
             maxLength = 10;
             maxEnterable = Integer.MAX_VALUE;
         } else {
             maxLength = 3;
             maxEnterable = 100;
         }
+        widget.getWindow().syncedWidgets.forEach(this::updateFields);
 
         useEU = !useEU;
         widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_EU_label", this.useEU));
