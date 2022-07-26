@@ -310,7 +310,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public boolean isDistinct() {
-        return isDistinct && (inputInventory.getSlots() + inputFluidInventory.getTanks() > 0);
+        return isDistinct && inputInventory.getSlots() > 0;
     }
 
     protected void toggleDistinct() {

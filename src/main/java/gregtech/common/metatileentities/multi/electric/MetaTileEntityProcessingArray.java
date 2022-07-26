@@ -114,7 +114,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @Override
     public boolean canBeDistinct() {
-        return (inputInventory.getSlots() + inputFluidInventory.getTanks() > 0);
+        return inputInventory.getSlots() > 0;
     }
 
     @Override
