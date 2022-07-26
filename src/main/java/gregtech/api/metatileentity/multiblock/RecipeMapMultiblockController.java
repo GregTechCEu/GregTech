@@ -182,7 +182,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
-            if (canBeDistinct()) {
+            if (canBeDistinct() && inputInventory.getSlots() > 0) {
                 ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.universal.distinct");
                 buttonText.appendText(" ");
                 ITextComponent button = AdvancedTextWidget.withButton(isDistinct() ?
@@ -310,7 +310,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public boolean isDistinct() {
-        return isDistinct && inputInventory.getSlots() > 0;
+        return isDistinct;
     }
 
     protected void toggleDistinct() {
