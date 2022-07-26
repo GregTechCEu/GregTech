@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -21,7 +22,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
-import gregtech.api.block.VariantActiveBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -310,7 +310,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public boolean isDistinct() {
-        return isDistinct;
+        return isDistinct && (inputInventory.getSlots() + inputFluidInventory.getTanks() > 0);
     }
 
     protected void toggleDistinct() {
