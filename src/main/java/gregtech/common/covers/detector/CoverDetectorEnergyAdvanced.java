@@ -106,10 +106,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(188, 90);
+
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new Column()
                         .widget(new Row()
-                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.min").localise(useEU ? "EU" : "Percent"))
+                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.min"))
                                         .setTextAlignment(Alignment.CenterLeft)
                                         .setSize(100, 16)
                                 )
@@ -125,8 +126,9 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
                         )
                         .widget(new Row()
-                                .widget(new TextWidget(new Text("cover.advanced_energy_detector.max").localise(useEU ? "EU" : "Percent"))
+                                .widget(new TextWidget()
                                         .setTextAlignment(Alignment.CenterLeft)
+                                        .setBackground(new Text("cover.advanced_energy_detector.max"))
                                         .setSize(100, 16)
                                 )
                                 .widget(new TextFieldWidget()
@@ -162,7 +164,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     private int getMinValue() {
-        return useEU ? maxEU : maxPercent;
+        return useEU ? minEU : minPercent;
     }
 
     private void setMinValue(int val){

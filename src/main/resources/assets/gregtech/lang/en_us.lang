@@ -1218,8 +1218,8 @@ cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPri
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
-cover.advanced_energy_detector.min=Minimum %s
-cover.advanced_energy_detector.max=Maximum %s
+cover.advanced_energy_detector.min=Minimum Threshold
+cover.advanced_energy_detector.max=Maximum Threshold
 cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic\nBy default, redstone is emitted when less than the minimum percent, and stops emitting when greater than the max percent
 cover.advanced_energy_detector.invert_label=Inverted: %s
 cover.advanced_energy_detector.toggle_EU_tooltip=Toggle to use EU instead of as a percent
