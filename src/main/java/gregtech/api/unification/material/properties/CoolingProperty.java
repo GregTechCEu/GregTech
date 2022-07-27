@@ -1,19 +1,22 @@
-package gregtech.api.nuclear.components;
+package gregtech.api.unification.material.properties;
 
-public class Coolant {
-
+public class CoolingProperty implements IMaterialProperty<CoolingProperty> {
     int pressure;
     int moderatorFactor;
-    int absorptionFactor;
+    double absorptionFactor;
     int boilingPoint;
     int temperature;
-
-    Coolant(int pressure, int moderatorFactor, int absorptionFactor, int boilingPoint, int temperature) {
+    public CoolingProperty(int pressure, int moderatorFactor, double absorptionFactor, int boilingPoint, int temperature) {
         this.pressure = pressure;
         this.moderatorFactor = moderatorFactor;
         this.absorptionFactor = absorptionFactor;
         this.boilingPoint = boilingPoint;
         this.temperature = temperature;
+    }
+
+    @Override
+    public void verifyProperty(MaterialProperties properties) {
+
     }
 
     public int getPressure() {
@@ -24,7 +27,7 @@ public class Coolant {
         return moderatorFactor;
     }
 
-    public int getAbsorptionFactor() {
+    public double getAbsorptionFactor() {
         return absorptionFactor;
     }
 

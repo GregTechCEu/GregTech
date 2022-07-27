@@ -282,6 +282,10 @@ public class Material implements Comparable<Material> {
         return prop == null ? null : prop.getNuclearCrossSections();
     }
 
+    public CoolingProperty getCoolantProperties() {
+        return properties.getProperty(PropertyKey.COOLING_MATERIAL);
+    }
+
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
         return GTUtility.lowerUnderscoreToUpperCamel(toString());
@@ -840,6 +844,11 @@ public class Material implements Comparable<Material> {
 
         public Builder nuclearMacroCrossSections(double fission_cs_HE, double fission_cs_LE, double capture_cs_HE, double capture_cs_LE){
             properties.setProperty(PropertyKey.NUCLEAR_MATERIAL, new NuclearMaterialProperty(fission_cs_HE, fission_cs_LE, capture_cs_HE, capture_cs_LE));
+            return this;
+        }
+
+        public Builder nuclearCoolingProperty(int pressure, int moderatorFactor, double absorptionFactor, int boilingPoint, int temperature){
+            properties.setProperty(PropertyKey.COOLING_MATERIAL, new CoolingProperty(pressure, moderatorFactor, absorptionFactor, boilingPoint, temperature));
             return this;
         }
 

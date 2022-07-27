@@ -14,6 +14,7 @@ public class PropertyKey<T extends IMaterialProperty<T>> {
     public static final PropertyKey<ToolProperty> TOOL = new PropertyKey<>("tool", ToolProperty.class);
     public static final PropertyKey<WireProperties> WIRE = new PropertyKey<>("wire", WireProperties.class);
     public static final PropertyKey<NuclearMaterialProperty> NUCLEAR_MATERIAL = new PropertyKey<>("nuclear", NuclearMaterialProperty.class);
+    public static final PropertyKey<CoolingProperty> COOLING_MATERIAL = new PropertyKey<>("coolant", CoolingProperty.class);
 
     private final String key;
     private final Class<T> type;

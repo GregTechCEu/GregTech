@@ -1,19 +1,20 @@
 package gregtech.api.nuclear.components;
 
 import gregtech.api.nuclear.ReactorComponent;
+import gregtech.api.unification.material.Material;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
 public class CoolantChannel extends ReactorComponent {
-    private final Coolant coolant;
+    private final Material coolant;
     private int weight;
     private final List<Pair<Integer, Integer>> fuelRodPairs = new ObjectArrayList<>();
 
 
-    CoolantChannel(int maxTemperature, float thermalConductivity, Coolant coolant) {
-        super(true, maxTemperature, coolant.getModeratorFactor(), thermalConductivity);
+    CoolantChannel(int maxTemperature, float thermalConductivity, Material coolant) {
+        super(true, maxTemperature, coolant.getCoolantProperties().getModeratorFactor(), thermalConductivity);
         this.coolant = coolant;
         this.weight = 0;
     }
@@ -34,7 +35,7 @@ public class CoolantChannel extends ReactorComponent {
         this.weight = weight;
     }
 
-    public Coolant getCoolant() {
+    public Material getCoolant() {
         return coolant;
     }
 

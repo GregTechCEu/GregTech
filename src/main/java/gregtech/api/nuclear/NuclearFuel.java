@@ -1,5 +1,6 @@
 package gregtech.api.nuclear;
 
+import gregtech.api.nuclear.fuels.NuclearFuels;
 import gregtech.api.unification.material.Material;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -7,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NuclearFuel {
-    private List<Pair<Material, Float>> nuclearMaterials;
-    private final int duration;
-    private final float temperatureCoefficient;
-    private List<Pair<Float, Float>> delayedNeutronsGroups = new ArrayList<>();
+    private List<Pair<Material, Double>> nuclearMaterials;
+    private final double duration;
+    private final double temperatureCoefficient;
+    private List<Pair<Double, Double>> delayedNeutronsGroups = new ArrayList<>();
     private final double[] cs_vector;
 
-    NuclearFuel(List<Pair<Material, Float>> nuclearMaterials, int duration, float temperatureCoefficient) {
+    public NuclearFuel(List<Pair<Material, Double>> nuclearMaterials, double duration, double temperatureCoefficient) {
         this.nuclearMaterials = nuclearMaterials;
         this.duration = duration;
         this.temperatureCoefficient = temperatureCoefficient;
@@ -22,7 +23,7 @@ public class NuclearFuel {
 
     double[] getMacroCrossSections() {
         double[] mcs = new double[]{0, 0, 0, 0};
-        for (Pair<Material, Float> pair : nuclearMaterials) {
+        for (Pair<Material, Double> pair : nuclearMaterials) {
             double[] pairCs = pair.getLeft().getNuclearCrossSections();
             mcs[0] += pairCs[0] * pair.getRight();
             mcs[1] += pairCs[1] * pair.getRight();
@@ -35,19 +36,20 @@ public class NuclearFuel {
         return mcs;
     }
 
-    void setDelayedNeutronsGroups(List<Pair<Float, Float>> groups) {
+    public NuclearFuel setDelayedNeutronsGroups(List<Pair<Double, Double>> groups) {
         delayedNeutronsGroups = groups;
+        return this;
     }
 
-    List<Pair<Float, Float>> getDelayedNeutronsGroups() {
+    List<Pair<Double, Double>> getDelayedNeutronsGroups() {
         return delayedNeutronsGroups;
     }
 
-    float getTemperatureCoefficient() {
+    double getTemperatureCoefficient() {
         return temperatureCoefficient;
     }
 
-    public int getDuration() {
+    public double getDuration() {
         return duration;
     }
 

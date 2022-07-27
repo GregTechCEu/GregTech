@@ -156,6 +156,7 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .fluidTemp(300)
+                .nuclearCoolingProperty(70, 1, 0.99, 373, 300)
                 .build();
 
         LiquidOxygen = new Material.Builder(270, "liquid_oxygen")
