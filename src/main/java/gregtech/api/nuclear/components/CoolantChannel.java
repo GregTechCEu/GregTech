@@ -13,7 +13,7 @@ public class CoolantChannel extends ReactorComponent {
     private final List<Pair<Integer, Integer>> fuelRodPairs = new ObjectArrayList<>();
 
 
-    CoolantChannel(int maxTemperature, float thermalConductivity, Material coolant) {
+    public CoolantChannel(int maxTemperature, float thermalConductivity, Material coolant) {
         super(true, maxTemperature, coolant.getCoolantProperties().getModeratorFactor(), thermalConductivity);
         this.coolant = coolant;
         this.weight = 0;

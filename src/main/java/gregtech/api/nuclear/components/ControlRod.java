@@ -12,7 +12,7 @@ public class ControlRod extends ReactorComponent {
     private float Insertion;
     private final List<Pair<Integer, Integer>> fuelRodPairs = new ObjectArrayList<>();
 
-    ControlRod(int maxTemperature, boolean tipModeration, int thermalConductivity, float insertion) {
+    public ControlRod(int maxTemperature, boolean tipModeration, double thermalConductivity, float insertion) {
         super(true, maxTemperature, 0, thermalConductivity);
         this.tipModeration = tipModeration;
         this.Insertion = insertion;
