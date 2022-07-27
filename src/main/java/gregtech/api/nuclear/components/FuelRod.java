@@ -7,7 +7,7 @@ public class FuelRod extends ReactorComponent {
     private final NuclearFuel fuel;
     private final float neutronSourceIntensity;
 
-    public FuelRod(int maxTemperature, int thermalConductivity, NuclearFuel fuel, float neutronSourceIntensity) {
+    public FuelRod(int maxTemperature, double thermalConductivity, NuclearFuel fuel, float neutronSourceIntensity) {
         super(true, maxTemperature, 0, thermalConductivity);
         this.fuel = fuel;
         this.neutronSourceIntensity = neutronSourceIntensity;
@@ -35,5 +35,10 @@ public class FuelRod extends ReactorComponent {
 
     public NuclearFuel getFuel() {
         return fuel;
+    }
+
+    @Override
+    public FuelRod copy() {
+        return new FuelRod(getMaxTemperature(), getThermalConductivity(), fuel, neutronSourceIntensity);
     }
 }

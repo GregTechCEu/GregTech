@@ -9,13 +9,13 @@ import java.util.List;
 public class ControlRod extends ReactorComponent {
     private int weight;
     private final boolean tipModeration;
-    private float Insertion;
+    private float insertion;
     private final List<Pair<Integer, Integer>> fuelRodPairs = new ObjectArrayList<>();
 
     public ControlRod(int maxTemperature, boolean tipModeration, double thermalConductivity, float insertion) {
         super(true, maxTemperature, 0, thermalConductivity);
         this.tipModeration = tipModeration;
-        this.Insertion = insertion;
+        this.insertion = insertion;
         this.weight = 0;
     }
 
@@ -40,11 +40,11 @@ public class ControlRod extends ReactorComponent {
     }
 
     public float getInsertion() {
-        return Insertion;
+        return insertion;
     }
 
     public void setInsertion(float insertion) {
-        Insertion = insertion;
+        this.insertion = insertion;
     }
 
     public void increaseWeight() {
@@ -57,5 +57,10 @@ public class ControlRod extends ReactorComponent {
 
     public void computeWeightFromFuelRodMap() {
         this.weight = fuelRodPairs.size() - 1;
+    }
+
+    @Override
+    public ControlRod copy() {
+        return new ControlRod(getMaxTemperature(), tipModeration, getThermalConductivity(), insertion);
     }
 }

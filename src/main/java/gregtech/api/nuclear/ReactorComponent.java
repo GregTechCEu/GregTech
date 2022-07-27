@@ -15,11 +15,15 @@ public class ReactorComponent {
         this.thermalConductivity = thermalConductivity;
     }
 
+    public ReactorComponent copy(){
+        return new ReactorComponent(isInside, maxTemperature, moderatorFactor, thermalConductivity);
+    }
+
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setID(int id) {
         this.id = id;
     }
 
