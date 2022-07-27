@@ -955,9 +955,7 @@ public class GTUtility {
         }
 
         MetaTileEntity machine = getMetaTileEntity(machineStack);
-        // Blacklist the Rock Breaker here instead of through the config option so we don't get people removing the config entry and then
-        // complaining it does not work. Remove from here if we ever decide to implement PA Rock Breaker
-        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity || machine instanceof MetaTileEntityRockBreaker))
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity))
             return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
 
         return false;
