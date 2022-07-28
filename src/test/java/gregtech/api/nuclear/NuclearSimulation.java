@@ -345,5 +345,105 @@ public class NuclearSimulation {
 
 //##########REACTOR SIMULATION##########
 
+        int n = 0;
+
+        double reactorTemp = average_temperature;
+
+        int p = average_pressure;
+
+        double dn = 0;
+
+        double deltaT = 0;
+
+        double k_eff = 1. * k;
+
+
+        double[] rC = new double[average_delayed_neutrons_groups.length];
+        double[] deltaCooling = new double[average_delayed_neutrons_groups.length];
+
+        int group_sum = 0;
+
+        double iodine_amount = 0;
+        double iodine_yield = 0.02;
+        double iodine_decay_constant = 0.0006;
+        double xenon_amount = 0;
+        double xenon_decay_constant = 0.0004;
+
+        boolean update_control_rods = false;
+
+        //neutrons_final = []
+        //temperature_final = []
+        //reactivity_final = []
+        //total_fuel_final = []
+        //iodine_amount_final = []
+        //poison_amount_final = []
+
+        double timestep = 1e-2;
+
+        int meltdown_counter = 0;
+
+        int timestart = 0;
+        int timeend = time_max;
+        //#time_max = 600000
+
+        GTLog.logger.info("Simulating...");
+
+        for (int time = timestart; time < timeend; time++) {
+
+            //#Actions simulating external intervention here
+
+            if (reactorTemp >= 400 && time < 2000) {
+                for (ControlRod rod : effective_control_rods) {
+                    rod.setInsertion(0.22F);
+                }
+                update_control_rods = true;
+            }
+
+            //#Actions simulating external intervention above here
+
+            dn = (k_eff * (1 - beta) - 1) * (n / l) + group_sum + neutron_sources_total;
+            n += dn * timestep;
+
+            for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
+                group_sum = 0;
+                group_sum += average_delayed_neutrons_groups[i][1] * rC[i];
+                deltaCooling[i] = (k_eff * average_delayed_neutrons_groups[i][0] * (n / l) - average_delayed_neutrons_groups[i][1] * rC[i]);
+                rC[i] += deltaCooling[i] * timestep;
+            }
+
+            deltaT = 2.5 * n - average_thermal_conductivity * (reactorTemp - average_coolant_temperature);
+            reactorTemp += deltaT * timestep;
+
+            iodine_amount += (n * iodine_yield - iodine_amount * iodine_decay_constant) * timestep;
+            xenon_amount += (iodine_amount * iodine_decay_constant - xenon_amount * (xenon_decay_constant + n * l_slow * average_geometric_factor_sn)) * timestep;
+
+            if (update_control_rods) {
+                control_rod_factor = ControlRod.ControlRodFactor(effective_control_rods);
+                update_control_rods = false;
+            }
+
+            k_eff = k * (1 + average_temperature_coefficient * reactorTemp);
+            k_eff *= 1 + effective_control_rods.size() * 1F / fuel_rods.size() * control_rod_factor;
+            k_eff *= 1 + CoolingProperty.coolantTemperatureFactor(reactorTemp, average_boiling_point, average_absorption, average_moderation, p);
+            k_eff *= 1 - 0.5 * xenon_amount * l_slow * average_geometric_factor_sn;
+            k_eff = Math.max(0, k_eff);
+
+            //#Checking for fail conditions
+
+            if (reactorTemp > reactor_max_temp) {
+                meltdown_counter += 1;
+            }
+            if (reactorTemp > 10 * reactor_max_temp) {
+                GTLog.logger.info("Reactor has exploded");
+            }
+            if ((reactorTemp >= 900 && p < 100)) {
+                GTLog.logger.info("Secondary hydrogen explosion happened");
+                break;
+            }
+            if (meltdown_counter >= 60) {
+                GTLog.logger.info("Reactor has melted down");
+                break;
+            }
+        }
     }
 }

@@ -39,7 +39,7 @@ public class CoolingProperty implements IMaterialProperty<CoolingProperty> {
         return temperature;
     }
 
-    public static double coolantTemperatureFactor(int temperature, int temperature_boil, double absorption, int m, int p) {
+    public static double coolantTemperatureFactor(double temperature, int temperature_boil, double absorption, int m, int p) {
         if (temperature > 3 * temperature_boil) {
             return (temperature - 3 * temperature_boil) * (absorption - m) / (3 * p) + m - absorption;
         } else {
