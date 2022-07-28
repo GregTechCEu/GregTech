@@ -10,7 +10,7 @@ import java.util.List;
 public class CoolantChannel extends ReactorComponent {
     private final Material coolant;
     private int weight;
-    private final List<Pair<Integer, Integer>> fuelRodPairs = new ObjectArrayList<>();
+    private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
 
     public CoolantChannel(int maxTemperature, double thermalConductivity, Material coolant) {
@@ -19,11 +19,11 @@ public class CoolantChannel extends ReactorComponent {
         this.weight = 0;
     }
 
-    public void addFuelRodPairToMap(int idA, int idB) {
-        fuelRodPairs.add(Pair.of(idA, idB));
+    public void addFuelRodPairToMap(FuelRod fuelRodA, FuelRod fuelRodB) {
+        fuelRodPairs.add(Pair.of(fuelRodA, fuelRodB));
     }
 
-    List<Pair<Integer, Integer>> getFuelRodPairMap() {
+    List<Pair<FuelRod, FuelRod>> getFuelRodPairMap() {
         return fuelRodPairs;
     }
 

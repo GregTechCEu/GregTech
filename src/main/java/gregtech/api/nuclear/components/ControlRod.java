@@ -10,7 +10,7 @@ public class ControlRod extends ReactorComponent {
     private int weight;
     private final boolean tipModeration;
     private float insertion;
-    private final List<Pair<Integer, Integer>> fuelRodPairs = new ObjectArrayList<>();
+    private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
     public ControlRod(int maxTemperature, boolean tipModeration, double thermalConductivity, float insertion) {
         super(true, maxTemperature, 0, thermalConductivity);
@@ -31,11 +31,11 @@ public class ControlRod extends ReactorComponent {
         this.weight = weight;
     }
 
-    public void addFuelRodPairToMap(int idA, int idB) {
-        fuelRodPairs.add(Pair.of(idA, idB));
+    public void addFuelRodPairToMap(FuelRod fuelRodA, FuelRod fuelRodB) {
+        fuelRodPairs.add(Pair.of(fuelRodA, fuelRodB));
     }
 
-    List<Pair<Integer, Integer>> getFuelRodPairMap() {
+    List<Pair<FuelRod, FuelRod>> getFuelRodPairMap() {
         return fuelRodPairs;
     }
 
