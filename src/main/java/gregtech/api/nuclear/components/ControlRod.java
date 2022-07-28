@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlRod extends ReactorComponent {
-    private int weight;
+    private double weight;
     private final boolean tipModeration;
-    private float insertion;
+    private double insertion;
     private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
-    public ControlRod(int maxTemperature, boolean tipModeration, double thermalConductivity, float insertion) {
+    public ControlRod(double maxTemperature, boolean tipModeration, double thermalConductivity, double insertion) {
         super(true, maxTemperature, 0, thermalConductivity);
         this.tipModeration = tipModeration;
         this.insertion = insertion;
@@ -21,7 +21,7 @@ public class ControlRod extends ReactorComponent {
     }
 
     public static void NormalizeWeights(ArrayList<ControlRod> effective_control_rods) {
-        int sum = 0;
+        double sum = 0;
         for (ControlRod control_rod : effective_control_rods) {
             sum += control_rod.weight;
         }
@@ -37,7 +37,6 @@ public class ControlRod extends ReactorComponent {
                 if (control_rod.insertion <= 0.3 ) {
                     crf += control_rod.insertion / 3 * control_rod.weight;
                 } else {
-                    //TODO is X a typo ?
                     crf += (-11F/7 * (control_rod.insertion - 0.3) + 0.1) * control_rod.weight;
                 }
             } else {
@@ -47,7 +46,7 @@ public class ControlRod extends ReactorComponent {
         return crf;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
@@ -63,11 +62,11 @@ public class ControlRod extends ReactorComponent {
         return fuelRodPairs;
     }
 
-    public float getInsertion() {
+    public double getInsertion() {
         return insertion;
     }
 
-    public void setInsertion(float insertion) {
+    public void setInsertion(double insertion) {
         this.insertion = insertion;
     }
 

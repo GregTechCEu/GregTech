@@ -119,7 +119,7 @@ public class NuclearSimulation {
         int j = 0;
         while (i < fuel_rods.size()) {
             while (j < i) {
-                int m_ij = 0;
+                double m_ij = 0;
                 boolean channel_is_unobstructed = true;
                 ArrayList<ControlRod> control_rods_hit = new ArrayList<>();
                 ArrayList<CoolantChannel> coolant_channels_hit = new ArrayList<>();
@@ -231,7 +231,7 @@ public class NuclearSimulation {
 
         average_fuel_rod_distance /= (2 * fuel_rods.size());
 
-        int beta = 0;
+        double beta = 0;
 
         for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
             for (j = 0; j < average_delayed_neutrons_groups[i].length; j++) {
@@ -246,10 +246,10 @@ public class NuclearSimulation {
         double k_slow = 2 * average_LE_fission_factor / average_LE_capture_factor * average_geometric_factor_sn;
         double k_fast = 2 * average_HE_fission_factor / average_HE_capture_factor * average_geometric_factor_fn;
 
-        double k = (k_slow + k_fast) / 2 * (2 * reactor_depth / (1D + reactor_depth));
+        double k = (k_slow + k_fast) / 2 * (2D * reactor_depth / (1 + reactor_depth));
         double l = (l_slow + l_fast) / 2;
 
-        int average_coolant_temperature = 0;
+        double average_coolant_temperature = 0;
 
         for (ControlRod rod : control_rods) {
             rod.computeWeightFromFuelRodMap();
@@ -270,15 +270,15 @@ public class NuclearSimulation {
 
         CoolantChannel.NormalizeWeights(effective_coolant_channels);
 
-        float control_rod_factor = ControlRod.ControlRodFactor(effective_control_rods);
+        double control_rod_factor = ControlRod.ControlRodFactor(effective_control_rods);
 
         average_coolant_temperature /= coolant_channels.size();
 
-        int average_temperature = 0;
-        int average_boiling_point = 0;
+        double average_temperature = 0;
+        double average_boiling_point = 0;
         double average_absorption = 0;
-        int average_moderation = 0;
-        int average_pressure = 0;
+        double average_moderation = 0;
+        double average_pressure = 0;
 
         for (CoolantChannel channel : effective_coolant_channels) {
             average_temperature += channel.getCoolant().getCoolantProperties().getTemperature() * channel.getWeight();
@@ -349,7 +349,7 @@ public class NuclearSimulation {
 
         double reactorTemp = average_temperature;
 
-        int p = average_pressure;
+        double p = average_pressure;
 
         double dn = 0;
 
@@ -361,7 +361,7 @@ public class NuclearSimulation {
         double[] rC = new double[average_delayed_neutrons_groups.length];
         double[] deltaCooling = new double[average_delayed_neutrons_groups.length];
 
-        int group_sum = 0;
+        double group_sum = 0;
 
         double iodine_amount = 0;
         double iodine_yield = 0.02;

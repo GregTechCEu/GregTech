@@ -10,18 +10,18 @@ import java.util.List;
 
 public class CoolantChannel extends ReactorComponent {
     private final Material coolant;
-    private int weight;
+    private double weight;
     private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
 
-    public CoolantChannel(int maxTemperature, double thermalConductivity, Material coolant) {
+    public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant) {
         super(true, maxTemperature, coolant.getCoolantProperties().getModeratorFactor(), thermalConductivity);
         this.coolant = coolant;
         this.weight = 0;
     }
 
     public static void NormalizeWeights(ArrayList<CoolantChannel> effective_coolant_channels) {
-        int sum = 0;
+        double sum = 0;
         for (CoolantChannel channel : effective_coolant_channels) {
             sum += channel.weight;
         }
@@ -38,7 +38,7 @@ public class CoolantChannel extends ReactorComponent {
         return fuelRodPairs;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 

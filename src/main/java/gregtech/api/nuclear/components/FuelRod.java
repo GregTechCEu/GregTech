@@ -5,9 +5,9 @@ import gregtech.api.nuclear.ReactorComponent;
 
 public class FuelRod extends ReactorComponent {
     private final NuclearFuel fuel;
-    private final float neutronSourceIntensity;
+    private final double neutronSourceIntensity;
 
-    public FuelRod(int maxTemperature, double thermalConductivity, NuclearFuel fuel, float neutronSourceIntensity) {
+    public FuelRod(double maxTemperature, double thermalConductivity, NuclearFuel fuel, double neutronSourceIntensity) {
         super(true, maxTemperature, 0, thermalConductivity);
         this.fuel = fuel;
         this.neutronSourceIntensity = neutronSourceIntensity;
@@ -29,7 +29,7 @@ public class FuelRod extends ReactorComponent {
         return fuel.getCs_vector()[3];
     }
 
-    public float getNeutronSourceIntensity() {
+    public double getNeutronSourceIntensity() {
         return neutronSourceIntensity;
     }
 

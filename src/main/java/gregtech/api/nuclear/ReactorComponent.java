@@ -1,14 +1,14 @@
 package gregtech.api.nuclear;
 
 public class ReactorComponent {
-    private final int maxTemperature;
+    private final double maxTemperature;
     private final double moderatorFactor;
     private final double thermalConductivity;
     boolean isInside;
     int id = -1;
     int[] pos = new int[2];
 
-    public ReactorComponent(boolean isInside, int maxTemperature, double moderatorFactor, double thermalConductivity) {
+    public ReactorComponent(boolean isInside, double maxTemperature, double moderatorFactor, double thermalConductivity) {
         this.isInside = isInside;
         this.maxTemperature = maxTemperature;
         this.moderatorFactor = moderatorFactor;
@@ -36,7 +36,7 @@ public class ReactorComponent {
         return moderatorFactor;
     }
 
-    public int getMaxTemperature() {
+    public double getMaxTemperature() {
         return maxTemperature;
     }
 

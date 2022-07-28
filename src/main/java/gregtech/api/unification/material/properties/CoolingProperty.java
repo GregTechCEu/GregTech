@@ -1,12 +1,12 @@
 package gregtech.api.unification.material.properties;
 
 public class CoolingProperty implements IMaterialProperty<CoolingProperty> {
-    int pressure;
-    int moderatorFactor;
+    double pressure;
+    double moderatorFactor;
     double absorptionFactor;
-    int boilingPoint;
-    int temperature;
-    public CoolingProperty(int pressure, int moderatorFactor, double absorptionFactor, int boilingPoint, int temperature) {
+    double boilingPoint;
+    double temperature;
+    public CoolingProperty(double pressure, double moderatorFactor, double absorptionFactor, double boilingPoint, double temperature) {
         this.pressure = pressure;
         this.moderatorFactor = moderatorFactor;
         this.absorptionFactor = absorptionFactor;
@@ -19,11 +19,11 @@ public class CoolingProperty implements IMaterialProperty<CoolingProperty> {
 
     }
 
-    public int getPressure() {
+    public double getPressure() {
         return pressure;
     }
 
-    public int getModeratorFactor() {
+    public double getModeratorFactor() {
         return moderatorFactor;
     }
 
@@ -31,19 +31,19 @@ public class CoolingProperty implements IMaterialProperty<CoolingProperty> {
         return absorptionFactor;
     }
 
-    public int getBoilingPoint() {
+    public double getBoilingPoint() {
         return boilingPoint;
     }
 
-    public int getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public static double coolantTemperatureFactor(double temperature, int temperature_boil, double absorption, int m, int p) {
+    public static double coolantTemperatureFactor(double temperature, double temperature_boil, double absorption, double moderation, double pressure) {
         if (temperature > 3 * temperature_boil) {
-            return (temperature - 3 * temperature_boil) * (absorption - m) / (3 * p) + m - absorption;
+            return (temperature - 3 * temperature_boil) * (absorption - moderation) / (3 * pressure) + moderation - absorption;
         } else {
-            return m - absorption;
+            return moderation - absorption;
         }
     }
 }
