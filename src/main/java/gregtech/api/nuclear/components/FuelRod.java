@@ -13,19 +13,19 @@ public class FuelRod extends ReactorComponent {
         this.neutronSourceIntensity = neutronSourceIntensity;
     }
 
-    double getHEFissionFactor() {
+    public double getHEFissionFactor() {
         return fuel.getCs_vector()[0];
     }
 
-    double getLEFissionFactor() {
+    public double getLEFissionFactor() {
         return fuel.getCs_vector()[1];
     }
 
-    double getHECaptureFactor() {
+    public double getHECaptureFactor() {
         return fuel.getCs_vector()[2];
     }
 
-    double getLECaptureFactor() {
+    public double getLECaptureFactor() {
         return fuel.getCs_vector()[3];
     }
 

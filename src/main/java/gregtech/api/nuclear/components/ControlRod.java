@@ -4,6 +4,7 @@ import gregtech.api.nuclear.ReactorComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ControlRod extends ReactorComponent {
@@ -19,8 +20,31 @@ public class ControlRod extends ReactorComponent {
         this.weight = 0;
     }
 
-    public static void NormalizeWeights() {
-        float s = 0;
+    public static void NormalizeWeights(ArrayList<ControlRod> effective_control_rods) {
+        int sum = 0;
+        for (ControlRod control_rod : effective_control_rods) {
+            sum += control_rod.weight;
+        }
+        for (ControlRod control_rod : effective_control_rods) {
+            control_rod.weight /= sum;
+        }
+    }
+
+    public static float ControlRodFactor(ArrayList<ControlRod> effective_control_rods) {
+        float crf = 0;
+        for (ControlRod  control_rod : effective_control_rods) {
+            if (control_rod.hasModeratorTip()){
+                if (control_rod.insertion <= 0.3 ) {
+                    crf += control_rod.insertion / 3 * control_rod.weight;
+                } else {
+                    //TODO is X a typo ?
+                    crf += (-11F/7 * (control_rod.insertion - 0.3) + 0.1) * control_rod.weight;
+                }
+            } else {
+                crf += -control_rod.insertion * control_rod.weight;
+            }
+        }
+        return crf;
     }
 
     public int getWeight() {

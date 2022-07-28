@@ -21,13 +21,13 @@ public class NuclearFuels {
         al.add(Pair.of(Uranium235, 0.007));
         al.add(Pair.of(Uranium238, 0.993));
 
-        ArrayList<Pair<Double,Double>> dng= new ArrayList<>();
-        dng.add(Pair.of(0.000266, 0.0127));
-        dng.add(Pair.of(0.001492, 0.0317));
-        dng.add(Pair.of(0.001317, 0.115));
-        dng.add(Pair.of(0.002851, 0.311));
-        dng.add(Pair.of(0.000897, 1.40));
-        dng.add(Pair.of(0.000182, 3.87));
+        Double[][] dng= new Double[6][];
+        dng[0] = new Double[]{0.000266, 0.0127};
+        dng[1] = new Double[]{0.001492, 0.0317};
+        dng[2] = new Double[]{0.001317, 0.115};
+        dng[3] = new Double[]{0.002851, 0.311};
+        dng[4] = new Double[]{0.000897, 1.40};
+        dng[5] = new Double[]{0.000182, 3.87};
 
         LEU235 = new NuclearFuel(
                 al, 1e6, -1e-8).setDelayedNeutronsGroups(dng);

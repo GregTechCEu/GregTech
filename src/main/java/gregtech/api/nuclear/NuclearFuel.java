@@ -1,6 +1,5 @@
 package gregtech.api.nuclear;
 
-import gregtech.api.nuclear.fuels.NuclearFuels;
 import gregtech.api.unification.material.Material;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -11,7 +10,7 @@ public class NuclearFuel {
     private List<Pair<Material, Double>> nuclearMaterials;
     private final double duration;
     private final double temperatureCoefficient;
-    private List<Pair<Double, Double>> delayedNeutronsGroups = new ArrayList<>();
+    private Double[][] delayedNeutronsGroups = new Double[6][];
     private final double[] cs_vector;
 
     public NuclearFuel(List<Pair<Material, Double>> nuclearMaterials, double duration, double temperatureCoefficient) {
@@ -36,12 +35,12 @@ public class NuclearFuel {
         return mcs;
     }
 
-    public NuclearFuel setDelayedNeutronsGroups(List<Pair<Double, Double>> groups) {
+    public NuclearFuel setDelayedNeutronsGroups(Double[][] groups) {
         delayedNeutronsGroups = groups;
         return this;
     }
 
-    List<Pair<Double, Double>> getDelayedNeutronsGroups() {
+    Double[][] getDelayedNeutronsGroups() {
         return delayedNeutronsGroups;
     }
 

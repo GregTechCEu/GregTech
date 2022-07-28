@@ -4,11 +4,15 @@ import gregtech.Bootstrap;
 import gregtech.api.nuclear.components.ControlRod;
 import gregtech.api.nuclear.components.CoolantChannel;
 import gregtech.api.nuclear.components.FuelRod;
+import gregtech.api.nuclear.fuels.NuclearFuels;
+import gregtech.api.unification.material.properties.CoolingProperty;
 import gregtech.api.util.GTLog;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static gregtech.api.nuclear.ReactorComponents.*;
 
@@ -16,6 +20,7 @@ public class NuclearSimulation {
     @BeforeClass
     public static void bootstrap() {
         Bootstrap.perform();
+        NuclearFuels.register();
         ReactorComponents.init();
     }
 
@@ -167,65 +172,178 @@ public class NuclearSimulation {
         GTLog.logger.info("Done");
         GTLog.logger.info("Calculating stats from geometry...");
 
-        average_geometric_factor_sn = 0;
-        average_geometric_factor_fn = 0;
+        double average_geometric_factor_sn = 0;
+        double average_geometric_factor_fn = 0;
 
-        average_HE_fission_factor = 0;
-        average_LE_fission_factor = 0;
-        average_HE_capture_factor = 0;
-        average_LE_capture_factor = 0;
+        double average_HE_fission_factor = 0;
+        double average_LE_fission_factor = 0;
+        double average_HE_capture_factor = 0;
+        double average_LE_capture_factor = 0;
 
-        average_temperature_coefficient = 0;
+        double average_temperature_coefficient = 0;
 
-        total_fuel_start = 0;
+        double total_fuel_start = 0;
 
-        neutron_sources_total = 0;
+        float neutron_sources_total = 0;
 
-        average_delayed_neutrons_groups = [
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0]
-            ]
+        Double[][] average_delayed_neutrons_groups = new Double[6][];
+        for (i = 0; i < 6; i++) {
+            average_delayed_neutrons_groups[i] = new Double[]{0D, 0D};
+        }
 
-        average_fuel_rod_distance = 0;
+        double average_fuel_rod_distance = 0;
 
-        for i in fuel_rods:
-        for j in fuel_rods:
-        average_geometric_factor_sn += geometric_matrix_sn[i.getID()][j.getID()]
-        average_geometric_factor_fn += geometric_matrix_fn[i.getID()][j.getID()]
+        for (FuelRod f1 : fuel_rods) {
+            for (FuelRod f2 : fuel_rods) {
+                average_geometric_factor_sn += geometric_matrix_sn[f1.getId()][f2.getId()];
+                average_geometric_factor_fn += geometric_matrix_fn[f1.getId()][f2.getId()];
 
-        average_fuel_rod_distance += np.linalg.norm(i.getPos() - j.getPos(), 2)
+                average_fuel_rod_distance += MathUtil.frobeniusNorm(MathUtil.intArraySub(f1.getPos(), f2.getPos()));
+            }
 
-        neutron_sources_total += i.getNeutronSourceIntensity()
 
-        average_temperature_coefficient += i.getFuel().getTemperatureCoefficient()
+            neutron_sources_total += f1.getNeutronSourceIntensity();
 
-        average_HE_fission_factor += i.getHEFissionFactor()
-        average_LE_fission_factor += i.getLEFissionFactor()
-        average_HE_capture_factor += i.getHECaptureFactor()
-        average_LE_capture_factor += i.getLECaptureFactor()
+            average_temperature_coefficient += f1.getFuel().getTemperatureCoefficient();
 
-        total_fuel_start += i.getFuel().getDuration()
+            average_HE_fission_factor += f1.getHEFissionFactor();
+            average_LE_fission_factor += f1.getLEFissionFactor();
+            average_HE_capture_factor += f1.getHECaptureFactor();
+            average_LE_capture_factor += f1.getLECaptureFactor();
 
-        for c in range(0, len(average_delayed_neutrons_groups)):
-        average_delayed_neutrons_groups[c][0] += i.getFuel().getDelayedNeutronsGroups()[c][0]
-        average_delayed_neutrons_groups[c][1] += i.getFuel().getDelayedNeutronsGroups()[c][1]
+            total_fuel_start += f1.getFuel().getDuration();
 
-        average_geometric_factor_sn *= 0.25 / (2 * len(fuel_rods))
-        average_geometric_factor_fn *= 0.25 / (2 * len(fuel_rods))
+            for (int c = 0; c < average_delayed_neutrons_groups.length; c++) {
+                average_delayed_neutrons_groups[c][0] += f1.getFuel().getDelayedNeutronsGroups()[c][0];
+                average_delayed_neutrons_groups[c][1] += f1.getFuel().getDelayedNeutronsGroups()[c][1];
+            }
+        }
 
-        average_temperature_coefficient /= len(fuel_rods)
+        average_geometric_factor_sn *= 0.25 / (2 * fuel_rods.size());
+        average_geometric_factor_fn *= 0.25 / (2 * fuel_rods.size());
 
-        average_HE_fission_factor /= len(fuel_rods)
-        average_LE_fission_factor /= len(fuel_rods)
-        average_HE_capture_factor /= len(fuel_rods)
-        average_LE_capture_factor /= len(fuel_rods)
+        average_temperature_coefficient /= fuel_rods.size();
 
-        average_fuel_rod_distance /= (2 * len(fuel_rods))
+        average_HE_fission_factor /= fuel_rods.size();
+        average_LE_fission_factor /= fuel_rods.size();
+        average_HE_capture_factor /= fuel_rods.size();
+        average_LE_capture_factor /= fuel_rods.size();
 
-        beta = 0
+        average_fuel_rod_distance /= (2 * fuel_rods.size());
+
+        int beta = 0;
+
+        for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
+            for (j = 0; j < average_delayed_neutrons_groups[i].length; j++) {
+                average_delayed_neutrons_groups[i][j] /= fuel_rods.size();
+            }
+            beta += average_delayed_neutrons_groups[i][0];
+        }
+
+        double l_slow = average_fuel_rod_distance / (2200 * average_LE_capture_factor);
+        double l_fast = average_fuel_rod_distance / (15000000 * average_HE_capture_factor);
+
+        double k_slow = 2 * average_LE_fission_factor / average_LE_capture_factor * average_geometric_factor_sn;
+        double k_fast = 2 * average_HE_fission_factor / average_HE_capture_factor * average_geometric_factor_fn;
+
+        double k = (k_slow + k_fast) / 2 * (2 * reactor_depth / (1D + reactor_depth));
+        double l = (l_slow + l_fast) / 2;
+
+        int average_coolant_temperature = 0;
+
+        for (ControlRod rod : control_rods) {
+            rod.computeWeightFromFuelRodMap();
+            if (rod.getWeight() > 0) {
+                effective_control_rods.add(rod);
+            }
+        }
+
+        for (CoolantChannel channel : coolant_channels) {
+            channel.computeWeightFromFuelRodMap();
+            average_coolant_temperature += channel.getCoolant().getCoolantProperties().getTemperature();
+            if (channel.getWeight() > 0) {
+                effective_coolant_channels.add(channel);
+            }
+        }
+
+        ControlRod.NormalizeWeights(effective_control_rods);
+
+        CoolantChannel.NormalizeWeights(effective_coolant_channels);
+
+        float control_rod_factor = ControlRod.ControlRodFactor(effective_control_rods);
+
+        average_coolant_temperature /= coolant_channels.size();
+
+        int average_temperature = 0;
+        int average_boiling_point = 0;
+        double average_absorption = 0;
+        int average_moderation = 0;
+        int average_pressure = 0;
+
+        for (CoolantChannel channel : effective_coolant_channels) {
+            average_temperature += channel.getCoolant().getCoolantProperties().getTemperature() * channel.getWeight();
+            average_boiling_point += channel.getCoolant().getCoolantProperties().getBoilingPoint() * channel.getWeight();
+            average_absorption += channel.getCoolant().getCoolantProperties().getAbsorptionFactor() * channel.getWeight();
+            average_moderation += channel.getCoolant().getCoolantProperties().getModeratorFactor() * channel.getWeight();
+            average_pressure += channel.getCoolant().getCoolantProperties().getPressure() * channel.getWeight();
+        }
+
+        double coolant_factor = CoolingProperty.coolantTemperatureFactor(average_temperature, average_boiling_point, average_absorption, average_moderation, average_pressure);
+
+        GTLog.logger.info("Done");
+
+        GTLog.logger.info("====================Geometric stats====================");
+
+        GTLog.logger.info("> Slow neutron geometric factor:{}", average_geometric_factor_sn);
+        GTLog.logger.info("> Fast neutron geometric factor:{}", average_geometric_factor_fn);
+
+        GTLog.logger.info("====================Fuel stats====================");
+
+        GTLog.logger.info("> Total neutron source intensity:{}", neutron_sources_total);
+        GTLog.logger.info("> Delayed neutrons yields and decay constants:");
+        GTLog.logger.info(">  " + "#" + "  Yield " + "    Decay Constant ");
+        for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
+            GTLog.logger.info(">  " + i + 1 + "|" + average_delayed_neutrons_groups[i][0] + "|" + average_delayed_neutrons_groups[i][1]);
+        }
+        GTLog.logger.info("====================Control rod stats====================");
+
+        GTLog.logger.info("> Starting control rod factor:" + control_rod_factor);
+        GTLog.logger.info("> List of control rod weights:");
+        GTLog.logger.info(">  " + "ID" + " Weight ");
+        for (ControlRod rod : effective_control_rods) {
+            GTLog.logger.info(">  " + rod.getId() + "|" + rod.getWeight());
+        }
+        GTLog.logger.info("> Ineffective rods are ignored");
+
+        GTLog.logger.info("====================Coolant channel stats====================");
+
+        GTLog.logger.info("> List of coolant channel weights:");
+        GTLog.logger.info(">  " + "ID" + " Weight ");
+        for (CoolantChannel channel : effective_coolant_channels) {
+            GTLog.logger.info(">  " + channel.getId() + "|" + channel.getWeight());
+        }
+        GTLog.logger.info("> Channels not affecting reactivity are not listed");
+        GTLog.logger.info("====================Thermal stats====================");
+        GTLog.logger.info(">" + "Average thermal conductivity:" + average_thermal_conductivity);
+        GTLog.logger.info(">" + "Average coolant temperature:" + average_coolant_temperature + "K");
+        GTLog.logger.info(">" + "Max temperature:" + reactor_max_temp + "K");
+
+        GTLog.logger.info("====================Coolant stats====================");
+        GTLog.logger.info("> Starting coolant factor:" + coolant_factor);
+        GTLog.logger.info("> List of coolant properties:");
+        GTLog.logger.info(">  " + "Average temperature:" + average_temperature + "K");
+        GTLog.logger.info(">  " + "Average boiling point:" + average_boiling_point + "K");
+        GTLog.logger.info(">  " + "Average absorption factor:" + average_absorption);
+        GTLog.logger.info(">  " + "Average moderation factor:" + average_moderation);
+        GTLog.logger.info(">  " + "Average pressure:" + average_pressure + "bar");
+
+        GTLog.logger.info("====================Kinetic parameters====================");
+        GTLog.logger.info("> Beta:" + beta);
+        GTLog.logger.info("> Neutron lifetime:" + l);
+        GTLog.logger.info("> Reactivity:" + k);
+        GTLog.logger.info("> Average fuel temperature coefficient:" + average_temperature_coefficient);
+
+//##########REACTOR SIMULATION##########
+
     }
 }
