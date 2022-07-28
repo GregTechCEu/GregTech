@@ -115,10 +115,8 @@ public class NuclearSimulation {
         double[][] geometric_matrix_sn = new double[fuel_rods.size()][fuel_rods.size()];
         double[][] geometric_matrix_fn = new double[fuel_rods.size()][fuel_rods.size()];
 
-        int i = 0;
-        int j = 0;
-        while (i < fuel_rods.size()) {
-            while (j < i) {
+        for (int i = 0; i<fuel_rods.size();i++) {
+            for (int j = 0; j < i; j++) {
                 double m_ij = 0;
                 boolean channel_is_unobstructed = true;
                 ArrayList<ControlRod> control_rods_hit = new ArrayList<>();
@@ -154,7 +152,6 @@ public class NuclearSimulation {
                     geometric_matrix_sn[j][i] = geometric_matrix_sn[i][j];
                     geometric_matrix_fn[j][i] = geometric_matrix_fn[i][j];
 
-
                     for (ControlRod c : control_rods_hit) {
                         c.addFuelRodPairToMap(fuel_rods.get(i), fuel_rods.get(j));
                     }
@@ -162,10 +159,7 @@ public class NuclearSimulation {
                         c.addFuelRodPairToMap(fuel_rods.get(i), fuel_rods.get(j));
                     }
                 }
-                j += 1;
             }
-            j = 0;
-            i += 1;
         }
 
 
@@ -187,7 +181,7 @@ public class NuclearSimulation {
         double neutron_sources_total = 0;
 
         Double[][] average_delayed_neutrons_groups = new Double[6][];
-        for (i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             average_delayed_neutrons_groups[i] = new Double[]{0D, 0D};
         }
 
@@ -233,8 +227,8 @@ public class NuclearSimulation {
 
         double beta = 0;
 
-        for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
-            for (j = 0; j < average_delayed_neutrons_groups[i].length; j++) {
+        for (int i = 0; i < average_delayed_neutrons_groups.length; i++) {
+            for (int j = 0; j < average_delayed_neutrons_groups[i].length; j++) {
                 average_delayed_neutrons_groups[i][j] /= fuel_rods.size();
             }
             beta += average_delayed_neutrons_groups[i][0];
@@ -302,7 +296,7 @@ public class NuclearSimulation {
         GTLog.logger.info("> Total neutron source intensity:{}", neutron_sources_total);
         GTLog.logger.info("> Delayed neutrons yields and decay constants:");
         GTLog.logger.info(">  " + "#" + "  Yield " + "    Decay Constant ");
-        for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
+        for (int i = 0; i < average_delayed_neutrons_groups.length; i++) {
             GTLog.logger.info(">  " + i + 1 + "|" + average_delayed_neutrons_groups[i][0] + "|" + average_delayed_neutrons_groups[i][1]);
         }
         GTLog.logger.info("====================Control rod stats====================");
@@ -385,7 +379,7 @@ public class NuclearSimulation {
         int timestart = 0;
         int timeend = time_max;
         //#time_max = 600000
-
+        long currentTime = System.nanoTime();
         GTLog.logger.info("Simulating...");
 
         for (int time = timestart; time < timeend; time++) {
@@ -404,7 +398,7 @@ public class NuclearSimulation {
             dn = (k_eff * (1 - beta) - 1) * (n / l) + group_sum + neutron_sources_total;
             n += dn * timestep;
 
-            for (i = 0; i < average_delayed_neutrons_groups.length; i++) {
+            for (int i = 0; i < average_delayed_neutrons_groups.length; i++) {
                 group_sum = 0;
                 group_sum += average_delayed_neutrons_groups[i][1] * rC[i];
                 deltaCooling[i] = (k_eff * average_delayed_neutrons_groups[i][0] * (n / l) - average_delayed_neutrons_groups[i][1] * rC[i]);
@@ -445,5 +439,6 @@ public class NuclearSimulation {
                 break;
             }
         }
+        GTLog.logger.info("Simulation ran for " + (System.nanoTime() - currentTime) + "ns" );
     }
 }
