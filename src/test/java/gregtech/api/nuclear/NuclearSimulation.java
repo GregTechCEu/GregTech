@@ -125,7 +125,7 @@ public class NuclearSimulation {
                 ArrayList<CoolantChannel> coolant_channels_hit = new ArrayList<>();
 
                 for (int k = 0; k < nsteps; k++) {
-                    double[] pos = new double[]{.5, .5};
+                    double[] pos = new double[2];
                     for (int l = 0; l < pos.length; l++) {
                         double d = (fuel_rods.get(j).getPos()[l] - fuel_rods.get(i).getPos()[l]) * (k * 1D / nsteps) + fuel_rods.get(i).getPos()[l] + .5;
                         pos[l] = d;
@@ -149,7 +149,7 @@ public class NuclearSimulation {
                 if (channel_is_unobstructed) {
                     m_ij /= nsteps;
                     double normalized = MathUtil.frobeniusNorm(MathUtil.intArraySub(fuel_rods.get(j).getPos(), fuel_rods.get(i).getPos()));
-                    geometric_matrix_sn[i][j] = (1 - Math.exp(-m_ij * normalized) / normalized);
+                    geometric_matrix_sn[i][j] = (1 - Math.exp(-m_ij * normalized)) / normalized;
                     geometric_matrix_fn[i][j] = 1 / normalized - geometric_matrix_sn[i][j];
                     geometric_matrix_sn[j][i] = geometric_matrix_sn[i][j];
                     geometric_matrix_fn[j][i] = geometric_matrix_fn[i][j];
@@ -184,7 +184,7 @@ public class NuclearSimulation {
 
         double total_fuel_start = 0;
 
-        float neutron_sources_total = 0;
+        double neutron_sources_total = 0;
 
         Double[][] average_delayed_neutrons_groups = new Double[6][];
         for (i = 0; i < 6; i++) {
