@@ -668,9 +668,7 @@ public class GTUtility {
             return replacement;
 
         M maybeResult;
-        if (list.size() <= index) {
-            maybeResult = list.get(list.size() - 1);
-        } else if (index < 0) {
+        if (list.size() <= index || index < 0) {
             maybeResult = list.get(0);
         } else maybeResult = list.get(index);
 
