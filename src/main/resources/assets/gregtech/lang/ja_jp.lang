@@ -2283,6 +2283,7 @@ behavior.tricorder.debug_machine_valid= 有効
 behavior.tricorder.debug_machine_invalid= 無効!
 behavior.tricorder.debug_machine_invalid_null=無効! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=CPUの平均ロード時間は ~%sns ( %s tickの間集計) 最長ロード時間は %sns.
+behavior.tricorder.debug_cpu_load_seconds=これは %s秒.
 behavior.tricorder.debug_lag_count=サーバーで %s 件のラグスパイク警告が発生 ( %smsを超過した全てのオブジェクトが対象).
 
 metaitem.item_magnet.lv.name=LV磁石
@@ -4486,6 +4487,17 @@ gregtech.multiblock.monitor_screen.tooltip.1=スクリュードライバーで�
 gregtech.multiblock.monitor_screen.tooltip.2=デジタルインターフェースのプロキシモードはスクリーンに機械の性質とGUIを付与させます. つまり, 機械に繋ぐようにスクリーンに直接パイプを繋げます.
 gregtech.multiblock.monitor_screen.tooltip.3=スクリーンはプラグインにも対応しています.
 
+metaitem.cover.digital.mode.proxy.disabled=クリックでプロキシモードを有効化
+metaitem.cover.digital.mode.proxy.enabled=プロキシモードが有効
+metaitem.cover.digital.mode.machine.disabled=クリックでマシンモードを有効化
+metaitem.cover.digital.mode.machine.enabled=マシンモードが有効
+metaitem.cover.digital.mode.energy.disabled=クリックでエネルギーモードを有効化
+metaitem.cover.digital.mode.energy.enabled=エネルギーモードが有効
+metaitem.cover.digital.mode.item.disabled=クリックでアイテムモードを有効化
+metaitem.cover.digital.mode.item.enabled=アイテムモードが有効
+metaitem.cover.digital.mode.fluid.disabled=クリックで液体モードを有効化
+metaitem.cover.digital.mode.fluid.enabled=液体モードが有効
+
 
 gregtech.machine.monitor_screen.name=モニタースクリーン
 
@@ -4639,7 +4651,8 @@ gregtech.machine.maintenance_hatch_configurable.tooltip=マルチブロックを
 gregtech.machine.maintenance_hatch_full_auto.name=自動メンテナンスハッチ
 gregtech.machine.maintenance_hatch_full_auto.tooltip=マルチブロックの自動メンテナンスに
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=フィルター付自動メンテナンスハッチ
-gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip=クリーニング付きマルチブロックの自動メンテナンスに!
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=クリーニング付きマルチブロックの自動メンテナンスに!
+gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=クリーニング対象:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=故障解決のためのツールがインベントリ内にある場合, 素手でここをクリック
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=故障を解決するためにテープを挿入
 
