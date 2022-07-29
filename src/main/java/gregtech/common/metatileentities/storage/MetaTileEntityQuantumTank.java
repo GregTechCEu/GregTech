@@ -138,6 +138,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         data.setBoolean("IsPartialVoiding", isPartialVoiding);
         data.setBoolean("IsLocked", isLocked);
         data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
+        data.setBoolean("AllowInputFromOutputSideF", allowInputFromOutputSide);
         return data;
     }
 
@@ -154,6 +155,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.isPartialVoiding = data.getBoolean("IsPartialVoiding");
         this.isLocked = data.getBoolean("IsLocked");
         this.lockedFluid.readFromNBT(data.getCompoundTag("LockedFluid"));
+        this.allowInputFromOutputSide = data.getBoolean("AllowInputFromOutputSideF");
     }
 
     public static void legacyTankItemHandlerNBTReading(MetaTileEntity mte, NBTTagCompound nbt, int inputSlot, int outputSlot) {
