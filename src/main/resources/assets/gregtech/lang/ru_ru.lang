@@ -5618,3 +5618,4 @@ gregtech.machine.cleanroom.tooltip.ae2.no_channels=Отправляйте §aAE2
 gregtech.multiblock.cleanroom.dirty_state=Статус: §4ЗАГРЯЗНЕНА
 gregtech.multiblock.cleanroom.clean_state=Статус: §aЧИСТАЯ
 gregtech.multiblock.cleanroom.clean_amount=Очищена: §a%s%%
+metaitem.cover.digital.mode.proxy.disabled=Нажмите чтобы включить Режим прокси
