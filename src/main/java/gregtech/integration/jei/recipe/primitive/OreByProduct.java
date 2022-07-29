@@ -250,7 +250,7 @@ public class OreByProduct implements IRecipeWrapper {
 
         // TC crushed purified -> refined
         addToOutputs(material, OrePrefix.crushedRefined, 1);
-        addToOutputs(byproduct, OrePrefix.dustTiny, 3);
+        addToOutputs(byproduct, OrePrefix.dustSmall, 1);
 
         // sifter purified ore -> gems
         if (material.hasProperty(PropertyKey.GEM)) {

@@ -47,7 +47,7 @@ public class PurifiedRecipeHandler {
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
                 .output(crushedRefined, material)
-                .output(dustTiny, byproduct, 3)
+                .output(dustSmall, byproduct, 1)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         // Sifter recipe (if applicable)
