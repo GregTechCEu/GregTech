@@ -1,7 +1,7 @@
 package gregtech.api.recipes.map;
 
-import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;

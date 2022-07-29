@@ -1,7 +1,7 @@
 package gregtech.api.recipes.ingredients;
 
-import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.Item;

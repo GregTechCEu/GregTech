@@ -10,8 +10,8 @@ import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTCondition;
-import gregtech.api.recipes.ingredients.NBTMatching.NBTMatcher;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -208,6 +208,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R input(MetaItem<?>.MetaValueItem item, NBTMatcher nbtMatcher, NBTCondition nbtCondition) {
+        if (nbtMatcher == NBTMatcher.ANY && nbtCondition != NBTCondition.ANY) {
+            throw new IllegalArgumentException("ANY condition should match ANY matcher");
+        }
+        if (nbtMatcher != NBTMatcher.ANY && nbtCondition == NBTCondition.ANY) {
+            throw new IllegalArgumentException("ANY matcher should match ANY condition");
+        }
         return inputs(GTRecipeItemInput.getOrCreate(item.getStackForm()).setNBTMatchingCondition(nbtMatcher, nbtCondition));
     }
 
