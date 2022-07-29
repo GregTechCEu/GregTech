@@ -1,6 +1,6 @@
 name: Crash Report
 description: Report a bug that crashes the game or prevents startup.
-labels: ["status: unverified", "bug: crash"]
+labels: [ "status: unverified", "bug: crash" ]
 body:
   - type: input
     id: version
@@ -32,12 +32,12 @@ body:
       label: Environment
       description: How you were playing on the world. Open to LAN means you did not start the world with dedicated server software, and used the in-game pause menu to start it.
       options:
-      - Singleplayer
-      - Open to LAN
-      - Base Forge Server
-      - Sponge
-      - Mohist
-      - Other
+        - Singleplayer
+        - Open to LAN
+        - Base Forge Server
+        - Sponge
+        - Mohist
+        - Other
     validations:
       required: true
   - type: dropdown
@@ -46,9 +46,9 @@ body:
       label: Side Crashed
       description: Where the game crashed.
       options:
-      - "Client"
-      - "Server"
-      - "Client and Server"
+        - "Client"
+        - "Server"
+        - "Client and Server"
     validations:
       required: true
   - type: dropdown
@@ -57,9 +57,9 @@ body:
       label: New Worlds
       description: Does this crash occur on a newly generated world?
       options:
-      - "Yes"
-      - "No"
-      - Unsure
+        - "Yes"
+        - "No"
+        - Unsure
     validations:
       required: true
   - type: textarea

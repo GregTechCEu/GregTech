@@ -1,10 +1,10 @@
 name: Ask a Question
 description: Ask a question regarding this project.
-labels: ["question"]
+labels: [ "question" ]
 body:
   - type: markdown
     attributes:
-      value: | 
+      value: |
         If you are in need of quick response, Discord may be a better place. We have quite an active Discord community, so you may get responses quicker.
         
         If you are looking for a gameplay wiki, we currently do not have one, however most information is available in-game info through tooltips or JEI/HEI. You can also ask any question on Discord, and someone will most likely have a response.
