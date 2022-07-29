@@ -16,6 +16,7 @@ jobs:
 
       - uses: yogevbd/enforce-label-action@2.1.0
         with:
-          REQUIRED_LABELS_ANY: "bug: gameplay,bug: crash,feature,no changelog"
-          REQUIRED_LABELS_ANY_DESCRIPTION: "Pull Requests need at least one of the following labels: ['bug: gameplay', 'bug: crash', 'feature', 'no changelog']"
-          BANNED_LABELS: "no changelog"
+          REQUIRED_LABELS_ANY: "type: bug,type: feature,ignore changelog"
+          REQUIRED_LABELS_ANY_DESCRIPTION: "Pull Requests need at least one of the following labels: ['type: bug', 'type: feature', 'ignore changelog']"
+          BANNED_LABELS: "status: do not merge"
+          BANNED_LABELS_DESCRIPTION: "Pull Requests cannot be merged with the '${bannedLabel.name}' label."

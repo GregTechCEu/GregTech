@@ -2,21 +2,20 @@ changelog:
 
   exclude:
     labels:
-      - "no changelog"
+      - "ignore changelog"
 
   categories:
-    - title: Breaking Changes
+    - title: New Features
       labels:
-        - "breaking change"
-
-    - title: Features
-      labels:
-        - "feature"
+        - "type: feature"
 
     - title: Bug Fixes
       labels:
-        - "bug: crash"
-        - "bug: gameplay"
+        - "type: bug"
+
+    - title: Internal Changes
+      labels:
+        - "type: refactor"
 
     - title: Other Changes
       labels:
