@@ -36,7 +36,7 @@ jobs:
           release_type: "release"
           changelog: "Changelog is available [here](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.get_version.outputs.version }})."
           changelog_type: "markdown"
-          relations: "codechickencore:requiredDependency,gregtechce:incompatible,gregtech-chill-edition:incompatible"
+          relations: "codechicken-lib-1-8:requiredDependency,gregtechce:incompatible,gregtech-chill-edition:incompatible"
           file_path: "$gregtech-1.12.2-${{ steps.get_version.outputs.version }}.jar"
           project_id: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
           token: "${{ secrets.CURSEFORGE_API_KEY }}"
