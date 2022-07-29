@@ -45,7 +45,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     private final OrePrefix prefix;
 
     public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
-        put(OrePrefix.crushed, OrePrefix.crushedPurified);
         put(OrePrefix.dustImpure, OrePrefix.dust);
     }};
 
