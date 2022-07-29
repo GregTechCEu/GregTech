@@ -133,7 +133,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(width / 2 - 81, 21 + slotsHeight))
                 .widget(new TextWidget(new Text(getMetaFullName()).localise())
                         .setPos(8, 6))
-                .widget(SlotGroup.ofItemHandler(inventory, slotsPerRow, 0, true)
+                .widget(SlotGroup.ofItemHandler(inventory, slotsPerRow, false, "storage")
                         .setPos(7, 16));
         return builder.build();
     }
