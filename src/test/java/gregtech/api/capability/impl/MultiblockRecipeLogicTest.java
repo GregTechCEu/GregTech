@@ -328,6 +328,11 @@ public class MultiblockRecipeLogicTest {
 
                             }
 
+                            @Override
+                            public boolean isDistinct() {
+                                return true;
+                            }
+
                             // function checks for the temperature of the recipe against the coils
                             @Override
                             public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
@@ -353,14 +358,6 @@ public class MultiblockRecipeLogicTest {
         }
 
         ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
-
-        try {
-            Field field = RecipeMapMultiblockController.class.getDeclaredField("isDistinct");
-            field.setAccessible(true);
-            field.setBoolean(mbt, true);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
 
 
         //Controller and isAttachedToMultiBlock need the world so we fake it here.
