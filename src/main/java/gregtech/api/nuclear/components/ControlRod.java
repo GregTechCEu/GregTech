@@ -30,8 +30,8 @@ public class ControlRod extends ReactorComponent {
         }
     }
 
-    public static float ControlRodFactor(ArrayList<ControlRod> effective_control_rods) {
-        float crf = 0;
+    public static double ControlRodFactor(ArrayList<ControlRod> effective_control_rods) {
+        double crf = 0;
         for (ControlRod  control_rod : effective_control_rods) {
             if (control_rod.hasModeratorTip()){
                 if (control_rod.insertion <= 0.3 ) {

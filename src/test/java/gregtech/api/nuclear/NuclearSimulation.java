@@ -397,6 +397,7 @@ public class NuclearSimulation {
             n += dn * timestep;
 
             for (int i = 0; i < average_delayed_neutrons_groups.length; i++) {
+                //group_sum is reset here so actually only the last value is used.. above the loop?
                 group_sum = 0;
                 group_sum += average_delayed_neutrons_groups[i][1] * rC[i];
                 deltaCooling[i] = (k_eff * average_delayed_neutrons_groups[i][0] * (n / l) - average_delayed_neutrons_groups[i][1] * rC[i]);
@@ -415,7 +416,7 @@ public class NuclearSimulation {
             }
 
             k_eff = k * (1 + average_temperature_coefficient * reactorTemp);
-            k_eff *= 1 + effective_control_rods.size() * 1F / fuel_rods.size() * control_rod_factor;
+            k_eff *= 1 + effective_control_rods.size() * 1D / fuel_rods.size() * control_rod_factor;
             k_eff *= 1 + CoolingProperty.coolantTemperatureFactor(reactorTemp, average_boiling_point, average_absorption, average_moderation, p);
             k_eff *= 1 - 0.5 * xenon_amount * l_slow * average_geometric_factor_sn;
             k_eff = Math.max(0, k_eff);
@@ -424,17 +425,17 @@ public class NuclearSimulation {
 
             if (reactorTemp > reactor_max_temp) {
                 meltdown_counter += 1;
-            }
-            if (reactorTemp > 10 * reactor_max_temp) {
-                GTLog.logger.info("Reactor has exploded");
-            }
-            if ((reactorTemp >= 900 && p < 100)) {
-                GTLog.logger.info("Secondary hydrogen explosion happened");
-                break;
-            }
-            if (meltdown_counter >= 60) {
-                GTLog.logger.info("Reactor has melted down");
-                break;
+                if (reactorTemp > 10 * reactor_max_temp) {
+                    GTLog.logger.info("Reactor has exploded");
+                    if ((reactorTemp >= 900 && p < 100)) {
+                        GTLog.logger.info("Secondary hydrogen explosion happened");
+                        break;
+                    }
+                }
+                if (meltdown_counter >= 60) {
+                    GTLog.logger.info("Reactor has melted down");
+                    break;
+                }
             }
         }
         GTLog.logger.info("Simulation ran for " + (System.nanoTime() - currentTime) + "ns" );
