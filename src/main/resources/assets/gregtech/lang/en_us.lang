@@ -4650,7 +4650,8 @@ gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over M
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=Automatic Filtration Maintenance Hatch
-gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip=For automatically maintaining Multiblocks with Cleaning!
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=For automatically maintaining Multiblocks with Cleaning!
+gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 
