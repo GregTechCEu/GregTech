@@ -847,7 +847,7 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder nuclearCoolingProperty(int pressure, int moderatorFactor, double absorptionFactor, int boilingPoint, int temperature){
+        public Builder nuclearCoolingProperty(double pressure, double moderatorFactor, double absorptionFactor, double boilingPoint, double temperature){
             properties.setProperty(PropertyKey.COOLING_MATERIAL, new CoolingProperty(pressure, moderatorFactor, absorptionFactor, boilingPoint, temperature));
             return this;
         }

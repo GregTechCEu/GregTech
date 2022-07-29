@@ -7,12 +7,10 @@ import gregtech.api.nuclear.components.FuelRod;
 import gregtech.api.nuclear.fuels.NuclearFuels;
 import gregtech.api.unification.material.properties.CoolingProperty;
 import gregtech.api.util.GTLog;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static gregtech.api.nuclear.ReactorComponents.*;
 
@@ -124,9 +122,9 @@ public class NuclearSimulation {
 
                 for (int k = 0; k < nsteps; k++) {
                     double[] pos = new double[2];
+                    double factor = (double) k / nsteps;
                     for (int l = 0; l < pos.length; l++) {
-                        double d = (fuel_rods.get(j).getPos()[l] - fuel_rods.get(i).getPos()[l]) * (k * 1D / nsteps) + fuel_rods.get(i).getPos()[l] + .5;
-                        pos[l] = d;
+                        pos[l] = 0.5D + (fuel_rods.get(j).getPos()[l] - fuel_rods.get(i).getPos()[l]) * factor + fuel_rods.get(i).getPos()[l];
                     }
 
                     ReactorComponent component = reactor_layout[(int) Math.floor(pos[0])][(int) Math.floor(pos[1])];
@@ -146,7 +144,7 @@ public class NuclearSimulation {
 
                 if (channel_is_unobstructed) {
                     m_ij /= nsteps;
-                    double normalized = MathUtil.frobeniusNorm(MathUtil.intArraySub(fuel_rods.get(j).getPos(), fuel_rods.get(i).getPos()));
+                    double normalized = MathUtil.l2norm(MathUtil.intArraySub(fuel_rods.get(j).getPos(), fuel_rods.get(i).getPos()));
                     geometric_matrix_sn[i][j] = (1 - Math.exp(-m_ij * normalized)) / normalized;
                     geometric_matrix_fn[i][j] = 1 / normalized - geometric_matrix_sn[i][j];
                     geometric_matrix_sn[j][i] = geometric_matrix_sn[i][j];
@@ -192,7 +190,7 @@ public class NuclearSimulation {
                 average_geometric_factor_sn += geometric_matrix_sn[f1.getId()][f2.getId()];
                 average_geometric_factor_fn += geometric_matrix_fn[f1.getId()][f2.getId()];
 
-                average_fuel_rod_distance += MathUtil.frobeniusNorm(MathUtil.intArraySub(f1.getPos(), f2.getPos()));
+                average_fuel_rod_distance += MathUtil.l2norm(MathUtil.intArraySub(f1.getPos(), f2.getPos()));
             }
 
 
@@ -297,7 +295,7 @@ public class NuclearSimulation {
         GTLog.logger.info("> Delayed neutrons yields and decay constants:");
         GTLog.logger.info(">  " + "#" + "  Yield " + "    Decay Constant ");
         for (int i = 0; i < average_delayed_neutrons_groups.length; i++) {
-            GTLog.logger.info(">  " + i + 1 + "|" + average_delayed_neutrons_groups[i][0] + "|" + average_delayed_neutrons_groups[i][1]);
+            GTLog.logger.info(">  " + (i + 1) + "|" + average_delayed_neutrons_groups[i][0] + "|" + average_delayed_neutrons_groups[i][1]);
         }
         GTLog.logger.info("====================Control rod stats====================");
 

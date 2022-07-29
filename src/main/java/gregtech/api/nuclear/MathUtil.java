@@ -14,8 +14,8 @@ public class MathUtil {
         }
     }
 
-    public static double frobeniusNorm(int[] a) {
-        double sum = 0;
+    public static double l2norm(int[] a) {
+        int sum = 0;
         for (int j : a) {
             sum += j * j;
         }

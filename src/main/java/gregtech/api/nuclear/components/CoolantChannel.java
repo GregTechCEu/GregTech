@@ -42,7 +42,7 @@ public class CoolantChannel extends ReactorComponent {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 
@@ -51,7 +51,7 @@ public class CoolantChannel extends ReactorComponent {
     }
 
     public void computeWeightFromFuelRodMap() {
-        this.weight = fuelRodPairs.size() - 1;
+        this.weight = fuelRodPairs.size() * 2;
     }
 
     @Override
