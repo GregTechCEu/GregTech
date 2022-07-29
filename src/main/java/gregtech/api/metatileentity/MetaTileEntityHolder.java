@@ -64,6 +64,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     private final int[] timeStatistics = new int[20];
     private int timeStatisticsIndex = 0;
     private int lagWarningCount = 0;
+    protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
 
     public MetaTileEntity getMetaTileEntity() {
         return metaTileEntity;
@@ -248,7 +249,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                         new TextComponentTranslation(GTUtility.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
                         new TextComponentTranslation(GTUtility.formatNumbers(worstTickTime)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
-                list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds", new DecimalFormat("#.#########").format(worstTickTime / 1000000000)));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds", tricorderFormat.format(worstTickTime / 1000000000)));
             }
             if (lagWarningCount > 0) {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_lag_count",
