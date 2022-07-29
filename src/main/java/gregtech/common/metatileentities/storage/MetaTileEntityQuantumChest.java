@@ -217,6 +217,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         NBTTagCompound tagCompound = super.writeToNBT(data);
         data.setInteger("OutputFacing", getOutputFacing().getIndex());
         data.setBoolean("AutoOutputItems", autoOutputItems);
+        data.setBoolean("AllowInputFromOutputSide", allowInputFromOutputSide);
         if (!itemStack.isEmpty() && itemsStoredInside > 0L) {
             tagCompound.setTag(NBT_ITEMSTACK, itemStack.writeToNBT(new NBTTagCompound()));
             tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
@@ -229,6 +230,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.readFromNBT(data);
         this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
         this.autoOutputItems = data.getBoolean("AutoOutputItems");
+        this.allowInputFromOutputSide = data.getBoolean("AllowInputFromOutputSide");
         if (data.hasKey("ItemStack", NBT.TAG_COMPOUND)) {
             this.itemStack = new ItemStack(data.getCompoundTag("ItemStack"));
             if (!itemStack.isEmpty()) {
