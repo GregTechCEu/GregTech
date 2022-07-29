@@ -4486,6 +4486,16 @@ gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-
 gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
 gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
 
+metaitem.cover.digital.mode.proxy.disabled=Click to enable Proxy Mode
+metaitem.cover.digital.mode.proxy.enabled=Proxy Mode enabled
+metaitem.cover.digital.mode.machine.disabled=Click to enable Machine Mode
+metaitem.cover.digital.mode.machine.enabled=Machine Mode enabled
+metaitem.cover.digital.mode.energy.disabled=Click to enable Energy Mode
+metaitem.cover.digital.mode.energy.enabled=Energy Mode enabled
+metaitem.cover.digital.mode.item.disabled=Click to enable Item Mode
+metaitem.cover.digital.mode.item.enabled=Item Mode enabled
+metaitem.cover.digital.mode.fluid.disabled=Click to enable Fluid Mode
+metaitem.cover.digital.mode.fluid.enabled=Fluid Mode enabled
 
 gregtech.machine.monitor_screen.name=Monitor Screen
 
