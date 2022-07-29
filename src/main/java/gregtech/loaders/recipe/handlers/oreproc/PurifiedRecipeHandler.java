@@ -8,6 +8,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -19,6 +20,7 @@ import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processM
 public class PurifiedRecipeHandler {
 
     public static void processPurified(OrePrefix prefix, Material material, OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproduct used for this step
         Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
 
@@ -37,7 +39,7 @@ public class PurifiedRecipeHandler {
                 .input(crushedPurified, material)
                 .output(dust, material, crushedMultiplier)
                 .chancedOutput(dust, material, crushedMultiplier, 2500, 0)
-                .chancedOutput(dust, byproduct, 1400, 850)
+                .chancedOutput(dust, byproduct, 2000, chancePerTier ? 500 : 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Thermal Centrifuge recipe
@@ -108,6 +110,7 @@ public class PurifiedRecipeHandler {
     }
 
     public static void processRefined(OrePrefix prefix, Material material, OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproduct used for this step
         Material byproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
 
@@ -126,7 +129,7 @@ public class PurifiedRecipeHandler {
                 .input(crushedRefined, material)
                 .output(dust, material, crushedMultiplier)
                 .chancedOutput(dust, material, crushedMultiplier, 3333, 0)
-                .chancedOutput(dust, byproduct, 1400, 850)
+                .chancedOutput(dust, byproduct, 2500, chancePerTier ? 500 : 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Hard Hammer crafting recipe

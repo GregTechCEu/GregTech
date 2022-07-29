@@ -165,6 +165,7 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     private void oreRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         Material smeltingResult = property.getDirectSmeltResult() != null ? property.getDirectSmeltResult() : material;
         if (!smeltingResult.hasProperty(PropertyKey.BLAST) && smeltingResult.hasProperty(PropertyKey.INGOT)) {
             long amountOutput = OrePrefix.ore.getMaterialAmount(material);
@@ -188,10 +189,11 @@ public class OreByProduct implements IRecipeWrapper {
         // macerate ore -> crushed
         addToOutputs(material, OrePrefix.crushed, baseOutputAmount * oreTypeMultiplier * 2);
         addToOutputs(byproductStack);
-        addChance(1400, 850);
+        addChance(2000, chancePerTier ? 500 : 0);
     }
 
     private void crushedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         Material primaryByproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
         Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
 
@@ -200,7 +202,7 @@ public class OreByProduct implements IRecipeWrapper {
         // macerate crushed -> impure
         addToOutputs(material, OrePrefix.dustImpure, crushedMultiplier);
         addToOutputs(secondaryByproduct, OrePrefix.dust, 1);
-        addChance(1400, 850);
+        addChance(2000, chancePerTier ? 500 : 0);
 
         // ore wash crushed -> crushed purified
         addToOutputs(material, OrePrefix.crushedPurified, 1);
@@ -235,6 +237,7 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     private void purifiedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
@@ -243,7 +246,7 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, dust, crushedMultiplier);
         addChance(2500, 0);
         addToOutputs(byproduct, dust, 1);
-        addChance(1400, 850);
+        addChance(2000, chancePerTier ? 500 : 0);
 
         // TC crushed purified -> refined
         addToOutputs(material, OrePrefix.crushedRefined, 1);
@@ -319,6 +322,7 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     private void refinedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         Material byproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
@@ -327,7 +331,7 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, dust, crushedMultiplier);
         addChance(3333, 0);
         addToOutputs(byproduct, dust, 1);
-        addChance(1400, 850);
+        addChance(2500, chancePerTier ? 500 : 0);
     }
 
     private void dustRecipes(@Nonnull Material material, @Nonnull OreProperty property) {

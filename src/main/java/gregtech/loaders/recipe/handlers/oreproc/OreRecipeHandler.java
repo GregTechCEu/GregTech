@@ -63,6 +63,7 @@ public class OreRecipeHandler {
      * Processing Handler for Ore Blocks
      */
     public static void processOre(OrePrefix prefix, Material material, OreProperty property) {
+        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the primary byproduct, the secondary output of the recipe. Prioritize Gem if possible
         Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
         ItemStack byproductStack = OreDictUnifier.get(gem, byproductMaterial);
@@ -87,8 +88,8 @@ public class OreRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .output(crushed, material, baseOutputAmount * oreTypeMultiplier * 2)
-                .chancedOutput(byproductStack, 1400, 850)
-                .chancedOutput(stoneTypeDust, 6700, 800)
+                .chancedOutput(byproductStack, 2000, chancePerTier ? 500 : 0)
+                .chancedOutput(stoneTypeDust, 6000, chancePerTier ? 1000 : 0)
                 .duration(400).EUt(2)
                 .buildAndRegister();
 
