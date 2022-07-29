@@ -193,12 +193,13 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void crushedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         Material primaryByproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
+        Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
 
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
         // macerate crushed -> impure
         addToOutputs(material, OrePrefix.dustImpure, crushedMultiplier);
-        addToOutputs(primaryByproduct, OrePrefix.dust, 1);
+        addToOutputs(secondaryByproduct, OrePrefix.dust, 1);
         addChance(1400, 850);
 
         // ore wash crushed -> crushed purified

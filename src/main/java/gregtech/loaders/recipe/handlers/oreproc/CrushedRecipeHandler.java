@@ -67,7 +67,7 @@ public class CrushedRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushed, material)
                 .output(dustImpure, material, crushedMultiplier)
-                .chancedOutput(dust, primaryByproduct, 1400, 850)
+                .chancedOutput(dust, secondaryByproduct, 1400, 850)
                 .output(dust, Stone)
                 .duration(400).EUt(2).buildAndRegister();
 
