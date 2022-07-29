@@ -30,7 +30,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: "How you were playing on the world. Typical answers include: Singleplayer, Open to LAN, Forge Server, Sponge Server, or 'Mohist Server."
+      description: "How you were playing on the world. Typical answers include: Singleplayer, Open to LAN, Forge Server, Sponge Server, or Mohist Server."
       placeholder: "Example: Singleplayer"
     validations:
       required: true
@@ -76,7 +76,7 @@ body:
     id: additional-info
     attributes:
       label: Additional Information
-      description: Any additional information you wish to provide.
+      description: Any additional information you wish to provide. Please add anything which did not fit into the other sections here.
       placeholder: "Example: This is likely caused by X because..."
     validations:
       required: false
