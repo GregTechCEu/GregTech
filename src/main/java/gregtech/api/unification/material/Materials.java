@@ -638,6 +638,7 @@ public class Materials {
     public static Material Collagen;
     public static Material Gelatin;
     public static Material Agar;
+    public static Material Purpur;
     public static Material Andesite;
     public static Material Milk;
     public static Material Cocoa;

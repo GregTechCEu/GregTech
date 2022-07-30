@@ -317,7 +317,10 @@ public class UnknownCompositionMaterials {
                 .color(0x4F7942).iconSet(ROUGH)
                 .build();
 
-        // FREE ID 1609
+        Purpur = new Material.Builder(1609, "purpur")
+                .dust(1)
+                .color(0xA545A5)
+                .build();
 
         // FREE ID 1610
 

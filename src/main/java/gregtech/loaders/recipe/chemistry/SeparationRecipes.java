@@ -235,6 +235,14 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(250))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(VA[HV])
+                .input(dust, Purpur)
+                .chancedOutput(dustSmall, Asbestos, 9500, 150)
+                .chancedOutput(dustSmall, Endstone, 3000, 125)
+                .chancedOutput(dustTiny, Vanadium, 2000, 110)
+                .fluidOutputs(Naphtha.getFluid(75))
+                .buildAndRegister();
+
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
                 .input(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
