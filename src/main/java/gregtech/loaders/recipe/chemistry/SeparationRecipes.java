@@ -215,6 +215,15 @@ public class SeparationRecipes {
                 .chancedOutput(dustSmall, Tantalite, 500, 130)
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
+                .input(dust, Prismarine)
+                .chancedOutput(dustSmall, Pyrolusite, 7500, 500)
+                .chancedOutput(dustSmall, BrownLimonite, 7500, 500)
+                .chancedOutput(dustSmall, CobaltOxide, 500, 100)
+                .chancedOutput(dustSmall, Garnierite, 500, 100)
+                .fluidOutputs(Water.getFluid(250))
+                .buildAndRegister();
+
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
                 .input(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
@@ -319,15 +328,6 @@ public class SeparationRecipes {
                 .fluidInputs(SaltWater.getFluid(1000))
                 .output(dust, Salt, 2)
                 .fluidOutputs(Water.getFluid(1000))
-                .buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .input(dust, Prismarine, 6)
-                .output(dust, Pyrolusite)
-                .output(dust, BrownLimonite)
-                .chancedOutput(dust, CobaltOxide, 500, 100)
-                .chancedOutput(dust, Garnierite, 500, 100)
-                .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
         // Electrolyzer
