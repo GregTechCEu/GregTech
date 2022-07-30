@@ -218,24 +218,24 @@ public class BatteryRecipes {
 
 
         // Battery Recycling Recipes
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_MV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_MV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_MV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_HV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_HV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_HV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_EV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_SMALL_VANADIUM).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_IV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MEDIUM_VANADIUM).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LUV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LARGE_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_EV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_SMALL_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_IV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MEDIUM_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LUV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LARGE_VANADIUM).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_ZPM_NAQUADRIA, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MEDIUM_NAQUADRIA).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_UV_NAQUADRIA, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_ZPM_NAQUADRIA, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MEDIUM_NAQUADRIA).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_UV_NAQUADRIA, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
     }
 
     private static void gemBatteries() {

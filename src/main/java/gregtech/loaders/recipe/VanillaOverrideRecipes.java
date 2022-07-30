@@ -725,7 +725,7 @@ public class VanillaOverrideRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .circuitMeta(8)
-                .input(OreDictNames.stoneCobble, 8)
+                .input(OreDictNames.stoneCobble.name(), 8)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputs(new ItemStack(Blocks.FURNACE))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();

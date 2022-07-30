@@ -219,7 +219,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(cobblestone, 1)
+                .input(cobblestone.name(), 1)
                 .outputs(new ItemStack(Blocks.GRAVEL, 1))
                 .EUt(16).duration(10)
                 .buildAndRegister();
@@ -995,7 +995,7 @@ public class VanillaStandardRecipes {
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(cobblestone, 1)
+                .input(cobblestone.name(), 1)
                 .inputs(new ItemStack(Blocks.VINE))
                 .outputs(new ItemStack(Blocks.MOSSY_COBBLESTONE))
                 .duration(40).EUt(1).buildAndRegister();
@@ -1006,7 +1006,7 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.STONEBRICK, 1, 1))
                 .duration(40).EUt(1).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).input(stoneCobble, 6).outputs(new ItemStack(Blocks.STONE_STAIRS, 4)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).input(stoneCobble.name(), 6).outputs(new ItemStack(Blocks.STONE_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.BRICK_BLOCK, 6)).outputs(new ItemStack(Blocks.BRICK_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.STONEBRICK, 6, GTValues.W)).outputs(new ItemStack(Blocks.STONE_BRICK_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.NETHER_BRICK, 6)).outputs(new ItemStack(Blocks.NETHER_BRICK_STAIRS, 4)).buildAndRegister();
@@ -1035,7 +1035,7 @@ public class VanillaStandardRecipes {
 
         if (!ConfigHolder.recipes.hardMiscRecipes) {
             ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).circuitMeta(4).input("plankWood", 4).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
-            ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(stoneCobble, 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(VA[ULV]).buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(stoneCobble.name(), 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.OBSIDIAN, 4)).input(gem, Diamond, 2).inputs(new ItemStack(Items.BOOK)).outputs(new ItemStack(Blocks.ENCHANTING_TABLE)).duration(100).EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(1).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputs(new ItemStack(Items.BOW)).input(dust, Redstone).outputs(new ItemStack(Blocks.DISPENSER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(2).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).input(dust, Redstone).outputs(new ItemStack(Blocks.DROPPER)).buildAndRegister();

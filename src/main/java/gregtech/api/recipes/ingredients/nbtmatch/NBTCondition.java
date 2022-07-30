@@ -1,5 +1,9 @@
 package gregtech.api.recipes.ingredients.nbtmatch;
 
+import gregtech.api.util.GTLog;
+
+import java.util.Objects;
+
 /**
  * This class is used to check if a NBT tag matches a condition, not necessarily matching the original item tag
  */
@@ -28,10 +32,31 @@ public class NBTCondition {
         this.tagType = tagType;
         this.nbtKey = nbtKey;
         this.value = value;
+        if (tagType == null || nbtKey == null || value == null) {
+            GTLog.logger.error("NBTCondition must not have null parameters.");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+        }
     }
 
     @Override
     public String toString() {
         return nbtKey + ": " + value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tagType, nbtKey, value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof NBTCondition) {
+            NBTCondition o = (NBTCondition) obj;
+            return this.tagType == o.tagType && this.nbtKey.equals(o.nbtKey) && this.value.equals(o.value);
+        }
+        return false;
     }
 }

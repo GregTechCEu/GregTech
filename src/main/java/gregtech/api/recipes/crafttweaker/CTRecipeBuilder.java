@@ -47,31 +47,31 @@ public class CTRecipeBuilder {
 
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
-        this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
-                .map(s -> {
-                    GTRecipeInput ri;
-                    if (s instanceof IOreDictEntry) {
-                        ri = GTRecipeOreInput.getOrCreate(((IOreDictEntry) s).getName(), s.getAmount());
-                    } else {
-                        ri = GTRecipeItemInput.getOrCreate(new CraftTweakerItemInputWrapper(s), s.getAmount());
-                    }
-                    return ri;
-                }).collect(Collectors.toList()));
+        for (IIngredient ingredient : ingredients) {
+            if (ingredient instanceof IOreDictEntry) {
+                this.backingBuilder.input(
+                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient).getName(), ingredient.getAmount()));
+            } else {
+                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
+                        new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount()));
+            }
+        }
         return this;
     }
 
     @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
-        this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
-                .map(s -> {
-                    GTRecipeInput ri;
-                    if (s instanceof IOreDictEntry) {
-                        ri = GTRecipeOreInput.getOrCreate(((IOreDictEntry) s).getName(), s.getAmount()).setNonConsumable();
-                    } else {
-                        ri = GTRecipeItemInput.getOrCreate(new CraftTweakerItemInputWrapper(s), s.getAmount()).setNonConsumable();
-                    }
-                    return ri;
-                }).collect(Collectors.toList()));
+        for (IIngredient ingredient : ingredients) {
+            if (ingredient instanceof IOreDictEntry) {
+                this.backingBuilder.input(
+                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient).getName(), ingredient.getAmount())
+                                .setNonConsumable());
+            } else {
+                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
+                        new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount())
+                        .setNonConsumable());
+            }
+        }
         return this;
     }
 
