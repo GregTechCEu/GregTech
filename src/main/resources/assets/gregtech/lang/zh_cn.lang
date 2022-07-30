@@ -1856,6 +1856,7 @@ material.gelatin_mixture=胶状诱变剂
 material.collagen=胶原蛋白
 material.gelatin=凝胶
 material.agar=琼脂
+material.purpur=紫珀
 
 material.uranium_hexafluoride=六氟化铀
 material.enriched_uranium_hexafluoride=浓缩六氟化铀
