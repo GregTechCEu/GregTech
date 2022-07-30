@@ -1167,12 +1167,6 @@ public class VanillaStandardRecipes {
                 .duration(200).EUt(2).buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.PRISMARINE_SHARD, 4))
-                .notConsumable(new IntCircuitIngredient(4))
-                .outputs(new ItemStack(Blocks.PRISMARINE))
-                .duration(100).EUt(2).buildAndRegister();
-
-        PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.PRISMARINE_SHARD, 9))
                 .notConsumable(new IntCircuitIngredient(9))
                 .outputs(new ItemStack(Blocks.PRISMARINE, 1, 1))

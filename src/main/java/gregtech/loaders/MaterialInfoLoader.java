@@ -314,6 +314,11 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.COBBLESTONE_WALL, 1), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));
         OreDictUnifier.registerOre(new ItemStack(Items.END_CRYSTAL, 1), new ItemMaterialInfo(new MaterialStack(Materials.Glass, M * 7), new MaterialStack(Materials.EnderEye, M)));
 
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PRISMARINE, 1, 1), new ItemMaterialInfo(new MaterialStack(Materials.Prismarine, M * 9)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PRISMARINE, 1, 2), new ItemMaterialInfo(new MaterialStack(Materials.Prismarine, M * 8)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.SEA_LANTERN, 1), new ItemMaterialInfo(new MaterialStack(Materials.Prismarine, M * 9)));
+
+
         if (ConfigHolder.recipes.hardToolArmorRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.CLOCK, 1, W), new ItemMaterialInfo
                     (new MaterialStack(Materials.Gold, (13 * M) / 8), // M + ring + 3 * bolt

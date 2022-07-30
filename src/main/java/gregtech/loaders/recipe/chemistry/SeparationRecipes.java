@@ -321,6 +321,15 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
+                .input(dust, Prismarine, 6)
+                .output(dust, Pyrolusite)
+                .output(dust, BrownLimonite)
+                .chancedOutput(dust, CobaltOxide, 500, 100)
+                .chancedOutput(dust, Garnierite, 500, 100)
+                .fluidOutputs(Water.getFluid(2000))
+                .buildAndRegister();
+
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, SodiumBisulfate, 7)

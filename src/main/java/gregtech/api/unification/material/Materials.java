@@ -689,6 +689,7 @@ public class Materials {
     public static Material Amethyst;
     public static Material Lapis;
     public static Material Blaze;
+    public static Material Prismarine;
     public static Material Apatite;
     public static Material BlackSteel;
     public static Material DamascusSteel;

@@ -282,6 +282,7 @@ public class OrePrefix {
         gem.setIgnored(Materials.Lapis);
         gem.setIgnored(Materials.NetherQuartz);
         gem.setIgnored(Materials.Coal);
+        gem.setIgnored(Materials.Prismarine);
 
         excludeAllGems(Materials.Charcoal);
         excludeAllGems(Materials.NetherStar);
@@ -296,6 +297,7 @@ public class OrePrefix {
         dust.setIgnored(Materials.Sugar);
         dust.setIgnored(Materials.Bone);
         dust.setIgnored(Materials.Blaze);
+        dust.setIgnored(Materials.Prismarine);
 
         stick.setIgnored(Materials.Wood);
         stick.setIgnored(Materials.Bone);
@@ -342,6 +344,7 @@ public class OrePrefix {
         block.setIgnored(Materials.Concrete);
         block.setIgnored(Materials.Blaze);
         block.setIgnored(Materials.Lapotron);
+        block.setIgnored(Materials.Prismarine);
 
         ore.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
         oreNetherrack.addSecondaryMaterial(new MaterialStack(Materials.Netherrack, dust.materialAmount));
@@ -483,7 +486,8 @@ public class OrePrefix {
             if (material == Materials.Glowstone ||
                     material == Materials.NetherQuartz ||
                     material == Materials.Brick ||
-                    material == Materials.Clay)
+                    material == Materials.Clay ||
+                    material == Materials.Prismarine)
                 return M * 4;
                 //glass, ice and obsidian gain only one dust
             else if (material == Materials.Glass ||

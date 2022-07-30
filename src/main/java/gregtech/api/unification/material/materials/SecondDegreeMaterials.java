@@ -82,7 +82,13 @@ public class SecondDegreeMaterials {
                 .fluidTemp(4000)
                 .build();
 
-        // Free ID 2009
+        Prismarine = new Material.Builder(2009, "prismarine")
+                .gem(1)
+                .color(0x73B5AA).iconSet(FINE)
+                .flags(CRYSTALLIZABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION, NO_WORKING)
+                .components(Pyrolusite, 1, BrownLimonite, 1, Water, 1)
+                .build()
+                .setFormula("(Fe,Mn)HO2(H2O)2", true);
 
         Apatite = new Material.Builder(2010, "apatite")
                 .gem(1).ore(4, 2)
