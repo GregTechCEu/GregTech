@@ -5,7 +5,6 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ValidationResult;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -82,11 +81,6 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         }
 
         super.buildAndRegister();
-    }
-
-    public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
     }
 
     private int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {

@@ -12,6 +12,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -578,7 +579,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
         return standardOverclockingLogic(Math.abs(recipeEUt),
                 maxVoltage,
                 duration,

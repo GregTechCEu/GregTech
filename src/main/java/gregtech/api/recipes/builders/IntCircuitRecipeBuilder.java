@@ -7,7 +7,6 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
@@ -30,7 +29,7 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     @Override
     public boolean applyProperty(@Nonnull String key, Object value) {
         if (key.equals("circuit") && value instanceof Number) {
-            this.circuitMeta = ((Number) value).intValue();
+            circuitMeta(((Number) value).intValue());
             return true;
         }
         return super.applyProperty(key, value);
@@ -56,11 +55,6 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
             inputs.add(IntCircuitIngredient.getOrCreate(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
         }
         return super.finalizeAndValidate();
-    }
-
-    public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.recipeproperties.EmptyRecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
  * Recipes are immutable.
  */
 public class Recipe {
+
+    private static final NonNullList<ItemStack> EMPTY = NonNullList.create();
 
     public static int getMaxChancedValue() {
         return 10000;
@@ -68,45 +72,41 @@ public class Recipe {
      * If this Recipe is a Crafttweaker recipe. Used for logging purposes
      */
     private final boolean isCTRecipe;
-    private final RecipePropertyStorage recipePropertyStorage;
-
-    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
+    private final IRecipePropertyStorage recipePropertyStorage;
 
     private final int hashCode;
 
     public Recipe(List<GTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<GTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
-                  int duration, int EUt, boolean hidden, boolean isCTRecipe) {
-        this.recipePropertyStorage = new RecipePropertyStorage();
-        this.inputs = NonNullList.create();
-        this.inputs.addAll(inputs);
-        this.outputs = NonNullList.create();
-        this.outputs.addAll(outputs);
-        this.chancedOutputs = new ArrayList<>(chancedOutputs);
-        this.fluidInputs = ImmutableList.copyOf(fluidInputs);
-        this.fluidOutputs = ImmutableList.copyOf(fluidOutputs);
+                  int duration, int EUt, boolean hidden, boolean isCTRecipe,
+                  IRecipePropertyStorage recipePropertyStorage) {
+        this.recipePropertyStorage = recipePropertyStorage;
+        if (inputs.isEmpty()) {
+            this.inputs = Collections.emptyList();
+        } else {
+            this.inputs = NonNullList.create();
+            this.inputs.addAll(inputs);
+            this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
+        }
+        if (outputs.isEmpty()) {
+            this.outputs = EMPTY;
+        } else {
+            this.outputs = NonNullList.create();
+            this.outputs.addAll(outputs);
+        }
+        this.chancedOutputs = chancedOutputs.isEmpty() ? Collections.emptyList() : new ArrayList<>(chancedOutputs);
+        this.fluidInputs = fluidInputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidInputs);
+        this.fluidOutputs = fluidOutputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidOutputs);
         this.duration = duration;
         this.EUt = EUt;
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
-        //sort not consumables inputs to the end
-        this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
         this.hashCode = makeHashCode();
     }
 
     public Recipe copy() {
-
-        // Create a new Recipe object
-        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe);
-
-        // Apply Properties from the original recipe onto the new one
-        if(this.recipePropertyStorage.getSize() > 0) {
-            for(Map.Entry<RecipeProperty<?>, Object> property : getRecipePropertyStorage().getRecipeProperties()) {
-                newRecipe.setProperty(property.getKey(), property.getValue());
-            }
-        }
-
-        return newRecipe;
+        return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
+                this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe, this.recipePropertyStorage);
     }
 
     /**
@@ -528,10 +528,6 @@ public class Recipe {
         return recipePropertyStorage.getRawRecipePropertyValue(key);
     }
 
-    public boolean setProperty(RecipeProperty<?> property, Object value) {
-        return recipePropertyStorage.store(property, value);
-    }
-
     public Set<Map.Entry<RecipeProperty<?>, Object>> getPropertyValues() {
         return recipePropertyStorage.getRecipeProperties();
     }
@@ -552,7 +548,7 @@ public class Recipe {
         return (int) recipePropertyStorage.getRecipeProperties().stream().filter((property) -> !property.getKey().isHidden()).count();
     }
 
-    public RecipePropertyStorage getRecipePropertyStorage() {
+    public IRecipePropertyStorage getRecipePropertyStorage() {
         return recipePropertyStorage;
     }
 

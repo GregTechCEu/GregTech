@@ -3,7 +3,6 @@ package gregtech.api.recipes.builders;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.ValidationResult;
 
 public class SimpleRecipeBuilder extends RecipeBuilder<SimpleRecipeBuilder> {
 
@@ -23,8 +22,4 @@ public class SimpleRecipeBuilder extends RecipeBuilder<SimpleRecipeBuilder> {
         return new SimpleRecipeBuilder(this);
     }
 
-    public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
-    }
 }

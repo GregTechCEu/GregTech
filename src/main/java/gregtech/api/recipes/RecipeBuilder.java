@@ -12,8 +12,7 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.recipeproperties.CleanroomProperty;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.recipeproperties.*;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -59,7 +58,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected int parallel = 0;
     protected Consumer<RecipeBuilder<?>> onBuildAction = null;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
-    protected CleanroomType cleanroom = null;
+    protected IRecipePropertyStorage recipePropertyStorage = null;
+    protected boolean recipePropertyStorageErrored = false;
 
     protected RecipeBuilder() {
         this.inputs = NonNullList.create();
@@ -81,6 +81,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration = recipe.getDuration();
         this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
+        this.recipePropertyStorage = recipe.getRecipePropertyStorage().copy();
+        if (this.recipePropertyStorage != null) {
+            this.recipePropertyStorage.freeze(false);
+        }
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
@@ -97,19 +101,21 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.onBuildAction = recipeBuilder.onBuildAction;
-        this.cleanroom = recipeBuilder.cleanroom;
+        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
+        if (this.recipePropertyStorage != null) {
+            this.recipePropertyStorage = this.recipePropertyStorage.copy();
+        }
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
         if (!ConfigHolder.machines.enableCleanroom) {
             return (R) this;
         }
-        // cleanroom property can be null, as it is default null.
-        this.cleanroom = cleanroom;
+        this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         return (R) this;
     }
 
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
         if (key.equals(CleanroomProperty.KEY)) {
             if (value instanceof CleanroomType) {
                 this.cleanroom((CleanroomType) value);
@@ -123,8 +129,22 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public boolean applyProperty(String key, ItemStack item) {
-        return false;
+    public boolean applyProperty(@Nonnull RecipeProperty<?> property, @Nullable Object value) {
+        if (value == null) {
+            if (this.recipePropertyStorage != null) {
+                return this.recipePropertyStorage.remove(property);
+            }
+        } else {
+            if (this.recipePropertyStorage == null) {
+                this.recipePropertyStorage = new RecipePropertyStorage();
+            }
+            boolean stored = this.recipePropertyStorage.store(property, value);
+            if (!stored) {
+                this.recipePropertyStorageErrored = true;
+            }
+            return stored;
+        }
+        return true;
     }
 
     public R input(GTRecipeInput input) {
@@ -655,12 +675,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult finalizeAndValidate() {
-        return validate();
+        return recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
     }
 
     public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
+        return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
+                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe,
+                        recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage));
     }
 
     protected EnumValidationResult validate() {
@@ -681,6 +702,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (recipeStatus == EnumValidationResult.INVALID) {
             GTLog.logger.error("Invalid recipe, read the errors above: {}", this);
         }
+        if (recipePropertyStorage != null) {
+            recipePropertyStorage.freeze(true);
+        }
         return recipeStatus;
     }
 
@@ -695,16 +719,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public void buildAndRegister() {
-        if (onBuildAction != null)
+        if (onBuildAction != null) {
             onBuildAction.accept(this);
-
-        ValidationResult<Recipe> validationResult = build();
-        if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
-            Recipe recipe = validationResult.getResult();
-            if (!recipe.setProperty(CleanroomProperty.getInstance(), cleanroom)) {
-                validationResult = ValidationResult.newResult(EnumValidationResult.INVALID, validationResult.getResult());
-            }
         }
+        ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }
 
@@ -755,7 +773,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     @Nullable
     public CleanroomType getCleanroom() {
-        return cleanroom;
+        return this.recipePropertyStorage == null ? null :
+                this.recipePropertyStorage.getRecipePropertyValue(CleanroomProperty.getInstance(), null);
     }
 
     @Override
@@ -770,7 +789,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("duration", duration)
                 .append("EUt", EUt)
                 .append("hidden", hidden)
-                .append("cleanroom", cleanroom)
+                .append("cleanroom", getCleanroom())
                 .append("recipeStatus", recipeStatus)
                 .toString();
     }
