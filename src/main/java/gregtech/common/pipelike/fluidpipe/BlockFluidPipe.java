@@ -48,8 +48,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
         Preconditions.checkNotNull(material, "material");
-        Preconditions.checkNotNull(fluidPipeProperties, "fluidPipeProperties");
-        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkNotNull(fluidPipeProperties, "material %s fluidPipeProperties was null", material);
+        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material %s is not registered", material);
         this.enabledMaterials.put(material, fluidPipeProperties);
     }
 

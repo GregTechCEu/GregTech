@@ -55,9 +55,9 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     public void addCableMaterial(Material material, WireProperties wireProperties) {
-        Preconditions.checkNotNull(material, "material");
-        Preconditions.checkNotNull(wireProperties, "wireProperties");
-        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkNotNull(material, "material was null");
+        Preconditions.checkNotNull(wireProperties, "material %s wireProperties was null", material);
+        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material %s is not registered", material);
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }
