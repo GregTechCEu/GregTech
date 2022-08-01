@@ -259,7 +259,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
                                 .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                 .setSize(14, 14))
                         .setPos(89, 18))
-                .widget(SlotGroup.ofItemHandler(this.exportItems, rowSize, 0, false)
+                .widget(SlotGroup.ofItemHandler(this.exportItems, rowSize, true, "storage")
                         .setPos(88 - rowSize * 18 / 2, 36))
                 .widget(itemFilter.createFilterUI(buildContext).setPos(7, 40 + rows * 18));
         return builder.build();
