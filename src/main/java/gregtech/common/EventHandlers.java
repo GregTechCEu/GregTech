@@ -1,11 +1,14 @@
 package gregtech.common;
 
+import com.cleanroommc.groovyscript.sandbox.ScriptRunEvent;
 import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
@@ -14,6 +17,7 @@ import gregtech.common.items.armor.IStepAssist;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -253,5 +257,17 @@ public class EventHandlers {
         if (ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
             event.setBurnTime(6400);
         }
+    }
+
+    @SubscribeEvent
+    public static void onReload(ScriptRunEvent.Pre event) {
+        GTLog.logger.info("Reloading GT recipe maps: ");
+        long time = Minecraft.getSystemTime();
+        for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
+            long time2 = Minecraft.getSystemTime();
+            recipeMap.onReload();
+            GTLog.logger.info(" - reloading {} took {}ms", recipeMap.unlocalizedName, Minecraft.getSystemTime() - time2);
+        }
+        GTLog.logger.info(" - reloading all recipe maps took {}ms", Minecraft.getSystemTime() - time);
     }
 }

@@ -1,5 +1,7 @@
 package gregtech.api.recipes;
 
+import com.cleanroommc.groovyscript.api.IIngredient;
+import com.cleanroommc.groovyscript.helper.recipe.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
@@ -535,6 +537,42 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R clearChancedOutput() {
         this.chancedOutputs.clear();
         return (R) this;
+    }
+
+    public R inputs(IIngredient ingredient) {
+        return input(ofGroovyIngredient(ingredient));
+    }
+
+    public R inputs(IIngredient... ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    public R inputs(Collection<IIngredient> ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    public R notConsumable(IIngredient ingredient) {
+        return notConsumable(ofGroovyIngredient(ingredient));
+    }
+
+    private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
+        if (ingredient instanceof OreDictIngredient) {
+            return GTRecipeOreInput.getOrCreate(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
+        }
+        Object oIngredient = ingredient;
+        if (oIngredient instanceof ItemStack) {
+            return GTRecipeItemInput.getOrCreate((ItemStack) oIngredient);
+        }
+        if (ingredient instanceof FluidStack) {
+            return GTRecipeFluidInput.getOrCreate((FluidStack) ingredient, ingredient.getAmount());
+        }
+        throw new IllegalArgumentException("Could not add groovy ingredient " + ingredient + " to recipe!");
     }
 
     /**

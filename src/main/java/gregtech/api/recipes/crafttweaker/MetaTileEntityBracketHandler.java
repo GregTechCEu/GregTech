@@ -3,12 +3,11 @@ package gregtech.api.recipes.crafttweaker;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -30,10 +29,10 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
         this.method = CraftTweakerAPI.getJavaMethod(MetaTileEntityBracketHandler.class, "getMetaTileEntityItem", String.class);
     }
 
-    public static IItemStack getMetaTileEntityItem(String name) {
+    public static ItemStack getMetaTileEntityItem(String name) {
         String[] resultName = splitObjectName(name);
         MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(resultName[0], resultName[1]));
-        return metaTileEntity == null ? null : new MCItemStack(metaTileEntity.getStackForm());
+        return metaTileEntity == null ? null : metaTileEntity.getStackForm();
     }
 
     public static String[] splitObjectName(String toSplit) {

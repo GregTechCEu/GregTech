@@ -1,6 +1,7 @@
 package gregtech;
 
 import codechicken.lib.CodeChickenLib;
+import com.cleanroommc.groovyscript.api.BracketHandler;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -14,10 +15,12 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
@@ -144,6 +147,13 @@ public class GregTechMod {
 
         proxy.onPreLoad();
         KeyBind.init();
+
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            BracketHandler.registerBracketHandler("recipemap", RecipeMap::getByName);
+            BracketHandler.registerBracketHandler("material", MATERIAL_REGISTRY::getObject);
+            BracketHandler.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
+            BracketHandler.registerBracketHandler("metaitem", MetaItemBracketHandler::getMetaItem);
+        }
     }
 
     @Mod.EventHandler
