@@ -1,10 +1,9 @@
 package gregtech.api.recipes;
 
-import gregtech.api.unification.material.Material;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,25 +12,12 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nullable;
 
-public class FluidCellIngredient extends Ingredient {
+public class FluidCellInput extends GTRecipeItemInput {
 
     final Fluid fluid;
 
-    /**
-     * @param fluid
-     * @param count Set to 0 for non consumable
-     * @return
-     */
-    public static CountableIngredient getIngredient(Fluid fluid, int count) {
-        return new CountableIngredient(new FluidCellIngredient(fluid), count);
-    }
-
-    public static CountableIngredient getIngredient(Material material, int count) {
-        return new CountableIngredient(new FluidCellIngredient(material.getFluid()), count);
-    }
-
-    public FluidCellIngredient(Fluid fluid) {
-        super(getFilledCell(fluid, 1));
+    public FluidCellInput(Fluid fluid) {
+        super(getFilledCell(fluid));
         this.fluid = fluid;
     }
 
@@ -56,15 +42,13 @@ public class FluidCellIngredient extends Ingredient {
     }
 
     @Override
-    public boolean apply(@Nullable ItemStack itemStack) {
+    public boolean acceptsStack(@Nullable ItemStack itemStack) {
+        if (itemStack == null || itemStack.isEmpty()) {
+            return false;
+        }
         IFluidHandlerItem stackFluid = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         FluidStack drained = stackFluid == null ? null : stackFluid.getTankProperties()[0].getContents();
-        return itemStack != null && MetaItems.FLUID_CELL.isItemEqual(itemStack) && drained != null && drained.getFluid() == fluid && drained.amount == 1000;
-    }
-
-    @Override
-    public boolean isSimple() {
-        return false;
+        return MetaItems.FLUID_CELL.isItemEqual(itemStack) && drained != null && drained.getFluid() == fluid && drained.amount == 1000;
     }
 
 }

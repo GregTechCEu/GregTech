@@ -6,7 +6,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.common.ConfigHolder;
 
 import javax.annotation.Nonnull;
@@ -20,7 +20,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
         // apply maintenance penalties
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();

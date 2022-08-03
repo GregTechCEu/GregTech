@@ -6,6 +6,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Materials;
@@ -319,7 +320,7 @@ public class RecipeMaps {
             .onRecipeBuild(recipeBuilder -> {
                 recipeBuilder.invalidateOnBuildAction();
                 RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                        .inputs(recipeBuilder.getInputs().toArray(new CountableIngredient[0]))
+                        .inputs(recipeBuilder.getInputs().toArray(new GTRecipeInput[0]))
                         .fluidInputs(recipeBuilder.getFluidInputs())
                         .outputs(recipeBuilder.getOutputs())
                         .chancedOutputs(recipeBuilder.getChancedOutputs())

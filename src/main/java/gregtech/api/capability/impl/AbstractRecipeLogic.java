@@ -12,6 +12,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -183,14 +184,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
         if (this.isOutputsFull && !hasNotifiedOutputs()) {
-            if (!hasNotifiedInputs() && checkPreviousRecipe()) {
-                return false;
-            }
+            return false;
+        } else {
+            this.isOutputsFull = false;
+            metaTileEntity.getNotifiedItemOutputList().clear();
+            metaTileEntity.getNotifiedFluidOutputList().clear();
+            return true;
         }
-        this.isOutputsFull = false;
-        metaTileEntity.getNotifiedItemOutputList().clear();
-        metaTileEntity.getNotifiedFluidOutputList().clear();
-        return true;
     }
 
     protected boolean canWorkWithInputs() {
@@ -434,13 +434,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && exportInventory.getSlots() > 0 && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && exportFluids.getTanks() > 0 && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -580,7 +580,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
         return standardOverclockingLogic(Math.abs(recipeEUt),
                 maxVoltage,
                 duration,
