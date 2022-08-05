@@ -9,6 +9,7 @@ import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.unification.material.Materials;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.init.SoundEvents;
@@ -140,6 +141,8 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ASSEMBLER);
             .onRecipeBuild(recipeBuilder -> {
+                if (!ConfigHolder.machines.enableResearch) return;
+
                 AssemblyLineRecipeBuilder builder = (AssemblyLineRecipeBuilder) recipeBuilder;
                 if (!builder.shouldAddResearchRecipe()) return;
 

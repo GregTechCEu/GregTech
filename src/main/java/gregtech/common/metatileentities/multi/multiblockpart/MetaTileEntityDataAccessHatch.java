@@ -19,11 +19,15 @@ import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -142,5 +146,12 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     @Override
     protected boolean openGUIOnRightClick() {
         return super.openGUIOnRightClick() && !this.isCreative;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (ConfigHolder.machines.enableResearch) {
+            super.getSubItems(creativeTab, subItems);
+        }
     }
 }
