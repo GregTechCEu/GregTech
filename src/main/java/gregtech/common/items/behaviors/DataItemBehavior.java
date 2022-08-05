@@ -4,6 +4,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,9 +23,17 @@ public class DataItemBehavior implements IItemBehaviour {
             if (researchId.isEmpty()) return;
 
             Set<Recipe> recipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
-            for (Recipe recipe : recipes) {
-                if (recipe == null) continue;
-                lines.add(I18n.format("metaitem.tool.datastick.assemblyline_data_tooltip", recipe.getOutputs().get(0).getDisplayName()));
+            if (!recipes.isEmpty()) {
+                lines.add(I18n.format("behavior.data_item.assemblyline.title"));
+                Set<ItemStack> itemsAdded = new ObjectOpenHashSet<>();
+                for (Recipe recipe : recipes) {
+                    if (recipe == null) continue;
+                    ItemStack stack = recipe.getOutputs().get(0);
+                    if (!itemsAdded.contains(stack)) {
+                        itemsAdded.add(stack);
+                        lines.add(I18n.format("behavior.data_item.assemblyline.data", stack.getDisplayName()));
+                    }
+                }
             }
         }
     }

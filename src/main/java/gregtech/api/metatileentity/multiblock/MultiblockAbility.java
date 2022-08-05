@@ -1,15 +1,13 @@
 package gregtech.api.metatileentity.multiblock;
 
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.IMufflerHatch;
-import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +44,8 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>("passthrough_hatch");
 
+    public static final MultiblockAbility<IDataAccessHatch> DATA_ACCESS_HATCH = new MultiblockAbility<>("data_access_hatch");
+
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {
             REGISTRY.put(ability, new ArrayList<>());
@@ -53,7 +53,7 @@ public class MultiblockAbility<T> {
         REGISTRY.get(ability).add(part);
     }
 
-    public MultiblockAbility(String name){
+    public MultiblockAbility(@Nonnull String name){
         NAME_REGISTRY.put(name.toLowerCase(), this);
     }
 }

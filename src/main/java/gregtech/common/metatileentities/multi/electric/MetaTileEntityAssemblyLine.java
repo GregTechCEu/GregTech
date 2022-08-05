@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import codechicken.lib.vec.Vector3;
+import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -10,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
@@ -28,6 +30,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -49,7 +54,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(FRONT, UP, RIGHT)
                 .aisle("FIF", "RTR", "SAG", "#Y#")
-                .aisle("FIF", "RTR", "GAG", "#Y#").setRepeatable(3, 15)
+                .aisle("FIF", "RTR", "DAG", "#Y#")
+                .aisle("FIF", "RTR", "GAG", "#Y#").setRepeatable(2, 14)
                 .aisle("FOF", "RTR", "GAG", "#Y#")
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
@@ -62,6 +68,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
                 .where('R', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS)))
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
+                .where('D', abilities(MultiblockAbility.DATA_ACCESS_HATCH))
                 .where('#', any())
                 .build();
     }
@@ -196,5 +203,17 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         });
 
         return particle;
+    }
+
+    @Override
+    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        List<IDataAccessHatch> dataHatches = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH);
+        for (IDataAccessHatch hatch : dataHatches) {
+            if (hatch.isCreative()) return true;
+            for (Recipe r : hatch.getAvailableRecipes()) {
+                if (r.equals(recipe)) return true;
+            }
+        }
+        return false;
     }
 }
