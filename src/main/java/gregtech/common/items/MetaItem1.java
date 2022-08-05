@@ -469,8 +469,8 @@ public class MetaItem1 extends StandardMetaItem {
         }));
 
         // Data Items: ID 261-265
-        TOOL_DATA_STICK = addItem(261, "tool.datastick");
-        TOOL_DATA_ORB = addItem(262, "tool.dataorb");
+        TOOL_DATA_STICK = addItem(261, "tool.datastick").addComponents(new DataItemBehavior());
+        TOOL_DATA_ORB = addItem(262, "tool.dataorb").addComponents(new DataItemBehavior());
 
         // Special Machine Components: ID 266-280
         COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")

@@ -86,6 +86,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
                 .output(ELECTRIC_MOTOR_LuV)
+                .research(ELECTRIC_MOTOR_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -99,6 +100,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(ELECTRIC_MOTOR_ZPM)
+                .research(ELECTRIC_MOTOR_LuV.getStackForm())
                 .duration(600).EUt(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -113,6 +115,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(1000))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(ELECTRIC_MOTOR_UV)
+                .research(ELECTRIC_MOTOR_ZPM.getStackForm())
                 .duration(600).EUt(100000).buildAndRegister();
 
 
