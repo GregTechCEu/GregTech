@@ -61,8 +61,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(FRONT, UP, RIGHT)
                 .aisle("FIF", "RTR", "SAG", " Y ")
-                .aisle("FIF", "RTR", "DAG", " Y ")
-                .aisle("FIF", "RTR", "GAG", " Y ").setRepeatable(2, 14)
+                .aisle("FIF", "RTR", "DAG", " Y ").setRepeatable(3, 15)
                 .aisle("FOF", "RTR", "GAG", " Y ")
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
@@ -83,8 +82,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
 
                 // if research is enabled, require the data hatch, otherwise use a grate instead
-                .where('D', ConfigHolder.machines.enableResearch ? abilities(MultiblockAbility.DATA_ACCESS_HATCH) :
-                        states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING)))
+                .where('D', ConfigHolder.machines.enableResearch ? abilities(MultiblockAbility.DATA_ACCESS_HATCH)
+                        .setMinGlobalLimited(1).setMaxGlobalLimited(2).or(states(getGrateState())) :
+                        states(getGrateState()))
                 .where(' ', any())
                 .build();
     }
@@ -96,6 +96,10 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+    }
+
+    protected IBlockState getGrateState() {
+        return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING);
     }
 
     @Override

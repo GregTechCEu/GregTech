@@ -127,8 +127,8 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether the Assembly Line should require the fluid inputs to be in order.",
                 "This does nothing if B:enableResearch is false or if B:orderedAssembly is false.",
-                "Default: true"})
-        public boolean orderedFluidAssembly = true;
+                "Default: false"})
+        public boolean orderedFluidAssembly = false;
 
         /**
          * <strong>Addons mods should not reference this config directly.</strong>
