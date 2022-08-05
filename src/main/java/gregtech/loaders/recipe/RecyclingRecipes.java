@@ -290,6 +290,12 @@ public class RecyclingRecipes {
                     highestTemp = prop.getBlastTemperature();
                 }
             }
+            else if(m.hasFlag(IS_MAGNETIC) && m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getSmeltingInto().hasProperty(PropertyKey.BLAST)) {
+                BlastProperty prop = m.getProperty(PropertyKey.INGOT).getSmeltingInto().getProperty(PropertyKey.BLAST);
+                if (prop.getBlastTemperature() > highestTemp) {
+                    highestTemp = prop.getBlastTemperature();
+                }
+            }
         }
 
         // No blast temperature in the list means no multiplier
