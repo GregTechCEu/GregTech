@@ -10,6 +10,11 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.machines.IResearchRecipeMap;
+import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
@@ -22,6 +27,8 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
@@ -54,7 +61,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         for (int i = 0; i < exportFluidTanks.length; i++)
             exportFluidTanks[i] = new FluidTank(16000);
         this.modularUI = recipeMap.createJeiUITemplate(
-                (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
+                (importItems = new ItemStackHandler(recipeMap.getMaxInputs() + (recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES ? 1 : 0))),
                 (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
                 (importFluids = new FluidTankList(false, importFluidTanks)),
                 (exportFluids = new FluidTankList(false, exportFluidTanks)), 0
@@ -174,6 +181,20 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 }
             }
         }
+
+        if (ConfigHolder.machines.enableResearch && this.recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES) {
+            ItemStack dataStick = MetaItems.TOOL_DATA_STICK.getStackForm();
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            NBTTagCompound subTagCompound = new NBTTagCompound();
+            if (recipeWrapper.getRecipe().hasProperty(ResearchProperty.getInstance())) {
+                String researchId = recipeWrapper.getRecipe().getProperty(ResearchProperty.getInstance(), "");
+                subTagCompound.setString(IResearchRecipeMap.RESEARCH_ID_NBT_TAG, researchId);
+            }
+            tagCompound.setTag(IResearchRecipeMap.RESEARCH_NBT_TAG, subTagCompound);
+            dataStick.setTagCompound(tagCompound);
+            itemStackGroup.set(16, dataStick);
+        }
+
         itemStackGroup.addTooltipCallback(recipeWrapper::addItemTooltip);
         fluidStackGroup.addTooltipCallback(recipeWrapper::addFluidTooltip);
         itemStackGroup.set(ingredients);
@@ -184,8 +205,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     public void drawExtras(@Nonnull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
             if (widget instanceof ProgressWidget) widget.detectAndSendChanges();
-            widget.drawInBackground(0, 0, minecraft.getRenderPartialTicks(), new IRenderContext() {
-            });
+            widget.drawInBackground(0, 0, minecraft.getRenderPartialTicks(), new IRenderContext() {/**/});
             widget.drawInForeground(0, 0);
         }
     }

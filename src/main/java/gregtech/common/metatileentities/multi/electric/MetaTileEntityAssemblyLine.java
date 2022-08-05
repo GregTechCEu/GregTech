@@ -244,7 +244,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             for (Recipe r : hatch.getAvailableRecipes()) {
                 if (ConfigHolder.machines.orderedAssembly) {
                     List<GTRecipeInput> inputs = r.getInputs();
-                    List<IItemHandlerModifiable> itemInputInventory = getOrderedItemInputs();
+                    List<IItemHandlerModifiable> itemInputInventory = getAbilities(MultiblockAbility.IMPORT_ITEMS);
                     // slot count is not enough, so don't try to match it
                     if (itemInputInventory.size() < inputs.size()) continue;
 
@@ -259,7 +259,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                     if (!failedItemInputs) {
                         if (ConfigHolder.machines.orderedFluidAssembly) {
                             inputs = r.getFluidInputs();
-                            List<IFluidTank> fluidInputInventory = getOrderedFluidInputs();
+                            List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
 
                             // slot count is not enough, so don't try to match it
                             if (fluidInputInventory.size() < inputs.size()) continue;
@@ -285,53 +285,5 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             }
         }
         return false;
-    }
-
-    protected List<IItemHandlerModifiable> getOrderedItemInputs() {
-        // order is reversed when facing the negative direction. Positive it is in order, so just return.
-//        if (getFrontFacing().getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) {
-//            // getAbilities is unmodifiable so we need to make a copy
-//            List<IItemHandlerModifiable> inputItems = new ObjectArrayList<>();
-//            inputItems.addAll(getAbilities(MultiblockAbility.IMPORT_ITEMS));
-//            Collections.reverse(inputItems);
-//
-//            // need to remove all the trailing empty hatches at the front after reversing
-//            boolean wasPreviousAir = true;
-//            for (int i = 0; i < inputItems.size(); i++) {
-//                if (!wasPreviousAir) break;
-//                if (inputItems.get(i).getStackInSlot(0).isEmpty()) {
-//                    inputItems.remove(i);
-//                    i--;
-//                } else {
-//                    wasPreviousAir = false;
-//                }
-//            }
-//            return inputItems;
-//        }
-        return getAbilities(MultiblockAbility.IMPORT_ITEMS);
-    }
-
-    protected List<IFluidTank> getOrderedFluidInputs() {
-        // order is reversed when facing the negative direction. Positive it is in order, so just return.
-//        if (getFrontFacing().getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) {
-//            // getAbilities is unmodifiable so we need to make a copy
-//            List<IFluidTank> inputFluids = new ObjectArrayList<>();
-//            inputFluids.addAll(getAbilities(MultiblockAbility.IMPORT_FLUIDS));
-//            Collections.reverse(inputFluids);
-//
-//            // need to remove all the trailing empty hatches at the front after reversing
-//            boolean wasPreviousAir = true;
-//            for (int i = 0; i < inputFluids.size(); i++) {
-//                if (!wasPreviousAir) break;
-//                if (inputFluids.get(i).getFluid() == null) {
-//                    inputFluids.remove(i);
-//                    i--;
-//                } else {
-//                    wasPreviousAir = false;
-//                }
-//            }
-//            return inputFluids;
-//        }
-        return getAbilities(MultiblockAbility.IMPORT_FLUIDS);
     }
 }

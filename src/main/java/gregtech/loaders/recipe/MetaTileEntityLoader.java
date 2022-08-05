@@ -175,6 +175,9 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "passthrough_hatch_item", MetaTileEntities.PASSTHROUGH_HATCH_ITEM.getStackForm(), " C ", "GHG", " S ", 'C', MetaItems.CONVEYOR_MODULE_HV.getStackForm(), 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Steel), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'S', OreDictNames.chestWood);
         ModHandler.addShapedRecipe(true, "passthrough_hatch_fluid", MetaTileEntities.PASSTHROUGH_HATCH_FLUID.getStackForm(), " C ", "GHG", " S ", 'C', MetaItems.ELECTRIC_PUMP_HV.getStackForm(), 'G', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Steel), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'S', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS));
 
+        ModHandler.addShapedRecipe(true, "data_access_hatch", MetaTileEntities.DATA_ACCESS_HATCH.getStackForm(), "COC", "OHO", "COC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'O', MetaItems.TOOL_DATA_STICK.getStackForm(), 'H', MetaTileEntities.HULL[GTValues.IV].getStackForm());
+        ModHandler.addShapedRecipe(true, "data_access_hatch_advanced", MetaTileEntities.ADVANCED_DATA_ACCESS_HATCH.getStackForm(), "COC", "OHO", "COC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.ZPM), 'O', MetaItems.TOOL_DATA_ORB.getStackForm(), 'H', MetaTileEntities.HULL[GTValues.ZPM].getStackForm());
+
         ModHandler.addShapedRecipe(true, "charcoal_pile_igniter", MetaTileEntities.CHARCOAL_PILE_IGNITER.getStackForm(), "ERE", "EHE", "FFF", 'E', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.rotor, Materials.Iron), 'H', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'F', new ItemStack(Items.FLINT));
 
         // STEAM MACHINES

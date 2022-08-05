@@ -42,41 +42,26 @@ public class RecipeMapAssemblyLine extends RecipeMap<AssemblyLineRecipeBuilder> 
 
     @Override
     protected void addInventorySlotGroup(ModularUI.Builder builder, @Nonnull IItemHandlerModifiable itemHandler, @Nonnull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
-        int itemInputsCount = itemHandler.getSlots();
-        int fluidInputsCount = fluidHandler.getTanks();
-        boolean invertFluids = false;
-        if (itemInputsCount == 0) {
-            int tmp = itemInputsCount;
-            itemInputsCount = fluidInputsCount;
-            fluidInputsCount = tmp;
-            invertFluids = true;
-        }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
-        int itemSlotsToLeft = inputSlotGrid[0];
-        int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = 80 - itemSlotsToLeft * 18;
-        int startInputsY = 37 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsX = 80 - 4 * 18;
+        int startInputsY = 37 - 2 * 18;
 
         if (!isOutputs) {
             // Data Slot
-            builder.widget(new SlotWidget(itemHandler, 15, startInputsX + 18 * 7, 1 + 18 * 2, true, true)
+            builder.widget(new SlotWidget(itemHandler, 16, startInputsX + 18 * 7, 1 + 18 * 2, true, true)
                     .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY));
-            for (int i = 0; i < itemSlotsToDown; i++) {
-                for (int j = 0; j < itemSlotsToLeft; j++) {
-                    int slotIndex = i * itemSlotsToLeft + j/* + 1*/; // needed for data slot
-                    addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, invertFluids, false);
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    int slotIndex = i * 4 + j;
+                    addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, false, false);
                 }
             }
-            if (fluidInputsCount > 0 || invertFluids) {
-                if (itemSlotsToDown >= fluidInputsCount) {
-                    int startSpecX = startInputsX + 18 * 5;
-                    for (int i = 0; i < fluidInputsCount; i++) {
-                        addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
-                    }
-                }
+            int startSpecX = startInputsX + 18 * 5;
+            for (int i = 0; i < 4; i++) {
+                addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
             }
         } else {
-            addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
+            // output slot
+            addSlot(builder, startInputsX + 18 * 7, 1, 0, itemHandler, fluidHandler, false, true);
         }
     }
 

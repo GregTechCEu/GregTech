@@ -27,6 +27,7 @@ import gregtech.common.items.MetaItems;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,10 +37,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,7 +96,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     protected int getInventorySize() {
-        return isCreative ? 0 : getTier() == GTValues.LuV ? 16 : 9;
+        return isCreative ? 0 : getTier() == GTValues.ZPM ? 16 : 9;
     }
 
     @Override
@@ -125,6 +128,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     private void rebuildData() {
+        dataMap.clear();
         for (int i = 0; i < this.importItems.getSlots(); i++) {
             ItemStack stack = this.importItems.getStackInSlot(i);
             addDataNBT(stack);
@@ -138,6 +142,13 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
             if (researchId.isEmpty()) return;
             dataMap.put(GTRecipeItemInput.getOrCreate(stack), ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId));
         }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        rebuildData();
+        return data;
     }
 
     @Override
@@ -172,6 +183,14 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         if (ConfigHolder.machines.enableResearch) {
             super.getSubItems(creativeTab, subItems);
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
+        if (isCreative) tooltip.add(I18n.format("gregtech.machine.data_access_hatch.creative.tooltip.1"));
+        else tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
     }
 
     @Nonnull

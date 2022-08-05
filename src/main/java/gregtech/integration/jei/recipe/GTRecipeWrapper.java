@@ -7,6 +7,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.CTRecipeHelper;
@@ -17,11 +18,13 @@ import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -77,12 +80,28 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
 
+            // Scanner Output replacing, used for cycling research outputs
+            List<ItemStack> scannerPossibilities = new ObjectArrayList<>();
+            if (recipe.getOutputs().size() > 0) {
+                ItemStack dataStick = recipe.getOutputs().get(0);
+                NBTTagCompound researchItemNBT = dataStick.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG);
+                if (researchItemNBT != null) {
+                    String researchId = researchItemNBT.getString(IResearchRecipeMap.RESEARCH_ID_NBT_TAG);
+                    Set<Recipe> possibleRecipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
+                    for (Recipe r : possibleRecipes) {
+                        scannerPossibilities.add(r.getOutputs().get(0));
+                    }
+                    scannerPossibilities.add(recipeOutputs.get(0));
+                }
+            }
+
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
                 recipeOutputs.add(chancedEntry.getItemStackRaw());
             }
-            ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
+            if (scannerPossibilities.isEmpty()) ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
+            else ingredients.setOutputLists(VanillaTypes.ITEM, Collections.singletonList(scannerPossibilities));
         }
 
         // Fluid Outputs
