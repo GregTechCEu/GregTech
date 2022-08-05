@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+//TODO, move this and all inheritors into integration.jei.basic
 public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
 
     public final String uniqueName;

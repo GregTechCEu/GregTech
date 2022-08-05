@@ -1,4 +1,4 @@
-package gregtech.integration.jei;
+package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
@@ -30,11 +30,8 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.MODID_CC;
@@ -72,7 +69,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Get the Name and trim unneeded information
         if (definition.getAssignedName() == null) {
-            this.name = makePrettyName(definition.getDepositName());
+            this.name = GTUtility.trimFileName(definition.getDepositName());
         } else {
             this.name = definition.getAssignedName();
         }
@@ -251,27 +248,6 @@ public class GTOreInfo implements IRecipeWrapper {
         }
         // No defined surface rock.
         return stack;
-    }
-
-
-    public String makePrettyName(String name) {
-        FileSystem fs = FileSystems.getDefault();
-        String separator = fs.getSeparator();
-
-        //Remove the leading "folderName\"
-        String[] tempName = name.split(Matcher.quoteReplacement(separator));
-        //Take the last entry in case of nested folders
-        String newName = tempName[tempName.length - 1];
-        //Remove the ".json"
-        tempName = newName.split("\\.");
-        //Take the first entry
-        newName = tempName[0];
-        //Replace all "_" with a space
-        newName = newName.replaceAll("_", " ");
-        //Capitalize the first letter
-        newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
-
-        return newName;
     }
 
     //Creates a tooltip based on the specific slots
