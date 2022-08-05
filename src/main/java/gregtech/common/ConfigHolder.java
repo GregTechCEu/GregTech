@@ -120,10 +120,15 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable Assembly Line research for recipes.", "Default: true"})
         public boolean enableResearch = true;
 
-        @Config.Comment({"Whether the Assembly Line should require the inputs to be in order.",
+        @Config.Comment({"Whether the Assembly Line should require the item inputs to be in order.",
                 "This does nothing if B:enableResearch is false.",
                 "Default: true"})
         public boolean orderedAssembly = true;
+
+        @Config.Comment({"Whether the Assembly Line should require the fluid inputs to be in order.",
+                "This does nothing if B:enableResearch is false or if B:orderedAssembly is false.",
+                "Default: true"})
+        public boolean orderedFluidAssembly = true;
 
         /**
          * <strong>Addons mods should not reference this config directly.</strong>

@@ -9,19 +9,23 @@ import gregtech.api.capability.impl.NotifiableFilteredItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
-import gregtech.api.unification.stack.ItemAndMetadata;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +33,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -37,10 +44,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch {
+public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch, IDataInfoProvider {
 
-    private final Map<ItemAndMetadata, Set<Recipe>> dataMap = new Object2ObjectOpenHashMap<>();
-    private final Set<Recipe> recipes = new ObjectOpenHashSet<>();
+    private final Map<GTRecipeInput, Set<Recipe>> dataMap = new Object2ObjectOpenHashMap<>();
 
     private final boolean isCreative;
 
@@ -75,20 +81,13 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                     if (stack.isEmpty() || stack.isItemEqual(MetaItems.TOOL_DATA_STICK.getStackForm()) ||
                             stack.isItemEqual(MetaItems.TOOL_DATA_ORB.getStackForm())) {
 
-                        NBTTagCompound researchItemNBT = stack.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG);
-                        if (researchItemNBT != null) {
-                            String researchId = researchItemNBT.getString(IResearchRecipeMap.RESEARCH_ID_NBT_TAG);
-                            if (researchId.isEmpty()) return true;
-                            dataMap.put(new ItemAndMetadata(stack), ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId));
-                            rebuildRecipes();
-                        }
+                        addDataNBT(stack);
                         return true;
                     }
                     return false;
                 })
                 .setExtractPredicate(stack -> {
-                    dataMap.remove(new ItemAndMetadata(stack));
-                    rebuildRecipes();
+                    rebuildData();
                     return true;
                 });
     }
@@ -125,16 +124,36 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                 .build(getHolder(), entityPlayer);
     }
 
-    private void rebuildRecipes() {
-        recipes.clear();
-        for (Set<Recipe> recipeSet : dataMap.values()) {
-            recipes.addAll(recipeSet);
+    private void rebuildData() {
+        for (int i = 0; i < this.importItems.getSlots(); i++) {
+            ItemStack stack = this.importItems.getStackInSlot(i);
+            addDataNBT(stack);
         }
+    }
+
+    private void addDataNBT(@Nonnull ItemStack stack) {
+        NBTTagCompound researchItemNBT = stack.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG);
+        if (researchItemNBT != null) {
+            String researchId = researchItemNBT.getString(IResearchRecipeMap.RESEARCH_ID_NBT_TAG);
+            if (researchId.isEmpty()) return;
+            dataMap.put(GTRecipeItemInput.getOrCreate(stack), ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId));
+        }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        rebuildData();
     }
 
     @Nonnull
     @Override
     public Set<Recipe> getAvailableRecipes() {
+        Set<Recipe> recipes = new ObjectOpenHashSet<>();
+        recipes.clear();
+        for (Set<Recipe> recipeSet : dataMap.values()) {
+            recipes.addAll(recipeSet);
+        }
         return recipes;
     }
 
@@ -153,5 +172,27 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         if (ConfigHolder.machines.enableResearch) {
             super.getSubItems(creativeTab, subItems);
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ObjectArrayList<>();
+        rebuildData();
+        Set<Recipe> recipes = getAvailableRecipes();
+        if (recipes.isEmpty()) return list;
+
+        list.add(new TextComponentTranslation("behavior.data_item.assemblyline.title"));
+        list.add(new TextComponentString(""));
+        Set<GTRecipeInput> itemsAdded = new ObjectOpenHashSet<>();
+        for (Recipe recipe : recipes) {
+            ItemStack stack = recipe.getOutputs().get(0);
+            GTRecipeInput gtRecipeInput = GTRecipeItemInput.getOrCreate(stack);
+            if (!itemsAdded.contains(gtRecipeInput)) {
+                itemsAdded.add(gtRecipeInput);
+                list.add(new TextComponentTranslation("behavior.data_item.assemblyline.data", LocalizationUtils.format(stack.getTranslationKey())));
+            }
+        }
+        return list;
     }
 }

@@ -97,7 +97,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         ValidationResult<Recipe> result = super.build();
         if (result.getType() == EnumValidationResult.VALID && !this.outputs.isEmpty() && !this.outputs.get(0).isEmpty()) {
             // only apply the research property if an item was specified
-            if (!this.researchItem.isEmpty()) {
+            if (!this.researchItem.isEmpty() && !recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
                 applyProperty(ResearchProperty.KEY, this.outputs.get(0).getTranslationKey());
             }
         }
