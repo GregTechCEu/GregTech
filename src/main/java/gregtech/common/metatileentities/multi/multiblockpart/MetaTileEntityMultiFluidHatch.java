@@ -173,7 +173,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, fluidTanks);
+        return isExportHatch ? new FluidTankList(false, fluidTanks) : new FluidTankList(false);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
+        abilityList.addAll(fluidTanks.getFluidTanks());
     }
 
     @Override
@@ -196,7 +196,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new TankWidget(isExportHatch ? exportFluids.getTankAt(index) : importFluids.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
+                builder.widget(new TankWidget(fluidTanks.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
                         .setBackgroundTexture(GuiTextures.FLUID_SLOT)
                         .setContainerClicking(true, !isExportHatch)
                         .setAlwaysShowFull(true));
