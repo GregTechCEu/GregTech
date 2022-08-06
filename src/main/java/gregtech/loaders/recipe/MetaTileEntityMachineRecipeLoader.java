@@ -95,6 +95,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_OUTPUT_HATCH[LuV])
+                .research(ENERGY_OUTPUT_HATCH[IV].getStackForm())
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -106,6 +107,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_OUTPUT_HATCH[ZPM])
+                .research(ENERGY_OUTPUT_HATCH[LuV].getStackForm(), 144000, VA[LV])
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -117,6 +119,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_OUTPUT_HATCH[UV])
+                .research(ENERGY_OUTPUT_HATCH[ZPM].getStackForm(), 288000, VA[LV])
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -128,6 +131,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_OUTPUT_HATCH[UHV])
+                .research(ENERGY_OUTPUT_HATCH[UV].getStackForm(), 288000, VA[LV])
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
         // Energy Input Hatches
@@ -209,6 +213,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_INPUT_HATCH[LuV])
+                .research(ENERGY_INPUT_HATCH[IV].getStackForm())
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -220,6 +225,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_INPUT_HATCH[ZPM])
+                .research(ENERGY_INPUT_HATCH[LuV].getStackForm(), 144000, VA[LV])
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -231,6 +237,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_INPUT_HATCH[UV])
+                .research(ENERGY_INPUT_HATCH[ZPM].getStackForm(), 288000, VA[LV])
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -242,6 +249,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_INPUT_HATCH[UHV])
+                .research(ENERGY_INPUT_HATCH[UV].getStackForm(), 288000, VA[LV])
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
 

@@ -65,7 +65,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem) {
-        return research(researchItem, 12000, GTValues.VA[GTValues.ULV]);
+        return research(researchItem, 144000, GTValues.VA[GTValues.LV]);
     }
 
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem, int scanDuration, int scanEUt) {
