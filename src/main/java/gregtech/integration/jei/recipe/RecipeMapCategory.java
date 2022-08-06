@@ -197,7 +197,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     private static boolean shouldShiftWidgets(@Nonnull RecipeMap<?> recipeMap) {
         return recipeMap.getMaxInputs() + recipeMap.getMaxOutputs() >= 6 ||
-                recipeMap.getMaxFluidInputs() + recipeMap.getMaxFluidInputs() >= 6;
+                recipeMap.getMaxFluidInputs() + recipeMap.getMaxFluidOutputs() >= 6;
     }
 
     private static int getPropertyShiftAmount(@Nonnull RecipeMap<?> recipeMap) {
