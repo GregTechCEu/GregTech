@@ -51,4 +51,24 @@ public class ReactorComponent {
     public int[] getPos() {
         return pos;
     }
+
+    public boolean samePositionAs(ReactorComponent component){
+        return this.getPos()[0] == component.getPos()[0] || this.getPos()[1] == component.getPos()[1];
+    }
+
+    public double getDistanceSquared(ReactorComponent component){
+        return getDistanceSquared(this, component);
+    }
+
+    public double getDistance(ReactorComponent component){
+        return getDistance(this, component);
+    }
+
+    public static double getDistanceSquared(ReactorComponent component1, ReactorComponent component2){
+        return Math.pow(component1.getPos()[0] - component2.getPos()[0], 2) + Math.pow(component1.getPos()[0] - component2.getPos()[0], 2);
+    }
+
+    public static double getDistance(ReactorComponent component1, ReactorComponent component2){
+        return Math.sqrt(getDistanceSquared(component1, component2));
+    }
 }
