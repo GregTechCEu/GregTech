@@ -6,9 +6,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.ISyncedWidget;
-import com.cleanroommc.modularui.api.widget.IWidgetParent;
 import com.cleanroommc.modularui.api.widget.Widget;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
@@ -21,7 +21,6 @@ import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
-import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,13 +28,14 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 
 
-public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable{
+public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
     public int minPercent, maxPercent;
     public int minEU, maxEU;
     private int outputAmount;
     private boolean inverted;
     private boolean useEU;
     private int maxLength,  maxEnterable;
+    private boolean isEnabled;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -71,7 +71,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0)
+        if (coverHolder.getOffsetTimer() % 20 != 0 && isEnabled)
             return;
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
@@ -254,5 +254,15 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.outputAmount = packetBuffer.readInt();
         this.inverted = packetBuffer.readBoolean();
         this.useEU = packetBuffer.readBoolean();
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        isEnabled = isActivationAllowed;
     }
 }
