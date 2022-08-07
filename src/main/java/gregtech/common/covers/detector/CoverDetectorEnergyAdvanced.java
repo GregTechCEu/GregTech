@@ -8,6 +8,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.ISyncedWidget;
 import com.cleanroommc.modularui.api.widget.Widget;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverBehavior;
@@ -26,6 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraftforge.common.capabilities.Capability;
 
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
@@ -48,6 +50,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.useEU = false;
         this.maxLength = 3;
         this.maxEnterable = 100;
+        this.isEnabled = true;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0 && isEnabled)
+        if (coverHolder.getOffsetTimer() % 20 != 0 || !isEnabled)
             return;
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
@@ -220,6 +223,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         tagCompound.setInteger("outputAmount", outputAmount);
         tagCompound.setBoolean("inverted", this.inverted);
         tagCompound.setBoolean("useEU", this.useEU);
+        tagCompound.setBoolean("isEnabled", this.isEnabled);
     }
 
     @Override
@@ -232,6 +236,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.outputAmount = tagCompound.getInteger("outputAmount");
         this.inverted = tagCompound.getBoolean("inverted");
         this.useEU = tagCompound.getBoolean("useEU");
+        this.isEnabled = tagCompound.getBoolean("isEnabled");
     }
 
     @Override
@@ -243,6 +248,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         packetBuffer.writeInt(this.outputAmount);
         packetBuffer.writeBoolean(this.inverted);
         packetBuffer.writeBoolean(this.useEU);
+        packetBuffer.writeBoolean(this.isEnabled);
     }
 
     @Override
@@ -254,6 +260,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.outputAmount = packetBuffer.readInt();
         this.inverted = packetBuffer.readBoolean();
         this.useEU = packetBuffer.readBoolean();
+        this.isEnabled = packetBuffer.readBoolean();
     }
 
     @Override
@@ -264,5 +271,15 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         isEnabled = isActivationAllowed;
+        setRedstoneSignalOutput(0);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+
+        return defaultValue;
     }
 }
