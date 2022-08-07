@@ -61,7 +61,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     // TODO: use unique texture for advanced energy detector
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ENERGY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
