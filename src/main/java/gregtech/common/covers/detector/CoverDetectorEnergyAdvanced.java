@@ -22,6 +22,7 @@ import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.modularui.common.widget.textfield.TextFieldWidget;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +36,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     public int minEU, maxEU;
     private int outputAmount;
     private boolean inverted;
-    private boolean useEU;
+    private boolean useEU, useRatio;
     private int maxLength,  maxEnterable;
     private boolean isEnabled;
 
@@ -48,6 +49,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.outputAmount = 0;
         this.inverted = false;
         this.useEU = false;
+        this.useRatio = false;
         this.maxLength = 3;
         this.maxEnterable = 100;
         this.isEnabled = true;
@@ -58,7 +60,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null;
     }
 
-    // TODO: use unique texture for advanced energy detector
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
@@ -91,18 +92,26 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     private void compareValue (float value, int maxValue, int minValue) {
-        if (value >= maxValue){
-            outputAmount = inverted ? 15 : 0;
+        if (useRatio){
+            float ratio;
+
+            if (inverted)
+                ratio = (value - minValue) / (maxValue - minValue);
+            else
+                ratio = (maxValue - value) / (maxValue - minValue);
+            outputAmount = (int) (ratio * 15);
         }
 
-        if (value <= minValue) {
+        if (value >= maxValue){
+            outputAmount = inverted ? 15 : 0;
+        } else if (value <= minValue) {
             outputAmount = inverted ? 0 : 15;
         }
     }
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(188, 90);
+        ModularWindow.Builder builder = ModularWindow.builder(190, 96);
 
         builder.setBackground(GuiTextures.VANILLA_BACKGROUND)
                 .widget(new Column()
@@ -152,6 +161,14 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
                                         .setSize(180, 16)
                                 )
                         )
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(this::toggleRatio)
+                                        .addTooltip(Text.localised("cover.advanced_energy_detector.toggle_ratio_tooltip"))
+                                        .setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_ratio_label", this.useRatio))
+                                        .setSize(180, 16)
+                                )
+                        )
                         .setPos(4, 4)
                 );
 
@@ -194,8 +211,9 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     private void toggleEU(Widget.ClickData data, Widget widget){
-        // i have to invert useEU for some godforsaken reason
-        if (!useEU) {
+        useEU = !useEU;
+
+        if (useEU) {
             maxLength = 10;
             maxEnterable = Integer.MAX_VALUE;
         } else {
@@ -204,8 +222,13 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         }
         widget.getWindow().syncedWidgets.forEach(this::updateFields);
 
-        useEU = !useEU;
         widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_EU_label", this.useEU));
+    }
+
+    private void toggleRatio(Widget.ClickData data, Widget widget){
+        useRatio = !useRatio;
+        // widget.getWindow().syncedWidgets.forEach(this::updateFields);
+        widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_ratio_label", this.useRatio));
     }
 
     @Override
@@ -223,6 +246,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         tagCompound.setInteger("outputAmount", outputAmount);
         tagCompound.setBoolean("inverted", this.inverted);
         tagCompound.setBoolean("useEU", this.useEU);
+        tagCompound.setBoolean("useRatio", this.useRatio);
         tagCompound.setBoolean("isEnabled", this.isEnabled);
     }
 
@@ -236,6 +260,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.outputAmount = tagCompound.getInteger("outputAmount");
         this.inverted = tagCompound.getBoolean("inverted");
         this.useEU = tagCompound.getBoolean("useEU");
+        this.useRatio = tagCompound.getBoolean("useRatio");
         this.isEnabled = tagCompound.getBoolean("isEnabled");
     }
 
@@ -248,6 +273,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         packetBuffer.writeInt(this.outputAmount);
         packetBuffer.writeBoolean(this.inverted);
         packetBuffer.writeBoolean(this.useEU);
+        packetBuffer.writeBoolean(this.useRatio);
         packetBuffer.writeBoolean(this.isEnabled);
     }
 
@@ -260,6 +286,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.outputAmount = packetBuffer.readInt();
         this.inverted = packetBuffer.readBoolean();
         this.useEU = packetBuffer.readBoolean();
+        this.useRatio = packetBuffer.readBoolean();
         this.isEnabled = packetBuffer.readBoolean();
     }
 

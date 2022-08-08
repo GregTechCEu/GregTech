@@ -1222,8 +1222,10 @@ cover.advanced_energy_detector.min=Minimum Threshold
 cover.advanced_energy_detector.max=Maximum Threshold
 cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic\nBy default, redstone is emitted when less than the minimum percent, and stops emitting when greater than the max percent
 cover.advanced_energy_detector.invert_label=Inverted: %s
-cover.advanced_energy_detector.toggle_EU_tooltip=Toggle to use EU instead of as a percent
+cover.advanced_energy_detector.toggle_EU_tooltip=Toggle to use EU instead of as a percent.
 cover.advanced_energy_detector.toggle_EU_label=Use EU: %s
+cover.advanced_energy_detector.toggle_ratio_tooltip=Toggle to allow the redstone signal to be proportional to the value between min and max.
+cover.advanced_energy_detector.toggle_ratio_label=Use Ratio: %s
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
