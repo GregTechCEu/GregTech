@@ -4,7 +4,6 @@ import gregtech.api.nuclear.components.ControlRod;
 import gregtech.api.nuclear.components.CoolantChannel;
 import gregtech.api.nuclear.components.FuelRod;
 
-import javax.naming.ldap.Control;
 import java.util.ArrayList;
 
 public class Reactor {
@@ -15,10 +14,37 @@ public class Reactor {
     private ArrayList<FuelRod> fuelRods;
     private ArrayList<ControlRod> controlRods;
     private ArrayList<CoolantChannel> coolantChannels;
+    private ArrayList<ControlRod> effectiveControlRods;
+    private ArrayList<CoolantChannel> effectiveCoolantChannels;
     private int reactorDepth;
     private double reactorMaxTemperature;
     private double averageThermalConductivity;
     private int numberOfComponents;
+
+    private double avgCoolantTemperature;
+    private double controlRodFactor;
+
+    private double beta;
+    private double lSlow;
+    private double lFast;
+    private double kSlow;
+    private double kFast;
+    private double k;
+    private double l;
+
+    private double n;
+    private double T;
+    private double P;
+    private double dn;
+    private double dT;
+    private double C;
+    private double dC;
+
+    private double avgBoilingPoint;
+    private double avgAbsorption;
+    private double avgModeration;
+
+    private double coolantFactor;
 
     public Reactor(int reactorDepth){
         reactorLayout = new ReactorComponent[15][15];
@@ -26,6 +52,30 @@ public class Reactor {
         reactorMaxTemperature = Double.MAX_VALUE;
         averageThermalConductivity = 0.;
         numberOfComponents = 1;
+
+        avgCoolantTemperature = 0.;
+
+        beta = 0.;
+        lSlow = 0.;
+        lFast = 0.;
+        kSlow = 0.;
+        kFast = 0.;
+        k = 0.;
+        l = 0.;
+
+        n = 0.;
+        T = 0.;
+        P = 0.;
+        dn = 0.;
+        dT = 0.;
+        C = 0.;
+        dC = 0.;
+
+        avgBoilingPoint = 0.;
+        avgAbsorption = 0.;
+        avgModeration = 0.;
+
+        coolantFactor = 0.;
     }
 
     public void buildReactorLayout(){
@@ -126,7 +176,7 @@ public class Reactor {
                 }
 
                 /*
-                The actual calculation of the geometric factors, fast neutrons are randomly converted into slow neutrons along the path, we pretend that fuel rods are infinitely long and thin for simplicity
+                The actual calculation of the geometric factors, fast neutrons are randomly converted into slow neutrons along the path, we pretend that fuel rods are infinitely tall and thin for simplicity
                 This means the fraction of slow neutrons will go as (1-exp(-m * x))/x where x is the distance between the cells
                 The fraction of fast neutrons is simply one minus the fraction of slow neutrons
                  */
@@ -149,6 +199,128 @@ public class Reactor {
         /*
         We now use the data we have on the geometry to calculate the reactor's stats
          */
+        double avgGeometricFactorSlowNeutrons = 0.;
+        double avgGeometricFactorFastNeutrons = 0.;
+
+        double avgHighEnergyFissionFactor = 0.;
+        double avgLowEnergyFissionFactor = 0.;
+        double avgHighEnergyCaptureFactor = 0.;
+        double avgLowEnergyCaptureFactor = 0.;
+
+        double avgTemperatureCoefficient = 0.;
+
+        double totFuelStart = 0.;
+
+        double totNeutronSources = 0.;
+
+        double[][] avgDelayedNeutronGroups = new double[6][2];
+
+        double avgFuelRodDistance = 0.;
+
+        for(FuelRod i : fuelRods){
+            for(FuelRod j : fuelRods){
+                avgGeometricFactorSlowNeutrons += geometricMatrixSlowNeutrons[i.getId()][j.getId()];
+                avgGeometricFactorFastNeutrons += geometricMatrixFastNeutrons[i.getId()][j.getId()];
+
+                avgFuelRodDistance += i.getDistance(j);
+            }
+            totNeutronSources += i.getNeutronSourceIntensity();
+            avgTemperatureCoefficient += i.getFuel().getTemperatureCoefficient();
+
+            avgHighEnergyFissionFactor += i.getHEFissionFactor();
+            avgLowEnergyFissionFactor += i.getLEFissionFactor();
+            avgHighEnergyCaptureFactor += i.getHECaptureFactor();
+            avgLowEnergyCaptureFactor += i.getLECaptureFactor();
+
+            totFuelStart += i.getFuel().getDuration();
+
+            for(int c = 0; c < avgDelayedNeutronGroups.length; c++){
+                avgDelayedNeutronGroups[c][0] += i.getFuel().getDelayedNeutronsGroups()[c][0];
+                avgDelayedNeutronGroups[c][1] += i.getFuel().getDelayedNeutronsGroups()[c][1];
+            }
+        }
+
+        avgGeometricFactorSlowNeutrons *= 0.125/fuelRods.size();
+        avgGeometricFactorFastNeutrons *= 0.125/fuelRods.size();
+
+        avgTemperatureCoefficient /= fuelRods.size();
+
+        avgHighEnergyFissionFactor /= fuelRods.size();
+        avgLowEnergyFissionFactor /= fuelRods.size();
+        avgHighEnergyCaptureFactor /= fuelRods.size();
+        avgLowEnergyCaptureFactor /= fuelRods.size();
+
+        avgFuelRodDistance /= 2.*fuelRods.size();
+
+        for(int i = 0; i < avgDelayedNeutronGroups.length; i++){
+            for(int j = 0; j < avgDelayedNeutronGroups.length; j++){
+                avgDelayedNeutronGroups[i][j] /= fuelRods.size();
+            }
+            beta += avgDelayedNeutronGroups[i][0];
+        }
+
+        lSlow = avgFuelRodDistance/(2200. * avgLowEnergyCaptureFactor);
+        lFast = avgFuelRodDistance/(15000000. * avgHighEnergyCaptureFactor);
+
+        kSlow = avgLowEnergyFissionFactor/avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
+        kFast = avgHighEnergyFissionFactor/avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
+
+        k = (kSlow + kFast) * reactorDepth/(1. + reactorDepth);
+        l = (lSlow + lFast)/2.;
+
+        /*
+        We give each control rod and coolant channel a weight depending on how many fuel rods they affect
+         */
+        this.computeControlRodWeights();
+        this.computeCoolantChannelWeights();
+
+        controlRodFactor = ControlRod.ControlRodFactor(effectiveControlRods);
+        avgCoolantTemperature /= coolantChannels.size();
+
+        this.prepareInitialConditions();
+
+        //TODO: Implement coolant class, extending material?
+        //coolantFactor = Coolant.CoolantTemperatureFactor(T, avgBoilingPoint, avgAbsorption, avgModeration, P);
+    }
+
+    /**
+     * Loops over all the control rods, determines which ones actually affect reactivity, and gives them a weight depending on how many fuel rods they affect
+     */
+    public void computeControlRodWeights(){
+        for(ControlRod rod : controlRods){
+            rod.computeWeightFromFuelRodMap();
+            if(rod.getWeight() > 0){
+                effectiveControlRods.add(rod);
+            }
+        }
+        ControlRod.NormalizeWeights(effectiveControlRods);
+    }
+
+    /**
+     * Loops over all the coolant channels, determines which ones actually affect reactivity, and gives them a weight depending on how many fuel rods they affect
+     */
+    public void computeCoolantChannelWeights(){
+        for(CoolantChannel channel : coolantChannels){
+            channel.computeWeightFromFuelRodMap();
+            if(channel.getWeight() > 0){
+                effectiveCoolantChannels.add(channel);
+            }
+        }
+        CoolantChannel.NormalizeWeights(effectiveCoolantChannels);
+    }
+
+    public void prepareInitialConditions(){
+        for(CoolantChannel channel : effectiveCoolantChannels){
+            T += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
+            //TODO: Add boiling point to liquids
+            avgBoilingPoint += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
+            //TODO: Add neutron absorption coefficients to materials
+            //avgAbsorption += channel.getCoolant().getAbsorption() * channel.getWeight();
+            //TODO: Add neutron moderation coefficients to materials
+            //avgModeration += channel.getCoolant().getModeration() * channel.getWeight();
+            //TODO: Add pressure to coolants
+            //avgPressure += channel.getCoolant().getPressure() * channel.getWeight();
+        }
     }
 
 }
