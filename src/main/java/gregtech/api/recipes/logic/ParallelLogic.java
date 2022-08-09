@@ -486,7 +486,7 @@ public class ParallelLogic {
             if (matchingRecipe != null) {
                 inputIngredient = matchingRecipe.getInputs().get(0);
                 if (recipeBuilder == null) {
-                    recipeBuilder = recipeMap.recipeBuilder();
+                    recipeBuilder = recipeMap.recipeBuilder().EUt(0);
                 }
             } else
                 continue;
