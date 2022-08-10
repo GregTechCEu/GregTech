@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.primitive;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -31,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -110,7 +108,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         // update the structure's dimensions just before we create it
         if (getWorld() != null) updateStructureDimensions();
 
-        // sometimes these can get reset
+        // these can sometimes get set to 0 when loading the game, breaking JEI
         if (lDist < 1) lDist = MIN_RADIUS;
         if (rDist < 1) rDist = MIN_RADIUS;
         if (hDist < 2) hDist = MIN_DEPTH;
@@ -233,6 +231,12 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         this.lDist = lDist;
         this.rDist = rDist;
         this.hDist = hDist;
+
+        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
+            buf.writeInt(this.lDist);
+            buf.writeInt(this.rDist);
+            buf.writeInt(this.hDist);
+        });
     }
 
     private static boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
@@ -241,13 +245,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     private static boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos) {
         return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
-    }
-
-    @Override
-    public boolean onRightClick(@Nonnull EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        // update the structure on right click, since finding edges happens to late after initial placement
-        if (!getWorld().isRemote && !playerIn.isSneaking() && !isStructureFormed()) reinitializeStructurePattern();
-        return false;
     }
 
     private void setActive(boolean active) {
@@ -358,9 +355,9 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.lDist = data.getInteger("lDist");
-        this.rDist = data.getInteger("rDist");
-        this.hDist = data.getInteger("hDist");
+        this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
+        this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
+        this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         this.progressTime = data.getInteger("progressTime");
         this.maxProgress = data.getInteger("maxProgress");
         this.isActive = data.getBoolean("isActive");
@@ -391,7 +388,12 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
+            this.lDist = buf.readInt();
+            this.rDist = buf.readInt();
+            this.hDist = buf.readInt();
+            this.reinitializeStructurePattern();
+        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             scheduleRenderUpdate();
         }

@@ -514,7 +514,7 @@ public class MetaTileEntities {
 
         CLEANROOM = registerMetaTileEntity(1035, new MetaTileEntityCleanroom(gregtechId("cleanroom")));
 
-        CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pit")));
+        CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
         // MISC MTE's START: IDs 1150-2000
 
