@@ -33,6 +33,10 @@ public class IngotProperty implements IMaterialProperty<IngotProperty> {
         this.smeltInto = smeltInto;
     }
 
+    public Material getSmeltingInto() {
+        return this.smeltInto;
+    }
+
     public void setArcSmeltingInto(Material arcSmeltingInto) {
         this.arcSmeltInto = arcSmeltingInto;
     }
