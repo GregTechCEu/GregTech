@@ -1,0 +1,22 @@
+# Enforces specific labels on a PR to allow/disallow merging
+name: Enforce PR labels
+
+on:
+  pull_request:
+    types: [ labeled, unlabeled, opened ]
+
+jobs:
+  enforce-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - uses: yogevbd/enforce-label-action@2.1.0
+        with:
+          REQUIRED_LABELS_ANY: "type: bug,type: feature,type: translation,ignore changelog"
+          REQUIRED_LABELS_ANY_DESCRIPTION: "Pull Requests need at least one of the following labels: ['type: bug', 'type: feature', 'type: translation', 'ignore changelog']"
+          BANNED_LABELS: "status: do not merge"
+          BANNED_LABELS_DESCRIPTION: "Pull Requests cannot be merged with the '${bannedLabel.name}' label."

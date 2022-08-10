@@ -4779,7 +4779,7 @@ gregtech.cable.amperage=最大安培: §e%d
 gregtech.cable.loss_per_block=线损: §c%d§7 EU-V
 gregtech.cable.superconductor=§d%s 超导体
 
-gregtech.fluid_pipe.throughput=§9传输效率: %,d L/s
+gregtech.fluid_pipe.throughput=§9传输效率: %,d L/t
 gregtech.fluid_pipe.capacity=§9内容物: %,d L
 gregtech.fluid_pipe.max_temperature=§c温度范围: %,d K
 gregtech.fluid_pipe.channels=§ee频道: %d

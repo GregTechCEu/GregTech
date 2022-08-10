@@ -1,0 +1,26 @@
+changelog:
+
+  exclude:
+    labels:
+      - "ignore changelog"
+
+  categories:
+    - title: New Features
+      labels:
+        - "type: feature"
+
+    - title: Bug Fixes
+      labels:
+        - "type: bug"
+
+    - title: Internal Changes
+      labels:
+        - "type: refactor"
+
+    - title: Translation Changes
+      - labels:
+          - "type: translation"
+
+    - title: Other Changes
+      labels:
+        - "*"
