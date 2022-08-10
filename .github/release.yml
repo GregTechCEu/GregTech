@@ -17,6 +17,10 @@ changelog:
       labels:
         - "type: refactor"
 
+    - title: Translation Changes
+      - labels:
+          - "type: translation"
+
     - title: Other Changes
       labels:
         - "*"
