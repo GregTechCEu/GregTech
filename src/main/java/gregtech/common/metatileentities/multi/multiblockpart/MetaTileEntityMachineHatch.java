@@ -153,7 +153,6 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                 ItemStack temp = stack.copy();
                 temp.setCount(amountInSlot + amountToInsert);
                 this.setStackInSlot(slot, temp);
-                //this.getStackInSlot(slot).grow(amountToInsert);
             }
 
             return remainder;
@@ -166,7 +165,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
             MultiblockControllerBase controller = getController();
             if (controller instanceof IMachineHatchMultiblock)
-                return GTUtility.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist()) && slotMatches;
+                return slotMatches && GTUtility.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist());
 
             //If the controller is null, this part is not attached to any Multiblock
             return slotMatches;
