@@ -80,7 +80,8 @@ public class Recipe {
                   List<GTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
                   int duration, int EUt, boolean hidden, boolean isCTRecipe,
                   IRecipePropertyStorage recipePropertyStorage) {
-        this.recipePropertyStorage = recipePropertyStorage;
+        this.recipePropertyStorage =
+                recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage;
         if (inputs.isEmpty()) {
             this.inputs = Collections.emptyList();
         } else {
