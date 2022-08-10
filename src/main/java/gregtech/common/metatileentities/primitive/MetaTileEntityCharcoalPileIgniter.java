@@ -11,7 +11,10 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -19,6 +22,7 @@ import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -26,16 +30,21 @@ import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemFireball;
+import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -74,6 +83,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     public MetaTileEntityCharcoalPileIgniter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        MinecraftForge.EVENT_BUS.register(MetaTileEntityCharcoalPileIgniter.class);
     }
 
     @Override
@@ -100,7 +110,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         super.formStructure(context);
         // start the machine on formation
         updateMaxProgressTime();
-        setActive(true);
     }
 
     @Override
@@ -267,7 +276,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
             float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.5F;
             float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
 
-            getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, 0, ySpd, 0);
+            getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, xPos, yPos, zPos, 0, ySpd, 0);
         }
     }
 
@@ -313,8 +322,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.3"));
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.4"));
-            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.5"));
-            tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.6"));
         } else {
             tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
         }
@@ -449,5 +456,56 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         }
 
         return super.getCapability(capability, side);
+    }
+
+    @SubscribeEvent
+    public static void onItemUse(@Nonnull PlayerInteractEvent.RightClickBlock event) {
+        if (event.getSide().isClient()) return;
+
+        TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
+        if (tileEntity instanceof MetaTileEntityHolder) {
+            MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            if (mte instanceof MetaTileEntityCharcoalPileIgniter) {
+                boolean shouldActivate = false;
+                ItemStack stack = event.getItemStack();
+                if (stack.getItem() instanceof ItemFlintAndSteel) {
+                    // flint and steel
+                    stack.damageItem(1, event.getEntityPlayer());
+
+                    // flint and steel does play its sound
+
+                    shouldActivate = true;
+                } else if (stack.getItem() instanceof ItemFireball) {
+                    // fire charge
+                    stack.shrink(1);
+
+                    // fire charge sound does not get played when handled like this
+                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+                    shouldActivate = true;
+                } else if (stack.getItem() instanceof MetaItem) {
+                    // lighters
+                    MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+                    for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                        if (behaviour instanceof LighterBehaviour) {
+                            ((LighterBehaviour) behaviour).prepareLighter(stack);
+                            ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack);
+
+                            // lighter sound does not get played when handled like this
+                            event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+                            shouldActivate = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldActivate) {
+                    ((MetaTileEntityCharcoalPileIgniter) mte).setActive(true);
+                    event.setCancellationResult(EnumActionResult.FAIL);
+                    event.setCanceled(true);
+                }
+            }
+        }
     }
 }

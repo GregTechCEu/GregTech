@@ -4414,11 +4414,9 @@ gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
 
 gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
 gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
-gregtech.machine.charcoal_pile.tooltip.2=Right Click to search for Logs
+gregtech.machine.charcoal_pile.tooltip.2=Right Click with fire starting items to start
 gregtech.machine.charcoal_pile.tooltip.3=Pyrolysis occurs in up to a §b9x4x9§7 space beneath
 gregtech.machine.charcoal_pile.tooltip.4=Logs must be §eAnaerobic§7!
-gregtech.machine.charcoal_pile.tooltip.5=Place Logs on a floor of §aBricks§7
-gregtech.machine.charcoal_pile.tooltip.6=Cover Logs with §aSoils§7 or §aSands§7
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power

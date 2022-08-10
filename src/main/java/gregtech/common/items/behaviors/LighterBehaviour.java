@@ -94,6 +94,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
             return EnumActionResult.PASS;
         }
 
+        if (!player.canPlayerEdit(pos, side, player.getHeldItem(hand))) return EnumActionResult.FAIL;
         // If this item does not have opening mechanics, or if it does and is currently open
         if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
             player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
