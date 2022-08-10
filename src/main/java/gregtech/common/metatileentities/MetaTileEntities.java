@@ -196,6 +196,8 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidDrill FLUID_DRILLING_RIG;
     public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
     public static MetaTileEntityCleanroom CLEANROOM;
+
+    public static MetaTileEntityBacterialVat BACTERIAL_VAT;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -511,6 +513,8 @@ public class MetaTileEntities {
         ADVANCED_FLUID_DRILLING_RIG = registerMetaTileEntity(1034, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.ev"), 4));
 
         CLEANROOM = registerMetaTileEntity(1035, new MetaTileEntityCleanroom(gregtechId("cleanroom")));
+
+        BACTERIAL_VAT = registerMetaTileEntity(1036, new MetaTileEntityBacterialVat(gregtechId("bacterial_vat")));
 
         // MISC MTE's START: IDs 1150-2000
 

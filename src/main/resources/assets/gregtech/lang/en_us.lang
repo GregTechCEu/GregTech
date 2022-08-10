@@ -4398,7 +4398,8 @@ gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
-
+gregtech.machine.bacterial_vat.name=Bacterial Vat
+gregtech.machine.bacterial_vat.tooltip.1=TODO
 
 
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine

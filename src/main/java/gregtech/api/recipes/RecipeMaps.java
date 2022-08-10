@@ -1115,6 +1115,24 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL)
             .setSound(GTSounds.MOTOR);
 
+    /**
+     * Example:
+     * <pre>
+     * 		RecipeMap.WIREMILL_RECIPES.recipeBuilder()
+     * 				.input(OrePrefix.ingot, Materials.Iron)
+     * 				.output(OrePrefix.wireGtSingle, Materials.Iron, 2)
+     * 				.duration(200)
+     * 				.EUt(GTValues.VA[GTValues.ULV])
+     * 				.buildAndRegister();
+     * </pre>
+     */
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> BACTERIAL_VAT_RECIPES = new RecipeMap<>("bacterial_vat", 0, 2, 0, 2, 0, 2, 0, 1, new SimpleRecipeBuilder(), false)
+            .setSlotOverlay(false, false, GuiTextures.BREWER_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .setSound(GTValues.FOOLS.get() ? GTSounds.SCIENCE : GTSounds.CHEMICAL_REACTOR);
+
+
 
     //////////////////////////////////////
     //         Fuel Recipe Maps         //
