@@ -460,12 +460,17 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     @SubscribeEvent
     public static void onItemUse(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        if (event.getSide().isClient()) return;
-
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
+        MetaTileEntity mte = null;
         if (tileEntity instanceof MetaTileEntityHolder) {
-            MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            if (mte instanceof MetaTileEntityCharcoalPileIgniter) {
+            mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        }
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter) {
+            if (event.getSide().isClient()) {
+                event.setCanceled(true);
+                event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
+                return;
+            } else {
                 boolean shouldActivate = false;
                 ItemStack stack = event.getItemStack();
                 if (stack.getItem() instanceof ItemFlintAndSteel) {
