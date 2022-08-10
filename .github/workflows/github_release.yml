@@ -1,0 +1,66 @@
+# Creates a release on GitHub with a new tag of the current version
+name: Release to GitHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'Release Label'
+        default: 'BETA RELEASE'
+        required: false
+      hotfix:
+        description: 'Hotfix Release'
+        required: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Get Mod Version
+        id: get_version
+        run: echo ::set-output name=version::$(./gradlew getVersionFromJava --q)
+
+      - name: Get Previous tag
+        id: previous_tag
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: ${{ github.repository }}
+
+      # exit CI early as a failure if creating this release clashes with the previous version
+      - name: Check if Version Bump is Needed
+        if: ${{ format('v{0}', steps.get_version.outputs.version) == (steps.previous_tag.outputs.release) }}
+        uses: actions/github-script@v6
+        with:
+          script: core.setFailed("A version bump from ${{ steps.previous_tag.outputs.release }} is required!")
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Use Cached Gradle Packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle.properties*') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          files: build/libs/*.jar
+          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
+          generate_release_notes: true

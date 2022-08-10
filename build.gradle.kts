@@ -155,6 +155,11 @@ idea {
     }
 }
 
+// used for GitHub Actions CI releases
+task<Exec>("getVersionFromJava") {
+    commandLine("echo", getVersionFromJava(file("src/main/java/gregtech/GregTechVersion.java")))
+}
+
 fun getVersionFromJava(file: File): String  {
     var major = "0"
     var minor = "0"
