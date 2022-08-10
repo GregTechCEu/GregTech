@@ -18,6 +18,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -144,15 +145,15 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
                 else z -= 0.52F;
                 x += horizontalOffset;
             }
+            if (ConfigHolder.machines.machineSounds && GTValues.RNG.nextDouble() < 0.1) {
+                getWorld().playSound(x, y, z, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+            }
             randomDisplayTick(x, y, z, EnumParticleTypes.FLAME, isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL);
         }
     }
 
     @SideOnly(Side.CLIENT)
     protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
-        if (GTValues.RNG.nextDouble() < 0.1) {
-            getWorld().playSound(x, y, z, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
-        }
         getWorld().spawnParticle(smoke, x, y, z, 0, 0, 0);
         getWorld().spawnParticle(flame, x, y, z, 0, 0, 0);
     }
