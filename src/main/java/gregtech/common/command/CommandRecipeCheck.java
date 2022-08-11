@@ -62,7 +62,7 @@ public class CommandRecipeCheck extends CommandBase {
                 List<ItemStack> inputs = new ArrayList<>();
                 for (GTRecipeInput input : currentRecipe.getInputs()) {
                     for (ItemStack stack : input.getInputStacks()) {
-                        stack.copy();
+                        stack = stack.copy();
                         stack.setCount(Integer.MAX_VALUE);
                         inputs.add(stack);
                     }
