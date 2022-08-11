@@ -465,7 +465,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (tileEntity instanceof MetaTileEntityHolder) {
             mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
         }
-        if (mte instanceof MetaTileEntityCharcoalPileIgniter) {
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((MetaTileEntityCharcoalPileIgniter) mte).isStructureFormed())  {
             if (event.getSide().isClient()) {
                 event.setCanceled(true);
                 event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
