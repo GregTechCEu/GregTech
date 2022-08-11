@@ -69,6 +69,12 @@ public class WoodMachineRecipes {
                     .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))
                     .duration(200).EUt(VA[ULV])
                     .buildAndRegister();
+					
+	        LATHE_RECIPES.recipeBuilder()
+                .input(plank, TreatedWood)
+                .output(stick, TreatedWood, 2)
+                .duration(10).EUt(VA[ULV])
+                .buildAndRegister();
 
             ItemStack doorStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE,
                     plankStack, plankStack, null,
