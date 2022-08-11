@@ -19,6 +19,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -77,6 +79,19 @@ public class MachineItemBlock extends ItemBlock {
     public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? null : metaTileEntity.initItemStackCapabilities(stack);
+    }
+
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null;
+    }
+
+    @Override
+    public @Nonnull ItemStack getContainerItem(@Nonnull ItemStack itemStack) {
+        if (!hasContainerItem(itemStack)) {
+            return ItemStack.EMPTY;
+        }
+        return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).getContainer().copy();
     }
 
     @Override

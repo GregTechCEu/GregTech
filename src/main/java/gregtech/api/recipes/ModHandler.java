@@ -21,6 +21,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
+import gregtech.common.crafting.GTShapedOreRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -303,7 +304,7 @@ public class ModHandler {
             return;
         }
 
-        IRecipe shapedOreRecipe = new ShapedOreRecipe(null, result.copy(), finalizeShapedRecipeInput(recipe))
+        IRecipe shapedOreRecipe = new GTShapedOreRecipe(null, result.copy(), finalizeShapedRecipeInput(recipe))
                 .setMirrored(false) //make all recipes not mirrored by default
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
