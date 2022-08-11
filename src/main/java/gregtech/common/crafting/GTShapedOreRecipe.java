@@ -13,7 +13,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.oredict.OreDictionary;
@@ -139,13 +138,10 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
             return (Ingredient)obj;
         else if (obj instanceof ItemStack) {
             ItemStack ing = (ItemStack)obj;
-            if (ing.getItem() instanceof UniversalBucket) {
-                IFluidHandlerItem  handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (ing.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                 if (handler != null) {
-                    FluidStack extracted = handler.drain(Integer.MAX_VALUE, false);
-                    if (extracted != null && extracted.amount > 0) {
-                        return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
-                    }
+                    return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
                 }
             }
             return Ingredient.fromStacks(((ItemStack) obj).copy());
@@ -160,34 +156,5 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
         return null;
-    }
-
-    @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-
-        for (int i = 0; i < nonnulllist.size(); ++i) {
-            ItemStack itemstack = inv.getStackInSlot(i);
-            if (input.get(i) instanceof GTFluidCraftingIngredient) {
-                if (input.get(i).apply(itemstack)) {
-                    FluidStack fluidStack = ((GTFluidCraftingIngredient) input.get(i)).getFluidStack();
-                    IFluidHandlerItem handler = null;
-                    if (itemstack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                        handler = itemstack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-                    }
-                    if (handler != null) {
-                        FluidStack drained = handler.drain(fluidStack, false);
-                        if (drained != null && drained.amount >= fluidStack.amount) {
-                            handler.drain(fluidStack, true);
-                            ItemStack returnStack = itemstack.getItem().getContainerItem(handler.getContainer());
-                            nonnulllist.set(i, returnStack);
-                        }
-                    }
-                }
-            } else {
-                nonnulllist.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
-            }
-        }
-        return nonnulllist;
     }
 }

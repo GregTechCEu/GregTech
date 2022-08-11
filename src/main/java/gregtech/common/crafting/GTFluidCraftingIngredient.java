@@ -18,16 +18,17 @@ public class GTFluidCraftingIngredient extends Ingredient {
 
     @Override
     public boolean apply(@Nullable ItemStack testedStack) {
-            IFluidHandlerItem handler = null;
-            if (testedStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                handler = testedStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem handler = null;
+        if (testedStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            handler = testedStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        }
+        if (handler != null) {
+            if (fluidStack == null || fluidStack.amount == 0) return true;
+            FluidStack drained = handler.drain(fluidStack, false);
+            if (drained != null && drained.amount >= fluidStack.amount) {
+                return drained.isFluidEqual(fluidStack);
             }
-            if (handler != null) {
-                FluidStack drained = handler.drain(fluidStack, false);
-                if (drained != null && drained.amount >= fluidStack.amount) {
-                    return drained.isFluidEqual(fluidStack);
-                }
-            }
+        }
         return false;
     }
 
