@@ -230,6 +230,15 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
+     * Used to display things like particles on random display ticks
+     * This method is typically used by torches or nether portals, as an example use-case
+     */
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick() {
+
+    }
+
+    /**
      * Called from ItemBlock to initialize this MTE with data contained in ItemStack
      *
      * @param itemStack itemstack of itemblock
@@ -1291,7 +1300,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public RecipeMap<?> getRecipeMap() {
-
         for (int i = 0; i < mteTraits.size(); i++) {
             if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
                 return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
