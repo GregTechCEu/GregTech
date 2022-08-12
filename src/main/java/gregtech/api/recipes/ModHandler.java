@@ -39,6 +39,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -350,14 +351,17 @@ public class ModHandler {
                             .collect(Collectors.joining(", ")));
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             skip = true;
-        } else if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(GTValues.MODID, regName))) {
-            GTLog.logger.error("Tried to register recipe, {}, with duplicate key. Recipe: {}", regName,
-                    Arrays.stream(recipe)
-                            .map(Object::toString)
-                            .map(s -> "\"" + s + "\"")
-                            .collect(Collectors.joining(", ")));
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
-            skip = true;
+        } else {
+            ModContainer container = Loader.instance().activeModContainer();
+            if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(container == null ? GTValues.MODID : container.getModId().toLowerCase(), regName))) {
+                GTLog.logger.error("Tried to register recipe, {}, with duplicate key. Recipe: {}", regName,
+                        Arrays.stream(recipe)
+                                .map(Object::toString)
+                                .map(s -> "\"" + s + "\"")
+                                .collect(Collectors.joining(", ")));
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                skip = true;
+            }
         }
         return skip;
     }
