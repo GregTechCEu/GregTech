@@ -486,7 +486,13 @@ public class ParallelLogic {
             if (matchingRecipe != null) {
                 inputIngredient = matchingRecipe.getInputs().get(0);
                 if (recipeBuilder == null) {
-                    recipeBuilder = recipeMap.recipeBuilder();
+                    //here we make a copy of the recipe builder of the current recipe map, while zeroing
+                    //the recipe builder EUt, since we're going to add to the total EUt of the recipes appended.
+                    //not zeroing means there is a base cost of 1 recipe EUt while doing parallel recipes
+                    //for example running 2 parallel recipes would cost the EUt of doing 3 recipes.
+                    //same should apply for the recipe map duration
+                    recipeBuilder = recipeMap.recipeBuilder().EUt(0).duration(0);
+
                 }
             } else
                 continue;
