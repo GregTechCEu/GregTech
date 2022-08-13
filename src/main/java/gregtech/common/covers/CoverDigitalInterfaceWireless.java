@@ -7,8 +7,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockPosFace;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,7 +66,7 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
     }
 
     @Override
-    public void onAttached(ItemStack itemStack) {
+    public void onAttached(ItemStack itemStack, EntityPlayer player) {
         remote = CoverDigitalInterfaceWirelessPlaceBehaviour.getRemotePos(itemStack);
     }
 
