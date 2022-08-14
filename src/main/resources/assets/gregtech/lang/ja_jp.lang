@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
 # Corresponding Version: .. - beta
-# 対応バージョン: .. - beta
+# 対応バージョン: 2.4.0 - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
@@ -42,13 +42,12 @@ gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
 
 gregtech.top.fuel_min_consume=必要量
 gregtech.top.fuel_none=燃料がありません
-gregtech.top.energy_stored=エネルギー:
-gregtech.top.progress=進捗:
+
 gregtech.top.working_disabled=停止中
 
-gregtech.top.invalid_structure=構造が未完成
-gregtech.top.valid_structure=構造が完成
-gregtech.top.obstructed_structure=スペース不足
+gregtech.top.invalid_structure=構造に不備あり
+gregtech.top.valid_structure=構造に問題なし
+gregtech.top.obstructed_structure=どこかが塞がれている
 
 gregtech.top.maintenance_fixed=修理は不要
 gregtech.top.maintenance_broken=修理が必要
@@ -4468,7 +4467,7 @@ gregtech.machine.cleanroom.tooltip.5=天井にフィルター外装が必要 (�
 gregtech.machine.cleanroom.tooltip.6=4つまでドアを設置できる! ドアを開けたままでも清潔さを保てる.
 gregtech.machine.cleanroom.tooltip.7=発電機, マフラー, ドリル及び初歩的な機械はクリーンルームにとって汚すぎる!
 gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の筐体またはダイオードを通して送ることができる.
-gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の貫通ハッチを通して送ることができる.
+gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の通過ハッチを通して送ることができる.
 gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2チャンネルs§7を壁面の筐体を通して送信できる.
 gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aAE2ネットワーク§7を壁面の筐体を通して送信できる.
 gregtech.multiblock.cleanroom.clean_state=状態: §a清潔
@@ -4693,10 +4692,10 @@ gregtech.machine.machine_hatch.locked=インターフェースはロックされ
 gregtech.machine.machine_hatch.tooltip=有効なアイテムのみを保持する専用アクセスバス
 gregtech.machine.machine_hatch.processing_array=§eプロセッシングアレイ§7に組み込まれた場合, §eプロセッシングアレイ§7で動作するマシンのみを保持します
 
-gregtech.machine.passthrough_hatch_item.name=アイテム貫通ハッチ
-gregtech.machine.passthrough_hatch_item.tooltip=片方のサイドからもう片方へアイテムを送る
-gregtech.machine.passthrough_hatch_fluid.name=液体貫通ハッチ
-gregtech.machine.passthrough_hatch_fluid.tooltip=片方のサイドからもう片方へ液体を送る
+gregtech.machine.passthrough_hatch_item.name=アイテム通過ハッチ
+gregtech.machine.passthrough_hatch_item.tooltip=一方通行でアイテムを送る
+gregtech.machine.passthrough_hatch_fluid.name=液体通過ハッチ
+gregtech.machine.passthrough_hatch_fluid.tooltip=一方通行で液体を送る
 
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
@@ -4729,7 +4728,7 @@ gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆薬: %s
 gregtech.recipe.eu_to_start=開始エネルギー: %sEU
 gregtech.recipe.dimensions=ディメンション: %s
-gregtech.recipe.cleanroom=%sを要求
+gregtech.recipe.cleanroom=%sが要求
 gregtech.recipe.cleanroom.display_name=クリーンルーム
 gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 
