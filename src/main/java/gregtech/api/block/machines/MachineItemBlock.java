@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
@@ -95,7 +96,10 @@ public class MachineItemBlock extends ItemBlock {
             IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null) {
                 if (handler != null) {
-                    handler.drain(1000, true);
+                    FluidStack drained = handler.drain(1000, true);
+                    if (drained == null || drained.amount != 1000) {
+                        return ItemStack.EMPTY;
+                    }
                     return handler.getContainer().copy();
                 }
             }
