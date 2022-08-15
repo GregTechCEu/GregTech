@@ -9,6 +9,9 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,10 +23,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart {
+public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     private ItemStackHandler itemStackHandler;
 
@@ -131,5 +135,21 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+        abilityList.add(this);
+    }
+
+    @Nonnull
+    @Override
+    public Class<IItemHandlerModifiable> getPassthroughType() {
+        return IItemHandlerModifiable.class;
     }
 }

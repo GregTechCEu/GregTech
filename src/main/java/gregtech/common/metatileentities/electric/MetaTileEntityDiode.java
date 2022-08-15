@@ -12,6 +12,9 @@ import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
@@ -35,7 +38,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
 
-public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart {
+public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     protected IEnergyContainer energyContainer;
 
@@ -162,5 +165,21 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart {
         tooltip.add(I18n.format("gregtech.machine.diode.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
                 energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+    }
+
+    @Override
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+        abilityList.add(this);
+    }
+
+    @Nonnull
+    @Override
+    public Class<?> getPassthroughType() {
+        return IEnergyContainer.class;
     }
 }
