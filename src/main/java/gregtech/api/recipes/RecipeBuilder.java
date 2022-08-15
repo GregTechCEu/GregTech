@@ -680,8 +680,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
-                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe,
-                        recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage));
+                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage));
     }
 
     protected EnumValidationResult validate() {
