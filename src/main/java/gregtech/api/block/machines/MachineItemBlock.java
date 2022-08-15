@@ -91,6 +91,15 @@ public class MachineItemBlock extends ItemBlock {
         if (!hasContainerItem(itemStack)) {
             return ItemStack.EMPTY;
         }
+        if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null) {
+                if (handler != null) {
+                    handler.drain(1000, true);
+                    return handler.getContainer().copy();
+                }
+            }
+        }
         return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).getContainer().copy();
     }
 

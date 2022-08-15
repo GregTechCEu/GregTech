@@ -23,7 +23,6 @@ public class GTFluidCraftingIngredient extends Ingredient {
             handler = testedStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         }
         if (handler != null) {
-            if (fluidStack == null || fluidStack.amount == 0) return true;
             FluidStack drained = handler.drain(fluidStack, false);
             if (drained != null && drained.amount >= fluidStack.amount) {
                 return drained.isFluidEqual(fluidStack);
