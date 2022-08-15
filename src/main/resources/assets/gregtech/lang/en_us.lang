@@ -2406,7 +2406,7 @@ tile.machine_casing.ultra_high_voltage.name=UHV Machine Casing
 tile.machine_casing.ultra_excessive_voltage.name=UEV Machine Casing
 tile.machine_casing.ultra_immense_voltage.name=UIV Machine Casing
 tile.machine_casing.ultra_extreme_voltage.name=UXV Machine Casing
-tile.machine_casing.Ultra Immense_voltage.name=OpV Machine Casing
+tile.machine_casing.overpowered_voltage.name=OpV Machine Casing
 tile.machine_casing.maximum_voltage.name=MAX Machine Casing
 
 # Steam casing blocks
