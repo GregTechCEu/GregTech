@@ -315,10 +315,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .where('B', states(getCasingState()).or(basePredicate))
                 .where('X', wallPredicate.or(basePredicate)
                         .or(doorPredicate().setMaxGlobalLimited(8))
-                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setMaxGlobalLimited(10))
-                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setMaxGlobalLimited(10))
-                        .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5))
-                        .or(metaTileEntities(MetaTileEntities.DIODES).setMaxGlobalLimited(5)))
+                        .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30)))
                 .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure dimension checks
                 .where('F', filterPredicate())
                 .where(' ', innerPredicate())
