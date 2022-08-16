@@ -2406,7 +2406,7 @@ tile.machine_casing.ultra_high_voltage.name=UHVマシン外装
 tile.machine_casing.ultra_excessive_voltage.name=UEVマシン外装
 tile.machine_casing.ultra_immense_voltage.name=UIVマシン外装
 tile.machine_casing.ultra_extreme_voltage.name=UXVマシン外装
-tile.machine_casing.Ultra Immense_voltage.name=OpVマシン外装
+tile.machine_casing.overpowered_voltage=OpVマシン外装
 tile.machine_casing.maximum_voltage.name=MAXマシン外装
 
 # Steam casing blocks
