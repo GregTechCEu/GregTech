@@ -4651,7 +4651,7 @@ gregtech.machine.maintenance_hatch_configurable.tooltip=マルチブロックを
 gregtech.machine.maintenance_hatch_full_auto.name=自動メンテナンスハッチ
 gregtech.machine.maintenance_hatch_full_auto.tooltip=マルチブロックの自動メンテナンスに
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=フィルター付自動メンテナンスハッチ
-gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=マルチブロックがクリーンルームに入れた時と同じくらい清潔になる!
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=マルチブロックがクリーンルームに入れた時と同じくらい清潔になる
 gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=クリーンルームの種類:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=故障解決のためのツールがインベントリ内にある場合, 素手でここをクリック
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=故障を解決するためにテープを挿入
@@ -4728,7 +4728,7 @@ gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆薬: %s
 gregtech.recipe.eu_to_start=開始エネルギー: %sEU
 gregtech.recipe.dimensions=ディメンション: %s
-gregtech.recipe.cleanroom=%sが要求
+gregtech.recipe.cleanroom=%sが必要
 gregtech.recipe.cleanroom.display_name=クリーンルーム
 gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 
