@@ -94,17 +94,15 @@ public class MachineItemBlock extends ItemBlock {
         }
         if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
             IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null) {
-                if (handler != null) {
-                    FluidStack drained = handler.drain(1000, true);
-                    if (drained == null || drained.amount != 1000) {
-                        return ItemStack.EMPTY;
-                    }
-                    return handler.getContainer().copy();
+            if (handler != null) {
+                FluidStack drained = handler.drain(1000, true);
+                if (drained == null || drained.amount != 1000) {
+                    return ItemStack.EMPTY;
                 }
+                return handler.getContainer().copy();
             }
         }
-        return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).getContainer().copy();
+        return ItemStack.EMPTY;
     }
 
     @Override

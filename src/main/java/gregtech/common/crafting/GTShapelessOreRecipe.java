@@ -18,19 +18,14 @@ import javax.annotation.Nonnull;
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
     public GTShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
         super(group, result);
-        for (Object in : recipe)
-        {
+        for (Object in : recipe) {
             Ingredient ing = getIngredient(in);
-            if (ing != null)
-            {
+            if (ing != null) {
                 input.add(ing);
                 this.isSimple &= ing.isSimple();
-            }
-            else
-            {
+            } else {
                 String ret = "Invalid shapeless ore recipe: ";
-                for (Object tmp :  recipe)
-                {
+                for (Object tmp : recipe) {
                     ret += tmp + ", ";
                 }
                 ret += output;
@@ -42,12 +37,10 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
     //a copy of the CraftingHelper getIngredient method.
     //the only difference is checking for a filled bucket and making
     //it an GTFluidCraftingIngredient
-    private static Ingredient getIngredient(Object obj)
-    {
-        if (obj instanceof Ingredient)
-            return (Ingredient)obj;
+    private static Ingredient getIngredient(Object obj) {
+        if (obj instanceof Ingredient) return (Ingredient) obj;
         else if (obj instanceof ItemStack) {
-            ItemStack ing = (ItemStack)obj;
+            ItemStack ing = (ItemStack) obj;
             if (ing.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
                 IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                 if (handler != null) {
@@ -58,13 +51,10 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
                 }
             }
             return Ingredient.fromStacks(((ItemStack) obj).copy());
-        }
-        else if (obj instanceof Item)
-            return Ingredient.fromItem((Item)obj);
+        } else if (obj instanceof Item) return Ingredient.fromItem((Item) obj);
         else if (obj instanceof Block)
-            return Ingredient.fromStacks(new ItemStack((Block)obj, 1, OreDictionary.WILDCARD_VALUE));
-        else if (obj instanceof String)
-            return new OreIngredient((String)obj);
+            return Ingredient.fromStacks(new ItemStack((Block) obj, 1, OreDictionary.WILDCARD_VALUE));
+        else if (obj instanceof String) return new OreIngredient((String) obj);
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
