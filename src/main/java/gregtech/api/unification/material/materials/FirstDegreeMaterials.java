@@ -1454,6 +1454,7 @@ public class FirstDegreeMaterials {
 
         LiquidHelium = new Material.Builder(450, "liquid_helium")
                 .fluid()
+                .color(0xFCFF90)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Helium, 1)
                 .fluidTemp(4)
