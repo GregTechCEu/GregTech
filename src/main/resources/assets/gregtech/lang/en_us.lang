@@ -1331,6 +1331,7 @@ material.holmium=Holmium
 material.hydrogen=Hydrogen
 material.helium=Helium
 material.helium_3=Helium-3
+material.liquid_helium=Liquid Helium
 material.indium=Indium
 material.iodine=Iodine
 material.iridium=Iridium

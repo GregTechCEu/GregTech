@@ -176,6 +176,7 @@ public class Materials {
     public static Material Hydrogen;
     public static Material Helium;
     public static Material Helium3;
+    public static Material LiquidHelium;
     public static Material Indium;
     public static Material Iodine;
     public static Material Iridium;

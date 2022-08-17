@@ -69,6 +69,11 @@ public class ChemistryRecipes {
                 .fluidOutputs(LiquidOxygen.getFluid(1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
+        VACUUM_RECIPES.recipeBuilder()
+                .fluidInputs(Helium.getFluid(1000))
+                .fluidOutputs(LiquidHelium.getFluid(1000))
+                .duration(240).EUt(VA[EV]).buildAndRegister();
+
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))

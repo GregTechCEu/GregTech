@@ -1095,7 +1095,7 @@ public class RecipeMaps {
      * Any Recipe added to the Thermal Centrifuge not specifying an <B>EUt</B> value will default to 120.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().EUt(VA[MV]), false)
+    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 2, 0, 1, new SimpleRecipeBuilder().EUt(VA[MV]), false)
             .setSound(GTSounds.COOLING);
 
     /**
