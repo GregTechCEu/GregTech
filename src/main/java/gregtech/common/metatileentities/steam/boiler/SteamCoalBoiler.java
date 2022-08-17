@@ -38,7 +38,7 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
 
     @Override
     protected int getBaseSteamOutput() {
-        return isHighPressure ? 300 : 120;
+        return isHighPressure ? 15 : 6;
     }
 
     @Override
