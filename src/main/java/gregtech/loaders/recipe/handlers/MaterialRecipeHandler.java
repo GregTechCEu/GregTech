@@ -168,6 +168,7 @@ public class MaterialRecipeHandler {
                         .input(ingotHot, material)
                         .fluidInputs(Materials.LiquidHelium.getFluid(500))
                         .output(ingot, material)
+                        .fluidOutputs(Materials.Helium.getFluid(250))
                         .duration((int) material.getMass() * 3)
                         .buildAndRegister();
             }
