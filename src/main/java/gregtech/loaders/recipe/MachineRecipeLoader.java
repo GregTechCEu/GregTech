@@ -873,12 +873,6 @@ public class MachineRecipeLoader {
                     .duration(100).EUt(16).buildAndRegister();
         }
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(Concrete.getFluid(GTValues.L))
-                .notConsumable(MetaItems.SHAPE_MOLD_BLOCK.getStackForm())
-                .output(stone, Concrete)
-                .duration(98).EUt(VA[ULV]).buildAndRegister();
-
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(VA[LV]).fluidInputs(Water.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(VA[LV]).fluidInputs(DistilledWater.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();
     }
