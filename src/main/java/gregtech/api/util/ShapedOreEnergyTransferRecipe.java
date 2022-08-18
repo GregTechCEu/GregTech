@@ -33,7 +33,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
     private void fixOutputItemMaxCharge() {
         long totalMaxCharge = getIngredients().stream()
                 .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
-                        .map(stack -> stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
+                        .map(stack -> stack.copy().getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
                         .filter(Objects::nonNull)
                         .mapToLong(IElectricItem::getMaxCharge)
                         .max().orElse(0L)).sum();
@@ -65,11 +65,8 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                     continue;
                 }
                 totalMaxCharge += batteryItem.getMaxCharge();
-                long discharged = batteryItem.discharge(Long.MAX_VALUE, Integer.MAX_VALUE, true, true, false);
+                long discharged = batteryItem.discharge(Long.MAX_VALUE, Integer.MAX_VALUE, true, true, true);
                 electricItem.charge(discharged, Integer.MAX_VALUE, true, false);
-                if (discharged > 0L) {
-                    ingredients.setInventorySlotContents(slotIndex, stackInSlot);
-                }
             }
         }
         if (electricItem instanceof ElectricItem && transferMaxCharge) {
