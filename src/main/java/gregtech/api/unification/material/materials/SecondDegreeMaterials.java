@@ -256,7 +256,7 @@ public class SecondDegreeMaterials {
         Concrete = new Material.Builder(2034, "concrete")
                 .dust().fluid()
                 .color(0x646464).iconSet(ROUGH)
-                .flags(NO_SMASHING)
+                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Stone, 1)
                 .build();
 

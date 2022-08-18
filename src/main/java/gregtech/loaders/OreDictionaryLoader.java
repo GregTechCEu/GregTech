@@ -104,8 +104,8 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.RED_GRANITE, 1), OrePrefix.stone, Materials.GraniteRed);
         OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.MARBLE, 1), OrePrefix.stone, Materials.Marble);
         OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.BASALT, 1), OrePrefix.stone, Materials.Basalt);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_LIGHT, 1), OrePrefix.stone, Materials.Concrete);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK, 1), OrePrefix.stone, Materials.Concrete);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_LIGHT, 1), OrePrefix.block, Materials.Concrete);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK, 1), OrePrefix.block, Materials.Concrete);
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.ANVIL), "craftingAnvil");
         OreDictUnifier.registerOre(new ItemStack(Blocks.OBSIDIAN, 1, W), OrePrefix.stone, Materials.Obsidian);
