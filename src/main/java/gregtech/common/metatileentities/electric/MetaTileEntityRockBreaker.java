@@ -42,7 +42,11 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     private void checkAdjacentFluids() {
-        if (getWorld() == null || getWorld().isRemote) {
+        if (getWorld() == null) {
+            hasValidFluids = true;
+            return;
+        }
+        if (getWorld().isRemote) {
             hasValidFluids = false;
             return;
         }
