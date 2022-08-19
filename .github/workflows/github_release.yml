@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get Mod Version
-        id: get_version
+        id: get_version_no_extra
         run: echo ::set-output name=version::$(./gradlew getVersionFromJavaNoExtra --q)
 
       - name: Get Previous tag
@@ -32,7 +32,7 @@ jobs:
 
       # exit CI early as a failure if creating this release clashes with the previous version
       - name: Check if Version Bump is Needed
-        if: ${{ format('v{0}', steps.get_version.outputs.version) == (steps.previous_tag.outputs.release) }}
+        if: ${{ format('v{0}', steps.get_version_no_extra.outputs.version) == (steps.previous_tag.outputs.release) }}
         uses: actions/github-script@v6
         with:
           script: core.setFailed("A version bump from ${{ steps.previous_tag.outputs.release }} is required!")
@@ -60,7 +60,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
+          tag_name: v${{ steps.get_version_no_extra.outputs.version }}
           files: build/libs/*.jar
           body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
           generate_release_notes: true

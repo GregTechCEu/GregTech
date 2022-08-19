@@ -160,6 +160,12 @@ task<Exec>("getVersionFromJavaNoExtra") {
     commandLine("echo", getVersionFromJavaNoExtra(file("src/main/java/gregtech/GregTechVersion.java")))
 }
 
+
+// used for GitHub Actions CI releases
+task<Exec>("getVersionFromJava") {
+    commandLine("echo", getVersionFromJava(file("src/main/java/gregtech/GregTechVersion.java")))
+}
+
 fun getVersionFromJava(file: File): String  {
     var version = getVersionFromJavaNoExtra(file)
     var extra = ""
