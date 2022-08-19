@@ -156,15 +156,36 @@ idea {
 }
 
 // used for GitHub Actions CI releases
-task<Exec>("getVersionFromJava") {
-    commandLine("echo", getVersionFromJava(file("src/main/java/gregtech/GregTechVersion.java")))
+task<Exec>("getVersionFromJavaNoExtra") {
+    commandLine("echo", getVersionFromJavaNoExtra(file("src/main/java/gregtech/GregTechVersion.java")))
 }
 
 fun getVersionFromJava(file: File): String  {
+    var version = getVersionFromJavaNoExtra(file)
+    var extra = ""
+
+    val extraPrefix = "public static final String"
+    file.forEachLine { line ->
+        var s = line.trim()
+        if (s.startsWith(extraPrefix)) {
+            s = s.substring(extraPrefix.length, s.length - 2)
+            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
+            val pts = s.split(" ")
+            when {
+                pts[0] == "EXTRA" -> extra = pts[pts.size - 1]
+            }
+        }
+    }
+    if (extra != "") {
+        return "$version-$extra"
+    }
+    return version
+}
+
+fun getVersionFromJavaNoExtra(file: File): String  {
     var major = "0"
     var minor = "0"
     var revision = "0"
-    var extra = ""
 
     val prefix = "public static final int"
     val extraPrefix = "public static final String"
@@ -180,17 +201,7 @@ fun getVersionFromJava(file: File): String  {
                 pts[0] == "MINOR" -> minor = pts[pts.size - 1]
                 pts[0] == "REVISION" -> revision = pts[pts.size - 1]
             }
-        } else if (s.startsWith(extraPrefix)) {
-            s = s.substring(extraPrefix.length, s.length - 2)
-            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
-            val pts = s.split(" ")
-            when {
-                pts[0] == "EXTRA" -> extra = pts[pts.size - 1]
-            }
         }
-    }
-    if (extra != "") {
-        return "$major.$minor.$revision-$extra"
     }
     return "$major.$minor.$revision"
 }

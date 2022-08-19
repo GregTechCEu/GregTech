@@ -22,7 +22,7 @@ jobs:
 
       - name: Get Mod Version
         id: get_version
-        run: echo ::set-output name=version::$(./gradlew getVersionFromJava --q)
+        run: echo ::set-output name=version::$(./gradlew getVersionFromJavaNoExtra --q)
 
       - name: Get Previous tag
         id: previous_tag

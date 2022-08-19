@@ -18,7 +18,7 @@ jobs:
 
       - name: Get Mod Version
         id: get_version
-        run: echo ::set-output name=version::$(./gradlew getVersionFromJava --q)
+        run: echo ::set-output name=version::$(./gradlew getVersionFromJavaNoExtra --q)
 
       - name: Retrieve Jar from Latest Release
         uses: dsaltares/fetch-gh-release-asset@master
