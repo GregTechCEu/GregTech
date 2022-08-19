@@ -7,6 +7,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
@@ -18,8 +19,8 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,6 +47,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
@@ -65,6 +67,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
     protected IItemHandler outputItemInventory;
+    private ItemHandlerList combinedInventory;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -193,6 +196,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.initializeInventory();
         this.itemInventory = new QuantumChestItemHandler();
         this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
+        List<IItemHandler> temp = new ArrayList<>();
+        temp.add(outputItemInventory);
+        temp.add(itemInventory);
+        combinedInventory = new ItemHandlerList(temp);
+
     }
 
     @Override
@@ -363,11 +371,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             return null;
         }
         else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : itemInventory;
-            if (itemHandler.getSlots() > 0) {
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
-            }
-            return null;
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(combinedInventory);
         }
         return super.getCapability(capability, side);
     }
@@ -422,6 +426,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         }
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
     }
+
     public void setAllowInputFromOutputSide(boolean allowInputFromOutputSide) {
         this.allowInputFromOutputSide = allowInputFromOutputSide;
         if (!getWorld().isRemote) {
