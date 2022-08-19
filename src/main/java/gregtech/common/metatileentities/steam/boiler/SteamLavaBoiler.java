@@ -48,7 +48,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
     @Override
     protected int getBaseSteamOutput() {
-        return isHighPressure ? 30 : 12;
+        return isHighPressure ? 600 : 240;
     }
 
     private Map<Fluid, Integer> getBoilerFuels() {
