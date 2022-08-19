@@ -18,8 +18,8 @@ changelog:
         - "type: refactor"
 
     - title: Translation Changes
-      - labels:
-          - "type: translation"
+      labels:
+        - "type: translation"
 
     - title: Other Changes
       labels:
