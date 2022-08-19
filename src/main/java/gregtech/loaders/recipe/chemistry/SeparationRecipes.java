@@ -239,8 +239,8 @@ public class SeparationRecipes {
                 .input(dust, Purpur)
                 .chancedOutput(dustSmall, Asbestos, 9500, 150)
                 .chancedOutput(dustSmall, Endstone, 3000, 125)
+                .chancedOutput(dustSmall, EnderPearl, 2000, 110)
                 .chancedOutput(dustTiny, Vanadium, 2000, 110)
-                .fluidOutputs(Naphtha.getFluid(40))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
