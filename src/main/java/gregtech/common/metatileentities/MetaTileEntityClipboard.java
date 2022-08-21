@@ -18,11 +18,14 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.packets.CPacketClipboardNBTUpdate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehavior;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -357,6 +360,12 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         }
     }
 
+    public void setClipboardNBT(NBTTagCompound data) {
+        ItemStack clipboard = this.getClipboard();
+        clipboard.setTagCompound(data);
+        this.setClipboard(clipboard);
+    }
+
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
@@ -385,12 +394,13 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_UI) {
+        if (dataId >= UPDATE_UI) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
             if (guiCache != null)
                 guiCache.handleWidgetUpdate(windowID, widgetID, buf);
             this.scheduleRenderUpdate();
+            this.sendNBTToServer();
         } else if (dataId == CREATE_FAKE_UI) {
             createFakeGui();
             this.scheduleRenderUpdate();
@@ -401,7 +411,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 guiCache.mouseClicked(mouseX, mouseY, 0); // Left mouse button
             }
             this.scheduleRenderUpdate();
-            this.markDirty();
+            this.sendNBTToServer();
         } else if (dataId == INIT_CLIPBOARD_NBT) {
             try {
                 NBTTagCompound clipboardNBT = buf.readCompoundTag();
@@ -414,6 +424,15 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 e.printStackTrace();
             }
         }
+    }
+
+    private void sendNBTToServer() {
+        PacketBuffer packetBuffer = new PacketBuffer(Unpooled.buffer());
+        packetBuffer.writeCompoundTag(this.getClipboard().getTagCompound());
+        NetworkHandler.channel.sendToServer(new CPacketClipboardNBTUpdate(
+                this.getWorld().provider.getDimension(),
+                this.getPos(),
+                1, packetBuffer).toFMLPacket());
     }
 
     @Override
