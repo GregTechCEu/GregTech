@@ -301,19 +301,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         });
     }
 
-    public boolean acceptsFluid(List<FluidStack> fluidInputs, FluidStack fluid) {
+    public boolean acceptsFluid(List<ItemStack> items, List<FluidStack> fluids, FluidStack fluid) {
         if (canInputFluidForce(fluid.getFluid())) {
             return true;
         }
-        if (fluidInputs.isEmpty()) {
+        if (fluids.isEmpty()) {
             return fluidIngredientRoot.get(new MapFluidIngredient(fluid)) != null;
         }
-        if (fluidInputs.contains(fluid)) {
-            return true;
-        }
-        fluidInputs.add(fluid);
-        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>();
-        buildFromFluidStacks(list, fluidInputs);
+        List<List<AbstractMapIngredient>> list = mapIngredients(items, fluids);
+        list.add(Collections.singletonList(new MapFluidIngredient(fluid)));
         return canInsertFluid(list, lookup);
     }
 
@@ -326,9 +322,22 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (items.size() == 0 && fluids.size() == 0) {
             return null;
         }
-        // Filter out empty fluids.
+        List<List<AbstractMapIngredient>> list = mapIngredients(items, fluids);
+        if (list.size() == 0) {
+            return null;
+        }
+        return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
+    }
 
-        // Build input.
+    /**
+     * Maps the current ItemStack and FluidStack to a List of AbstractMapIngredients
+     *
+     * @param items a list of ItemStacks to be mapped
+     * @param fluids a list of FluidStacks to be mapped
+     * @return a List of AbstractMapIngredients lists to be searched on the lookup tree
+     */
+
+    List<List<AbstractMapIngredient>> mapIngredients(List<ItemStack> items, List<FluidStack> fluids) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.size() + fluids.size());
         if (items.size() > 0) {
             buildFromItemStacks(list, uniqueItems(items));
@@ -345,10 +354,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 buildFromFluidStacks(list, stack);
             }
         }
-        if (list.size() == 0) {
-            return null;
-        }
-        return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
+        return list;
     }
 
     /**

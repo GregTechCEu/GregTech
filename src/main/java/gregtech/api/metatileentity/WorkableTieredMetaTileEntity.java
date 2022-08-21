@@ -8,11 +8,9 @@ import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.FluidKey;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +29,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -145,7 +142,15 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
                 fluidInputs.add(fluidStack);
             }
         }
-        return recipeMap != null && recipeMap.acceptsFluid(fluidInputs, inputFluid);
+        List<ItemStack> itemInputs = new ArrayList<>();
+        for (int i= 0; i< this.importItems.getSlots(); i++) {
+            ItemStack itemStack = this.importItems.getStackInSlot(i);
+            if (!(itemStack.isEmpty())) {
+                itemInputs.add(itemStack);
+            }
+        }
+
+        return recipeMap != null && recipeMap.acceptsFluid(itemInputs, fluidInputs, inputFluid);
     }
 
     @Override
