@@ -214,7 +214,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
         List<List<AbstractMapIngredient>> fluidsOnly = fromRecipeFluids(recipe);
-        recurseIngredientTreeAdd(recipe, fluidsOnly, fluidLookup, 0, 0);
+        recurseFluidTreeAdd(fluidsOnly, fluidLookup, 0, 0);
     }
 
     public boolean removeRecipe(Recipe recipe) {
@@ -424,7 +424,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Try each ingredient as a starting point, adding it to the skiplist.
         boolean canInsert;
         for (int i = 0; i < fluidIngredients.size(); i++) {
-            canInsert = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, map, i, 0, (1L << i));
+            canInsert = recurseFluidTreeFindBranch(fluidIngredients, map, i, 0, (1L << i));
             if (canInsert) {
                 return true;
             }
@@ -443,33 +443,31 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *                         recursion.
      * @return True if the current fluid ingredients resolve to a valid branch or recipe. False otherwise.
      */
-    private boolean recurseFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
+    private boolean recurseFluidTreeFindBranch(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
         List<AbstractMapIngredient> wr = fluidIngredients.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
             Either<Recipe, Branch> result = branchMap.getNodes().get(t);
             if (result != null) {
-                if (result.left().isPresent() && count == fluidIngredients.size() - 1) {
-                    return true;
-                } else if (result.right().isPresent()) {
-                    if (count == fluidIngredients.size() -1 ) {
+                 if (result.right().isPresent()) {
+                    if (count == fluidIngredients.size() - 1) {
                         return true;
                     }
-                    return diveFluidTreeFindBranchOrRecipe(fluidIngredients, result.right().get(), index, count, skip);
+                    return diveFluidTreeFindBranch(fluidIngredients, result.right().get(), index, count, skip);
                 }
             }
         }
         return false;
     }
 
-    private boolean diveFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
+    private boolean diveFluidTreeFindBranch(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
         // We loop around fluidIngredients.size() if we reach the end.
         int counter = (index + 1) % fluidIngredients.size();
         while (counter != index) {
             // Have we already used this ingredient? If so, skip this one.
             if (((skip & (1L << counter)) == 0)) {
                 // Recursive call.
-                boolean found = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, branchMap, counter, count + 1, skip | (1L << counter));
+                boolean found = recurseFluidTreeFindBranch(fluidIngredients, branchMap, counter, count + 1, skip | (1L << counter));
                 if (found) {
                     return true;
                 }
@@ -826,6 +824,28 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 });
                 return false;
             }
+        }
+        return true;
+    }
+
+    boolean recurseFluidTreeAdd(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int index, int count) {
+        if (count >= ingredients.size()) return true;
+        if (index >= ingredients.size()) {
+            throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
+        }
+        // Loop through NUMBER_OF_INGREDIENTS times.
+        List<AbstractMapIngredient> current = ingredients.get(index);
+        final Branch branchRight = new Branch();
+        Either<Recipe, Branch> r;
+        for (AbstractMapIngredient obj : current) {
+            // Either add the recipe or create a branch.
+            r = branchMap.getNodes().compute(obj, (k, v) -> {
+                if (v == null) {
+                    v = Either.right(branchRight);
+                }
+                return v;
+            });
+            r.right().map(m -> !recurseFluidTreeAdd(ingredients, m, (index + 1) % ingredients.size(), count + 1));
         }
         return true;
     }
