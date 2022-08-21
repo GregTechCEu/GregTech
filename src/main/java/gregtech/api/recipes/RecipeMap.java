@@ -75,6 +75,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public final boolean isHidden;
 
     private final Branch lookup = new Branch();
+    private final Branch fluidLookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
     private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
@@ -212,6 +213,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
+        List<List<AbstractMapIngredient>> fluidsOnly = fromRecipeFluids(recipe);
+        recurseIngredientTreeAdd(recipe, fluidsOnly, fluidLookup, 0, 0);
     }
 
     public boolean removeRecipe(Recipe recipe) {
@@ -301,16 +304,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         });
     }
 
-    public boolean acceptsFluid(List<ItemStack> items, List<FluidStack> fluids, FluidStack fluid) {
+    public boolean acceptsFluid(List<FluidStack> fluids, FluidStack fluid) {
         if (canInputFluidForce(fluid.getFluid())) {
             return true;
         }
         if (fluids.isEmpty()) {
             return fluidIngredientRoot.get(new MapFluidIngredient(fluid)) != null;
         }
-        List<List<AbstractMapIngredient>> list = mapIngredients(items, fluids);
+        List<List<AbstractMapIngredient>> list = mapIngredients(Collections.emptyList(), fluids);
         list.add(Collections.singletonList(new MapFluidIngredient(fluid)));
-        return canInsertFluid(list, lookup);
+        return canInsertFluid(list, fluidLookup);
     }
 
     @Nullable
@@ -449,7 +452,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 if (result.left().isPresent() && count == fluidIngredients.size() - 1) {
                     return true;
                 } else if (result.right().isPresent()) {
-                    if (count == fluidIngredients.size()) {
+                    if (count == fluidIngredients.size() -1 ) {
                         return true;
                     }
                     return diveFluidTreeFindBranchOrRecipe(fluidIngredients, result.right().get(), index, count, skip);
@@ -852,6 +855,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (r.getInputs().size() > 0) {
             buildFromRecipeItems(list, uniqueIngredientsList(r.getInputs()));
         }
+        if (r.getFluidInputs().size() > 0) {
+            buildFromRecipeFluids(list, r.getFluidInputs());
+        }
+        return list;
+    }
+
+    protected List<List<AbstractMapIngredient>> fromRecipeFluids(Recipe r) {
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(r.getFluidInputs().size());
         if (r.getFluidInputs().size() > 0) {
             buildFromRecipeFluids(list, r.getFluidInputs());
         }

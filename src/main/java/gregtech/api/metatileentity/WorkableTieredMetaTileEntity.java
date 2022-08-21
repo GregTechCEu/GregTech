@@ -142,15 +142,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
                 fluidInputs.add(fluidStack);
             }
         }
-        List<ItemStack> itemInputs = new ArrayList<>();
-        for (int i= 0; i< this.importItems.getSlots(); i++) {
-            ItemStack itemStack = this.importItems.getStackInSlot(i);
-            if (!(itemStack.isEmpty())) {
-                itemInputs.add(itemStack);
-            }
-        }
 
-        return recipeMap != null && recipeMap.acceptsFluid(itemInputs, fluidInputs, inputFluid);
+        return recipeMap != null && recipeMap.acceptsFluid(fluidInputs, inputFluid);
     }
 
     @Override
