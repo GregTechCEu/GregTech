@@ -83,10 +83,9 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         if (this.getWorld().isRemote) {
             if (guiCache != null)
                 guiCache.updateScreen();
-        } else {
-            if (guiContainerCache != null)
-                guiContainerCache.detectAndSendChanges();
         }
+        if (guiContainerCache != null)
+            guiContainerCache.detectAndSendChanges();
     }
 
     @Override
@@ -164,8 +163,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             this.guiContainerCache = fakeModularUIContainer;
             if (getWorld().isRemote)
                 this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(CREATE_FAKE_UI, buffer -> {
-            });
+            this.writeCustomData(CREATE_FAKE_UI, buffer -> {});
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
