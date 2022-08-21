@@ -8,11 +8,9 @@ import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.FluidKey;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -22,23 +20,18 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements IDataInfoProvider, ICleanroomReceiver {
-
-    protected static Set<FluidKey> fluidKeyCache;
 
     protected final RecipeLogicEnergy workable;
     protected final RecipeMap<?> recipeMap;
@@ -114,10 +107,9 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected FluidTankList createImportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.getRecipeMap().getMaxFluidInputs()];
+        NotifiableFluidTank[] fluidImports = new NotifiableFluidTank[workable.getRecipeMap().getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
-            NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(this.tankScalingFunction.apply(this.getTier()), this, false);
-            filteredFluidHandler.setFillPredicate(this::canInputFluid);
+            NotifiableFluidTank filteredFluidHandler = new NotifiableFluidTank(this.tankScalingFunction.apply(this.getTier()), this, false);
             fluidImports[i] = filteredFluidHandler;
         }
         return new FluidTankList(false, fluidImports);
@@ -131,21 +123,6 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
             fluidExports[i] = new NotifiableFluidTank(this.tankScalingFunction.apply(this.getTier()), this, true);
         }
         return new FluidTankList(false, fluidExports);
-    }
-
-    protected boolean canInputFluid(FluidStack inputFluid) {
-        RecipeMap<?> recipeMap = workable.getRecipeMap();
-        List<FluidStack> fluidInputs = new ArrayList<>();
-        for (IFluidTank fluidTank : this.importFluids.getFluidTanks()) {
-            FluidStack fluidStack = fluidTank.getFluid();
-            if (fluidStack != null && fluidStack.amount > 0){
-                if (fluidStack.isFluidEqual(inputFluid)) {
-                    return true;
-                }
-                fluidInputs.add(fluidStack);
-            }
-        }
-        return recipeMap != null && recipeMap.acceptsFluid(fluidInputs, inputFluid);
     }
 
     @Override

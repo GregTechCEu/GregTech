@@ -20,11 +20,6 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
     }
 
     @Override
-    public boolean canInputFluidForce(Fluid fluid) {
-        return true;
-    }
-
-    @Override
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
         Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, exactVoltage);

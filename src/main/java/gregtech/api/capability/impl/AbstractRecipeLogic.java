@@ -13,7 +13,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -197,6 +196,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
         if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
         else {
+            //the change in inputs (especially by removal of ingredient by the player) might change the current valid recipe.
+            //and if the previous recipe produced fluids and the new recipe doesn't, then outputs are not full.
+            this.isOutputsFull = false;
             this.invalidInputsForRecipes = false;
             this.metaTileEntity.getNotifiedItemInputList().clear();
             this.metaTileEntity.getNotifiedFluidInputList().clear();
