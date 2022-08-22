@@ -101,7 +101,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     @Override
     public IItemHandlerModifiable getImportItems() {
-        return importItemsWithCircuit;
+        if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(circuitInventory.getStackInSlot(0))){
+            return importItemsWithCircuit;
+        }else {
+            return super.getImportItems();
+        }
     }
 
     @Override
