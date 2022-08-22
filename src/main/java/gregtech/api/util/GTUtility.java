@@ -237,7 +237,8 @@ public class GTUtility {
                 continue; //if itemstacks don't match, continue
             int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
             int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
-            if (amountToInsert == 0)
+            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
+            if (amountToInsert <= 0)
                 continue; //if we can't insert anything, continue
             //shrink our stack, grow slot's stack and mark slot as changed
             if (!simulate) {
@@ -955,9 +956,7 @@ public class GTUtility {
         }
 
         MetaTileEntity machine = getMetaTileEntity(machineStack);
-        // Blacklist the Rock Breaker here instead of through the config option so we don't get people removing the config entry and then
-        // complaining it does not work. Remove from here if we ever decide to implement PA Rock Breaker
-        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity || machine instanceof MetaTileEntityRockBreaker))
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity))
             return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
 
         return false;

@@ -13,6 +13,9 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
@@ -31,7 +34,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
+public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     protected IEnergyContainer energyContainer;
     private AENetworkProxy gridProxy;
@@ -113,5 +116,21 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
             gridProxy = new AENetworkProxy((MetaTileEntityHolder) getHolder(), "proxy", getStackForm(), true);
         }
         return gridProxy;
+    }
+
+    @Override
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+        abilityList.add(this);
+    }
+
+    @Nonnull
+    @Override
+    public Class<?> getPassthroughType() {
+        return IEnergyContainer.class;
     }
 }

@@ -11,6 +11,9 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,12 +21,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart {
+public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     private static final int TANK_SIZE = 16_000;
 
@@ -129,5 +134,21 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         tooltip.add(I18n.format("gregtech.machine.multi_fluid_hatch_universal.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.multi_fluid_hatch_universal.tooltip.2", getTier() + 1));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+        abilityList.add(this);
+    }
+
+    @Nonnull
+    @Override
+    public Class<IFluidHandler> getPassthroughType() {
+        return IFluidHandler.class;
     }
 }

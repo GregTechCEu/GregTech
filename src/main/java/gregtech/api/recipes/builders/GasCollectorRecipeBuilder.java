@@ -40,9 +40,9 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
                 IntList dimensionIDs = getDimensionIDs();
                 if (dimensionIDs == IntLists.EMPTY_LIST) {
                     dimensionIDs = new IntArrayList();
+                    this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
                 }
                 dimensionIDs.addAll((List<Integer>) value);
-                this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
             } else {
                 if (isCTRecipe) {
                     CraftTweakerAPI.logError("Dimension for Gas Collector needs to be a Integer");
@@ -59,9 +59,9 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
         IntList dimensionIDs = getDimensionIDs();
         if (dimensionIDs == IntLists.EMPTY_LIST) {
             dimensionIDs = new IntArrayList();
+            this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
         }
         dimensionIDs.add(dimensionID);
-        this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
         return this;
     }
 

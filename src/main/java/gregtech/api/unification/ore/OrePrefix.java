@@ -488,7 +488,8 @@ public class OrePrefix {
                 //glass, ice and obsidian gain only one dust
             else if (material == Materials.Glass ||
                     material == Materials.Ice ||
-                    material == Materials.Obsidian)
+                    material == Materials.Obsidian ||
+                    material == Materials.Concrete)
                 return M;
         } else if (this == stick) {
             if (material == Materials.Blaze)
