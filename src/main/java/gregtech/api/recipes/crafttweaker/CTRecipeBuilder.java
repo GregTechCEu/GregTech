@@ -48,9 +48,9 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            if (ingredient instanceof IOreDictEntry) {
+            if (ingredient.getInternal() instanceof IOreDictEntry) {
                 this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient).getName(), ingredient.getAmount()));
+                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient.getInternal()).getName(), ingredient.getAmount()));
             } else {
                 this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
                         new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount()));
