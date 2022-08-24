@@ -431,5 +431,11 @@ public class MiscRecipeLoader {
                 .input(plate, PolyvinylButyral)
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))
                 .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        LATHE_RECIPES.recipeBuilder()
+                .input(plank, TreatedWood)
+                .output(stick, TreatedWood, 2)
+                .duration(10).EUt(VA[ULV])
+                .buildAndRegister();
     }
 }
