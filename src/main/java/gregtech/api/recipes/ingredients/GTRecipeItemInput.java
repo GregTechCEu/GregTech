@@ -107,21 +107,26 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-
-        final Item inputItem = input.getItem();
-        for (ItemToMetaList item : this.itemList) {
-            if (item.getItem() == inputItem) {
-                final int inputMeta = input.getMetadata();
-                for (MetaToTAGList meta : item.getMetaToTAGList()) {
-                    if (meta.getMeta() == inputMeta) {
+        List<ItemToMetaList> itemList = this.itemList;
+        Item inputItem = input.getItem();
+        for (int i = 0; i < itemList.size(); i++) {
+            ItemToMetaList metaList = itemList.get(i);
+            if (metaList.item == inputItem) {
+                List<MetaToTAGList> tagLists = metaList.getMetaToTAGList();
+                for (int j = 0; j < tagLists.size(); j++) {
+                    MetaToTAGList tagList = tagLists.get(j);
+                    if (tagList.meta == input.getMetadata()) {
                         final NBTTagCompound inputNBT = input.getTagCompound();
-                        for (TagToStack nbt : meta.getTagToStack()) {
-                            if (nbtMatcher == null) {
-                                if (inputNBT == null && nbt.getTag() == null || inputNBT != null && inputNBT.equals(nbt.getTag())) {
-                                    return nbt.getStack().areCapsCompatible(input);
+                        if (nbtMatcher != null) {
+                            return nbtMatcher.evaluate(inputNBT, nbtCondition);
+                        } else {
+                            List<TagToStack> tagMaps = tagList.tagToStack;
+                            for (int k = 0; k < tagMaps.size(); k++) {
+                                TagToStack tagMapping = tagMaps.get(k);
+                                if (inputNBT == null && tagMapping.tag == null || inputNBT != null &&
+                                        inputNBT.equals(tagMapping.tag)) {
+                                    return tagMapping.stack.areCapsCompatible(input);
                                 }
-                            } else {
-                                return nbtMatcher.evaluate(inputNBT, nbtCondition);
                             }
                         }
                     }
