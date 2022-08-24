@@ -33,10 +33,10 @@ public class GTRecipeItemInput extends GTRecipeInput {
             boolean addedStack = false;
             if (!is.isEmpty()) {
                 for (ItemToMetaList item : this.itemList) {
-                    if (item.getItem() == is.getItem()) {
-                        List<MetaToTAGList> metaList = item.getMetaToTAGList();
+                    if (item.getKey() == is.getItem()) {
+                        List<MetaToTAGList> metaList = item.getValue();
                         for (MetaToTAGList meta : metaList) {
-                            if (meta.getMeta() == is.getMetadata()) {
+                            if (meta.getIntKey() == is.getMetadata()) {
                                 meta.addStackToList(is);
                                 addedStack = true;
                                 break;
@@ -112,7 +112,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
         for (int i = 0; i < itemList.size(); i++) {
             ItemToMetaList metaList = itemList.get(i);
             if (metaList.item == inputItem) {
-                List<MetaToTAGList> tagLists = metaList.getMetaToTAGList();
+                List<MetaToTAGList> tagLists = metaList.metaToTAGList;
                 for (int j = 0; j < tagLists.size(); j++) {
                     MetaToTAGList tagList = tagLists.get(j);
                     if (tagList.meta == input.getMetadata()) {
