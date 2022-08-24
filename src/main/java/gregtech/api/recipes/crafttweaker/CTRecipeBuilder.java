@@ -52,8 +52,9 @@ public class CTRecipeBuilder {
             return ((IOreDictEntry) ingredient.getInternal()).getName();
         return null;
     }
+    
     private static void checkIfExists(IIngredient ingredient, String oreDict) {
-        if (ingredient == null){
+        if (ingredient == null) {
             throw new IllegalArgumentException("Invalid ingredient: is null");
         }
 
