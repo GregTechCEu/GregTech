@@ -470,7 +470,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         ItemStack stack;
         if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
             IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? 5 : 1);
-            this.workable.forceRecipeRecheck();
+            this.notifiedItemInputList.add(circuitInventory);
         }
     }
 
@@ -478,7 +478,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         ItemStack stack;
         if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
             IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? -5 : -1);
-            this.workable.forceRecipeRecheck();
+            this.notifiedItemInputList.add(circuitInventory);
         }
     }
 
