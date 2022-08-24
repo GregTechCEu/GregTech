@@ -48,9 +48,15 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            if (ingredient.getInternal() instanceof IOreDictEntry) {
+            String oreDict = null;
+            if (ingredient instanceof IOreDictEntry) {
+                oreDict = ((IOreDictEntry) ingredient).getName();
+            } else if (ingredient.getInternal() instanceof IOreDictEntry) {
+                oreDict = ((IOreDictEntry) ingredient.getInternal()).getName();
+            }
+            if (oreDict != null) {
                 this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient.getInternal()).getName(), ingredient.getAmount()));
+                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
             } else {
                 this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
                         new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount()));
@@ -62,13 +68,19 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
+            String oreDict = null;
             if (ingredient instanceof IOreDictEntry) {
+                oreDict = ((IOreDictEntry) ingredient).getName();
+            } else if (ingredient.getInternal() instanceof IOreDictEntry) {
+                oreDict = ((IOreDictEntry) ingredient.getInternal()).getName();
+            }
+            if (oreDict != null) {
                 this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient).getName(), ingredient.getAmount())
+                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
                                 .setNonConsumable());
             } else {
                 this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
-                        new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount())
+                                new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount())
                         .setNonConsumable());
             }
         }
