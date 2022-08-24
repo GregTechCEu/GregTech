@@ -45,12 +45,37 @@ public class CTRecipeBuilder {
         return this;
     }
 
+    private static String extractOreDictEntry(IIngredient ingredient) {
+        if (ingredient instanceof IOreDictEntry)
+            return ((IOreDictEntry) ingredient).getName();
+        if (ingredient.getInternal() instanceof IOreDictEntry)
+            return ((IOreDictEntry) ingredient.getInternal()).getName();
+        return null;
+    }
+    
+    private static void checkIfExists(IIngredient ingredient, String oreDict) {
+        if (ingredient == null) {
+            throw new IllegalArgumentException("Invalid ingredient: is null");
+        }
+
+        if (ingredient.getItems().size() == 0) {
+            if (oreDict != null) {
+                throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
+            } else {
+                throw new IllegalArgumentException("Invalid Item [" + ingredient.toString() + "]: item not found");
+            }
+        }
+    }
+
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            if (ingredient instanceof IOreDictEntry) {
+            String oreDict = extractOreDictEntry(ingredient);
+            checkIfExists(ingredient, oreDict);
+
+            if (oreDict != null) {
                 this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient).getName(), ingredient.getAmount()));
+                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
             } else {
                 this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
                         new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount()));
@@ -62,13 +87,16 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            if (ingredient instanceof IOreDictEntry) {
+            String oreDict = extractOreDictEntry(ingredient);
+            checkIfExists(ingredient, oreDict);
+
+            if (oreDict != null) {
                 this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(((IOreDictEntry) ingredient).getName(), ingredient.getAmount())
+                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
                                 .setNonConsumable());
             } else {
                 this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
-                        new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount())
+                                new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount())
                         .setNonConsumable());
             }
         }
