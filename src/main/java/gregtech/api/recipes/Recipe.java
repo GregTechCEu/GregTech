@@ -164,8 +164,8 @@ public class Recipe {
      * @return true if the recipe matches the given inputs false otherwise.
      */
     public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        Pair<Boolean, Integer[]> fluids;
-        Pair<Boolean, Integer[]> items;
+        Pair<Boolean, int[]> fluids;
+        Pair<Boolean, int[]> items;
 
 
         fluids = matchesFluid(fluidInputs);
@@ -179,8 +179,8 @@ public class Recipe {
         }
 
         if (consumeIfSuccessful) {
-            Integer[] fluidAmountInTank = fluids.getValue();
-            Integer[] itemAmountInSlot = items.getValue();
+            int[] fluidAmountInTank = fluids.getValue();
+            int[] itemAmountInSlot = items.getValue();
             for (int i = 0; i < fluidAmountInTank.length; i++) {
                 FluidStack fluidStack = fluidInputs.get(i);
                 int fluidAmount = fluidAmountInTank[i];
@@ -202,18 +202,15 @@ public class Recipe {
         return true;
     }
 
-    private Pair<Boolean, Integer[]> matchesItems(List<ItemStack> inputs) {
-        Integer[] itemAmountInSlot = new Integer[inputs.size()];
-
-        for (int i = 0; i < itemAmountInSlot.length; i++) {
-            ItemStack itemInSlot = inputs.get(i);
-            itemAmountInSlot[i] = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
-        }
+    private Pair<Boolean, int[]> matchesItems(List<ItemStack> inputs) {
+        int[] itemAmountInSlot = new int[inputs.size()];
 
         for (GTRecipeInput ingredient : this.inputs) {
             int ingredientAmount = ingredient.getAmount();
             for (int i = 0; i < inputs.size(); i++) {
                 ItemStack inputStack = inputs.get(i);
+                itemAmountInSlot[i] = inputStack.isEmpty() ? 0 : inputStack.getCount();
+
                 if (inputStack.isEmpty() || !ingredient.acceptsStack(inputStack))
                     continue;
                 int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
@@ -228,18 +225,15 @@ public class Recipe {
         return Pair.of(true, itemAmountInSlot);
     }
 
-    private Pair<Boolean, Integer[]> matchesFluid(List<FluidStack> fluidInputs) {
-        Integer[] fluidAmountInTank = new Integer[fluidInputs.size()];
-
-        for (int i = 0; i < fluidAmountInTank.length; i++) {
-            FluidStack fluidInTank = fluidInputs.get(i);
-            fluidAmountInTank[i] = fluidInTank == null ? 0 : fluidInTank.amount;
-        }
+    private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
+        int[] fluidAmountInTank = new int[fluidInputs.size()];
 
         for (GTRecipeInput fluid : this.fluidInputs) {
             int fluidAmount = fluid.getAmount();
             for (int i = 0; i < fluidInputs.size(); i++) {
                 FluidStack tankFluid = fluidInputs.get(i);
+                fluidAmountInTank[i] = tankFluid == null ? 0 : tankFluid.amount;
+
                 if (tankFluid == null || !fluid.acceptsFluid(tankFluid))
                     continue;
                 int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
