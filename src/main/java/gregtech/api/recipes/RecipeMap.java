@@ -21,6 +21,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -364,7 +365,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
 
     public static List<GTRecipeInput> uniqueIngredientsList(List<GTRecipeInput> input) {
-        List<GTRecipeInput> list = new ObjectArrayList<>(input.size());
+        LinkedList<GTRecipeInput> list = new LinkedList<>();
         for (GTRecipeInput item : input) {
             boolean isEqual = false;
             for (GTRecipeInput obj : list) {
@@ -374,7 +375,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
             if (isEqual) continue;
-            list.add(item);
+            if (item instanceof IntCircuitIngredient) {
+                list.addFirst(item);
+            } else {
+                list.add(item);
+            }
         }
         return list;
     }
