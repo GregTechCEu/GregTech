@@ -31,7 +31,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -175,19 +174,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return smallRecipeMap;
     }
 
-    /**
-     * This is alternative case when machine can input given fluid
-     * If this method returns true, machine will receive given fluid even if getRecipesForFluid doesn't have
-     * any recipe for this fluid
-     */
-    public boolean canInputFluidForce(Fluid fluid) {
-        return false;
-    }
-
-    public Collection<Recipe> getRecipesForFluid(FluidStack fluid) {
-        return lookup.getRecipes(false).filter(r -> r.hasInputFluid(fluid)).collect(Collectors.toSet());
-    }
-
     private static boolean foundInvalidRecipe = false;
 
     //internal usage only, use buildAndRegister()
@@ -301,22 +287,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         });
     }
 
-    public boolean acceptsFluid(List<FluidStack> fluidInputs, FluidStack fluid) {
-        if (canInputFluidForce(fluid.getFluid())) {
-            return true;
-        }
-        if (fluidInputs.isEmpty()) {
-            return fluidIngredientRoot.get(new MapFluidIngredient(fluid)) != null;
-        }
-        if (fluidInputs.contains(fluid)) {
-            return true;
-        }
-        fluidInputs.add(fluid);
-        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>();
-        buildFromFluidStacks(list, fluidInputs);
-        return canInsertFluid(list, lookup);
-    }
-
     @Nullable
     public Recipe find(@Nonnull List<ItemStack> items, @Nonnull List<FluidStack> fluids, @Nonnull Predicate<Recipe> canHandle) {
         // First, check if items and fluids are valid.
@@ -326,9 +296,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (items.size() == 0 && fluids.size() == 0) {
             return null;
         }
-        // Filter out empty fluids.
 
-        // Build input.
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.size() + fluids.size());
         if (items.size() > 0) {
             buildFromItemStacks(list, uniqueItems(items));
@@ -402,72 +370,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             list.add(item);
         }
         return list;
-    }
-
-    /**
-     * Returns a boolean indicating whether the given group of fluids resolves to a valid branch or recipe.
-     *
-     * @param fluidIngredients the ingredients part
-     * @param map              the root branch to search from.
-     * @return a recipe
-     */
-    private boolean canInsertFluid(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch map) {
-        // Try each ingredient as a starting point, adding it to the skiplist.
-        boolean canInsert;
-        for (int i = 0; i < fluidIngredients.size(); i++) {
-            canInsert = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, map, i, 0, (1L << i));
-            if (canInsert) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Recursively finds either a recipe or a branch, and return it upon evaluating all the ingredients
-     *
-     * @param fluidIngredients the ingredients part
-     * @param branchMap        the current branch of the tree
-     * @param index            the index of the wrapper to get
-     * @param count            how deep we are in recursion, < ingredients.length
-     * @param skip             bitmap of ingredients to skip, i.e. which ingredients are used in the
-     *                         recursion.
-     * @return True if the current fluid ingredients resolve to a valid branch or recipe. False otherwise.
-     */
-    private boolean recurseFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
-        List<AbstractMapIngredient> wr = fluidIngredients.get(index);
-        // Iterate over current level of nodes.
-        for (AbstractMapIngredient t : wr) {
-            Either<Recipe, Branch> result = branchMap.getNodes().get(t);
-            if (result != null) {
-                if (result.left().isPresent() && count == fluidIngredients.size() - 1) {
-                    return true;
-                } else if (result.right().isPresent()) {
-                    if (count == fluidIngredients.size()) {
-                        return true;
-                    }
-                    return diveFluidTreeFindBranchOrRecipe(fluidIngredients, result.right().get(), index, count, skip);
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean diveFluidTreeFindBranchOrRecipe(@Nonnull List<List<AbstractMapIngredient>> fluidIngredients, @Nonnull Branch branchMap, int index, int count, long skip) {
-        // We loop around fluidIngredients.size() if we reach the end.
-        int counter = (index + 1) % fluidIngredients.size();
-        while (counter != index) {
-            // Have we already used this ingredient? If so, skip this one.
-            if (((skip & (1L << counter)) == 0)) {
-                // Recursive call.
-                boolean found = recurseFluidTreeFindBranchOrRecipe(fluidIngredients, branchMap, counter, count + 1, skip | (1L << counter));
-                if (found) {
-                    return true;
-                }
-            }
-            counter = (counter + 1) % fluidIngredients.size();
-        }
-        return false;
     }
 
     /**
