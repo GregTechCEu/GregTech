@@ -52,11 +52,26 @@ public class CTRecipeBuilder {
             return ((IOreDictEntry) ingredient.getInternal()).getName();
         return null;
     }
+    private static void checkIfExists(IIngredient ingredient, String oreDict) {
+        if (ingredient == null){
+            throw new IllegalArgumentException("Invalid ingredient: is null");
+        }
+
+        if (ingredient.getItems().size() == 0) {
+            if (oreDict != null) {
+                throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
+            } else {
+                throw new IllegalArgumentException("Invalid Item [" + ingredient.toString() + "]: item not found");
+            }
+        }
+    }
 
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             String oreDict = extractOreDictEntry(ingredient);
+            checkIfExists(ingredient, oreDict);
+
             if (oreDict != null) {
                 this.backingBuilder.input(
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
@@ -72,6 +87,8 @@ public class CTRecipeBuilder {
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             String oreDict = extractOreDictEntry(ingredient);
+            checkIfExists(ingredient, oreDict);
+
             if (oreDict != null) {
                 this.backingBuilder.input(
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
