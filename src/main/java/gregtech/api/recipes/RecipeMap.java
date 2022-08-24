@@ -325,27 +325,33 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * pack them into one.
      * This uses a strict comparison, so it will not pack the same item with different NBT tags,
      * to allow the presence of, for example, more than one configured circuit in the input.
-     * @param input The Collection of GTRecipeInputs.
+     * @param inputs The Collection of GTRecipeInputs.
      * @return an array of unique itemstacks.
      */
 
-    public static ItemStack[] uniqueItems(Collection<ItemStack> input) {
-        List<ItemStack> list = new ObjectArrayList<>(input.size());
-        for (ItemStack item : input) {
-            if (item.isEmpty()) {
+    public static ItemStack[] uniqueItems(Collection<ItemStack> inputs) {
+        int index = 0;
+        ItemStack[] uniqueItems = new ItemStack[inputs.size()];
+        main: for (ItemStack input : inputs) {
+            if (input.isEmpty()) {
                 continue;
             }
-            boolean isEqual = false;
-            for (ItemStack obj: list) {
-                if (item.isItemEqual(obj) && ItemStack.areItemStackTagsEqual(item, obj)) {
-                    isEqual = true;
-                    break;
+            if (index > 0) {
+                for (int i = 0; i < uniqueItems.length; i++) {
+                    ItemStack unique = uniqueItems[i];
+                    if (input.isItemEqual(unique) && ItemStack.areItemStackTagsEqual(input, unique)) {
+                        continue main;
+                    }
                 }
             }
-            if (isEqual) continue;
-            list.add(item);
+            uniqueItems[index++] = input;
         }
-        return list.toArray(new ItemStack[0]);
+        if (index == uniqueItems.length) {
+            return uniqueItems;
+        }
+        ItemStack[] retUniqueItems = new ItemStack[index];
+        System.arraycopy(uniqueItems, 0, retUniqueItems, 0, index);
+        return retUniqueItems;
     }
 
     /**
