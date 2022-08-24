@@ -45,15 +45,18 @@ public class CTRecipeBuilder {
         return this;
     }
 
+    private static String extractOreDictEntry(IIngredient ingredient) {
+        if (ingredient instanceof IOreDictEntry)
+            return ((IOreDictEntry) ingredient).getName();
+        if (ingredient.getInternal() instanceof IOreDictEntry)
+            return ((IOreDictEntry) ingredient.getInternal()).getName();
+        return null;
+    }
+
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            String oreDict = null;
-            if (ingredient instanceof IOreDictEntry) {
-                oreDict = ((IOreDictEntry) ingredient).getName();
-            } else if (ingredient.getInternal() instanceof IOreDictEntry) {
-                oreDict = ((IOreDictEntry) ingredient.getInternal()).getName();
-            }
+            String oreDict = extractOreDictEntry(ingredient);
             if (oreDict != null) {
                 this.backingBuilder.input(
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
@@ -68,12 +71,7 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            String oreDict = null;
-            if (ingredient instanceof IOreDictEntry) {
-                oreDict = ((IOreDictEntry) ingredient).getName();
-            } else if (ingredient.getInternal() instanceof IOreDictEntry) {
-                oreDict = ((IOreDictEntry) ingredient.getInternal()).getName();
-            }
+            String oreDict = extractOreDictEntry(ingredient);
             if (oreDict != null) {
                 this.backingBuilder.input(
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
