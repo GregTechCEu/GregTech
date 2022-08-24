@@ -205,7 +205,9 @@ public class Recipe {
     private Pair<Boolean, int[]> matchesItems(List<ItemStack> inputs) {
         int[] itemAmountInSlot = new int[inputs.size()];
 
-        for (GTRecipeInput ingredient : this.inputs) {
+        List<GTRecipeInput> gtRecipeInputs = this.inputs;
+        for (int j = 0; j < gtRecipeInputs.size(); j++) {
+            GTRecipeInput ingredient = gtRecipeInputs.get(j);
             int ingredientAmount = ingredient.getAmount();
             for (int i = 0; i < inputs.size(); i++) {
                 ItemStack inputStack = inputs.get(i);
@@ -228,7 +230,9 @@ public class Recipe {
     private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
         int[] fluidAmountInTank = new int[fluidInputs.size()];
 
-        for (GTRecipeInput fluid : this.fluidInputs) {
+        List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
+        for (int j = 0; j < gtRecipeInputs.size(); j++) {
+            GTRecipeInput fluid = gtRecipeInputs.get(j);
             int fluidAmount = fluid.getAmount();
             for (int i = 0; i < fluidInputs.size(); i++) {
                 FluidStack tankFluid = fluidInputs.get(i);
@@ -436,7 +440,9 @@ public class Recipe {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> recipeOutputs = new ArrayList<>(this.outputs);
 
-        recipeOutputs.addAll(chancedOutputs.stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        for (ChanceEntry entry : this.chancedOutputs) {
+            recipeOutputs.add(entry.getItemStack());
+        }
 
         return recipeOutputs;
     }
