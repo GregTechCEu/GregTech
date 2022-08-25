@@ -161,13 +161,13 @@ public class MaterialInfoLoader {
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE), new ItemMaterialInfo(
-                new MaterialStack(Materials.Steel, M * 2), // frame / 2
+                new MaterialStack(Materials.Steel, M), // frame / 2
                 new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
                 new MaterialStack(Materials.Concrete, M / 2) // 1 block / 2
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS), new ItemMaterialInfo(
-                new MaterialStack(Materials.Steel, M * 2), // frame / 2
+                new MaterialStack(Materials.Steel, M), // frame / 2
                 new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
                 new MaterialStack(Materials.Glass, M / 2) // 1 block / 2
         ));
