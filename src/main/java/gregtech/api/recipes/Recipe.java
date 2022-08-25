@@ -204,20 +204,25 @@ public class Recipe {
 
     private Pair<Boolean, int[]> matchesItems(List<ItemStack> inputs) {
         int[] itemAmountInSlot = new int[inputs.size()];
+        int indexed = 0;
 
         List<GTRecipeInput> gtRecipeInputs = this.inputs;
-        for (int j = 0; j < gtRecipeInputs.size(); j++) {
-            GTRecipeInput ingredient = gtRecipeInputs.get(j);
+        for (int i = 0; i < gtRecipeInputs.size(); i++) {
+            GTRecipeInput ingredient = gtRecipeInputs.get(i);
             int ingredientAmount = ingredient.getAmount();
-            for (int i = 0; i < inputs.size(); i++) {
-                ItemStack inputStack = inputs.get(i);
-                itemAmountInSlot[i] = inputStack.isEmpty() ? 0 : inputStack.getCount();
+            for (int j = 0; j < inputs.size(); j++) {
+                ItemStack inputStack = inputs.get(j);
+
+                if (j == indexed) {
+                    itemAmountInSlot[j] = inputStack.isEmpty() ? 0 : inputStack.getCount();
+                    indexed++;
+                }
 
                 if (inputStack.isEmpty() || !ingredient.acceptsStack(inputStack))
                     continue;
-                int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
+                int itemAmountToConsume = Math.min(itemAmountInSlot[j], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
-                if (!ingredient.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;
+                if (!ingredient.isNonConsumable()) itemAmountInSlot[j] -= itemAmountToConsume;
                 if (ingredientAmount == 0) break;
             }
             if (ingredientAmount > 0)
@@ -229,20 +234,25 @@ public class Recipe {
 
     private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
         int[] fluidAmountInTank = new int[fluidInputs.size()];
+        int indexed = 0;
 
         List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
-        for (int j = 0; j < gtRecipeInputs.size(); j++) {
-            GTRecipeInput fluid = gtRecipeInputs.get(j);
+        for (int i = 0; i < gtRecipeInputs.size(); i++) {
+            GTRecipeInput fluid = gtRecipeInputs.get(i);
             int fluidAmount = fluid.getAmount();
-            for (int i = 0; i < fluidInputs.size(); i++) {
-                FluidStack tankFluid = fluidInputs.get(i);
-                fluidAmountInTank[i] = tankFluid == null ? 0 : tankFluid.amount;
+            for (int j = 0; j < fluidInputs.size(); j++) {
+                FluidStack tankFluid = fluidInputs.get(j);
+
+                if (j == indexed) {
+                    indexed++;
+                    fluidAmountInTank[j] = tankFluid == null ? 0 : tankFluid.amount;
+                }
 
                 if (tankFluid == null || !fluid.acceptsFluid(tankFluid))
                     continue;
-                int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
+                int fluidAmountToConsume = Math.min(fluidAmountInTank[j], fluidAmount);
                 fluidAmount -= fluidAmountToConsume;
-                if (!fluid.isNonConsumable()) fluidAmountInTank[i] -= fluidAmountToConsume;
+                if (!fluid.isNonConsumable()) fluidAmountInTank[j] -= fluidAmountToConsume;
                 if (fluidAmount == 0) break;
             }
             if (fluidAmount > 0)
