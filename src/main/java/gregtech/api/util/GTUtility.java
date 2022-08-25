@@ -283,7 +283,8 @@ public class GTUtility {
 
     public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
         if (!itemStackList.isEmpty()) {
-            for (ItemStack stackInList : itemStackList) {
+            for (int i = 0; i < itemStackList.size(); i++) {
+                ItemStack stackInList = itemStackList.get(i);
                 if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
                     if (stackInList.getCount() < stackInList.getMaxStackSize()) {
                         int insertable = stackInList.getMaxStackSize() - stackInList.getCount();

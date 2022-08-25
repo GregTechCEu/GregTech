@@ -25,9 +25,6 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
         copy.nbtCondition = this.nbtCondition;
         return copy;
     }
-    public static GTRecipeInput getOrCreate(IntCircuitIngredient ri) {
-        return getFromCache(new IntCircuitIngredient(getCircuitConfiguration(ri.getInputStacks()[0])));
-    }
 
     public IntCircuitIngredient(int matchingConfigurations) {
         super(getIntegratedCircuit(matchingConfigurations));

@@ -65,7 +65,8 @@ dependencies {
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
 
-    "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
+    "compile"("curse.maven:crafttweaker-239197:3935788")
+
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
     "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
