@@ -121,9 +121,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
                             return nbtMatcher.evaluate(inputNBT, nbtCondition);
                         } else {
                             List<TagToStack> tagMaps = tagList.tagToStack;
-                            if (tagMaps.isEmpty()) {
-                                return true;
-                            }
                             for (int k = 0; k < tagMaps.size(); k++) {
                                 TagToStack tagMapping = tagMaps.get(k);
                                 if (inputNBT == null && tagMapping.tag == null || inputNBT != null &&
