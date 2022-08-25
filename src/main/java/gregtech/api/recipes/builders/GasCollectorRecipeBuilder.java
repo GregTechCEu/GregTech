@@ -32,7 +32,7 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyPropertyCT(@Nonnull String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
             if (value instanceof Integer) {
                 this.dimension((Integer) value);
@@ -52,7 +52,7 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
             }
             return true;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     public GasCollectorRecipeBuilder dimension(int dimensionID) {

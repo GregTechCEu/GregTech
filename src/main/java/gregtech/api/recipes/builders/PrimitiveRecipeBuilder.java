@@ -27,7 +27,7 @@ public class PrimitiveRecipeBuilder extends RecipeBuilder<PrimitiveRecipeBuilder
     @Override
     public ValidationResult<Recipe> build() {
         this.EUt(1); // secretly force to 1 to allow recipe matching to work properly
-        applyProperty(PrimitiveProperty.getInstance(), true);
+        this.applyProperty(PrimitiveProperty.getInstance(), true);
         return super.build();
     }
 }

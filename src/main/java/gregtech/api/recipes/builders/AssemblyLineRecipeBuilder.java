@@ -43,12 +43,12 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyPropertyCT(@Nonnull String key, Object value) {
         if (key.equals(ResearchProperty.KEY)) {
             this.research(value.toString());
             return true;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     /**
@@ -102,7 +102,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         if (result.getType() == EnumValidationResult.VALID && !this.outputs.isEmpty() && !this.outputs.get(0).isEmpty()) {
             // only apply the research property if an item was specified
             if (!this.researchItem.isEmpty() && !recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
-                applyProperty(ResearchProperty.KEY, this.outputs.get(0).getTranslationKey());
+                this.applyProperty(ResearchProperty.getInstance(), this.outputs.get(0).getTranslationKey());
             }
         }
 
