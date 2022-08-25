@@ -228,8 +228,10 @@ public class Recipe {
             if (ingredientAmount > 0)
                 return Pair.of(false, itemAmountInSlot);
         }
+        int[] retItemAmountInSlot = new int[indexed];
+        System.arraycopy(itemAmountInSlot, 0, retItemAmountInSlot, 0, indexed);
 
-        return Pair.of(true, itemAmountInSlot);
+        return Pair.of(true, retItemAmountInSlot);
     }
 
     private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
@@ -258,7 +260,10 @@ public class Recipe {
             if (fluidAmount > 0)
                 return Pair.of(false, fluidAmountInTank);
         }
-        return Pair.of(true, fluidAmountInTank);
+        int[] retfluidAmountInTank = new int[indexed];
+        System.arraycopy(fluidAmountInTank, 0, retfluidAmountInTank, 0, indexed);
+
+        return Pair.of(true, retfluidAmountInTank);
     }
 
     @Override
