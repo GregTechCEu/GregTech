@@ -48,9 +48,11 @@ public class FilteredItemHandler extends ItemStackHandler {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (extractPredicate != null) {
-            extractPredicate.test(super.extractItem(slot, amount, true));
+            if (extractPredicate.test(super.extractItem(slot, amount, true))) {
+                return super.extractItem(slot, amount, simulate);
+            }
+            return ItemStack.EMPTY;
         }
-
         return super.extractItem(slot, amount, simulate);
     }
 }

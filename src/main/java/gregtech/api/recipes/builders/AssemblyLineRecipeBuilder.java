@@ -22,9 +22,9 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     private int scanEUt = -1;
     private boolean shouldAddResearchRecipe = true;
 
-    public AssemblyLineRecipeBuilder() {
-    }
+    public AssemblyLineRecipeBuilder() {/**/}
 
+    @SuppressWarnings("unused")
     public AssemblyLineRecipeBuilder(Recipe recipe, RecipeMap<AssemblyLineRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
     }
@@ -54,7 +54,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     /**
      * Do not use! Look for {@link AssemblyLineRecipeBuilder#research(ItemStack, boolean)}
      */
-    private AssemblyLineRecipeBuilder research(@Nonnull String researchId) {
+    protected AssemblyLineRecipeBuilder research(@Nonnull String researchId) {
         this.applyProperty(ResearchProperty.getInstance(), researchId);
         return this;
     }
@@ -69,12 +69,16 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem, int scanDuration, int scanEUt) {
+        return research(researchItem, researchItem.getTranslationKey(), scanDuration, scanEUt);
+    }
+
+    public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem, @Nonnull String researchId, int scanDuration, int scanEUt) {
         if (researchItem.isEmpty()) {
             GTLog.logger.error("Assemblyline Research Items cannot be empty", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
             this.researchItem = researchItem;
-            research(researchItem.getTranslationKey());
+            research(researchId);
         }
         if (scanDuration <=0) {
             GTLog.logger.error("Assemblyline Research Duration must be greater than 0", new IllegalArgumentException());
