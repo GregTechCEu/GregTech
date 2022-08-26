@@ -404,7 +404,7 @@ public class BatteryRecipes {
                 .input(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 64)
                 .input(bolt, Neutronium, 64)
                 .fluidInputs(SolderingAlloy.getFluid(L * 40))
-                .fluidInputs(Polybenzimidazole.getFluid(2000))
+                .fluidInputs(Polybenzimidazole.getFluid(2304))
                 .fluidInputs(Naquadria.getFluid(L * 18))
                 .output(ULTIMATE_BATTERY)
                 .buildAndRegister();
