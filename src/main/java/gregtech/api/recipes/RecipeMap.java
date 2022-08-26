@@ -832,10 +832,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2], specialTexturePosition[3], specialTexture);
         return builder;
     }
-
-
+    
     public Collection<Recipe> getRecipeList() {
-        return lookup.getRecipes(true).collect(Collectors.toCollection(() -> new TreeSet<>(RECIPE_DURATION_THEN_EU)));
+        return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
     }
 
     public SoundEvent getSound() {
