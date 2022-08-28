@@ -116,7 +116,8 @@ public class GTValues {
             MODID_BC = "buildcraftcore",
             MODID_COFH = "cofhcore",
             MODID_APPENG = "appliedenergistics2",
-            MODID_JEI = "jei";
+            MODID_JEI = "jei",
+            MODID_MEK = "mekanism";
 
     private static Boolean isClient;
 

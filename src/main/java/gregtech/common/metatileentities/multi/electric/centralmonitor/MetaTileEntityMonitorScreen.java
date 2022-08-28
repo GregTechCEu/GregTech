@@ -36,7 +36,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -560,7 +563,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                             pluginWidget.removePluginWidget();
                             mainGroup.setVisible(true);
                             if (plugin != null) {
-                                plugin.markAsDirty();
+                                plugin.markDirty();
                             }
                         }
                     }) {
@@ -571,14 +574,14 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                                 pluginWidget.removePluginWidget();
                                 mainGroup.setVisible(true);
                                 if (plugin != null) {
-                                    plugin.markAsDirty();
+                                    plugin.markDirty();
                                 }
                             }
                         }
                     })
                     .bindCloseListener(() -> {
                         if (plugin != null) {
-                            plugin.markAsDirty();
+                            plugin.markDirty();
                         }
                     })
                     .build(this.getHolder(), entityPlayer);

@@ -55,7 +55,7 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
 
     public static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {
         adjustConfiguration(holder.getCurrentItem(), amount);
-        holder.markAsDirty();
+        holder.markDirty();
     }
 
     public static void adjustConfiguration(ItemStack stack, int amount) {

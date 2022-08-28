@@ -6,23 +6,23 @@ import net.minecraft.world.World;
 
 public interface IHasWorldObjectAndCoords extends IDirtyNotifiable {
 
-    World world();
+    World getWorld();
 
-    BlockPos pos();
+    BlockPos getPos();
 
     default boolean isServerSide() {
-        return world() != null && !world().isRemote;
+        return getWorld() != null && !getWorld().isRemote;
     }
 
     default boolean isClientSide() {
-        return world() != null && world().isRemote;
+        return getWorld() != null && getWorld().isRemote;
     }
 
     void notifyBlockUpdate();
 
     default void scheduleRenderUpdate() {
-        BlockPos pos = pos();
-        world().markBlockRangeForRenderUpdate(
+        BlockPos pos = getPos();
+        getWorld().markBlockRangeForRenderUpdate(
                 pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1,
                 pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
     }

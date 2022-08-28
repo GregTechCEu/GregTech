@@ -56,19 +56,19 @@ public class ItemFilterWrapper {
         if (currentItemFilter != null) {
             currentItemFilter.setMaxStackSize(getInternalMaxStackSize());
         }
-        dirtyNotifiable.markAsDirty();
+        dirtyNotifiable.markDirty();
     }
 
     public void setMaxStackSize(int maxStackSize) {
         this.maxStackSize = maxStackSize;
         onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
+        dirtyNotifiable.markDirty();
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
         isBlacklistFilter = blacklistFilter;
         onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
+        dirtyNotifiable.markDirty();
     }
 
     public boolean isBlacklistFilter() {

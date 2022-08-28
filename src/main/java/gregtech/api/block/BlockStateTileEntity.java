@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 public class BlockStateTileEntity extends TileEntity {
 
     public IBlockState getBlockState() {
+        //noinspection deprecation
         return getBlockType().getStateFromMeta(getBlockMetadata());
     }
 

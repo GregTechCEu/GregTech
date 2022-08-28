@@ -15,6 +15,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -28,7 +29,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
 
     protected final Int2ObjectMap<byte[]> updates = new Int2ObjectArrayMap<>(5);
 
-    public void writeCustomData(int discriminator, Consumer<PacketBuffer> dataWriter) {
+    public final void writeCustomData(int discriminator, @Nonnull Consumer<PacketBuffer> dataWriter) {
         ByteBuf backedBuffer = Unpooled.buffer();
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
@@ -38,8 +39,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
         world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
     }
 
+    @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public final SPacketUpdateTileEntity getUpdatePacket() {
         if (this.updates.isEmpty()) {
             return null;
         }
@@ -56,7 +58,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
     }
 
     @Override
-    public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public final void onDataPacket(@Nonnull NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt) {
         NBTTagCompound updateTag = pkt.getNbtCompound();
         NBTTagList listTag = updateTag.getTagList("d", Constants.NBT.TAG_COMPOUND);
         for (NBTBase entryBase : listTag) {
@@ -70,7 +72,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
 
     @Nonnull
     @Override
-    public NBTTagCompound getUpdateTag() {
+    public final NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
         ByteBuf backedBuffer = Unpooled.buffer();
         writeInitialSyncData(new PacketBuffer(backedBuffer));
@@ -80,11 +82,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
     }
 
     @Override
-    public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
+    public final void handleUpdateTag(@Nonnull NBTTagCompound tag) {
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
     }
-
 }

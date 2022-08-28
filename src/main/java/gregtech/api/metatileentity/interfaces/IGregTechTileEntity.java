@@ -4,6 +4,7 @@ import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.network.PacketBuffer;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 /**
@@ -14,14 +15,23 @@ import java.util.function.Consumer;
  */
 public interface IGregTechTileEntity extends IHasWorldObjectAndCoords, IUIHolder {
 
-    MetaTileEntity getMetaTileEntity();
+    @Deprecated
+    default MetaTileEntity getMetaTileEntity() {
+        return null;
+    }
 
-    MetaTileEntity setMetaTileEntity(MetaTileEntity metaTileEntity);
+    @Deprecated
+    default MetaTileEntity setMetaTileEntity(MetaTileEntity metaTileEntity) {
+        return null;
+    }
 
-    void writeCustomData(int discriminator, Consumer<PacketBuffer> dataWriter);
+    void writeCustomData(int discriminator, @Nonnull Consumer<PacketBuffer> dataWriter);
 
+    @Deprecated
     long getOffsetTimer(); // todo might not keep this one
 
     @Deprecated
-    boolean isFirstTick();
+    default boolean isFirstTick() {
+        return false;
+    }
 }

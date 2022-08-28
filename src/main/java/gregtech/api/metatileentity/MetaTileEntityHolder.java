@@ -53,6 +53,7 @@ import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
         @Interface(iface = "appeng.api.networking.security.IActionHost", modid = GTValues.MODID_APPENG, striprefs = true),
         @Interface(iface = "appeng.me.helpers.IGridProxyable", modid = GTValues.MODID_APPENG, striprefs = true),
 })
+@Deprecated
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder, IWorldNameable, IActionHost, IGridProxyable {
 
     MetaTileEntity metaTileEntity;
@@ -307,21 +308,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public World world() {
-        return getWorld();
-    }
-
-    @Override
-    public BlockPos pos() {
-        return getPos();
-    }
-
-    @Override
-    public void markAsDirty() {
-        markDirty();
-    }
-
-    @Override
     public void onLoad() {
         super.onLoad();
         if (metaTileEntity != null) {
@@ -428,7 +414,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                     }
                 }
             } else {
-                markAsDirty();
+                this.markDirty();
             }
         }
     }

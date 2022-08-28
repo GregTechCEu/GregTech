@@ -59,7 +59,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         this.partIndex = partIndex;
         this.partPos = null;
         writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buffer -> buffer.writeVarInt(this.partIndex));
-        markAsDirty();
+        markDirty();
     }
 
     public MetaTileEntity getRealMTE() {

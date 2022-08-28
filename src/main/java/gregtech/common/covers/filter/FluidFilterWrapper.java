@@ -60,12 +60,12 @@ public class FluidFilterWrapper {
     }
 
     public void onFilterInstanceChange() {
-        dirtyNotifiable.markAsDirty();
+        dirtyNotifiable.markDirty();
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
         isBlacklistFilter = blacklistFilter;
-        dirtyNotifiable.markAsDirty();
+        dirtyNotifiable.markDirty();
     }
 
     public boolean isBlacklistFilter() {

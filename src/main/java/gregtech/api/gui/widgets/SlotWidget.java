@@ -255,7 +255,7 @@ public class SlotWidget extends Widget implements INativeWidget {
     }
 
     public void onSlotChanged() {
-        gui.holder.markAsDirty();
+        gui.holder.markDirty();
     }
 
     @Override

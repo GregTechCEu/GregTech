@@ -25,6 +25,10 @@ public abstract class TickableTileEntityBase extends SyncedTileEntityBase implem
 
     @Override
     public void update() {
+        updateTimer();
+    }
+
+    private void updateTimer() {
         if (timer == 0) {
             onFirstTick();
         }

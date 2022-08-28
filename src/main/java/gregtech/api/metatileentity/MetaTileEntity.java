@@ -137,16 +137,16 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
 
     public World getWorld() {
-        return holder == null ? null : holder.world();
+        return holder == null ? null : holder.getWorld();
     }
 
     public BlockPos getPos() {
-        return holder == null ? null : holder.pos();
+        return holder == null ? null : holder.getPos();
     }
 
     public void markDirty() {
         if (holder != null) {
-            holder.markAsDirty();
+            holder.markDirty();
         }
     }
 

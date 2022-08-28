@@ -159,7 +159,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     public boolean subProxyMode(MODE mode) {
         if (this.mode == MODE.PROXY) {
             proxyMode[mode.ordinal()]++;
-            this.markAsDirty();
+            this.markDirty();
             return true;
         }
         return false;
@@ -169,7 +169,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         if (this.mode == MODE.PROXY) {
             if (proxyMode[mode.ordinal()] > 0) {
                 proxyMode[mode.ordinal()]--;
-                this.markAsDirty();
+                this.markDirty();
                 return true;
             }
         }

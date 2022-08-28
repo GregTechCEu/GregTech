@@ -52,7 +52,7 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
             packetBuffer.writeBoolean(flippedX);
             packetBuffer.writeBoolean(flippedY);
         });
-        markAsDirty();
+        markDirty();
     }
 
     @Override

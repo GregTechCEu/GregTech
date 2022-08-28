@@ -38,7 +38,7 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(@Nonnull IBlockState state, @Nonnull World worldObj, RayTraceResult target, @Nonnull ParticleManager manager) {
+    public boolean addHitEffects(@Nonnull IBlockState state, @Nonnull World worldObj, @Nonnull RayTraceResult target, @Nonnull ParticleManager manager) {
         Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(worldObj, target.getBlockPos());
         ParticleHandlerUtil.addHitEffects(state, worldObj, target, atlasSprite.getLeft(), atlasSprite.getRight(), manager);
         return true;
@@ -60,7 +60,7 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
     }
 
     @Override
-    public boolean addRunningEffects(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
+    public boolean addRunningEffects(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         if (world.isRemote) {
             Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(world, pos);
             ParticleHandlerUtil.addBlockRunningEffects(world, entity, atlasSprite.getLeft(), atlasSprite.getRight());
@@ -69,9 +69,8 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
     }
 
     @Override
-    public boolean addLandingEffects(@Nonnull IBlockState state, @Nonnull WorldServer worldObj, @Nonnull BlockPos blockPosition, @Nonnull IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
-        SPacketBlockParticle
-                packet = new SPacketBlockParticle(blockPosition, new Vector3(entity.posX, entity.posY, entity.posZ), numberOfParticles);
+    public boolean addLandingEffects(@Nonnull IBlockState state, @Nonnull WorldServer worldObj, @Nonnull BlockPos blockPosition, @Nonnull IBlockState iblockstate, @Nonnull EntityLivingBase entity, int numberOfParticles) {
+        SPacketBlockParticle packet = new SPacketBlockParticle(blockPosition, new Vector3(entity.posX, entity.posY, entity.posZ), numberOfParticles);
         NetworkHandler.channel.sendToAllTracking(packet.toFMLPacket(), NetworkUtils.blockPoint(worldObj, blockPosition));
         return true;
     }

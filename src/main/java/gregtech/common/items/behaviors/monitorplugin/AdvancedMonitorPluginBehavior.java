@@ -16,9 +16,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
-import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.common.gui.widget.WidgetScrollBar;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
@@ -204,7 +204,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 buffer.writeFloat(spin);
                 buffer.writeBoolean(connect);
             });
-            markAsDirty();
+            markDirty();
         }
     }
 
