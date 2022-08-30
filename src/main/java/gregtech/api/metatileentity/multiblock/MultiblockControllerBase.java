@@ -171,7 +171,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return new TraceabilityPredicate(blockWorldState -> {
             IBlockState state = blockWorldState.getBlockState();
             if (state.getBlock() instanceof VariantActiveBlock) {
-                state = state.withProperty(VariantActiveBlock.ACTIVE, false);
                 blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             }
             return ArrayUtils.contains(allowedStates, state);

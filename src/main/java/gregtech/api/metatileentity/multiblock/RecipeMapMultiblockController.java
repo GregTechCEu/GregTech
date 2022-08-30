@@ -32,6 +32,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -119,7 +120,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             for (BlockPos blockPos : variantActiveBlocks) {
                 IBlockState blockState = getWorld().getBlockState(blockPos);
                 if (blockState.getBlock() instanceof VariantActiveBlock) {
-                    getWorld().setBlockState(blockPos, blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive));
+                    getWorld().setBlockState(blockPos, ((IExtendedBlockState) blockState).withProperty(VariantActiveBlock.ACTIVE, isActive), 2);
                 }
             }
         }

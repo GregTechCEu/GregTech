@@ -19,6 +19,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nonnull;
 
@@ -104,7 +105,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 BlockPos blockPos = centerPos.add(x, 0, z);
                 IBlockState blockState = getWorld().getBlockState(blockPos);
                 if (blockState.getBlock() instanceof BlockFireboxCasing) {
-                    blockState = blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive);
+                    blockState = ((IExtendedBlockState)blockState).withProperty(BlockFireboxCasing.ACTIVE, isActive);
                     getWorld().setBlockState(blockPos, blockState);
                 }
             }

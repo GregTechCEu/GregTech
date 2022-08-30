@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nonnull;
 
@@ -26,13 +27,13 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
 
     @Override
     public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        return state.getValue(ACTIVE) ? 15 : 0;
+        return ((IExtendedBlockState) state).getValue(ACTIVE) ? 15 : 0;
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        if (state.getValue(ACTIVE)) {
+        if (((IExtendedBlockState) state).getValue(ACTIVE)) {
             return 0b10100000 << 16 | 0b10100000;
         }
         return source.getCombinedLight(pos, state.getLightValue(source, pos));

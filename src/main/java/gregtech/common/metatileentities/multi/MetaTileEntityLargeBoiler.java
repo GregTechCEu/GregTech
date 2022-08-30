@@ -32,6 +32,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -142,7 +143,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
                 BlockPos blockPos = centerPos.add(x, 0, z);
                 IBlockState blockState = getWorld().getBlockState(blockPos);
                 if (blockState.getBlock() instanceof BlockFireboxCasing) {
-                    blockState = blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive);
+                    blockState = ((IExtendedBlockState)blockState).withProperty(BlockFireboxCasing.ACTIVE, isActive);
                     getWorld().setBlockState(blockPos, blockState);
                 }
             }
