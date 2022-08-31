@@ -14,8 +14,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T>{
+    private static final Set<BlockPos> ACTIVE_BLOCKS = new TreeSet<>();
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
@@ -49,10 +53,9 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Override
     public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState ext = (IExtendedBlockState) state;
-        //TileEntity te = world.getTileEntity(pos);
-        //if (te instanceof V) {
-            //ext = ext.withProperty(UNLISTED_PROP, ((MyTE) te).getSomeImmutableData());
-        //}
+        if (ACTIVE_BLOCKS.contains(pos)){
+            ext = ext.withProperty(ACTIVE, true);
+        }
         return ext;
     }
 
