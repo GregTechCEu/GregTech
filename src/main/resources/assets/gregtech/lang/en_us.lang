@@ -4400,6 +4400,7 @@ gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke O
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 gregtech.machine.bacterial_vat.name=Bacterial Vat
 gregtech.machine.bacterial_vat.tooltip.1=TODO
+gregtech.machine.bacterial_vat.radiation_count=Radiation count: %f
 
 
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
@@ -4696,6 +4697,9 @@ gregtech.machine.passthrough_hatch_item.name=Item Passthrough Hatch
 gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the other
 gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
 gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
+
+gregtech.machine.radiation_hatch.name=Radiation Hatch
+gregtech.machine.radiation_hatch.tooltip=Irradiates the inside of a multiblock
 
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d

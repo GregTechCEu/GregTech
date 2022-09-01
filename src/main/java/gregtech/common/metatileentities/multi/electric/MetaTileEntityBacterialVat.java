@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.capability.IRadiationHatch;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -16,6 +17,11 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+
+import java.util.List;
 
 public class MetaTileEntityBacterialVat extends RecipeMapMultiblockController {
 
@@ -38,6 +44,7 @@ public class MetaTileEntityBacterialVat extends RecipeMapMultiblockController {
                 .aisle("XXSXX", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
                 .where('X', states(getCasingState()).setMinGlobalLimited(42)
                         .or(autoAbilities(true, true, true, true, true, false, false))
+                        .or(abilities(MultiblockAbility.RADIATION_HATCH))
                         .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()
                                 .filter(mte->!(mte instanceof MetaTileEntityMultiFluidHatch))
                                 .toArray(MetaTileEntity[]::new)).setMaxGlobalLimited(1)))
@@ -49,6 +56,18 @@ public class MetaTileEntityBacterialVat extends RecipeMapMultiblockController {
 
     public IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN);
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        if (this.isStructureFormed()) {
+            float totalRad = 0;
+            for (IRadiationHatch hatch : getAbilities(MultiblockAbility.RADIATION_HATCH)) {
+                totalRad += hatch.getRadValue();
+            }
+            textList.add(new TextComponentTranslation("gregtech.machine.bacterial_vat.radiation_count", totalRad));
+        }
+        super.addDisplayText(textList);
     }
 
     @Override
