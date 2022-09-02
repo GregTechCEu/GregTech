@@ -1,7 +1,6 @@
 package gregtech;
 
 import codechicken.lib.CodeChickenLib;
-import com.cleanroommc.groovyscript.api.BracketHandler;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -15,12 +14,10 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
@@ -41,6 +38,7 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
+import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraft.block.state.IBlockState;
@@ -79,6 +77,9 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
+
+        /* init GroovyScript compat */
+        GroovyScriptCompat.init();
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
@@ -147,13 +148,6 @@ public class GregTechMod {
 
         proxy.onPreLoad();
         KeyBind.init();
-
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
-            BracketHandler.registerBracketHandler("recipemap", RecipeMap::getByName);
-            BracketHandler.registerBracketHandler("material", MATERIAL_REGISTRY::getObject);
-            BracketHandler.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
-            BracketHandler.registerBracketHandler("metaitem", MetaItemBracketHandler::getMetaItem);
-        }
     }
 
     @Mod.EventHandler

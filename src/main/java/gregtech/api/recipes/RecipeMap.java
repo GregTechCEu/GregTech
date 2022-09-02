@@ -1,7 +1,5 @@
 package gregtech.api.recipes;
 
-import com.cleanroommc.groovyscript.registry.ReloadableRegistryManager;
-import com.cleanroommc.groovyscript.sandbox.GroovyLog;
 import com.cleanroommc.groovyscript.sandbox.SandboxRunner;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
@@ -30,13 +28,14 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.VirtualizedRecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
@@ -87,7 +86,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected MoveType moveType;
     public final boolean isHidden;
 
-    private final List<Recipe> backupRecipes = new ArrayList<>();
+    private final VirtualizedRecipeMap virtualizedRecipeMap;
     private final Branch lookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
@@ -119,6 +118,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
+
+        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
     }
 
     @ZenMethod
@@ -191,16 +192,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static boolean foundInvalidRecipe = false;
 
-    public void onReload() {
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
-            lookup.yeet();
-            for (Recipe recipe : backupRecipes) {
-                List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-                recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
-            }
-        }
-    }
-
     //internal usage only, use buildAndRegister()
     public void addRecipe(ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
@@ -213,6 +204,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         Recipe recipe = validationResult.getResult();
 
+        if (recipe != null && GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning()) {
+            this.virtualizedRecipeMap.addScripted(recipe);
+        }
         compileRecipe(recipe);
 
     }
@@ -221,16 +215,19 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (recipe == null) {
             return;
         }
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT) && !ReloadableRegistryManager.isShouldRegisterAsReloadable()) {
-            backupRecipes.add(recipe);
-        }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
     }
 
     public boolean removeRecipe(Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        return recurseIngredientTreeRemove(recipe, items, lookup, 0) != null;
+        if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
+            if (GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning()) {
+                this.virtualizedRecipeMap.addBackup(recipe);
+            }
+            return true;
+        }
+        return false;
     }
 
     protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
@@ -882,21 +879,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public SoundEvent getSound() {
         return sound;
-    }
-
-    public Recipe findRecipe(long voltage, List<ItemStack> items, List<FluidStack> fluids) {
-        return findRecipe(voltage, items == null || items.isEmpty() ? Collections.emptyList() : items, fluids == null || fluids.isEmpty() ? Collections.emptyList() : fluids, Integer.MAX_VALUE, true);
-    }
-
-    public boolean removeRecipe(long voltage, List<ItemStack> items, List<FluidStack> fluids) {
-        Recipe recipe = findRecipe(voltage, items, fluids);
-        if (recipe == null) {
-            if (SandboxRunner.isCurrentlyRunning()) {
-                GroovyLog.LOG.error("Can't find recipe of voltage: {}, items: {}, fluids: {}", voltage, items, fluids);
-            }
-            return false;
-        }
-        return removeRecipe(recipe);
     }
 
     @ZenMethod("findRecipe")

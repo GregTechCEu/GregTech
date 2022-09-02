@@ -258,16 +258,4 @@ public class EventHandlers {
             event.setBurnTime(6400);
         }
     }
-
-    @SubscribeEvent
-    public static void onReload(ScriptRunEvent.Pre event) {
-        GTLog.logger.info("Reloading GT recipe maps: ");
-        long time = Minecraft.getSystemTime();
-        for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            long time2 = Minecraft.getSystemTime();
-            recipeMap.onReload();
-            GTLog.logger.info(" - reloading {} took {}ms", recipeMap.unlocalizedName, Minecraft.getSystemTime() - time2);
-        }
-        GTLog.logger.info(" - reloading all recipe maps took {}ms", Minecraft.getSystemTime() - time);
-    }
 }
