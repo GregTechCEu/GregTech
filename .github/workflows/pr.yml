@@ -32,9 +32,7 @@ jobs:
 
     steps:
       - name: Clone Repository
-        shell: bash
-        run: |
-          /usr/bin/git clone https://github.com/Gregicality/GregTech.git ./
+        uses: actions/checkout@v2
       - name: Declare some variables
         id: vars
         shell: bash
@@ -44,6 +42,7 @@ jobs:
         uses: actions/setup-node@v2
       - name: Run Formatter
         run: |
-          cd scripts
-          chmod +x format.sh
+          npm audit fix --force |
+          cd scripts |
+          chmod +x format.sh |
           ./format.sh
