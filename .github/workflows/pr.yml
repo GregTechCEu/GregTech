@@ -42,7 +42,6 @@ jobs:
         uses: actions/setup-node@v2
       - name: Run Formatter
         run: |
-          npm audit fix --force |
-          cd scripts |
-          chmod +x format.sh |
+          cd scripts
+          chmod +x format.sh
           ./format.sh
