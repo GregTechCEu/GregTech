@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.recipe.OreDictIngredient;
+import com.cleanroommc.groovyscript.sandbox.SandboxRunner;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
@@ -23,6 +24,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.GroovyScriptCompat;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -717,6 +719,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public ValidationResult<Recipe> build() {
+        isCTRecipe |= GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning();
         return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
                 fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage));
     }
