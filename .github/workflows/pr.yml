@@ -41,7 +41,5 @@ jobs:
       - name: Install npm
         uses: actions/setup-node@v2
       - name: Run Formatter
-        run: |
-          cd scripts
-          chmod +x format.sh
-          ./format.sh
+        run: ./scripts/format.sh
+        shell: bash
