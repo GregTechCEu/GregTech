@@ -36,6 +36,6 @@ jobs:
       - name: Install npm
         uses: actions/setup-node@v2
       - name: Install eclint
-        run: npm install -g eclint
+        run: npm install -g lintspaces-cli
       - name: Run Formatter
-        run: eclint check $(git ls-files '*.java')
+        run: lintspaces -e .editorconfig -i 'java-comments' ./src/main/**/*.java
