@@ -33,15 +33,9 @@ jobs:
     steps:
       - name: Clone Repository
         uses: actions/checkout@v2
-      - name: Declare some variables
-        id: vars
-        shell: bash
-        run: |
-          echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
       - name: Install npm
         uses: actions/setup-node@v2
-      - name: Give script execution permission
-        run: chmod +x scripts/format.sh
+      - name: Install eclint
+        run: npm install -g eclint
       - name: Run Formatter
-        run: ./scripts/format.sh
-        shell: bash
+        run: eclint check $(git ls-files '*.java')
