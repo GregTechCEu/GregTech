@@ -2,6 +2,7 @@ package gregtech.api.net.packets;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.IServerExecutor;
 import gregtech.api.net.NetworkUtils;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 @NoArgsConstructor
-public class CPacketClipboardUIWidgetUpdate implements IPacket {
+public class CPacketClipboardUIWidgetUpdate implements IPacket, IServerExecutor {
 
     private int dimension;
     private BlockPos pos;

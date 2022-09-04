@@ -1,12 +1,7 @@
 package gregtech.api.net;
 
+import gregtech.api.util.GTLog;
 import net.minecraft.util.IntIdentityHashBiMap;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PacketHandler {
 
@@ -14,21 +9,18 @@ public class PacketHandler {
 
     private final IntIdentityHashBiMap<Class<? extends IPacket>> packetMap;
 
-    @SideOnly(Side.CLIENT)
-    private List<Class<? extends IPacket>> clientExecutors;
-    private final List<Class<? extends IPacket>> serverExecutors;
-
     private PacketHandler(int initialCapacity) {
         packetMap = new IntIdentityHashBiMap<>(initialCapacity);
-        serverExecutors = new ArrayList<>();
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            clientExecutors = new ArrayList<>();
-        }
     }
 
     private static int ID = 1;
     public static void registerPacket(Class<? extends IPacket> packetClass) {
         INSTANCE.packetMap.put(packetClass, ID++);
+
+        // Ensure packet is not marked as both a client and server executor
+        if (IServerExecutor.class.isAssignableFrom(packetClass) && IClientExecutor.class.isAssignableFrom(packetClass)) {
+            GTLog.logger.error("Packet {} cannot be marked as server and client executor, skipping...", packetClass.toGenericString());
+        }
     }
 
     public static int getPacketId(Class<? extends IPacket> packetClass) {
@@ -37,23 +29,5 @@ public class PacketHandler {
 
     public static Class<? extends IPacket> getPacketClass(int packetId) {
         return INSTANCE.packetMap.get(packetId);
-    }
-
-    public static void registerServerExecutor(Class<? extends IPacket> packetClass) {
-        INSTANCE.serverExecutors.add(packetClass);
-    }
-
-    public static boolean hasServerExecutor(Class<? extends IPacket> packetClass) {
-        return INSTANCE.serverExecutors.contains(packetClass);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void registerClientExecutor(Class<? extends IPacket> packetClass) {
-        INSTANCE.clientExecutors.add(packetClass);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static boolean hasClientExecutor(Class<? extends IPacket> packetClass) {
-        return INSTANCE.clientExecutors.contains(packetClass);
     }
 }

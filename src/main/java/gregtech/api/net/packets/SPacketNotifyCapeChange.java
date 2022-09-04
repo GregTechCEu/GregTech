@@ -1,5 +1,6 @@
 package gregtech.api.net.packets;
 
+import gregtech.api.net.IClientExecutor;
 import gregtech.api.net.IPacket;
 import gregtech.api.util.CapesRegistry;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.UUID;
 
 @NoArgsConstructor
-public class SPacketNotifyCapeChange implements IPacket {
+public class SPacketNotifyCapeChange implements IPacket, IClientExecutor {
 
     public ResourceLocation cape;
     public UUID uuid;

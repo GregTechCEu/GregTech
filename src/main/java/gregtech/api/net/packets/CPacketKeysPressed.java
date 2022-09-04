@@ -1,6 +1,7 @@
 package gregtech.api.net.packets;
 
 import gregtech.api.net.IPacket;
+import gregtech.api.net.IServerExecutor;
 import gregtech.api.util.input.KeyBind;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 
 @NoArgsConstructor
-public class CPacketKeysPressed implements IPacket {
+public class CPacketKeysPressed implements IPacket, IServerExecutor {
 
     private Object updateKeys;
 

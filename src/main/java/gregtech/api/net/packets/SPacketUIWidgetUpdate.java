@@ -1,6 +1,7 @@
 package gregtech.api.net.packets;
 
 import gregtech.api.gui.impl.ModularUIGui;
+import gregtech.api.net.IClientExecutor;
 import gregtech.api.net.IPacket;
 import gregtech.api.net.NetworkUtils;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
-public class SPacketUIWidgetUpdate implements IPacket {
+public class SPacketUIWidgetUpdate implements IPacket, IClientExecutor {
 
     public int windowId;
     public int widgetId;

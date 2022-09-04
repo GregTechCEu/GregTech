@@ -2,6 +2,7 @@ package gregtech.api.net.packets;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.UIFactory;
+import gregtech.api.net.IClientExecutor;
 import gregtech.api.net.IPacket;
 import gregtech.api.net.NetworkUtils;
 import gregtech.api.util.GTLog;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class SPacketUIOpen implements IPacket {
+public class SPacketUIOpen implements IPacket, IClientExecutor {
 
     private int uiFactoryId;
     private PacketBuffer serializedHolder;

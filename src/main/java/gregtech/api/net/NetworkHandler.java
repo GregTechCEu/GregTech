@@ -39,32 +39,6 @@ public class NetworkHandler {
         registerPacket(CPacketFluidVeinList.class);
         registerPacket(SPacketNotifyCapeChange.class);
         registerPacket(SPacketReloadShaders.class);
-
-        initServer();
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            initClient();
-        }
-    }
-
-    // Register packets as "received on server" here
-    protected static void initServer() {
-        registerServerExecutor(CPacketUIClientAction.class);
-        registerServerExecutor(CPacketClipboardUIWidgetUpdate.class);
-        registerServerExecutor(CPacketPluginSynced.class);
-        registerServerExecutor(CPacketRecoverMTE.class);
-        registerServerExecutor(CPacketKeysPressed.class);
-    }
-
-    // Register packets as "received on client" here
-    @SideOnly(Side.CLIENT)
-    protected static void initClient() {
-        registerClientExecutor(SPacketUIOpen.class);
-        registerClientExecutor(SPacketUIWidgetUpdate.class);
-        registerClientExecutor(SPacketBlockParticle.class);
-        registerClientExecutor(SPacketClipboard.class);
-        registerClientExecutor(CPacketFluidVeinList.class);
-        registerClientExecutor(SPacketNotifyCapeChange.class);
-        registerClientExecutor(SPacketReloadShaders.class);
     }
 
 
@@ -72,13 +46,14 @@ public class NetworkHandler {
     @SideOnly(Side.CLIENT)
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) throws Exception {
         IPacket packet = NetworkUtils.proxy2packet(event.getPacket());
-        if (hasClientExecutor(packet.getClass())) {
+        if (IClientExecutor.class.isAssignableFrom(packet.getClass())) {
+            IClientExecutor clientExecutor = (IClientExecutor) packet;
             NetHandlerPlayClient handler = (NetHandlerPlayClient) event.getHandler();
             IThreadListener threadListener = FMLCommonHandler.instance().getWorldThread(handler);
             if (threadListener.isCallingFromMinecraftThread()) {
-                packet.executeClient(handler);
+                clientExecutor.executeClient(handler);
             } else {
-                threadListener.addScheduledTask(() -> packet.executeClient(handler));
+                threadListener.addScheduledTask(() -> clientExecutor.executeClient(handler));
             }
         }
     }
@@ -86,13 +61,14 @@ public class NetworkHandler {
     @SubscribeEvent
     public void onServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event) throws Exception {
         IPacket packet = NetworkUtils.proxy2packet(event.getPacket());
-        if (hasServerExecutor(packet.getClass())) {
+        if (IServerExecutor.class.isAssignableFrom(packet.getClass())) {
+            IServerExecutor serverExecutor = (IServerExecutor) packet;
             NetHandlerPlayServer handler = (NetHandlerPlayServer) event.getHandler();
             IThreadListener threadListener = FMLCommonHandler.instance().getWorldThread(handler);
             if (threadListener.isCallingFromMinecraftThread()) {
-                packet.executeServer(handler);
+                serverExecutor.executeServer(handler);
             } else {
-                threadListener.addScheduledTask(() -> packet.executeServer(handler));
+                threadListener.addScheduledTask(() -> serverExecutor.executeServer(handler));
             }
         }
     }

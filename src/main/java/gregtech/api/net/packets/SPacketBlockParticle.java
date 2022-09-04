@@ -2,6 +2,7 @@ package gregtech.api.net.packets;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.api.block.ICustomParticleBlock;
+import gregtech.api.net.IClientExecutor;
 import gregtech.api.net.IPacket;
 import lombok.NoArgsConstructor;
 import net.minecraft.block.state.IBlockState;
@@ -15,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
-public class SPacketBlockParticle implements IPacket {
+public class SPacketBlockParticle implements IPacket, IClientExecutor {
 
     private BlockPos blockPos;
     private Vector3 entityPos;

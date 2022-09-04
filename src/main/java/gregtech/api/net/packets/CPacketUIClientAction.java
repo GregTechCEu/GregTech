@@ -3,6 +3,7 @@ package gregtech.api.net.packets;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.IServerExecutor;
 import gregtech.api.net.NetworkUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.inventory.Container;
@@ -10,7 +11,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 
 @NoArgsConstructor
-public class CPacketUIClientAction implements IPacket {
+public class CPacketUIClientAction implements IPacket, IServerExecutor {
 
     private int windowId;
     private int widgetId;

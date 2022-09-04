@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.IServerExecutor;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 @NoArgsConstructor
-public class CPacketRecoverMTE implements IPacket {
+public class CPacketRecoverMTE implements IPacket, IServerExecutor {
 
     private int dimension;
     private BlockPos pos;

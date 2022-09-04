@@ -3,6 +3,7 @@ package gregtech.api.net.packets;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.IServerExecutor;
 import gregtech.api.net.NetworkUtils;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 @NoArgsConstructor
-public class CPacketPluginSynced implements IPacket {
+public class CPacketPluginSynced implements IPacket, IServerExecutor {
 
     private int dimension;
     private BlockPos pos;

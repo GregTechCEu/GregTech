@@ -4,8 +4,6 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * The general structure of Network Packets. <br><br>
@@ -14,11 +12,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * {@link IPacket#decode(PacketBuffer)}, and register the packet in {@link NetworkHandler#init()} method.<br><br>
  * <p>
  * Additionally, do one of the following:<p>
- *     - If this Packet is to be received on the SERVER, implement {@link IPacket#executeServer(NetHandlerPlayServer)}
- *       and register in {@link NetworkHandler#initServer()}.
+ *     - If this Packet is to be received on the SERVER, implement {@link IServerExecutor#executeServer(NetHandlerPlayServer)}.
  * <p>
- *     - If this Packet is to be received on the CLIENT, implement {@link IPacket#executeClient(NetHandlerPlayClient)}
- *       and register in {@link NetworkHandler#initClient()}.<br><br>
+ *     - If this Packet is to be received on the CLIENT, implement {@link IClientExecutor#executeClient(NetHandlerPlayClient)}.<br><br>
  * <p>
  * Lastly, add the {@link lombok.NoArgsConstructor} annotation to your Packet class.
  */
@@ -43,27 +39,6 @@ public interface IPacket {
      * @param buf The PacketBuffer to read Packet data from.
      */
     void decode(PacketBuffer buf);
-
-    /**
-     * Used to execute code on the client, after receiving a packet from the server.<br><br>
-     * <p>
-     * CANNOT be implemented with {@link IPacket#executeServer(NetHandlerPlayServer)}, only one at a time is supported.
-     *
-     * @param handler Network handler that contains useful data and helpers.
-     */
-    @SideOnly(Side.CLIENT)
-    default void executeClient(NetHandlerPlayClient handler) {
-    }
-
-    /**
-     * Used to execute code on the server, after receiving a packet from the client.<br><br>
-     * <p>
-     * CANNOT be implemented with {@link IPacket#executeClient(NetHandlerPlayClient)}, only one at a time is supported.
-     *
-     * @param handler Network handler that contains useful data and helpers.
-     */
-    default void executeServer(NetHandlerPlayServer handler) {
-    }
 
     /**
      * Convenience method that redirects to {@link NetworkUtils#packet2proxy(IPacket)}. Converts an instance of this
