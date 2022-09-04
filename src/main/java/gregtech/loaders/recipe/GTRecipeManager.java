@@ -15,6 +15,7 @@ public class GTRecipeManager {
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();
         MetaTileEntityMachineRecipeLoader.init();
+        BacterialVatLoader.init();
         RecipeHandlerList.register();
     }
 

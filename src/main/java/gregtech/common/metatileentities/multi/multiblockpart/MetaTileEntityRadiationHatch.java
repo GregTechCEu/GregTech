@@ -12,31 +12,60 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenCustomHashMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
+import java.util.Map;
 
 public class MetaTileEntityRadiationHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IRadiationHatch>, IRadiationHatch {
 
     private final boolean isCreative;
+    private float radValue;
+    private static final Map<ItemStack, Float> radiationValues = new Object2FloatOpenCustomHashMap<>(ItemStackHashStrategy.builder()
+            .compareCount(false)
+            .compareDamage(true)
+            .compareItem(true)
+            .compareTag(false)
+            .build());
 
     public MetaTileEntityRadiationHatch(ResourceLocation metaTileEntityId, int tier, boolean isCreative) {
         super(metaTileEntityId, tier, false);
         this.isCreative = isCreative;
+        this.radValue = 0;
     }
 
     @Override
     public float getRadValue() {
-        return this.importItems.getStackInSlot(0).getCount();
+        return radValue;
     }
 
     @Override
     public boolean isCreative() {
         return isCreative;
+    }
+
+    public static void addRadiationItem(GTRecipeInput item, float rads) {
+        for (ItemStack stack : item.getInputStacks()) {
+            radiationValues.put(stack, rads);
+        }
+    }
+
+    private void recalculateRadValue() {
+        radValue = 0.0F;
+        for (int i = 0; i < importItems.getSlots(); i++) {
+            ItemStack stack = importItems.getStackInSlot(i);
+            if (stack != null && !stack.isEmpty()) {
+                radValue += radiationValues.get(stack) * stack.getCount();
+            }
+        }
     }
 
     @Override
@@ -46,7 +75,13 @@ public class MetaTileEntityRadiationHatch extends MetaTileEntityMultiblockNotifi
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), false);
+        return new NotifiableItemStackHandler(getInventorySize(), getController(), false) {
+            @Override
+            public void onContentsChanged(int slot) {
+                super.onContentsChanged(slot);
+                recalculateRadValue();
+            }
+        };
     }
 
     @Override
