@@ -5011,7 +5011,7 @@ terminal.pong.description=A classic pong game, if you're really that bored of wa
 terminal.minesweeper.description=A classic minesweeper game, if you're in class.
 terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 terminal.cape_selector.description=An app that allows you to equip GT capes that you've unlocked through advancements.
-
+terminal.teleport.description=Open portals to any coordinate in any dimension. Be careful not to teleport into a wall!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
