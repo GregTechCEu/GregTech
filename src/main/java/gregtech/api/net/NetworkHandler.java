@@ -2,9 +2,11 @@ package gregtech.api.net;
 
 import gregtech.api.GTValues;
 import gregtech.api.net.packets.*;
+import gregtech.api.util.GTLog;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
@@ -13,14 +15,14 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import static gregtech.api.net.PacketHandler.*;
-
 public class NetworkHandler {
 
     public static FMLEventChannel channel;
 
     private NetworkHandler() {
     }
+
+    protected static final IntIdentityHashBiMap<Class<? extends IPacket>> packetMap = new IntIdentityHashBiMap<>(15);
 
     // Register your packets here
     public static void init() {
@@ -39,6 +41,16 @@ public class NetworkHandler {
         registerPacket(CPacketFluidVeinList.class);
         registerPacket(SPacketNotifyCapeChange.class);
         registerPacket(SPacketReloadShaders.class);
+    }
+
+    private static int ID = 1;
+    private static void registerPacket(Class<? extends IPacket> packetClass) {
+        packetMap.put(packetClass, ID++);
+
+        // Ensure packet is not marked as both a client and server executor
+        if (IServerExecutor.class.isAssignableFrom(packetClass) && IClientExecutor.class.isAssignableFrom(packetClass)) {
+            GTLog.logger.error("Packet {} cannot be marked as server and client executor, skipping...", packetClass.toGenericString());
+        }
     }
 
 

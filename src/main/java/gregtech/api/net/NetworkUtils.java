@@ -36,14 +36,14 @@ public class NetworkUtils {
 
     public static FMLProxyPacket packet2proxy(IPacket packet) {
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-        buf.writeVarInt(PacketHandler.getPacketId(packet.getClass()));
+        buf.writeVarInt(NetworkHandler.packetMap.getId(packet.getClass()));
         packet.encode(buf);
         return new FMLProxyPacket(buf, GTValues.MODID);
     }
 
     public static IPacket proxy2packet(FMLProxyPacket proxyPacket) throws Exception {
         PacketBuffer payload = (PacketBuffer) proxyPacket.payload();
-        IPacket packet = PacketHandler.getPacketClass(payload.readVarInt()).newInstance();
+        IPacket packet = NetworkHandler.packetMap.get(payload.readVarInt()).newInstance();
         packet.decode(payload);
         return packet;
     }
