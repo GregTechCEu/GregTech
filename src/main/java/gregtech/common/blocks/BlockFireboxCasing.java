@@ -22,7 +22,7 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setDefaultState(getState(FireboxCasingType.BRONZE_FIREBOX));
+        setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, FireboxCasingType.BRONZE_FIREBOX));
     }
 
     @Override

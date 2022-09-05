@@ -1,25 +1,46 @@
 package gregtech.api.block;
 
-import codechicken.lib.block.property.unlisted.UnlistedBooleanProperty;
+import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.IStateMapper;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import team.chisel.ctm.client.state.CTMExtendedState;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T>{
-    private static final Set<BlockPos> ACTIVE_BLOCKS = new TreeSet<>();
+import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
+
+public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
+
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
+    public static final IStateMapper mapper = new SimpleStateMapper(MODEL_LOCATION);
+    public static final Set<BlockPos> ACTIVE_BLOCKS = new TreeSet<>();
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
@@ -31,14 +52,20 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return super.getState(variant);
     }
 
-    public IBlockState getState(T variant, boolean active) {
-        return super.getState(variant);
-    }
-
     @Override
     @SuppressWarnings("deprecation")
     protected boolean canSilkHarvest() {
         return false;
+    }
+
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return super.getRenderLayer();
+    }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return true;
     }
 
     @Nonnull
@@ -47,31 +74,40 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
-        return new BlockStateContainer.Builder(this).add(VARIANT).add(ACTIVE).build();
+        return new ExtendedBlockState(this, new IProperty[]{VARIANT}, new IUnlistedProperty[]{ACTIVE});
     }
 
     @Override
     public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState ext = (IExtendedBlockState) state;
-        if (ACTIVE_BLOCKS.contains(pos)){
-            ext = ext.withProperty(ACTIVE, true);
+        ext = ext.withProperty(ACTIVE, ACTIVE_BLOCKS.contains(pos));
+        if (Loader.isModLoaded(GTValues.MODID_CTM)) {
+            //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
+            //so that the CTM renderer can render the block properly.
+            return new CTMExtendedState(ext, world, pos);
         }
         return ext;
     }
 
-    @Override
-    public int damageDropped(@Nonnull IBlockState state) {
-        return getMetaFromState(state);
-    }
 
-    @Nonnull
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return super.getStateFromMeta(meta);
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
-        return super.getMetaFromState(state);
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        ACTIVE_BLOCKS.remove(pos);
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelRegister() {
+        ModelLoader.setCustomStateMapper(this, mapper);
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=true," + statePropertiesToString(state.getProperties())));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=false," + statePropertiesToString(state.getProperties())));
+        }
     }
 }

@@ -120,8 +120,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             for (BlockPos blockPos : variantActiveBlocks) {
                 IBlockState blockState = getWorld().getBlockState(blockPos);
                 if (blockState.getBlock() instanceof VariantActiveBlock) {
-                    getWorld().setBlockState(blockPos, ((IExtendedBlockState) blockState).withProperty(VariantActiveBlock.ACTIVE, isActive), 2);
+                    if (isActive) {
+                        VariantActiveBlock.ACTIVE_BLOCKS.add(blockPos);
+                    } else {
+                        VariantActiveBlock.ACTIVE_BLOCKS.remove(blockPos);
+                    }
                 }
+                getWorld().markBlockRangeForRenderUpdate(blockPos, blockPos);
             }
         }
     }
