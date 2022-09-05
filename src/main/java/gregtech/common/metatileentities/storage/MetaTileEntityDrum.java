@@ -317,6 +317,13 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
     }

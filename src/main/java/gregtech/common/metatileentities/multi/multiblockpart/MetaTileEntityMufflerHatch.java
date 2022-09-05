@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TooltipHelper;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -149,9 +150,17 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.muffler_hatch.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.muffler_hatch.tooltip1"));
         tooltip.add(I18n.format("gregtech.muffler.recovery_tooltip", recoveryChance));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+        tooltip.add(TooltipHelper.BLINKING_RED + I18n.format("gregtech.machine.muffler_hatch.tooltip2"));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

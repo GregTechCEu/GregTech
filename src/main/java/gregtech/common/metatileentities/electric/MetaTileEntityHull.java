@@ -133,4 +133,11 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     public Class<?> getPassthroughType() {
         return IEnergyContainer.class;
     }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
 }

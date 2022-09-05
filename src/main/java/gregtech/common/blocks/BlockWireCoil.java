@@ -58,7 +58,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             lines.add(I18n.format("tile.wire_coil.tooltip_cracking"));
             lines.add(I18n.format("tile.wire_coil.tooltip_energy_cracking", 100 - 10 * coilTier));
         } else {
-            lines.add(I18n.format("gregtech.tooltip.hold_shift"));
+            lines.add(I18n.format("tile.wire_coil.tooltip_extended_info"));
         }
     }
 

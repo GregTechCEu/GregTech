@@ -4,6 +4,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.CapesRegistry;
+import gregtech.api.util.TooltipHelper;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
@@ -28,6 +29,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 import java.util.UUID;
+
+import static gregtech.api.GTValues.CLIENT_TIME;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -55,6 +58,8 @@ public class ClientEventHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         GTParticleManager.clientTick(event);
         TerminalARRenderer.onClientTick(event);
+        TooltipHelper.onClientTick(event);
+        CLIENT_TIME++;
     }
 
     @SubscribeEvent

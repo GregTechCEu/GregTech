@@ -10,6 +10,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.TooltipHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -123,7 +124,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.perfect_oc"));
+        tooltip.add(TooltipHelper.RAINBOW + I18n.format("gregtech.machine.perfect_oc"));
     }
 
     @Nonnull

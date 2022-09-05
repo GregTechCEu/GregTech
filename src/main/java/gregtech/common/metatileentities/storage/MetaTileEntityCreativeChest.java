@@ -22,11 +22,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Function;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
@@ -163,5 +168,10 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }
         tag.setInteger("mBPerCycle", itemsPerCycle);
         tag.setInteger("ticksPerCycle", ticksPerCycle);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        // do not append the normal tooltips
     }
 }

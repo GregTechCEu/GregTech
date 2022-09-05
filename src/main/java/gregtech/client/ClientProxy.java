@@ -63,6 +63,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank.isItemSuperTank;
+
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -170,6 +172,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
+        if (isItemSuperTank(itemStack)) return; // do not apply this tooltip to Super Tanks/Quantum Tanks that are filled
 
         // Handles Item tooltips
         List<String> tooltips = new ArrayList<>();
@@ -193,6 +196,7 @@ public class ClientProxy extends CommonProxy {
 
             // GTCE Cells, Forestry cans, some other containers
             if (tooltips == null || tooltips.size() == 0) {
+                //if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == GregTechAPI.MACHINE && itemStack.getItemDamage())
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
                     FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));

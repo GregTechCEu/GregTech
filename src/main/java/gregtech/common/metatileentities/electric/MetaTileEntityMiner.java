@@ -154,10 +154,22 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        int currentArea = getWorkingArea(minerLogic.getCurrentRadius());
+        tooltip.add(I18n.format("gregtech.machine.miner.tooltip", currentArea, currentArea));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick)
+                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.usage", getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20, this.energyPerTick));
+        int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area_max", maxArea, maxArea));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_hammer.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

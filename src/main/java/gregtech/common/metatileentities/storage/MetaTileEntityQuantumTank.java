@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.*;
@@ -20,6 +21,7 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -267,15 +269,21 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity", maxFluidCapacity));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", maxFluidCapacity));
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FLUID_NBT_KEY));
             if (fluidStack != null) {
-                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.name", fluidStack.getLocalizedName()));
-                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.count", fluidStack.amount));
+                tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_stored", fluidStack.getLocalizedName(), fluidStack.amount));
             }
         }
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -506,5 +514,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public boolean needsSneakToRotate() {
         return true;
+    }
+
+    public static boolean isItemSuperTank(ItemStack stack) {
+        if (stack.getItemDamage() < 1575 || stack.getItemDamage() > 1589) return false; // not in ID range
+        if (!(stack.getItem() instanceof ItemBlock)) return false; // not a block
+        return ((ItemBlock) stack.getItem()).getBlock() == GregTechAPI.MACHINE;
     }
 }

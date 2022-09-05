@@ -32,6 +32,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
@@ -221,5 +222,20 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
     public CraftingRecipeMemory getRecipeMemory() {
         return recipeMemory;
+    }
+
+    @Override
+    public boolean canPlaceCoverOnSide(EnumFacing side) {
+        return false;
+    }
+
+    @Override
+    public boolean canRenderMachineGrid() {
+        return false;
+    }
+
+    @Override
+    public boolean showToolUsages() {
+        return false;
     }
 }

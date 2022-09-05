@@ -201,6 +201,16 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
     }
 
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        if (getSound() != null) {
+            tooltip.add(I18n.format("gregtech.tool_action.hammer"));
+        }
+        tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+        // todo tool_to_break (maybe in the block class where this is called would be easier?)
+    }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {

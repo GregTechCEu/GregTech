@@ -161,8 +161,18 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.steam_miner.description",
-                getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick_steam", energyPerTick)
+                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
+        int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", maxArea, maxArea));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_hammer.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     public boolean drainEnergy(boolean simulate) {
