@@ -2,9 +2,11 @@ package gregtech.common.crafting;
 
 import com.google.gson.JsonElement;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -16,10 +18,13 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import javax.annotation.Nonnull;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
-    public GTShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    boolean isClearing;
+
+    public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
         super(group, result);
+        this.isClearing = isClearing;
         for (Object in : recipe) {
-            Ingredient ing = getIngredient(in);
+            Ingredient ing = getIngredient(isClearing, in);
             if (ing != null) {
                 input.add(ing);
                 this.isSimple &= ing.isSimple();
@@ -37,7 +42,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
     //a copy of the CraftingHelper getIngredient method.
     //the only difference is checking for a filled bucket and making
     //it an GTFluidCraftingIngredient
-    private static Ingredient getIngredient(Object obj) {
+    private static Ingredient getIngredient(boolean isClearing, Object obj) {
         if (obj instanceof Ingredient) return (Ingredient) obj;
         else if (obj instanceof ItemStack) {
             ItemStack ing = (ItemStack) obj;
@@ -47,6 +52,9 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
                     FluidStack drained = handler.drain(Integer.MAX_VALUE, false);
                     if (drained != null && drained.amount > 0) {
                         return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
+                    }
+                    if (!isClearing) {
+                        return new GTIngredientNBT(((ItemStack) obj).copy());
                     }
                 }
             }
@@ -59,5 +67,15 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
         return null;
+    }
+
+    @Override
+    public @Nonnull NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+        if (isClearing) {
+            return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        }
+        else {
+            return super.getRemainingItems(inv);
+        }
     }
 }

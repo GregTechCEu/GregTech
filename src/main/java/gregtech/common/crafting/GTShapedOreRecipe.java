@@ -24,16 +24,17 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe {
+    boolean isClearing;
 
-
-    public GTShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
-        super(group, result, parseShaped(recipe));
+    public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+        super(group, result, parseShaped(isClearing, recipe));
+        this.isClearing = isClearing;
     }
 
     //a copy of the CraftingHelper.ShapedPrimer.parseShaped method.
     //the on difference is calling getIngredient of this class.
 
-    public static CraftingHelper.ShapedPrimer parseShaped(Object... recipe) {
+    public static CraftingHelper.ShapedPrimer parseShaped(boolean isClearing, Object... recipe) {
         CraftingHelper.ShapedPrimer ret = new CraftingHelper.ShapedPrimer();
         String shape = "";
         int idx = 0;
@@ -76,7 +77,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         for (; idx < recipe.length; idx += 2) {
             Character chr = (Character) recipe[idx];
             Object in = recipe[idx + 1];
-            Ingredient ing = getIngredient(in);
+            Ingredient ing = getIngredient(isClearing, in);
 
             if (' ' == chr.charValue()) throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
 
@@ -114,7 +115,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
     //a copy of the CraftingHelper getIngredient method.
     //the only difference is checking for a filled bucket and making
     //it an GTFluidCraftingIngredient
-    private static Ingredient getIngredient(Object obj) {
+    protected static Ingredient getIngredient(boolean isClearing, Object obj) {
         if (obj instanceof Ingredient) return (Ingredient) obj;
         else if (obj instanceof ItemStack) {
             ItemStack ing = (ItemStack) obj;
@@ -124,6 +125,9 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
                     FluidStack drained = handler.drain(Integer.MAX_VALUE, false);
                     if (drained != null && drained.amount > 0) {
                         return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
+                    }
+                    if (!isClearing) {
+                        return new GTIngredientNBT(((ItemStack) obj).copy());
                     }
                 }
             }
@@ -139,7 +143,11 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        return super.getRemainingItems(inv);
+    public @Nonnull NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+        if (isClearing) {
+            return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        } else {
+            return super.getRemainingItems(inv);
+        }
     }
 }
