@@ -981,10 +981,8 @@ public class VanillaStandardRecipes {
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(1024).EUt(16).notConsumable(SHAPE_MOLD_BLOCK).fluidInputs(Lava.getFluid(1000)).outputs(new ItemStack(Blocks.OBSIDIAN)).buildAndRegister();
 
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(128).EUt(16).notConsumable(SHAPE_MOLD_ANVIL).fluidInputs(Iron.getFluid(L * 31)).outputs(new ItemStack(Blocks.ANVIL)).buildAndRegister();
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(128).EUt(16).notConsumable(SHAPE_MOLD_ANVIL).fluidInputs(WroughtIron.getFluid(L * 31)).outputs(new ItemStack(Blocks.ANVIL)).buildAndRegister();
 
         ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, Iron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(16).buildAndRegister();
-        ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, WroughtIron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(16).buildAndRegister();
 
         ModHandler.addSmeltingRecipe(new ItemStack(Items.SLIME_BALL), STICKY_RESIN.getStackForm(), 0.3f);
 
