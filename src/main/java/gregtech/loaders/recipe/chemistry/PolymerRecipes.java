@@ -270,17 +270,6 @@ public class PolymerRecipes {
                 .duration(480).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(23))
-                .fluidInputs(Chlorine.getFluid(4000))
-                .fluidInputs(Propene.getFluid(1000))
-                .fluidInputs(Water.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
-                .fluidOutputs(Epichlorohydrin.getFluid(1000))
-                .fluidOutputs(HydrochloricAcid.getFluid(2000))
-                .fluidOutputs(SaltWater.getFluid(1000))
-                .duration(640).EUt(VA[LV]).buildAndRegister();
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
                 .fluidInputs(Chlorine.getFluid(2000))
                 .fluidInputs(Propene.getFluid(1000))
@@ -289,9 +278,9 @@ public class PolymerRecipes {
                 .fluidOutputs(Epichlorohydrin.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
-                .duration(640).EUt(VA[LV]).buildAndRegister();
+                .duration(640).EUt(VA[HV]).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        CHEMICAL_RECIPES.recipeBuilder() // The Cumene Process
                 .fluidInputs(Oxygen.getFluid(2000))
                 .fluidInputs(Cumene.getFluid(1000))
                 .fluidOutputs(Phenol.getFluid(1000))
@@ -307,25 +296,26 @@ public class PolymerRecipes {
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
+        // 2NaOH + 2C3H5ClO + C15H16O2 -> C21H24O4 + 2NaCl + 2H2O
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 3)
-                .fluidInputs(Epichlorohydrin.getFluid(1000))
+                .input(dust, SodiumHydroxide, 6)
+                .fluidInputs(Epichlorohydrin.getFluid(2000))
                 .fluidInputs(BisphenolA.getFluid(1000))
-                .fluidOutputs(Epoxy.getFluid(1000))
-                .fluidOutputs(SaltWater.getFluid(1000))
+                .fluidOutputs(Epoxy.getFluid(1008))
+                .fluidOutputs(SaltWater.getFluid(2000))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
-                .fluidInputs(Epichlorohydrin.getFluid(1000))
+                .fluidInputs(Epichlorohydrin.getFluid(2000))
                 .fluidInputs(Phenol.getFluid(2000))
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidInputs(HydrochloricAcid.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
-                .fluidOutputs(Epoxy.getFluid(1000))
-                .fluidOutputs(SaltWater.getFluid(1000))
+                .input(dust, SodiumHydroxide, 6)
+                .fluidOutputs(Epoxy.getFluid(1008))
+                .fluidOutputs(SaltWater.getFluid(2000))
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
-                .duration(480).EUt(VA[LV]).buildAndRegister();
+                .duration(680).EUt(VA[HV]).buildAndRegister();
     }
 
     private static void styreneButadieneProcess() {

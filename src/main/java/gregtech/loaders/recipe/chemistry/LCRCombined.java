@@ -32,17 +32,17 @@ public class LCRCombined {
                 .duration(160)
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder() // The Cumeme Process (Shortcut)
                 .notConsumable(new IntCircuitIngredient(24))
                 .fluidInputs(Propene.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(1000))
-                .fluidInputs(Oxygen.getFluid(1000))
+                .fluidInputs(Oxygen.getFluid(2000))
                 .fluidInputs(PhosphoricAcid.getFluid(100))
                 .fluidOutputs(Phenol.getFluid(1000))
                 .fluidOutputs(Acetone.getFluid(1000))
-                .duration(480).EUt(VA[LV]).buildAndRegister();
+                .duration(480).EUt(VA[HV]).buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder() // The Raschig-Hooker Process
                 .notConsumable(new IntCircuitIngredient(24))
                 .fluidInputs(Benzene.getFluid(1000))
                 .fluidInputs(Chlorine.getFluid(2000))
@@ -50,17 +50,17 @@ public class LCRCombined {
                 .fluidOutputs(Phenol.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
-                .duration(560).EUt(VA[LV]).buildAndRegister();
+                .duration(560).EUt(VA[HV]).buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder() // The Dow Process (shortcut)
                 .notConsumable(new IntCircuitIngredient(24))
-                .fluidInputs(Benzene.getFluid(2000))
-                .fluidInputs(Chlorine.getFluid(4000))
-                .input(dust, SodiumHydroxide, 6)
-                .output(dust, Salt, 4)
-                .fluidOutputs(Phenol.getFluid(2000))
-                .fluidOutputs(HydrochloricAcid.getFluid(2000))
-                .duration(1120).EUt(VA[LV]).buildAndRegister();
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Chlorine.getFluid(1000))
+                .input(dust, SodiumHydroxide, 3)
+                .output(dust, Salt, 2)
+                .fluidOutputs(Phenol.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .duration(620).EUt(VA[HV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))

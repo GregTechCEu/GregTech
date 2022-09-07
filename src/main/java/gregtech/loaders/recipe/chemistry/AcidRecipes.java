@@ -129,18 +129,17 @@ public class AcidRecipes {
     }
 
     private static void phosphoricAcidRecipes() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
-                .input(dust, Phosphorus, 4)
-                .fluidInputs(Oxygen.getFluid(10000))
+                .input(dust, Phosphorus, 2)
+                .fluidInputs(Oxygen.getFluid(5000))
                 .output(dust, PhosphorusPentoxide, 14)
                 .duration(40).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, PhosphorusPentoxide, 14)
-                .fluidInputs(Water.getFluid(6000))
-                .fluidOutputs(PhosphoricAcid.getFluid(4000))
+                .input(dust, PhosphorusPentoxide, 7)
+                .fluidInputs(Water.getFluid(3000))
+                .fluidOutputs(PhosphoricAcid.getFluid(2000))
                 .duration(40).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -150,14 +149,6 @@ public class AcidRecipes {
                 .output(dust, Gypsum, 40)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(PhosphoricAcid.getFluid(3000))
-                .duration(320).EUt(VA[LV]).buildAndRegister();
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
-                .input(dust, Phosphorus, 2)
-                .fluidInputs(Water.getFluid(3000))
-                .fluidInputs(Oxygen.getFluid(5000))
-                .fluidOutputs(PhosphoricAcid.getFluid(2000))
                 .duration(320).EUt(VA[LV]).buildAndRegister();
     }
 

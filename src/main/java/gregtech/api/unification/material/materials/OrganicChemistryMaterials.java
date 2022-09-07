@@ -121,7 +121,7 @@ public class OrganicChemistryMaterials {
                 .ingot(1).fluid()
                 .color(0xC88C14)
                 .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
-                .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
+                .components(Carbon, 21, Hydrogen, 24, Oxygen, 4)
                 .fluidTemp(400)
                 .build();
 

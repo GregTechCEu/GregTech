@@ -262,18 +262,17 @@ public class ReactorRecipes {
                 .duration(320).EUt(96).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(Mercury.getFluid(1000))
-                .fluidInputs(Water.getFluid(10000))
-                .fluidInputs(Chlorine.getFluid(10000))
-                .fluidOutputs(HypochlorousAcid.getFluid(10000))
-                .duration(600).EUt(VA[ULV]).buildAndRegister();
+                .fluidInputs(Mercury.getFluid(100))
+                .fluidInputs(Water.getFluid(1000))
+                .fluidInputs(Chlorine.getFluid(1000))
+                .fluidOutputs(HypochlorousAcid.getFluid(1000))
+                .duration(60).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(Water.getFluid(1000))
                 .fluidInputs(Chlorine.getFluid(2000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
-                .fluidOutputs(HypochlorousAcid.getFluid(1000))
+                .fluidInputs(Oxygen.getFluid(1000))
+                .fluidOutputs(HypochlorousAcid.getFluid(2000))
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -299,11 +298,11 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
-                .fluidInputs(PhosphoricAcid.getFluid(1000))
-                .fluidInputs(Benzene.getFluid(8000))
-                .fluidInputs(Propene.getFluid(8000))
-                .fluidOutputs(Cumene.getFluid(8000))
-                .duration(1920).EUt(VA[LV]).buildAndRegister();
+                .fluidInputs(PhosphoricAcid.getFluid(100))
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Propene.getFluid(1000))
+                .fluidOutputs(Cumene.getFluid(1000))
+                .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Silicon)
@@ -590,13 +589,13 @@ public class ReactorRecipes {
                 .outputs(new ItemStack(Blocks.TNT))
                 .duration(200).EUt(24).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 6)
-                .fluidInputs(Dichlorobenzene.getFluid(1000))
-                .output(dust, Salt, 4)
+        CHEMICAL_RECIPES.recipeBuilder() // The Dow Process
+                .input(dust, SodiumHydroxide, 3)
+                .fluidInputs(Chlorobenzene.getFluid(1000))
+                .output(dust, Salt, 2)
                 .fluidOutputs(Phenol.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .duration(120).EUt(VA[LV]).buildAndRegister();
+                .duration(220).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(MethylAcetate.getFluid(1000))
