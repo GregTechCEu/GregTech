@@ -223,7 +223,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         @Override
         protected void updateRecipeProgress() {
-            if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+            if (canWorkProgress() && drawEnergy(recipeEUt, true)) {
 
                 //drain lubricant and invalidate if it fails
                 if (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 72 == 0) {

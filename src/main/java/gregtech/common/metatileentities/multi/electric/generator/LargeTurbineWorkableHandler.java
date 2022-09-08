@@ -29,7 +29,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     protected void updateRecipeProgress() {
-        if (canRecipeProgress) {
+        if (canWorkProgress()) {
             // turbines can void energy
             drawEnergy(recipeEUt, false);
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it

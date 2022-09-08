@@ -1,11 +1,8 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IWorkable;
-import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.recipes.Recipe;
@@ -19,9 +16,7 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
@@ -34,7 +29,7 @@ import java.util.List;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
-public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
+public abstract class AbstractRecipeLogic extends AbstractWorkableLogic implements IParallelableRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -48,18 +43,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private long overclockVoltage = 0;
     private int[] overclockResults;
 
-    protected boolean canRecipeProgress = true;
-
-    protected int progressTime;
-    protected int maxProgressTime;
     protected int recipeEUt;
     protected List<FluidStack> fluidOutputs;
     protected NonNullList<ItemStack> itemOutputs;
 
-    protected boolean isActive;
-    protected boolean workingEnabled = true;
-    protected boolean hasNotEnoughEnergy;
-    protected boolean wasActiveAndNeedsUpdate;
     protected boolean isOutputsFull;
     protected boolean invalidInputsForRecipes;
 
@@ -108,49 +95,41 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return metaTileEntity.getExportFluids();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "RecipeMapWorkable";
     }
 
     @Override
-    public int getNetworkID() {
-        return TraitNetworkIds.TRAIT_ID_WORKABLE;
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE) {
-            return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
-        } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        } else if (capability == GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC) {
             return GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC.cast(this);
         }
-        return null;
+        return super.getCapability(capability);
     }
 
     @Override
-    public void update() {
-        World world = getMetaTileEntity().getWorld();
-        if (world != null && !world.isRemote) {
-            if (workingEnabled) {
-                if (getMetaTileEntity().getOffsetTimer() % 20 == 0)
-                    this.canRecipeProgress = canProgressRecipe();
+    protected boolean drawPerTick(boolean simulate) {
+        return drawEnergy(this.recipeEUt, simulate);
+    }
 
-                if (progressTime > 0) {
-                    updateRecipeProgress();
-                }
-                //check everything that would make a recipe never start here.
-                if (progressTime == 0 && shouldSearchForRecipes()) {
-                    trySearchNewRecipe();
-                }
-            }
-            if (wasActiveAndNeedsUpdate) {
-                this.wasActiveAndNeedsUpdate = false;
-                setActive(false);
-            }
+    @Override
+    protected void completeWork() {
+        super.completeWork();
+        completeRecipe();
+    }
+
+    @Override
+    protected void resetNotEnoughEnergy() {
+        if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19L * recipeEUt) {
+            this.hasNotEnoughEnergy = false;
         }
+    }
+
+    @Override
+    protected boolean isWorkEnergyConsuming() {
+        return this.recipeEUt > 0;
     }
 
     /**
@@ -164,6 +143,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     public Recipe getPreviousRecipe() {
         return previousRecipe;
+    }
+
+    @Override
+    protected boolean shouldSearchForWork() {
+        return shouldSearchForRecipes();
     }
 
     protected boolean shouldSearchForRecipes() {
@@ -218,29 +202,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.parallelRecipesPerformed = amount;
     }
 
-    protected void updateRecipeProgress() {
-        if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
-            drawEnergy(recipeEUt, false);
-            //as recipe starts with progress on 1 this has to be > only not => to compensate for it
-            if (++progressTime > maxProgressTime) {
-                completeRecipe();
-            }
-            if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19L * recipeEUt) {
-                this.hasNotEnoughEnergy = false;
-            }
-        } else if (recipeEUt > 0) {
-            //only set hasNotEnoughEnergy if this recipe is consuming recipe
-            //generators always have enough energy
-            this.hasNotEnoughEnergy = true;
-            //if current progress value is greater than 2, decrement it by 2
-            if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy) {
-                    this.progressTime = 1;
-                } else {
-                    this.progressTime = Math.max(1, progressTime - 2);
-                }
-            }
-        }
+    @Override
+    protected boolean canWorkProgress() {
+        return canProgressRecipe();
     }
 
     /**
@@ -264,12 +228,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
     }
 
+    @Override
+    protected void forceWorkRecheck() {
+        forceRecipeRecheck();
+    }
+
     /**
      * used to force the workable to search for new recipes
      * use sparingly
      */
     public void forceRecipeRecheck() {
         this.previousRecipe = null;
+        trySearchNewRecipe();
+    }
+
+    @Override
+    protected void searchForWork() {
         trySearchNewRecipe();
     }
 
@@ -342,7 +316,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe was successfully prepared, else false
      */
     protected boolean prepareRecipe(Recipe recipe) {
-
         recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         // Pass in the trimmed recipe to the parallel logic
@@ -659,82 +632,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected void completeRecipe() {
         GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
         GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
-        this.progressTime = 0;
-        setMaxProgress(0);
         this.recipeEUt = 0;
         this.fluidOutputs = null;
         this.itemOutputs = null;
-        this.hasNotEnoughEnergy = false;
-        this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
         this.overclockResults = new int[]{0, 0};
     }
 
-    public double getProgressPercent() {
-        return getMaxProgress() == 0 ? 0.0 : getProgress() / (getMaxProgress() * 1.0);
-    }
-
-    @Override
-    public int getProgress() {
-        return progressTime;
-    }
-
-    @Override
-    public int getMaxProgress() {
-        return maxProgressTime;
-    }
-
     public int getRecipeEUt() {
         return recipeEUt;
-    }
-
-    /**
-     * sets the amount of ticks of running time to finish the recipe
-     *
-     * @param maxProgress the amount of ticks to set
-     */
-    public void setMaxProgress(int maxProgress) {
-        this.maxProgressTime = maxProgress;
-        metaTileEntity.markDirty();
-    }
-
-    protected void setActive(boolean active) {
-        if (this.isActive != active) {
-            this.isActive = active;
-            metaTileEntity.markDirty();
-            World world = metaTileEntity.getWorld();
-            if (world != null && !world.isRemote) {
-                writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
-            }
-        }
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.workingEnabled = workingEnabled;
-        metaTileEntity.markDirty();
-        World world = metaTileEntity.getWorld();
-        if (world != null && !world.isRemote) {
-            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
-        }
-    }
-
-    public boolean isHasNotEnoughEnergy() {
-        return hasNotEnoughEnergy;
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public boolean isWorking() {
-        return isActive && !hasNotEnoughEnergy && workingEnabled;
     }
 
     /**
@@ -804,38 +710,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
-            this.isActive = buf.readBoolean();
-            getMetaTileEntity().scheduleRenderUpdate();
-        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
-            this.workingEnabled = buf.readBoolean();
-            getMetaTileEntity().scheduleRenderUpdate();
-        }
-    }
-
-    @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
-        buf.writeBoolean(this.isActive);
-        buf.writeBoolean(this.workingEnabled);
-    }
-
-    @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
-        this.isActive = buf.readBoolean();
-        this.workingEnabled = buf.readBoolean();
-    }
-
-    @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setBoolean("WorkEnabled", workingEnabled);
-        compound.setBoolean("CanRecipeProgress", canRecipeProgress);
+        NBTTagCompound compound = super.serializeNBT();
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
         compound.setLong(OVERCLOCK_VOLTAGE, this.overclockVoltage);
         if (progressTime > 0) {
-            compound.setInteger("Progress", progressTime);
-            compound.setInteger("MaxProgress", maxProgressTime);
             compound.setInteger("RecipeEUt", this.recipeEUt);
             NBTTagList itemOutputsList = new NBTTagList();
             for (ItemStack itemOutput : itemOutputs) {
@@ -853,15 +732,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     @Override
     public void deserializeNBT(@Nonnull NBTTagCompound compound) {
-        this.workingEnabled = compound.getBoolean("WorkEnabled");
-        this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
-        this.progressTime = compound.getInteger("Progress");
+        super.deserializeNBT(compound);
         this.allowOverclocking = compound.getBoolean(ALLOW_OVERCLOCKING);
         this.overclockVoltage = compound.getLong(OVERCLOCK_VOLTAGE);
-        this.isActive = false;
         if (progressTime > 0) {
-            this.isActive = true;
-            this.maxProgressTime = compound.getInteger("MaxProgress");
             this.recipeEUt = compound.getInteger("RecipeEUt");
             NBTTagList itemOutputsList = compound.getTagList("ItemOutputs", Constants.NBT.TAG_COMPOUND);
             this.itemOutputs = NonNullList.create();
@@ -875,5 +749,4 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
         }
     }
-
 }

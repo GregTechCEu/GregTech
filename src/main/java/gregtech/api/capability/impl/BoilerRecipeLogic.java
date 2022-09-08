@@ -257,7 +257,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == BOILER_HEAT) {
             this.currentHeat = buf.readVarInt();

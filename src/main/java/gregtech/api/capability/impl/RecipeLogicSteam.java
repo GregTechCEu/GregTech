@@ -95,7 +95,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.NEEDS_VENTING) {
             this.needsVenting = buf.readBoolean();
