@@ -302,7 +302,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the previous recipe is valid and can be run again
      */
     protected boolean checkPreviousRecipe() {
-        return this.previousRecipe != null && this.previousRecipe.matches(false, getInputInventory(), getInputTank());
+        if (this.previousRecipe == null) return false;
+        if (this.previousRecipe.getEUt() > this.getMaxVoltage()) return false;
+        return this.previousRecipe.matches(false, getInputInventory(), getInputTank());
     }
 
     /**
