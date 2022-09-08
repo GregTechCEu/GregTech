@@ -10,10 +10,10 @@ public class ItemFluidContainer implements IItemContainerItemProvider {
     public ItemStack getContainerItem(ItemStack itemStack) {
         IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (handler != null) {
-            FluidStack drained = handler.drain(1000, false);
+            FluidStack drained = handler.drain(1000, true);
             if (drained == null || drained.amount != 1000) return ItemStack.EMPTY;
             return handler.getContainer();
         }
-        return itemStack;
+        return ItemStack.EMPTY;
     }
 }

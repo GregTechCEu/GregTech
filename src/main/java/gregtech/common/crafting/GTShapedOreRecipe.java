@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Set;
 
+import static net.minecraftforge.common.ForgeHooks.getContainerItem;
+
 public class GTShapedOreRecipe extends ShapedOreRecipe {
     boolean isClearing;
 
@@ -147,7 +149,18 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
-            return super.getRemainingItems(inv);
+            NonNullList<ItemStack> remainingItems = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+            for (int i = 0; i < remainingItems.size(); i++) {
+
+                ItemStack oldIS = inv.getStackInSlot(i);
+                if (oldIS.getItem().hasContainerItem(oldIS)) {
+                    oldIS = oldIS.copy();
+                    oldIS.setCount(1);
+                }
+                ItemStack newIS = getContainerItem(oldIS);
+                remainingItems.set(i, newIS);
+            }
+            return remainingItems;
         }
     }
 }

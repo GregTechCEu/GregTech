@@ -26,6 +26,8 @@ public class GTFluidCraftingIngredient extends Ingredient {
         if (testedStack == null || testedStack.isEmpty()) return false;
         IFluidHandlerItem handler = null;
         if (testedStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            testedStack = testedStack.copy();
+            testedStack.setCount(1);
             handler = testedStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         }
         if (handler != null) {
