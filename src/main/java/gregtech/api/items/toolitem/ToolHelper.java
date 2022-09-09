@@ -7,6 +7,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.enchants.EnchantmentHardHammer;
+import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -269,12 +270,12 @@ public class ToolHelper {
         return tool.getItem().getToolClasses(tool).containsAll(new ObjectArraySet<String>(toolClasses));
     }
 
-    public static AoEDefinition getMaxAoEDefinition(ItemStack stack) {
-        return AoEDefinition.readMax(getBehavioursTag(stack));
+    public static AoESymmetrical getMaxAoEDefinition(ItemStack stack) {
+        return AoESymmetrical.readMax(getBehavioursTag(stack));
     }
 
-    public static AoEDefinition getAoEDefinition(ItemStack stack) {
-        return AoEDefinition.read(getBehavioursTag(stack), getMaxAoEDefinition(stack));
+    public static AoESymmetrical getAoEDefinition(ItemStack stack) {
+        return AoESymmetrical.read(getBehavioursTag(stack), getMaxAoEDefinition(stack));
     }
 
     /**
@@ -293,8 +294,8 @@ public class ToolHelper {
         return false;
     }
 
-    public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, AoEDefinition aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
-        if (aoeDefinition != AoEDefinition.none() && rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
+    public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
+        if (aoeDefinition != AoESymmetrical.none() && rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
             int column = aoeDefinition.column;
             int row = aoeDefinition.row;
             int layer = aoeDefinition.layer;
@@ -352,8 +353,8 @@ public class ToolHelper {
     }
 
     public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, EntityPlayer player) {
-        AoEDefinition aoeDefiniton = getAoEDefinition(stack);
-        if (aoeDefiniton == AoEDefinition.none()) {
+        AoESymmetrical aoeDefiniton = getAoEDefinition(stack);
+        if (aoeDefiniton == AoESymmetrical.none()) {
             return Collections.emptySet();
         }
         Vec3d lookPos = player.getPositionEyes(1F);
