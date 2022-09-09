@@ -5,7 +5,6 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.common.ConfigHolder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
@@ -14,9 +13,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nonnull;
 
 public abstract class AbstractWorkableLogic extends MTETrait implements IWorkable {
-
-    protected int progressTime;
-    protected int maxProgressTime;
 
     protected boolean canWorkProgress = true;
 
@@ -38,11 +34,10 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
                     this.canWorkProgress = canWorkProgress();
                 }
 
-                if (progressTime > 0) {
-                    updateRecipeProgress();
-                }
+                updateRecipeProgress();
+
                 //check everything that would make a recipe never start here.
-                if (progressTime == 0 && shouldSearchForWork()) {
+                if (shouldSearchForWork()) {
                     searchForWork();
                 }
             }
@@ -64,23 +59,11 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
     protected void updateRecipeProgress() {
         if (canWorkProgress && drawPerTick(true)) {
             drawPerTick(false);
-            //as recipe starts with progress on 1 this has to be > only not => to compensate for it
-            if (++progressTime > maxProgressTime) {
-                completeWork();
-            }
             resetNotEnoughEnergy();
         } else if (isWorkEnergyConsuming()) {
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
             //generators always have enough energy
             this.hasNotEnoughEnergy = true;
-            //if current progress value is greater than 2, decrement it by 2
-            if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy) {
-                    this.progressTime = 1;
-                } else {
-                    this.progressTime = Math.max(1, progressTime - 2);
-                }
-            }
         }
     }
 
@@ -112,18 +95,6 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
      * @return true if the workable's work consumes energy, otherwise false
      */
     protected abstract boolean isWorkEnergyConsuming();
-
-    /**
-     * Completes the work which was being run
-     * <p>
-     * Performs actions done upon work completion
-     */
-    protected void completeWork() {
-        this.progressTime = 0;
-        setMaxProgress(0);
-        this.hasNotEnoughEnergy = false;
-        this.wasActiveAndNeedsUpdate = true;
-    }
 
     /**
      * @return true if this workable should search for new work, otherwise false
@@ -160,39 +131,6 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
         if (world != null && !world.isRemote) {
             writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
         }
-    }
-
-    /**
-     * @return the amount of ticks progressed towards completing work
-     */
-    @Override
-    public int getProgress() {
-        return progressTime;
-    }
-
-    /**
-     * @return the amount of ticks required to progress in order to complete work
-     */
-    @Override
-    public int getMaxProgress() {
-        return maxProgressTime;
-    }
-
-    /**
-     * Sets the amount of ticks of running time to finish the work
-     *
-     * @param maxProgress the amount of ticks to set
-     */
-    public void setMaxProgress(int maxProgress) {
-        this.maxProgressTime = maxProgress;
-        metaTileEntity.markDirty();
-    }
-
-    /**
-     * @return the percentage of current progress towards the maximum
-     */
-    public double getProgressPercent() {
-        return getMaxProgress() == 0 ? 0.0 : getProgress() / (getMaxProgress() * 1.0);
     }
 
     /**
@@ -263,10 +201,6 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
         NBTTagCompound compound = new NBTTagCompound();
         compound.setBoolean("WorkEnabled", workingEnabled);
         compound.setBoolean("CanRecipeProgress", canWorkProgress);
-        if (progressTime > 0) {
-            compound.setInteger("Progress", progressTime);
-            compound.setInteger("MaxProgress", maxProgressTime);
-        }
         return compound;
     }
 
@@ -274,12 +208,7 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
     public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         this.workingEnabled = compound.getBoolean("WorkEnabled");
         this.canWorkProgress = compound.getBoolean("CanRecipeProgress");
-        this.progressTime = compound.getInteger("Progress");
         this.isActive = false;
-        if (progressTime > 0) {
-            this.isActive = true;
-            this.maxProgressTime = compound.getInteger("MaxProgress");
-        }
     }
 
     @Override

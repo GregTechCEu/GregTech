@@ -29,7 +29,7 @@ import java.util.List;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
-public abstract class AbstractRecipeLogic extends AbstractWorkableLogic implements IParallelableRecipeLogic {
+public abstract class AbstractRecipeLogic extends AbstractWorkableProgressLogic implements IParallelableRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -147,7 +147,7 @@ public abstract class AbstractRecipeLogic extends AbstractWorkableLogic implemen
 
     @Override
     protected boolean shouldSearchForWork() {
-        return shouldSearchForRecipes();
+        return super.shouldSearchForWork() && shouldSearchForRecipes();
     }
 
     protected boolean shouldSearchForRecipes() {
