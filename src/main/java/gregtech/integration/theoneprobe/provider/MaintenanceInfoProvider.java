@@ -4,8 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
+import gregtech.api.unification.material.Materials;
 import gregtech.common.ConfigHolder;
-import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -20,12 +21,12 @@ import javax.annotation.Nonnull;
 
 public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance> {
 
-    private static final ItemStack WRENCH = MetaItems.WRENCH.getStackForm();
-    private static final ItemStack SCREWDRIVER = MetaItems.SCREWDRIVER.getStackForm();
-    private static final ItemStack SOFT_MALLET = MetaItems.SOFT_HAMMER.getStackForm();
-    private static final ItemStack HARD_HAMMER = MetaItems.HARD_HAMMER.getStackForm();
-    private static final ItemStack WIRE_CUTTERS = MetaItems.WIRE_CUTTER.getStackForm();
-    private static final ItemStack CROWBAR = MetaItems.CROWBAR.getStackForm();
+    private static final ItemStack WRENCH = ToolItems.WRENCH.get(Materials.Neutronium);
+    private static final ItemStack SCREWDRIVER = ToolItems.SCREWDRIVER.get(Materials.Neutronium);
+    private static final ItemStack SOFT_MALLET = ToolItems.SOFT_MALLET.get(Materials.Neutronium);
+    private static final ItemStack HARD_HAMMER = ToolItems.HARD_HAMMER.get(Materials.Neutronium);
+    private static final ItemStack WIRE_CUTTERS = ToolItems.WIRE_CUTTER.get(Materials.Neutronium);
+    private static final ItemStack CROWBAR = ToolItems.CROWBAR.get(Materials.Neutronium);
 
     @Override
     public String getID() {
