@@ -1,4 +1,4 @@
-package gregtech.api.items.toolitem;
+package gregtech.api.items.toolitem.aoe;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.nbt.NBTTagCompound;
@@ -6,11 +6,11 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 
-public class AoEDefinition {
+public class AoESymmetrical {
 
-    private static final AoEDefinition NONE = new AoEDefinition();
+    private static final AoESymmetrical NONE = new AoESymmetrical();
 
-    public static AoEDefinition readMax(NBTTagCompound tag) {
+    public static AoESymmetrical readMax(NBTTagCompound tag) {
         int column = 0, row = 0, layer = 0;
         if (tag.hasKey("AoEMaxColumn", Constants.NBT.TAG_INT)) {
             column = tag.getInteger("AoEMaxColumn");
@@ -21,10 +21,10 @@ public class AoEDefinition {
         if (tag.hasKey("AoEMaxLayer", Constants.NBT.TAG_INT)) {
             layer = tag.getInteger("AoEMaxLayer");
         }
-        return column == 0 && row == 0 && layer == 0 ? NONE : new AoEDefinition(column, row, layer);
+        return column == 0 && row == 0 && layer == 0 ? NONE : new AoESymmetrical(column, row, layer);
     }
 
-    public static AoEDefinition read(NBTTagCompound tag, @Nullable AoEDefinition defaultDefinition) {
+    public static AoESymmetrical read(NBTTagCompound tag, @Nullable AoESymmetrical defaultDefinition) {
         int column, row, layer;
         if (tag.hasKey("AoEColumn", Constants.NBT.TAG_INT)) {
             column = tag.getInteger("AoEColumn");
@@ -44,31 +44,31 @@ public class AoEDefinition {
             layer = defaultDefinition == null ? 0 : defaultDefinition.layer;
             tag.setInteger("AoELayer", layer);
         }
-        return column == 0 && row == 0 && layer == 0 ? NONE : new AoEDefinition(column, row, layer);
+        return column == 0 && row == 0 && layer == 0 ? NONE : new AoESymmetrical(column, row, layer);
     }
 
-    public static int getColumn(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static int getColumn(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (tag.hasKey("AoEColumn", Constants.NBT.TAG_INT)) {
             return tag.getInteger("AoEColumn");
         }
         return defaultDefinition.column;
     }
 
-    public static int getRow(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static int getRow(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (tag.hasKey("AoERow", Constants.NBT.TAG_INT)) {
             return tag.getInteger("AoERow");
         }
         return defaultDefinition.row;
     }
 
-    public static int getLayer(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static int getLayer(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (tag.hasKey("AoELayer", Constants.NBT.TAG_INT)) {
             return tag.getInteger("AoELayer");
         }
         return defaultDefinition.layer;
     }
 
-    public static void increaseColumn(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static void increaseColumn(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (!tag.hasKey("AoEColumn", Constants.NBT.TAG_INT)) {
             tag.setInteger("AoEColumn", defaultDefinition.column);
         } else {
@@ -79,7 +79,7 @@ public class AoEDefinition {
         }
     }
 
-    public static void increaseRow(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static void increaseRow(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (!tag.hasKey("AoERow", Constants.NBT.TAG_INT)) {
             tag.setInteger("AoERow", defaultDefinition.row);
         } else {
@@ -90,7 +90,7 @@ public class AoEDefinition {
         }
     }
 
-    public static void increaseLayer(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static void increaseLayer(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (!tag.hasKey("AoELayer", Constants.NBT.TAG_INT)) {
             tag.setInteger("AoELayer", defaultDefinition.layer);
         } else {
@@ -101,7 +101,7 @@ public class AoEDefinition {
         }
     }
 
-    public static void decreaseColumn(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static void decreaseColumn(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (!tag.hasKey("AoEColumn", Constants.NBT.TAG_INT)) {
             tag.setInteger("AoEColumn", defaultDefinition.column);
         } else {
@@ -112,7 +112,7 @@ public class AoEDefinition {
         }
     }
 
-    public static void decreaseRow(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static void decreaseRow(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (!tag.hasKey("AoERow", Constants.NBT.TAG_INT)) {
             tag.setInteger("AoERow", defaultDefinition.row);
         } else {
@@ -123,7 +123,7 @@ public class AoEDefinition {
         }
     }
 
-    public static void decreaseLayer(NBTTagCompound tag, AoEDefinition defaultDefinition) {
+    public static void decreaseLayer(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         if (!tag.hasKey("AoELayer", Constants.NBT.TAG_INT)) {
             tag.setInteger("AoELayer", defaultDefinition.layer);
         } else {
@@ -134,26 +134,26 @@ public class AoEDefinition {
         }
     }
 
-    public static AoEDefinition none() {
+    public static AoESymmetrical none() {
         return NONE;
     }
 
-    public static AoEDefinition of(int column, int row, int layer) {
+    public static AoESymmetrical of(int column, int row, int layer) {
         Preconditions.checkArgument(column >= 0, "Height cannot be negative.");
         Preconditions.checkArgument(row >= 0, "Width cannot be negative.");
         Preconditions.checkArgument(layer >= 0, "Depth cannot be negative.");
-        return column == 0 && row == 0 && layer == 0 ? NONE : new AoEDefinition(column, row, layer);
+        return column == 0 && row == 0 && layer == 0 ? NONE : new AoESymmetrical(column, row, layer);
     }
 
     public final int column, row, layer;
 
-    private AoEDefinition() {
+    private AoESymmetrical() {
         this.column = 0;
         this.row = 0;
         this.layer = 0;
     }
 
-    private AoEDefinition(int column, int row, int layer) {
+    private AoESymmetrical(int column, int row, int layer) {
         this.column = column;
         this.row = row;
         this.layer = layer;

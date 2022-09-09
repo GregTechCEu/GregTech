@@ -128,7 +128,7 @@ public class ToolItems {
                 .symbol('r')
                 .toolClasses(ToolClasses.SOFT_MALLET));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).efficiencyMultiplier(0.4F))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).efficiencyMultiplier(0.4F))
                 .toolClasses(ToolClasses.PICKAXE));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse())
@@ -167,7 +167,7 @@ public class ToolItems {
                 .symbol('x')
                 .toolClasses(ToolClasses.WIRE_CUTTER));
         SICKLE = register(ItemGTTool.Builder.of(GTValues.MODID, "sickle") //TODO Tools PR: Sickle AOE does not work
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().aoeDefinition(2, 2, 2))
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().aoeChained(20))
                 .toolClasses(ToolClasses.SICKLE, ToolClasses.SCYTHE, ToolClasses.SHEARS, ToolClasses.HOE));
         KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
                 .toolStats(b -> b.suitableForCrafting())
@@ -183,35 +183,35 @@ public class ToolItems {
                 .oreDict("craftingToolPlunger")
                 .toolClasses(ToolClasses.PLUNGER));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 1).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(2));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(2, 2, 2).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(3));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(3, 3, 3).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(3, 3, 3).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(4));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(4, 4, 4).efficiencyMultiplier(5.0F).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(4, 4, 4).efficiencyMultiplier(5.0F).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(5));
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .toolClasses(ToolClasses.AXE)
                 .electric(1));
         CHAINSAW_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 1).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 1).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses(ToolClasses.AXE)
                 .electric(2));
         CHAINSAW_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 2).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(2, 2, 2).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses(ToolClasses.AXE)
                 .electric(3));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")

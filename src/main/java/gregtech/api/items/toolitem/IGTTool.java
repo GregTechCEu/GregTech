@@ -19,6 +19,7 @@ import gregtech.api.gui.widgets.DynamicLabelWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
+import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -129,7 +130,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set behaviours
         NBTTagCompound behaviourTag = getBehavioursTag(stack);
-        AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
+        AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
         behaviourTag.setInteger(MAX_AOE_ROW_KEY, aoeDefinition.row);
@@ -280,12 +281,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return harvestLevel;
     }
 
-    default AoEDefinition getMaxAoEDefinition(ItemStack stack) {
-        return AoEDefinition.readMax(getToolTag(stack));
+    default AoESymmetrical getMaxAoEDefinition(ItemStack stack) {
+        return AoESymmetrical.readMax(getToolTag(stack));
     }
 
-    default AoEDefinition getAoEDefinition(ItemStack stack) {
-        return AoEDefinition.read(getToolTag(stack), getMaxAoEDefinition(stack));
+    default AoESymmetrical getAoEDefinition(ItemStack stack) {
+        return AoESymmetrical.read(getToolTag(stack), getMaxAoEDefinition(stack));
     }
 
     // Item.class methods
@@ -441,7 +442,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
-            if (getMaxAoEDefinition(stack) != AoEDefinition.none()) {
+            if (getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
                 PlayerInventoryHolder.openHandItemUI(player, hand);
                 return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
@@ -473,8 +474,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (behavioursTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
             behaviours.add(" " + I18n.format("metaitem.tool.behavior.relocate_mining"));
         }
-        AoEDefinition aoeDefinition = ToolHelper.getAoEDefinition(stack);
-        if (aoeDefinition != AoEDefinition.none()) {
+        AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
+        if (aoeDefinition != AoESymmetrical.none()) {
             behaviours.add(" " + I18n.format("metaitem.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer * 2 + 1));
         }
         if (!behaviours.isEmpty()) {
@@ -531,38 +532,38 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         NBTTagCompound tag = getToolTag(holder.getCurrentItem());
-        AoEDefinition defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
+        AoESymmetrical defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
         return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
                 .label(10, 10, "Column")
                 .label(52, 10, "Row")
                 .label(82, 10, "Layer")
                 .widget(new ClickButtonWidget(15, 24, 20, 20, "+", data -> {
-                    AoEDefinition.increaseColumn(tag, defaultDefinition);
+                    AoESymmetrical.increaseColumn(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
                 .widget(new ClickButtonWidget(15, 44, 20, 20, "-", data -> {
-                    AoEDefinition.decreaseColumn(tag, defaultDefinition);
+                    AoESymmetrical.decreaseColumn(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
                 .widget(new ClickButtonWidget(50, 24, 20, 20, "+", data -> {
-                    AoEDefinition.increaseRow(tag, defaultDefinition);
+                    AoESymmetrical.increaseRow(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
                 .widget(new ClickButtonWidget(50, 44, 20, 20, "-", data -> {
-                    AoEDefinition.decreaseRow(tag, defaultDefinition);
+                    AoESymmetrical.decreaseRow(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
                 .widget(new ClickButtonWidget(85, 24, 20, 20, "+", data -> {
-                    AoEDefinition.increaseLayer(tag, defaultDefinition);
+                    AoESymmetrical.increaseLayer(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
                 .widget(new ClickButtonWidget(85, 44, 20, 20, "-", data -> {
-                    AoEDefinition.decreaseLayer(tag, defaultDefinition);
+                    AoESymmetrical.decreaseLayer(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
-                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(AoEDefinition.getColumn(getToolTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(AoEDefinition.getRow(getToolTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(93, 65, () -> Integer.toString(AoEDefinition.getLayer(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(AoESymmetrical.getColumn(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(AoESymmetrical.getRow(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(93, 65, () -> Integer.toString(AoESymmetrical.getLayer(getToolTag(holder.getCurrentItem()), defaultDefinition))))
                 .build(holder, entityPlayer);
     }
 

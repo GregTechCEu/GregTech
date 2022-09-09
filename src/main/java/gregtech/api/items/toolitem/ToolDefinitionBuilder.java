@@ -1,6 +1,8 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.ImmutableList;
+import gregtech.api.items.toolitem.aoe.AoEChained;
+import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
@@ -35,7 +37,8 @@ public class ToolDefinitionBuilder {
     private float attackSpeed = 0F;
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
-    private AoEDefinition aoeDefinition = AoEDefinition.none();
+    private AoESymmetrical aoeSymmetrical = AoESymmetrical.none();
+    private AoEChained aoeChained = AoEChained.none();
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
     private final Set<Material> effectiveMaterials = new ObjectOpenHashSet<>();
     private Predicate<IBlockState> effectiveStates;
@@ -132,13 +135,22 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder aoeDefinition(AoEDefinition aoeDefinition) {
-        this.aoeDefinition = aoeDefinition;
+    public ToolDefinitionBuilder aoeSymmetrical(AoESymmetrical aoeSymmetrical) {
+        this.aoeSymmetrical = aoeSymmetrical;
         return this;
     }
 
-    public ToolDefinitionBuilder aoeDefinition(int column, int row, int layer) {
-        return aoeDefinition(AoEDefinition.of(column, row, layer));
+    public ToolDefinitionBuilder aoeSymmetrical(int column, int row, int layer) {
+        return aoeSymmetrical(AoESymmetrical.of(column, row, layer));
+    }
+
+    public ToolDefinitionBuilder aoeChained(AoEChained aoeChained) {
+        this.aoeChained = aoeChained;
+        return this;
+    }
+
+    public ToolDefinitionBuilder aoeChained(int limit) {
+        return aoeChained(AoEChained.of(limit));
     }
 
     public ToolDefinitionBuilder effectiveBlocks(Block... blocks) {
@@ -174,7 +186,8 @@ public class ToolDefinitionBuilder {
             private final float attackSpeed = ToolDefinitionBuilder.this.attackSpeed;
             private final boolean sneakBypassUse = ToolDefinitionBuilder.this.sneakBypassUse;
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
-            private final AoEDefinition aoeDefinition = ToolDefinitionBuilder.this.aoeDefinition;
+            private final AoESymmetrical aoeSymmetrical = ToolDefinitionBuilder.this.aoeSymmetrical;
+            private final AoEChained aoeChained = ToolDefinitionBuilder.this.aoeChained;
             private final Predicate<IBlockState> effectiveStatePredicate;
 
             {
@@ -277,8 +290,13 @@ public class ToolDefinitionBuilder {
             }
 
             @Override
-            public AoEDefinition getAoEDefinition(ItemStack stack) {
-                return aoeDefinition;
+            public AoESymmetrical getAoEDefinition(ItemStack stack) {
+                return aoeSymmetrical;
+            }
+
+            @Override
+            public AoEChained getAoEChainedDefinition(ItemStack stack) {
+                return aoeChained;
             }
         };
     }
