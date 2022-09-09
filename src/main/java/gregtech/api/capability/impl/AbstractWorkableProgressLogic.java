@@ -15,6 +15,13 @@ public abstract class AbstractWorkableProgressLogic extends AbstractWorkableLogi
         super(metaTileEntity);
     }
 
+    @Override
+    protected void updateWorkingTick() {
+        if (this.progressTime > 0) {
+            updateRecipeProgress();
+        }
+    }
+
     /**
      * Updates work progress towards completion
      */

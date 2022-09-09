@@ -34,7 +34,7 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
                     this.canWorkProgress = canWorkProgress();
                 }
 
-                updateRecipeProgress();
+                updateWorkingTick();
 
                 //check everything that would make a recipe never start here.
                 if (shouldSearchForWork()) {
@@ -54,9 +54,9 @@ public abstract class AbstractWorkableLogic extends MTETrait implements IWorkabl
     protected abstract boolean canWorkProgress();
 
     /**
-     * Updates work progress towards completion
+     * Performs updates every tick when working
      */
-    protected void updateRecipeProgress() {
+    protected void updateWorkingTick() {
         if (canWorkProgress && drawPerTick(true)) {
             drawPerTick(false);
             resetNotEnoughEnergy();
