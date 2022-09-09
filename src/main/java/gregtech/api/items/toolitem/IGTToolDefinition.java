@@ -1,5 +1,7 @@
 package gregtech.api.items.toolitem;
 
+import gregtech.api.items.toolitem.aoe.AoEChained;
+import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -72,8 +74,12 @@ public interface IGTToolDefinition {
         return 0.0F;
     }
 
-    default AoEDefinition getAoEDefinition(ItemStack stack) {
-        return AoEDefinition.none();
+    default AoESymmetrical getAoEDefinition(ItemStack stack) {
+        return AoESymmetrical.none();
+    }
+
+    default AoEChained getAoEChainedDefinition(ItemStack stack) {
+        return AoEChained.none();
     }
 
     /**
