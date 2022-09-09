@@ -522,7 +522,7 @@ public class ToolHelper {
             if (behaviourTag.getBoolean(TORCH_PLACING_CACHE_SLOT_KEY)) {
                 cachedTorchSlot = behaviourTag.getInteger(TORCH_PLACING_CACHE_SLOT_KEY);
                 if (cachedTorchSlot < 0) {
-                    slotStack = player.inventory.offHandInventory.get(Math.abs(cachedTorchSlot) + 1);
+                    slotStack = player.inventory.offHandInventory.get(0);
                 } else {
                     slotStack = player.inventory.mainInventory.get(cachedTorchSlot);
                 }
@@ -568,7 +568,7 @@ public class ToolHelper {
                             slotState = world.getBlockState(pos);
                             SoundType soundtype = slotState.getBlock().getSoundType(slotState, world, pos, player);
                             world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-                            slotStack.shrink(1);
+                            if (!player.isCreative()) slotStack.shrink(1);
                             return true;
                         }
                     }

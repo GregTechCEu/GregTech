@@ -300,9 +300,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     return getTotalToolSpeed(stack);
                 } else {
                     net.minecraft.block.material.Material material = state.getMaterial();
-                    return material != net.minecraft.block.material.Material.PLANTS && material != net.minecraft.block.material.Material.VINE && material != net.minecraft.block.material.Material.CORAL && material != net.minecraft.block.material.Material.LEAVES && material != net.minecraft.block.material.Material.GOURD ? 1.0F : 1.5F;
+                    return material != net.minecraft.block.material.Material.PLANTS &&
+                            material != net.minecraft.block.material.Material.VINE &&
+                            material != net.minecraft.block.material.Material.CORAL &&
+                            material != net.minecraft.block.material.Material.LEAVES &&
+                            material != net.minecraft.block.material.Material.GOURD ? 1.0F : 1.5F;
                 }
-            } else if (state.getBlock().isToolEffective(type, state)) {
+            } else if (state.getBlock().isToolEffective(type, state) || (type.equals(ToolClasses.PICKAXE) && state.getMaterial() == net.minecraft.block.material.Material.ANVIL)) {
                 return getTotalToolSpeed(stack);
             }
         }
