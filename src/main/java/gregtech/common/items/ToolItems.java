@@ -46,6 +46,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -188,19 +189,19 @@ public class ToolItems {
                 .toolClasses(ToolClasses.DRILL)
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 1).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 2).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(2));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(2, 2, 2).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(2, 2, 4).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(3));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(3, 3, 3).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(3, 3, 6).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(4));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(4, 4, 4).efficiencyMultiplier(5.0F).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(4, 4, 8).efficiencyMultiplier(5.0F).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
                 .toolClasses(ToolClasses.DRILL)
                 .electric(5));
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
@@ -246,8 +247,13 @@ public class ToolItems {
                 .electric(1));
     }
 
-    private static IGTTool register(ToolBuilder<?> builder) {
+    private static IGTTool register(@Nonnull ToolBuilder<?> builder) {
         IGTTool tool = builder.build();
+        TOOLS.add(tool);
+        return tool;
+    }
+
+    private static IGTTool register(@Nonnull IGTTool tool) {
         TOOLS.add(tool);
         return tool;
     }

@@ -408,6 +408,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return stack.copy();
     }
 
+    default boolean definition$shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        if (getCharge(oldStack) != getCharge(newStack)) {
+            return slotChanged;
+        }
+        return !oldStack.equals(newStack);
+    }
+
+    default boolean definition$onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+        return false;
+    }
+
+    default boolean definition$canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player) {
+        return true;
+    }
+
     default boolean definition$isDamaged(ItemStack stack) {
         return definition$getDamage(stack) > 0;
     }
@@ -457,6 +472,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Client-side methods
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, ITooltipFlag flag) {
+        if (this.isElectric()) {
+            tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip",
+                    getCharge(stack),
+                    getMaxCharge(stack),
+                    GTValues.VNF[getElectricTier()]));
+            tooltip.add("");
+        }
+
         tooltip.add(I18n.format("metaitem.tool.behaves_like", stack.getItem().getToolClasses(stack).stream()
                 .map(s -> s.replaceAll("_", " "))
                 .map(WordUtils::capitalize)
@@ -480,7 +503,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
         if (aoeDefinition != AoESymmetrical.none()) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer * 2 + 1));
+            behaviours.add(" " + I18n.format("metaitem.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer + 1));
         }
         if (!behaviours.isEmpty()) {
             tooltip.add(I18n.format("metaitem.tool.behavior.behaviors"));
@@ -574,6 +597,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Extended Interfaces
 
     // IAEWrench
+
     /**
      * Check if the wrench can be used.
      *
@@ -587,6 +611,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     // IToolWrench
+
     /*** Called to ensure that the wrench can be used.
      *
      * @param player - The player doing the wrenching
@@ -607,7 +632,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      * @param wrench - The item stack that holds the wrench
      * @param rayTrace - The object that is being wrenched */
     @Override
-    default void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) { }
+    default void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
+    }
 
     // IToolHammer
     @Override
@@ -621,10 +647,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Override
-    default void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) { }
+    default void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
+    }
 
     @Override
-    default void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) { }
+    default void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) {
+    }
 
     // ITool
     @Override
@@ -633,7 +661,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Override
-    default void used(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) { }
+    default void used(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    }
 
     // IHideFacades
     @Override
@@ -642,6 +671,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     // IToolGrafter
+
     /**
      * Called by leaves to determine the increase in sapling droprate.
      *
