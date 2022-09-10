@@ -96,10 +96,10 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
             if (isElectric()) {
-                items.add(get(Materials.Neutronium, 50000L)); // TODO: change
+                items.add(get(Materials.Neutronium, Integer.MAX_VALUE));
             } else {
                 items.add(get(Materials.Neutronium));
             }

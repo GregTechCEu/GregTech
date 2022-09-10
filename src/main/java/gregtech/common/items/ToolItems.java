@@ -186,34 +186,42 @@ public class ToolItems {
                 .toolClasses(ToolClasses.PLUNGER));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 2).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(2));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(2, 2, 4).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(3));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(3, 3, 6).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
+                .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(4));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(4, 4, 8).efficiencyMultiplier(5.0F).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
+                .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(5));
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .sound(GTSounds.CHAINSAW_TOOL)
                 .toolClasses(ToolClasses.AXE)
                 .electric(1));
         CHAINSAW_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_mv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 1).efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .sound(GTSounds.CHAINSAW_TOOL)
                 .toolClasses(ToolClasses.AXE)
                 .electric(2));
         CHAINSAW_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_hv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(2, 2, 2).efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .sound(GTSounds.CHAINSAW_TOOL)
                 .toolClasses(ToolClasses.AXE)
                 .electric(3));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
