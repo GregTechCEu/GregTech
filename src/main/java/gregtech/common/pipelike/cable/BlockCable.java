@@ -3,8 +3,8 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
@@ -28,7 +28,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -95,19 +94,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
-        if (stack.getItem().getToolClasses(stack).contains(ToolClasses.SCREWDRIVER)) {
-            if (!entityPlayer.world.isRemote) {
-                boolean isOpen = pipeTile.isConnected(coverSide);
-                pipeTile.setConnection(coverSide, !isOpen, false);
-                ToolHelper.damageItem(stack, entityPlayer);
-                if (stack.getItem() instanceof IGTTool) {
-                    ((IGTTool) stack.getItem()).playSound(entityPlayer);
-                }
-            }
-            return EnumActionResult.SUCCESS;
-        }
-        return EnumActionResult.PASS;
+    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
     @Override
@@ -154,6 +142,13 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         }
         ItemStack stack = player.getHeldItemMainhand();
         return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockCable;
+    }
+
+    @Override
+    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
+        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
+                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
+                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
     @Override

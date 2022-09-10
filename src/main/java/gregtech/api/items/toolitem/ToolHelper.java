@@ -244,7 +244,7 @@ public class ToolHelper {
     }
 
     /**
-     * Return if any of the specified tool classes exists in the tool
+     * @return if any of the specified tool classes exists in the tool
      */
     public static boolean isTool(ItemStack tool, String... toolClasses) {
         if (toolClasses.length == 1) {
