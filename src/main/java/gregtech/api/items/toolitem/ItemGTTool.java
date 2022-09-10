@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 
 /**
  * GT-styled ItemTool (generic tool item).
- *
+ * <p>
  * Use this class if your tool isn't specialized (e.g. {@link ItemGTSword})
  */
 public class ItemGTTool extends ItemTool implements IGTTool {
@@ -106,120 +106,136 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         }
     }
 
+    @Nonnull
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName());
     }
 
     @Override
-    public float getDestroySpeed(ItemStack stack, IBlockState state) {
+    public float getDestroySpeed(@Nonnull ItemStack stack, @Nonnull IBlockState state) {
         return definition$getDestroySpeed(stack, state);
     }
 
     @Override
-    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
+    public boolean hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
         return definition$hitEntity(stack, target, attacker);
     }
 
     @Override
-    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+    public boolean onBlockStartBreak(@Nonnull ItemStack itemstack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         return definition$onBlockStartBreak(itemstack, pos, player);
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
+    public boolean onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {
         return definition$onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
+    public int getItemEnchantability(@Nonnull ItemStack stack) {
         return getTotalEnchantability(stack);
     }
 
     @Override
-    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+    public boolean getIsRepairable(@Nonnull ItemStack toRepair, @Nonnull ItemStack repair) {
         return definition$getIsRepairable(toRepair, repair);
     }
 
+    @Nonnull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
         return definition$getAttributeModifiers(slot, stack);
     }
 
     @Override
-    public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+    public int getHarvestLevel(@Nonnull ItemStack stack, @Nonnull String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
         return definition$getHarvestLevel(stack, toolClass, player, blockState);
     }
 
+    @Nonnull
     @Override
-    public Set<String> getToolClasses(ItemStack stack) {
-        return toolClasses;
+    public Set<String> getToolClasses(@Nonnull ItemStack stack) {
+        return this.toolClasses;
     }
 
     @Override
-    public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
+    public boolean canDisableShield(@Nonnull ItemStack stack, @Nonnull ItemStack shield, @Nonnull EntityLivingBase entity, @Nonnull EntityLivingBase attacker) {
         return definition$canDisableShield(stack, shield, entity, attacker);
     }
 
     @Override
-    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+    public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         return definition$doesSneakBypassUse(stack, world, pos, player);
     }
 
     @Override
-    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+    public boolean shouldCauseBlockBreakReset(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
         return definition$shouldCauseBlockBreakReset(oldStack, newStack);
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack) {
+    public boolean hasContainerItem(@Nonnull ItemStack stack) {
         return definition$hasContainerItem(stack);
     }
 
+    @Nonnull
     @Override
-    public ItemStack getContainerItem(ItemStack stack) {
+    public ItemStack getContainerItem(@Nonnull ItemStack stack) {
         return definition$getContainerItem(stack);
     }
 
     @Override
-    public boolean isDamaged(ItemStack stack) {
+    public boolean onEntitySwing(@Nonnull EntityLivingBase entityLiving, @Nonnull ItemStack stack) {
+        return definition$onEntitySwing(entityLiving, stack);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
+        return definition$shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
+    }
+
+    @Override
+    public boolean isDamaged(@Nonnull ItemStack stack) {
         return definition$isDamaged(stack);
     }
 
     @Override
-    public int getDamage(ItemStack stack) {
+    public int getDamage(@Nonnull ItemStack stack) {
         return definition$getDamage(stack);
     }
 
     @Override
-    public int getMaxDamage(ItemStack stack) {
+    public int getMaxDamage(@Nonnull ItemStack stack) {
         return definition$getMaxDamage(stack);
     }
 
     @Override
-    public void setDamage(ItemStack stack, int damage) {
+    public void setDamage(@Nonnull ItemStack stack, int damage) {
         definition$setDamage(stack, damage);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
         return definition$initCapabilities(stack, nbt);
     }
 
+    @Nonnull
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         return definition$onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
     }
 
+    @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
         return definition$onItemRightClick(world, player, hand);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
         definition$addInformation(stack, world, tooltip, flag);
     }
 
@@ -231,11 +247,12 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
     public static class Builder extends ToolBuilder<ItemGTTool> {
 
-        public static Builder of(String domain, String id) {
+        @Nonnull
+        public static Builder of(@Nonnull String domain, @Nonnull String id) {
             return new Builder(domain, id);
         }
 
-        public Builder(String domain, String id) {
+        public Builder(@Nonnull String domain, @Nonnull String id) {
             super(domain, id);
         }
 
@@ -243,7 +260,5 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         public Supplier<ItemGTTool> supply() {
             return () -> new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDict);
         }
-
     }
-
 }

@@ -140,8 +140,8 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder aoeSymmetrical(int column, int row, int layer) {
-        return aoeSymmetrical(AoESymmetrical.of(column, row, layer));
+    public ToolDefinitionBuilder aoeSymmetrical(int additionalColumns, int additionalRows, int additionalDepth) {
+        return aoeSymmetrical(AoESymmetrical.of(additionalColumns, additionalRows, additionalDepth));
     }
 
     public ToolDefinitionBuilder aoeChained(AoEChained aoeChained) {
