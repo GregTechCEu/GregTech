@@ -357,20 +357,30 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * -1 if ItemStack failed the capability check (no action done, continue checks).
      */
     public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
-        if (stack.getItem().getToolClasses(stack).contains(ToolClasses.WRENCH)) {
+        if (isPipeTool(stack)) {
             if (!entityPlayer.world.isRemote) {
                 if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
                     boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
                     pipeTile.setFaceBlocked(coverSide, !isBlocked);
+                    if (stack.getItem() instanceof IGTTool) {
+                        ((IGTTool) stack.getItem()).playSound(entityPlayer);
+                    }
                 } else {
                     boolean isOpen = pipeTile.isConnected(coverSide);
                     pipeTile.setConnection(coverSide, !isOpen, false);
+                    if (stack.getItem() instanceof IGTTool && isOpen != pipeTile.isConnected(coverSide)) {
+                        ((IGTTool) stack.getItem()).playSound(entityPlayer);
+                    }
                 }
                 ToolHelper.damageItem(stack, entityPlayer);
                 return EnumActionResult.SUCCESS;
             }
         }
         return EnumActionResult.PASS;
+    }
+
+    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+        return ToolHelper.isTool(stack, ToolClasses.WRENCH);
     }
 
     @Override
@@ -540,7 +550,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return result;
     }
 
-    // TODO Tools PR
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
         if (entity instanceof EntityPlayer) {
             return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
@@ -550,13 +559,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return false;
     }
 
-    // TODO Tools PR
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
-    // TODO Tools PR
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WRENCH, ToolClasses.SCREWDRIVER) || GTUtility.isCoverBehaviorItem(stack,
-                () -> hasCover(getPipeTileEntity(world, pos)),
+        return isPipeTool(stack) || ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER) ||
+                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
                 coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
