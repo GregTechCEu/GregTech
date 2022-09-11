@@ -23,6 +23,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class MetaTileEntityBracketHandler implements IBracketHandler {
 
+    // TODO merge into MetaItemBracketHandler and YEET
+
     private final IJavaMethod method;
 
     public MetaTileEntityBracketHandler() {
