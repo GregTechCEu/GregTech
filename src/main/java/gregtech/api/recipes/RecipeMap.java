@@ -204,7 +204,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         Recipe recipe = validationResult.getResult();
 
-        if (recipe != null && GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning()) {
+        if (recipe.isGroovyRecipe()) {
             this.virtualizedRecipeMap.addScripted(recipe);
         }
         compileRecipe(recipe);
@@ -233,6 +233,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
+        if (recipe.isGroovyRecipe()) {
+            return validationResult;
+        }
         if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
