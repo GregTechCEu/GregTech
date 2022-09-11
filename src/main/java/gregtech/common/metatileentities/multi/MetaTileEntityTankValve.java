@@ -153,4 +153,9 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.tank_valve.tooltip"));
     }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
 }

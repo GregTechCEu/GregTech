@@ -487,4 +487,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             tooltip.add(1, mainKey);
         }
     }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
 }
