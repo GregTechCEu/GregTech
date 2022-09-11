@@ -1065,6 +1065,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean isValidFrontFacing(EnumFacing facing) {
+        if (this.hasFrontFacing() && getFrontFacing() == facing) return false;
         return facing != EnumFacing.UP && facing != EnumFacing.DOWN;
     }
 

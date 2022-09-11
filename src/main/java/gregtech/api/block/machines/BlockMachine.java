@@ -202,13 +202,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean rotateBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if (metaTileEntity == null ||
-                !metaTileEntity.isValidFrontFacing(axis) ||
-                metaTileEntity.getFrontFacing() == axis ||
-                !metaTileEntity.hasFrontFacing())
-            return false;
-        metaTileEntity.setFrontFacing(axis);
-        return true;
+        if (metaTileEntity == null) return false;
+        if (metaTileEntity.hasFrontFacing() && metaTileEntity.isValidFrontFacing(axis)) {
+            metaTileEntity.setFrontFacing(axis);
+            return true;
+        }
+        return false;
     }
 
     @Nullable

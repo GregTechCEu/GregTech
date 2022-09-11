@@ -102,13 +102,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
-            //TODO Separate the setters
-            EnumFacing currentOutputSide = getOutputFacing();
-            if (currentOutputSide == facing || getFrontFacing() == facing) {
-                return false;
-            }
+            //TODO Separate into two output getters
+            if (getOutputFacing() == facing) return false;
+            if (hasFrontFacing() && facing == getFrontFacing()) return false;
             if (!getWorld().isRemote) {
-                //TODO Separate two setters
+                //TODO Separate into two output setters
                 setOutputFacing(facing);
             }
             return true;
