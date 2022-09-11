@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -255,17 +255,17 @@ public class AdvancedTextWidget extends Widget {
     @SideOnly(Side.CLIENT)
     private static class WrapScreen extends GuiScreen {
         @Override
-        public void handleComponentHover(@Nonnull ITextComponent component, int x, int y) {
+        public void handleComponentHover(@NotNull ITextComponent component, int x, int y) {
             super.handleComponentHover(component, x, y);
         }
 
         @Override
-        public boolean handleComponentClick(@Nonnull ITextComponent component) {
+        public boolean handleComponentClick(@NotNull ITextComponent component) {
             return super.handleComponentClick(component);
         }
 
         @Override
-        protected void drawHoveringText(@Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer font) {
+        protected void drawHoveringText(@NotNull List<String> textLines, int x, int y, @NotNull FontRenderer font) {
             GuiUtils.drawHoveringText(textLines, x, y, width, height, 256, font);
         }
     }

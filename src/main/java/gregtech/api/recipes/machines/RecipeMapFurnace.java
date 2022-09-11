@@ -8,7 +8,7 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {

@@ -33,8 +33,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         this.fluidInventory = new FluidHandlerProxy(this.importFluids, this.exportFluids);
     }
 
-    @Nonnull
+    @NotNull
     private List<FluidTank> makeFluidTanks() {
         List<FluidTank> fluidTankList = new ArrayList<>(1);
         fluidTankList.add(new FilteredFluidHandler(capacity).setFillPredicate(
@@ -120,7 +120,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(@Nonnull EntityPlayer entityPlayer) {
+    protected ModularUI.Builder createUITemplate(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .widget(new LabelWidget(6, 6, getMetaFullName()))
                 .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
@@ -135,7 +135,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_TANK_OVERLAY;

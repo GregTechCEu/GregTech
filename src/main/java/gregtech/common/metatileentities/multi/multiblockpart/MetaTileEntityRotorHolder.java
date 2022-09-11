@@ -33,8 +33,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
@@ -62,7 +62,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    protected ModularUI createUI(@Nonnull EntityPlayer entityPlayer) {
+    protected ModularUI createUI(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .label(6, 6, getMetaFullName())
                 .slot(inventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
@@ -129,7 +129,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IRotorHolder> abilityList) {
+    public void registerAbilities(@NotNull List<IRotorHolder> abilityList) {
         abilityList.add(this);
     }
 
@@ -161,7 +161,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         return true;
     }
 
-    private boolean onRotorHolderInteract(@Nonnull EntityPlayer player) {
+    private boolean onRotorHolderInteract(@NotNull EntityPlayer player) {
         if (player.isCreative())
             return false;
 
@@ -415,11 +415,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return TurbineRotorBehavior.getInstanceFor(stack) != null && super.isItemValid(slot, stack);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack itemStack = super.extractItem(slot, amount, simulate);

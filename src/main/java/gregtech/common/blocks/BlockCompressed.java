@@ -30,8 +30,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class BlockCompressed extends DelayedStateBlock implements IModelSupplier {
 
@@ -50,7 +50,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state);
     }
 
@@ -74,7 +74,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return 0;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -111,14 +111,14 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()
                 .filter(blockState -> blockState.getValue(variantProperty) != Materials.NULL)
                 .forEach(blockState -> list.add(getItem(blockState)));
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
     public net.minecraft.block.material.Material getMaterial(IBlockState state) {
         Material material = state.getValue(variantProperty);
@@ -132,16 +132,16 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return net.minecraft.block.material.Material.ROCK;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public MapColor getMapColor(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public MapColor getMapColor(@NotNull IBlockState state, @NotNull IBlockAccess worldIn, @NotNull BlockPos pos) {
         return getMaterial(state).getMaterialMapColor();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(IBlockState state, @NotNull World world, @NotNull BlockPos pos, @Nullable Entity entity) {
         Material material = state.getValue(variantProperty);
         if (material.hasProperty(PropertyKey.GEM)) {
             return SoundType.STONE;

@@ -28,8 +28,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,7 +95,7 @@ public class BakedModelHandler {
             this.particleTexture = particleTexture;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
             return Collections.emptyList();
@@ -116,21 +116,21 @@ public class BakedModelHandler {
             return true;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public TextureAtlasSprite getParticleTexture() {
             return TextureUtils.getBlockTexture(particleTexture);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemOverrideList getOverrides() {
             return ItemOverrideList.NONE;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@Nonnull TransformType cameraTransformType) {
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@NotNull TransformType cameraTransformType) {
             CCRenderItem.notifyTransform(cameraTransformType);
             return PerspectiveMapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK, cameraTransformType);
         }

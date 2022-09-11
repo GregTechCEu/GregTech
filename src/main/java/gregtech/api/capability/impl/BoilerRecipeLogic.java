@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
@@ -234,7 +234,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.currentHeat = compound.getInteger("Heat");
         this.excessFuel = compound.getInteger("ExcessFuel");
@@ -243,14 +243,14 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
+    public void writeInitialData(@NotNull PacketBuffer buf) {
         super.writeInitialData(buf);
         buf.writeVarInt(currentHeat);
         buf.writeVarInt(lastTickSteamOutput);
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialData(@NotNull PacketBuffer buf) {
         super.receiveInitialData(buf);
         this.currentHeat = buf.readVarInt();
         this.lastTickSteamOutput = buf.readVarInt();

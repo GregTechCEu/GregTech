@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class EnchantmentHardHammer extends Enchantment {
     public static final EnchantmentHardHammer INSTANCE = new EnchantmentHardHammer();
@@ -65,7 +65,7 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     @Override
-    protected boolean canApplyTogether(@Nonnull Enchantment ench) {
+    protected boolean canApplyTogether(@NotNull Enchantment ench) {
             return ench != Enchantments.SILK_TOUCH && super.canApplyTogether(ench);
     }
 }

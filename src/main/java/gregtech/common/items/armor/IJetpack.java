@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -59,7 +59,7 @@ public interface IJetpack {
 
     boolean hasEnergy(ItemStack stack);
 
-    default void performFlying(@Nonnull EntityPlayer player, boolean hover, ItemStack stack) {
+    default void performFlying(@NotNull EntityPlayer player, boolean hover, ItemStack stack) {
         double currentAccel = getVerticalAcceleration() * (player.motionY < 0.3D ? 2.5D : 1.0D);
         double currentSpeedVertical = getVerticalSpeed() * (player.isInWater() ? 0.4D : 1.0D);
         boolean flyKeyDown = KeyBind.VANILLA_JUMP.isKeyDown(player);

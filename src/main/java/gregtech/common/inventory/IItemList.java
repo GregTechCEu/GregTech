@@ -2,7 +2,7 @@ package gregtech.common.inventory;
 
 import gregtech.api.util.ItemStackKey;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public interface IItemList {

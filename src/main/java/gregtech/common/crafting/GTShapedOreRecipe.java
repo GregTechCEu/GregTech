@@ -19,14 +19,14 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Set;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe {
 
 
-    public GTShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    public GTShapedOreRecipe(ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(group, result, parseShaped(recipe));
     }
 

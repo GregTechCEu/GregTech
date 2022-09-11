@@ -4,7 +4,7 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
@@ -37,7 +37,7 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
         this.channels = channels;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;

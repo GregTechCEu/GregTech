@@ -57,7 +57,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -164,7 +164,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
+    public static void addMaterialFormulaHandler(@NotNull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
 
         // Handles Item tooltips

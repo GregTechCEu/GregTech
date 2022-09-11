@@ -13,7 +13,7 @@ import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,25 +40,25 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         registry.addRecipes(REGISTER.stream().map(MultiblockInfoRecipeWrapper::new).collect(Collectors.toList()), "gregtech:multiblock_info");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getUid() {
         return "gregtech:multiblock_info";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTitle() {
         return I18n.format("gregtech.multiblock.title");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getModName() {
         return GTValues.MODID;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IDrawable getBackground() {
         return background;
@@ -70,7 +70,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(@NotNull IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, @NotNull IIngredients ingredients) {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
     }
 }

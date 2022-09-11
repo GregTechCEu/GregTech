@@ -57,7 +57,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
@@ -114,7 +114,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private TraceabilityPredicate father;
 
     @SuppressWarnings("NewExpressionSideOnly")
-    public MultiblockInfoRecipeWrapper(@Nonnull MultiblockControllerBase controller) {
+    public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStackKey> drops = new ObjectOpenHashSet<>();
         this.patterns = controller.getMatchingShapes().stream()
@@ -265,7 +265,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
@@ -372,7 +372,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (Entry<GuiButton, Runnable> button : buttons.entrySet()) {
             if (button.getKey().mousePressed(minecraft, mouseX, mouseY)) {
                 button.getValue().run();
@@ -430,7 +430,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (drawInfoIcon) {
@@ -481,8 +481,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
     }
 
-    @Nonnull
-    private Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
+    @NotNull
+    private Collection<PartInfo> gatherStructureBlocks(World world, @NotNull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
         Map<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
             BlockPos pos = entry.getKey();
@@ -533,8 +533,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @SuppressWarnings("NewExpressionSideOnly")
-    @Nonnull
-    private MBPattern initializePattern(@Nonnull MultiblockShapeInfo shapeInfo, @Nonnull Set<ItemStackKey> parts) {
+    @NotNull
+    private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStackKey> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         MultiblockControllerBase controllerBase = null;
         BlockInfo[][][] blocks = shapeInfo.getBlocks();

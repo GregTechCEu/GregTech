@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
@@ -24,19 +24,19 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
         return GTValues.MODID + ":fuelable_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<IFuelable> getCapability() {
         return GregtechCapabilities.CAPABILITY_FUELABLE;
     }
 
     @Override
-    protected boolean allowDisplaying(@Nonnull IFuelable capability) {
+    protected boolean allowDisplaying(@NotNull IFuelable capability) {
         return !capability.isOneProbeHidden();
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IFuelable capability, IProbeInfo probeInfo, EntityPlayer player, TileEntity tileEntity, IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IFuelable capability, IProbeInfo probeInfo, EntityPlayer player, TileEntity tileEntity, IProbeHitData data) {
         Collection<IFuelInfo> fuels = capability.getFuels();
         if (fuels == null || fuels.isEmpty()) {
             probeInfo.text(TextStyleClass.WARNING + "{*gregtech.top.fuel_none*}");

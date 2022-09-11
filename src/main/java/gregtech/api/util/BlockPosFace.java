@@ -3,7 +3,7 @@ package gregtech.api.util;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockPosFace {
     public final EnumFacing facing;

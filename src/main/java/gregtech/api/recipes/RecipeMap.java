@@ -40,8 +40,8 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Consumer;
@@ -288,7 +288,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @Nullable
-    public Recipe find(@Nonnull List<ItemStack> items, @Nonnull List<FluidStack> fluids, @Nonnull Predicate<Recipe> canHandle) {
+    public Recipe find(@NotNull List<ItemStack> items, @NotNull List<FluidStack> fluids, @NotNull Predicate<Recipe> canHandle) {
         // First, check if items and fluids are valid.
         if (items.size() == Integer.MAX_VALUE || fluids.size() == Integer.MAX_VALUE) {
             return null;
@@ -379,7 +379,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param branchRoot  the root branch to search from.
      * @return a recipe
      */
-    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchRoot, @Nonnull Predicate<Recipe> canHandle) {
+    private Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch branchRoot, @NotNull Predicate<Recipe> canHandle) {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < ingredients.size(); i++) {
             Recipe r = recurseIngredientTreeFindRecipe(ingredients, branchRoot, canHandle, i, 0, (1L << i));
@@ -402,7 +402,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *                    recursion.
      * @return a recipe
      */
-    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
+    private Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch branchMap, @NotNull Predicate<Recipe> canHandle, int index, int count, long skip) {
         if (count == ingredients.size()) {
             return null;
         }
@@ -428,7 +428,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
+    private Recipe diveIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
         // We loop around ingredients.size() if we reach the end.
         int counter = (index + 1) % ingredients.size();
         while (counter != index) {
@@ -487,7 +487,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recurseIngredientTreeFindRecipeCollisions(list, lookup, collidingRecipes);
     }
 
-    private Set<Recipe> recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchRoot, Set<Recipe> collidingRecipes) {
+    private Set<Recipe> recurseIngredientTreeFindRecipeCollisions(@NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch branchRoot, Set<Recipe> collidingRecipes) {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < ingredients.size(); i++) {
             recurseIngredientTreeFindRecipeCollisions(ingredients, branchRoot, i, 0, (1L << i), collidingRecipes);
@@ -495,7 +495,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return collidingRecipes;
     }
 
-    private Recipe recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int index, int count, long skip, Set<Recipe> collidingRecipes) {
+    private Recipe recurseIngredientTreeFindRecipeCollisions(@NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch branchMap, int index, int count, long skip, Set<Recipe> collidingRecipes) {
         if (count == ingredients.size()) {
             return null;
         }
@@ -521,7 +521,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private Recipe diveIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, int index, int count, long skip, Set<Recipe> collidingRecipes) {
+    private Recipe diveIngredientTreeFindRecipeCollisions(@NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch map, int index, int count, long skip, Set<Recipe> collidingRecipes) {
         // We loop around ingredients.size() if we reach the end.
         int counter = (index + 1) % ingredients.size();
         while (counter != index) {
@@ -663,7 +663,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param index       where in the ingredients list we are.
      * @param count       how many added already.
      */
-    boolean recurseIngredientTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int index, int count) {
+    boolean recurseIngredientTreeAdd(@NotNull Recipe recipe, @NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
             throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
@@ -878,7 +878,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param ingredients    list of input ingredients.
      * @param branchMap      the current branch in the recursion.
      */
-    private Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int depth) {
+    private Recipe recurseIngredientTreeRemove(@NotNull Recipe recipeToRemove, @NotNull List<List<AbstractMapIngredient>> ingredients, @NotNull Branch branchMap, int depth) {
         for (List<AbstractMapIngredient> current : ingredients) {
             for (AbstractMapIngredient obj : current) {
                 Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
@@ -907,7 +907,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private Recipe removeDive(Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap, AbstractMapIngredient obj, int depth) {
+    private Recipe removeDive(Recipe recipeToRemove, @NotNull List<List<AbstractMapIngredient>> ingredients, Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap, AbstractMapIngredient obj, int depth) {
         Either<Recipe, Branch> result = targetMap.get(obj);
         if (result != null) {
             // Either return recipe or continue branch.

@@ -24,7 +24,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
@@ -97,11 +97,11 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         stack.getTagCompound().setInteger("Mode", mode);
     }
 
-    private boolean checkCanUseScanner(ItemStack stack, @Nonnull EntityPlayer player, boolean simulate) {
+    private boolean checkCanUseScanner(ItemStack stack, @NotNull EntityPlayer player, boolean simulate) {
         return player.isCreative() || drainEnergy(stack, GTValues.V[tier] / VOLTAGE_FACTOR, simulate);
     }
 
-    private boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
+    private boolean drainEnergy(@NotNull ItemStack stack, long amount, boolean simulate) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null)
             return false;
@@ -110,7 +110,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     }
 
     @Override
-    public ModularUI createUI(PlayerInventoryHolder holder, @Nonnull EntityPlayer entityPlayer) {
+    public ModularUI createUI(PlayerInventoryHolder holder, @NotNull EntityPlayer entityPlayer) {
         int mode = getMode(entityPlayer.getHeldItem(EnumHand.MAIN_HAND));
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 332, 200);
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);

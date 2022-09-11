@@ -11,7 +11,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
 
@@ -25,13 +25,13 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
     }
 
     @Override
-    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    public int getLightValue(IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         return state.getValue(ACTIVE) ? 15 : 0;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    public int getPackedLightmapCoords(IBlockState state, @NotNull IBlockAccess source, @NotNull BlockPos pos) {
         if (state.getValue(ACTIVE)) {
             return 0b10100000 << 16 | 0b10100000;
         }
@@ -39,7 +39,7 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull SpawnPlacementType type) {
         return false;
     }
 
@@ -58,7 +58,7 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
             this.harvestLevel = harvestLevel;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

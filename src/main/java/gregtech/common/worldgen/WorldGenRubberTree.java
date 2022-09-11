@@ -11,7 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 import static gregtech.common.blocks.wood.BlockRubberLog.NATURAL;
@@ -26,11 +26,11 @@ public class WorldGenRubberTree extends WorldGenerator {
     }
 
     @Override
-    public boolean generate(@Nonnull World world, @Nonnull Random random, @Nonnull BlockPos pos) {
+    public boolean generate(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos) {
         return generateImpl(world, random, new BlockPos.MutableBlockPos(pos));
     }
 
-    public boolean generateImpl(@Nonnull World world, @Nonnull Random random, BlockPos.MutableBlockPos pos) {
+    public boolean generateImpl(@NotNull World world, @NotNull Random random, BlockPos.MutableBlockPos pos) {
         pos.setPos(pos.getX() + 8, world.getHeight() - 1, pos.getZ() + 8);
         while (pos.getY() > 0 && world.isAirBlock(pos)) {
             pos.setY(pos.getY() - 1);

@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class for holding all the various Overclocking logics
@@ -63,7 +63,7 @@ public class OverclockingLogic {
         return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
     }
 
-    @Nonnull
+    @NotNull
     public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
         int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
         int amountPerfectOC = amountEUDiscount / 2;

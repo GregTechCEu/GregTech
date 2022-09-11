@@ -11,7 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
@@ -26,7 +26,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterWrapper.setOnFilterInstanceChange(this::onFilterInstanceChange);
         this.filterInventory = new ItemStackHandler(1) {
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 return FilterTypeRegistry.getItemFilterForStack(stack) != null;
             }
 

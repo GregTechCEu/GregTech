@@ -2,15 +2,15 @@ package gregtech.api.fluids.fluidType;
 
 import gregtech.api.util.LocalizationUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FluidTypeAcid extends FluidTypeLiquid {
 
     private static final String TOOLTIP_NAME = "gregtech.fluid.state_liquid";
 
-    public FluidTypeAcid(@Nonnull String name, @Nullable String prefix, @Nullable String suffix, @Nonnull String localization) {
+    public FluidTypeAcid(@NotNull String name, @Nullable String prefix, @Nullable String suffix, @NotNull String localization) {
         super(name, prefix, suffix, localization);
     }
 

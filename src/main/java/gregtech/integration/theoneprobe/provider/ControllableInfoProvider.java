@@ -10,11 +10,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ControllableInfoProvider extends CapabilityInfoProvider<IControllable> {
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<IControllable> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE;
@@ -26,7 +26,7 @@ public class ControllableInfoProvider extends CapabilityInfoProvider<IControllab
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IControllable capability, @Nonnull IProbeInfo probeInfo, EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IControllable capability, @NotNull IProbeInfo probeInfo, EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         if (!capability.isWorkingEnabled()) probeInfo.text(TextStyleClass.WARNING + "{*gregtech.top.working_disabled*}");
     }
 }

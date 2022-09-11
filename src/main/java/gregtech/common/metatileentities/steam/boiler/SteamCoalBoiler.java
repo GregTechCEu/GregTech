@@ -21,7 +21,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -77,9 +77,9 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
     @Override
     public IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(1) {
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 if (TileEntityFurnace.getItemBurnTime(stack) <= 0)
                     return stack;
                 return super.insertItem(slot, stack, simulate);

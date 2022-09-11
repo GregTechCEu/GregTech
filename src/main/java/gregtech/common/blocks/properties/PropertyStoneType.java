@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.ore.StoneType;
 import net.minecraft.block.properties.PropertyHelper;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -26,15 +26,15 @@ public class PropertyStoneType extends PropertyHelper<StoneType> {
         return new PropertyStoneType(name, Arrays.asList(allowedValues));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ImmutableList<StoneType> getAllowedValues() {
         return allowedValues;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Optional<StoneType> parseValue(@Nonnull String value) {
+    public Optional<StoneType> parseValue(@NotNull String value) {
         StoneType stoneType = StoneType.STONE_TYPE_REGISTRY.getObject(value);
         if (this.allowedValues.contains(stoneType)) {
             return Optional.of(stoneType);
@@ -42,7 +42,7 @@ public class PropertyStoneType extends PropertyHelper<StoneType> {
         return Optional.absent();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName(StoneType stoneType) {
         return stoneType.name;

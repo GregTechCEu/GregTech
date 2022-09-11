@@ -4,7 +4,7 @@ import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleThermalFluidHandlerItemStack extends GTSimpleFluidHandlerItemStack implements IThermalFluidHandlerItemStack {
 
@@ -18,7 +18,7 @@ public class SimpleThermalFluidHandlerItemStack extends GTSimpleFluidHandlerItem
      * @param container The container itemStack, data is stored on it directly as NBT.
      * @param capacity  The maximum capacity of this fluid tank.
      */
-    public SimpleThermalFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+    public SimpleThermalFluidHandlerItemStack(@NotNull ItemStack container, int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
         super(container, capacity);
         this.maxFluidTemperature = maxFluidTemperature;
         this.gasProof = gasProof;

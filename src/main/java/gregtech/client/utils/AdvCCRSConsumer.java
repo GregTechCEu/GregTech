@@ -11,7 +11,7 @@ import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @SideOnly(Side.CLIENT)
 public class AdvCCRSConsumer implements IVertexConsumer {
@@ -23,19 +23,19 @@ public class AdvCCRSConsumer implements IVertexConsumer {
         this.ccrs = ccrs;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public VertexFormat getVertexFormat() {
         return ccrs.getVertexFormat();
     }
 
     @Override
-    public void setTexture(@Nonnull TextureAtlasSprite texture) {
+    public void setTexture(@NotNull TextureAtlasSprite texture) {
         ccrs.sprite = texture;
     }
 
     @Override
-    public void put(int e, @Nonnull float... data) {
+    public void put(int e, @NotNull float... data) {
         VertexFormat format = getVertexFormat();
 
         VertexFormatElement fmte = format.getElement(e);
@@ -75,7 +75,7 @@ public class AdvCCRSConsumer implements IVertexConsumer {
     }
 
     @Override
-    public void setQuadOrientation(@Nonnull EnumFacing orientation) {
+    public void setQuadOrientation(@NotNull EnumFacing orientation) {
     }
 
     @Override

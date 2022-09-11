@@ -23,7 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
@@ -93,7 +93,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         return Textures.HEAT_PROOF_CASING;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTI_FURNACE_OVERLAY;
@@ -116,7 +116,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         }
 
         @Override
-        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+        public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
             builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
                     .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
         }

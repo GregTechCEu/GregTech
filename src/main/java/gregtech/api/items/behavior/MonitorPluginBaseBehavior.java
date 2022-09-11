@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -93,7 +93,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      * @param id PacketID
      * @param buf PacketBuffer
      */
-    public final void writePluginData(int id, @Nonnull Consumer<PacketBuffer> buf) {
+    public final void writePluginData(int id, @NotNull Consumer<PacketBuffer> buf) {
         if (screen != null && this.screen.getWorld() != null && !this.screen.getWorld().isRemote) {
             screen.writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_DATA, packetBuffer -> {
                 packetBuffer.writeVarInt(id);
@@ -116,7 +116,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      * @param id PacketID
      * @param buf PacketBuffer
      */
-    public final void writePluginAction(int id, @Nonnull Consumer<PacketBuffer> dataWriter) {
+    public final void writePluginAction(int id, @NotNull Consumer<PacketBuffer> dataWriter) {
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         dataWriter.accept(buffer);
         NetworkHandler.channel.sendToServer(new CPacketPluginSynced(

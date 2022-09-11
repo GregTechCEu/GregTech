@@ -9,8 +9,8 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +27,7 @@ public abstract class FluidType {
     private final String suffix;
     protected final String localization;
 
-    public FluidType(@Nonnull String name, @Nullable String prefix, @Nullable String suffix, @Nonnull String localization) {
+    public FluidType(@NotNull String name, @Nullable String prefix, @Nullable String suffix, @NotNull String localization) {
         if (FLUID_TYPES.get(name) != null)
             throw new IllegalArgumentException("Cannot register FluidType with duplicate name: " + name);
 
@@ -38,7 +38,7 @@ public abstract class FluidType {
         FLUID_TYPES.put(name, this);
     }
 
-    public String getNameForMaterial(@Nonnull Material material) {
+    public String getNameForMaterial(@NotNull Material material) {
         StringBuilder builder = new StringBuilder();
 
         if (this.prefix != null)
@@ -52,11 +52,11 @@ public abstract class FluidType {
         return builder.toString();
     }
 
-    public static void setFluidProperties(@Nonnull FluidType fluidType, @Nonnull Fluid fluid) {
+    public static void setFluidProperties(@NotNull FluidType fluidType, @NotNull Fluid fluid) {
         fluidType.setFluidProperties(fluid);
     }
 
-    protected abstract void setFluidProperties(@Nonnull Fluid fluid);
+    protected abstract void setFluidProperties(@NotNull Fluid fluid);
 
     @ZenMethod("setFluidProperties")
     public void setFluidPropertiesCT(FluidType fluidType, Material material) {
@@ -97,7 +97,7 @@ public abstract class FluidType {
 
     @Nullable
     @ZenMethod
-    public static FluidType getByName(@Nonnull String name) {
+    public static FluidType getByName(@NotNull String name) {
         return FLUID_TYPES.get(name);
     }
 }

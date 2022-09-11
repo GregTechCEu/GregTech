@@ -31,8 +31,8 @@ import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityFisher extends TieredMetaTileEntity {
@@ -114,9 +114,9 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(1) {
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 if (OreDictUnifier.getOreDictionaryNames(stack).contains("string")) {
                     return super.insertItem(slot, stack, simulate);
                 }

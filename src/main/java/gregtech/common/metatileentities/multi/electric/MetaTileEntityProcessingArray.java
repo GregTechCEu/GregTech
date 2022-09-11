@@ -36,8 +36,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.unlockedVoltageOverclockingLogic;
@@ -104,7 +104,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return tier == 0
@@ -261,7 +261,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+        protected int[] calculateOverclock(@NotNull Recipe recipe) {
             int recipeEUt = recipe.getEUt();
             int recipeDuration = recipe.getDuration();
             if (!isAllowOverclocking()) {

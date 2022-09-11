@@ -54,8 +54,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -188,7 +188,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
@@ -249,7 +249,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
-    @Nonnull
+    @NotNull
     private IBlockState getFrameState() {
         if (this.material.equals(Materials.Titanium))
             return MetaBlocks.FRAMES.get(Materials.Titanium).getBlock(Materials.Titanium);
@@ -302,7 +302,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.minerLogic.receiveCustomData(dataId, buf);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         if (this.tier == 5)
@@ -438,7 +438,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return minerLogic.isActive() && isWorkingEnabled();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));

@@ -15,12 +15,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<ICoverable> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_COVERABLE;
@@ -32,7 +32,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull ICoverable capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull ICoverable capability, @NotNull IProbeInfo probeInfo, @NotNull EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         CoverBehavior coverBehavior = capability.getCoverAtSide(data.getSideHit());
         if (coverBehavior instanceof CoverConveyor) {
             conveyorInfo(probeInfo, (CoverConveyor) coverBehavior);
@@ -53,7 +53,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param conveyor  the conveyor to get data from
      */
-    private static void conveyorInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverConveyor conveyor) {
+    private static void conveyorInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverConveyor conveyor) {
         String rateUnit = " {*cover.conveyor.transfer_rate*}";
 
         if (conveyor instanceof CoverItemVoiding) {
@@ -77,7 +77,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param voiding   the voiding cover to get data from
      */
-    private static void itemVoidingInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverItemVoiding voiding) {
+    private static void itemVoidingInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverItemVoiding voiding) {
         String unit = " {*gregtech.top.unit.items*}";
 
         ItemFilterContainer container = voiding.getItemFilterContainer();
@@ -94,7 +94,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param pump      the pump to get data from
      */
-    private static void pumpInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverPump pump) {
+    private static void pumpInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverPump pump) {
         String rateUnit = IProbeInfo.STARTLOC + pump.getBucketMode().getName() + IProbeInfo.ENDLOC;
 
         if (pump instanceof CoverFluidVoiding) {
@@ -118,7 +118,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param voiding   the voiding cover to get data from
      */
-    private static void fluidVoidingInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidVoiding voiding) {
+    private static void fluidVoidingInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverFluidVoiding voiding) {
         String unit = voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? " {*gregtech.top.unit.fluid_buckets*}" : " {*gregtech.top.unit.fluid_milibuckets*}";
 
         if (voiding instanceof CoverFluidVoidingAdvanced) {
@@ -135,7 +135,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo  the info to add the text to
      * @param itemFilter the filter to get data from
      */
-    private static void itemFilterInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverItemFilter itemFilter) {
+    private static void itemFilterInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverItemFilter itemFilter) {
         filterModeText(probeInfo, itemFilter.getFilterMode());
         itemFilterText(probeInfo, itemFilter.getItemFilter().getItemFilter());
     }
@@ -146,7 +146,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo   the info to add the text to
      * @param fluidFilter the filter to get data from
      */
-    private static void fluidFilterInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidFilter fluidFilter) {
+    private static void fluidFilterInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverFluidFilter fluidFilter) {
         filterModeText(probeInfo, fluidFilter.getFilterMode());
         fluidFilterText(probeInfo, fluidFilter.getFluidFilter().getFluidFilter());
     }
@@ -157,7 +157,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo      the info to add the text to
      * @param enderFluidLink the ender fluid link cover to get data from
      */
-    private static void enderFluidLinkInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverEnderFluidLink enderFluidLink) {
+    private static void enderFluidLinkInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
         fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
 
@@ -175,7 +175,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param rateUnit  the unit of what is transferred
      * @param rate      the transfer rate of the mode
      */
-    private static void transferRateText(@Nonnull IProbeInfo probeInfo, @Nonnull IIOMode mode, @Nonnull String rateUnit, int rate) {
+    private static void transferRateText(@NotNull IProbeInfo probeInfo, @NotNull IIOMode mode, @NotNull String rateUnit, int rate) {
         String modeText = mode.isImport() ? "{*gregtech.top.mode.import*} " : "{*gregtech.top.mode.export*} ";
         probeInfo.text(TextStyleClass.OK + modeText + TextStyleClass.LABEL + GTUtility.formatNumbers(rate) + rateUnit);
     }
@@ -189,7 +189,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param rate      the transfer rate of the mode
      * @param hasFilter whether the cover has a filter installed
      */
-    private static void transferModeText(@Nonnull IProbeInfo probeInfo, @Nonnull TransferMode mode, @Nonnull String rateUnit, int rate, boolean hasFilter) {
+    private static void transferModeText(@NotNull IProbeInfo probeInfo, @NotNull TransferMode mode, @NotNull String rateUnit, int rate, boolean hasFilter) {
         String text = TextStyleClass.OK + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
         if (!hasFilter && mode != TransferMode.TRANSFER_ANY) text += TextStyleClass.LABEL + " " + rate + rateUnit;
         probeInfo.text(text);
@@ -204,7 +204,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param amount    the transfer rate of the mode
      * @param hasFilter whether the cover has a filter in it or not
      */
-    private static void voidingText(@Nonnull IProbeInfo probeInfo, @Nonnull VoidingMode mode, @Nonnull String unit, int amount, boolean hasFilter) {
+    private static void voidingText(@NotNull IProbeInfo probeInfo, @NotNull VoidingMode mode, @NotNull String unit, int amount, boolean hasFilter) {
         String text = TextFormatting.RED + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
         if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + amount + unit;
         probeInfo.text(text);
@@ -216,7 +216,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param mode      the filter mode of the cover
      */
-    private static void filterModeText(@Nonnull IProbeInfo probeInfo, @Nonnull IFilterMode mode) {
+    private static void filterModeText(@NotNull IProbeInfo probeInfo, @NotNull IFilterMode mode) {
         probeInfo.text(TextStyleClass.WARNING + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC);
     }
 
@@ -226,7 +226,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void itemFilterText(@Nonnull IProbeInfo probeInfo, @Nullable ItemFilter filter) {
+    private static void itemFilterText(@NotNull IProbeInfo probeInfo, @Nullable ItemFilter filter) {
         String label = TextStyleClass.INFO + "{*gregtech.top.filter.label*} ";
         if (filter instanceof OreDictionaryItemFilter) {
             String expression = ((OreDictionaryItemFilter) filter).getOreDictFilterExpression();
@@ -242,7 +242,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void fluidFilterText(@Nonnull IProbeInfo probeInfo, @Nullable FluidFilter filter) {
+    private static void fluidFilterText(@NotNull IProbeInfo probeInfo, @Nullable FluidFilter filter) {
         // TODO If more unique fluid filtration is added, providers for it go here
     }
 }

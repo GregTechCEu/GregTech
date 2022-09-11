@@ -18,7 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class AdvancedJetpack extends Jetpack {
 
@@ -27,7 +27,7 @@ public class AdvancedJetpack extends Jetpack {
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack item) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if(cont == null) {
             return;

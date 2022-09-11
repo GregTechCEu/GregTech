@@ -9,7 +9,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface IParallelableRecipeLogic {
 
@@ -19,7 +19,7 @@ public interface IParallelableRecipeLogic {
      *
      * @param builder the recipe builder
      */
-    default void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+    default void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
     }
 
     /**

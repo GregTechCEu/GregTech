@@ -2,17 +2,17 @@ package gregtech.api.block;
 
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class UnlistedStringProperty implements IUnlistedProperty<String> {
 
     private final String name;
 
-    public UnlistedStringProperty(@Nonnull String name) {
+    public UnlistedStringProperty(@NotNull String name) {
         this.name = name;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return this.name;
@@ -23,7 +23,7 @@ public class UnlistedStringProperty implements IUnlistedProperty<String> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<String> getType() {
         return String.class;

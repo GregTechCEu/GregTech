@@ -15,7 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -63,9 +63,9 @@ public class ChestGenHooks {
     public static void addItem(ResourceLocation lootTable, ItemStack item, int minAmount, int maxAmount, int weight) {
         LootEntryItem itemEntry = new LootEntryItem(item.getItem(), weight, 1, new LootFunction[]{
                 new LootFunction(NO_CONDITIONS) {
-                    @Nonnull
+                    @NotNull
                     @Override
-                    public ItemStack apply(@Nonnull ItemStack stack, @Nonnull Random rand, @Nonnull LootContext context) {
+                    public ItemStack apply(@NotNull ItemStack stack, @NotNull Random rand, @NotNull LootContext context) {
                         stack.setItemDamage(item.getItemDamage());
                         stack.setTagCompound(item.getTagCompound());
 

@@ -16,7 +16,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class NightvisionGoggles extends ArmorLogicSuite {
@@ -26,7 +26,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     }
 
     @Override
-    public void onArmorTick(World world, @Nonnull EntityPlayer player, @Nonnull ItemStack itemStack) {
+    public void onArmorTick(World world, @NotNull EntityPlayer player, @NotNull ItemStack itemStack) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item == null) {
             return;
@@ -71,7 +71,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         player.inventoryContainer.detectAndSendChanges();
     }
 
-    public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+    public void disableNightVision(@NotNull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
             if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);

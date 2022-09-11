@@ -2,7 +2,7 @@ package gregtech.api.metatileentity;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface IVoidable {
 
@@ -33,7 +33,7 @@ public interface IVoidable {
             this.localeName = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;

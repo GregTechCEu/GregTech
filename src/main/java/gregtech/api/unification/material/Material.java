@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.*;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 @ZenClass("mods.gregtech.material.Material")
@@ -34,7 +34,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialInfo
      */
-    @Nonnull
+    @NotNull
     private final MaterialInfo materialInfo;
 
     /**
@@ -42,7 +42,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialProperties
      */
-    @Nonnull
+    @NotNull
     private final MaterialProperties properties;
 
     /**
@@ -50,7 +50,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialFlags
      */
-    @Nonnull
+    @NotNull
     private final MaterialFlags flags;
 
     /**
@@ -98,7 +98,7 @@ public class Material implements Comparable<Material> {
         return getMaterialComponents().toArray(new MaterialStack[0]);
     }
 
-    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties, @Nonnull MaterialFlags flags) {
+    private Material(@NotNull MaterialInfo materialInfo, @NotNull MaterialProperties properties, @NotNull MaterialFlags flags) {
         this.materialInfo = materialInfo;
         this.properties = properties;
         this.flags = flags;
@@ -313,7 +313,7 @@ public class Material implements Comparable<Material> {
         return new MaterialStack(this, amount);
     }
 
-    @Nonnull
+    @NotNull
     public MaterialProperties getProperties() {
         return properties;
     }

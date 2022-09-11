@@ -21,8 +21,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
         }
     }
 
-    private @Nonnull
+    private @NotNull
     IBakedModel wrap(IModel model, IBakedModel object) {
         CustomTextureModel ctm = new CustomTextureModel(null, model);
         ctm.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, rl -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString()));

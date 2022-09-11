@@ -4,7 +4,7 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum Insulation implements IMaterialPipeType<WireProperties> {
 
@@ -36,7 +36,7 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
         this.lossMultiplier = lossMultiplier;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;

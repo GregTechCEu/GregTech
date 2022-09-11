@@ -4,7 +4,7 @@ import gregtech.api.metatileentity.multiblock.CleanroomType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CleanroomProperty extends RecipeProperty<CleanroomType> {
 
@@ -24,15 +24,15 @@ public class CleanroomProperty extends RecipeProperty<CleanroomType> {
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int x, int y, int color, Object value) {
+    public void drawInfo(@NotNull Minecraft minecraft, int x, int y, int color, Object value) {
         CleanroomType type = castValue(value);
         if (type == null) return;
 
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.cleanroom", getName(type)), x, y, color);
     }
 
-    @Nonnull
-    private String getName(@Nonnull CleanroomType value) {
+    @NotNull
+    private String getName(@NotNull CleanroomType value) {
         String name = I18n.format(value.getTranslationKey());
         if (name.length() >= 20) return name.substring(0, 20) + "..";
         return name;

@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityDamageUtil {
 
@@ -25,7 +25,7 @@ public class EntityDamageUtil {
      * @param multiplier  the multiplier on the damage taken
      * @param maximum     the maximum damage to apply to the entity, use -1 for no maximum
      */
-    public static void applyTemperatureDamage(@Nonnull EntityLivingBase entity, int temperature, float multiplier, int maximum) {
+    public static void applyTemperatureDamage(@NotNull EntityLivingBase entity, int temperature, float multiplier, int maximum) {
         if (temperature > 320) {
             int damage = (int) ((multiplier * (temperature - 300)) / 50.0F);
             if (maximum > 0) {
@@ -45,7 +45,7 @@ public class EntityDamageUtil {
      * @param entity the entity to damage
      * @param damage the damage to apply
      */
-    public static void applyHeatDamage(@Nonnull EntityLivingBase entity, int damage) {
+    public static void applyHeatDamage(@NotNull EntityLivingBase entity, int damage) {
         // do not attempt to damage by 0
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;
@@ -64,7 +64,7 @@ public class EntityDamageUtil {
      * @param entity the entity to damage
      * @param damage the damage to apply
      */
-    public static void applyFrostDamage(@Nonnull EntityLivingBase entity, int damage) {
+    public static void applyFrostDamage(@NotNull EntityLivingBase entity, int damage) {
         // do not attempt to damage by 0
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;
@@ -94,7 +94,7 @@ public class EntityDamageUtil {
      * @param entity the entity to damage
      * @param damage the damage to apply
      */
-    public static void applyChemicalDamage(@Nonnull EntityLivingBase entity, int damage) {
+    public static void applyChemicalDamage(@NotNull EntityLivingBase entity, int damage) {
         // do not attempt to damage by 0
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;

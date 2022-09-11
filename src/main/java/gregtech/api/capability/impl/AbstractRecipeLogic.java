@@ -28,7 +28,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -313,7 +313,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
-    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+    protected boolean checkRecipe(@NotNull Recipe recipe) {
         CleanroomType requiredType = null;
         if (recipe.hasProperty(CleanroomProperty.getInstance())) {
             requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
@@ -380,7 +380,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return ParallelLogicType.MULTIPLY;
     }
 
-    protected int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
+    protected int getMinTankCapacity(@NotNull IMultipleTankHandler tanks) {
         if (tanks.getTanks() == 0) {
             return 0;
         }
@@ -457,7 +457,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return false;
     }
 
-    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // Format of resultOverclock: EU/t, duration
         int totalEUt = resultOverclock[0] * resultOverclock[1];
 
@@ -504,7 +504,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+    protected int[] calculateOverclock(@NotNull Recipe recipe) {
 
         int recipeEUt = recipe.getEUt();
         int recipeDuration = recipe.getDuration();
@@ -815,13 +815,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
+    public void writeInitialData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialData(@NotNull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }
@@ -852,7 +852,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         this.workingEnabled = compound.getBoolean("WorkEnabled");
         this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
         this.progressTime = compound.getInteger("Progress");

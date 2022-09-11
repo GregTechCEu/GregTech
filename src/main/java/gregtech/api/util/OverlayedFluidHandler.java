@@ -6,7 +6,7 @@ import gregtech.api.recipes.FluidKey;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class OverlayedFluidHandler {
         }
     }
 
-    public int insertStackedFluidKey(@Nonnull FluidKey toInsert, int amountToInsert) {
+    public int insertStackedFluidKey(@NotNull FluidKey toInsert, int amountToInsert) {
         int insertedAmount = 0;
         for (int i = 0; i < this.overlayedTanks.length; i++) {
             initTank(i);

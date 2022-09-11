@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.registries.GameData;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -69,7 +69,7 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
     }
 
     @Override
-    public void putObject(@Nonnull K key, @Nonnull V value) {
+    public void putObject(@NotNull K key, @NotNull V value) {
         throw new UnsupportedOperationException("Use #register(int, String, T)");
     }
 
@@ -83,7 +83,7 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
     protected final IntIdentityHashBiMap<V> underlyingIntegerMap = new IntIdentityHashBiMap<>(256);
     protected final Map<V, K> inverseObjectRegistry;
 
-    @Nonnull
+    @NotNull
     @Override
     protected Map<K, V> createUnderlyingMap() {
         return HashBiMap.create();
@@ -103,7 +103,7 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         return this.underlyingIntegerMap.get(id);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<V> iterator() {
         return this.underlyingIntegerMap.iterator();

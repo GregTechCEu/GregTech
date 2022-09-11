@@ -24,8 +24,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
@@ -65,7 +65,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
-    @Nonnull
+    @NotNull
     private SimpleOverlayRenderer getOverlay() {
         if (isExportHatch) {
             if (amperage <= 2) {

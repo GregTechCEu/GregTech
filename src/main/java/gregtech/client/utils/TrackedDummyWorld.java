@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.vecmath.Vector3f;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,22 +57,22 @@ public class TrackedDummyWorld extends DummyWorld {
     }
 
     @Override
-    public TileEntity getTileEntity(@Nonnull BlockPos pos) {
+    public TileEntity getTileEntity(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return null;
         return proxyWorld != null ? proxyWorld.getTileEntity(pos) : super.getTileEntity(pos);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getBlockState(@Nonnull BlockPos pos) {
+    public IBlockState getBlockState(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return Blocks.AIR.getDefaultState(); //return air if not rendering this block
         return proxyWorld != null ? proxyWorld.getBlockState(pos) : super.getBlockState(pos);
     }
 
     @Override
-    public boolean setBlockState(@Nonnull BlockPos pos, IBlockState newState, int flags) {
+    public boolean setBlockState(@NotNull BlockPos pos, IBlockState newState, int flags) {
         minPos.setX(Math.min(minPos.getX(), pos.getX()));
         minPos.setY(Math.min(minPos.getY(), pos.getY()));
         minPos.setZ(Math.min(minPos.getZ(), pos.getZ()));

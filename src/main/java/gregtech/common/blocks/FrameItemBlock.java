@@ -8,8 +8,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FrameItemBlock extends ItemBlock {
@@ -31,9 +31,9 @@ public class FrameItemBlock extends ItemBlock {
         return frameBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(@NotNull ItemStack stack) {
         Material material = getBlockState(stack).getValue(frameBlock.variantProperty);
         return OrePrefix.frameGt.getLocalNameForItem(material);
     }

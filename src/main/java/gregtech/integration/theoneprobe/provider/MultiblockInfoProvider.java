@@ -11,7 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MultiblockInfoProvider extends CapabilityInfoProvider<IMultiblockController> {
 
@@ -20,14 +20,14 @@ public class MultiblockInfoProvider extends CapabilityInfoProvider<IMultiblockCo
         return GTValues.MODID + ":multiblock_controller_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<IMultiblockController> getCapability() {
         return GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER;
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IMultiblockController capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IMultiblockController capability, @NotNull IProbeInfo probeInfo, @NotNull EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         if (capability.isStructureFormed()) {
             probeInfo.text(TextStyleClass.OK + "{*gregtech.top.valid_structure*}");
             if (capability.isStructureObstructed()) {

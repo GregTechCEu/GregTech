@@ -49,8 +49,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
@@ -407,12 +407,12 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             }
 
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(stack);
                 return behavior != null;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
                 if (!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {

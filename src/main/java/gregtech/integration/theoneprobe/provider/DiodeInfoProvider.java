@@ -10,7 +10,7 @@ import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DiodeInfoProvider extends ElectricContainerInfoProvider {
 
@@ -20,7 +20,7 @@ public class DiodeInfoProvider extends ElectricContainerInfoProvider {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IEnergyContainer capability, @Nonnull IProbeInfo probeInfo, EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IEnergyContainer capability, @NotNull IProbeInfo probeInfo, EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         if (tileEntity instanceof IGregTechTileEntity) {
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityDiode) {

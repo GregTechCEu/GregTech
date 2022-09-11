@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance> {
 
@@ -32,7 +32,7 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
         return GTValues.MODID + ":multiblock_maintenance_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<IMaintenance> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_MAINTENANCE;

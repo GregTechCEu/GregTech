@@ -24,8 +24,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
@@ -142,11 +142,11 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
         abilityList.add(this);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<IFluidHandler> getPassthroughType() {
         return IFluidHandler.class;

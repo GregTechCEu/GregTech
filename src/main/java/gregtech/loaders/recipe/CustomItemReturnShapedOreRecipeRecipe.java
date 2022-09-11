@@ -9,19 +9,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 public class CustomItemReturnShapedOreRecipeRecipe extends ShapedOreRecipe implements IRecipe {
 
     private final Predicate<ItemStack> itemsToReturn;
 
-    public CustomItemReturnShapedOreRecipeRecipe(ResourceLocation group, @Nonnull ItemStack result, Predicate<ItemStack> itemsToReturn, Object... recipe) {
+    public CustomItemReturnShapedOreRecipeRecipe(ResourceLocation group, @NotNull ItemStack result, Predicate<ItemStack> itemsToReturn, Object... recipe) {
         super(group, result, recipe);
         this.itemsToReturn = itemsToReturn;
     }
 
-    public CustomItemReturnShapedOreRecipeRecipe(ResourceLocation group, @Nonnull ItemStack result, ShapedPrimer primer, Predicate<ItemStack> itemsToReturn) {
+    public CustomItemReturnShapedOreRecipeRecipe(ResourceLocation group, @NotNull ItemStack result, ShapedPrimer primer, Predicate<ItemStack> itemsToReturn) {
         super(group, result, primer);
         this.itemsToReturn = itemsToReturn;
     }
@@ -30,9 +30,9 @@ public class CustomItemReturnShapedOreRecipeRecipe extends ShapedOreRecipe imple
         return itemsToReturn.test(itemStack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         NonNullList<ItemStack> remainingItems = super.getRemainingItems(inv);
         for (int i = 0; i < remainingItems.size(); i++) {
             if (!remainingItems.get(i).isEmpty()) continue;

@@ -31,8 +31,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.MutableTriple;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -167,7 +167,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    public void checkAndDestroy(@Nonnull FluidStack stack) {
+    public void checkAndDestroy(@NotNull FluidStack stack) {
         Fluid fluid = stack.getFluid();
         boolean burning = getNodeData().getMaxFluidTemperature() < fluid.getTemperature(stack);
         boolean leaking = !getNodeData().isGasProof() && fluid.isGaseous(stack);
@@ -343,9 +343,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return fluids;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < getFluidTanks().length; i++) {
@@ -362,7 +362,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
+    public void readFromNBT(@NotNull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
         createTanksList();
@@ -374,7 +374,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();

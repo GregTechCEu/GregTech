@@ -25,8 +25,8 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +81,7 @@ public class MetaFluids {
         }
     }
 
-    public static void handleNonMaterialFluids(@Nonnull Material material, @Nonnull Fluid fluid) {
+    public static void handleNonMaterialFluids(@NotNull Material material, @NotNull Fluid fluid) {
         material.getProperty(PropertyKey.FLUID).setFluid(fluid);
         material.getProperty(PropertyKey.FLUID).setFluidTemperature(fluid.getTemperature());
         List<String> tooltip = new ArrayList<>();
@@ -171,7 +171,7 @@ public class MetaFluids {
      * @param material  the material whose texture to change
      * @param fluidType the type of the fluid
      */
-    public static void setMaterialFluidTexture(@Nonnull Material material, @Nonnull FluidType fluidType) {
+    public static void setMaterialFluidTexture(@NotNull Material material, @NotNull FluidType fluidType) {
         String path = "blocks/fluids/fluid." + material.toString();
         if (fluidType.equals(FluidTypes.PLASMA))
             path += ".plasma";
@@ -200,12 +200,12 @@ public class MetaFluids {
         fluidSprites.add(textureLocation);
     }
 
-    public static void setAlternativeFluidName(Material material, @Nonnull FluidType fluidType, String alternativeName) {
+    public static void setAlternativeFluidName(Material material, @NotNull FluidType fluidType, String alternativeName) {
         alternativeFluidNames.put(fluidType.getNameForMaterial(material), alternativeName);
     }
 
-    @Nonnull
-    public static Fluid registerFluid(@Nonnull Material material, @Nonnull FluidType fluidType, int temperature, boolean generateBlock) {
+    @NotNull
+    public static Fluid registerFluid(@NotNull Material material, @NotNull FluidType fluidType, int temperature, boolean generateBlock) {
         String materialName = material.toString();
         String fluidName = fluidType.getNameForMaterial(material);
         Fluid fluid = FluidRegistry.getFluid(fluidName);
@@ -264,7 +264,7 @@ public class MetaFluids {
     }
 
     @Nullable
-    public static Material getMaterialFromFluid(@Nonnull Fluid fluid) {
+    public static Material getMaterialFromFluid(@NotNull Fluid fluid) {
         Material material = fluidToMaterialMappings.get(fluid.getName());
         if (material.hasFluid())
             return material;

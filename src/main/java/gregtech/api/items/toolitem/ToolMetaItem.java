@@ -62,8 +62,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,12 +123,12 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public boolean doesSneakBypassUse(@NotNull ItemStack stack, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         return true; //required for machine wrenching
     }
 
     @Override
-    public boolean showDurabilityBar(@Nonnull ItemStack stack) {
+    public boolean showDurabilityBar(@NotNull ItemStack stack) {
         T item = getItem(stack);
         if (item != null && item.getDurabilityManager() != null) {
             return item.getDurabilityManager().showsDurabilityBar(stack);
@@ -138,7 +138,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
+    public double getDurabilityForDisplay(@NotNull ItemStack stack) {
         T item = getItem(stack);
         if (item != null && item.getDurabilityManager() != null) {
             return item.getDurabilityManager().getDurabilityForDisplay(stack);
@@ -154,14 +154,14 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+    public int getRGBDurabilityForDisplay(@NotNull ItemStack stack) {
         //always color durability bar as item internal damage
         double internalDamage = getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
         return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0 - internalDamage)) / 3.0F, 1.0F, 1.0F);
     }
 
     @Override
-    public void onCreated(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull EntityPlayer playerIn) {
+    public void onCreated(@NotNull ItemStack stack, @NotNull World worldIn, @NotNull EntityPlayer playerIn) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
@@ -170,13 +170,13 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean hasContainerItem(@Nonnull ItemStack stack) {
+    public boolean hasContainerItem(@NotNull ItemStack stack) {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getContainerItem(@Nonnull ItemStack stack) {
+    public ItemStack getContainerItem(@NotNull ItemStack stack) {
         stack = stack.copy();
         stack.setCount(1);
         T metaToolValueItem = getItem(stack);
@@ -208,7 +208,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public float getSaplingModifier(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    public float getSaplingModifier(@NotNull ItemStack stack, @NotNull World world, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
@@ -219,7 +219,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean onBlockStartBreak(@Nonnull ItemStack itemStack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public boolean onBlockStartBreak(@NotNull ItemStack itemStack, @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         T metaToolValueItem = getItem(itemStack);
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
@@ -229,7 +229,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entity) {
+    public boolean onBlockDestroyed(@NotNull ItemStack stack, @NotNull World world, @NotNull IBlockState state, @NotNull BlockPos pos, @NotNull EntityLivingBase entity) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
@@ -249,7 +249,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public float getDestroySpeed(@Nonnull ItemStack stack, @Nonnull IBlockState state) {
+    public float getDestroySpeed(@NotNull ItemStack stack, @NotNull IBlockState state) {
         Preconditions.checkNotNull(state, "null blockState");
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
@@ -262,7 +262,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull ItemStack stack) {
+    public boolean canHarvestBlock(@NotNull IBlockState state, @NotNull ItemStack stack) {
         Preconditions.checkNotNull(state, "null blockState");
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
@@ -273,7 +273,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public int getHarvestLevel(@Nonnull ItemStack stack, @Nonnull String toolClass, EntityPlayer player, IBlockState blockState) {
+    public int getHarvestLevel(@NotNull ItemStack stack, @NotNull String toolClass, EntityPlayer player, IBlockState blockState) {
         if (blockState == null) {
             GTLog.logger.warn("ToolMetaItem.getHarvestLevel called for tool '{}' without providing IBlockState. Offending stack trace:\n    {}",
                     toolClass, Arrays.stream(Thread.currentThread().getStackTrace()).skip(1).map(StackTraceElement::toString).collect(Collectors.joining("\n    ")));
@@ -290,9 +290,9 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return -1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@NotNull EntityEquipmentSlot slot, @NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         HashMultimap<String, AttributeModifier> modifiers = HashMultimap.create();
         modifiers.putAll(super.getAttributeModifiers(slot, stack));
@@ -308,7 +308,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
+    public boolean onLeftClickEntity(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull Entity entity) {
         //cancel attack if broken or out of charge
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
@@ -321,7 +321,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
+    public boolean hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target, @NotNull EntityLivingBase attacker) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null) {
             IToolStats toolStats = metaValueItem.getToolStats();
@@ -413,7 +413,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable NBTTagCompound nbt) {
         ICapabilityProvider capabilityProvider = super.initCapabilities(stack, nbt);
         if (capabilityProvider != null && capabilityProvider.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             IElectricItem electricItem = capabilityProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -428,7 +428,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return capabilityProvider;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getItemDamage() >= metaItemOffset) {
@@ -445,7 +445,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines, @NotNull ITooltipFlag tooltipFlag) {
         T item = getItem(itemStack);
         if (item == null) {
             return;
@@ -464,17 +464,17 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean isEnchantable(@Nonnull ItemStack stack) {
+    public boolean isEnchantable(@NotNull ItemStack stack) {
         return true;
     }
 
     @Override
-    public int getItemEnchantability(@Nonnull ItemStack stack) {
+    public int getItemEnchantability(@NotNull ItemStack stack) {
         return getToolMaterial(stack).getProperty(PropertyKey.TOOL).getToolEnchantability();
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack, @NotNull Enchantment enchantment) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null && metaToolValueItem.toolStats != null) {
             return metaToolValueItem.toolStats.canApplyEnchantment(stack, enchantment);
@@ -615,8 +615,8 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    @Nonnull
-    public Set<String> getToolClasses(@Nonnull ItemStack stack) {
+    @NotNull
+    public Set<String> getToolClasses(@NotNull ItemStack stack) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
@@ -671,12 +671,12 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     // EIO Wrench Compat
     @Override
-    public boolean shouldHideFacades(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+    public boolean shouldHideFacades(@NotNull ItemStack stack, @NotNull EntityPlayer player) {
         return false;
     }
 
     @Override
-    public boolean canUse(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    public boolean canUse(@NotNull EnumHand stack, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         T metaToolValueItem = getItem(player.getHeldItem(stack));
         if (metaToolValueItem != null) {
             return metaToolValueItem.getToolStats() instanceof ToolWrench;
@@ -685,7 +685,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public void used(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    public void used(@NotNull EnumHand stack, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         this.damageItem(player.getHeldItem(stack), player, DamageValues.DAMAGE_FOR_WRENCH, false);
     }
 
@@ -766,7 +766,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return this;
         }
 
-        @Nonnull
+        @NotNull
         public IToolStats getToolStats() {
             return toolStats;
         }

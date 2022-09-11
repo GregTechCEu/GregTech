@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -109,7 +109,7 @@ public class ArmorUtils {
         }
     }
 
-    public static void playJetpackSound(@Nonnull EntityPlayer player) {
+    public static void playJetpackSound(@NotNull EntityPlayer player) {
         if (player.world.isRemote) {
             float cons = (float) player.motionY + player.moveForward;
             cons = MathHelper.clamp(cons, 0.6F, 1.0F);
@@ -219,7 +219,7 @@ public class ArmorUtils {
             }
         }
 
-        @Nonnull
+        @NotNull
         private Pair<Integer, Integer> getStringCoord(int index) {
             int posX;
             int posY;

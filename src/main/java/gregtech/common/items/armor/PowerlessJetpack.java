@@ -34,7 +34,7 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +57,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack stack) {
         IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (internalTank == null)
             return;
@@ -103,7 +103,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     }
 
     @Override
-    public void addToolComponents(@Nonnull ArmorMetaValueItem mvi) {
+    public void addToolComponents(@NotNull ArmorMetaValueItem mvi) {
         mvi.addComponents(new Behaviour(tankCapacity));
     }
 
@@ -113,7 +113,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawHUD(@Nonnull ItemStack item) {
+    public void drawHUD(@NotNull ItemStack item) {
         IFluidHandlerItem tank = item.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (tank != null) {
             IFluidTankProperties[] prop = tank.getTankProperties();
@@ -181,11 +181,11 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         return burnTimer > 0 || currentRecipe != null;
     }
 
-    private IFluidHandlerItem getIFluidHandlerItem(@Nonnull ItemStack stack) {
+    private IFluidHandlerItem getIFluidHandlerItem(@NotNull ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
     }
 
-    public void findNewRecipe(@Nonnull ItemStack stack) {
+    public void findNewRecipe(@NotNull ItemStack stack) {
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
@@ -226,14 +226,14 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     }
 
     @Override
-    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, @Nonnull DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, @NotNull DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = (int) Math.min(Integer.MAX_VALUE, burnTimer * 1.0 / 32 * 25.0);
         if (source.isUnblockable()) return new ISpecialArmor.ArmorProperties(0, 0.0, 0);
         return new ISpecialArmor.ArmorProperties(0, 0, damageLimit);
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         return 0;
     }
 
@@ -251,7 +251,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         }
 
         @Override
-        public double getDurabilityForDisplay(@Nonnull ItemStack itemStack) {
+        public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
             IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null)
                 return 1.0;

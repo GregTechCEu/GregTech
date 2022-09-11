@@ -65,8 +65,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -1377,9 +1377,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Method(modid = GTValues.MODID_APPENG)
-    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+    public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.NONE;
     }
 

@@ -18,7 +18,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
@@ -124,14 +124,14 @@ public class OreDictFilterTestSlot extends Widget implements IGhostIngredientTar
         }
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new IGhostIngredientHandler.Target<Object>() {
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 if (ingredient instanceof ItemStack) {
                     putItem((ItemStack) ingredient);
                 }

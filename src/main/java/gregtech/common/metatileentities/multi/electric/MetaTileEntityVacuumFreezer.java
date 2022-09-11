@@ -14,7 +14,7 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     public MetaTileEntityVacuumFreezer(ResourceLocation metaTileEntityId) {
@@ -47,7 +47,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
         return MetaBlocks.METAL_CASING.getState(MetalCasingType.ALUMINIUM_FROSTPROOF);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.VACUUM_FREEZER_OVERLAY;

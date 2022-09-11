@@ -9,7 +9,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemblerRecipeBuilder> {
 
@@ -27,7 +27,7 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public CircuitAssemblerRecipeBuilder copy() {
         return new CircuitAssemblerRecipeBuilder(this);
     }

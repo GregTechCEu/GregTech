@@ -30,8 +30,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
@@ -101,10 +101,10 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @Optional.Method(modid = GTValues.MODID_APPENG)
-    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+    public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.SMART;
     }
 
@@ -124,11 +124,11 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
         abilityList.add(this);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<?> getPassthroughType() {
         return IEnergyContainer.class;

@@ -8,7 +8,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockStoneChiseled extends VariantBlock<BlockStoneChiseled.BlockType> {
 
@@ -23,7 +23,7 @@ public class BlockStoneChiseled extends VariantBlock<BlockStoneChiseled.BlockTyp
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -42,7 +42,7 @@ public class BlockStoneChiseled extends VariantBlock<BlockStoneChiseled.BlockTyp
             this.name = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

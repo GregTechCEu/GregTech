@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,7 +126,7 @@ public class SmartItemFilter extends ItemFilter {
             this.recipeMap = recipeMap;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;

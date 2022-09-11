@@ -9,7 +9,7 @@ import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigger<T> {
@@ -23,14 +23,14 @@ public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigg
 
     public abstract T create();
 
-    @Nonnull
+    @NotNull
     @Override
     public ResourceLocation getId() {
         return ID;
     }
 
     @Override
-    public void addListener(@Nonnull PlayerAdvancements playerAdvancementsIn, @Nonnull Listener<T> listener) {
+    public void addListener(@NotNull PlayerAdvancements playerAdvancementsIn, @NotNull Listener<T> listener) {
         GTListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener == null) {
@@ -42,7 +42,7 @@ public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigg
     }
 
     @Override
-    public void removeListener(@Nonnull PlayerAdvancements playerAdvancementsIn, @Nonnull Listener<T> listener) {
+    public void removeListener(@NotNull PlayerAdvancements playerAdvancementsIn, @NotNull Listener<T> listener) {
         GTListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener != null) {
@@ -55,13 +55,13 @@ public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigg
     }
 
     @Override
-    public void removeAllListeners(@Nonnull PlayerAdvancements playerAdvancementsIn) {
+    public void removeAllListeners(@NotNull PlayerAdvancements playerAdvancementsIn) {
         listeners.remove(playerAdvancementsIn);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public T deserializeInstance(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context) {
+    public T deserializeInstance(@NotNull JsonObject json, @NotNull JsonDeserializationContext context) {
         return create();
     }
 

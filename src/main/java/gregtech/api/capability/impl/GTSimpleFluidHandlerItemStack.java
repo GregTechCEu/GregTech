@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple {
 
@@ -12,7 +12,7 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple {
      * @param container The container itemStack, data is stored on it directly as NBT.
      * @param capacity  The maximum capacity of this fluid tank.
      */
-    public GTSimpleFluidHandlerItemStack(@Nonnull ItemStack container, int capacity) {
+    public GTSimpleFluidHandlerItemStack(@NotNull ItemStack container, int capacity) {
         super(container, capacity);
     }
 

@@ -12,14 +12,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MaterialFluid extends Fluid {
 
     private final Material material;
     private final FluidType fluidType;
 
-    public MaterialFluid(String fluidName, @Nonnull Material material, @Nonnull FluidType fluidType, ResourceLocation texture) {
+    public MaterialFluid(String fluidName, @NotNull Material material, @NotNull FluidType fluidType, ResourceLocation texture) {
         super(fluidName, texture, texture, GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
         this.material = material;
         this.fluidType = fluidType;
@@ -29,12 +29,12 @@ public class MaterialFluid extends Fluid {
         FluidTooltipUtil.registerTooltip(this, FluidTooltipUtil.getMaterialTooltip(material, getTemperature(), fluidType.equals(FluidTypes.PLASMA)));
     }
 
-    @Nonnull
+    @NotNull
     public Material getMaterial() {
         return this.material;
     }
 
-    @Nonnull
+    @NotNull
     public FluidType getFluidType() {
         return this.fluidType;
     }

@@ -7,7 +7,7 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class BedrockFluidVeinSaveData extends WorldSavedData {
@@ -34,8 +34,8 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
     }
 
     @Override
-    public @Nonnull
-    NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    public @NotNull
+    NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
         NBTTagList oilList = new NBTTagList();
         for (Map.Entry<ChunkPosDimension, BedrockFluidVeinHandler.FluidVeinWorldEntry> e : BedrockFluidVeinHandler.veinCache.entrySet()) {
             if (e.getKey() != null && e.getValue() != null) {

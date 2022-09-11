@@ -31,8 +31,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +89,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         return orePrefix.doGenerateItem(material);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getItemStackDisplayName(ItemStack itemStack) {
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
@@ -136,7 +136,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getItemStackLimit(@NotNull ItemStack stack) {
         if (prefix == null)
             return 64;
         return prefix.maxStackSize;
@@ -144,7 +144,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> subItems) {
         if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
             for (MetaItem<?>.MetaValueItem enabledItem : metaItems.values()) {
                 if (!enabledItem.isVisible())
@@ -156,7 +156,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public void onUpdate(@Nonnull ItemStack itemStack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
+    public void onUpdate(@NotNull ItemStack itemStack, @NotNull World worldIn, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entity = (EntityLivingBase) entityIn;
@@ -172,7 +172,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines, @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         int damage = itemStack.getItemDamage();
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
@@ -190,7 +190,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public int getItemBurnTime(@Nonnull ItemStack itemStack) {
+    public int getItemBurnTime(@NotNull ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
         DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);

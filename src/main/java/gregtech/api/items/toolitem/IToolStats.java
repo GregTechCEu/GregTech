@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -193,7 +193,7 @@ public interface IToolStats {
             world.playSound(null, pos, ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
     }
 
-    static void onOtherUse(@Nonnull ItemStack stack, World world, BlockPos pos) {
+    static void onOtherUse(@NotNull ItemStack stack, World world, BlockPos pos) {
         if (stack.getItem() instanceof ToolMetaItem<?>) {
             IToolStats stats = ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getToolStats();
             if (ConfigHolder.client.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)

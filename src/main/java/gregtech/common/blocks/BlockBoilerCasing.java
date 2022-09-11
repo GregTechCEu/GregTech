@@ -10,7 +10,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasingType> {
 
@@ -24,7 +24,7 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull SpawnPlacementType type) {
         return false;
     }
 
@@ -44,7 +44,7 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
             this.harvestLevel = harvestLevel;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

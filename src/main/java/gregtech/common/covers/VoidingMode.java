@@ -2,7 +2,7 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum VoidingMode implements IStringSerializable {
     VOID_ANY("cover.voiding.voiding_mode.void_any", 1),
@@ -17,7 +17,7 @@ public enum VoidingMode implements IStringSerializable {
     }
 
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return localeName;

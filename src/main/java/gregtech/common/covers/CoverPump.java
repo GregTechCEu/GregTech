@@ -39,8 +39,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 
@@ -364,7 +364,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;
@@ -386,7 +386,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;

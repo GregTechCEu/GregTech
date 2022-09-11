@@ -26,8 +26,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class LighterBehaviour implements IItemBehaviour {
@@ -75,7 +75,7 @@ public class LighterBehaviour implements IItemBehaviour {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
         if (canOpen) {
@@ -110,7 +110,7 @@ public class LighterBehaviour implements IItemBehaviour {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, @Nonnull List<String> lines) {
+    public void addInformation(ItemStack itemStack, @NotNull List<String> lines) {
         lines.add(I18n.format(usesFluid ? "behaviour.lighter.fluid.tooltip" : "behaviour.lighter.tooltip"));
         if (hasMultipleUses && !usesFluid) {
             lines.add(I18n.format("behaviour.lighter.uses", getUsesLeft(itemStack)));
@@ -142,7 +142,7 @@ public class LighterBehaviour implements IItemBehaviour {
         return false;
     }
 
-    private int getUsesLeft(@Nonnull ItemStack stack) {
+    private int getUsesLeft(@NotNull ItemStack stack) {
         if (usesFluid) {
             IFluidHandlerItem fluidHandlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null)
@@ -163,7 +163,7 @@ public class LighterBehaviour implements IItemBehaviour {
         return stack.getCount();
     }
 
-    private void setUsesLeft(EntityPlayer entity, @Nonnull ItemStack stack, int usesLeft) {
+    private void setUsesLeft(EntityPlayer entity, @NotNull ItemStack stack, int usesLeft) {
         if (usesFluid) {
             IFluidHandlerItem fluidHandlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem != null) {
@@ -185,7 +185,7 @@ public class LighterBehaviour implements IItemBehaviour {
     }
 
     @Override
-    public void onAddedToItem(@Nonnull MetaItem.MetaValueItem metaValueItem) {
+    public void onAddedToItem(@NotNull MetaItem.MetaValueItem metaValueItem) {
         if (overrideLocation != null) {
             metaValueItem.getMetaItem().addPropertyOverride(overrideLocation,
                     (stack, worldIn, entityIn) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);

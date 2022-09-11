@@ -9,7 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T>{
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
@@ -41,7 +41,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
@@ -51,11 +51,11 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state) - (state.getValue(ACTIVE) ? 8 : 0);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return super.getStateFromMeta(meta).withProperty(ACTIVE, meta / 8 >= 1);

@@ -12,8 +12,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProperties> {
@@ -24,7 +24,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
         WireProperties wireProperties = blockPipe.createItemProperties(stack);
         int tier = GTUtility.getTierByVoltage(wireProperties.getVoltage());
         if (wireProperties.isSuperconductor()) tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));

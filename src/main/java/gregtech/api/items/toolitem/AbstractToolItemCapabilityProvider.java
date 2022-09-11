@@ -6,8 +6,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractToolItemCapabilityProvider<T> implements ICapabilityProvider {
 
@@ -24,14 +24,14 @@ public abstract class AbstractToolItemCapabilityProvider<T> implements ICapabili
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == getCapability();
     }
 
     @Nullable
     @Override
     @SuppressWarnings("unchecked")
-    public <R> R getCapability(@Nonnull Capability<R> capability, @Nullable EnumFacing facing) {
+    public <R> R getCapability(@NotNull Capability<R> capability, @Nullable EnumFacing facing) {
         if (capability == getCapability()) {
             return getCapability().cast((T) this);
         }

@@ -7,8 +7,8 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 
 @SideOnly(Side.CLIENT)
@@ -74,7 +74,7 @@ public class MetadataSectionCTM implements IMetadataSection {
         }
 
         @Override
-        public @Nonnull
+        public @NotNull
         String getSectionName() {
             return SECTION_NAME;
         }

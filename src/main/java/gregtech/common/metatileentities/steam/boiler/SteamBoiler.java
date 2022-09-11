@@ -44,8 +44,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -341,7 +341,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         clearInventory(itemBuffer, containerInventory);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount", GTUtility.formatNumbers((int) (this.getTemperaturePercent() * 100))));

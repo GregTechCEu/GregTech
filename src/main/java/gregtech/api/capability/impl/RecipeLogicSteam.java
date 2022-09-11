@@ -27,7 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
@@ -108,7 +108,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
+    public void writeInitialData(@NotNull PacketBuffer buf) {
         super.writeInitialData(buf);
         buf.writeByte(getVentingSide().getIndex());
         buf.writeBoolean(needsVenting);
@@ -116,7 +116,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialData(@NotNull PacketBuffer buf) {
         super.receiveInitialData(buf);
         this.ventingSide = EnumFacing.VALUES[buf.readByte()];
         this.needsVenting = buf.readBoolean();
@@ -178,7 +178,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+    protected boolean checkRecipe(@NotNull Recipe recipe) {
         return super.checkRecipe(recipe) && !this.needsVenting;
     }
 
@@ -190,7 +190,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+    protected int[] calculateOverclock(@NotNull Recipe recipe) {
 
         //EUt, Duration
         int[] result = new int[2];
@@ -238,7 +238,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.ventingSide = EnumFacing.VALUES[compound.getInteger("VentingSide")];
         this.needsVenting = compound.getBoolean("NeedsVenting");

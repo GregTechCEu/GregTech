@@ -8,8 +8,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CompressedItemBlock extends ItemBlock {
@@ -31,15 +31,15 @@ public class CompressedItemBlock extends ItemBlock {
         return compressedBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(@NotNull ItemStack stack) {
         Material material = getBlockState(stack).getValue(compressedBlock.variantProperty);
         return OrePrefix.block.getLocalNameForItem(material);
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if(flagIn.isAdvanced()) {
             tooltip.add("MetaItem Id: block" + compressedBlock.getGtMaterial(stack.getMetadata()).toCamelCaseString());

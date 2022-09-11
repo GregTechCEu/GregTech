@@ -13,10 +13,10 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
-    public GTShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    public GTShapelessOreRecipe(ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(group, result);
         for (Object in : recipe) {
             Ingredient ing = getIngredient(in);

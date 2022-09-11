@@ -17,8 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         for (T variant : VALUES) {
             list.add(getItemVariant(variant));
         }
@@ -66,7 +66,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         return new ItemStack(this, amount, variant.ordinal());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), VariantBlock.class, 0);
@@ -77,7 +77,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, List<String> tooltip, @NotNull ITooltipFlag advanced) {
         //basic tooltip for all variant blocks
         tooltip.add(I18n.format("tile.machine_casing.tooltip1"));
         tooltip.add(I18n.format("tile.machine_casing.tooltip2"));
@@ -92,11 +92,11 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {

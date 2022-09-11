@@ -6,7 +6,7 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
@@ -23,7 +23,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     private boolean isGas;
     private int fluidTemperature = BASE_TEMP;
 
-    public FluidProperty(@Nonnull FluidType fluidType, boolean hasBlock) {
+    public FluidProperty(@NotNull FluidType fluidType, boolean hasBlock) {
         this.fluidType = fluidType;
         this.isGas = fluidType == FluidTypes.GAS;
         this.hasBlock = hasBlock;
@@ -43,7 +43,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     /**
      * internal usage only
      */
-    public void setFluid(@Nonnull Fluid materialFluid) {
+    public void setFluid(@NotNull Fluid materialFluid) {
         Preconditions.checkNotNull(materialFluid);
         this.fluid = materialFluid;
     }
@@ -64,7 +64,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
         this.isGas = isGas;
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getFluid(int amount) {
         return new FluidStack(fluid, amount);
     }
@@ -85,7 +85,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
         return fluidTemperature;
     }
 
-    @Nonnull
+    @NotNull
     public FluidType getFluidType() {
         return this.fluidType;
     }

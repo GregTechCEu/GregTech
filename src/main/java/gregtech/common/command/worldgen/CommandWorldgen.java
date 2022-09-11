@@ -3,7 +3,7 @@ package gregtech.common.command.worldgen;
 import net.minecraft.command.ICommandSender;
 import net.minecraftforge.server.command.CommandTreeBase;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandWorldgen extends CommandTreeBase {
 
@@ -11,7 +11,7 @@ public class CommandWorldgen extends CommandTreeBase {
         addSubcommand(new CommandWorldgenReload());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "worldgen";
@@ -22,9 +22,9 @@ public class CommandWorldgen extends CommandTreeBase {
         return 3;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.worldgen.usage";
     }
 }

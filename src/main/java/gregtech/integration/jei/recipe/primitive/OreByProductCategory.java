@@ -21,8 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,7 +130,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull OreByProduct recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull OreByProduct recipeWrapper, @NotNull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
@@ -165,9 +165,9 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         hasSifter = recipeWrapper.hasSifter();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull OreByProduct recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull OreByProduct recipe) {
         return recipe;
     }
 
@@ -178,7 +178,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         arrowsBase.draw(minecraft, 0, 0);
         if (hasDirectSmelt) {
             arrowsDirectSmelt.draw(minecraft, 0, 0);

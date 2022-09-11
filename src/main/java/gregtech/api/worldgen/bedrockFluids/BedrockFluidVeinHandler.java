@@ -15,8 +15,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class BedrockFluidVeinHandler {
      * @return The FluidVeinWorldInfo corresponding with the given chunk
      */
     @Nullable
-    public static FluidVeinWorldEntry getFluidVeinWorldEntry(@Nonnull World world, int chunkX, int chunkZ) {
+    public static FluidVeinWorldEntry getFluidVeinWorldEntry(@NotNull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return null;
 
@@ -94,7 +94,7 @@ public class BedrockFluidVeinHandler {
      * @param biome    The biome type to check
      * @return The total weight associated with the dimension/biome pair
      */
-    public static int getTotalWeight(@Nonnull WorldProvider provider, Biome biome) {
+    public static int getTotalWeight(@NotNull WorldProvider provider, Biome biome) {
         int dim = provider.getDimension();
         if (!totalWeightMap.containsKey(dim)) {
             totalWeightMap.put(dim, new HashMap<>());
@@ -277,8 +277,8 @@ public class BedrockFluidVeinHandler {
             return tag;
         }
 
-        @Nonnull
-        public static FluidVeinWorldEntry readFromNBT(@Nonnull NBTTagCompound tag) {
+        @NotNull
+        public static FluidVeinWorldEntry readFromNBT(@NotNull NBTTagCompound tag) {
             FluidVeinWorldEntry info = new FluidVeinWorldEntry();
             info.fluidYield = tag.getInteger("fluidYield");
             info.operationsRemaining = tag.getInteger("operationsRemaining");

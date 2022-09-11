@@ -42,8 +42,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class BlockFrame extends DelayedStateBlock implements IModelSupplier {
 
@@ -64,11 +64,11 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -92,9 +92,9 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return "wrench";
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(IBlockState state, @NotNull World world, @NotNull BlockPos pos, @Nullable Entity entity) {
         Material material = state.getValue(variantProperty);
         if (ModHandler.isMaterialWood(material)) {
             return SoundType.WOOD;
@@ -103,7 +103,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    public int getHarvestLevel(@Nonnull IBlockState state) {
+    public int getHarvestLevel(@NotNull IBlockState state) {
         return 1;
     }
 
@@ -113,7 +113,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
     public net.minecraft.block.material.Material getMaterial(IBlockState state) {
         Material material = state.getValue(variantProperty);
@@ -124,7 +124,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()
                 .filter(blockState -> blockState.getValue(variantProperty) != Materials.NULL)
                 .forEach(blockState -> list.add(getItem(blockState)));
@@ -147,12 +147,12 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
         if (stackInHand.isEmpty()) {
             return false;
@@ -216,7 +216,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Entity entityIn) {
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, Entity entityIn) {
         entityIn.motionX = MathHelper.clamp(entityIn.motionX, -0.15, 0.15);
         entityIn.motionZ = MathHelper.clamp(entityIn.motionZ, -0.15, 0.15);
         entityIn.fallDistance = 0.0F;
@@ -231,20 +231,20 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
+    public EnumPushReaction getPushReaction(@NotNull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(@NotNull IBlockState blockState, @NotNull IBlockAccess worldIn, @NotNull BlockPos pos) {
         return COLLISION_BOX;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
@@ -252,14 +252,14 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@NotNull IBlockAccess worldIn, @NotNull IBlockState state, @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 

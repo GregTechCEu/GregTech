@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -54,7 +54,7 @@ public class StoneType implements Comparable<StoneType> {
     }
 
     @Override
-    public int compareTo(@Nonnull StoneType stoneType) {
+    public int compareTo(@NotNull StoneType stoneType) {
         return STONE_TYPE_REGISTRY.getIDForObject(this) - STONE_TYPE_REGISTRY.getIDForObject(stoneType);
     }
 

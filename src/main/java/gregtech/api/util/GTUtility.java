@@ -63,8 +63,8 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -925,7 +925,7 @@ public class GTUtility {
      * @param values to find the mean of
      * @return the mean value
      */
-    public static long mean(@Nonnull long[] values) {
+    public static long mean(@NotNull long[] values) {
         if (values.length == 0L)
             return 0L;
 
@@ -939,7 +939,7 @@ public class GTUtility {
      * @param world the {@link World} to get the average tick time of
      * @return the mean tick time
      */
-    public static double getMeanTickTime(@Nonnull World world) {
+    public static double getMeanTickTime(@NotNull World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
 

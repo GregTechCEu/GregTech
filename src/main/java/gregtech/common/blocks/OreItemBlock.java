@@ -7,7 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class OreItemBlock extends ItemBlock {
 
@@ -24,7 +24,7 @@ public class OreItemBlock extends ItemBlock {
         return damage;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public CreativeTabs[] getCreativeTabs() {
         return new CreativeTabs[]{CreativeTabs.SEARCH, GregTechAPI.TAB_GREGTECH_ORES};
@@ -34,9 +34,9 @@ public class OreItemBlock extends ItemBlock {
         return oreBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(@NotNull ItemStack stack) {
         IBlockState blockState = getBlockState(stack);
         StoneType stoneType = blockState.getValue(oreBlock.STONE_TYPE);
         return stoneType.processingPrefix.getLocalNameForItem(oreBlock.material);

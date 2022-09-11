@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @SideOnly(Side.CLIENT)
 public class DynamiteRenderer extends RenderSnowball<DynamiteEntity> {
@@ -18,8 +18,8 @@ public class DynamiteRenderer extends RenderSnowball<DynamiteEntity> {
         super(renderManagerIn, MetaItems.DYNAMITE.getMetaItem(), itemRendererIn);
     }
 
-    @Nonnull
-    public ItemStack getStackToRender(@Nonnull DynamiteEntity entityIn) {
+    @NotNull
+    public ItemStack getStackToRender(@NotNull DynamiteEntity entityIn) {
         return MetaItems.DYNAMITE.getStackForm();
     }
 }

@@ -17,8 +17,8 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -251,7 +251,7 @@ public class RecyclingRecipes {
         return materialStack;
     }
 
-    private static ItemStack getArcIngotOrDust(@Nonnull MaterialStack stack) {
+    private static ItemStack getArcIngotOrDust(@NotNull MaterialStack stack) {
         if (stack.material == Materials.Carbon) {
             return OreDictUnifier.getDust(stack);
         }

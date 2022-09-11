@@ -1,6 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implement this interface in order to make a TileEntity into a block that recieves a cleanroom from other blocks

@@ -45,8 +45,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -207,7 +207,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(1) {
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 NBTTagCompound compound = stack.getTagCompound();
                 if (compound == null) return true;
                 return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
@@ -441,7 +441,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             return 1;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             ItemStack itemStack = MetaTileEntityQuantumChest.this.itemStack;
@@ -459,7 +459,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             return (int) MetaTileEntityQuantumChest.this.maxStoredItems;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             int extractedAmount = (int) Math.min(amount, itemsStoredInside);
@@ -477,9 +477,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             return extractedStack;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
 
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;

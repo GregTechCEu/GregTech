@@ -26,8 +26,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity {
@@ -175,7 +175,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         return casingRenderer;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return frontOverlay;

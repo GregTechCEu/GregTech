@@ -9,8 +9,8 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implements IItemMaxStackSizeProvider {
@@ -62,7 +62,7 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
     }
 
     @Nullable
-    public static TurbineRotorBehavior getInstanceFor(@Nonnull ItemStack itemStack) {
+    public static TurbineRotorBehavior getInstanceFor(@NotNull ItemStack itemStack) {
         if (!(itemStack.getItem() instanceof MetaItem))
             return null;
 

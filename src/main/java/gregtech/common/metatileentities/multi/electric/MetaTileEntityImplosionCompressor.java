@@ -14,7 +14,7 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockController {
 
@@ -48,7 +48,7 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
         return MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.IMPLOSION_COMPRESSOR_OVERLAY;

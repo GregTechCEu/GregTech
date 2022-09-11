@@ -15,8 +15,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -119,7 +119,7 @@ public class CustomTextureBakedModel implements IBakedModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IBakedModel parent = getParent(rand);
 
@@ -171,20 +171,20 @@ public class CustomTextureBakedModel implements IBakedModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public TextureAtlasSprite getParticleTexture() {
         return parent.getParticleTexture();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemOverrideList getOverrides() {
         return parent.getOverrides();
     }
 
     @Override
-    @Nonnull
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@Nonnull ItemCameraTransforms.TransformType cameraTransformType) {
+    @NotNull
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@NotNull ItemCameraTransforms.TransformType cameraTransformType) {
         return parent.handlePerspective(cameraTransformType);
     }
 

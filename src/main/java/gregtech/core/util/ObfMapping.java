@@ -13,7 +13,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.*;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -344,7 +344,7 @@ public class ObfMapping extends Remapper {
         }
 
         @Override
-        public boolean processLine(@Nonnull String line) {
+        public boolean processLine(@NotNull String line) {
             int i = line.indexOf(',');
             String srg = line.substring(0, i);
             int i2 = i + 1;

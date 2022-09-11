@@ -4,7 +4,7 @@ import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.unification.material.Material;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>, NodeDataType> extends ItemBlockPipe<PipeType, NodeDataType> {
 
@@ -12,10 +12,10 @@ public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPi
         super(block);
     }
 
-    @Nonnull
+    @NotNull
     @SuppressWarnings("unchecked")
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(@NotNull ItemStack stack) {
         PipeType pipeType = blockPipe.getItemPipeType(stack);
         Material material = ((BlockMaterialPipe<PipeType, NodeDataType, ?>) blockPipe).getItemMaterial(stack);
         return material == null ? " " : pipeType.getOrePrefix().getLocalNameForItem(material);

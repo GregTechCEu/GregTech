@@ -3,7 +3,7 @@ package gregtech.api.util;
 import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**

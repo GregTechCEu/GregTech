@@ -12,7 +12,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class EUToFEProvider extends CapabilityCompatProvider {
 
@@ -28,14 +28,14 @@ public class EUToFEProvider extends CapabilityCompatProvider {
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
         return ConfigHolder.compat.energy.nativeEUToFE &&
                 capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER &&
                 hasUpvalueCapability(CapabilityEnergy.ENERGY, facing);
     }
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
         if (!ConfigHolder.compat.energy.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return null;
 

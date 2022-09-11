@@ -12,8 +12,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -48,7 +48,7 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
         return Collections.unmodifiableList(fluidTanks);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<IFluidTank> iterator() {
         return getFluidTanks().iterator();

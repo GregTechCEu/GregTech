@@ -2,19 +2,19 @@ package gregtech.api.fluids.fluidType;
 
 import net.minecraftforge.fluids.Fluid;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FluidTypeLiquid extends FluidType {
 
     private static final String TOOLTIP_NAME = "gregtech.fluid.state_liquid";
 
-    public FluidTypeLiquid(@Nonnull String name, @Nullable String prefix, @Nullable String suffix, @Nonnull String localization) {
+    public FluidTypeLiquid(@NotNull String name, @Nullable String prefix, @Nullable String suffix, @NotNull String localization) {
         super(name, prefix, suffix, localization);
     }
 
     @Override
-    protected void setFluidProperties(@Nonnull Fluid fluid) {
+    protected void setFluidProperties(@NotNull Fluid fluid) {
         fluid.setGaseous(false);
         fluid.setViscosity(1000);
     }

@@ -10,7 +10,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
@@ -31,7 +31,7 @@ public class BlockHermeticCasing extends VariantBlock<BlockHermeticCasing.Hermet
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         // cutout is needed for the top (outer) layer/overlay to render properly in world
@@ -57,7 +57,7 @@ public class BlockHermeticCasing extends VariantBlock<BlockHermeticCasing.Hermet
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return this.name;
         }

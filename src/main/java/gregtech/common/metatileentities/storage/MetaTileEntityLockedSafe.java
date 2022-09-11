@@ -44,7 +44,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
@@ -65,9 +65,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private long unlockComponentsSeed = 0L;
     private final ItemStackHandler unlockComponents = new ItemStackHandler(2);
     private final ItemStackHandler unlockInventory = new ItemStackHandler(2) {
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             int maxStackSize = canPutUnlockItemInSlot(slot, stack);
             if (maxStackSize == 0) return stack;
             int maxAmount = Math.min(maxStackSize, stack.getCount());

@@ -26,7 +26,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class MinerLogic {
      * @param speed the speed in ticks per block mined
      * @param maximumRadius the maximum radius (square shaped) the miner can mine in
      */
-    public MinerLogic(@Nonnull MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
+    public MinerLogic(@NotNull MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
         this.metaTileEntity = metaTileEntity;
         this.miner = (IMiner) metaTileEntity;
         this.fortune = fortune;
@@ -224,7 +224,7 @@ public class MinerLogic {
      * @param blockToMine the {@link BlockPos} of the block being mined
      * @param blockState the {@link IBlockState} of the block being mined
      */
-    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
+    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @NotNull IBlockState blockState) {
         blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, 0); // regular ores do not get fortune applied
     }
 
@@ -263,7 +263,7 @@ public class MinerLogic {
      * @param pos the {@link BlockPos} of the miner itself
      * @param currentRadius the currently set mining radius
      */
-    public void initPos(@Nonnull BlockPos pos, int currentRadius) {
+    public void initPos(@NotNull BlockPos pos, int currentRadius) {
         x.set(pos.getX() - currentRadius);
         z.set(pos.getZ() - currentRadius);
         y.set(pos.getY() - 1);
@@ -283,7 +283,7 @@ public class MinerLogic {
      * @param z the z coordinate
      * @return {@code true} if the coordinates are invalid, else false
      */
-    private static boolean checkCoordinatesInvalid(@Nonnull AtomicInteger x, @Nonnull AtomicInteger y, @Nonnull AtomicInteger z) {
+    private static boolean checkCoordinatesInvalid(@NotNull AtomicInteger x, @NotNull AtomicInteger y, @NotNull AtomicInteger z) {
         return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
     }
 
@@ -359,7 +359,7 @@ public class MinerLogic {
      * @param map the recipemap from which to get the drops
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
-    protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
+    protected static void applyTieredHammerNoRandomDrops(@NotNull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @NotNull RecipeMap<?> map, int tier) {
         ItemStack itemStack = GTUtility.toItem(blockState);
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
@@ -400,7 +400,7 @@ public class MinerLogic {
      * writes all needed values to NBT
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeToNBT(NBTTagCompound)} method
      */
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         data.setTag("xPos", new NBTTagInt(x.get()));
         data.setTag("yPos", new NBTTagInt(y.get()));
         data.setTag("zPos", new NBTTagInt(z.get()));
@@ -424,7 +424,7 @@ public class MinerLogic {
      * reads all needed values from NBT
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)} method
      */
-    public void readFromNBT(@Nonnull NBTTagCompound data) {
+    public void readFromNBT(@NotNull NBTTagCompound data) {
         x.set(data.getInteger("xPos"));
         y.set(data.getInteger("yPos"));
         z.set(data.getInteger("zPos"));
@@ -447,7 +447,7 @@ public class MinerLogic {
      * writes all needed values to InitialSyncData
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeInitialSyncData(PacketBuffer)} method
      */
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeInt(pipeLength);
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.isWorkingEnabled);
@@ -458,7 +458,7 @@ public class MinerLogic {
      * reads all needed values from InitialSyncData
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#receiveInitialSyncData(PacketBuffer)} method
      */
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         this.pipeLength = buf.readInt();
         setActive(buf.readBoolean());
         setWorkingEnabled(buf.readBoolean());

@@ -13,7 +13,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.server.command.CommandTreeBase;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class GregTechCommand extends CommandTreeBase {
@@ -25,26 +25,26 @@ public class GregTechCommand extends CommandTreeBase {
         addSubcommand(new CommandShaders());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "gregtech";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getAliases() {
         return Lists.newArrayList("gt");
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.usage";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, String[] args) throws CommandException {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, String[] args) throws CommandException {
         if (args.length > 0) {
             if (args[0].equals("copy")) {
                 StringBuilder message = new StringBuilder();

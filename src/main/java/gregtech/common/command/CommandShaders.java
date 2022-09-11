@@ -8,24 +8,24 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandShaders extends CommandBase {
 
     @Override
-    @Nonnull
+    @NotNull
     public String getName() {
         return "reloadshaders";
     }
 
     @Override
-    @Nonnull
-    public String getUsage(@Nonnull ICommandSender iCommandSender) {
+    @NotNull
+    public String getUsage(@NotNull ICommandSender iCommandSender) {
         return "Reload GTCEu Shaders";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer minecraftServer, @Nonnull ICommandSender iCommandSender, @Nonnull String[] strings) {
+    public void execute(@NotNull MinecraftServer minecraftServer, @NotNull ICommandSender iCommandSender, @NotNull String[] strings) {
         if (iCommandSender instanceof EntityPlayerMP) {
             NetworkHandler.channel.sendTo(new SPacketReloadShaders().toFMLPacket(), (EntityPlayerMP) iCommandSender);
             iCommandSender.sendMessage(new TextComponentString("Reloaded Shaders"));

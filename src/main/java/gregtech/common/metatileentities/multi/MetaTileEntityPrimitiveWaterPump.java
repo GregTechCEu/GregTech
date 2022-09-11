@@ -28,7 +28,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -150,7 +150,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
         return Textures.PRIMITIVE_PUMP;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.PRIMITIVE_PUMP_OVERLAY;

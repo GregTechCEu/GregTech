@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class PlasmaProperty implements IMaterialProperty<PlasmaProperty> {
 
@@ -20,7 +20,7 @@ public class PlasmaProperty implements IMaterialProperty<PlasmaProperty> {
     /**
      * internal usage only
      */
-    public void setPlasma(@Nonnull Fluid plasma) {
+    public void setPlasma(@NotNull Fluid plasma) {
         Preconditions.checkNotNull(plasma);
         this.plasma = plasma;
     }
@@ -29,7 +29,7 @@ public class PlasmaProperty implements IMaterialProperty<PlasmaProperty> {
         return plasma;
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getPlasma(int amount) {
         return new FluidStack(plasma, amount);
     }

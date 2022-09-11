@@ -43,7 +43,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
@@ -59,12 +59,12 @@ public class GTJeiPlugin implements IModPlugin {
     public static IGuiHelper guiHelper;
 
     @Override
-    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
         GTJeiPlugin.jeiRuntime = jeiRuntime;
     }
 
     @Override
-    public void registerItemSubtypes(@Nonnull ISubtypeRegistry subtypeRegistry) {
+    public void registerItemSubtypes(@NotNull ISubtypeRegistry subtypeRegistry) {
         MetaItemSubtypeHandler subtype = new MetaItemSubtypeHandler();
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);

@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
@@ -56,14 +56,14 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 FluidStack stack;
                 if (ingredient instanceof FluidStack) {
                     stack = (FluidStack) ingredient;

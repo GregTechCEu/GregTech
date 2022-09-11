@@ -22,8 +22,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
@@ -75,7 +75,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         tooltip.add(I18n.format("gregtech.machine.cracker.tooltip.1"));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.CRACKING_UNIT_OVERLAY;

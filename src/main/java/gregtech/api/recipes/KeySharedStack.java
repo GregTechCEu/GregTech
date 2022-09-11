@@ -3,7 +3,7 @@ package gregtech.api.recipes;
 import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
@@ -16,7 +16,7 @@ public class KeySharedStack {
 
     }
 
-    public static synchronized ItemStackKey getRegisteredStack(final @Nonnull ItemStack itemStack) {
+    public static synchronized ItemStackKey getRegisteredStack(final @NotNull ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return EMPTY;
         }

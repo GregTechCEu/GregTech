@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber(modid = GTValues.MODID)
 public class EnchantmentTableTweaks {
@@ -87,7 +87,7 @@ public class EnchantmentTableTweaks {
         }
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return super.isItemValid(stack) || isValidForEnchantment(stack);
         }
     }

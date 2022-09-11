@@ -3,7 +3,7 @@ package gregtech.api.util;
 import gregtech.api.unification.OreDictUnifier;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

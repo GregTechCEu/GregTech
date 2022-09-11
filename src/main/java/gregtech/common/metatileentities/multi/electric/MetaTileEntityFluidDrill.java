@@ -40,8 +40,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,7 +124,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
-    @Nonnull
+    @NotNull
     private IBlockState getFrameState() {
         if (tier == GTValues.MV)
             return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
@@ -212,7 +212,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.FLUID_RIG_OVERLAY;

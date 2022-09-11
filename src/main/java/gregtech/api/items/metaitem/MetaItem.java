@@ -60,8 +60,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -177,7 +177,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public boolean showDurabilityBar(@Nonnull ItemStack stack) {
+    public boolean showDurabilityBar(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
             return metaValueItem.getDurabilityManager().showsDurabilityBar(stack);
@@ -187,7 +187,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
+    public double getDurabilityForDisplay(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
             return metaValueItem.getDurabilityManager().getDurabilityForDisplay(stack);
@@ -200,7 +200,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+    public int getRGBDurabilityForDisplay(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
             return metaValueItem.getDurabilityManager().getRGBDurabilityForDisplay(stack);
@@ -208,10 +208,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public EnumRarity getRarity(@Nonnull ItemStack stack) {
+    public EnumRarity getRarity(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null && metaValueItem.getRarity() != null) return metaValueItem.getRarity();
         else return super.getRarity(stack);
@@ -255,7 +255,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable NBTTagCompound nbt) {
         T metaValueItem = getItem(stack);
         if (metaValueItem == null) {
             return null;
@@ -273,7 +273,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     //////////////////////////////////////////////////////////////////
 
     @Override
-    public int getItemBurnTime(@Nonnull ItemStack itemStack) {
+    public int getItemBurnTime(@NotNull ItemStack itemStack) {
         T metaValueItem = getItem(itemStack);
         if (metaValueItem == null) {
             return super.getItemBurnTime(itemStack);
@@ -302,7 +302,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getItemStackLimit(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem == null) {
             return 64;
@@ -310,9 +310,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return metaValueItem.getMaxStackSize(stack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumAction getItemUseAction(@Nonnull ItemStack stack) {
+    public EnumAction getItemUseAction(@NotNull ItemStack stack) {
         IItemUseManager useManager = getUseManager(stack);
         if (useManager != null) {
             return useManager.getUseAction(stack);
@@ -321,7 +321,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public int getMaxItemUseDuration(@Nonnull ItemStack stack) {
+    public int getMaxItemUseDuration(@NotNull ItemStack stack) {
         IItemUseManager useManager = getUseManager(stack);
         if (useManager != null) {
             return useManager.getMaxItemUseDuration(stack);
@@ -330,7 +330,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public void onUsingTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player, int count) {
+    public void onUsingTick(@NotNull ItemStack stack, @NotNull EntityLivingBase player, int count) {
         if (player instanceof EntityPlayer) {
             IItemUseManager useManager = getUseManager(stack);
             if (useManager != null) {
@@ -340,7 +340,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public void onPlayerStoppedUsing(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player, int timeLeft) {
+    public void onPlayerStoppedUsing(@NotNull ItemStack stack, @NotNull World world, @NotNull EntityLivingBase player, int timeLeft) {
         if (player instanceof EntityPlayer) {
             IItemUseManager useManager = getUseManager(stack);
             if (useManager != null) {
@@ -351,7 +351,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Nullable
     @Override
-    public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player) {
+    public ItemStack onItemUseFinish(@NotNull ItemStack stack, @NotNull World world, @NotNull EntityLivingBase player) {
         if (player instanceof EntityPlayer) {
             IItemUseManager useManager = getUseManager(stack);
             if (useManager != null) {
@@ -362,7 +362,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
+    public boolean onLeftClickEntity(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull Entity entity) {
         boolean returnValue = false;
         for (IItemBehaviour behaviour : getBehaviours(stack)) {
             if (behaviour.onLeftClickEntity(stack, player, entity)) {
@@ -373,7 +373,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public boolean itemInteractionForEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer playerIn, @Nonnull EntityLivingBase target, @Nonnull EnumHand hand) {
+    public boolean itemInteractionForEntity(@NotNull ItemStack stack, @NotNull EntityPlayer playerIn, @NotNull EntityLivingBase target, @NotNull EnumHand hand) {
         boolean returnValue = false;
         for (IItemBehaviour behaviour : getBehaviours(stack)) {
             if (behaviour.itemInteractionForEntity(stack, playerIn, target, hand)) {
@@ -383,9 +383,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return returnValue;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, EntityPlayer player, @Nonnull EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@NotNull World world, EntityPlayer player, @NotNull EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
             ActionResult<ItemStack> behaviourResult = behaviour.onItemRightClick(world, player, hand);
@@ -405,9 +405,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return ActionResult.newResult(EnumActionResult.PASS, itemStack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX, float hitY, float hitZ, @NotNull EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
             EnumActionResult behaviourResult = behaviour.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
@@ -420,9 +420,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return EnumActionResult.PASS;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, @NotNull World world, @NotNull BlockPos pos, @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         ItemStack originalStack = stack.copy();
         for (IItemBehaviour behaviour : getBehaviours(stack)) {
@@ -440,9 +440,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return EnumActionResult.PASS;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@NotNull EntityEquipmentSlot slot, @NotNull ItemStack stack) {
         HashMultimap<String, AttributeModifier> modifiers = HashMultimap.create();
         T metaValueItem = getItem(stack);
         if (metaValueItem != null) {
@@ -454,7 +454,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public boolean isEnchantable(@Nonnull ItemStack stack) {
+    public boolean isEnchantable(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null) {
             IEnchantabilityHelper helper = metaValueItem.getEnchantabilityHelper();
@@ -464,7 +464,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public int getItemEnchantability(@Nonnull ItemStack stack) {
+    public int getItemEnchantability(@NotNull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null) {
             IEnchantabilityHelper helper = metaValueItem.getEnchantabilityHelper();
@@ -474,7 +474,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack, @NotNull Enchantment enchantment) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null) {
             IEnchantabilityHelper helper = metaValueItem.getEnchantabilityHelper();
@@ -484,14 +484,14 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public void onUpdate(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
+    public void onUpdate(@NotNull ItemStack stack, @NotNull World worldIn, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
         for (IItemBehaviour behaviour : getBehaviours(stack)) {
             behaviour.onUpdate(stack, entityIn);
         }
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
+    public boolean shouldCauseReequipAnimation(@NotNull ItemStack oldStack, @NotNull ItemStack newStack, boolean slotChanged) {
         //if item is equal, and old item has electric item capability, remove charge tags to stop reequip animation when charge is altered
         if (ItemStack.areItemsEqual(oldStack, newStack) && oldStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) &&
                 oldStack.hasTagCompound() && newStack.hasTagCompound()) {
@@ -513,7 +513,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return metaItem == null ? getTranslationKey() : getTranslationKey() + "." + metaItem.unlocalizedName;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getItemDamage() >= metaItemOffset) {
@@ -540,7 +540,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines, @NotNull ITooltipFlag tooltipFlag) {
         T item = getItem(itemStack);
         if (item == null) return;
         String unlocalizedTooltip = "metaitem." + item.unlocalizedName + ".tooltip";
@@ -622,7 +622,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    public boolean hasContainerItem(@Nonnull ItemStack itemStack) {
+    public boolean hasContainerItem(@NotNull ItemStack itemStack) {
         T item = getItem(itemStack);
         if (item == null) {
             return false;
@@ -630,9 +630,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return item.getContainerItemProvider() != null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getContainerItem(@Nonnull ItemStack itemStack) {
+    public ItemStack getContainerItem(@NotNull ItemStack itemStack) {
         T item = getItem(itemStack);
         if (item == null) {
             return ItemStack.EMPTY;
@@ -643,7 +643,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return provider == null ? ItemStack.EMPTY : provider.getContainerItem(itemStack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public CreativeTabs[] getCreativeTabs() {
         return new CreativeTabs[]{GregTechAPI.TAB_GREGTECH, GregTechAPI.TAB_GREGTECH_MATERIALS};
@@ -651,7 +651,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> subItems) {
         if (tab != GregTechAPI.TAB_GREGTECH && tab != CreativeTabs.SEARCH) {
             return;
         }

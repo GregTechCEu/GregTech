@@ -19,7 +19,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -53,7 +53,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @NotNull IIngredients ingredients) {
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         int baseYPos = 19;
@@ -83,14 +83,14 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         definition = recipeWrapper.getDefinition();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull GTOreInfo recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull GTOreInfo recipe) {
         return recipe;
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
 
         int baseXPos = 70;
         int baseYPos = 19;

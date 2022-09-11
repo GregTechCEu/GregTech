@@ -16,7 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 
@@ -36,13 +36,13 @@ public class BlockRubberLeaves extends BlockLeaves {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, CHECK_DECAY, DECAYABLE);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -63,20 +63,20 @@ public class BlockRubberLeaves extends BlockLeaves {
         return meta;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+    public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         return Item.getItemFromBlock(MetaBlocks.RUBBER_SAPLING);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public List<ItemStack> onSheared(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
+    public List<ItemStack> onSheared(@NotNull ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
         return Lists.newArrayList(new ItemStack(this, 1, 0));
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public BlockRenderLayer getRenderLayer() {
         if (!fancyLeaves()) {
             return super.getRenderLayer();
@@ -86,7 +86,7 @@ public class BlockRubberLeaves extends BlockLeaves {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
         if (!fancyLeaves()) {
             return super.isOpaqueCube(state);
         }
@@ -95,7 +95,7 @@ public class BlockRubberLeaves extends BlockLeaves {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean shouldSideBeRendered(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public boolean shouldSideBeRendered(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos, @NotNull EnumFacing side) {
         if (!fancyLeaves()) {
             return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
         }

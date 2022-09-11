@@ -61,7 +61,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
@@ -405,9 +405,9 @@ public class MetaBlocks {
         }
 
         normalStateMapper = new StateMapperBase() {
-            @Nonnull
+            @NotNull
             @Override
-            protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+            protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
                 return new ModelResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()), "normal");
             }
         };

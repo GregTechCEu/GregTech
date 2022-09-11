@@ -26,7 +26,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,14 +101,14 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 FluidStack ingredientStack;
                 if (ingredient instanceof FluidStack)
                     ingredientStack = (FluidStack) ingredient;

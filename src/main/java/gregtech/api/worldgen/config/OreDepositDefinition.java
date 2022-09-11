@@ -9,7 +9,7 @@ import gregtech.api.worldgen.shape.ShapeGenerator;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -42,7 +42,7 @@ public class OreDepositDefinition implements IWorldgenDefinition {
     }
 
     @Override
-    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
+    public boolean initializeFromConfig(@NotNull JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
         this.density = configRoot.get("density").getAsFloat();
         if (configRoot.has("name")) {

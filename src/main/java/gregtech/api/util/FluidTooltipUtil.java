@@ -9,7 +9,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +91,7 @@ public class FluidTooltipUtil {
     /**
      * A simple helper method to get the tooltip for Water, since it is an edge case of fluids.
      */
-    @Nonnull
+    @NotNull
     public static List<String> getWaterTooltip() {
         return getMaterialTooltip(Materials.Water, Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature(), false);
     }
@@ -99,13 +99,13 @@ public class FluidTooltipUtil {
     /**
      * A simple helper method to get the tooltip for Lava, since it is an edge case of fluids.
      */
-    @Nonnull
+    @NotNull
     public static List<String> getLavaTooltip() {
         return getMaterialTooltip(Materials.Lava, Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature(), false);
     }
 
-    @Nonnull
-    public static List<String> getMaterialTooltip(@Nonnull Material material, int temperature, boolean isPlasma) {
+    @NotNull
+    public static List<String> getMaterialTooltip(@NotNull Material material, int temperature, boolean isPlasma) {
         List<String> tooltip = new ArrayList<>();
         if (!material.getChemicalFormula().isEmpty())
             tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());

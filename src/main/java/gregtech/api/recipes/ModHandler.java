@@ -51,8 +51,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -77,11 +77,11 @@ public class ModHandler {
         return false;
     }
 
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
+    public static FluidStack getBoilerFluidFromContainer(@NotNull IFluidHandler fluidHandler, boolean doDrain) {
         return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
     }
 
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
+    public static FluidStack getBoilerFluidFromContainer(@NotNull IFluidHandler fluidHandler, int amount, boolean doDrain) {
         if (amount == 0) return null;
         FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
         if (drainedWater == null || drainedWater.amount == 0) {

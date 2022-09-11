@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
@@ -211,7 +211,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = Integer.MAX_VALUE;
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item == null) {
@@ -224,7 +224,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     }
 
     @Override
-    public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE;
     }
 
@@ -239,7 +239,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     }
 
     @Override
-    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+    public boolean canUseEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
@@ -247,7 +247,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     }
 
     @Override
-    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+    public void drainEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return;
@@ -255,14 +255,14 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     }
 
     @Override
-    public boolean hasEnergy(@Nonnull ItemStack stack) {
+    public boolean hasEnergy(@NotNull ItemStack stack) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
         return container.getCharge() > 0;
     }
 
-    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private IElectricItem getIElectricItem(@NotNull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 

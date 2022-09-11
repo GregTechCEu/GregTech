@@ -14,8 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return name;
         }

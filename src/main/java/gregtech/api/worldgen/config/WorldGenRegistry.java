@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -393,7 +393,7 @@ public class WorldGenRegistry {
         }
     }
 
-    private void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
+    private void removeExistingFiles(Path root, @NotNull List<? extends IWorldgenDefinition> definitions){
         for(IWorldgenDefinition definition : definitions) {
             Path filePath = root.resolve(Paths.get(definition.getDepositName()));
 
@@ -409,7 +409,7 @@ public class WorldGenRegistry {
         }
     }
 
-    private <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
+    private <T extends IWorldgenDefinition> void addAddonFiles(Path root, @NotNull List<T> definitions, @NotNull List<T> registeredDefinitions){
         for(IWorldgenDefinition definition : definitions) {
 
             JsonObject element = FileUtility.tryExtractFromFile(root.resolve(definition.getDepositName()));

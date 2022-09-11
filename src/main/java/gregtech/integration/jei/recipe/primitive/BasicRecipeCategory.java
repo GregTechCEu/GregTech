@@ -9,8 +9,8 @@ import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,35 +32,35 @@ public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implement
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getUid() {
         return getModName() + ":" + uniqueName;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTitle() {
         return localizedName;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IDrawable getBackground() {
         return background;
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         return Collections.emptyList();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getModName() {
         return GTValues.MODID;

@@ -28,8 +28,8 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,13 +66,13 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getUid() {
         return GTValues.MODID + ":" + recipeMap.unlocalizedName;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getTitle() {
         return recipeMap.getLocalizedName();
     }
@@ -97,19 +97,19 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IDrawable getBackground() {
         return backgroundDrawable;
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull GTRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull GTRecipeWrapper recipeWrapper, @NotNull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
@@ -182,7 +182,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
             if (widget instanceof ProgressWidget) widget.detectAndSendChanges();
             widget.drawInBackground(0, 0, minecraft.getRenderPartialTicks(), new IRenderContext() {
@@ -195,12 +195,12 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         return categoryMap;
     }
 
-    private static boolean shouldShiftWidgets(@Nonnull RecipeMap<?> recipeMap) {
+    private static boolean shouldShiftWidgets(@NotNull RecipeMap<?> recipeMap) {
         return recipeMap.getMaxInputs() + recipeMap.getMaxOutputs() >= 6 ||
                 recipeMap.getMaxFluidInputs() + recipeMap.getMaxFluidOutputs() >= 6;
     }
 
-    private static int getPropertyShiftAmount(@Nonnull RecipeMap<?> recipeMap) {
+    private static int getPropertyShiftAmount(@NotNull RecipeMap<?> recipeMap) {
         int maxPropertyCount = 0;
         if (shouldShiftWidgets(recipeMap)) {
             for (Recipe recipe : recipeMap.getRecipeList()) {
