@@ -13,6 +13,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -29,14 +30,16 @@ public class BloomEffectUtil {
     public static BlockRenderLayer BLOOM;
     private static Framebuffer BLOOM_FBO;
     private static Map<IBloomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
+    private static boolean nothiriumLoaded;
 
-    public static BlockRenderLayer getRealBloomLayer(){
+    public static BlockRenderLayer getRealBloomLayer() {
         return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : BLOOM;
     }
 
     public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
         RENDER_FAST = Maps.newHashMap();
+        nothiriumLoaded = Loader.isModLoaded("nothirium");
     }
 
     public static void initBloomRenderLayer(BufferBuilder[] worldRenderers) {
@@ -46,8 +49,8 @@ public class BloomEffectUtil {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (Shaders.isOptiFineShaderPackLoaded()) {
-            int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
+        if (Shaders.isOptiFineShaderPackLoaded() || nothiriumLoaded) {
+            int result = renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
             RENDER_FAST.clear();
             return result;
         } else if (!ConfigHolder.client.shader.emissiveTexturesBloom) {
@@ -57,9 +60,9 @@ public class BloomEffectUtil {
             // render fast
             if (!RENDER_FAST.isEmpty()) {
                 BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-                RENDER_FAST.forEach((handler, list)->{
+                RENDER_FAST.forEach((handler, list) -> {
                     handler.preDraw(buffer);
-                    list.forEach(consumer->consumer.accept(buffer));
+                    list.forEach(consumer -> consumer.accept(buffer));
                     handler.postDraw(buffer);
                 });
                 RENDER_FAST.clear();
@@ -89,7 +92,6 @@ public class BloomEffectUtil {
         }
 
 
-
         GlStateManager.depthMask(true);
 
         fbo.bindFramebuffer(true);
@@ -97,9 +99,9 @@ public class BloomEffectUtil {
         // render fast
         if (!RENDER_FAST.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-            RENDER_FAST.forEach((handler, list)->{
+            RENDER_FAST.forEach((handler, list) -> {
                 handler.preDraw(buffer);
-                list.forEach(consumer->consumer.accept(buffer));
+                list.forEach(consumer -> consumer.accept(buffer));
                 handler.postDraw(buffer);
             });
         }
@@ -161,20 +163,19 @@ public class BloomEffectUtil {
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
 
-
         //********** render custom bloom ************
 
         // render fast
         if (!RENDER_FAST.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-            RENDER_FAST.forEach((handler, list)->{
+            RENDER_FAST.forEach((handler, list) -> {
                 GlStateManager.depthMask(true);
 
                 BLOOM_FBO.framebufferClear();
                 BLOOM_FBO.bindFramebuffer(true);
 
                 handler.preDraw(buffer);
-                list.forEach(consumer->consumer.accept(buffer));
+                list.forEach(consumer -> consumer.accept(buffer));
                 handler.postDraw(buffer);
 
                 GlStateManager.depthMask(false);
@@ -216,7 +217,7 @@ public class BloomEffectUtil {
     }
 
     public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
-        RENDER_FAST.computeIfAbsent(handler, (x)->Lists.newLinkedList()).add(render);
+        RENDER_FAST.computeIfAbsent(handler, (x) -> Lists.newLinkedList()).add(render);
     }
 
     public interface IBloomRenderFast extends ICustomRenderFast {
@@ -224,16 +225,15 @@ public class BloomEffectUtil {
         /**
          * Custom Bloom Style.
          *
-         * @return
-         * 0 - Simple Gaussian Blur Bloom
+         * @return 0 - Simple Gaussian Blur Bloom
          * <p>
-         *  1 - Unity Bloom
+         * 1 - Unity Bloom
          * </p>
          * <p>
          * 2 - Unreal Bloom
          * </p>
          */
-         int customBloomStyle();
+        int customBloomStyle();
 
     }
 }
