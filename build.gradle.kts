@@ -61,6 +61,8 @@ repositories {
 }
 
 dependencies {
+    "compileOnly"("org.jetbrains:annotations:23.0.0")
+
     "deobfCompile"("curse.maven:codechicken-lib-1-8-242818:2779848")
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
