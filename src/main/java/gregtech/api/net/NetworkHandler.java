@@ -1,13 +1,15 @@
 package gregtech.api.net;
 
+import gregtech.GregTechMod;
 import gregtech.api.GTValues;
-import gregtech.api.net.packets.*;
-import gregtech.api.util.GTLog;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -24,33 +26,25 @@ public class NetworkHandler {
 
     protected static final IntIdentityHashBiMap<Class<? extends IPacket>> packetMap = new IntIdentityHashBiMap<>(15);
 
-    // Register your packets here
-    public static void init() {
+    public static void init(ASMDataTable table) {
+        // don't call this method pls :pleading:
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null || container.getMod() != GregTechMod.instance || channel != null) {
+            return;
+        }
+
+        // register the channel
         channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(GTValues.MODID);
         channel.register(new NetworkHandler());
 
-        registerPacket(SPacketUIOpen.class);
-        registerPacket(SPacketUIWidgetUpdate.class);
-        registerPacket(CPacketUIClientAction.class);
-        registerPacket(SPacketBlockParticle.class);
-        registerPacket(SPacketClipboard.class);
-        registerPacket(CPacketClipboardUIWidgetUpdate.class);
-        registerPacket(CPacketPluginSynced.class);
-        registerPacket(CPacketRecoverMTE.class);
-        registerPacket(CPacketKeysPressed.class);
-        registerPacket(CPacketFluidVeinList.class);
-        registerPacket(SPacketNotifyCapeChange.class);
-        registerPacket(SPacketReloadShaders.class);
+        // register the packets
+        //noinspection unchecked
+        NetworkUtils.getPacketClasses(table).forEach(p -> registerPacket((Class<? extends IPacket>) p));
     }
 
     private static int ID = 1;
     private static void registerPacket(Class<? extends IPacket> packetClass) {
         packetMap.put(packetClass, ID++);
-
-        // Ensure packet is not marked as both a client and server executor
-        if (IServerExecutor.class.isAssignableFrom(packetClass) && IClientExecutor.class.isAssignableFrom(packetClass)) {
-            GTLog.logger.error("Packet {} cannot be marked as server and client executor, skipping...", packetClass.toGenericString());
-        }
     }
 
 

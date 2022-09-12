@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class CPacketPluginSynced implements IPacket, IServerExecutor {
 
     private int dimension;

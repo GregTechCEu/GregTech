@@ -5,6 +5,11 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * The general structure of Network Packets. <br><br>
  * <p>
@@ -48,5 +53,10 @@ public interface IPacket {
      */
     default FMLProxyPacket toFMLPacket() {
         return NetworkUtils.packet2proxy(this);
+    }
+
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Packet {
     }
 }

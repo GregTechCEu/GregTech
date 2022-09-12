@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class SPacketBlockParticle implements IPacket, IClientExecutor {
 
     private BlockPos blockPos;

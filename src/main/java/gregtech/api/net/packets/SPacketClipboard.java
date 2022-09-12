@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class SPacketClipboard implements IPacket, IClientExecutor {
 
     private String text;

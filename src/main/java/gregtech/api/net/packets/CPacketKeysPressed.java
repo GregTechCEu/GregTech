@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class CPacketKeysPressed implements IPacket, IServerExecutor {
 
     private Object updateKeys;

@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class SPacketUIWidgetUpdate implements IPacket, IClientExecutor {
 
     public int windowId;

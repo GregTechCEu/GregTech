@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.UUID;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class SPacketNotifyCapeChange implements IPacket, IClientExecutor {
 
     public ResourceLocation cape;

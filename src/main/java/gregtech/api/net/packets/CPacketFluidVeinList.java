@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class CPacketFluidVeinList implements IPacket, IClientExecutor {
 
     private Map<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map;

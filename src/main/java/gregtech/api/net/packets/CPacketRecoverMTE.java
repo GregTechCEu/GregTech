@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class CPacketRecoverMTE implements IPacket, IServerExecutor {
 
     private int dimension;

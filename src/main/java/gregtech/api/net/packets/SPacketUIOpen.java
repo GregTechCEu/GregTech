@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class SPacketUIOpen implements IPacket, IClientExecutor {
 
     private int uiFactoryId;

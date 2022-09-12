@@ -75,7 +75,7 @@ public class GregTechMod {
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
-        NetworkHandler.init();
+        NetworkHandler.init(event.getAsmData());
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();

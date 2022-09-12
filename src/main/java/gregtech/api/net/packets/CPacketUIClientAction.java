@@ -11,6 +11,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class CPacketUIClientAction implements IPacket, IServerExecutor {
 
     private int windowId;

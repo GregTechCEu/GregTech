@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 @NoArgsConstructor
+@IPacket.Packet
 public class CPacketClipboardUIWidgetUpdate implements IPacket, IServerExecutor {
 
     private int dimension;
