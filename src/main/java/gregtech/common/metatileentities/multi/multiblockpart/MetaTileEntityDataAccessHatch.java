@@ -5,7 +5,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IDataAccessHatch;
-import gregtech.api.capability.impl.NotifiableFilteredItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -21,10 +20,8 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.I18n;
@@ -44,59 +41,54 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch, IDataInfoProvider {
 
-    private final Map<GTRecipeInput, Set<Recipe>> dataMap = new Object2ObjectOpenHashMap<>();
+    private final Set<Recipe> recipes = new ObjectOpenHashSet<>();
 
-    private final boolean isCreative;
-
-    public MetaTileEntityDataAccessHatch(ResourceLocation metaTileEntityId, int tier, boolean isCreative) {
+    public MetaTileEntityDataAccessHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
-        this.isCreative = isCreative;
+        rebuildData();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier(), this.isCreative);
+        return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier());
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = this.isCreative ? Textures.CREATIVE_DATA_ACCESS_HATCH : Textures.DATA_ACCESS_HATCH;
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.DATA_ACCESS_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(0);
-    }
-
-    @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableFilteredItemStackHandler(getInventorySize(), getController(), false)
-                .setFillPredicate(stack -> {
-                    if (stack.isEmpty() || stack.isItemEqual(MetaItems.TOOL_DATA_STICK.getStackForm()) ||
-                            stack.isItemEqual(MetaItems.TOOL_DATA_ORB.getStackForm())) {
+        return new ItemStackHandler(getInventorySize()) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                rebuildData();
+            }
 
-                        addDataNBT(stack);
-                        return true;
+            @Nonnull
+            @Override
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+                if (stack.isItemEqual(MetaItems.TOOL_DATA_STICK.getStackForm()) ||
+                            stack.isItemEqual(MetaItems.TOOL_DATA_ORB.getStackForm())) {
+                    if (stack.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG) != null) {
+                        return super.insertItem(slot, stack, simulate);
                     }
-                    return false;
-                })
-                .setExtractPredicate(stack -> {
-                    rebuildData();
-                    return true;
-                });
+                }
+                return stack;
+            }
+        };
     }
 
     protected int getInventorySize() {
-        return isCreative ? 0 : getTier() == GTValues.ZPM ? 16 : 9;
+        return getTier() == GTValues.ZPM ? 16 : 9;
     }
 
     @Override
@@ -128,54 +120,22 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     private void rebuildData() {
-        dataMap.clear();
+        recipes.clear();
         for (int i = 0; i < this.importItems.getSlots(); i++) {
             ItemStack stack = this.importItems.getStackInSlot(i);
-            addDataNBT(stack);
+            NBTTagCompound researchItemNBT = stack.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG);
+            if (researchItemNBT != null) {
+                String researchId = researchItemNBT.getString(IResearchRecipeMap.RESEARCH_ID_NBT_TAG);
+                if (researchId.isEmpty()) return;
+                recipes.addAll(((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId));
+            }
         }
-    }
-
-    private void addDataNBT(@Nonnull ItemStack stack) {
-        NBTTagCompound researchItemNBT = stack.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG);
-        if (researchItemNBT != null) {
-            String researchId = researchItemNBT.getString(IResearchRecipeMap.RESEARCH_ID_NBT_TAG);
-            if (researchId.isEmpty()) return;
-            dataMap.put(GTRecipeItemInput.getOrCreate(stack), ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId));
-        }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        rebuildData();
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        rebuildData();
     }
 
     @Nonnull
     @Override
     public Set<Recipe> getAvailableRecipes() {
-        Set<Recipe> recipes = new ObjectOpenHashSet<>();
-        recipes.clear();
-        for (Set<Recipe> recipeSet : dataMap.values()) {
-            recipes.addAll(recipeSet);
-        }
         return recipes;
-    }
-
-    @Override
-    public boolean isCreative() {
-        return this.isCreative;
-    }
-
-    @Override
-    protected boolean openGUIOnRightClick() {
-        return super.openGUIOnRightClick() && !this.isCreative;
     }
 
     @Override
@@ -189,16 +149,13 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
-        if (isCreative) tooltip.add(I18n.format("gregtech.machine.data_access_hatch.creative.tooltip.1"));
-        else tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
+        tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
     }
 
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ObjectArrayList<>();
-        rebuildData();
-        Set<Recipe> recipes = getAvailableRecipes();
         if (recipes.isEmpty()) return list;
 
         list.add(new TextComponentTranslation("behavior.data_item.assemblyline.title"));
