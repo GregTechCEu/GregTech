@@ -15,7 +15,6 @@ public class FilteredItemHandler extends ItemStackHandler {
     }
 
     private Predicate<ItemStack> fillPredicate;
-    private Predicate<ItemStack> extractPredicate;
 
     public FilteredItemHandler() {
         super(1);
@@ -34,25 +33,8 @@ public class FilteredItemHandler extends ItemStackHandler {
         return this;
     }
 
-    public FilteredItemHandler setExtractPredicate(Predicate<ItemStack> extractPredicate) {
-        this.extractPredicate = extractPredicate;
-        return this;
-    }
-
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         return fillPredicate == null || fillPredicate.test(stack);
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (extractPredicate != null) {
-            if (extractPredicate.test(super.extractItem(slot, amount, true))) {
-                return super.extractItem(slot, amount, simulate);
-            }
-            return ItemStack.EMPTY;
-        }
-        return super.extractItem(slot, amount, simulate);
     }
 }
