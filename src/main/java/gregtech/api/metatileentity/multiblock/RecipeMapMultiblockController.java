@@ -22,8 +22,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -103,6 +103,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         super.formStructure(context);
         initializeAbilities();
         variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
+        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
     }
 
     @Override
@@ -117,47 +118,53 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     protected void replaceVariantBlocksActive(boolean isActive) {
         if (variantActiveBlocks != null) {
+            int id = getWorld().provider.getDimension();
+
+            writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
+                buf.writeBoolean(isActive);
+                buf.writeInt(variantActiveBlocks.size());
+                for (BlockPos blockPos : variantActiveBlocks) {
+                    if (isActive) {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
+                    } else {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
+                    }
+                    buf.writeBlockPos(blockPos);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
             int minX;
-            int miny;
+            int minY;
             int minZ;
-            minX = miny = minZ = Integer.MAX_VALUE;
+            minX = minY = minZ = Integer.MAX_VALUE;
             int maxX;
             int maxY;
             int maxZ;
             maxX = maxY = maxZ = Integer.MIN_VALUE;
-            for (BlockPos blockPos : variantActiveBlocks) {
-                if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.add(blockPos);
-                } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.remove(blockPos);
-                }
 
+            boolean isActive = buf.readBoolean();
+            int size = buf.readInt();
+            for (int i = 0; i < size; i++) {
+                BlockPos blockPos = buf.readBlockPos();
+                if (isActive) {
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(getWorld().provider.getDimension()).add(blockPos);
+                } else {
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(getWorld().provider.getDimension()).remove(blockPos);
+                }
                 minX = Math.min(minX, blockPos.getX());
-                miny = Math.min(miny, blockPos.getY());
+                minY = Math.min(minY, blockPos.getY());
                 minZ = Math.min(minZ, blockPos.getZ());
                 maxX = Math.max(maxX, blockPos.getX());
                 maxY = Math.max(maxY, blockPos.getY());
                 maxZ = Math.max(maxZ, blockPos.getZ());
             }
-            updateVariantRender(new BlockPos(minX, miny, minZ), new BlockPos(maxX, maxY, maxZ));
+            getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
         }
-    }
-
-    protected void updateVariantRender(BlockPos min, BlockPos max) {
-        writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
-            buf.writeBlockPos(min);
-            buf.writeBlockPos(max);
-        });
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE){
-            BlockPos pos = buf.readBlockPos();
-            BlockPos mx = buf.readBlockPos();
-            getWorld().markBlockRangeForRenderUpdate(pos, mx);
-        }
-        super.receiveCustomData(dataId, buf);
     }
 
     @Override
@@ -172,12 +179,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected void updateFormedValid() {
-        if (!hasMufflerMechanics() || isMufflerFaceFree())
+        if (!hasMufflerMechanics() || isMufflerFaceFree()){
             this.recipeMapWorkable.updateWorkable();
+        }
         boolean state = recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
         if (lastActive != state) {
             lastActive = state;
-            if (ConfigHolder.client.casingsActiveEmissiveTextures ) {
+            if (ConfigHolder.client.casingsActiveEmissiveTextures) {
                 replaceVariantBlocksActive(lastActive);
             }
         }

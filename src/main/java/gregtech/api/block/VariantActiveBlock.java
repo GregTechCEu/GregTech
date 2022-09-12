@@ -5,11 +5,15 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.utils.BloomEffectUtil;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +35,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
@@ -40,7 +42,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
     public static final IStateMapper mapper = new SimpleStateMapper(MODEL_LOCATION);
-    public static final Set<BlockPos> ACTIVE_BLOCKS = new TreeSet<>();
+    public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
@@ -80,7 +82,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Override
     public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState ext = (IExtendedBlockState) state;
-        ext = ext.withProperty(ACTIVE, ACTIVE_BLOCKS.contains(pos));
+        ext = ext.withProperty(ACTIVE, ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos));
         if (Loader.isModLoaded(GTValues.MODID_CTM)) {
             //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
             //so that the CTM renderer can render the block properly.
