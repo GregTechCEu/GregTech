@@ -46,8 +46,8 @@ public class ProspectingTexture extends AbstractTexture {
     public void updateTexture(PacketProspecting packet) {
         int playerChunkX = packet.posX >> 4;
         int playerChunkZ = packet.posZ >> 4;
-        playerI = packet.posX - (playerChunkX - this.radius + 1) * 16 - 1;
-        playerJ = packet.posZ - (playerChunkZ - this.radius + 1) * 16 - 1;
+        playerI = packet.posX - (playerChunkX - this.radius + 1) * 16 + 1;
+        playerJ = packet.posZ - (playerChunkZ - this.radius + 1) * 16 + 1;
         if (this.mode == 1) {
             map[packet.chunkX - (playerChunkX - radius + 1)][packet.chunkZ - (playerChunkZ - radius + 1)] = packet.map[0][0] == null ?
                     emptyTag : packet.map[0][0];
@@ -80,12 +80,6 @@ public class ProspectingTexture extends AbstractTexture {
                         image.setRGB(i, j, mterialStack==null? orePrefix.hashCode():mterialStack.material.getMaterialRGB() | 0XFF000000);
                         break;
                     }
-                }
-                // draw player pos
-                if (i == playerI || j == playerJ) {
-                    raster.setSample(i, j, 0, (raster.getSample(i, j, 0) + 255) / 2);
-                    raster.setSample(i, j, 1, raster.getSample(i, j, 1) / 2);
-                    raster.setSample(i, j, 2, raster.getSample(i, j, 2) / 2);
                 }
                 // draw grid
                 if ((i) % 16 == 0 || (j) % 16 == 0) {
@@ -123,12 +117,12 @@ public class ProspectingTexture extends AbstractTexture {
     }
 
     public void draw(int x, int y) {
-        if(this.glTextureId < 0) return;
+        if (this.glTextureId < 0) return;
         GlStateManager.bindTexture(this.getGlTextureId());
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-        if(this.mode == 1) { // draw fluids in grid
-            for (int cx = 0; cx < this.radius * 2 - 1; cx++){
-                for (int cz = 0; cz < this.radius * 2 - 1; cz++){
+        if (this.mode == 1) { // draw fluids in grid
+            for (int cx = 0; cx < this.radius * 2 - 1; cx++) {
+                for (int cz = 0; cz < this.radius * 2 - 1; cz++) {
                     if (this.map[cx][cz] != null && !this.map[cx][cz].isEmpty()) {
                         Fluid fluid = FluidRegistry.getFluid(this.map[cx][cz].get((byte) 1));
                         if (selected.equals("[all]") || selected.equals(fluid.getName())) {
@@ -137,6 +131,18 @@ public class ProspectingTexture extends AbstractTexture {
                     }
                 }
             }
+        }
+        //draw red vertical line
+        if (playerI % 16 >7 || playerI % 16 == 0) {
+            Gui.drawRect(x + playerI - 1, y, x + playerI, y + imageHeight, Color.RED.getRGB());
+        } else {
+            Gui.drawRect(x + playerI, y, x + playerI + 1, y + imageHeight, Color.RED.getRGB());
+        }
+        //draw red horizontal line
+        if (playerJ % 16 > 7 || playerJ % 16 == 0) {
+            Gui.drawRect(x, y + playerJ - 1, x + imageWidth, y + playerJ, Color.RED.getRGB());
+        } else {
+            Gui.drawRect(x, y + playerJ, x + imageWidth, y + playerJ + 1, Color.RED.getRGB());
         }
     }
 
