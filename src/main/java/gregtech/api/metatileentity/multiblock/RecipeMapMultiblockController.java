@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -21,7 +22,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockFireboxCasing;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -32,7 +33,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -117,18 +117,47 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     protected void replaceVariantBlocksActive(boolean isActive) {
         if (variantActiveBlocks != null) {
+            int minX;
+            int miny;
+            int minZ;
+            minX = miny = minZ = Integer.MAX_VALUE;
+            int maxX;
+            int maxY;
+            int maxZ;
+            maxX = maxY = maxZ = Integer.MIN_VALUE;
             for (BlockPos blockPos : variantActiveBlocks) {
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                if (blockState.getBlock() instanceof VariantActiveBlock) {
-                    if (isActive) {
-                        VariantActiveBlock.ACTIVE_BLOCKS.add(blockPos);
-                    } else {
-                        VariantActiveBlock.ACTIVE_BLOCKS.remove(blockPos);
-                    }
+                if (isActive) {
+                    VariantActiveBlock.ACTIVE_BLOCKS.add(blockPos);
+                } else {
+                    VariantActiveBlock.ACTIVE_BLOCKS.remove(blockPos);
                 }
-                getWorld().markBlockRangeForRenderUpdate(blockPos, blockPos);
+
+                minX = Math.min(minX, blockPos.getX());
+                miny = Math.min(miny, blockPos.getY());
+                minZ = Math.min(minZ, blockPos.getZ());
+                maxX = Math.max(maxX, blockPos.getX());
+                maxY = Math.max(maxY, blockPos.getY());
+                maxZ = Math.max(maxZ, blockPos.getZ());
             }
+            updateVariantRender(new BlockPos(minX, miny, minZ), new BlockPos(maxX, maxY, maxZ));
         }
+    }
+
+    protected void updateVariantRender(BlockPos min, BlockPos max) {
+        writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
+            buf.writeBlockPos(min);
+            buf.writeBlockPos(max);
+        });
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE){
+            BlockPos pos = buf.readBlockPos();
+            BlockPos mx = buf.readBlockPos();
+            getWorld().markBlockRangeForRenderUpdate(pos, mx);
+        }
+        super.receiveCustomData(dataId, buf);
     }
 
     @Override
@@ -145,10 +174,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void updateFormedValid() {
         if (!hasMufflerMechanics() || isMufflerFaceFree())
             this.recipeMapWorkable.updateWorkable();
-        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.client.casingsActiveEmissiveTextures;
+        boolean state = recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
         if (lastActive != state) {
             lastActive = state;
-            replaceVariantBlocksActive(lastActive);
+            if (ConfigHolder.client.casingsActiveEmissiveTextures ) {
+                replaceVariantBlocksActive(lastActive);
+            }
         }
     }
 
