@@ -637,6 +637,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (item == null) {
             return ItemStack.EMPTY;
         }
+        itemStack = itemStack.copy();
+        itemStack.setCount(1);
         IItemContainerItemProvider provider = item.getContainerItemProvider();
         return provider == null ? ItemStack.EMPTY : provider.getContainerItem(itemStack);
     }
