@@ -245,47 +245,39 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
 
-            for (Recipe r : hatch.getAvailableRecipes()) {
+            // hatches need to have the recipe allowed
+            if (hatch.getAvailableRecipes().contains(recipe)) {
+                // check ordered items
                 if (ConfigHolder.machines.orderedAssembly) {
-                    List<GTRecipeInput> inputs = r.getInputs();
+                    List<GTRecipeInput> inputs = recipe.getInputs();
                     List<IItemHandlerModifiable> itemInputInventory = getAbilities(MultiblockAbility.IMPORT_ITEMS);
-                    // slot count is not enough, so don't try to match it
-                    if (itemInputInventory.size() < inputs.size()) continue;
 
-                    boolean failedItemInputs = false;
+                    // slot count is not enough, so don't try to match it
+                    if (itemInputInventory.size() < inputs.size()) return false;
+
                     for (int i = 0; i < inputs.size(); i++) {
                         if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
-                            failedItemInputs = true;
-                            break;
+                            return false;
                         }
                     }
-                    // if items were good, try the fluids
-                    if (!failedItemInputs) {
-                        if (ConfigHolder.machines.orderedFluidAssembly) {
-                            inputs = r.getFluidInputs();
-                            List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
 
-                            // slot count is not enough, so don't try to match it
-                            if (fluidInputInventory.size() < inputs.size()) continue;
+                    // check ordered fluids
+                    if (ConfigHolder.machines.orderedFluidAssembly) {
+                        inputs = recipe.getFluidInputs();
+                        List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
 
-                            boolean failedFluidInputs = false;
-                            for (int i = 0; i < inputs.size(); i++) {
-                                if (!inputs.get(i).acceptsFluid(fluidInputInventory.get(i).getFluid())) {
-                                    failedFluidInputs = true;
-                                    break;
-                                }
+                        // slot count is not enough, so don't try to match it
+                        if (fluidInputInventory.size() < inputs.size()) return false;
+
+                        for (int i = 0; i < inputs.size(); i++) {
+                            if (!inputs.get(i).acceptsFluid(fluidInputInventory.get(i).getFluid())) {
+                                return false;
                             }
-                            // fluids are good, return true
-                            if (!failedFluidInputs) return true;
-                        } else {
-                            // fluid checking is off, so return true as items are good
-                            return true;
                         }
                     }
-                } else if (r.equals(recipe)) {
-                    // no ordering involved, so return true if the recipes match
-                    return true;
                 }
+                // all conditions matched for any given config
+                return true;
             }
         }
         return false;
