@@ -4,6 +4,7 @@ import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
+import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +22,11 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
 
     @Override
     protected int[] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+        // apply maintenance penalties
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
         return heatingCoilOverclockingLogic(Math.abs(recipeEUt),
                 maxVoltage,
-                duration,
+                (int) Math.round(duration * maintenanceValues.getSecond()),
                 maxOverclocks,
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
                 propertyStorage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0)

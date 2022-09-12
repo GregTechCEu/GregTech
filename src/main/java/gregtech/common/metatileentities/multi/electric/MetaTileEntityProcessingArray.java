@@ -29,6 +29,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -268,10 +269,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 return new int[]{recipeEUt, recipeDuration};
             }
 
+            // apply maintenance penalties
+            Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
             int originalTier = Math.max(1, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
             int numOverclocks = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage())) - originalTier;
             return unlockedVoltageOverclockingLogic(
-                    recipeEUt, getMaxVoltage(), recipeDuration,
+                    recipeEUt, getMaxVoltage(),
+                    (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
                     getOverclockingDurationDivisor(),
                     getOverclockingVoltageMultiplier(),
                     numOverclocks
