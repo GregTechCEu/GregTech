@@ -45,6 +45,9 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
                 mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
                         "active=true," + statePropertiesToString(state.getProperties()));
             } else {
+                if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
+                    return quads;
+                }
                 mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
                         "active=false," + statePropertiesToString(state.getProperties()));
             }
