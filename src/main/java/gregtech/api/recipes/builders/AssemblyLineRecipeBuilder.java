@@ -69,7 +69,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem, int scanDuration, int scanEUt) {
-        return research(researchItem, researchItem.getTranslationKey(), scanDuration, scanEUt);
+        return research(researchItem, researchItem.toString(), scanDuration, scanEUt);
     }
 
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem, @Nonnull String researchId, int scanDuration, int scanEUt) {
