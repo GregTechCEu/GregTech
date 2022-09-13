@@ -1127,7 +1127,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> BACTERIAL_VAT_RECIPES = new RecipeMap<>("bacterial_vat", 0, 2, 0, 2, 0, 2, 0, 1, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<RadiationRecipeBuilder> BACTERIAL_VAT_RECIPES = new RecipeMap<>("bacterial_vat", 0, 2, 0, 2, 0, 2, 0, 1, new RadiationRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.BREWER_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTValues.FOOLS.get() ? GTSounds.SCIENCE : GTSounds.CHEMICAL_REACTOR);
