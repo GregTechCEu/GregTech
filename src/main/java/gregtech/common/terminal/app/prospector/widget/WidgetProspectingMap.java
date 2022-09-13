@@ -12,7 +12,10 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
+import journeymap.client.model.Waypoint;
+import journeymap.client.waypoint.WaypointStore;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -23,7 +26,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,6 +55,10 @@ public class WidgetProspectingMap extends Widget {
 
     public static final int ORE_PROSPECTING_MODE = 0;
     public static final int FLUID_PROSPECTING_MODE = 1;
+    private long lastClicked;
+
+    private List<String> hoveredNames;
+    private int color;
 
     public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList, int mode, int scanTick) {
         super(new Position(xPosition, yPosition), new Size(16 * (chunkRadius * 2 - 1), 16 * (chunkRadius * 2 - 1)));
@@ -216,6 +225,7 @@ public class WidgetProspectingMap extends Widget {
     public void drawInForeground(int mouseX, int mouseY) {
         // draw tooltips
         if (this.isMouseOverElement(mouseX, mouseY) && texture != null) {
+            this.hoveredNames = new ArrayList<>();
             List<String> tooltips = new ArrayList<>();
             int cX = (mouseX - this.getPosition().x) / 16;
             int cZ = (mouseY - this.getPosition().y) / 16;
@@ -227,6 +237,10 @@ public class WidgetProspectingMap extends Widget {
                     (cX + 1) * 16 + this.getPosition().x,
                     (cZ + 1) * 16 + this.getPosition().y,
                     new Color(0x4B6C6C6C, true).getRGB());
+
+            //pick the color of the highest element for the waypoint color
+            final int[] maxAmount = {0};
+
             if (this.mode == 0) { // draw ore
                 tooltips.add(I18n.format("terminal.prospector.ore"));
                 HashMap<String, Integer> oreInfo = new HashMap<>();
@@ -237,25 +251,63 @@ public class WidgetProspectingMap extends Widget {
                                 String name = OreDictUnifier.get(dict).getDisplayName();
                                 if (texture.getSelected().equals("[all]") || texture.getSelected().equals(dict)) {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
+                                    if (oreInfo.get(name) > maxAmount[0]) {
+                                        maxAmount[0] = oreInfo.get(name);
+                                        color = OreDictUnifier.getMaterial(OreDictUnifier.get(dict)).material.getMaterialRGB();
+                                    }
                                 }
                             });
                         }
                     }
                 }
-                oreInfo.forEach((name, count)->tooltips.add(name + " --- " + count));
-            } else if(this.mode == 1){
+                oreInfo.forEach((name, count) -> {
+                    tooltips.add(name + " --- " + count);
+                    hoveredNames.add(name);
+                });
+            } else if (this.mode == 1) {
                 tooltips.add(I18n.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
                     if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
+                        FluidStack fluidStack = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1), 1);
                         tooltips.add(I18n.format("terminal.prospector.fluid.info",
-                                FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1),1).getLocalizedName(),
+                                        fluidStack.getLocalizedName(),
                                 texture.map[cX][cZ].get((byte) 2),
                                 texture.map[cX][cZ].get((byte) 3)));
+                        hoveredNames.add(fluidStack.getLocalizedName());
+                        int amount = Integer.parseInt(texture.map[cX][cZ].get((byte) 2));
+                        if ( amount > maxAmount[0]) {
+                            maxAmount[0] = amount;
+                            color = fluidStack.getFluid().getColor(fluidStack);
+                        }
                     }
                 }
             }
             this.drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0F, 1.0F, 1.0F);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+
+        int cX = (mouseX - this.getPosition().x) / 16;
+        int cZ = (mouseY - this.getPosition().y) / 16;
+
+        if (cX >= chunkRadius * 2 - 1 || cZ >= chunkRadius * 2 - 1)
+            return false;
+
+        int xDiff = cX - (chunkRadius - 1);
+        int zDiff = cZ - (chunkRadius - 1);
+
+        int xPos = ((Minecraft.getMinecraft().player.chunkCoordX + xDiff) << 4) + 8;
+        int zPos = ((Minecraft.getMinecraft().player.chunkCoordZ + zDiff) << 4) + 8;
+
+        BlockPos b = new BlockPos(xPos, Minecraft.getMinecraft().world.getHeight(xPos, zPos), zPos);
+
+        if (Loader.isModLoaded("journeymap") && System.currentTimeMillis() - lastClicked < 200) {
+            WaypointStore.INSTANCE.save(new Waypoint(hoveredNames.toString(), b, new Color(color), Waypoint.Type.Normal, Minecraft.getMinecraft().world.provider.getDimension()));
+        }
+        this.lastClicked = System.currentTimeMillis();
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }
