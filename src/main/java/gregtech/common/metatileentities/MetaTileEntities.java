@@ -613,7 +613,7 @@ public class MetaTileEntities {
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402, new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403, new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
-    RADIATION_HATCH = registerMetaTileEntity(1404, new MetaTileEntityRadiationHatch(gregtechId("radiation_hatch"), 7, true)); // might want to change from LuV
+        RADIATION_HATCH = registerMetaTileEntity(1404, new MetaTileEntityRadiationHatch(gregtechId("radiation_hatch"), 7, false)); // might want to change from LuV
         // Free Range: 1405-1509
 
         // Buffers, IDs 1510-1512
