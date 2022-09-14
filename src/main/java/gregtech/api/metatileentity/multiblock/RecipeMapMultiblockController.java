@@ -121,6 +121,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             int id = getWorld().provider.getDimension();
 
             writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
+                buf.writeInt(id);
                 buf.writeBoolean(isActive);
                 buf.writeInt(variantActiveBlocks.size());
                 for (BlockPos blockPos : variantActiveBlocks) {
@@ -137,6 +138,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
             int minX;
             int minY;
@@ -147,14 +149,15 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             int maxZ;
             maxX = maxY = maxZ = Integer.MIN_VALUE;
 
+            int id = buf.readInt();
             boolean isActive = buf.readBoolean();
             int size = buf.readInt();
             for (int i = 0; i < size; i++) {
                 BlockPos blockPos = buf.readBlockPos();
                 if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(getWorld().provider.getDimension()).add(blockPos);
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
                 } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(getWorld().provider.getDimension()).remove(blockPos);
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
                 }
                 minX = Math.min(minX, blockPos.getX());
                 minY = Math.min(minY, blockPos.getY());
@@ -163,7 +166,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 maxY = Math.max(maxY, blockPos.getY());
                 maxZ = Math.max(maxZ, blockPos.getZ());
             }
-            getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
+            if (getWorld().provider.getDimension() == id) {
+                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
+            }
         }
     }
 
@@ -182,7 +187,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         if (!hasMufflerMechanics() || isMufflerFaceFree()){
             this.recipeMapWorkable.updateWorkable();
         }
-        boolean state = recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
+        boolean state = this.recipeMapWorkable.isWorking();
         if (lastActive != state) {
             lastActive = state;
             if (ConfigHolder.client.casingsActiveEmissiveTextures) {

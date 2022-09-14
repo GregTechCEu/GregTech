@@ -82,6 +82,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Override
     public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState ext = (IExtendedBlockState) state;
+        //ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
         ext = ext.withProperty(ACTIVE, ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos));
         if (Loader.isModLoaded(GTValues.MODID_CTM)) {
             //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
@@ -99,7 +100,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        ACTIVE_BLOCKS.remove(pos);
+        ACTIVE_BLOCKS.get(worldIn.provider.getDimension()).remove(pos);
         super.breakBlock(worldIn, pos, state);
     }
 
