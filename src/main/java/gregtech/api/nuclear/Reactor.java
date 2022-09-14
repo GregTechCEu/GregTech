@@ -8,6 +8,17 @@ import java.util.ArrayList;
 
 public class Reactor {
 
+    private static final double iodineYield = 0.02;
+    private static final double iodineDecayConstant = 0.0006;
+    private static final double xenonDecayConstant = 0.0004;
+
+    public static double timeStep = 0.01;
+
+    private static int meltdownLimit = 0;
+
+    private static double maxTemperature = 900.;
+    private static double lowPressureLimit = 100.;
+
     private int geometricIntegrationSteps;
 
     private ReactorComponent[][] reactorLayout;
@@ -34,11 +45,13 @@ public class Reactor {
 
     private double n;
     private double T;
-    private double P;
     private double dn;
     private double dT;
-    private double C;
-    private double dC;
+    private ArrayList<Float> C;
+    private ArrayList<Float> dC;
+
+    private double iodineAmount;
+    private double xenonAmount;
 
     private double avgBoilingPoint;
     private double avgAbsorption;
@@ -46,7 +59,25 @@ public class Reactor {
 
     private double coolantFactor;
 
-    public Reactor(int reactorDepth){
+    private double kEff;
+
+    private double groupSum;
+    private double totNeutronSources;
+
+    private double[][] avgDelayedNeutronGroups;
+
+    private double avgGeometricFactorSlowNeutrons;
+    private double avgGeometricFactorFastNeutrons;
+
+    private double avgTemperatureCoefficient;
+
+    private double avgPressure;
+
+    private int meltdownCounter;
+
+    private boolean updateControlRods;
+
+    public Reactor(int reactorDepth) {
         reactorLayout = new ReactorComponent[15][15];
         this.reactorDepth = reactorDepth;
         reactorMaxTemperature = Double.MAX_VALUE;
@@ -65,20 +96,38 @@ public class Reactor {
 
         n = 0.;
         T = 0.;
-        P = 0.;
         dn = 0.;
         dT = 0.;
-        C = 0.;
-        dC = 0.;
+        //C = 0.;
+        //dC = 0.;
+
+        iodineAmount = 0.;
+        xenonAmount = 0.;
 
         avgBoilingPoint = 0.;
         avgAbsorption = 0.;
         avgModeration = 0.;
 
         coolantFactor = 0.;
+
+        groupSum = 0.;
+        totNeutronSources = 0.;
+
+        avgDelayedNeutronGroups  = new double[6][2];
+
+        avgGeometricFactorSlowNeutrons = 0.;
+        avgGeometricFactorFastNeutrons = 0.;
+
+        avgTemperatureCoefficient = 0.;
+
+        avgPressure = 0.;
+
+        meltdownCounter = 0;
+
+        updateControlRods = false;
     }
 
-    public void buildReactorLayout(){
+    public void buildReactorLayout() {
         //TODO: Filling the reactor layout matrix with the components from the GUI
     }
 
@@ -86,31 +135,31 @@ public class Reactor {
     /**
      * Calculates the thermal properties of the reactor and fills the component arrays used later
      */
-    public void prepareThermalProperties(){
+    public void prepareThermalProperties() {
 
         int idRod = 0, idControl = 0, idChannel = 0;
 
-        for(int i = 0; i < reactorLayout.length; i++){
-            for(int j = 0; j < reactorLayout[i].length; j++){
+        for(int i = 0; i < reactorLayout.length; i++) {
+            for(int j = 0; j < reactorLayout[i].length; j++) {
                 if(reactorLayout[i][j].isInside()){
                     reactorLayout[i][j].setPos(i, j);
                     numberOfComponents++;
                     averageThermalConductivity += reactorLayout[i][j].getThermalConductivity();
                     reactorMaxTemperature = Double.min(reactorMaxTemperature, reactorLayout[i][j].getMaxTemperature());
 
-                    if(reactorLayout[i][j] instanceof FuelRod){
+                    if(reactorLayout[i][j] instanceof FuelRod) {
                         reactorLayout[i][j].setID(idRod);
                         fuelRods.add((FuelRod) reactorLayout[i][j]);
                         idRod++;
                     }
 
-                    if(reactorLayout[i][j] instanceof ControlRod){
+                    if(reactorLayout[i][j] instanceof ControlRod) {
                         reactorLayout[i][j].setID(idControl);
                         controlRods.add((ControlRod) reactorLayout[i][j]);
                         idControl++;
                     }
 
-                    if(reactorLayout[i][j] instanceof CoolantChannel){
+                    if(reactorLayout[i][j] instanceof CoolantChannel) {
                         reactorLayout[i][j].setID(idChannel);
                         coolantChannels.add((CoolantChannel) reactorLayout[i][j]);
                         idChannel++;
@@ -135,8 +184,8 @@ public class Reactor {
            We calculate geometric factor matrices to determine how many neutrons go from the i-th to the j-th fuel rod
            This factor is different for slow and fast neutrons because they interact differently with the materials and fuel
         */
-        for(int i = 0; i < fuelRods.size(); i++){
-            for(int j = 0; j < i; j++){
+        for(int i = 0; i < fuelRods.size(); i++) {
+            for(int j = 0; j < i; j++) {
                 double mij = 0;
                 boolean pathIsClear = true;
                 ArrayList<ControlRod> controlRodsHit = new ArrayList<ControlRod>();
@@ -145,7 +194,7 @@ public class Reactor {
                 /*
                 Geometric factor calculation is done by (rough) numerical integration along a straight path between the two cells
                  */
-                for(int t = 0; t < geometricIntegrationSteps; t++){
+                for(int t = 0; t < geometricIntegrationSteps; t++) {
                     double[] pos = new double[]{.5, .5};
                     pos[0] += (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[0])*((float)t/geometricIntegrationSteps) + fuelRods.get(i).getPos()[0];
                     pos[1] += (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[1])*((float)t/geometricIntegrationSteps) + fuelRods.get(i).getPos()[1];
@@ -156,7 +205,7 @@ public class Reactor {
                     /*
                     For simplicity we pretend that fuel rods are completely opaque to neutrons, paths that hit fuel rods are ignored as obstructed
                      */
-                    if(component instanceof FuelRod && component.samePositionAs(fuelRods.get(i)) && component.samePositionAs(fuelRods.get(j))){
+                    if(component instanceof FuelRod && component.samePositionAs(fuelRods.get(i)) && component.samePositionAs(fuelRods.get(j))) {
                         pathIsClear = false;
                         break;
                     }
@@ -164,12 +213,12 @@ public class Reactor {
                     /*
                     We keep track of which active elements we hit, so we can determined how important they are relative to the others later
                      */
-                    if(component instanceof ControlRod){
-                        if(!controlRodsHit.contains(component)){
+                    if(component instanceof ControlRod) {
+                        if(!controlRodsHit.contains(component)) {
                             controlRodsHit.add((ControlRod)component);
                         }
-                    } else if(component instanceof CoolantChannel){
-                        if(!coolantChannelsHit.contains(component)){
+                    } else if(component instanceof CoolantChannel) {
+                        if(!coolantChannelsHit.contains(component)) {
                             coolantChannelsHit.add((CoolantChannel)component);
                         }
                     }
@@ -185,11 +234,11 @@ public class Reactor {
                     geometricMatrixSlowNeutrons[i][j] = geometricMatrixFastNeutrons[j][i] = (1. - Math.exp(-mij*fuelRods.get(i).getDistance(fuelRods.get(j))))/fuelRods.get(i).getDistance(fuelRods.get(j));
                     geometricMatrixFastNeutrons[i][j] = geometricMatrixFastNeutrons[j][i] = 1./fuelRods.get(i).getDistance(fuelRods.get(j)) - geometricMatrixSlowNeutrons[i][j];
 
-                    for(ControlRod rod : controlRodsHit){
+                    for(ControlRod rod : controlRodsHit) {
                         rod.addFuelRodPairToMap(fuelRods.get(i), fuelRods.get(j));
                     }
 
-                    for(CoolantChannel channel : coolantChannelsHit){
+                    for(CoolantChannel channel : coolantChannelsHit) {
                         channel.addFuelRodPairToMap(fuelRods.get(i), fuelRods.get(j));
                     }
                 }
@@ -207,18 +256,12 @@ public class Reactor {
         double avgHighEnergyCaptureFactor = 0.;
         double avgLowEnergyCaptureFactor = 0.;
 
-        double avgTemperatureCoefficient = 0.;
-
         double totFuelStart = 0.;
-
-        double totNeutronSources = 0.;
-
-        double[][] avgDelayedNeutronGroups = new double[6][2];
 
         double avgFuelRodDistance = 0.;
 
-        for(FuelRod i : fuelRods){
-            for(FuelRod j : fuelRods){
+        for(FuelRod i : fuelRods) {
+            for(FuelRod j : fuelRods) {
                 avgGeometricFactorSlowNeutrons += geometricMatrixSlowNeutrons[i.getId()][j.getId()];
                 avgGeometricFactorFastNeutrons += geometricMatrixFastNeutrons[i.getId()][j.getId()];
 
@@ -252,8 +295,8 @@ public class Reactor {
 
         avgFuelRodDistance /= 2.*fuelRods.size();
 
-        for(int i = 0; i < avgDelayedNeutronGroups.length; i++){
-            for(int j = 0; j < avgDelayedNeutronGroups.length; j++){
+        for(int i = 0; i < avgDelayedNeutronGroups.length; i++) {
+            for(int j = 0; j < avgDelayedNeutronGroups.length; j++) {
                 avgDelayedNeutronGroups[i][j] /= fuelRods.size();
             }
             beta += avgDelayedNeutronGroups[i][0];
@@ -280,13 +323,23 @@ public class Reactor {
         this.prepareInitialConditions();
 
         //TODO: Implement coolant class, extending material?
-        //coolantFactor = Coolant.CoolantTemperatureFactor(T, avgBoilingPoint, avgAbsorption, avgModeration, P);
+        for(CoolantChannel channel : effectiveCoolantChannels) {
+            //T += channel.getCoolant().getTemperature() * channel.getWeight();
+            //avgBoilingPoint += channel.getCoolant().getBoilingPoint() * channel.getWeight();
+            //avgAbsorption += channel.getCoolant().getAbsorption() * channel.getWeight();
+            //avgModeration += channel.getCoolant().getModerationFactor() * channel.getWeight();
+            //avgPressure += channel.getCoolant().getPressure() * channel.getWeight();
+        }
+
+        //coolantFactor = Coolant.CoolantTemperatureFactor(T, avgBoilingPoint, avgAbsorption, avgModeration, avgPressure);
+
+        kEff = 1. * k;
     }
 
     /**
      * Loops over all the control rods, determines which ones actually affect reactivity, and gives them a weight depending on how many fuel rods they affect
      */
-    public void computeControlRodWeights(){
+    public void computeControlRodWeights() {
         for(ControlRod rod : controlRods){
             rod.computeWeightFromFuelRodMap();
             if(rod.getWeight() > 0){
@@ -299,18 +352,18 @@ public class Reactor {
     /**
      * Loops over all the coolant channels, determines which ones actually affect reactivity, and gives them a weight depending on how many fuel rods they affect
      */
-    public void computeCoolantChannelWeights(){
-        for(CoolantChannel channel : coolantChannels){
+    public void computeCoolantChannelWeights() {
+        for(CoolantChannel channel : coolantChannels) {
             channel.computeWeightFromFuelRodMap();
-            if(channel.getWeight() > 0){
+            if(channel.getWeight() > 0) {
                 effectiveCoolantChannels.add(channel);
             }
         }
         CoolantChannel.NormalizeWeights(effectiveCoolantChannels);
     }
 
-    public void prepareInitialConditions(){
-        for(CoolantChannel channel : effectiveCoolantChannels){
+    public void prepareInitialConditions() {
+        for(CoolantChannel channel : effectiveCoolantChannels) {
             T += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
             //TODO: Add boiling point to liquids
             avgBoilingPoint += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
@@ -321,6 +374,63 @@ public class Reactor {
             //TODO: Add pressure to coolants
             //avgPressure += channel.getCoolant().getPressure() * channel.getWeight();
         }
+    }
+
+    /**
+     * The actual simulation, this method runs a single step
+     */
+    public void simulationStep() {
+        dn = (kEff*(1-beta)-1)*(n/l) + groupSum + totNeutronSources;
+        n += dn * timeStep;
+
+        for(int i = 0; i < avgDelayedNeutronGroups.length; i++) {
+            groupSum = 0;
+            groupSum += avgDelayedNeutronGroups[i][1] * C.get(i);
+            dC.set(i, (float)(kEff * avgDelayedNeutronGroups[i][0] * (n/l) - avgDelayedNeutronGroups[i][1] * C.get(i)));
+            C.set(i, (float)(C.get(i) * timeStep));
+        }
+
+        dT = 2.5 * n - averageThermalConductivity * (T - avgCoolantTemperature);
+        T += dT * timeStep;
+
+        iodineAmount += (n * iodineYield - iodineAmount * iodineDecayConstant) * timeStep;
+        xenonAmount += (iodineAmount * iodineDecayConstant - xenonAmount * (xenonDecayConstant + n * lSlow  * avgGeometricFactorSlowNeutrons)) * timeStep;
+
+        if(updateControlRods) {
+            controlRodFactor = ControlRod.ControlRodFactor(effectiveControlRods);
+            updateControlRods = false;
+        }
+
+        kEff = k * (1 + avgTemperatureCoefficient * T);
+        kEff *= 1 + (float)effectiveControlRods.size()/fuelRods.size() * controlRodFactor;
+        //kEff *= 1 + 1 + Coolant.CoolantTemperatureFactor(T, avgBoilingPoint, avgAbsorption, avgModeration, avgPressure)
+        kEff *= 1 - 0.5 * xenonAmount * lSlow * avgGeometricFactorSlowNeutrons;
+        kEff = Math.max(0., kEff);
+
+        if(T > maxTemperature) {
+            meltdownCounter++;
+            if(T > 10 * maxTemperature) {
+                this.explode();
+                if(T >= 900 && avgPressure < 100) {
+                    this.hydrogenExplosion();
+                }
+            }
+            if(meltdownCounter >= meltdownLimit) {
+                this.meltdown();
+            }
+        }
+    }
+
+    protected void explode() {
+        //TODO explosion
+    }
+
+    protected void hydrogenExplosion() {
+        //TODO secondary explosion
+    }
+
+    protected void meltdown() {
+        //TODO meltdown
     }
 
 }
