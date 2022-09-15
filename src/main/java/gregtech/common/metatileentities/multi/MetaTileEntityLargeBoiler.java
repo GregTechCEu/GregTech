@@ -3,6 +3,8 @@ package gregtech.common.metatileentities.multi;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.*;
@@ -136,16 +138,62 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         return super.isActive() && recipeLogic.isActive() && recipeLogic.isWorkingEnabled();
     }
 
+    //FIXME this is basically the same method in RecipeMapMultiblockController
     public void replaceFireboxAsActive(boolean isActive) {
+        int id = getWorld().provider.getDimension();
         BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos blockPos = centerPos.add(x, 0, z);
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                if (blockState.getBlock() instanceof BlockFireboxCasing) {
-                    blockState = ((IExtendedBlockState)blockState).withProperty(BlockFireboxCasing.ACTIVE, isActive);
-                    getWorld().setBlockState(blockPos, blockState);
+        writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
+            buf.writeInt(id);
+            buf.writeBoolean(isActive);
+            //9 is the number of blocks we will be passing as 'active'
+            buf.writeInt(9);
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    BlockPos blockPos = centerPos.add(x, 0, z);
+                    if (isActive) {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
+                    } else {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
+                    }
+                    buf.writeBlockPos(blockPos);
                 }
+            }
+        });
+    }
+
+    //FIXME this is exactly the same method in RecipeMapMultiblockController.
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
+            int minX;
+            int minY;
+            int minZ;
+            minX = minY = minZ = Integer.MAX_VALUE;
+            int maxX;
+            int maxY;
+            int maxZ;
+            maxX = maxY = maxZ = Integer.MIN_VALUE;
+
+            int id = buf.readInt();
+            boolean isActive = buf.readBoolean();
+            int size = buf.readInt();
+            for (int i = 0; i < size; i++) {
+                BlockPos blockPos = buf.readBlockPos();
+                if (isActive) {
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
+                } else {
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
+                }
+                minX = Math.min(minX, blockPos.getX());
+                minY = Math.min(minY, blockPos.getY());
+                minZ = Math.min(minZ, blockPos.getZ());
+                maxX = Math.max(maxX, blockPos.getX());
+                maxY = Math.max(maxY, blockPos.getY());
+                maxZ = Math.max(maxZ, blockPos.getZ());
+            }
+            if (getWorld().provider.getDimension() == id) {
+                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
             }
         }
     }
