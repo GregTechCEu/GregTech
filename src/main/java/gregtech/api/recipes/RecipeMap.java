@@ -365,7 +365,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
 
     public static List<GTRecipeInput> uniqueIngredientsList(List<GTRecipeInput> input) {
-        LinkedList<GTRecipeInput> list = new LinkedList<>();
+        List<GTRecipeInput> list = new ObjectArrayList<>(input.size());
         for (GTRecipeInput item : input) {
             boolean isEqual = false;
             for (GTRecipeInput obj : list) {
@@ -376,7 +376,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
             if (isEqual) continue;
             if (item instanceof IntCircuitIngredient) {
-                list.addFirst(item);
+                list.add(0, item);
             } else {
                 list.add(item);
             }
