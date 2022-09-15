@@ -141,12 +141,6 @@ val energyApiTask: Jar = tasks.create("energyApi", Jar::class.java) {
     classifier = "energy-api"
 }
 
-artifacts {
-    add("archives", jar)
-    add("archives", sourceTask)
-    add("archives", energyApiTask)
-}
-
 fun Project.idea(configure: org.gradle.plugins.ide.idea.model.IdeaModel.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("idea", configure)
 idea {
