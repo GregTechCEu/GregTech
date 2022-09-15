@@ -188,7 +188,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("cdiMode", (byte) this.mode.ordinal());
         tagCompound.setByte("cdiSpin", (byte) this.spin.ordinal());
@@ -197,6 +197,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         tagCompound.setInteger("cdi1", this.proxyMode[1]);
         tagCompound.setInteger("cdi2", this.proxyMode[2]);
         tagCompound.setInteger("cdi3", this.proxyMode[3]);
+
+        return tagCompound;
     }
 
     @Override

@@ -105,13 +105,15 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", filterMode.ordinal());
         tagCompound.setBoolean("IsBlacklist", this.itemFilter.isBlacklistFilter());
         NBTTagCompound filterComponent = new NBTTagCompound();
         this.itemFilter.getItemFilter().writeToNBT(filterComponent);
         tagCompound.setTag("Filter", filterComponent);
+
+        return tagCompound;
     }
 
     @Override
