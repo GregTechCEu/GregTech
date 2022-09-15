@@ -79,6 +79,9 @@ public class GregtechDataCodes {
     // Fusion Reactor
     public static final int UPDATE_COLOR = 371;
 
+    // Assembly Line
+    public static final int UPDATE_PARTICLE = 371;
+
     // Central Monitor
     public static final int UPDATE_ALL = 1;
     public static final int UPDATE_COVERS = 2;
