@@ -3,19 +3,12 @@ import net.minecraftforge.gradle.user.UserBaseExtension
 buildscript {
     repositories {
         mavenCentral()
-        /*
-        maven {
-            name = "jitpack"
-            setUrl("https://jitpack.io")
-        }
-         */
         maven {
             name = "forge"
             setUrl("https://maven.minecraftforge.net/")
         }
     }
     dependencies {
-        // classpath("com.github.GregTechCE:ForgeGradle:FG_2.3-SNAPSHOT")
         classpath("net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT")
         classpath("org.eclipse.jgit:org.eclipse.jgit:5.8.0.202006091008-r")
         classpath("org.apache.commons:commons-lang3:3.12.0")
@@ -150,42 +143,15 @@ idea {
 }
 
 // used for GitHub Actions CI releases
-task<Exec>("getVersionFromJavaNoExtra") {
-    commandLine("echo", getVersionFromJavaNoExtra(file("src/main/java/gregtech/GregTechVersion.java")))
-}
-
-
-// used for GitHub Actions CI releases
 task<Exec>("getVersionFromJava") {
     commandLine("echo", getVersionFromJava(file("src/main/java/gregtech/GregTechVersion.java")))
 }
 
 fun getVersionFromJava(file: File): String  {
-    var version = getVersionFromJavaNoExtra(file)
-    var extra = ""
-
-    val extraPrefix = "public static final String"
-    file.forEachLine { line ->
-        var s = line.trim()
-        if (s.startsWith(extraPrefix)) {
-            s = s.substring(extraPrefix.length, s.length - 2)
-            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
-            val pts = s.split(" ")
-            when {
-                pts[0] == "EXTRA" -> extra = pts[pts.size - 1]
-            }
-        }
-    }
-    if (extra != "") {
-        return "$version-$extra"
-    }
-    return version
-}
-
-fun getVersionFromJavaNoExtra(file: File): String  {
     var major = "0"
     var minor = "0"
     var revision = "0"
+    var extra = ""
 
     val prefix = "public static final int"
     val extraPrefix = "public static final String"
@@ -201,7 +167,17 @@ fun getVersionFromJavaNoExtra(file: File): String  {
                 pts[0] == "MINOR" -> minor = pts[pts.size - 1]
                 pts[0] == "REVISION" -> revision = pts[pts.size - 1]
             }
+        } else if (s.startsWith(extraPrefix)) {
+            s = s.substring(extraPrefix.length, s.length - 2)
+            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
+            val pts = s.split(" ")
+            when {
+                pts[0] == "EXTRA" -> extra = pts[pts.size - 1]
+            }
         }
+    }
+    if (extra != "") {
+        return "$major.$minor.$revision-$extra"
     }
     return "$major.$minor.$revision"
 }
