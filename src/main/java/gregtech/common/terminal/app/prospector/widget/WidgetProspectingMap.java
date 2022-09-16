@@ -101,18 +101,18 @@ public class WidgetProspectingMap extends Widget {
         EntityPlayer player = gui.entityPlayer;
         World world = player.world;
         if (FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() % scanTick == 0 && chunkIndex < (chunkRadius * 2 - 1) * (chunkRadius * 2 - 1)) {
-            int cX = ((int) player.posX) >> 4;
-            int cZ = ((int) player.posZ) >> 4;
-            int r = (int) Math.floor(Math.sqrt(chunkIndex));
-            r = r / 2 + ((r % 2 == 0) ? 0 : 1);
-            int side = r == 0 ? 0 : (chunkIndex -  (2 * r - 1) * (2 * r - 1)) / (2 * r);
-            int offset = r == 0 ? -1 : (chunkIndex -  (2 * r - 1) * (2 * r - 1)) % (2 * r);
 
-            int ox = side == 0 ? -r : side == 1 ? (offset - r + 1) : side == 2 ? r : -(offset - r + 1);
-            int oz = side == 3 ? r : side == 0 ? -(offset - r + 1) : side == 1 ? -r : (offset - r + 1);
+            int playerChunkX = player.chunkCoordX;
+            int playerChunkZ = player.chunkCoordZ;
 
-            Chunk chunk = world.getChunk(cX + ox, cZ + oz);
-            PacketProspecting packet = new PacketProspecting(cX + ox, cZ + oz, (int) player.posX, (int) player.posZ, this.mode);
+            int row = chunkIndex / (chunkRadius * 2 - 1);
+            int column = chunkIndex % (chunkRadius * 2 - 1);
+
+            int ox = column - (chunkRadius - 1);
+            int oz = row - (chunkRadius - 1);
+
+            Chunk chunk = world.getChunk(playerChunkX + ox, playerChunkZ + oz);
+            PacketProspecting packet = new PacketProspecting(playerChunkX + ox, playerChunkZ + oz, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
                 case ORE_PROSPECTING_MODE:

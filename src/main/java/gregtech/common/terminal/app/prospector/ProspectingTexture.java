@@ -28,8 +28,8 @@ public class ProspectingTexture extends AbstractTexture {
     private int imageHeight = -1;
     public final HashMap<Byte, String>[][] map;
     public static HashMap<Byte, String> emptyTag = new HashMap<>();
-    private int playerI;
-    private int playerJ;
+    private int playerXGui;
+    private int playerYGui;
     private final int mode;
     private final int radius;
 
@@ -44,17 +44,39 @@ public class ProspectingTexture extends AbstractTexture {
     }
 
     public void updateTexture(PacketProspecting packet) {
+
         int playerChunkX = packet.posX >> 4;
         int playerChunkZ = packet.posZ >> 4;
-        playerI = packet.posX - (playerChunkX - this.radius + 1) * 16 + 1;
-        playerJ = packet.posZ - (playerChunkZ - this.radius + 1) * 16 + 1;
+        playerXGui = packet.posX - (playerChunkX - this.radius + 1) * 16;
+        playerYGui = packet.posZ - (playerChunkZ - this.radius + 1) * 16;
+
+        int ox;
+        if ((packet.chunkX >= 0 && playerChunkX >= 0) || (packet.chunkX <= 0 && playerChunkX <= 0)) {
+            ox = Math.abs(Math.abs(packet.chunkX) - Math.abs(playerChunkX));
+        } else {
+            ox = Math.abs(playerChunkX) + Math.abs(packet.chunkX);
+        }
+        if (playerChunkX > packet.chunkX) {
+            ox = -ox;
+        }
+
+        int oy;
+        if ((packet.chunkZ >= 0 && playerChunkZ >= 0) || (packet.chunkZ <= 0 && playerChunkZ <= 0)) {
+            oy = Math.abs(Math.abs(packet.chunkZ) - Math.abs(playerChunkZ));
+        } else {
+            oy = Math.abs(playerChunkZ) + Math.abs(packet.chunkZ);
+        }
+        if (playerChunkZ > packet.chunkZ) {
+            oy = -oy;
+        }
+
         if (this.mode == 1) {
-            map[packet.chunkX - (playerChunkX - radius + 1)][packet.chunkZ - (playerChunkZ - radius + 1)] = packet.map[0][0] == null ?
+            map[(this.radius - 1) + ox][(this.radius - 1) + oy] = packet.map[0][0] == null ?
                     emptyTag : packet.map[0][0];
         } else {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    map[x + (packet.chunkX - (playerChunkX - radius) - 1) * 16][z + (packet.chunkZ - (playerChunkZ - radius) - 1) * 16] = packet.map[x][z] == null ?
+                    map[x + (radius - 1 + ox) * 16][z + (radius - 1 + oy) * 16] = packet.map[x][z] == null ?
                             emptyTag : packet.map[x][z];
                 }
             }
@@ -133,16 +155,16 @@ public class ProspectingTexture extends AbstractTexture {
             }
         }
         //draw red vertical line
-        if (playerI % 16 >7 || playerI % 16 == 0) {
-            Gui.drawRect(x + playerI - 1, y, x + playerI, y + imageHeight, Color.RED.getRGB());
+        if (playerXGui % 16 >7 || playerXGui % 16 == 0) {
+            Gui.drawRect(x + playerXGui - 1, y, x + playerXGui, y + imageHeight, Color.RED.getRGB());
         } else {
-            Gui.drawRect(x + playerI, y, x + playerI + 1, y + imageHeight, Color.RED.getRGB());
+            Gui.drawRect(x + playerXGui, y, x + playerXGui + 1, y + imageHeight, Color.RED.getRGB());
         }
         //draw red horizontal line
-        if (playerJ % 16 > 7 || playerJ % 16 == 0) {
-            Gui.drawRect(x, y + playerJ - 1, x + imageWidth, y + playerJ, Color.RED.getRGB());
+        if (playerYGui % 16 > 7 || playerYGui % 16 == 0) {
+            Gui.drawRect(x, y + playerYGui - 1, x + imageWidth, y + playerYGui, Color.RED.getRGB());
         } else {
-            Gui.drawRect(x, y + playerJ, x + imageWidth, y + playerJ + 1, Color.RED.getRGB());
+            Gui.drawRect(x, y + playerYGui, x + imageWidth, y + playerYGui + 1, Color.RED.getRGB());
         }
     }
 
