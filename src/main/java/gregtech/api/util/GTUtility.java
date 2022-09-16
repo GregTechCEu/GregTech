@@ -1036,7 +1036,7 @@ public class GTUtility {
     }
 
     public static boolean canSeeSunClearly(World world, BlockPos blockPos) {
-        if (!world.canSeeSky(blockPos.up())) {
+        if (!world.canSeeSky(blockPos.up()) || world.getTileEntity(blockPos.up()) != null) {
             return false;
         }
         Biome biome = world.getBiome(blockPos.up());
