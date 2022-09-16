@@ -887,7 +887,7 @@ public class VanillaStandardRecipes {
                 'P', new UnificationEntry(plate, Materials.Diamond),
                 'C', new ItemStack(Items.DIAMOND_CHESTPLATE),
                 'L', new ItemStack(Items.DIAMOND_LEGGINGS),
-                'S', new UnificationEntry(bolt, Materials.Diamond)
+                'S', new UnificationEntry(screw, Materials.Diamond)
         );
 
         ModHandler.addShapedRecipe("chainmail_helmet", new ItemStack(Items.CHAINMAIL_HELMET), "PPP", "PhP",

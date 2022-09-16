@@ -18,6 +18,13 @@ public class ItemMaterialInfo {
         this.materials.addAll(materials);
     }
 
+    public ItemMaterialInfo(List<ItemMaterialInfo> infos, MaterialStack... materials) {
+        for(ItemMaterialInfo info : infos) {
+            this.materials.addAll(info.getMaterials());
+        }
+        this.materials.addAll(Arrays.asList(materials));
+    }
+
     /**
      * Returns the first MaterialStack in the "materials" list
      */
