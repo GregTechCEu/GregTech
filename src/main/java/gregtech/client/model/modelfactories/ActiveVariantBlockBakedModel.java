@@ -21,10 +21,7 @@ import team.chisel.ctm.client.model.ModelBakedCTM;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
@@ -45,9 +42,6 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
                 mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
                         "active=true," + statePropertiesToString(state.getProperties()));
             } else {
-                if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
-                    return quads;
-                }
                 mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
                         "active=false," + statePropertiesToString(state.getProperties()));
             }
@@ -55,6 +49,9 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
             TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
             particle.set(textureAtlasSprite);
             quads = new ArrayList<>(m.getQuads(state, side, rand));
+            if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
+                quads.removeIf(b -> !b.getSprite().getIconName().endsWith("bloom"));
+            }
         }
         return quads;
     }
