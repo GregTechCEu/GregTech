@@ -1036,9 +1036,9 @@ public class GTUtility {
     }
 
     public static boolean canSeeSunClearly(World world, BlockPos blockPos) {
-        if (!world.canSeeSky(blockPos.up()) || world.getTileEntity(blockPos.up()) != null) {
+        if (!world.canSeeSky(blockPos.up()) || testTE(world,blockPos))
             return false;
-        }
+
         Biome biome = world.getBiome(blockPos.up());
         if (world.isRaining()) {
             if (biome.canRain() || biome.getEnableSnow()) {
@@ -1050,5 +1050,14 @@ public class GTUtility {
             return false;
         }
         return world.isDaytime();
+    }
+
+    public static boolean testTE(World world, BlockPos blockPos) {
+        for(int y = blockPos.getY(); y < 255; y++) {
+            if (world.getTileEntity(blockPos.up()) != null)
+                return true;
+            blockPos = blockPos.add(0, 1, 0);
+        }
+        return false;
     }
 }

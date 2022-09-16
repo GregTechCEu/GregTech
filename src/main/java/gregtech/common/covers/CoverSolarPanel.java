@@ -24,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class CoverSolarPanel extends CoverBehavior implements ITickable {
 
     private final long EUt;
+    private boolean seeSky = false;
 
     public CoverSolarPanel(ICoverable coverHolder, EnumFacing attachedSide, long EUt) {
         super(coverHolder, attachedSide);
@@ -44,10 +45,19 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
     public void update() {
         World world = coverHolder.getWorld();
         BlockPos blockPos = coverHolder.getPos();
-        if (GTUtility.canSeeSunClearly(world, blockPos)) {
-            IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-            if (energyContainer != null) {
-                energyContainer.acceptEnergyFromNetwork(null, EUt, 1);
+
+        IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+
+        if (!this.seeSky && coverHolder.getOffsetTimer() % 100 == 0) {
+            this.seeSky = GTUtility.canSeeSunClearly(world, blockPos);
+        }
+
+        if (this.seeSky) {
+            if (coverHolder.getOffsetTimer() % 100 == 0)
+                this.seeSky = GTUtility.canSeeSunClearly(world, blockPos);
+            if (this.seeSky) {
+                if (energyContainer != null)
+                    energyContainer.acceptEnergyFromNetwork(null, EUt, 1);
             }
         }
     }
