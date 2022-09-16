@@ -1,6 +1,5 @@
 package gregtech.api.recipes;
 
-import com.cleanroommc.groovyscript.sandbox.SandboxRunner;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -106,7 +105,7 @@ public class Recipe {
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
-        this.groovyRecipe = GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning();
+        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
     }
 
     public Recipe copy() {

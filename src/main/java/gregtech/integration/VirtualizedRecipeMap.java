@@ -1,9 +1,8 @@
 package gregtech.integration;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.helper.SimpleObjectStream;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
-import com.cleanroommc.groovyscript.sandbox.GroovyLog;
-import com.cleanroommc.groovyscript.sandbox.SandboxRunner;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -55,7 +54,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public boolean removeByInput(long voltage, List<ItemStack> items, List<FluidStack> fluids) {
         Recipe recipe = find(voltage, items, fluids);
         if (recipe == null) {
-            if (GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning()) {
+            if (GroovyScriptCompat.isCurrentlyRunning()) {
                 GroovyLog.msg("Error removing GregTech " + getName() + " recipe")
                         .add("could not find recipe for: voltage %s, items %s, fluids %s", voltage, items, fluids)
                         .error()

@@ -1,6 +1,7 @@
 package gregtech.integration;
 
-import com.cleanroommc.groovyscript.api.BracketHandler;
+import com.cleanroommc.groovyscript.GroovyScript;
+import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModSupport;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
@@ -22,10 +23,10 @@ public class GroovyScriptCompat extends ModPropertyContainer {
         loaded = Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT);
         if (!loaded) return;
 
-        BracketHandler.registerBracketHandler("recipemap", RecipeMap::getByName);
-        BracketHandler.registerBracketHandler("material", MATERIAL_REGISTRY::getObject);
-        BracketHandler.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
-        BracketHandler.registerBracketHandler("metaitem", MetaItemBracketHandler::getMetaItem);
+        BracketHandlerManager.registerBracketHandler("recipemap", RecipeMap::getByName);
+        BracketHandlerManager.registerBracketHandler("material", MATERIAL_REGISTRY::getObject);
+        BracketHandlerManager.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
+        BracketHandlerManager.registerBracketHandler("metaitem", MetaItemBracketHandler::getMetaItem);
 
         modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", GroovyScriptCompat::new, "");
     }
@@ -37,6 +38,10 @@ public class GroovyScriptCompat extends ModPropertyContainer {
 
     public static boolean isLoaded() {
         return loaded;
+    }
+
+    public static boolean isCurrentlyRunning() {
+        return loaded && GroovyScript.getSandbox().isRunning();
     }
 
     public static GroovyScriptCompat getInstance() {

@@ -1,9 +1,8 @@
 package gregtech.api.recipes;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.IIngredient;
-import com.cleanroommc.groovyscript.helper.recipe.OreDictIngredient;
-import com.cleanroommc.groovyscript.sandbox.GroovyLog;
-import com.cleanroommc.groovyscript.sandbox.SandboxRunner;
+import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
@@ -725,7 +724,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult validate() {
-        if (GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning()) {
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
             GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
             validateGroovy(msg);
             return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;

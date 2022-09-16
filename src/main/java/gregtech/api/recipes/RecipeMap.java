@@ -1,6 +1,5 @@
 package gregtech.api.recipes;
 
-import com.cleanroommc.groovyscript.sandbox.SandboxRunner;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
@@ -222,7 +221,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public boolean removeRecipe(Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
-            if (GroovyScriptCompat.isLoaded() && SandboxRunner.isCurrentlyRunning()) {
+            if (GroovyScriptCompat.isCurrentlyRunning()) {
                 this.virtualizedRecipeMap.addBackup(recipe);
             }
             return true;
