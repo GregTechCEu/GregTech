@@ -27,8 +27,8 @@ jobs:
           gradle-executable: ".gradlew"
           generate-job-summary: false
 
-      - name: Execute Gradle build
-        run: ./gradlew build
+      - name: Execute Gradle test
+        run: ./gradlew test --no-daemon # remove the --no-daemon if more than 1 gradlew command is run
 
   formatting:
     name: check-fmt
