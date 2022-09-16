@@ -43,6 +43,11 @@ public class ConfigHolder {
 
     public static class MachineOptions {
 
+        @Config.Comment("Config options for the Large Miners")
+        @Config.Name("Large Miner Options")
+        @Config.RequiresMcRestart
+        public LargeMinerOptions largeminer = new LargeMinerOptions();
+
         @Config.Comment({"Whether insufficient energy supply should reset Machine recipe progress to zero.",
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed", "Default: false"})
         public boolean recipeProgressLowEnergy = false;
@@ -107,6 +112,51 @@ public class ConfigHolder {
                 "This does nothing if B:enableCleanroom is false.",
                 "Default: false"})
         public boolean cleanMultiblocks = false;
+
+        public class LargeMinerOptions {
+            @Config.Comment({"Enables or disables the ZPM tier large miner.", "Default: true"})
+            public boolean extremeLargeMiner = true;
+
+            @Config.Comment({"Specifies the chunk radius of the basic, regular, advanced large miners.", "Default: 1,2,3,4"})
+            @Config.RangeInt(min = 1)
+            public int[] largeMinerChunkRadii = {
+                    1,
+                    2,
+                    3,
+                    4
+            };
+            @Config.Comment({"Specifies the ticks per block of the basic, regular, advanced large miners.", "Default: 16,8,4,2"})
+            @Config.RangeInt(min = 1)
+            public int[] largeMinerSpeed = {
+                    16,
+                    8,
+                    4,
+                    2
+            };
+            @Config.Comment({"Specifies the maceration multiplier of the basic, regular, advanced large miners.", "Default: 2,2,2,3"})
+            @Config.RangeInt(min = 1)
+            public int[] largeMinerMace = {
+                    2,
+                    2,
+                    2,
+                    3
+            };
+            @Config.Comment({"Specifies the fortune level for the basic, regular, advanced large miners for small ores.", "Default: 4,5,6,7"})
+            @Config.RangeInt(min = 4)
+            public int[] largeMinerFortune = {
+                    4,
+                    5,
+                    6,
+                    7
+            };
+            @Config.Comment({"Specifies the drilling fluid consumption of the basic, regular, advanced large miners.", "Default: 16, 64, 256,1024"})
+            public int[] largeMinerFluidConsume = {
+                    16,
+                    64,
+                    256,
+                    1024
+            };
+        }
     }
 
     public static class WorldGenOptions {

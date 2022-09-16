@@ -40,7 +40,10 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         TUNGSTENSTEEL_ROBUST("tungstensteel_robust", 3),
         COKE_BRICKS("coke_bricks", 1),
         PTFE_INERT_CASING("ptfe_inert", 0),
+        HSSG_STURDY("hssg_sturdy", 3),
+        HSSS_RIGID("hsss_rigid", 3),
         HSSE_STURDY("hsse_sturdy", 3);
+
 
         private final String name;
         private final int harvestLevel;

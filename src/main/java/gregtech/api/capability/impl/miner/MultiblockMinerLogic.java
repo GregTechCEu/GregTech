@@ -27,16 +27,18 @@ public class MultiblockMinerLogic extends MinerLogic {
     private boolean isChunkMode;
     private boolean isSilkTouchMode;
 
+
     /**
      * Creates the logic for multiblock ore block miners
      *
      * @param metaTileEntity the {@link MetaTileEntity} this logic belongs to
-     * @param fortune        the fortune amount to apply when mining ores
+     * @param fortune        the fortune amount to apply when mining small ores
+     * @param mace           the maceration multiplier
      * @param speed          the speed in ticks per block mined
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
-    public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture, RecipeMap<?> blockDropRecipeMap) {
-        super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
+    public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int mace, int speed, int maximumRadius, ICubeRenderer pipeTexture, RecipeMap<?> blockDropRecipeMap) {
+        super(metaTileEntity, fortune, mace, speed, maximumRadius, pipeTexture);
         this.blockDropRecipeMap = blockDropRecipeMap;
     }
 
@@ -53,8 +55,8 @@ public class MultiblockMinerLogic extends MinerLogic {
 
     @Override
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
-        if (!isSilkTouchMode) // 3X the ore compared to the single blocks
-            applyTieredHammerNoRandomDrops(blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
+        if (!isSilkTouchMode) // multiplies post macerated ore compared to the single blocks
+            applyTieredHammerNoRandomDrops(blockState, blockDrops, this.getMace(), this.blockDropRecipeMap, this.voltageTier);
         else
             super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
     }

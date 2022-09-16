@@ -2,6 +2,7 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.ConfigHolder;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -562,9 +563,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(HULL[EV])
                 .input(frameGt, Titanium, 4)
                 .input(circuit, Tier.EV, 4)
-                .input(ELECTRIC_MOTOR_EV, 4)
+                .input(ELECTRIC_PISTON_EV, 4)
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(CONVEYOR_MODULE_EV, 4)
+                .input(SENSOR_EV, 1)
                 .input(gear, Tungsten, 4)
                 .circuitMeta(2)
                 .output(BASIC_LARGE_MINER)
@@ -572,27 +574,44 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[IV])
-                .input(frameGt, TungstenSteel, 4)
+                .input(frameGt, HSSG, 4)
                 .input(circuit, Tier.IV, 4)
-                .input(ELECTRIC_MOTOR_IV, 4)
+                .input(ELECTRIC_PISTON_IV, 4)
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(CONVEYOR_MODULE_IV, 4)
+                .input(SENSOR_IV, 1)
                 .input(gear, Iridium, 4)
                 .circuitMeta(2)
                 .output(LARGE_MINER)
                 .duration(400).EUt(VA[IV]).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder()
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(HULL[LuV])
                 .input(frameGt, HSSS, 4)
                 .input(circuit, Tier.LuV, 4)
-                .input(ELECTRIC_MOTOR_LuV, 4)
+                .input(ELECTRIC_PISTON_LUV, 4)
                 .input(ELECTRIC_PUMP_LuV, 4)
                 .input(CONVEYOR_MODULE_LuV, 4)
+                .input(SENSOR_LuV, 1)
                 .input(gear, Ruridit, 4)
-                .circuitMeta(2)
+                .fluidInputs(Lubricant.getFluid(1000), SolderingAlloy.getFluid(1152))
                 .output(ADVANCED_LARGE_MINER)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
+
+        if (ConfigHolder.machines.largeminer.extremeLargeMiner) {
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(HULL[ZPM])
+                    .input(frameGt, HSSE, 4)
+                    .input(circuit, Tier.ZPM, 4)
+                    .input(ELECTRIC_PISTON_ZPM, 4)
+                    .input(ELECTRIC_PUMP_ZPM, 4)
+                    .input(CONVEYOR_MODULE_ZPM, 4)
+                    .input(SENSOR_ZPM, 1)
+                    .input(gear, Naquadria, 4)
+                    .fluidInputs(Lubricant.getFluid(2000), SolderingAlloy.getFluid(2304))
+                    .output(EXTREME_LARGE_MINER)
+                    .duration(400).EUt(VA[ZPM]).buildAndRegister();
+        }
 
         // Multiblock Fluid Drills
 

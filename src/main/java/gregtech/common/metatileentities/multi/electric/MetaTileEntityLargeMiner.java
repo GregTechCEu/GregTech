@@ -82,18 +82,18 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     private final MultiblockMinerLogic minerLogic;
 
-    public MetaTileEntityLargeMiner(ResourceLocation metaTileEntityId, int tier, int speed, int maximumChunkRadius, int fortune, Material material, int drillingFluidConsumePerTick) {
+    public MetaTileEntityLargeMiner(ResourceLocation metaTileEntityId, int tier, int speed, int maximumChunkRadius, int fortune, int mace, Material material, int drillingFluidConsumePerTick) {
         super(metaTileEntityId);
         this.material = material;
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
         this.romanNumeralString = GTUtility.romanNumeralString(fortune);
-        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkRadius * CHUNK_LENGTH, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
+        this.minerLogic = new MultiblockMinerLogic(this, fortune, mace, speed, maximumChunkRadius * CHUNK_LENGTH, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius() / CHUNK_LENGTH, this.minerLogic.getFortune(), getMaterial(), getDrillingFluidConsumePerTick());
+        return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius() / CHUNK_LENGTH, this.minerLogic.getFortune(), this.minerLogic.getMace(), getMaterial(), getDrillingFluidConsumePerTick());
     }
 
     @Override
@@ -191,8 +191,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.production"));
+        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.getMaxChunkRadius() * 2 + 1, this.getMaxChunkRadius() * 2 + 1));
+        tooltip.add(I18n.format("gregtech.machine.miner.multi.production", this.getMace()));
         //small ore: tooltip.add(I18n.format("gregtech.machine.miner.multi.production", getRomanNumeralString()));
         tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid().getUnlocalizedName())));
         tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
@@ -244,8 +244,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public IBlockState getCasingState() {
         if (this.material.equals(Materials.Titanium))
             return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TITANIUM_STABLE);
-        if (this.material.equals(Materials.TungstenSteel))
-            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST);
+        if (this.material.equals(Materials.HSSG))
+            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSG_STURDY);
+        if (this.material.equals(Materials.HSSS))
+            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSS_RIGID);
+        if (this.material.equals(Materials.HSSE))
+            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
@@ -253,8 +257,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private IBlockState getFrameState() {
         if (this.material.equals(Materials.Titanium))
             return MetaBlocks.FRAMES.get(Materials.Titanium).getBlock(Materials.Titanium);
-        if (this.material.equals(Materials.TungstenSteel))
-            return MetaBlocks.FRAMES.get(Materials.TungstenSteel).getBlock(Materials.TungstenSteel);
+        if (this.material.equals(Materials.HSSG))
+            return MetaBlocks.FRAMES.get(Materials.HSSE).getBlock(Materials.HSSG);
+        if (this.material.equals(Materials.HSSS))
+            return MetaBlocks.FRAMES.get(Materials.HSSS).getBlock(Materials.HSSS);
+        if (this.material.equals(Materials.HSSE))
+            return MetaBlocks.FRAMES.get(Materials.HSSE).getBlock(Materials.HSSE);
         return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
     }
 
@@ -262,8 +270,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (this.material.equals(Materials.Titanium))
             return Textures.STABLE_TITANIUM_CASING;
-        if (this.material.equals(Materials.TungstenSteel))
-            return Textures.ROBUST_TUNGSTENSTEEL_CASING;
+        if (this.material.equals(Materials.HSSG))
+            return Textures.STURDY_HSSG_CASING;
+        if (this.material.equals(Materials.HSSS))
+            return Textures.RIGID_HSSS_CASING;
+        if (this.material.equals(Materials.HSSE))
+            return Textures.ROBUST_HSSE_CASING;
         return Textures.SOLID_STEEL_CASING;
     }
 
@@ -414,6 +426,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public int getMaxChunkRadius() {
         return this.minerLogic.getMaximumRadius() / CHUNK_LENGTH;
     }
+
+    public int getMace() { return this.minerLogic.getMace(); };
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {

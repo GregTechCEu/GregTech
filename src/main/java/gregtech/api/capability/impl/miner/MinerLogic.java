@@ -45,6 +45,7 @@ public class MinerLogic {
     private final int fortune;
     private final int speed;
     private final int maximumRadius;
+    private final int mace;
 
     private final ICubeRenderer PIPE_TEXTURE;
 
@@ -76,10 +77,11 @@ public class MinerLogic {
      * @param speed the speed in ticks per block mined
      * @param maximumRadius the maximum radius (square shaped) the miner can mine in
      */
-    public MinerLogic(@Nonnull MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
+    public MinerLogic(@Nonnull MetaTileEntity metaTileEntity, int fortune, int mace, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
         this.metaTileEntity = metaTileEntity;
         this.miner = (IMiner) metaTileEntity;
         this.fortune = fortune;
+        this.mace = mace;
         this.speed = speed;
         this.currentRadius = maximumRadius;
         this.maximumRadius = maximumRadius;
@@ -669,6 +671,10 @@ public class MinerLogic {
      */
     public int getFortune() {
         return this.fortune;
+    }
+
+    public int getMace() {
+        return this.mace;
     }
 
     /**

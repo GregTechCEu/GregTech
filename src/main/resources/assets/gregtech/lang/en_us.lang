@@ -2390,6 +2390,8 @@ tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
+tile.metal_casing.hssg_sturdy.name=Sturdy HSS-G Machine Casing
+tile.metal_casing.hsss_rigid.name=Rigid HSS-S Machine Casing
 tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
 
 # Machine casing blocks
@@ -4432,11 +4434,12 @@ gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per
 gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
 gregtech.machine.large_miner.iv.name=Advanced Ore Drilling Plant
 gregtech.machine.large_miner.luv.name=Advanced Ore Drilling Plant II
+gregtech.machine.large_miner.zpm.name=Extreme Ore Drilling Plant
 gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
 gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
-gregtech.machine.miner.multi.production=Produces §b3x§7 more crushed ore than a macerator.
+gregtech.machine.miner.multi.production=Produces §b%dx§7 more crushed ore than a macerator.
 gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
-#Small ores lang:gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
+#Small ores lang:gregtech.machine.miner.multi.production=Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
