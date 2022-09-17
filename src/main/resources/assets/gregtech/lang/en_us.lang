@@ -2199,6 +2199,7 @@ metaitem.prospector.mode.fluid=§bFluid Prospection Mode
 metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
 metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 behavior.prospector.not_enough_energy=Not Enough Energy!
+behavior.prospector.added_waypoint=Waypoint added!
 
 metaitem.tricorder_scanner.name=Portable Scanner
 metaitem.tricorder_scanner.tooltip=Tricorder

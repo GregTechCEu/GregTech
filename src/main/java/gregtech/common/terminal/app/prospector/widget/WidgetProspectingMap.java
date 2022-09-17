@@ -25,12 +25,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -304,40 +306,58 @@ public class WidgetProspectingMap extends Widget {
 
         BlockPos b = new BlockPos(xPos, Minecraft.getMinecraft().world.getHeight(xPos, zPos), zPos);
         if (System.currentTimeMillis() - lastClicked < 200) {
-
+            boolean added = false;
             if (Loader.isModLoaded("journeymap")) {
-                WaypointStore.INSTANCE.save(
-                        new journeymap.client.model.Waypoint(
-                                hoveredNames.toString(),
-                                b,
-                                new Color(color),
-                                Waypoint.Type.Normal,
-                                Minecraft.getMinecraft().world.provider.getDimension()));
+                added = addJourneymapWaypoint(b);
             } else if (Loader.isModLoaded("voxelmap")) {
-                Color c = new Color(color);
-                TreeSet<Integer> world = new TreeSet<>();
-                world.add(Minecraft.getMinecraft().world.provider.getDimension());
-
-                IWaypointManager waypointManager = VoxelMap.getInstance().getWaypointManager();
-                com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(hoveredNames.toString(),
-                        xPos,
-                        zPos,
-                        Minecraft.getMinecraft().world.getHeight(xPos, zPos),
-                        true,
-                        c.getRed(),
-                        c.getGreen(),
-                        c.getBlue(),
-                        Minecraft.getMinecraft().world.provider.getDimensionType().getSuffix(),
-                        Minecraft.getMinecraft().world.provider.getDimensionType().getName(),
-                        world);
-
-                if (!waypointManager.getWaypoints().contains(voxelMapWaypoint)) {
-                    waypointManager.addWaypoint(voxelMapWaypoint);
-                    waypointManager.saveWaypoints();
-                }
+                added = addVoxelMapWaypoint(b);
+            }
+            if (added) {
+                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("behavior.prospector.added_waypoint"), false);
             }
         }
         this.lastClicked = System.currentTimeMillis();
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Optional.Method(modid = "journeymap")
+    boolean addJourneymapWaypoint(BlockPos b) {
+        journeymap.client.model.Waypoint journeyMapWaypoint = new Waypoint(hoveredNames.toString(),
+                b,
+                new Color(color),
+                Waypoint.Type.Normal,
+                Minecraft.getMinecraft().world.provider.getDimension());
+        if (!WaypointStore.INSTANCE.getAll().contains(journeyMapWaypoint)) {
+            WaypointStore.INSTANCE.save(journeyMapWaypoint);
+            return true;
+        }
+        return false;
+    }
+
+    @Optional.Method(modid = "voxelmap")
+    boolean addVoxelMapWaypoint(BlockPos b) {
+        Color c = new Color(color);
+        TreeSet<Integer> world = new TreeSet<>();
+        world.add(Minecraft.getMinecraft().world.provider.getDimension());
+
+        IWaypointManager waypointManager = VoxelMap.getInstance().getWaypointManager();
+        com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(hoveredNames.toString(),
+                b.getX(),
+                b.getZ(),
+                Minecraft.getMinecraft().world.getHeight(b.getX(),b.getZ()),
+                true,
+                c.getRed(),
+                c.getGreen(),
+                c.getBlue(),
+                Minecraft.getMinecraft().world.provider.getDimensionType().getSuffix(),
+                Minecraft.getMinecraft().world.provider.getDimensionType().getName(),
+                world);
+
+        if (!waypointManager.getWaypoints().contains(voxelMapWaypoint)) {
+            waypointManager.addWaypoint(voxelMapWaypoint);
+            waypointManager.saveWaypoints();
+            return true;
+        }
+        return false;
     }
 }
