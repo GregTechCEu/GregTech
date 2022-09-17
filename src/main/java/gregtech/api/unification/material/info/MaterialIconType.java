@@ -8,6 +8,7 @@ import gregtech.api.GTValues;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -119,18 +120,24 @@ public class MaterialIconType {
             return BLOCK_TEXTURE_CACHE.get(this, materialIconSet);
         }
 
-        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-        MaterialIconSet iconSet = materialIconSet;
-        while (!iconSet.isRootIconset) {
-            try {
-                // check if the model file exists
-                manager.getResource(new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name)));
-                break;
-            } catch (IOException ignored) {
-                iconSet = iconSet.parentIconset;
+        ResourceLocation location;
+        //noinspection ConstantConditions
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && Minecraft.getMinecraft()  != null) {
+            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+            MaterialIconSet iconSet = materialIconSet;
+            while (!iconSet.isRootIconset) {
+                try {
+                    // check if the model file exists
+                    manager.getResource(new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name)));
+                    break;
+                } catch (IOException ignored) {
+                    iconSet = iconSet.parentIconset;
+                }
             }
+            location = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/" + this.name);
+        } else {
+            location = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.name + "/" + this.name);
         }
-        ResourceLocation location = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/" + this.name);
         BLOCK_TEXTURE_CACHE.put(this, materialIconSet, location);
 
         return location;
@@ -141,18 +148,24 @@ public class MaterialIconType {
             return ITEM_MODEL_CACHE.get(this, materialIconSet);
         }
 
-        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-        MaterialIconSet iconSet = materialIconSet;
-        while (!iconSet.isRootIconset) {
-            try {
-                // check if the model file exists
-                manager.getResource(new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name)));
-                break;
-            } catch (IOException ignored) {
-                iconSet = iconSet.parentIconset;
+        ResourceLocation location;
+        //noinspection ConstantConditions
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && Minecraft.getMinecraft()  != null) {
+            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+            MaterialIconSet iconSet = materialIconSet;
+            while (!iconSet.isRootIconset) {
+                try {
+                    // check if the model file exists
+                    manager.getResource(new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name)));
+                    break;
+                } catch (IOException ignored) {
+                    iconSet = iconSet.parentIconset;
+                }
             }
+            location = new ResourceLocation(GTValues.MODID, "material_sets/" + iconSet.name + "/" + this.name);
+        } else {
+            location = new ResourceLocation(GTValues.MODID, "material_sets/" + materialIconSet.name + "/" + this.name);
         }
-        ResourceLocation location = new ResourceLocation(GTValues.MODID, "material_sets/" + iconSet.name + "/" + this.name);
         ITEM_MODEL_CACHE.put(this, materialIconSet, location);
 
         return location;

@@ -1,5 +1,4 @@
 package gregtech;
-
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -42,5 +41,4 @@ public class Bootstrap {
         MetaItems.init();
         bootstrapped = true;
     }
-
 }

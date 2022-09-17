@@ -123,6 +123,7 @@ public class ClientProxy extends CommonProxy {
         FluidPipeRenderer.INSTANCE.preInit();
         ItemPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
+        MetaFluids.initIconFluidSprites();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }
 
