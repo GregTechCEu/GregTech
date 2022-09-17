@@ -1,9 +1,9 @@
 package gregtech.client.model.modelfactories;
 
-import gregtech.client.model.ModelFactory;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.client.model.ModelFactory;
 import gregtech.common.blocks.BlockCompressed;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
@@ -57,7 +57,7 @@ public class CompressedBlockBakedModel implements IBakedModel {
                         new Vector3f(0F, 0F, 0F),
                         new Vector3f(16F, 16F, 16F),
                         new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
-                        ModelLoader.defaultTextureGetter().apply(MaterialIconType.block.getBlockPath(material.getMaterialIconSet())),
+                        ModelLoader.defaultTextureGetter().apply(MaterialIconType.block.getBlockTexturePath(material.getMaterialIconSet())),
                         side,
                         ModelRotation.X0_Y0,
                         null,

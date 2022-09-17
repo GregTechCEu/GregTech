@@ -160,7 +160,7 @@ public class MetaFluids {
      */
     private static void registerIconFluidSprites() {
         for (MaterialIconSet materialIconSet : MaterialIconSet.ICON_SETS.values()) {
-            fluidSprites.add(new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.getName() + "/fluid"));
+            fluidSprites.add(MaterialIconType.fluid.getBlockTexturePath(materialIconSet));
         }
     }
 
@@ -224,14 +224,14 @@ public class MetaFluids {
                 if (fluidType.equals(FluidTypes.PLASMA))
                     map.put(fluidType, AUTO_GENERATED_PLASMA_TEXTURE);
                 else
-                    map.put(fluidType, MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet()));
+                    map.put(fluidType, MaterialIconType.fluid.getBlockTexturePath(material.getMaterialIconSet()));
                 return map;
             }).computeIfAbsent(fluidType, key -> {
                 Map<FluidType, ResourceLocation> map = fluidTextureMap.get(material);
                 if (fluidType.equals(FluidTypes.PLASMA))
                     map.put(fluidType, AUTO_GENERATED_PLASMA_TEXTURE);
                 else
-                    map.put(fluidType, MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet()));
+                    map.put(fluidType, MaterialIconType.fluid.getBlockTexturePath(material.getMaterialIconSet()));
                 return map.get(fluidType);
             });
 

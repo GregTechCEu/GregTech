@@ -155,8 +155,8 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void registerSprites(TextureStitchEvent.Pre event) {
         for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
-            event.getMap().registerSprite(MaterialIconType.ore.getBlockPath(set));
-            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(set));
+            event.getMap().registerSprite(MaterialIconType.ore.getBlockTexturePath(set));
+            event.getMap().registerSprite(MaterialIconType.block.getBlockTexturePath(set));
         }
         MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
         MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));

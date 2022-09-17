@@ -181,24 +181,24 @@ public class OrePrefix {
 
     public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION, material -> material.hasFlag(GENERATE_FRAME));
 
-    public static final OrePrefix pipeTinyFluid = new OrePrefix("pipeTinyFluid", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeSmallFluid = new OrePrefix("pipeSmallFluid", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNormalFluid = new OrePrefix("pipeNormalFluid", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 4, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 9, null, MaterialIconType.pipeNonuple, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeTinyFluid = new OrePrefix("pipeTinyFluid", M / 2, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeSmallFluid = new OrePrefix("pipeSmallFluid", M, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNormalFluid = new OrePrefix("pipeNormalFluid", M * 3, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 4, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 9, null, null, ENABLE_UNIFICATION, null);
 
-    public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNormalItem = new OrePrefix("pipeNormalItem", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeItem = new OrePrefix("pipeLargeItem", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeHugeItem = new OrePrefix("pipeHugeItem", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNormalItem = new OrePrefix("pipeNormalItem", M * 3, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeLargeItem = new OrePrefix("pipeLargeItem", M * 6, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHugeItem = new OrePrefix("pipeHugeItem", M * 12, null, null, ENABLE_UNIFICATION, null);
 
-    public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, null, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix wireGtOctal = new OrePrefix("wireGtOctal", M * 4, null, null, ENABLE_UNIFICATION, null);

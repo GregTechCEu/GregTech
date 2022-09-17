@@ -23,10 +23,10 @@ public class MaterialIconSet {
     public static final MaterialIconSet SHINY = new MaterialIconSet("shiny", METALLIC);
     public static final MaterialIconSet BRIGHT = new MaterialIconSet("bright", SHINY);
     public static final MaterialIconSet DIAMOND = new MaterialIconSet("diamond", SHINY);
-    public static final MaterialIconSet EMERALD = new MaterialIconSet("emerald", SHINY);
-    public static final MaterialIconSet GEM_HORIZONTAL = new MaterialIconSet("gem_horizontal", SHINY);
-    public static final MaterialIconSet GEM_VERTICAL = new MaterialIconSet("gem_vertical", SHINY);
-    public static final MaterialIconSet RUBY = new MaterialIconSet("ruby", SHINY);
+    public static final MaterialIconSet EMERALD = new MaterialIconSet("emerald", DIAMOND);
+    public static final MaterialIconSet GEM_HORIZONTAL = new MaterialIconSet("gem_horizontal", EMERALD);
+    public static final MaterialIconSet GEM_VERTICAL = new MaterialIconSet("gem_vertical", EMERALD);
+    public static final MaterialIconSet RUBY = new MaterialIconSet("ruby", EMERALD);
     public static final MaterialIconSet OPAL = new MaterialIconSet("opal", RUBY);
     public static final MaterialIconSet GLASS = new MaterialIconSet("glass", RUBY);
     public static final MaterialIconSet NETHERSTAR = new MaterialIconSet("netherstar", GLASS);
