@@ -65,12 +65,8 @@ public class MaterialIconType {
     public static final MaterialIconType stickLong = new MaterialIconType("stickLong");
     public static final MaterialIconType springSmall = new MaterialIconType("springSmall");
     public static final MaterialIconType spring = new MaterialIconType("spring");
-    public static final MaterialIconType arrow = new MaterialIconType("arrow");
     public static final MaterialIconType gear = new MaterialIconType("gear");
     public static final MaterialIconType foil = new MaterialIconType("foil");
-
-    public static final MaterialIconType cell = new MaterialIconType("cell");
-    public static final MaterialIconType cellPlasma = new MaterialIconType("cellPlasma");
 
     public static final MaterialIconType toolHeadSword = new MaterialIconType("toolHeadSword");
     public static final MaterialIconType toolHeadPickaxe = new MaterialIconType("toolHeadPickaxe");
@@ -88,7 +84,6 @@ public class MaterialIconType {
     public static final MaterialIconType toolHeadWrench = new MaterialIconType("toolHeadWrench");
 
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
-    public static final MaterialIconType coke = new MaterialIconType("coke");
 
     // BLOCK TEXTURES
     public static final MaterialIconType block = new MaterialIconType("block");

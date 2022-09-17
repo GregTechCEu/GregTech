@@ -7,7 +7,9 @@ import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 @ZenClass("mods.gregtech.material.MaterialIconSet")
 @ZenRegister
@@ -58,17 +60,6 @@ public class MaterialIconSet {
         this.isRootIconset = this.name.equals("dull");
         this.parentIconset = parentIconSet;
         ICON_SETS.put(this.name, this);
-    }
-
-    @Nonnull
-    public Collection<MaterialIconSet> getHeirarchy() {
-        List<MaterialIconSet> iconSets = new ArrayList<>(Collections.singletonList(this));
-        MaterialIconSet parent = this.parentIconset;
-        while (!parent.isRootIconset) {
-            iconSets.add(parent);
-            parent = parent.parentIconset;
-        }
-        return iconSets;
     }
 
     @ZenGetter("name")
