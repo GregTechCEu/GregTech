@@ -709,7 +709,7 @@ public class FirstDegreeMaterials {
 
         CertusQuartz = new Material.Builder(214, "certus_quartz")
                 .gem(1).ore(2, 1)
-                .color(0xD2D2E6).iconSet(QUARTZ)
+                .color(0xD2D2E6).iconSet(CERTUS)
                 .flags(GENERATE_PLATE, NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();

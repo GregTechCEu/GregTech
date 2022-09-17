@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/tool_head_screwdriver",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/tool_head_screwdriver",
-    "layer1": "gregtech:items/material_sets/magnetic/tool_head_screwdriver_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

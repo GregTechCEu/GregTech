@@ -2,9 +2,15 @@ package gregtech.api.unification.material.info;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import gregtech.api.GTValues;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,6 +111,8 @@ public class MaterialIconType {
     public static final MaterialIconType crop = new MaterialIconType("crop");
     public static final MaterialIconType essence = new MaterialIconType("essence");
 
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable.create();
+
     public final String name;
     public final int id;
 
@@ -125,8 +133,26 @@ public class MaterialIconType {
         } else return getBlockPath(materialIconSet);
     }
 
-    public ResourceLocation getItemModelPath(MaterialIconSet materialIconSet) {
-        return new ResourceLocation(GTValues.MODID, "material_sets/" + materialIconSet.name + "/" + this.name);
+    public ResourceLocation getItemModelPath(@Nonnull MaterialIconSet materialIconSet) {
+        if (ITEM_MODEL_CACHE.contains(this, materialIconSet)) {
+            return ITEM_MODEL_CACHE.get(this, materialIconSet);
+        }
+
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        MaterialIconSet iconSet = materialIconSet;
+        while (!iconSet.isRootIconset) {
+            try {
+                // check if the model file exists
+                manager.getResource(new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name)));
+                break;
+            } catch (IOException ignored) {
+                iconSet = iconSet.parentIconset;
+            }
+        }
+        ResourceLocation location = new ResourceLocation(GTValues.MODID, "material_sets/" + iconSet.name + "/" + this.name);
+        ITEM_MODEL_CACHE.put(this, materialIconSet, location);
+
+        return location;
     }
 
     public ResourceLocation getItemOverlayPath(MaterialIconSet materialIconSet) {

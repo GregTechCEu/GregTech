@@ -1,6 +1,5 @@
 package gregtech.api.items.materialitem;
 
-import gnu.trove.map.hash.TShortObjectHashMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
@@ -14,6 +13,7 @@ import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -113,7 +113,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("ConstantConditions")
     public void registerModels() {
-        TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
+        Map<Short, ModelResourceLocation> alreadyRegistered = new Short2ObjectOpenHashMap<>();
         for (short metaItem : metaItems.keySet()) {
             MaterialIconSet materialIconSet = GregTechAPI.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
 
@@ -127,7 +127,7 @@ public class MetaPrefixItem extends StandardMetaItem {
             metaItemsModels.put(metaItem, resourceLocation);
         }
 
-        // Make some default model for meta prefix items without any materials associated
+        // Make some default models for meta prefix items without any materials associated
         if (metaItems.keySet().isEmpty()) {
             MaterialIconSet defaultIcon = MaterialIconSet.DULL;
             ResourceLocation defaultLocation = OrePrefix.ingot.materialIconType.getItemModelPath(defaultIcon);
@@ -137,8 +137,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     public int getItemStackLimit(@Nonnull ItemStack stack) {
-        if (prefix == null)
-            return 64;
+        if (prefix == null) return 64;
         return prefix.maxStackSize;
     }
 
@@ -147,8 +146,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
         if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
             for (MetaItem<?>.MetaValueItem enabledItem : metaItems.values()) {
-                if (!enabledItem.isVisible())
-                    continue;
+                if (!enabledItem.isVisible()) continue;
                 ItemStack itemStack = enabledItem.getStackForm();
                 enabledItem.getSubItemHandler().getSubItems(itemStack, tab, subItems);
             }
