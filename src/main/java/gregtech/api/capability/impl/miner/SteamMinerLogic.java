@@ -15,7 +15,7 @@ public class SteamMinerLogic extends MinerLogic {
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
     public SteamMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
-        super(metaTileEntity, fortune, 0, speed, maximumRadius, pipeTexture);
+        super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
     }
 
     @Override

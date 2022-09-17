@@ -93,7 +93,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius() / CHUNK_LENGTH, this.minerLogic.getFortune(), this.minerLogic.getMace(), getMaterial(), getDrillingFluidConsumePerTick());
+        return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius() / CHUNK_LENGTH, this.minerLogic.getFortune(), getMace(), getMaterial(), getDrillingFluidConsumePerTick());
     }
 
     @Override
@@ -248,8 +248,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSG_STURDY);
         if (this.material.equals(Materials.HSSS))
             return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSS_RIGID);
-        if (this.material.equals(Materials.HSSE))
-            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
@@ -261,8 +259,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             return MetaBlocks.FRAMES.get(Materials.HSSE).getBlock(Materials.HSSG);
         if (this.material.equals(Materials.HSSS))
             return MetaBlocks.FRAMES.get(Materials.HSSS).getBlock(Materials.HSSS);
-        if (this.material.equals(Materials.HSSE))
-            return MetaBlocks.FRAMES.get(Materials.HSSE).getBlock(Materials.HSSE);
         return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
     }
 
@@ -274,8 +270,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             return Textures.STURDY_HSSG_CASING;
         if (this.material.equals(Materials.HSSS))
             return Textures.RIGID_HSSS_CASING;
-        if (this.material.equals(Materials.HSSE))
-            return Textures.ROBUST_HSSE_CASING;
         return Textures.SOLID_STEEL_CASING;
     }
 

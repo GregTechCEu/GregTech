@@ -54,7 +54,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         super(metaTileEntityId, tier);
         this.inventorySize = (tier + 1) * (tier + 1);
         this.energyPerTick = GTValues.V[tier - 1];
-        this.minerLogic = new MinerLogic(this, fortune, 0, speed, maximumRadius, Textures.SOLID_STEEL_CASING);
+        this.minerLogic = new MinerLogic(this, fortune, speed, maximumRadius, Textures.SOLID_STEEL_CASING);
         this.chargerInventory = new ItemStackHandler(1);
         initializeInventory();
     }

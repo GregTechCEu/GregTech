@@ -498,9 +498,9 @@ public class MetaTileEntities {
         STEAM_OVEN = registerMetaTileEntity(1024, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1025, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
 
-        BASIC_LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), GTValues.EV, ConfigHolder.machines.largeminer.largeMinerSpeed[0], ConfigHolder.machines.largeminer.largeMinerChunkRadii[0], ConfigHolder.machines.largeminer.largeMinerFortune[0], ConfigHolder.machines.largeminer.largeMinerMace[0], Materials.Titanium, ConfigHolder.machines.largeminer.largeMinerFluidConsume[0]));
-        LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), GTValues.IV, ConfigHolder.machines.largeminer.largeMinerSpeed[1], ConfigHolder.machines.largeminer.largeMinerChunkRadii[1], ConfigHolder.machines.largeminer.largeMinerFortune[1], ConfigHolder.machines.largeminer.largeMinerMace[1], Materials.HSSG, ConfigHolder.machines.largeminer.largeMinerFluidConsume[1]));
-        ADVANCED_LARGE_MINER = registerMetaTileEntity(1028, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), GTValues.LuV, ConfigHolder.machines.largeminer.largeMinerSpeed[2], ConfigHolder.machines.largeminer.largeMinerChunkRadii[2], ConfigHolder.machines.largeminer.largeMinerFortune[2], ConfigHolder.machines.largeminer.largeMinerMace[2], Materials.HSSS, ConfigHolder.machines.largeminer.largeMinerFluidConsume[2]));
+        BASIC_LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), GTValues.EV, 16, 1, 4, ConfigHolder.machines.largeMinerMace[0], Materials.Titanium, 16));
+        LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), GTValues.IV, 8, 2, 5, ConfigHolder.machines.largeMinerMace[1], Materials.HSSG, 64));
+        ADVANCED_LARGE_MINER = registerMetaTileEntity(1028, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), GTValues.LuV, 4, 3, 6, ConfigHolder.machines.largeMinerMace[2], Materials.HSSS, 256));
 
         CENTRAL_MONITOR = registerMetaTileEntity(1029, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 
@@ -512,10 +512,6 @@ public class MetaTileEntities {
         ADVANCED_FLUID_DRILLING_RIG = registerMetaTileEntity(1034, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.ev"), 4));
 
         CLEANROOM = registerMetaTileEntity(1035, new MetaTileEntityCleanroom(gregtechId("cleanroom")));
-
-        if(ConfigHolder.machines.largeminer.extremeLargeMiner) {
-            EXTREME_LARGE_MINER = registerMetaTileEntity(1036, new MetaTileEntityLargeMiner(gregtechId("large_miner.zpm"), GTValues.ZPM, ConfigHolder.machines.largeminer.largeMinerSpeed[3], ConfigHolder.machines.largeminer.largeMinerChunkRadii[3], ConfigHolder.machines.largeminer.largeMinerFortune[3], ConfigHolder.machines.largeminer.largeMinerMace[3], Materials.HSSE, ConfigHolder.machines.largeminer.largeMinerFluidConsume[3]));
-        }
 
         // MISC MTE's START: IDs 1150-2000
 

@@ -598,20 +598,6 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ADVANCED_LARGE_MINER)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
-        if (ConfigHolder.machines.largeminer.extremeLargeMiner) {
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[ZPM])
-                    .input(frameGt, HSSE, 4)
-                    .input(circuit, Tier.ZPM, 4)
-                    .input(ELECTRIC_PISTON_ZPM, 4)
-                    .input(ELECTRIC_PUMP_ZPM, 4)
-                    .input(CONVEYOR_MODULE_ZPM, 4)
-                    .input(SENSOR_ZPM, 1)
-                    .input(gear, Naquadria, 4)
-                    .fluidInputs(Lubricant.getFluid(2000), SolderingAlloy.getFluid(2304))
-                    .output(EXTREME_LARGE_MINER)
-                    .duration(400).EUt(VA[ZPM]).buildAndRegister();
-        }
 
         // Multiblock Fluid Drills
 

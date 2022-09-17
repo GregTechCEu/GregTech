@@ -23,6 +23,7 @@ public class MultiblockMinerLogic extends MinerLogic {
 
     private int voltageTier;
     private int overclockAmount = 0;
+    private int mace = 0;
 
     private boolean isChunkMode;
     private boolean isSilkTouchMode;
@@ -38,7 +39,8 @@ public class MultiblockMinerLogic extends MinerLogic {
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
     public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int mace, int speed, int maximumRadius, ICubeRenderer pipeTexture, RecipeMap<?> blockDropRecipeMap) {
-        super(metaTileEntity, fortune, mace, speed, maximumRadius, pipeTexture);
+        super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
+        this.mace = mace;
         this.blockDropRecipeMap = blockDropRecipeMap;
     }
 
@@ -56,7 +58,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     @Override
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
         if (!isSilkTouchMode) // multiplies post macerated ore compared to the single blocks
-            applyTieredHammerNoRandomDrops(blockState, blockDrops, this.getMace(), this.blockDropRecipeMap, this.voltageTier);
+            applyTieredHammerNoRandomDrops(blockState, blockDrops, this.mace, this.blockDropRecipeMap, this.voltageTier);
         else
             super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
     }
@@ -97,6 +99,8 @@ public class MultiblockMinerLogic extends MinerLogic {
     public boolean isChunkMode() {
         return this.isChunkMode;
     }
+
+    public int getMace() { return this.mace; }
 
     public void setChunkMode(boolean isChunkMode) {
         if (!isWorkingEnabled()) {
