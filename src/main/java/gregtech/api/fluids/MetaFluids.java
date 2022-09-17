@@ -155,7 +155,7 @@ public class MetaFluids {
     }
 
     /**
-     * Every {@link gregtech.api.unification.material.info.MaterialIconSet} that has fluids requires a registered sprite
+     * Add all fluid textures for any {@link MaterialIconSet} which has them
      */
     public static void initIconFluidSprites() {
         fluidSprites.add(AUTO_GENERATED_PLASMA_TEXTURE);
@@ -188,9 +188,6 @@ public class MetaFluids {
      * @param textureLocation the location of the texture to use
      */
     public static void setMaterialFluidTexture(Material material, FluidType fluidType, ResourceLocation textureLocation) {
-        if (!fluidTextures.containsRow(material)) {
-            fluidTextures.put(material, fluidType, textureLocation);
-        }
         if (!fluidTextures.contains(material, fluidType)) {
             fluidTextures.put(material, fluidType, textureLocation);
         }
@@ -216,13 +213,6 @@ public class MetaFluids {
         // if the material is still not registered by this point, register it
         if (fluid == null) {
             // determine texture for use
-            if (!fluidTextures.containsRow(material)) {
-                if (fluidType.equals(FluidTypes.PLASMA)) {
-                    fluidTextures.put(material, fluidType, AUTO_GENERATED_PLASMA_TEXTURE);
-                } else {
-                    fluidTextures.put(material, fluidType, MaterialIconType.fluid.getBlockTexturePath(material.getMaterialIconSet()));
-                }
-            }
             if (!fluidTextures.contains(material, fluidType)) {
                 if (fluidType.equals(FluidTypes.PLASMA)) {
                     fluidTextures.put(material, fluidType, AUTO_GENERATED_PLASMA_TEXTURE);

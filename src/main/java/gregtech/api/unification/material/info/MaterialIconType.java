@@ -110,44 +110,44 @@ public class MaterialIconType {
         ICON_TYPES.put(this.name, this);
     }
 
+    @Nonnull
     public ResourceLocation getBlockTexturePath(@Nonnull MaterialIconSet materialIconSet) {
         if (BLOCK_TEXTURE_CACHE.contains(this, materialIconSet)) {
             return BLOCK_TEXTURE_CACHE.get(this, materialIconSet);
         }
 
-        ResourceLocation location;
+        MaterialIconSet iconSet = materialIconSet;
         //noinspection ConstantConditions
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && Minecraft.getMinecraft()  != null) {
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
+                Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-            MaterialIconSet iconSet = materialIconSet;
             while (!iconSet.isRootIconset) {
                 try {
-                    // check if the model file exists
+                    // check if the texture file exists
                     manager.getResource(new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name)));
                     break;
                 } catch (IOException ignored) {
                     iconSet = iconSet.parentIconset;
                 }
             }
-            location = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/" + this.name);
-        } else {
-            location = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.name + "/" + this.name);
         }
+        ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("blocks/material_sets/%s/%s", iconSet.name, this.name));
         BLOCK_TEXTURE_CACHE.put(this, materialIconSet, location);
 
         return location;
     }
 
+    @Nonnull
     public ResourceLocation getItemModelPath(@Nonnull MaterialIconSet materialIconSet) {
         if (ITEM_MODEL_CACHE.contains(this, materialIconSet)) {
             return ITEM_MODEL_CACHE.get(this, materialIconSet);
         }
 
-        ResourceLocation location;
+        MaterialIconSet iconSet = materialIconSet;
         //noinspection ConstantConditions
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && Minecraft.getMinecraft()  != null) {
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
+                Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-            MaterialIconSet iconSet = materialIconSet;
             while (!iconSet.isRootIconset) {
                 try {
                     // check if the model file exists
@@ -157,12 +157,16 @@ public class MaterialIconType {
                     iconSet = iconSet.parentIconset;
                 }
             }
-            location = new ResourceLocation(GTValues.MODID, "material_sets/" + iconSet.name + "/" + this.name);
-        } else {
-            location = new ResourceLocation(GTValues.MODID, "material_sets/" + materialIconSet.name + "/" + this.name);
         }
+
+        ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("material_sets/%s/%s", iconSet.name, this.name));
         ITEM_MODEL_CACHE.put(this, materialIconSet, location);
 
         return location;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
