@@ -1174,7 +1174,15 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
+    /**
+     * Deprecated, use {@link MetaTileEntity#onPlacement()} instead
+     */
+    @Deprecated
     public void onAttached(Object... data) {
+    }
+
+    public void onPlacement() {
+
     }
 
     /**

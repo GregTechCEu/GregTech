@@ -224,8 +224,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean recolorBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, @Nonnull EnumDyeColor color) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if (metaTileEntity == null ||
-                metaTileEntity.getPaintingColor() == color.colorValue)
+        if (metaTileEntity == null || metaTileEntity.getPaintingColor() == color.colorValue)
             return false;
         metaTileEntity.setPaintingColor(color.colorValue);
         return true;
@@ -255,6 +254,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
                 }
             }
+            metaTileEntity.onPlacement();
         }
     }
 

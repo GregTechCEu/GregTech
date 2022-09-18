@@ -277,6 +277,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (buf.readBoolean()) {
             int metaTileEntityId = buf.readVarInt();
             setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
+            this.metaTileEntity.onPlacement();
             this.metaTileEntity.receiveInitialSyncData(buf);
             scheduleRenderUpdate();
             this.needToUpdateLightning = true;
@@ -288,6 +289,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (discriminator == INITIALIZE_MTE) {
             int metaTileEntityId = buffer.readVarInt();
             setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
+            this.metaTileEntity.onPlacement();
             this.metaTileEntity.receiveInitialSyncData(buffer);
             scheduleRenderUpdate();
             this.needToUpdateLightning = true;

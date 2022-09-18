@@ -577,6 +577,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
         if (controllerBase != null) {
+            controllerBase.reinitializeStructurePattern();
             controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap.put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
         }
 
