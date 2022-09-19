@@ -258,6 +258,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
+        if (getMetaTileEntity() instanceof MultiblockWithDisplayBase && ConfigHolder.machines.cleanMultiblocks) return true;
+
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
 
