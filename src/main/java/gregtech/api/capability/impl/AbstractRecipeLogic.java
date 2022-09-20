@@ -1,10 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
@@ -258,7 +255,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
-        if (getMetaTileEntity() instanceof MultiblockWithDisplayBase && ConfigHolder.machines.cleanMultiblocks) return true;
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
 
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
@@ -323,7 +320,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
-        if (getMetaTileEntity() instanceof MultiblockWithDisplayBase && ConfigHolder.machines.cleanMultiblocks) return true;
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
 
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
