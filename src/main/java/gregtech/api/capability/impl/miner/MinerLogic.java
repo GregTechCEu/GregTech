@@ -8,17 +8,15 @@ import gregtech.api.capability.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GTTransferUtils;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -71,6 +69,8 @@ public class MinerLogic {
     private boolean isActive = false;
     private boolean isWorkingEnabled = true;
     protected boolean wasActiveAndNeedsUpdate;
+
+    private final Block oreReplacementBlock = Block.getBlockFromName(ConfigHolder.machines.replaceMinedBlocksWith);
 
     /**
      * Creates the general logic for all in-world ore block miners
@@ -246,7 +246,10 @@ public class MinerLogic {
         // remove the ore block's position from the mining queue
         if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
             GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
-            world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
+            if(oreReplacementBlock == null) {
+                GTLog.logger.error("Replacement block for electric miners was null, falling back on Cobblestone");
+            }
+            world.setBlockState(blocksToMine.getFirst(), oreReplacementBlock == null ? Blocks.COBBLESTONE.getDefaultState() : oreReplacementBlock.getDefaultState());
             mineX.set(blocksToMine.getFirst().getX());
             mineZ.set(blocksToMine.getFirst().getZ());
             mineY.set(blocksToMine.getFirst().getY());
