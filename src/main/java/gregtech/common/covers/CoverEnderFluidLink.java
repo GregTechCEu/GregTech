@@ -200,7 +200,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("Frequency", color);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
@@ -209,6 +209,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         tagCompound.setBoolean("Private", isPrivate);
         tagCompound.setString("PlacedUUID", playerUUID.toString());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+
+        return tagCompound;
     }
 
     @Override

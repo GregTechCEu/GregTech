@@ -35,11 +35,13 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         if (this.remote != null) {
             tagCompound.setTag("cdiRemote", NBTUtil.createPosTag(this.remote));
         }
+
+        return tagCompound;
     }
 
     @Override

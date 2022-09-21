@@ -189,9 +189,11 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
+
+        return tagCompound;
     }
 
     @Override
