@@ -135,8 +135,8 @@ public class MinerLogic {
             NonNullList<ItemStack> blockDrops = NonNullList.create();
             IBlockState blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
 
-            // if the block is not air, harvest it
-            if (blockState != Blocks.AIR.getDefaultState()) {
+            // if the block is not air or cobblestone., harvest it
+            if (blockState != Blocks.AIR.getDefaultState() && blockState != Blocks.COBBLESTONE.getDefaultState()) {
                 // get the small ore drops, if a small ore
                 getSmallOreBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // get the block's drops.
@@ -144,8 +144,9 @@ public class MinerLogic {
                 // try to insert them
                 mineAndInsertItems(blockDrops, world);
             } else {
-                // the block attempted to mine was air, so remove it from the queue and move on
-                // This can occur because of block destruction when lowering the pipe
+                // the block attempted to mine was air or cobblestone, so remove it from the queue and move on
+                // This can occur because of block destruction when lowering the pipe or when two miners are attempting
+                // to mine the same area
                 blocksToMine.removeFirst();
             }
 
