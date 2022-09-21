@@ -163,6 +163,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.steam_miner.description",
                 getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20));
+        tooltip.add(I18n.format("gregtech.machine.miner.warning"));
     }
 
     public boolean drainEnergy(boolean simulate) {
