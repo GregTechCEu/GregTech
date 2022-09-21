@@ -220,9 +220,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {
-        if (isMufflerFaceFree()) {
-            this.recipeLogic.update();
-        }
+        this.recipeLogic.update();
     }
 
     @Override
