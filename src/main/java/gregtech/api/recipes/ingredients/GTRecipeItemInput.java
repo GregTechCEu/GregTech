@@ -182,7 +182,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
         if (this.inputStacks.length != other.inputStacks.length) return false;
         for (int i = 0; i < this.inputStacks.length; i++) {
-            if (!ItemStack.areItemsEqual(this.inputStacks[i], other.inputStacks[i]) && !ItemStack.areItemStackTagsEqual(this.inputStacks[i], other.inputStacks[i]))
+            if (!ItemStack.areItemsEqual(this.inputStacks[i], other.inputStacks[i]) || !ItemStack.areItemStackTagsEqual(this.inputStacks[i], other.inputStacks[i]))
                 return false;
         }
         return true;
