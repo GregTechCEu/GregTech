@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
-import gregtech.client.utils.BloomEffectUtil;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -16,7 +16,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
@@ -41,12 +40,37 @@ import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
+    public static final Object2BooleanOpenHashMap<IBlockState> GLOW = new Object2BooleanOpenHashMap<>();
     public static final IStateMapper mapper = new SimpleStateMapper(MODEL_LOCATION);
     public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
+        super.onBlockAdded(worldIn, pos, state);
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        if (GLOW.containsKey(state) && ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos)) {
+            return 15;
+        }
+        return 0;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+        ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
+        if (GLOW.containsKey(state) && ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos)) {
+            return 0b10100000 << 16 | 0b10100000;
+        }
+        return source.getCombinedLight(pos, state.getLightValue(source, pos));
     }
 
     @Override
@@ -96,12 +120,6 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Override
     public void onTextureStitch(TextureStitchEvent.Pre event) {
 
-    }
-
-    @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        ACTIVE_BLOCKS.get(worldIn.provider.getDimension()).remove(pos);
-        super.breakBlock(worldIn, pos, state);
     }
 
     @Override

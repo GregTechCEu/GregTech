@@ -6,12 +6,10 @@ import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nonnull;
 
@@ -24,20 +22,6 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, FireboxCasingType.BRONZE_FIREBOX));
-    }
-
-    @Override
-    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        return (ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos)) ? 15 : 0;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        if (ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos)) {
-            return 0b10100000 << 16 | 0b10100000;
-        }
-        return source.getCombinedLight(pos, state.getLightValue(source, pos));
     }
 
     @Override

@@ -5,9 +5,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.impl.BoilerRecipeLogic;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.*;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -20,8 +20,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.common.blocks.BlockFireboxCasing;
-import net.minecraft.block.state.IBlockState;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,12 +33,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
@@ -49,6 +48,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     public final BoilerType boilerType;
     protected BoilerRecipeLogic recipeLogic;
+    private boolean lastActive;
 
     private FluidTankList fluidImportInventory;
     private ItemHandlerList itemImportInventory;

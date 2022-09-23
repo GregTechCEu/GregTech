@@ -1,28 +1,24 @@
 package gregtech.client.model.modelfactories;
 
 import gregtech.api.block.VariantActiveBlock;
-import gregtech.client.model.ModelFactory;
 import gregtech.client.utils.BloomEffectUtil;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.util.vector.Vector3f;
-import team.chisel.ctm.client.model.ModelBakedCTM;
-import team.chisel.ctm.client.state.CTMExtendedState;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import static gregtech.api.block.VariantActiveBlock.GLOW;
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
 public class ActiveVariantBlockBakedModel implements IBakedModel {
@@ -48,9 +44,16 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
             IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
             TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
             particle.set(textureAtlasSprite);
-            quads = new ArrayList<>(m.getQuads(state, side, rand));
             if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
-                quads.removeIf(b -> !b.getSprite().getIconName().endsWith("bloom"));
+                quads = new ArrayList<>();
+                for (BakedQuad b : m.getQuads(state, side, rand) ) {
+                    if (b.getSprite().getIconName().contains("bloom")) {
+                        quads.add(b);
+                        GLOW.put(state,true);
+                    }
+                }
+            } else {
+                quads = new ArrayList<>(m.getQuads(state, side, rand));
             }
         }
         return quads;
@@ -58,7 +61,24 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
 
     @Override
     public boolean isAmbientOcclusion() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean isAmbientOcclusion(IBlockState state) {
+        if (Minecraft.getMinecraft().world != null ) {
+            ModelResourceLocation mrl;
+            if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
+                mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                        "active=true," + statePropertiesToString(state.getProperties()));
+            } else {
+                mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                        "active=false," + statePropertiesToString(state.getProperties()));
+            }
+            IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
+            return m.isAmbientOcclusion();
+        }
+        return true;
     }
 
     @Override
