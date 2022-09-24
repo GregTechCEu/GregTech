@@ -185,6 +185,7 @@ public class MaterialInfoLoader {
                 new MaterialStack(Glass, OrePrefix.block.getMaterialAmount(Glass) / 2) // 1 block / 2
         ));
 
+        // Use Ingot instead of plank, as plank has no material amount set
         if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3), new MaterialStack(Iron, OrePrefix.screw.getMaterialAmount(Iron)))); // screw
             OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, M * 2), new MaterialStack(Iron, M / 9))); // screw
@@ -193,20 +194,20 @@ public class MaterialInfoLoader {
             OreDictUnifier.registerOre(new ItemStack(Items.SPRUCE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, M * 2), new MaterialStack(Iron, M / 9))); // screw
             OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, M * 2), new MaterialStack(Iron, M / 9))); // screw
         } else {
-            OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3)));
-            OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3)));
-            OreDictUnifier.registerOre(new ItemStack(Items.JUNGLE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3)));
-            OreDictUnifier.registerOre(new ItemStack(Items.OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3)));
-            OreDictUnifier.registerOre(new ItemStack(Items.SPRUCE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3)));
-            OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.plank.getMaterialAmount(Wood) * 6) / 3)));
+            OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.ingot.getMaterialAmount(Wood) * 6) / 3)));
+            OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.ingot.getMaterialAmount(Wood) * 6) / 3)));
+            OreDictUnifier.registerOre(new ItemStack(Items.JUNGLE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.ingot.getMaterialAmount(Wood) * 6) / 3)));
+            OreDictUnifier.registerOre(new ItemStack(Items.OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.ingot.getMaterialAmount(Wood) * 6) / 3)));
+            OreDictUnifier.registerOre(new ItemStack(Items.SPRUCE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.ingot.getMaterialAmount(Wood) * 6) / 3)));
+            OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Wood, (OrePrefix.ingot.getMaterialAmount(Wood) * 6) / 3)));
         }
 
-        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood))));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood))));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 2), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood))));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 3), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood))));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 4), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood))));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 5), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood))));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood))));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood))));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 2), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood))));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 3), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood))));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 4), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood))));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 5), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood))));
 
 
         if (ConfigHolder.recipes.hardIronRecipes)
@@ -441,11 +442,12 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Items.CHAINMAIL_LEGGINGS, 1), new ItemMaterialInfo(new MaterialStack(Iron, OrePrefix.ring.getMaterialAmount(Iron) * 7)));
         OreDictUnifier.registerOre(new ItemStack(Items.CHAINMAIL_BOOTS, 1), new ItemMaterialInfo(new MaterialStack(Iron, OrePrefix.ring.getMaterialAmount(Iron) * 4)));
 
-        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_SHOVEL, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood)), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
-        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_PICKAXE, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood) * 3), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
-        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_AXE, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood) * 3), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
-        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_HOE, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood) * 2), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
-        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_SWORD, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.plank.getMaterialAmount(Wood) * 2), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood))));
+        // Use Ingot instead of plank, as plank does not have a material amount set and I don't know what that would mess up
+        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_SHOVEL, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood)), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
+        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_PICKAXE, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood) * 3), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
+        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_AXE, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood) * 3), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
+        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_HOE, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood) * 2), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
+        OreDictUnifier.registerOre(new ItemStack(Items.WOODEN_SWORD, 1), new ItemMaterialInfo(new MaterialStack(Wood, OrePrefix.ingot.getMaterialAmount(Wood) * 2), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood))));
 
         OreDictUnifier.registerOre(new ItemStack(Items.STONE_SHOVEL, 1), new ItemMaterialInfo(new MaterialStack(Stone, OrePrefix.ingot.getMaterialAmount(Stone)), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
         OreDictUnifier.registerOre(new ItemStack(Items.STONE_PICKAXE, 1), new ItemMaterialInfo(new MaterialStack(Stone, OrePrefix.ingot.getMaterialAmount(Stone) * 3), new MaterialStack(Wood, OrePrefix.stick.getMaterialAmount(Wood) * 2)));
