@@ -22,7 +22,6 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -47,12 +46,6 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
-    }
-
-    @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
-        super.onBlockAdded(worldIn, pos, state);
     }
 
     @Override

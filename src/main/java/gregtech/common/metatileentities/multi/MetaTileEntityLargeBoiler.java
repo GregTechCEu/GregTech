@@ -21,6 +21,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -72,6 +73,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
     }
 
     @Override
