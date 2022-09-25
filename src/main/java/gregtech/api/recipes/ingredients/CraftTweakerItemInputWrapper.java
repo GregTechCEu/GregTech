@@ -1,8 +1,8 @@
 package gregtech.api.recipes.ingredients;
 
-import crafttweaker.api.item.*;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.mc1120.item.MCItemStack;
 import gregtech.api.GTValues;
 import net.minecraft.item.ItemStack;
 
@@ -117,4 +117,8 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
         return true;
     }
 
+    @Override
+    public boolean hasNBTMatchingCondition() {
+        return true;
+    }
 }

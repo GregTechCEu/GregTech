@@ -777,6 +777,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 } else {
                     ingredient = new MapOreDictIngredient(r.getOreDict());
                 }
+
                 WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
                 if (cached != null && cached.get() != null) {
                     list.add(Collections.singletonList(cached.get()));
@@ -784,22 +785,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
                     list.add(Collections.singletonList(ingredient));
                 }
+
             } else {
                 List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
+                if (r.hasNBTMatchingCondition()) {
+                    inner.addAll(MapItemStackNBTIngredient.from(r));
+                    hasNBTMatcherInputs = true;
+                } else {
+                    inner.addAll(MapItemStackIngredient.from(r));
+                }
 
-                for (ItemStack s : r.getInputStacks()) {
-                    if (r.hasNBTMatchingCondition()) {
-                        hasNBTMatcherInputs = true;
-                        ingredient = new MapItemStackNBTIngredient(s, r.getNBTMatcher(), r.getNBTMatchingCondition());
-                    } else {
-                        ingredient = new MapItemStackIngredient(s);
-                    }
-                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                for (int i = 0; i < inner.size(); i++) {
+                    AbstractMapIngredient mappedIngredient = inner.get(i);
+                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(mappedIngredient);
                     if (cached != null && cached.get() != null) {
-                        inner.add(cached.get());
+                        inner.set(i,cached.get());
                     } else {
-                        ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                        inner.add(ingredient);
+                        ingredientRoot.put(mappedIngredient, new WeakReference<>(mappedIngredient));
                     }
                 }
                 list.add(inner);
