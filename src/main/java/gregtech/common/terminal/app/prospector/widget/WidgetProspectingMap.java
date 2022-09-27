@@ -118,17 +118,19 @@ public class WidgetProspectingMap extends Widget {
                                 if (GTUtility.isOre(itemBlock)) {
                                     boolean added = false;
                                     String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream().findFirst().get();
+                                    OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
                                     for(StoneType type : StoneType.STONE_TYPE_REGISTRY) {
-                                        OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
                                         if(type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
                                             packet.addBlock(x, y, z, oreDictString);
                                             added = true;
+                                            break;
                                         }
                                         else if(type.processingPrefix == prefix) {
                                             MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
                                             if(materialStack != null) {
                                                 packet.addBlock(x, y, z, "ore" + materialStack.material.getLocalizedName());
                                                 added = true;
+                                                break;
                                             }
                                         }
                                     }
