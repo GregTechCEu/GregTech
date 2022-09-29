@@ -4,12 +4,14 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.net.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -114,7 +116,29 @@ public class WidgetProspectingMap extends Widget {
                                 IBlockState state = chunk.getBlockState(pos);
                                 ItemStack itemBlock = GTUtility.toItem(state);
                                 if (GTUtility.isOre(itemBlock)) {
-                                    packet.addBlock(x, y, z, OreDictUnifier.getOreDictionaryNames(itemBlock).stream().findFirst().get());
+                                    boolean added = false;
+                                    String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream().findFirst().get();
+                                    OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
+                                    for(StoneType type : StoneType.STONE_TYPE_REGISTRY) {
+                                        if(type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
+                                            packet.addBlock(x, y, z, oreDictString);
+                                            added = true;
+                                            break;
+                                        }
+                                        else if(type.processingPrefix == prefix) {
+                                            MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
+                                            if(materialStack != null) {
+                                                packet.addBlock(x, y, z, "ore" + materialStack.material.getLocalizedName());
+                                                added = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    // Probably other mod's ores
+                                    if(!added) {
+                                        // Fallback
+                                        packet.addBlock(x, y, z, oreDictString);
+                                    }
                                 }
                             }
                         }
