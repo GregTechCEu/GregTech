@@ -82,6 +82,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         resetTileAbilities();
         this.throttlePercentage = 100;
         this.recipeLogic.invalidate();
+        this.lastActive = false;
         replaceFireboxAsActive(false);
     }
 
