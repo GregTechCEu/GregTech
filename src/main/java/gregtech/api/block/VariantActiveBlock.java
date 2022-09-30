@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
+import gregtech.client.utils.BloomEffectUtil;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -60,12 +61,12 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return super.getRenderLayer();
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return true;
+        return layer == getRenderLayer() || layer == BloomEffectUtil.BLOOM;
     }
 
     @Nonnull
