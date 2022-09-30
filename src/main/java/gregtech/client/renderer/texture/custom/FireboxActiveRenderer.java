@@ -32,11 +32,15 @@ public class FireboxActiveRenderer extends SidedCubeRenderer {
             OrientedOverlayRenderer.OverlayFace overlayFace = OrientedOverlayRenderer.OverlayFace.bySide(facing, frontFacing);
             TextureAtlasSprite renderSprite = sprites.get(overlayFace);
             if (renderSprite != null) {
-                Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new ColourOperation(0xdddddddd)), facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
+                    Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new ColourOperation(0xffffffff)), facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                } else {
+                    Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new ColourOperation(0xbbbbbbbb)), facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                }
                 TextureAtlasSprite emissiveSprite = spritesEmissive.get(overlayFace);
                 if (emissiveSprite != null && facing != frontFacing && facing != EnumFacing.UP && facing != EnumFacing.DOWN) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
-                        Textures.renderFace(renderState, translation, pipeline, facing, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
+                        Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new ColourOperation(0xffffffff)), facing, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
                     } else {
                         Textures.renderFace(renderState, translation, pipeline, facing, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
                     }
