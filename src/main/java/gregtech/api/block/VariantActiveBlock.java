@@ -39,31 +39,12 @@ import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
-    public static final Object2BooleanOpenHashMap<IBlockState> GLOW = new Object2BooleanOpenHashMap<>();
     public static final IStateMapper mapper = new SimpleStateMapper(MODEL_LOCATION);
     public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
-    }
-
-    @Override
-    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        if (GLOW.containsKey(state) && ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos)) {
-            return 15;
-        }
-        return 0;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
-        if (GLOW.containsKey(state) && ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos)) {
-            return 0b10100000 << 16 | 0b10100000;
-        }
-        return source.getCombinedLight(pos, state.getLightValue(source, pos));
     }
 
     @Override

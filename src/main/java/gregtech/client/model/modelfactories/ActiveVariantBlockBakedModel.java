@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static gregtech.api.block.VariantActiveBlock.GLOW;
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
 public class ActiveVariantBlockBakedModel implements IBakedModel {
@@ -49,7 +48,6 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
                 for (BakedQuad b : m.getQuads(state, side, rand) ) {
                     if (b.getSprite().getIconName().contains("bloom")) {
                         quads.add(b);
-                        GLOW.put(state,true);
                     }
                 }
             } else {
