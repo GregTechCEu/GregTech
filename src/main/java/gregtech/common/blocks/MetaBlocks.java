@@ -97,6 +97,9 @@ public class MetaBlocks {
     public static BlockHermeticCasing HERMETIC_CASING;
     public static BlockCleanroomCasing CLEANROOM_CASING;
 
+    public static BlockLamp LAMP;
+    public static BlockLampOff OFF_LAMP;
+
     public static BlockAsphalt ASPHALT;
 
     public static BlockStoneSmooth STONE_SMOOTH;
@@ -175,6 +178,11 @@ public class MetaBlocks {
         HERMETIC_CASING.setRegistryName("hermetic_casing");
         CLEANROOM_CASING = new BlockCleanroomCasing();
         CLEANROOM_CASING.setRegistryName("cleanroom_casing");
+
+        LAMP = new BlockLamp();
+        LAMP.setRegistryName("lamp");
+        OFF_LAMP = new BlockLampOff();
+        OFF_LAMP.setRegistryName("off_lamp");
 
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
@@ -332,6 +340,8 @@ public class MetaBlocks {
         registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
         registerItemModel(CLEANROOM_CASING);
+        registerItemModel(LAMP);
+        registerItemModel(OFF_LAMP);
         registerItemModel(ASPHALT);
         registerItemModel(STONE_SMOOTH);
         registerItemModel(STONE_COBBLE);

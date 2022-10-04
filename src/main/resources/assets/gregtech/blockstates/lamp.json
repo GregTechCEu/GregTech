@@ -1,0 +1,124 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:cube_2_layer_all"
+  },
+  "variants": {
+    "variant=lamp_white": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_white_bloom"
+      }
+    },
+    "variant=lamp_magenta": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_magenta_bloom"
+      }
+    },
+    "variant=lamp_orange": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_orange_bloom"
+      }
+    },
+    "variant=lamp_lightblue": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_lightblue_bloom"
+      }
+    },
+    "variant=lamp_yellow": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_yellow_bloom"
+      }
+    },
+    "variant=lamp_lime": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_lime_bloom"
+      }
+    },
+    "variant=lamp_pink": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_pink_bloom"
+      }
+    },
+    "variant=lamp_gray": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_gray_bloom"
+      }
+    },
+    "variant=lamp_lightgray": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_lightgray_bloom"
+      }
+    },
+    "variant=lamp_cyan": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_cyan_bloom"
+      }
+    },
+    "variant=lamp_purple": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_purple_bloom"
+      }
+    },
+    "variant=lamp_blue": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_blue_bloom"
+      }
+    },
+    "variant=lamp_brown": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_brown_bloom"
+      }
+    },
+    "variant=lamp_green": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_green_bloom"
+      }
+    },
+    "variant=lamp_red": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_red_bloom"
+      }
+    },
+    "variant=lamp_black": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/lamps/lamp_frame",
+        "top_all": "gregtech:blocks/lamps/lamp_black_bloom"
+      }
+    }
+  },
+    "inventory": [
+      {}
+    ]
+}
+

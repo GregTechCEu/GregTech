@@ -1,0 +1,13 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "ctm",
+    "layer": "CUTOUT",
+    "textures": [
+      "gregtech:blocks/lamps/lamp_frame_ctm"
+    ],
+    "extra": {
+      "ignore_states": true
+    }
+  }
+}
