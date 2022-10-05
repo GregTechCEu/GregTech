@@ -391,6 +391,14 @@ public class MachineRecipeLoader {
                     .outputs(MetaItems.SPRAY_CAN_DYES[i].getStackForm())
                     .EUt(VA[ULV]).duration(200)
                     .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(plate, Glass, 6)
+                    .input(dust, Glowstone, 1)
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                    .outputs(MetaBlocks.LAMP.getItemVariant(BlockLamp.LampType.values()[i], 6))
+                    .EUt(VA[ULV]).duration(40)
+                    .buildAndRegister();
         }
 
         CANNER_RECIPES.recipeBuilder()
