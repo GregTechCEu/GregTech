@@ -12,19 +12,24 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.IngredientNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe {
     boolean isClearing;
+    public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class, ItemStack.class);
 
     public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
         super(group, result, parseShaped(isClearing, recipe));
@@ -127,7 +132,11 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
                         return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
                     }
                     if (!isClearing) {
-                        return new GTIngredientNBT(((ItemStack) obj).copy());
+                        try {
+                            return ingredientNBT.newInstance(((ItemStack) obj).copy());
+                        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
