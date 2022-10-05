@@ -29,30 +29,28 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        List<BakedQuad> quads = Collections.emptyList();
-        if (side == null) return quads;
-        if (state != null) {
-            ModelResourceLocation mrl;
-            if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
-                mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                        "active=true," + statePropertiesToString(state.getProperties()));
-            } else {
-                mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                        "active=false," + statePropertiesToString(state.getProperties()));
-            }
-            IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
-            TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
-            particle.set(textureAtlasSprite);
-            if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
-                quads = new ArrayList<>();
-                for (BakedQuad b : m.getQuads(state, side, rand) ) {
-                    if (b.getSprite().getIconName().contains("bloom")) {
-                        quads.add(b);
-                    }
+        List<BakedQuad> quads;
+        if (side == null || state == null) return Collections.emptyList();
+        ModelResourceLocation mrl;
+        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
+            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                    "active=true," + statePropertiesToString(state.getProperties()));
+        } else {
+            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                    "active=false," + statePropertiesToString(state.getProperties()));
+        }
+        IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
+        TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
+        particle.set(textureAtlasSprite);
+        if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
+            quads = new ArrayList<>();
+            for (BakedQuad b : m.getQuads(state, side, rand) ) {
+                if (b.getSprite().getIconName().contains("bloom")) {
+                    quads.add(b);
                 }
-            } else {
-                quads = new ArrayList<>(m.getQuads(state, side, rand));
             }
+        } else {
+            quads = new ArrayList<>(m.getQuads(state, side, rand));
         }
         return quads;
     }
