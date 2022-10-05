@@ -6,6 +6,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -38,6 +39,22 @@ public class BlockLampOff extends VariantBlock<BlockLampOff.OffLampType> {
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
         return MetaBlocks.LAMP.getItemDropped(state, rand, fortune);
+    }
+
+    @Override
+    protected ItemStack getSilkTouchDrop(IBlockState state) {
+        return new ItemStack(this.getItemDropped(state, new Random(), 0));
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        if (!worldIn.isRemote) {
+            if (worldIn.isBlockPowered(pos)) {
+                worldIn.setBlockState(pos, state);
+            } else {
+                worldIn.setBlockState(pos, getComplementaryState(getMetaFromState(state)));
+            }
+        }
     }
 
     @Override
