@@ -39,6 +39,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
@@ -49,8 +50,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     public final BoilerType boilerType;
     protected BoilerRecipeLogic recipeLogic;
-    private boolean lastActive;
-
     private FluidTankList fluidImportInventory;
     private ItemHandlerList itemImportInventory;
     private FluidTankList steamOutputTank;
@@ -73,7 +72,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
-        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
     }
 
     @Override
@@ -82,8 +80,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         resetTileAbilities();
         this.throttlePercentage = 100;
         this.recipeLogic.invalidate();
-        this.lastActive = false;
-        replaceFireboxAsActive(false);
     }
 
     private void initializeAbilities() {
@@ -96,14 +92,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         this.fluidImportInventory = new FluidTankList(true);
         this.itemImportInventory = new ItemHandlerList(Collections.emptyList());
         this.steamOutputTank = new FluidTankList(true);
-    }
-
-    @Override
-    public void onRemoval() {
-        super.onRemoval();
-        if (!getWorld().isRemote && isStructureFormed()) {
-            replaceFireboxAsActive(false);
-        }
     }
 
     @Override
@@ -139,66 +127,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
     @Override
     public boolean isActive() {
         return super.isActive() && recipeLogic.isActive() && recipeLogic.isWorkingEnabled();
-    }
-
-    //FIXME this is basically the same method in RecipeMapMultiblockController
-    public void replaceFireboxAsActive(boolean isActive) {
-        int id = getWorld().provider.getDimension();
-        BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
-        writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
-            buf.writeInt(id);
-            buf.writeBoolean(isActive);
-            //9 is the number of blocks we will be passing as 'active'
-            buf.writeInt(9);
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    BlockPos blockPos = centerPos.add(x, 0, z);
-                    if (isActive) {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                    } else {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                    }
-                    buf.writeBlockPos(blockPos);
-                }
-            }
-        });
-    }
-
-    //FIXME this is exactly the same method in RecipeMapMultiblockController.
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
-            int minX;
-            int minY;
-            int minZ;
-            minX = minY = minZ = Integer.MAX_VALUE;
-            int maxX;
-            int maxY;
-            int maxZ;
-            maxX = maxY = maxZ = Integer.MIN_VALUE;
-
-            int id = buf.readInt();
-            boolean isActive = buf.readBoolean();
-            int size = buf.readInt();
-            for (int i = 0; i < size; i++) {
-                BlockPos blockPos = buf.readBlockPos();
-                if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                }
-                minX = Math.min(minX, blockPos.getX());
-                minY = Math.min(minY, blockPos.getY());
-                minZ = Math.min(minZ, blockPos.getZ());
-                maxX = Math.max(maxX, blockPos.getX());
-                maxY = Math.max(maxY, blockPos.getY());
-                maxZ = Math.max(maxZ, blockPos.getZ());
-            }
-            if (getWorld().provider.getDimension() == id) {
-                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
-            }
-        }
     }
 
     @Override

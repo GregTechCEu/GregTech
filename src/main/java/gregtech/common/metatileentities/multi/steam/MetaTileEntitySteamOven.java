@@ -46,9 +46,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     private void setActive(boolean active) {
         this.isActive = active;
         if (!getWorld().isRemote) {
-            if (isStructureFormed()) {
-                replaceFireboxAsActive(active);
-            }
             writeCustomData(IS_WORKING, buf -> buf.writeBoolean(isActive));
             markDirty();
         }
@@ -67,12 +64,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                         .or(autoAbilities(false, false, true, true, false)))
                 .where('#', any())
                 .build();
-    }
-
-    @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
-        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
     }
 
     public IBlockState getCasingState() {
@@ -107,29 +98,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
-    //FIXME this is basically the same method in RecipeMapMultiblockController
-    public void replaceFireboxAsActive(boolean isActive) {
-        int id = getWorld().provider.getDimension();
-        BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
-        writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
-            buf.writeInt(id);
-            buf.writeBoolean(isActive);
-            //9 is the number of blocks we will be passing as 'active'
-            buf.writeInt(9);
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    BlockPos blockPos = centerPos.add(x, 0, z);
-                    if (isActive) {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                    } else {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                    }
-                    buf.writeBlockPos(blockPos);
-                }
-            }
-        });
-    }
-
     @Override
     protected void updateFormedValid() {
         super.updateFormedValid();
@@ -139,18 +107,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     }
 
     @Override
-    public void onRemoval() {
-        super.onRemoval();
-        if (!getWorld().isRemote && isStructureFormed()) {
-            replaceFireboxAsActive(false);
-        }
-    }
-
-    @Override
     public void invalidateStructure() {
         super.invalidateStructure();
         this.isActive = false;
-        replaceFireboxAsActive(false);
     }
 
     @Override
@@ -175,37 +134,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
-        }
-        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
-            int minX;
-            int minY;
-            int minZ;
-            minX = minY = minZ = Integer.MAX_VALUE;
-            int maxX;
-            int maxY;
-            int maxZ;
-            maxX = maxY = maxZ = Integer.MIN_VALUE;
-
-            int id = buf.readInt();
-            boolean isActive = buf.readBoolean();
-            int size = buf.readInt();
-            for (int i = 0; i < size; i++) {
-                BlockPos blockPos = buf.readBlockPos();
-                if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                }
-                minX = Math.min(minX, blockPos.getX());
-                minY = Math.min(minY, blockPos.getY());
-                minZ = Math.min(minZ, blockPos.getZ());
-                maxX = Math.max(maxX, blockPos.getX());
-                maxY = Math.max(maxY, blockPos.getY());
-                maxZ = Math.max(maxZ, blockPos.getZ());
-            }
-            if (getWorld().provider.getDimension() == id) {
-                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
-            }
         }
     }
 

@@ -5,8 +5,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
-import gregtech.api.block.VariantActiveBlock;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -22,12 +20,10 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -38,16 +34,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
-    protected List<BlockPos> variantActiveBlocks;
-    protected boolean lastActive;
-
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler inputFluidInventory;
@@ -101,8 +93,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
-        variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
-        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
     }
 
     @Override
@@ -110,88 +100,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         super.invalidateStructure();
         resetTileAbilities();
         this.recipeMapWorkable.invalidate();
-        this.replaceVariantBlocksActive(false);
-        variantActiveBlocks.clear();
-        lastActive = false;
-    }
-
-    protected void replaceVariantBlocksActive(boolean isActive) {
-        if (variantActiveBlocks != null) {
-            int id = getWorld().provider.getDimension();
-
-            writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
-                buf.writeInt(id);
-                buf.writeBoolean(isActive);
-                buf.writeInt(variantActiveBlocks.size());
-                for (BlockPos blockPos : variantActiveBlocks) {
-                    if (isActive) {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                    } else {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                    }
-                    buf.writeBlockPos(blockPos);
-                }
-            });
-        }
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
-            int minX;
-            int minY;
-            int minZ;
-            minX = minY = minZ = Integer.MAX_VALUE;
-            int maxX;
-            int maxY;
-            int maxZ;
-            maxX = maxY = maxZ = Integer.MIN_VALUE;
-
-            int id = buf.readInt();
-            boolean isActive = buf.readBoolean();
-            int size = buf.readInt();
-            for (int i = 0; i < size; i++) {
-                BlockPos blockPos = buf.readBlockPos();
-                if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                }
-                minX = Math.min(minX, blockPos.getX());
-                minY = Math.min(minY, blockPos.getY());
-                minZ = Math.min(minZ, blockPos.getZ());
-                maxX = Math.max(maxX, blockPos.getX());
-                maxY = Math.max(maxY, blockPos.getY());
-                maxZ = Math.max(maxZ, blockPos.getZ());
-            }
-            if (getWorld().provider.getDimension() == id) {
-                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
-            }
-        }
-    }
-
-    @Override
-    public void onRemoval() {
-        super.onRemoval();
-        if (!getWorld().isRemote && isStructureFormed()) {
-            replaceVariantBlocksActive(false);
-            variantActiveBlocks.clear();
-            lastActive = false;
-        }
     }
 
     @Override
     protected void updateFormedValid() {
         if (!hasMufflerMechanics() || isMufflerFaceFree()){
             this.recipeMapWorkable.updateWorkable();
-        }
-        boolean state = this.recipeMapWorkable.isWorking();
-        if (lastActive != state) {
-            lastActive = state;
-            if (ConfigHolder.client.casingsActiveEmissiveTextures) {
-                replaceVariantBlocksActive(lastActive);
-            }
         }
     }
 

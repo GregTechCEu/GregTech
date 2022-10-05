@@ -1,6 +1,8 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMufflerHatch;
@@ -16,6 +18,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -38,6 +42,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -73,6 +78,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private final String NBT_VOIDING_MODE = "VoidingMode";
     private final String NBT_VOIDING_ITEMS = "VoidingItems";
     private final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+
+    protected List<BlockPos> variantActiveBlocks;
+    protected boolean lastActive;
 
     public MultiblockWithDisplayBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -173,6 +181,22 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 storeTaped(false);
             }
         }
+        this.variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
+        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote) {
+            boolean state = isActive();
+            if (lastActive != state) {
+                lastActive = state;
+                if (ConfigHolder.client.casingsActiveEmissiveTextures) {
+                    replaceVariantBlocksActive(lastActive);
+                }
+            }
+        }
     }
 
     /**
@@ -255,7 +279,30 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
                         .storeMaintenanceData(maintenance_problems, timeActive);
         }
+        this.replaceVariantBlocksActive(false);
+        this.variantActiveBlocks.clear();
+        this.lastActive = false;
         super.invalidateStructure();
+    }
+
+    protected void replaceVariantBlocksActive(boolean isActive) {
+        if (variantActiveBlocks != null) {
+            int id = getWorld().provider.getDimension();
+
+            writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
+                buf.writeInt(id);
+                buf.writeBoolean(isActive);
+                buf.writeInt(variantActiveBlocks.size());
+                for (BlockPos blockPos : variantActiveBlocks) {
+                    if (isActive) {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
+                    } else {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
+                    }
+                    buf.writeBlockPos(blockPos);
+                }
+            });
+        }
     }
 
     public TraceabilityPredicate autoAbilities() {
@@ -444,6 +491,37 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.receiveCustomData(dataId, buf);
         if (dataId == STORE_TAPED) {
             storedTaped = buf.readBoolean();
+        }
+        if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
+            int minX;
+            int minY;
+            int minZ;
+            minX = minY = minZ = Integer.MAX_VALUE;
+            int maxX;
+            int maxY;
+            int maxZ;
+            maxX = maxY = maxZ = Integer.MIN_VALUE;
+
+            int id = buf.readInt();
+            boolean isActive = buf.readBoolean();
+            int size = buf.readInt();
+            for (int i = 0; i < size; i++) {
+                BlockPos blockPos = buf.readBlockPos();
+                if (isActive) {
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
+                } else {
+                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
+                }
+                minX = Math.min(minX, blockPos.getX());
+                minY = Math.min(minY, blockPos.getY());
+                minZ = Math.min(minZ, blockPos.getZ());
+                maxX = Math.max(maxX, blockPos.getX());
+                maxY = Math.max(maxY, blockPos.getY());
+                maxZ = Math.max(maxZ, blockPos.getZ());
+            }
+            if (getWorld().provider.getDimension() == id) {
+                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
+            }
         }
     }
 
