@@ -6,6 +6,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.core.network.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.MaterialStack;
@@ -49,6 +50,7 @@ public class WidgetProspectingMap extends Widget {
     private final int scanTick;
     private boolean darkMode = false;
     private int chunkIndex = 0;
+
     @SideOnly(Side.CLIENT)
     private ProspectingTexture texture;
     @SideOnly(Side.CLIENT)
@@ -110,11 +112,11 @@ public class WidgetProspectingMap extends Widget {
             int row = chunkIndex / (chunkRadius * 2 - 1);
             int column = chunkIndex % (chunkRadius * 2 - 1);
 
-            int ox = column - (chunkRadius - 1);
-            int oz = row - (chunkRadius - 1);
+            int ox = column - chunkRadius + 1;
+            int oz = row - chunkRadius + 1;
 
             Chunk chunk = world.getChunk(playerChunkX + ox, playerChunkZ + oz);
-            PacketProspecting packet = new PacketProspecting(playerChunkX + ox, playerChunkZ + oz, (int) player.posX, (int) player.posZ, this.mode);
+            PacketProspecting packet = new PacketProspecting(playerChunkX + ox, playerChunkZ + oz, playerChunkX, playerChunkZ, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
                 case ORE_PROSPECTING_MODE:
@@ -255,7 +257,10 @@ public class WidgetProspectingMap extends Widget {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
                                     if (oreInfo.get(name) > maxAmount[0]) {
                                         maxAmount[0] = oreInfo.get(name);
-                                        color = OreDictUnifier.getMaterial(OreDictUnifier.get(dict)).material.getMaterialRGB();
+                                        MaterialStack m = OreDictUnifier.getMaterial(OreDictUnifier.get(dict));
+                                        if (m != null) {
+                                            color = m.material.getMaterialRGB();
+                                        }
                                     }
                                 }
                             });
