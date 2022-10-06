@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class ProspectingTexture extends AbstractTexture {
@@ -45,13 +46,13 @@ public class ProspectingTexture extends AbstractTexture {
 
     public void updateTexture(PacketProspecting packet) {
 
-        int playerChunkX = packet.posX >> 4;
-        int playerChunkZ = packet.posZ >> 4;
+        int playerChunkX = packet.playerChunkX;
+        int playerChunkZ = packet.playerChunkZ;
         playerXGui = packet.posX - (playerChunkX - this.radius + 1) * 16;
         playerYGui = packet.posZ - (playerChunkZ - this.radius + 1) * 16;
 
         int ox;
-        if ((packet.chunkX >= 0 && playerChunkX >= 0) || (packet.chunkX <= 0 && playerChunkX <= 0)) {
+        if ((packet.chunkX > 0 && playerChunkX > 0) || (packet.chunkX < 0 && playerChunkX < 0)) {
             ox = Math.abs(Math.abs(packet.chunkX) - Math.abs(playerChunkX));
         } else {
             ox = Math.abs(playerChunkX) + Math.abs(packet.chunkX);
@@ -61,7 +62,7 @@ public class ProspectingTexture extends AbstractTexture {
         }
 
         int oy;
-        if ((packet.chunkZ >= 0 && playerChunkZ >= 0) || (packet.chunkZ <= 0 && playerChunkZ <= 0)) {
+        if ((packet.chunkZ > 0 && playerChunkZ > 0) || (packet.chunkZ < 0 && playerChunkZ < 0)) {
             oy = Math.abs(Math.abs(packet.chunkZ) - Math.abs(playerChunkZ));
         } else {
             oy = Math.abs(playerChunkZ) + Math.abs(packet.chunkZ);
@@ -70,13 +71,32 @@ public class ProspectingTexture extends AbstractTexture {
             oy = -oy;
         }
 
+        int currentColumn = (this.radius - 1) + ox;
+        /*
+        if (currentColumn < 0) {
+            for (int i = map.length - 1; i > 0 ; i--) {
+                map[i] = map[i-1];
+            }
+            if (this.mode == 1)
+                map[0] = new HashMap[(radius * 2 - 1)];
+            else
+                map[0] = new HashMap[(radius * 2 - 1) * 16];
+            currentColumn = 0;
+        }
+        */
+
+        int currentRow = (this.radius - 1) + oy;
+        if (currentRow < 0) {
+            return;
+        }
+
         if (this.mode == 1) {
-            map[(this.radius - 1) + ox][(this.radius - 1) + oy] = packet.map[0][0] == null ?
+            map[currentColumn][currentRow] = packet.map[0][0] == null ?
                     emptyTag : packet.map[0][0];
         } else {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    map[x + (radius - 1 + ox) * 16][z + (radius - 1 + oy) * 16] = packet.map[x][z] == null ?
+                    map[x + currentColumn * 16][z + currentRow * 16] = packet.map[x][z] == null ?
                             emptyTag : packet.map[x][z];
                 }
             }
