@@ -5,7 +5,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.utils.BloomEffectUtil;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -46,6 +45,10 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
+    }
+
+    public boolean updatesLights(){
+        return false;
     }
 
     @Override
