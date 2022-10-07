@@ -19,6 +19,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -188,12 +189,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote) {
+        if (!getWorld().isRemote && isStructureFormed()) {
             boolean state = isActive();
             if (lastActive != state) {
                 lastActive = state;
+                this.markDirty();
                 if (ConfigHolder.client.casingsActiveEmissiveTextures) {
-                    replaceVariantBlocksActive(lastActive);
+                    this.replaceVariantBlocksActive(lastActive);
                 }
             }
         }
@@ -280,7 +282,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         .storeMaintenanceData(maintenance_problems, timeActive);
         }
         this.replaceVariantBlocksActive(false);
-        this.variantActiveBlocks.clear();
         this.lastActive = false;
         super.invalidateStructure();
     }
@@ -518,7 +519,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 maxX = Math.max(maxX, blockPos.getX());
                 maxY = Math.max(maxY, blockPos.getY());
                 maxZ = Math.max(maxZ, blockPos.getZ());
+                Block b = getWorld().getBlockState(blockPos).getBlock();
+                if (b instanceof VariantActiveBlock) {
+                    if (((VariantActiveBlock<?>) b).updatesLights()) {
+                        getWorld().checkLight(blockPos);
+                    }
+                }
             }
+
             if (getWorld().provider.getDimension() == id) {
                 getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
             }
