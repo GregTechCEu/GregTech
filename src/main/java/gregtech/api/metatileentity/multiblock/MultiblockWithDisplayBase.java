@@ -47,6 +47,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
 public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
@@ -192,13 +193,18 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (!getWorld().isRemote && isStructureFormed()) {
             boolean state = isActive();
             if (lastActive != state) {
-                lastActive = state;
+                setLastActive(state);
                 this.markDirty();
                 if (ConfigHolder.client.casingsActiveEmissiveTextures) {
                     this.replaceVariantBlocksActive(lastActive);
                 }
             }
         }
+    }
+
+    public void setLastActive(boolean lastActive) {
+        this.lastActive = lastActive;
+        this.writeCustomData(IS_WORKING, buf -> buf.writeBoolean(lastActive));
     }
 
     /**
@@ -536,6 +542,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getWorld().provider.getDimension() == id) {
                 getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
             }
+        }
+        if (dataId == IS_WORKING) {
+            lastActive = buf.readBoolean();
         }
     }
 
