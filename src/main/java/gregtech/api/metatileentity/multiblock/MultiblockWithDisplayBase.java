@@ -287,7 +287,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     protected void replaceVariantBlocksActive(boolean isActive) {
-        if (variantActiveBlocks != null) {
+        if (variantActiveBlocks != null && !variantActiveBlocks.isEmpty()) {
             int id = getWorld().provider.getDimension();
 
             writeCustomData(GregtechDataCodes.VARIANT_RENDER_UPDATE, buf -> {
@@ -301,6 +301,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
                     }
                     buf.writeBlockPos(blockPos);
+                    Block b = getWorld().getBlockState(blockPos).getBlock();
+                    if (b instanceof VariantActiveBlock) {
+                        if (((VariantActiveBlock<?>) b).updatesLights()) {
+                            getWorld().checkLight(blockPos);
+                        }
+                    }
                 }
             });
         }

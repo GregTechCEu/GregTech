@@ -43,6 +43,13 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         return source.getCombinedLight(pos, state.getLightValue(source, pos));
     }
 
+    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        if (getExtendedState(state, world, pos).getValue(ACTIVE)) {
+            return 15;
+        }
+        return 0;
+    }
+
     public enum FireboxCasingType implements IStringSerializable, IStateHarvestLevel {
 
         BRONZE_FIREBOX("bronze_firebox", 1),
