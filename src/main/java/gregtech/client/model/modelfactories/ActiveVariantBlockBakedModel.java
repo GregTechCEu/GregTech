@@ -1,9 +1,7 @@
 package gregtech.client.model.modelfactories;
 
 import gregtech.api.block.VariantActiveBlock;
-import gregtech.api.block.VariantBlock;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -20,7 +18,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;

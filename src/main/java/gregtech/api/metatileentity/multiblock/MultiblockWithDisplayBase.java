@@ -19,7 +19,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -185,6 +184,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
         VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
+        replaceVariantBlocksActive(false);
     }
 
     @Override
@@ -195,9 +195,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (lastActive != state) {
                 setLastActive(state);
                 this.markDirty();
-                if (ConfigHolder.client.casingsActiveEmissiveTextures) {
-                    this.replaceVariantBlocksActive(lastActive);
-                }
+                this.replaceVariantBlocksActive(lastActive);
             }
         }
     }
@@ -307,12 +305,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
                     }
                     buf.writeBlockPos(blockPos);
-                    Block b = getWorld().getBlockState(blockPos).getBlock();
-                    if (b instanceof VariantActiveBlock) {
-                        if (((VariantActiveBlock<?>) b).updatesLights()) {
-                            getWorld().checkLight(blockPos);
-                        }
-                    }
                 }
             });
         }
@@ -506,41 +498,37 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             storedTaped = buf.readBoolean();
         }
         if (dataId == GregtechDataCodes.VARIANT_RENDER_UPDATE) {
-            int minX;
-            int minY;
-            int minZ;
-            minX = minY = minZ = Integer.MAX_VALUE;
-            int maxX;
-            int maxY;
-            int maxZ;
-            maxX = maxY = maxZ = Integer.MIN_VALUE;
+            if (ConfigHolder.client.casingsActiveEmissiveTextures) {
+                int minX;
+                int minY;
+                int minZ;
+                minX = minY = minZ = Integer.MAX_VALUE;
+                int maxX;
+                int maxY;
+                int maxZ;
+                maxX = maxY = maxZ = Integer.MIN_VALUE;
 
-            int id = buf.readInt();
-            boolean isActive = buf.readBoolean();
-            int size = buf.readInt();
-            for (int i = 0; i < size; i++) {
-                BlockPos blockPos = buf.readBlockPos();
-                if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                }
-                minX = Math.min(minX, blockPos.getX());
-                minY = Math.min(minY, blockPos.getY());
-                minZ = Math.min(minZ, blockPos.getZ());
-                maxX = Math.max(maxX, blockPos.getX());
-                maxY = Math.max(maxY, blockPos.getY());
-                maxZ = Math.max(maxZ, blockPos.getZ());
-                Block b = getWorld().getBlockState(blockPos).getBlock();
-                if (b instanceof VariantActiveBlock) {
-                    if (((VariantActiveBlock<?>) b).updatesLights()) {
-                        getWorld().checkLight(blockPos);
+                int id = buf.readInt();
+                boolean isActive = buf.readBoolean();
+                int size = buf.readInt();
+                for (int i = 0; i < size; i++) {
+                    BlockPos blockPos = buf.readBlockPos();
+                    if (isActive) {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
+                    } else {
+                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
                     }
+                    minX = Math.min(minX, blockPos.getX());
+                    minY = Math.min(minY, blockPos.getY());
+                    minZ = Math.min(minZ, blockPos.getZ());
+                    maxX = Math.max(maxX, blockPos.getX());
+                    maxY = Math.max(maxY, blockPos.getY());
+                    maxZ = Math.max(maxZ, blockPos.getZ());
                 }
-            }
 
-            if (getWorld().provider.getDimension() == id) {
-                getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
+                if (getWorld().provider.getDimension() == id) {
+                    getWorld().markBlockRangeForRenderUpdate(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ));
+                }
             }
         }
         if (dataId == IS_WORKING) {
