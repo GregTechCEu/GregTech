@@ -2,6 +2,7 @@ package gregtech.client.model.modelfactories;
 
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -60,11 +61,16 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
         particle.set(textureAtlasSprite);
         if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
-            quads = new ArrayList<>();
-            for (BakedQuad b : m.getQuads(state, side, rand) ) {
-                if (b.getSprite().getIconName().contains("bloom")) {
-                    quads.add(b);
+            if (ConfigHolder.client.casingsActiveEmissiveTextures) {
+                quads = new ArrayList<>();
+                for (BakedQuad b : m.getQuads(state, side, rand)) {
+                    if (b.getSprite().getIconName().contains("bloom")) {
+                        quads.add(b);
+                    }
                 }
+            }
+            else {
+                quads = Collections.emptyList();
             }
         } else {
             quads = new ArrayList<>(m.getQuads(state, side, rand));
