@@ -1,7 +1,10 @@
 package gregtech.client.model.modelfactories;
 
 import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.block.VariantBlock;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.common.blocks.MetaBlocks;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -17,6 +20,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
@@ -32,12 +37,27 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         List<BakedQuad> quads;
         if (side == null || state == null) return Collections.emptyList();
         ModelResourceLocation mrl;
+        /*
         if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
             mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
                     "active=true," + statePropertiesToString(state.getProperties()));
         } else {
             mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
                     "active=false," + statePropertiesToString(state.getProperties()));
+        }
+        */
+        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
+            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                    "active=true,variant="+ state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
+                        IProperty<?> p = e.getKey();
+                        return getPropertyName(p, e.getValue());
+                    }).collect(Collectors.joining()));
+        } else {
+            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                    "active=false,variant=" + state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
+                        IProperty<?> p = e.getKey();
+                        return getPropertyName(p, e.getValue());
+                    }).collect(Collectors.joining()));
         }
         IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
         TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
@@ -53,6 +73,10 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
             quads = new ArrayList<>(m.getQuads(state, side, rand));
         }
         return quads;
+    }
+
+    public static <T extends Comparable<T>> String getPropertyName(IProperty<T> property, Comparable<?> value) {
+        return property.getName((T) value);
     }
 
     @Override

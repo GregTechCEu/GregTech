@@ -71,6 +71,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        replaceVariantBlocksActive(false);
     }
 
     @Override

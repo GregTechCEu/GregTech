@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -41,6 +42,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
     public static final IStateMapper mapper = new SimpleStateMapper(MODEL_LOCATION);
     public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
+    public static final PropertyBool ACTIVE_DEPRECATED = PropertyBool.create("active");
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
@@ -53,7 +55,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @Override
     public IBlockState getState(T variant) {
-        return super.getState(variant);
+        return super.getState(variant).withProperty(ACTIVE_DEPRECATED, false);
     }
 
     @Override
@@ -74,11 +76,22 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @Nonnull
     @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return super.getStateFromMeta(meta).withProperty(ACTIVE_DEPRECATED, meta / 8 >= 1);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return super.getMetaFromState(state) + (state.getValue(ACTIVE_DEPRECATED) ? 8 : 0);
+    }
+
+    @Nonnull
+    @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
-        return new ExtendedBlockState(this, new IProperty[]{VARIANT}, new IUnlistedProperty[]{ACTIVE});
+        return new ExtendedBlockState(this, new IProperty[]{VARIANT, ACTIVE_DEPRECATED}, new IUnlistedProperty[]{ACTIVE});
     }
 
     @Override
@@ -105,8 +118,12 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     public void onModelRegister() {
         ModelLoader.setCustomStateMapper(this, mapper);
         for (IBlockState state : this.getBlockState().getValidStates()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=true," + statePropertiesToString(state.getProperties())));
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=false," + statePropertiesToString(state.getProperties())));
+            //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=true," + statePropertiesToString(state.getProperties())));
+            //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=false," + statePropertiesToString(state.getProperties())));
+
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), statePropertiesToString(state.getProperties())));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), statePropertiesToString(state.getProperties())));
+
         }
     }
 }
