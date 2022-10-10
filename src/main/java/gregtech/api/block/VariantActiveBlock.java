@@ -77,12 +77,16 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return super.getStateFromMeta(meta).withProperty(ACTIVE_DEPRECATED, meta / 8 >= 1);
+        return super.getStateFromMeta(meta).withProperty(ACTIVE_DEPRECATED, false);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return super.getMetaFromState(state) + (state.getValue(ACTIVE_DEPRECATED) ? 8 : 0);
+        int meta = 0;
+        if (state.getValue(ACTIVE_DEPRECATED)) {
+            meta += 8;
+        }
+        return meta + state.getValue(VARIANT).ordinal();
     }
 
     @Nonnull
