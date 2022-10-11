@@ -85,6 +85,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      *
      * @param index of the maintenance problem
      */
+    @Override
     public void setMaintenanceFixed(int index) {
         this.maintenance_problems |= 1 << index;
     }
@@ -92,13 +93,15 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * Used to cause a single random maintenance problem
      */
-    protected void causeMaintenanceProblems() {
+    @Override
+    public void causeMaintenanceProblems() {
         this.maintenance_problems &= ~(1 << ((int) (GTValues.RNG.nextFloat() * 5)));
     }
 
     /**
      * @return the byte value representing the maintenance problems
      */
+    @Override
     public byte getMaintenanceProblems() {
         return ConfigHolder.machines.enableMaintenance ? maintenance_problems : 0b111111;
     }
@@ -106,6 +109,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * @return the amount of maintenance problems the multiblock has
      */
+    @Override
     public int getNumMaintenanceProblems() {
         return ConfigHolder.machines.enableMaintenance ? 6 - Integer.bitCount(maintenance_problems) : 0;
     }
@@ -113,6 +117,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * @return whether the multiblock has any maintenance problems
      */
+    @Override
     public boolean hasMaintenanceProblems() {
         return ConfigHolder.machines.enableMaintenance && this.maintenance_problems < 63;
     }
@@ -120,6 +125,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * @return whether this multiblock has maintenance mechanics
      */
+    @Override
     public boolean hasMaintenanceMechanics() {
         return true;
     }
@@ -180,6 +186,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      *
      * @param isTaped is whether the maintenance hatch is taped or not
      */
+    @Override
     public void storeTaped(boolean isTaped) {
         this.storedTaped = isTaped;
         writeCustomData(STORE_TAPED, buf -> buf.writeBoolean(isTaped));
