@@ -67,11 +67,6 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     }
 
     @Override
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return sourcePart == null && recipeMapWorkable.isActive() ? 15 : 0;
-    }
-
-    @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         return ModularUI.builder(GuiTextures.PRIMITIVE_BACKGROUND, 176, 166)
                 .shouldColor(false)

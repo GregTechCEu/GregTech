@@ -80,11 +80,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
-    @Override
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return sourcePart == null ? 0 : (lastActive ? 15 : 0);
-    }
-
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

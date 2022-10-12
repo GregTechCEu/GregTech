@@ -29,27 +29,6 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         return false;
     }
 
-    @Override
-    public boolean updatesLights() {
-        return true;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        if (getExtendedState(state, source, pos).getValue(ACTIVE)) {
-            return 0b10100000 << 16 | 0b10100000;
-        }
-        return source.getCombinedLight(pos, state.getLightValue(source, pos));
-    }
-
-    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        if (getExtendedState(state, world, pos).getValue(ACTIVE)) {
-            return 15;
-        }
-        return 0;
-    }
-
     public enum FireboxCasingType implements IStringSerializable, IStateHarvestLevel {
 
         BRONZE_FIREBOX("bronze_firebox", 1),

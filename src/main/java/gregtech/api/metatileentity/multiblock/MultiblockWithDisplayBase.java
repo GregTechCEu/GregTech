@@ -306,12 +306,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
                     }
                     buf.writeBlockPos(blockPos);
-                    Block b = getWorld().getBlockState(blockPos).getBlock();
-                    if (b instanceof VariantActiveBlock) {
-                        if (((VariantActiveBlock<?>) b).updatesLights()) {
-                            getWorld().checkLight(blockPos);
-                        }
-                    }
                 }
             });
         }
@@ -530,12 +524,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 maxX = Math.max(maxX, blockPos.getX());
                 maxY = Math.max(maxY, blockPos.getY());
                 maxZ = Math.max(maxZ, blockPos.getZ());
-                Block b = getWorld().getBlockState(blockPos).getBlock();
-                if (b instanceof VariantActiveBlock) {
-                    if (((VariantActiveBlock<?>) b).updatesLights()) {
-                        getWorld().checkLight(blockPos);
-                    }
-                }
             }
 
             if (getWorld().provider.getDimension() == id) {

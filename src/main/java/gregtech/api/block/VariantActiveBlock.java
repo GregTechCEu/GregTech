@@ -49,10 +49,6 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         super(materialIn);
     }
 
-    public boolean updatesLights(){
-        return false;
-    }
-
     @Override
     public IBlockState getState(T variant) {
         return super.getState(variant).withProperty(ACTIVE_DEPRECATED, false);

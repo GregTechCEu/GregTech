@@ -116,15 +116,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return 0;
-    }
-
-    @Override
-    public final int getActualLightValue() {
-        return getLightValueForPart(null);
-    }
-
     public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();

@@ -33,7 +33,7 @@ public class FireboxActiveRenderer extends SidedCubeRenderer {
                 if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
                     Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new ColourOperation(0xffffffff)), facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
                 } else {
-                    Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new ColourOperation(0xbbbbbbbb)), facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                    Textures.renderFace(renderState, translation, pipeline, facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
                 }
                 TextureAtlasSprite emissiveSprite = spritesEmissive.get(overlayFace);
                 if (emissiveSprite != null && facing != frontFacing && facing != EnumFacing.UP && facing != EnumFacing.DOWN) {
