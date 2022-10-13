@@ -28,7 +28,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
-    public int minPercent, maxPercent;
+    // public int minPercent, maxPercent;
     public int minEU, maxEU;
     private int outputAmount;
     private boolean inverted;
@@ -38,13 +38,13 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.minPercent = 10;
-        this.maxPercent = 90;
+        // this.minPercent = 10;
+        // this.maxPercent = 90;
         this.minEU = 512;
         this.maxEU = 2048;
         this.outputAmount = 0;
         this.inverted = false;
-        this.useEU = false;
+        this.useEU = true;
         this.useRatio = false;
         this.maxLength = 3;
         this.maxEnterable = 100;
@@ -58,8 +58,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ENERGY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
-        // Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        // Textures.DETECTOR_ENERGY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -78,13 +78,15 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0){
-            float currentStorageRatio = 100f * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-
+            // float currentStorageRatio = 100f * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
+            compareValue((float) energyContainer.getEnergyStored(), maxEU, minEU);
+            /*
             if (useEU) {
                 compareValue((float) energyContainer.getEnergyStored(), maxEU, minEU);
             } else {
                 compareValue(currentStorageRatio, maxPercent, minPercent);
             }
+            */
             setRedstoneSignalOutput(outputAmount);
         }
     }
@@ -268,8 +270,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("minPercent", this.minPercent);
-        tagCompound.setInteger("maxPercent", this.maxPercent);
+        // tagCompound.setInteger("minPercent", this.minPercent);
+        // tagCompound.setInteger("maxPercent", this.maxPercent);
         tagCompound.setInteger("maxEU", this.maxEU);
         tagCompound.setInteger("minEU", this.minEU);
         tagCompound.setInteger("outputAmount", outputAmount);
@@ -283,8 +285,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.minPercent = tagCompound.getInteger("minPercent");
-        this.maxPercent = tagCompound.getInteger("maxPercent");
+        // this.minPercent = tagCompound.getInteger("minPercent");
+        // this.maxPercent = tagCompound.getInteger("maxPercent");
         this.minEU = tagCompound.getInteger("minEU");
         this.maxEU = tagCompound.getInteger("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
@@ -296,8 +298,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeInt(this.minPercent);
-        packetBuffer.writeInt(this.maxPercent);
+        // packetBuffer.writeInt(this.minPercent);
+        // packetBuffer.writeInt(this.maxPercent);
         packetBuffer.writeInt(this.minEU);
         packetBuffer.writeInt(this.maxEU);
         packetBuffer.writeInt(this.outputAmount);
@@ -309,8 +311,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
-        this.minPercent = packetBuffer.readInt();
-        this.maxPercent = packetBuffer.readInt();
+        // this.minPercent = packetBuffer.readInt();
+        // this.maxPercent = packetBuffer.readInt();
         this.minEU = packetBuffer.readInt();
         this.maxEU = packetBuffer.readInt();
         this.outputAmount = packetBuffer.readInt();
