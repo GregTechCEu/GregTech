@@ -127,6 +127,9 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
             IItemHandler delegate = (IItemHandler) defaultValue;
             if (itemHandler == null || itemHandler.delegate != delegate) {
                 this.itemHandler = new ItemHandlerFiltered(delegate);
