@@ -12,10 +12,13 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,6 +58,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+        Textures.DETECTOR_ENERGY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
         // Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
@@ -175,33 +179,53 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup group = new WidgetGroup();
 
-        group.addWidget(new LabelWidget(10, 5, "energy.detector_advanced.label"));
-        return null;
+        group.addWidget(new LabelWidget(10, 5, "cover.energy.detector_advanced.label"));
+
+        // invert logic button
+        group.addWidget(new ToggleButtonWidget(10, 5 + 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
+                this::isInverted, this::setInverted));
+
+        // field for inserting max or min EU
+        group.addWidget(new TextFieldWidget(10, 23, 36, 18, true,
+                this::getMaxValue, this::setMaxValue));
+
+        group.addWidget(new TextFieldWidget(10, 23 + 18, 36, 18, true,
+                this::getMinValue, this::setMinValue));
+
+        // field for setting max or min Percent
+
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
+                .widget(group)
+                .build(this, player);
     }
 
-    private int getMinValue() {
-        return useEU ? minEU : minPercent;
+    private String getMinValue() {
+        return String.valueOf(minEU);
     }
 
-    private void setMinValue(int val){
-        if (useEU)
-            minEU = Math.min(maxEU - 1, val);
-        else
-            minPercent = Math.min(maxPercent - 1, val);
+    private String getMaxValue() {
+        return String.valueOf(maxEU);
     }
 
-    private int getMaxValue() {
-        return useEU ? maxEU : maxPercent;
+    private void setMinValue(String val){
+        int c = Integer.parseInt(val);
+        minEU = Math.min(maxEU - 1, c);
     }
 
-    private void setMaxValue(int val){
-        if (useEU)
-            maxEU = Math.max(minEU + 1, val);
-        else
-            maxPercent = Math.max(minPercent + 1, val);
+    private void setMaxValue(String val){
+        int c = Integer.parseInt(val);
+        maxEU = Math.max(minEU + 1, c);
     }
 
-/*~~~~~~~~~~~~~~ NEWER MUI CODE ~~~~~~~~~~~~~~~
+    private boolean isInverted(){
+        return inverted;
+    }
+
+    private void setInverted(boolean b){
+        inverted = b;
+    }
+// ~~~~~~~~~~~~~~ NEWER MUI CODE ~~~~~~~~~~~~~~~
+/*
     private void toggleInvert(Widget.ClickData data, Widget widget){
         inverted = !inverted;
         widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.invert_label", this.inverted));
@@ -235,12 +259,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         // widget.getWindow().syncedWidgets.forEach(this::updateFields);
         widget.setBackground(GuiTextures.BASE_BUTTON, Text.localised("cover.advanced_energy_detector.toggle_ratio_label", this.useRatio));
     }
-
+*/
     @Override
     public boolean canConnectRedstone() {
         return true;
     }
-*/
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {

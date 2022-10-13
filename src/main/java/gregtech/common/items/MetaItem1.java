@@ -340,6 +340,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_FLUID_DETECTOR = addItem(304, "cover.fluid.detector");
         COVER_ITEM_DETECTOR = addItem(305, "cover.item.detector");
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
+        COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
         COVER_SCREEN = addItem(307, "cover.screen");
         COVER_CRAFTING = addItem(308, "cover.crafting");
         COVER_SHUTTER = addItem(309, "cover.shutter");
