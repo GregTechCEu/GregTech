@@ -18,6 +18,8 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -187,16 +189,20 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         group.addWidget(new ToggleButtonWidget(10, 5 + 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
                 this::isInverted, this::setInverted));
 
-        // field for inserting max or min EU
+        // get/set max EU
         group.addWidget(new TextFieldWidget(10, 23, 36, 18, true,
-                this::getMaxValue, this::setMaxValue));
-
+                this::getMaxValue, this::setMaxValue, 11)
+                .setValidator(str -> str.matches(".[0-9]*"))
+        );
+        // get/set min EU
         group.addWidget(new TextFieldWidget(10, 23 + 18, 36, 18, true,
-                this::getMinValue, this::setMinValue));
+                this::getMinValue, this::setMinValue, 11)
+                .setValidator(str -> str.matches(".[0-9]*"))
+        );
 
         // field for setting max or min Percent
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 176)
                 .widget(group)
                 .build(this, player);
     }
@@ -210,13 +216,23 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     private void setMinValue(String val){
-        int c = Integer.parseInt(val);
-        minEU = Math.min(maxEU - 1, c);
+        try {
+            int c = Integer.parseInt(val);
+            this.minEU = Math.min(maxEU - 1, c);
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+            this.minEU = 512;
+        }
     }
 
     private void setMaxValue(String val){
-        int c = Integer.parseInt(val);
-        maxEU = Math.max(minEU + 1, c);
+        try {
+            int c = Integer.parseInt(val);
+            maxEU = Math.max(minEU + 1, c);
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+            this.maxEU = 2048;
+        }
     }
 
     private boolean isInverted(){
