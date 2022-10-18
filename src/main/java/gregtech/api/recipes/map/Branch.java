@@ -50,13 +50,4 @@ public class Branch {
         }
         return specialNodes;
     }
-
-    public void yeet() {
-        if (nodes != null) {
-            nodes.clear();
-        }
-        if (specialNodes != null) {
-            specialNodes.clear();
-        }
-    }
 }
