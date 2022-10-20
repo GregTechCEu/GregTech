@@ -539,4 +539,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             return remainingStack;
         }
     }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
 }

@@ -476,4 +476,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             markDirty();
         }
     }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
 }
