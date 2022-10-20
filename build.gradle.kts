@@ -22,6 +22,7 @@ plugins {
 
 apply {
     plugin("net.minecraftforge.gradle.forge")
+    plugin("idea")
 }
 
 val mcVersion = "1.12.2"
@@ -139,6 +140,8 @@ fun Project.idea(configure: org.gradle.plugins.ide.idea.model.IdeaModel.() -> Un
 idea {
     module {
         inheritOutputDirs = true
+        setDownloadSources(true)
+        setDownloadJavadoc(true)
     }
 }
 
