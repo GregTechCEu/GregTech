@@ -92,7 +92,7 @@ public class LCRCombined {
                 .duration(400).EUt(VA[HV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(4))
+                .notConsumable(new IntCircuitIngredient(5))
                 .fluidInputs(Oxygen.getFluid(7000))
                 .fluidInputs(Nitrogen.getFluid(2000))
                 .fluidInputs(Hydrogen.getFluid(6000))
