@@ -25,7 +25,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
-import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.properties.IProperty;
@@ -86,6 +85,14 @@ public class GTUtility {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
+
+    private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
+
+    static {
+        for (int i = 0; i < V.length; i++) {
+            tierByVoltage.put(V[i], (byte) i);
+        }
+    }
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
@@ -439,15 +446,8 @@ public class GTUtility {
      * @return lowest tier that can handle passed voltage
      */
     public static byte getTierByVoltage(long voltage) {
-        byte tier = 0;
-        while (++tier < V.length) {
-            if (voltage == V[tier]) {
-                return tier;
-            } else if (voltage < V[tier]) {
-                return (byte) Math.max(0, tier - 1);
-            }
-        }
-        return (byte) Math.min(V.length - 1, tier);
+        if (voltage > V[GTValues.MAX]) return GTValues.MAX;
+        return tierByVoltage.ceilingEntry(voltage).getValue();
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {

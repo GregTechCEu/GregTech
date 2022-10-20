@@ -8,6 +8,7 @@ import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.liquid.MCLiquidStack;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -46,7 +47,8 @@ public class CTRecipe {
 
     @ZenMethod
     public List<IItemStack> getResultItemOutputs(@Optional(valueLong = 1) int tier) {
-        return this.backingRecipe.getResultItemOutputs(tier, recipeMap).stream()
+        return this.backingRecipe.getResultItemOutputs(GTUtility.getTierByVoltage(getEUt()), tier, recipeMap)
+                .stream()
                 .map(MCItemStack::new)
                 .collect(Collectors.toList());
     }
