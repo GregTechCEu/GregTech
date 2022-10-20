@@ -7,7 +7,6 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.EmptyRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -363,17 +362,19 @@ public class Recipe {
      * The Recipe should be trimmed by calling {@link Recipe#getItemAndChanceOutputs(int)} before calling this method,
      * if trimming is required.
      *
-     * @param tier The Voltage Tier of the Recipe, used for chanced output calculation
-     * @param recipeMap The RecipeMap that the recipe is being performed upon, used for chanced output calculation
-     *
+     * @param recipeTier  The Voltage Tier of the Recipe, used for chanced output calculation
+     * @param machineTier The Voltage Tier of the Machine, used for chanced output calculation
+     * @param recipeMap   The RecipeMap that the recipe is being performed upon, used for chanced output calculation
      * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
      */
-    public List<ItemStack> getResultItemOutputs(int tier, RecipeMap<?> recipeMap) {
+    public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
         List<ItemStack> resultChanced = new ArrayList<>();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
-            int outputChance = recipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
+            int outputChance = recipeMap.getChanceFunction().chanceFor(
+                    chancedOutput.getChance(), chancedOutput.getBoostPerTier(),
+                    recipeTier, machineTier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
                 GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
