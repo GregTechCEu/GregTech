@@ -25,7 +25,7 @@ public class LCRCombined {
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
                 .fluidInputs(Hydrogen.getFluid(6000))
-                .fluidInputs(CarbonDioxide.getFluid(1000))
+                .fluidInputs(CarbonMonoxide.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
                 .EUt(VA[LV])
