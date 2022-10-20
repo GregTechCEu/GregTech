@@ -211,7 +211,6 @@ public class GTJeiPlugin implements IModPlugin {
 
         String fluidVeinSpawnID = GTValues.MODID + ":" + "fluid_spawn_location";
         registry.addRecipes(fluidVeinInfos, fluidVeinSpawnID);
-        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), fluidVeinSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), fluidVeinSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), fluidVeinSpawnID);
         // Fluid Veins End
