@@ -258,17 +258,19 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             return;
 
         for (ToolMetaItem<?>.MetaToolValueItem tool : tools) {
-            for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
-                if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                    fixProblemWithTool(problemIndex, itemStack);
-                    return;
-                }
-            }
             // Try to use the item in the player's "hand" (under the cursor)
             ItemStack heldItem = entityPlayer.inventory.getItemStack();
             if (heldItem.isItemEqualIgnoreDurability(tool.getStackForm())) {
                 fixProblemWithTool(problemIndex, heldItem);
                 return;
+            }
+
+            // Then try all the remaining inventory slots
+            for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
+                if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
+                    fixProblemWithTool(problemIndex, itemStack);
+                    return;
+                }
             }
         }
     }
