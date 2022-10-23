@@ -181,6 +181,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 for(int i  = 0; i < EnumDyeColor.values().length; i++) {
                     if(offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
                         MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        break;
                     }
                 }
             }
