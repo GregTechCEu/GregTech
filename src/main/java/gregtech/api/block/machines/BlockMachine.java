@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -252,6 +253,17 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
                 if (metaTileEntity.getProxy() != null) {
                     metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+                }
+            }
+
+            // Color machines on place if holding spray can in off-hand
+            if(placer instanceof EntityPlayer) {
+                ItemStack offhand = placer.getHeldItemOffhand();
+                for(int i  = 0; i < EnumDyeColor.values().length; i++) {
+                    if(offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        break;
+                    }
                 }
             }
         }
