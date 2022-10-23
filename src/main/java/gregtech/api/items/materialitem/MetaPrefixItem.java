@@ -4,6 +4,7 @@ import gnu.trove.map.hash.TShortObjectHashMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
@@ -23,6 +24,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -160,11 +162,22 @@ public class MetaPrefixItem extends StandardMetaItem {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entity = (EntityLivingBase) entityIn;
-            if (worldIn.getTotalWorldTime() % 20 == 0) {
-                if (prefix.heatDamage != 0.0 && prefix.heatDamage > 0.0) {
-                    entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), prefix.heatDamage);
-                } else if (prefix.heatDamage < 0.0) {
-                    entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -prefix.heatDamage);
+            if (entityIn.ticksExisted % 20 == 0) {
+                if (prefix.heatDamageFunction == null) return;
+
+                Material material = getMaterial(itemStack);
+                if (material == null || !material.hasProperty(PropertyKey.BLAST)) return;
+
+                float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
+                ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
+                    heatDamage *= ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().getHeatResistance();
+                }
+
+                if (heatDamage != 0.0 && heatDamage > 0.0) {
+                    entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), heatDamage);
+                } else if (heatDamage < 0.0) {
+                    entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -heatDamage);
                 }
             }
         }

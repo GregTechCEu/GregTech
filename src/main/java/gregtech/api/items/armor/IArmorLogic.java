@@ -67,4 +67,12 @@ public interface IArmorLogic {
     default ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {
         return null;
     }
+
+    /**
+     *
+     * @return the value to multiply heat damage by
+     */
+    default float getHeatResistance() {
+        return 1.0f;
+    }
 }
