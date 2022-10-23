@@ -35,11 +35,11 @@ public class GregtechDataCodes {
     public static final int SYNC_TILE_MODE = 500;
 
     // Clipboard
-    public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
     public static final int INIT_CLIPBOARD_NBT = 3;
 
+    public static final int UPDATE_UI = 10; // 10-36
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
 
