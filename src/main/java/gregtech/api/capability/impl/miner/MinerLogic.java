@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -70,7 +71,7 @@ public class MinerLogic {
     private boolean isWorkingEnabled = true;
     protected boolean wasActiveAndNeedsUpdate;
 
-    private final Block oreReplacementBlock = Block.getBlockFromName(ConfigHolder.machines.replaceMinedBlocksWith);
+    private final IBlockState oreReplacementBlock = findMiningReplacementBlock();
 
     /**
      * Creates the general logic for all in-world ore block miners
@@ -89,6 +90,30 @@ public class MinerLogic {
         this.maximumRadius = maximumRadius;
         this.isDone = false;
         this.PIPE_TEXTURE = pipeTexture;
+    }
+
+    private IBlockState findMiningReplacementBlock() {
+
+        String[] blockDescription = StringUtils.split(ConfigHolder.machines.replaceMinedBlocksWith, ":");
+        Block replacementBlock;
+
+        if(blockDescription.length == 2) {
+            replacementBlock = Block.getBlockFromName(ConfigHolder.machines.replaceMinedBlocksWith);
+        }
+        else {
+            replacementBlock = Block.getBlockFromName(String.format("%s:%s", blockDescription[0], blockDescription[1]));
+        }
+        if(replacementBlock == null) {
+            GTLog.logger.error("Miner Config Replacement block was null, replacing with Cobblestone");
+            return Blocks.COBBLESTONE.getDefaultState();
+        }
+
+        // check for meta
+        if(blockDescription.length > 2 && blockDescription[2].isEmpty()) {
+            return replacementBlock.getDefaultState();
+        } else {
+            return replacementBlock.getDefaultState().getBlock().getStateFromMeta(Integer.parseInt(blockDescription[2]));
+        }
     }
 
     /**
@@ -246,10 +271,7 @@ public class MinerLogic {
         // remove the ore block's position from the mining queue
         if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
             GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
-            if(oreReplacementBlock == null) {
-                GTLog.logger.error("Replacement block for electric miners was null, falling back on Cobblestone");
-            }
-            world.setBlockState(blocksToMine.getFirst(), oreReplacementBlock == null ? Blocks.COBBLESTONE.getDefaultState() : oreReplacementBlock.getDefaultState());
+            world.setBlockState(blocksToMine.getFirst(), oreReplacementBlock);
             mineX.set(blocksToMine.getFirst().getX());
             mineZ.set(blocksToMine.getFirst().getZ());
             mineY.set(blocksToMine.getFirst().getY());
