@@ -749,7 +749,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
-        stacks.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        for (int i = 0; i < this.chancedOutputs.size(); i++) {
+            ChanceEntry entry = this.chancedOutputs.get(i);
+            stacks.add(entry.getItemStack());
+        }
 
         return stacks;
     }

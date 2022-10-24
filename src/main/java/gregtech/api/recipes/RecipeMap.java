@@ -21,6 +21,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -334,27 +335,34 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * pack them into one.
      * This uses a strict comparison, so it will not pack the same item with different NBT tags,
      * to allow the presence of, for example, more than one configured circuit in the input.
-     * @param input The Collection of GTRecipeInputs.
+     * @param inputs The Collection of GTRecipeInputs.
      * @return an array of unique itemstacks.
      */
 
-    public static ItemStack[] uniqueItems(Collection<ItemStack> input) {
-        List<ItemStack> list = new ObjectArrayList<>(input.size());
-        for (ItemStack item : input) {
-            if (item.isEmpty()) {
+    public static ItemStack[] uniqueItems(Collection<ItemStack> inputs) {
+        int index = 0;
+        ItemStack[] uniqueItems = new ItemStack[inputs.size()];
+        main: for (ItemStack input : inputs) {
+            if (input.isEmpty()) {
                 continue;
             }
-            boolean isEqual = false;
-            for (ItemStack obj: list) {
-                if (item.isItemEqual(obj) && ItemStack.areItemStackTagsEqual(item, obj)) {
-                    isEqual = true;
-                    break;
+            if (index > 0) {
+                for (int i = 0; i < uniqueItems.length; i++) {
+                    ItemStack unique = uniqueItems[i];
+                    if (unique == null) break;
+                    else if (input.isItemEqual(unique) && ItemStack.areItemStackTagsEqual(input, unique)) {
+                        continue main;
+                    }
                 }
             }
-            if (isEqual) continue;
-            list.add(item);
+            uniqueItems[index++] = input;
         }
-        return list.toArray(new ItemStack[0]);
+        if (index == uniqueItems.length) {
+            return uniqueItems;
+        }
+        ItemStack[] retUniqueItems = new ItemStack[index];
+        System.arraycopy(uniqueItems, 0, retUniqueItems, 0, index);
+        return retUniqueItems;
     }
 
     /**
@@ -376,7 +384,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
             if (isEqual) continue;
-            list.add(item);
+            if (item instanceof IntCircuitIngredient) {
+                list.add(0, item);
+            } else {
+                list.add(item);
+            }
         }
         return list;
     }
@@ -774,6 +786,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 } else {
                     ingredient = new MapOreDictIngredient(r.getOreDict());
                 }
+
                 WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
                 if (cached != null && cached.get() != null) {
                     list.add(Collections.singletonList(cached.get()));
@@ -781,22 +794,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
                     list.add(Collections.singletonList(ingredient));
                 }
+
             } else {
                 List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
+                if (r.hasNBTMatchingCondition()) {
+                    inner.addAll(MapItemStackNBTIngredient.from(r));
+                    hasNBTMatcherInputs = true;
+                } else {
+                    inner.addAll(MapItemStackIngredient.from(r));
+                }
 
-                for (ItemStack s : r.getInputStacks()) {
-                    if (r.hasNBTMatchingCondition()) {
-                        hasNBTMatcherInputs = true;
-                        ingredient = new MapItemStackNBTIngredient(s, r.getNBTMatcher(), r.getNBTMatchingCondition());
-                    } else {
-                        ingredient = new MapItemStackIngredient(s);
-                    }
-                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                for (int i = 0; i < inner.size(); i++) {
+                    AbstractMapIngredient mappedIngredient = inner.get(i);
+                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(mappedIngredient);
                     if (cached != null && cached.get() != null) {
-                        inner.add(cached.get());
+                        inner.set(i,cached.get());
                     } else {
-                        ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                        inner.add(ingredient);
+                        ingredientRoot.put(mappedIngredient, new WeakReference<>(mappedIngredient));
                     }
                 }
                 list.add(inner);

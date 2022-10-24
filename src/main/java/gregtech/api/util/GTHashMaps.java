@@ -25,17 +25,19 @@ public class GTHashMaps {
      * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
     public static Map<ItemStackKey, Integer> fromItemHandler(IItemHandler inputs) {
-        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Map<ItemStackKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return StreamUtils.streamFrom(inputs)
-                // keep only non-empty item stacks
-                .filter(not(ItemStack::isEmpty))
-                // Track the number of identical items
-                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
-                        ItemStack::getCount,
-                        Math::addExact,
-                        mapSupplier));
+
+        for (int i = 0; i < inputs.getSlots(); i++) {
+            ItemStack stack = inputs.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                map.computeIfPresent(KeySharedStack.getRegisteredStack(stack), (k, v) -> v + stack.getCount());
+                map.computeIfAbsent(KeySharedStack.getRegisteredStack(stack), (v) -> stack.getCount());
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -45,17 +47,18 @@ public class GTHashMaps {
      * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
     public static Map<ItemStackKey, Integer> fromItemStackCollection(Collection<ItemStack> inputs) {
-        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Map<ItemStackKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return inputs.stream()
-                // keep only non-empty item stacks
-                .filter(not(ItemStack::isEmpty))
-                // Track the number of identical items
-                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
-                        ItemStack::getCount,
-                        Math::addExact,
-                        mapSupplier));
+
+        for (ItemStack stack : inputs) {
+            if (!stack.isEmpty()) {
+                map.computeIfPresent(KeySharedStack.getRegisteredStack(stack), (k, v) -> v + stack.getCount());
+                map.computeIfAbsent(KeySharedStack.getRegisteredStack(stack), (v) -> stack.getCount());
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -65,17 +68,19 @@ public class GTHashMaps {
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
     public static Map<FluidKey, Integer> fromFluidHandler(IFluidHandler fluidInputs) {
-        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Map<FluidKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return StreamUtils.streamFrom(fluidInputs)
-                // keep only non-empty item stacks
-                .filter(Objects::nonNull)
-                // Track the number of identical items
-                .collect(Collectors.toMap(FluidKey::new,
-                        (fluidStack -> fluidStack.amount),
-                        Math::addExact,
-                        mapSupplier));
+
+        for (int i = 0; i < fluidInputs.getTankProperties().length; i++) {
+            FluidStack fluidStack = fluidInputs.getTankProperties()[i].getContents();
+            if (fluidStack != null && fluidStack.amount > 0) {
+                map.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidStack.amount);
+                map.computeIfAbsent(new FluidKey(fluidStack), (v) -> fluidStack.amount);
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -85,16 +90,17 @@ public class GTHashMaps {
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
     public static Map<FluidKey, Integer> fromFluidCollection(Collection<FluidStack> fluidInputs) {
-        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Map<FluidKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return fluidInputs.stream()
-                // keep only non-empty item stacks
-                .filter(Objects::nonNull)
-                // Track the number of identical items
-                .collect(Collectors.toMap(FluidKey::new,
-                        (fluidStack -> fluidStack.amount),
-                        Math::addExact,
-                        mapSupplier));
+
+        for (FluidStack fluidStack : fluidInputs) {
+            if (fluidStack != null && fluidStack.amount > 0) {
+                map.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidStack.amount);
+                map.computeIfAbsent(new FluidKey(fluidStack), (v) -> fluidStack.amount);
+            }
+        }
+
+        return map;
     }
 }

@@ -163,93 +163,114 @@ public class Recipe {
      * @return true if the recipe matches the given inputs false otherwise.
      */
     public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        Pair<Boolean, Integer[]> fluids;
-        Pair<Boolean, Integer[]> items;
+        Pair<Boolean, int[]> fluids = null;
+        Pair<Boolean, int[]> items = null;
 
-
-        fluids = matchesFluid(fluidInputs);
-        if (!fluids.getKey()) {
-            return false;
+        if (fluidInputs.size() >0 ) {
+            fluids = matchesFluid(fluidInputs);
+            if (!fluids.getKey()) {
+                return false;
+            }
         }
 
-        items = matchesItems(inputs);
-        if (!items.getKey()) {
-            return false;
+        if (inputs.size() > 0) {
+            items = matchesItems(inputs);
+            if (!items.getKey()) {
+                return false;
+            }
         }
 
         if (consumeIfSuccessful) {
-            Integer[] fluidAmountInTank = fluids.getValue();
-            Integer[] itemAmountInSlot = items.getValue();
-            for (int i = 0; i < fluidAmountInTank.length; i++) {
-                FluidStack fluidStack = fluidInputs.get(i);
-                int fluidAmount = fluidAmountInTank[i];
-                if (fluidStack == null || fluidStack.amount == fluidAmount)
-                    continue;
-                fluidStack.amount = fluidAmount;
-                if (fluidStack.amount == 0)
-                    fluidInputs.set(i, null);
+            if (fluids != null) {
+                int[] fluidAmountInTank = fluids.getValue();
+
+                for (int i = 0; i < fluidAmountInTank.length; i++) {
+                    FluidStack fluidStack = fluidInputs.get(i);
+                    int fluidAmount = fluidAmountInTank[i];
+                    if (fluidStack == null || fluidStack.amount == fluidAmount)
+                        continue;
+                    fluidStack.amount = fluidAmount;
+                    if (fluidStack.amount == 0)
+                        fluidInputs.set(i, null);
+                }
             }
-            for (int i = 0; i < itemAmountInSlot.length; i++) {
-                ItemStack itemInSlot = inputs.get(i);
-                int itemAmount = itemAmountInSlot[i];
-                if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
-                    continue;
-                itemInSlot.setCount(itemAmountInSlot[i]);
+            if(items != null) {
+                int[] itemAmountInSlot = items.getValue();
+                for (int i = 0; i < itemAmountInSlot.length; i++) {
+                    ItemStack itemInSlot = inputs.get(i);
+                    int itemAmount = itemAmountInSlot[i];
+                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
+                        continue;
+                    itemInSlot.setCount(itemAmountInSlot[i]);
+                }
             }
         }
 
         return true;
     }
 
-    private Pair<Boolean, Integer[]> matchesItems(List<ItemStack> inputs) {
-        Integer[] itemAmountInSlot = new Integer[inputs.size()];
+    private Pair<Boolean, int[]> matchesItems(List<ItemStack> inputs) {
+        int[] itemAmountInSlot = new int[inputs.size()];
+        int indexed = 0;
 
-        for (int i = 0; i < itemAmountInSlot.length; i++) {
-            ItemStack itemInSlot = inputs.get(i);
-            itemAmountInSlot[i] = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
-        }
-
-        for (GTRecipeInput ingredient : this.inputs) {
+        List<GTRecipeInput> gtRecipeInputs = this.inputs;
+        for (int i = 0; i < gtRecipeInputs.size(); i++) {
+            GTRecipeInput ingredient = gtRecipeInputs.get(i);
             int ingredientAmount = ingredient.getAmount();
-            for (int i = 0; i < inputs.size(); i++) {
-                ItemStack inputStack = inputs.get(i);
+            for (int j = 0; j < inputs.size(); j++) {
+                ItemStack inputStack = inputs.get(j);
+
+                if (j == indexed) {
+                    itemAmountInSlot[j] = inputStack.isEmpty() ? 0 : inputStack.getCount();
+                    indexed++;
+                }
+
                 if (inputStack.isEmpty() || !ingredient.acceptsStack(inputStack))
                     continue;
-                int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
+                int itemAmountToConsume = Math.min(itemAmountInSlot[j], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
-                if (!ingredient.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;
+                if (!ingredient.isNonConsumable()) itemAmountInSlot[j] -= itemAmountToConsume;
                 if (ingredientAmount == 0) break;
             }
             if (ingredientAmount > 0)
                 return Pair.of(false, itemAmountInSlot);
         }
+        int[] retItemAmountInSlot = new int[indexed];
+        System.arraycopy(itemAmountInSlot, 0, retItemAmountInSlot, 0, indexed);
 
-        return Pair.of(true, itemAmountInSlot);
+        return Pair.of(true, retItemAmountInSlot);
     }
 
-    private Pair<Boolean, Integer[]> matchesFluid(List<FluidStack> fluidInputs) {
-        Integer[] fluidAmountInTank = new Integer[fluidInputs.size()];
+    private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
+        int[] fluidAmountInTank = new int[fluidInputs.size()];
+        int indexed = 0;
 
-        for (int i = 0; i < fluidAmountInTank.length; i++) {
-            FluidStack fluidInTank = fluidInputs.get(i);
-            fluidAmountInTank[i] = fluidInTank == null ? 0 : fluidInTank.amount;
-        }
-
-        for (GTRecipeInput fluid : this.fluidInputs) {
+        List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
+        for (int i = 0; i < gtRecipeInputs.size(); i++) {
+            GTRecipeInput fluid = gtRecipeInputs.get(i);
             int fluidAmount = fluid.getAmount();
-            for (int i = 0; i < fluidInputs.size(); i++) {
-                FluidStack tankFluid = fluidInputs.get(i);
+            for (int j = 0; j < fluidInputs.size(); j++) {
+                FluidStack tankFluid = fluidInputs.get(j);
+
+                if (j == indexed) {
+                    indexed++;
+                    fluidAmountInTank[j] = tankFluid == null ? 0 : tankFluid.amount;
+                }
+
                 if (tankFluid == null || !fluid.acceptsFluid(tankFluid))
                     continue;
-                int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
+                int fluidAmountToConsume = Math.min(fluidAmountInTank[j], fluidAmount);
                 fluidAmount -= fluidAmountToConsume;
-                if (!fluid.isNonConsumable()) fluidAmountInTank[i] -= fluidAmountToConsume;
+                if (!fluid.isNonConsumable()) fluidAmountInTank[j] -= fluidAmountToConsume;
                 if (fluidAmount == 0) break;
             }
             if (fluidAmount > 0)
                 return Pair.of(false, fluidAmountInTank);
         }
-        return Pair.of(true, fluidAmountInTank);
+        int[] retfluidAmountInTank = new int[indexed];
+        System.arraycopy(fluidAmountInTank, 0, retfluidAmountInTank, 0, indexed);
+
+        return Pair.of(true, retfluidAmountInTank);
     }
 
     @Override
@@ -443,7 +464,9 @@ public class Recipe {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> recipeOutputs = new ArrayList<>(this.outputs);
 
-        recipeOutputs.addAll(chancedOutputs.stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        for (ChanceEntry entry : this.chancedOutputs) {
+            recipeOutputs.add(entry.getItemStack());
+        }
 
         return recipeOutputs;
     }

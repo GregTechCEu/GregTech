@@ -2,7 +2,10 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectLists;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -130,25 +133,19 @@ public abstract class GTRecipeInput {
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
 
-    protected static class ItemToMetaList implements Map.Entry<Item, List<MetaToTAGList>> {
+    protected static class ItemToMetaList implements Object2ObjectMap.Entry<Item, List<MetaToTAGList>> {
         protected Item item;
         protected List<MetaToTAGList> metaToTAGList;
 
         public ItemToMetaList(ItemStack stack) {
             this.item = stack.getItem();
-            this.metaToTAGList = new ObjectArrayList<>();
-            this.metaToTAGList.add(new MetaToTAGList(stack));
-        }
-
-        public Item getItem() {
-            return item;
-        }
-
-        public List<MetaToTAGList> getMetaToTAGList() {
-            return metaToTAGList;
+            this.metaToTAGList = ObjectLists.singleton(new MetaToTAGList(stack));
         }
 
         void addStackToLists(ItemStack stack) {
+            if (this.metaToTAGList instanceof ObjectLists.Singleton) {
+                this.metaToTAGList = new ObjectArrayList<>(this.metaToTAGList);
+            }
             this.metaToTAGList.add(new MetaToTAGList(stack));
         }
 
@@ -168,30 +165,29 @@ public abstract class GTRecipeInput {
         }
     }
 
-    protected static class MetaToTAGList implements Map.Entry<Integer, List<TagToStack>> {
+    protected static class MetaToTAGList implements Int2ObjectMap.Entry<List<TagToStack>> {
         protected int meta;
         protected List<TagToStack> tagToStack;
 
         public MetaToTAGList(ItemStack stack) {
             this.meta = stack.getMetadata();
-            this.tagToStack = new ObjectArrayList<>(1);
-            this.tagToStack.add(new TagToStack(stack));
-        }
-
-        public int getMeta() {
-            return meta;
-        }
-
-        public List<TagToStack> getTagToStack() {
-            return tagToStack;
+            this.tagToStack = ObjectLists.singleton(new TagToStack(stack));
         }
 
         void addStackToList(ItemStack stack) {
+            if (this.tagToStack instanceof ObjectLists.Singleton) {
+                this.tagToStack = new ObjectArrayList<>(this.tagToStack);
+            }
             this.tagToStack.add(new TagToStack(stack.getTagCompound(), stack));
         }
 
         @Override
         public Integer getKey() {
+            return meta;
+        }
+
+        @Override
+        public int getIntKey() {
             return meta;
         }
 
@@ -206,7 +202,7 @@ public abstract class GTRecipeInput {
         }
     }
 
-    protected static class TagToStack implements Map.Entry<NBTTagCompound, ItemStack> {
+    protected static class TagToStack implements Object2ObjectMap.Entry<NBTTagCompound, ItemStack> {
         NBTTagCompound tag;
         ItemStack stack;
 
@@ -218,14 +214,6 @@ public abstract class GTRecipeInput {
         TagToStack(ItemStack stack) {
             this.tag = stack.getTagCompound();
             this.stack = stack;
-        }
-
-        public ItemStack getStack() {
-            return stack;
-        }
-
-        public NBTTagCompound getTag() {
-            return tag;
         }
 
         @Override
