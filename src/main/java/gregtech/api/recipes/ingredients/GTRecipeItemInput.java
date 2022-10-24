@@ -123,8 +123,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
                             List<TagToStack> tagMaps = tagList.tagToStack;
                             for (int k = 0; k < tagMaps.size(); k++) {
                                 TagToStack tagMapping = tagMaps.get(k);
-                                if (inputNBT == null && tagMapping.tag == null || inputNBT != null &&
-                                        inputNBT.equals(tagMapping.tag)) {
+                                if ((inputNBT == null && tagMapping.tag == null) ||
+                                        (inputNBT != null && inputNBT.equals(tagMapping.tag))) {
                                     return tagMapping.stack.areCapsCompatible(input);
                                 }
                             }

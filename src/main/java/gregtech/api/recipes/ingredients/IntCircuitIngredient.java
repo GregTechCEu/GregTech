@@ -13,8 +13,8 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
     public static final int CIRCUIT_MAX = 32;
     private final int matchingConfigurations;
 
-    public static IntCircuitIngredient getOrCreate(IntCircuitIngredient ri, int i) {
-        return (IntCircuitIngredient) getFromCache(new IntCircuitIngredient(getCircuitConfiguration(ri.getInputStacks()[0])));
+    public static IntCircuitIngredient getOrCreate(IntCircuitIngredient ri) {
+        return (IntCircuitIngredient) getFromCache(new IntCircuitIngredient(ri.matchingConfigurations));
     }
 
     @Override

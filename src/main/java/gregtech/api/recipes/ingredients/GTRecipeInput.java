@@ -3,6 +3,7 @@ package gregtech.api.recipes.ingredients;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -132,7 +133,7 @@ public abstract class GTRecipeInput {
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
 
-    protected static class ItemToMetaList implements Map.Entry<Item, List<MetaToTAGList>> {
+    protected static class ItemToMetaList implements Object2ObjectMap.Entry<Item, List<MetaToTAGList>> {
         protected Item item;
         protected List<MetaToTAGList> metaToTAGList;
 
@@ -201,7 +202,7 @@ public abstract class GTRecipeInput {
         }
     }
 
-    protected static class TagToStack implements Map.Entry<NBTTagCompound, ItemStack> {
+    protected static class TagToStack implements Object2ObjectMap.Entry<NBTTagCompound, ItemStack> {
         NBTTagCompound tag;
         ItemStack stack;
 
