@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTStringUtils;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -132,10 +134,12 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
                         return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
                     }
                     if (!isClearing) {
+                        ItemStack i = ((ItemStack) obj).copy();
                         try {
-                            return ingredientNBT.newInstance(((ItemStack) obj).copy());
+                            return ingredientNBT.newInstance(i);
                         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                            throw new RuntimeException(e);
+                            GTLog.logger.error("Failure to instantiate an IngredientNBT of item {}",
+                                    GTStringUtils.prettyPrintItemStack(i));
                         }
                     }
                 }
