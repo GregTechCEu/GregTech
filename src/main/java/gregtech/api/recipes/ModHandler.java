@@ -21,9 +21,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
-import gregtech.common.crafting.GTShapedNBTClearingOreRecipe;
 import gregtech.common.crafting.GTShapedOreRecipe;
-import gregtech.common.crafting.GTShapelessNBTClearingOreRecipe;
 import gregtech.common.crafting.GTShapelessOreRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -254,7 +252,7 @@ public class ModHandler {
             return;
         }
 
-        IRecipe shapedOreRecipe = new GTShapedOreRecipe(new ResourceLocation(GTValues.MODID, "general"), result.copy(), finalizeShapedRecipeInput(recipe))
+        IRecipe shapedOreRecipe = new GTShapedOreRecipe(false, new ResourceLocation(GTValues.MODID, "general"), result.copy(), finalizeShapedRecipeInput(recipe))
                 .setMirrored(true)
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
@@ -317,15 +315,10 @@ public class ModHandler {
         }
 
         IRecipe shapedOreRecipe;
-        if (isNBTClearing) {
-            shapedOreRecipe = new GTShapedNBTClearingOreRecipe(null, result.copy(), finalizeShapedRecipeInput(recipe))
-                    .setMirrored(false) //make all recipes not mirrored by default
-                    .setRegistryName(regName);
-        } else {
-            shapedOreRecipe = new GTShapedOreRecipe(null, result.copy(), finalizeShapedRecipeInput(recipe))
-                    .setMirrored(false) //make all recipes not mirrored by default
-                    .setRegistryName(regName);
-        }
+        shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(), finalizeShapedRecipeInput(recipe))
+                .setMirrored(false) //make all recipes not mirrored by default
+                .setRegistryName(regName);
+
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
 
         if (withUnificationData)
@@ -560,13 +553,8 @@ public class ModHandler {
             }
         }
         IRecipe shapelessRecipe;
-        if (isNBTClearing) {
-            shapelessRecipe = new GTShapelessNBTClearingOreRecipe(null, result.copy(), recipe)
+            shapelessRecipe = new GTShapelessOreRecipe(isNBTClearing, null, result.copy(), recipe)
                     .setRegistryName(regName);
-        } else {
-            shapelessRecipe = new GTShapelessOreRecipe(null, result.copy(), recipe)
-                    .setRegistryName(regName);
-        }
 
         try {
             //workaround for MC bug that makes all shaped recipe inputs that have enchanted items
