@@ -271,6 +271,11 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         return SLOT == EntityEquipmentSlot.CHEST ? 1.2D : 1.0D;
     }
 
+    @Override
+    public float getHeatResistance() {
+        return 0.5f;
+    }
+
     @SideOnly(Side.CLIENT)
     public boolean isNeedDrawHUD() {
         return true;
