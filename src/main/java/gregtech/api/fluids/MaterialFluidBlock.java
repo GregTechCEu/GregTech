@@ -48,6 +48,16 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     }
 
     @Override
+    public int getFireSpreadSpeed(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        return this.isFlammable ? 300 : 0;
+    }
+
+    @Override
+    public boolean isFlammable(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        return this.isFlammable;
+    }
+
+    @Override
     public int getFlammability(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return this.isFlammable ? 200 : 0;
     }
@@ -64,7 +74,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     @Override
     public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (this.isSticky) {
-            if (entityIn instanceof EntityPlayer && !((EntityPlayer) entityIn).isCreative()) {
+            if (entityIn instanceof EntityPlayer && ((EntityPlayer) entityIn).isCreative()) {
                 return;
             }
 
@@ -72,6 +82,22 @@ public class MaterialFluidBlock extends BlockFluidClassic {
             entityIn.motionY *= 0.25;
             entityIn.motionZ *= 0.5;
         }
+    }
+
+    @Override
+    public boolean canDisplace(@Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        if (world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
+            return false;
+        }
+        return super.canDisplace(world, pos);
+    }
+
+    @Override
+    public boolean displaceIfPossible(@Nonnull World world, @Nonnull BlockPos pos) {
+        if (world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
+            return false;
+        }
+        return super.displaceIfPossible(world, pos);
     }
 
     @Nonnull
