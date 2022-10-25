@@ -49,7 +49,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
 
     @Override
     public int getFireSpreadSpeed(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
-        return this.isFlammable ? 300 : 0;
+        return this.isFlammable ? 5 : 0;
     }
 
     @Override
