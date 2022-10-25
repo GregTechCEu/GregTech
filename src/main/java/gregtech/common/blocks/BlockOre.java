@@ -154,24 +154,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     }
 
     @Override
-    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        // if the material in the ore block is flammable, it can catch fire and burn
-        return this.material.hasFlag(MaterialFlags.FLAMMABLE) ? 20 : 0;
-    }
-
-    @Override
-    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        // if the material in the ore block is flammable, it can spread fire
-        return this.material.hasFlag(MaterialFlags.FLAMMABLE) ? 5 : 0;
-    }
-
-    @Override
-    public boolean isBurning(IBlockAccess world, BlockPos pos) {
-        return super.isBurning(world, pos);
-    }
-
-    @Override
-    public boolean isFireSource(@Nonnull World world, BlockPos pos, EnumFacing side) {
+    public boolean isFireSource(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         if (side != EnumFacing.UP) return false;
 
         // if the stone type of the ore block is flammable, it will burn forever like Netherrack
