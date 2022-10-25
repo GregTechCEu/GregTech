@@ -244,7 +244,7 @@ public class OrePrefix {
     }
 
     static {
-        ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 3;
+        ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
