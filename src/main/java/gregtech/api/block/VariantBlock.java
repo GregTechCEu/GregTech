@@ -29,7 +29,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     public VariantBlock(Material materialIn) {
         super(materialIn);
-        if(VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
+        if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
             for (T t : VALUES) {
                 IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
                 IBlockState state = getState(t);
@@ -37,6 +37,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             }
         }
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, VALUES[0]));
     }
 
     @Override
@@ -87,8 +88,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             tooltip.addAll(Arrays.asList(I18n.format(unlocalizedVariantTooltip).split("/n")));
         //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
-        if (I18n.hasKey(unlocalizedTooltip))
-            tooltip.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
+        if (I18n.hasKey(unlocalizedTooltip)) tooltip.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
     }
 
     @Override

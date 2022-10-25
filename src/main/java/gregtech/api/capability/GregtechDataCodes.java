@@ -69,6 +69,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_ROTOR_COLOR = 201;
     public static final int UPDATE_STRUCTURE_SIZE = 202;
     public static final int STRUCTURE_FORMED = 400;
+    public static final int VARIANT_RENDER_UPDATE = 410;
     public static final int IS_TAPED = 550;
     public static final int STORE_MAINTENANCE = 551;
     public static final int STORE_TAPED = 552;

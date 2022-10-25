@@ -162,12 +162,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
                 .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH);
         GregTechAPI.HEATING_COILS.entrySet().stream()
-                .filter(entry -> {
-                    if (entry.getKey().getPropertyKeys().contains(VariantActiveBlock.ACTIVE)) {
-                        return !entry.getKey().getValue(VariantActiveBlock.ACTIVE);
-                    }
-                    return true;
-                })
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                 .forEach(entry -> shapeInfo.add(builder.where('C', entry.getKey()).build()));
         return shapeInfo;

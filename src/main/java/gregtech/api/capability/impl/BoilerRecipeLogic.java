@@ -224,14 +224,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void setActive(boolean active) {
-        if (active != this.isActive) {
-            getMetaTileEntity().replaceFireboxAsActive(active);
-        }
-        super.setActive(active);
-    }
-
-    @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = super.serializeNBT();
         compound.setInteger("Heat", currentHeat);
