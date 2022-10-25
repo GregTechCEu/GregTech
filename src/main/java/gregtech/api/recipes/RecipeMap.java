@@ -27,6 +27,8 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.VirtualizedRecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
@@ -83,6 +85,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected MoveType moveType;
     public final boolean isHidden;
 
+    private final VirtualizedRecipeMap virtualizedRecipeMap;
     private final Branch lookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
@@ -114,6 +117,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
+
+        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
     }
 
     @ZenMethod
@@ -198,6 +203,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         Recipe recipe = validationResult.getResult();
 
+        if (recipe.isGroovyRecipe()) {
+            this.virtualizedRecipeMap.addScripted(recipe);
+        }
         compileRecipe(recipe);
 
     }
@@ -212,12 +220,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public boolean removeRecipe(Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        return recurseIngredientTreeRemove(recipe, items, lookup, 0) != null;
+        if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
+            if (GroovyScriptCompat.isCurrentlyRunning()) {
+                this.virtualizedRecipeMap.addBackup(recipe);
+            }
+            return true;
+        }
+        return false;
     }
 
     protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
+        if (recipe.isGroovyRecipe()) {
+            return validationResult;
+        }
         if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
@@ -369,6 +386,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Builds a list of unique inputs from the given list GTRecipeInputs.
      * Used to reduce the number inputs, if for example there is more than one of the same input,
      * pack them into one.
+     *
      * @param input The list of GTRecipeInputs.
      * @return The list of unique inputs.
      */
@@ -468,7 +486,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * Exhaustively gathers all recipes that can be crafted with the given ingredients, into a Set.
-     * @param items the ingredients, in the form of a List of ItemStack. Usually the inputs of a Recipe
+     *
+     * @param items  the ingredients, in the form of a List of ItemStack. Usually the inputs of a Recipe
      * @param fluids the ingredients, in the form of a List of FluidStack. Usually the inputs of a Recipe
      * @return a Set of recipes that can be crafted with the given ingredients
      */
@@ -855,7 +874,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2], specialTexturePosition[3], specialTexture);
         return builder;
     }
-    
+
     public Collection<Recipe> getRecipeList() {
         return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
     }

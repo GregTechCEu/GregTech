@@ -38,6 +38,7 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
+import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraft.block.state.IBlockState;
@@ -76,6 +77,9 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
+
+        /* init GroovyScript compat */
+        GroovyScriptCompat.init();
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();

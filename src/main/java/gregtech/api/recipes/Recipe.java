@@ -9,6 +9,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.integration.GroovyScriptCompat;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -70,7 +71,9 @@ public class Recipe {
     /**
      * If this Recipe is a Crafttweaker recipe. Used for logging purposes
      */
+    // TODO YEET
     private final boolean isCTRecipe;
+    private final boolean groovyRecipe;
     private final IRecipePropertyStorage recipePropertyStorage;
 
     private final int hashCode;
@@ -102,6 +105,7 @@ public class Recipe {
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
+        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
     }
 
     public Recipe copy() {
@@ -112,17 +116,16 @@ public class Recipe {
     /**
      * Trims the recipe outputs, chanced outputs, and fluid outputs based on the performing MetaTileEntity's trim limit.
      *
-     * @param currentRecipe The recipe to perform the output trimming upon
-     * @param recipeMap     The RecipeMap that the recipe is from
-     * @param itemTrimLimit The Limit to which item outputs should be trimmed to, -1 for no trimming
+     * @param currentRecipe  The recipe to perform the output trimming upon
+     * @param recipeMap      The RecipeMap that the recipe is from
+     * @param itemTrimLimit  The Limit to which item outputs should be trimmed to, -1 for no trimming
      * @param fluidTrimLimit The Limit to which fluid outputs should be trimmed to, -1 for no trimming
-     *
      * @return A new Recipe whose outputs have been trimmed.
      */
     public Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
 
         // Fast return early if no trimming desired
-        if(itemTrimLimit == -1 && fluidTrimLimit == -1) {
+        if (itemTrimLimit == -1 && fluidTrimLimit == -1) {
             return currentRecipe;
         }
 
@@ -419,23 +422,22 @@ public class Recipe {
         List<ItemStack> outputs = new ArrayList<>();
 
 
-
         // Create an entry for the chanced outputs, and initially populate it
         List<ChanceEntry> chancedOutputs = new ArrayList<>(getChancedOutputs());
 
 
         // No limiting
-        if(outputLimit == -1) {
+        if (outputLimit == -1) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()));
         }
         // If just the regular outputs would satisfy the outputLimit
-        else if(getOutputs().size() >= outputLimit) {
+        else if (getOutputs().size() >= outputLimit) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
             // clear the chanced outputs, as we are only getting regular outputs
             chancedOutputs.clear();
         }
         // If the regular outputs and chanced outputs are required to satisfy the outputLimit
-        else if(!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
+        else if (!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()));
 
             // Calculate the number of chanced outputs after adding all the regular outputs
@@ -444,7 +446,7 @@ public class Recipe {
             chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
         }
         // There are only chanced outputs to satisfy the outputLimit
-        else if(getOutputs().isEmpty()) {
+        else if (getOutputs().isEmpty()) {
             chancedOutputs = chancedOutputs.subList(0, Math.min(outputLimit, chancedOutputs.size()));
         }
         // The number of outputs + chanced outputs is lower than the trim number, so just add everything
@@ -499,7 +501,6 @@ public class Recipe {
      * Similar to {@link Recipe#getItemAndChanceOutputs(int)} but does not handle chanced fluid outputs
      *
      * @param outputLimit The limiting factor to trim the fluid outputs to, -1 for disabled.
-     *
      * @return A trimmed List of fluid outputs.
      */
     // TODO, implement future chanced fluid outputs here
@@ -521,6 +522,10 @@ public class Recipe {
 
     public boolean getIsCTRecipe() {
         return isCTRecipe;
+    }
+
+    public boolean isGroovyRecipe() {
+        return groovyRecipe;
     }
 
     public boolean hasValidInputsForDisplay() {
