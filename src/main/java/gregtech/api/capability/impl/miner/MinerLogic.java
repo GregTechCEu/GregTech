@@ -109,11 +109,11 @@ public class MinerLogic {
         }
 
         // check for meta
-        if(blockDescription.length > 2 && blockDescription[2].isEmpty()) {
-            return replacementBlock.getDefaultState();
-        } else {
+        if(blockDescription.length > 2 && !blockDescription[2].isEmpty()) {
             return replacementBlock.getDefaultState().getBlock().getStateFromMeta(Integer.parseInt(blockDescription[2]));
         }
+
+        return replacementBlock.getDefaultState();
     }
 
     /**
