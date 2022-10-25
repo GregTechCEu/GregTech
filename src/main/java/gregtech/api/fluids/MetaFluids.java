@@ -259,7 +259,8 @@ public class MetaFluids {
 
         // generate fluid blocks if the material has one, and the current state being handled is not plasma
         if (generateBlock && fluid.getBlock() == null && fluidType != FluidTypes.PLASMA) {
-            GTFluidMaterial fluidMaterial = new GTFluidMaterial(GTUtility.getMapColor(material.getMaterialRGB()), material.hasFlag(MaterialFlags.STICKY));
+            GTFluidMaterial fluidMaterial = new GTFluidMaterial(GTUtility.getMapColor(material.getMaterialRGB()),
+                    material.hasFlag(MaterialFlags.STICKY));
 
             BlockFluidBase fluidBlock = new MaterialFluidBlock(fluid, fluidMaterial, material);
             fluidBlock.setRegistryName("fluid." + materialName);

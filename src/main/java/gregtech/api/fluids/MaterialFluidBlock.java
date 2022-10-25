@@ -7,8 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -26,7 +26,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     private final boolean isExplosive;
     private final boolean isSticky;
 
-    public MaterialFluidBlock(@Nonnull Fluid fluid, @Nonnull net.minecraft.block.material.Material material, @Nonnull Material gtMaterial) {
+    public MaterialFluidBlock(@Nonnull Fluid fluid, @Nonnull GTFluidMaterial material, @Nonnull Material gtMaterial) {
         super(fluid, material);
         this.gtMaterial = gtMaterial;
         this.isFlammable = gtMaterial.hasFlag(MaterialFlags.FLAMMABLE);
@@ -39,8 +39,6 @@ public class MaterialFluidBlock extends BlockFluidClassic {
         displaces = fluid.getDensity() > 3000; // lava density
         this.displacements.put(Blocks.LAVA, displaces);
         this.displacements.put(Blocks.FLOWING_LAVA, displaces);
-
-        this.renderLayer = BlockRenderLayer.SOLID;
     }
 
     @Nullable
@@ -57,19 +55,23 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block neighborBlock, @Nonnull BlockPos neighbourPos) {
         super.neighborChanged(state, world, pos, neighborBlock, neighbourPos);
-        if (this.isExplosive) {
-            // explosive fluids are unstable, can just explode whenever disrupted
-            // flammable explosives are way more likely to blow up
-            if (GTValues.RNG.nextInt(this.isFlammable && neighborBlock instanceof BlockFire ? 5 : 10) == 0) {
-                world.setBlockToAir(pos);
-                world.createExplosion(null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 3.0F, true);
-            }
+        if (this.isExplosive && this.isFlammable && neighborBlock instanceof BlockFire && GTValues.RNG.nextInt(5) == 0) {
+            world.setBlockToAir(pos);
+            world.createExplosion(null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 1.5F, true);
         }
     }
 
     @Override
     public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
-        if (this.isSticky) entityIn.setInWeb();
+        if (this.isSticky) {
+            if (entityIn instanceof EntityPlayer && !((EntityPlayer) entityIn).isCreative()) {
+                return;
+            }
+
+            entityIn.motionX *= 0.5;
+            entityIn.motionY *= 0.25;
+            entityIn.motionZ *= 0.5;
+        }
     }
 
     @Nonnull
