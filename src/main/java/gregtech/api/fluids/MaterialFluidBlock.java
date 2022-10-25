@@ -86,7 +86,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
 
     @Override
     public boolean canDisplace(@Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        if (world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
+        if (this.isFlammable && world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
             return false;
         }
         return super.canDisplace(world, pos);
@@ -94,7 +94,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
 
     @Override
     public boolean displaceIfPossible(@Nonnull World world, @Nonnull BlockPos pos) {
-        if (world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
+        if (this.isFlammable && world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
             return false;
         }
         return super.displaceIfPossible(world, pos);
