@@ -22,9 +22,9 @@ import javax.annotation.Nullable;
 public class MaterialFluidBlock extends BlockFluidClassic {
 
     private final Material gtMaterial;
-    private final boolean isFlammable;
-    private final boolean isExplosive;
-    private final boolean isSticky;
+    public final boolean isFlammable;
+    public final boolean isExplosive;
+    public final boolean isSticky;
 
     public MaterialFluidBlock(@Nonnull Fluid fluid, @Nonnull GTFluidMaterial material, @Nonnull Material gtMaterial) {
         super(fluid, material);

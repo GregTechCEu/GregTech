@@ -45,7 +45,8 @@ public class FluidVisualHandler {
 
     @SubscribeEvent
     public static void onFOVModifier(@Nonnull EntityViewRenderEvent.FOVModifier event) {
-        if (event.getState() instanceof MaterialFluidBlock) {
+        if (event.getState().getBlock() instanceof MaterialFluidBlock &&
+                ((MaterialFluidBlock) event.getState().getBlock()).isSticky) {
             event.setFOV(event.getFOV() * 60.0F / 70.0F);
         }
     }
