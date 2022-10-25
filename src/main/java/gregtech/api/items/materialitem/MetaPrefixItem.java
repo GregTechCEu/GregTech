@@ -174,7 +174,7 @@ public class MetaPrefixItem extends StandardMetaItem {
                     heatDamage *= ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().getHeatResistance();
                 }
 
-                if (heatDamage != 0.0 && heatDamage > 0.0) {
+                if (heatDamage > 0.0) {
                     entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), heatDamage);
                 } else if (heatDamage < 0.0) {
                     entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -heatDamage);
