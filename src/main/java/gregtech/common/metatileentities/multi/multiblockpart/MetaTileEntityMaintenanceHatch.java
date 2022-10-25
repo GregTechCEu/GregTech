@@ -236,11 +236,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     /**
+     * Attempts to fix a provided maintenance problem with a tool in the player's
+     * inventory, if the tool exists.
      *
-     * Fixes all maintenance problems that a player's inventory has tools for
-     *
-     * @param problemIndex is the index of the maintenance problem
-     * @param entityPlayer is the target player whose inventory is used to scan for tools
+     * @param problemIndex The index of the maintenance problem.
+     * @param entityPlayer The player whose inventory the tool may be in.
      */
     private void fixProblemWithTool(int problemIndex, EntityPlayer entityPlayer) {
         List<ToolMetaItem<?>.MetaToolValueItem> tools = null;
@@ -258,15 +258,28 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             return;
 
         for (ToolMetaItem<?>.MetaToolValueItem tool : tools) {
+            // Try to use the item in the player's "hand" (under the cursor)
+            ItemStack heldItem = entityPlayer.inventory.getItemStack();
+            if (heldItem.isItemEqualIgnoreDurability(tool.getStackForm())) {
+                fixProblemWithTool(problemIndex, heldItem);
+                return;
+            }
+
+            // Then try all the remaining inventory slots
             for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
                 if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                    ((IMaintenance) this.getController()).setMaintenanceFixed(problemIndex);
-                    IToolStats.onOtherUse(itemStack, getWorld(), getPos());
-                    damageTool(itemStack);
-                    this.setTaped(false);
+                    fixProblemWithTool(problemIndex, itemStack);
+                    return;
                 }
             }
         }
+    }
+
+    private void fixProblemWithTool(int problemIndex, ItemStack toolStack) {
+        ((IMaintenance) getController()).setMaintenanceFixed(problemIndex);
+        IToolStats.onOtherUse(toolStack, getWorld(), getPos());
+        damageTool(toolStack);
+        setTaped(false);
     }
 
     /**
