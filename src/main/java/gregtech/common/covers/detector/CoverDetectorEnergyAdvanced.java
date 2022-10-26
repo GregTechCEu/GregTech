@@ -68,12 +68,17 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            compareValue((float) energyContainer.getEnergyStored(), maxEU, minEU);
+            compareValue(energyContainer.getEnergyStored(), maxEU, minEU);
             setRedstoneSignalOutput(outputAmount);
         }
     }
 
-    private void compareValue(float value, long maxValue, long minValue) {
+    /**
+     * Compares the value to min and max, and sets the output value accordingly.
+     * <p>
+     * Behaves like an SR Latch.
+     */
+    private void compareValue(long value, long maxValue, long minValue) {
         if (value >= maxValue) {
             this.outputAmount = inverted ? 15 : 0;
         } else if (value <= minValue) {
