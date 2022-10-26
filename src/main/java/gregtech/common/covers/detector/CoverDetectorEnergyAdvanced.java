@@ -24,27 +24,23 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Pattern;
 
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
-    // public int minPercent, maxPercent;
+
     public long minEU, maxEU;
     private int outputAmount;
     private boolean inverted;
-    private boolean useRatio;
     private boolean isEnabled;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        // this.minPercent = 10;
-        // this.maxPercent = 90;
-        this.minEU = 512;
-        this.maxEU = 2048;
+        this.minEU = 0;
+        this.maxEU = 32;
         this.outputAmount = 0;
         this.inverted = false;
-        // this.useEU = true;
-        this.useRatio = false;
         this.isEnabled = true;
     }
 
@@ -68,35 +64,20 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0 || !isEnabled)
-            return;
+        if (coverHolder.getOffsetTimer() % 20 != 0 || !isEnabled) return;
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0){
-            // float currentStorageRatio = 100f * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-
-            // always use EU for now
+        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
             compareValue((float) energyContainer.getEnergyStored(), maxEU, minEU);
             setRedstoneSignalOutput(outputAmount);
         }
     }
 
-    private void compareValue (float value, long maxValue, long minValue) {
-
-        if (useRatio){
-            float ratio;
-
-            if (inverted)
-                ratio = (value - minValue) / (maxValue - minValue);
-            else
-                ratio = (maxValue - value) / (maxValue - minValue);
-            outputAmount = (int) (ratio * 15);
-        }
-
-        if (value >= maxValue){
-            outputAmount = inverted ? 15 : 0;
+    private void compareValue(float value, long maxValue, long minValue) {
+        if (value >= maxValue) {
+            this.outputAmount = inverted ? 15 : 0;
         } else if (value <= minValue) {
-            outputAmount = inverted ? 0 : 15;
+            this.outputAmount = inverted ? 0 : 15;
         }
     }
 
@@ -106,7 +87,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         int SIZE = 18;
 
         WidgetGroup group = new WidgetGroup();
-
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_energy_detector.label"));
 
         // invert logic button
@@ -157,7 +137,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
             GTLog.logger.warn(e);
             this.minEU = Math.max(maxEU - 1, 0);
         }
-
     }
 
     private void setMaxValue(String val){
@@ -169,12 +148,13 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
             this.maxEU = Math.max(minEU + 1, 2048);
         }
     }
+
     private boolean isInverted(){
-        return inverted;
+        return this.inverted;
     }
 
     private void setInverted(boolean b){
-        inverted = b;
+        this.inverted = b;
     }
 
     @Override
@@ -182,69 +162,54 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         return true;
     }
 
+    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        // tagCompound.setInteger("minPercent", this.minPercent);
-        // tagCompound.setInteger("maxPercent", this.maxPercent);
         tagCompound.setLong("maxEU", this.maxEU);
         tagCompound.setLong("minEU", this.minEU);
         tagCompound.setInteger("outputAmount", this.outputAmount);
         tagCompound.setBoolean("inverted", this.inverted);
-        // tagCompound.setBoolean("useEU", this.useEU);
-        tagCompound.setBoolean("useRatio", this.useRatio);
         tagCompound.setBoolean("isEnabled", this.isEnabled);
         return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@Nonnull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        // this.minPercent = tagCompound.getInteger("minPercent");
-        // this.maxPercent = tagCompound.getInteger("maxPercent");
         this.minEU = tagCompound.getLong("minEU");
         this.maxEU = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
         this.inverted = tagCompound.getBoolean("inverted");
-        // this.useEU = tagCompound.getBoolean("useEU");
-        this.useRatio = tagCompound.getBoolean("useRatio");
         this.isEnabled = tagCompound.getBoolean("isEnabled");
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        // packetBuffer.writeInt(this.minPercent);
-        // packetBuffer.writeInt(this.maxPercent);
+    public void writeInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
         packetBuffer.writeLong(this.minEU);
         packetBuffer.writeLong(this.maxEU);
         packetBuffer.writeInt(this.outputAmount);
         packetBuffer.writeBoolean(this.inverted);
-        // packetBuffer.writeBoolean(this.useEU);
-        packetBuffer.writeBoolean(this.useRatio);
         packetBuffer.writeBoolean(this.isEnabled);
     }
 
     @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
-        // this.minPercent = packetBuffer.readInt();
-        // this.maxPercent = packetBuffer.readInt();
+    public void readInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
         this.minEU = packetBuffer.readLong();
         this.maxEU = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
         this.inverted = packetBuffer.readBoolean();
-        // this.useEU = packetBuffer.readBoolean();
-        this.useRatio = packetBuffer.readBoolean();
         this.isEnabled = packetBuffer.readBoolean();
     }
 
     @Override
     public boolean isWorkingEnabled() {
-        return isEnabled;
+        return this.isEnabled;
     }
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
-        isEnabled = isActivationAllowed;
+        this.isEnabled = isActivationAllowed;
         setRedstoneSignalOutput(0);
     }
 

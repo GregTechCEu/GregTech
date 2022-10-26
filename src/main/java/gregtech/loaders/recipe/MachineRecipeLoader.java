@@ -435,6 +435,14 @@ public class MachineRecipeLoader {
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(COVER_ENERGY_DETECTOR)
+                    .input(SENSOR_HV)
+                    .fluidInputs(solder)
+                    .output(COVER_ENERGY_DETECTOR_ADVANCED)
+                    .EUt(16).duration(100)
+                    .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
                     .input(plate, material)
                     .fluidInputs(solder)
