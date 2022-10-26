@@ -440,13 +440,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && exportInventory.getSlots() > 0 && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && exportFluids.getTanks() > 0 && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
