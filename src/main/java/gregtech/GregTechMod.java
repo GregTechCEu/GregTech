@@ -79,7 +79,9 @@ public class GregTechMod {
         NetworkHandler.init();
 
         /* init GroovyScript compat */
-        GroovyScriptCompat.init();
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            GroovyScriptCompat.init();
+        }
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
