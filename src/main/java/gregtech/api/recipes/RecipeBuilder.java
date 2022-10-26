@@ -15,7 +15,10 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.recipeproperties.*;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -31,13 +34,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -541,10 +545,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
     public R inputs(IIngredient ingredient) {
         return input(ofGroovyIngredient(ingredient));
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
     public R inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             inputs(ingredient);
@@ -552,6 +558,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
     public R inputs(Collection<IIngredient> ingredients) {
         for (IIngredient ingredient : ingredients) {
             inputs(ingredient);
@@ -559,10 +566,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
     public R notConsumable(IIngredient ingredient) {
         return notConsumable(ofGroovyIngredient(ingredient));
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
     private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
         if (ingredient instanceof OreDictIngredient) {
             return GTRecipeOreInput.getOrCreate(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
@@ -724,10 +733,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult validate() {
-        if (GroovyScriptCompat.isCurrentlyRunning()) {
-            GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
-            validateGroovy(msg);
-            return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            EnumValidationResult result = validateGroovy();
+            if (result != null) return result;
         }
         if (EUt == 0) {
             GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
@@ -752,6 +760,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return recipeStatus;
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    protected EnumValidationResult validateGroovy() {
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
+            GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
+            validateGroovy(msg);
+            return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
+        }
+        return null;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
     protected void validateGroovy(GroovyLog.Msg errorMsg) {
         errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
         errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");

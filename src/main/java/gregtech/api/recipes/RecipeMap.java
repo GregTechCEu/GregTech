@@ -35,6 +35,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
@@ -118,7 +119,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        } else {
+            this.virtualizedRecipeMap = null;
+        }
     }
 
     @ZenMethod
