@@ -819,6 +819,8 @@ metaitem.cover.item.detector.name=Item Detector
 metaitem.cover.item.detector.tooltip=Gives out Item Amount as Redstone (as Cover)
 metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
+metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector
+metaitem.cover.energy.detector.advanced.tooltip=Gives RS-Latch controlled Energy Status as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
 metaitem.cover.drain.name=Drain Cover
@@ -1188,6 +1190,14 @@ cover.ender_fluid_link.iomode.disabled=I/O Disabled
 cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
+
+cover.advanced_energy_detector.label=Advanced Energy Detector
+cover.advanced_energy_detector.min=Minimum EU
+cover.advanced_energy_detector.max=Maximum EU
+cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
+cover.advanced_energy_detector.invert_label=Inverted:
+cover.advanced_energy_detector.normal=Normal
+cover.advanced_energy_detector.inverted=Inverted
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
