@@ -14,13 +14,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Class that represent machine recipe.<p>
@@ -105,7 +105,11 @@ public class Recipe {
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
-        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
+        } else {
+            this.groovyRecipe = false;
+        }
     }
 
     public Recipe copy() {
