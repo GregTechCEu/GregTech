@@ -733,9 +733,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult validate() {
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
-            EnumValidationResult result = validateGroovy();
-            if (result != null) return result;
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
+            GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
+            validateGroovy(msg);
+            return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
         }
         if (EUt == 0) {
             GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
@@ -758,16 +759,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             recipePropertyStorage.freeze(true);
         }
         return recipeStatus;
-    }
-
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
-    protected EnumValidationResult validateGroovy() {
-        if (GroovyScriptCompat.isCurrentlyRunning()) {
-            GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
-            validateGroovy(msg);
-            return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
-        }
-        return null;
     }
 
     @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)

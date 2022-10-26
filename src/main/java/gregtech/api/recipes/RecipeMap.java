@@ -35,7 +35,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
@@ -119,11 +118,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
-            this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
-        } else {
-            this.virtualizedRecipeMap = null;
-        }
+        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
     }
 
     @ZenMethod
@@ -357,6 +352,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * pack them into one.
      * This uses a strict comparison, so it will not pack the same item with different NBT tags,
      * to allow the presence of, for example, more than one configured circuit in the input.
+     *
      * @param inputs The Collection of GTRecipeInputs.
      * @return an array of unique itemstacks.
      */
@@ -364,7 +360,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public static ItemStack[] uniqueItems(Collection<ItemStack> inputs) {
         int index = 0;
         ItemStack[] uniqueItems = new ItemStack[inputs.size()];
-        main: for (ItemStack input : inputs) {
+        main:
+        for (ItemStack input : inputs) {
             if (input.isEmpty()) {
                 continue;
             }
@@ -832,7 +829,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     AbstractMapIngredient mappedIngredient = inner.get(i);
                     WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(mappedIngredient);
                     if (cached != null && cached.get() != null) {
-                        inner.set(i,cached.get());
+                        inner.set(i, cached.get());
                     } else {
                         ingredientRoot.put(mappedIngredient, new WeakReference<>(mappedIngredient));
                     }
@@ -1024,11 +1021,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public interface IChanceFunction {
 
         /**
-         *
-         * @param baseChance the base chance of the recipe
+         * @param baseChance   the base chance of the recipe
          * @param boostPerTier the amount the chance is changed per tier over the base
-         * @param baseTier the lowest tier used to obtain un-boosted chances
-         * @param boostTier the tier the chance should be calculated at
+         * @param baseTier     the lowest tier used to obtain un-boosted chances
+         * @param boostTier    the tier the chance should be calculated at
          * @return the chance
          */
         int chanceFor(int baseChance, int boostPerTier, int baseTier, int boostTier);

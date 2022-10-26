@@ -105,11 +105,7 @@ public class Recipe {
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
-            this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
-        } else {
-            this.groovyRecipe = false;
-        }
+        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
     }
 
     public Recipe copy() {

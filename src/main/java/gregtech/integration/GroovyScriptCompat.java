@@ -10,14 +10,21 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 
 import static gregtech.api.GregTechAPI.MATERIAL_REGISTRY;
 
-public class GroovyScriptCompat extends ModPropertyContainer {
+/**
+ * A utility class to manage GroovyScript compat. Is safe to be called when GroovyScript is not installed.
+ */
+public class GroovyScriptCompat {
 
     private static boolean loaded = false;
 
-    private static ModSupport.Container<GroovyScriptCompat> modSupportContainer;
+    private static ModSupport.Container<Container> modSupportContainer;
+
+    private GroovyScriptCompat() {
+    }
 
     public static void init() {
         loaded = Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT);
@@ -28,12 +35,7 @@ public class GroovyScriptCompat extends ModPropertyContainer {
         BracketHandlerManager.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
         BracketHandlerManager.registerBracketHandler("metaitem", MetaItemBracketHandler::getMetaItem);
 
-        modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", GroovyScriptCompat::new, "");
-    }
-
-    @Override
-    protected void addRegistry(VirtualizedRegistry<?> registry) {
-        super.addRegistry(registry);
+        modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", Container::new, "gregtech", "gt");
     }
 
     public static boolean isLoaded() {
@@ -44,7 +46,21 @@ public class GroovyScriptCompat extends ModPropertyContainer {
         return loaded && GroovyScript.getSandbox().isRunning();
     }
 
-    public static GroovyScriptCompat getInstance() {
-        return loaded ? modSupportContainer.get() : null;
+    public static Container getInstance() {
+        return modSupportContainer.get();
+    }
+
+    /**
+     * A GroovyScript mod compat container. This should not be referenced when GrS is not installed!
+     */
+    public static class Container extends ModPropertyContainer {
+
+        private Container() {
+        }
+
+        @Override
+        protected void addRegistry(VirtualizedRegistry<?> registry) {
+            super.addRegistry(registry);
+        }
     }
 }
