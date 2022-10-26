@@ -276,21 +276,25 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             if (toolToMatch != null) {
                 // Try to use the item in the player's "hand" (under the cursor)
                 ItemStack heldItem = entityPlayer.inventory.getItemStack();
-                if (ToolHelper.isTool(stack, toolToMatch)) {
+                if (ToolHelper.isTool(heldItem, toolToMatch)) {
                     fixProblemWithTool(i, heldItem, entityPlayer);
-                    continue;
+
+                    if (toolsToMatch.stream().allMatch(Objects::isNull)) {
+                        return;
+                    }
                 }
 
                 // Then try all the remaining inventory slots
                 for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
-                    if (ToolHelper.isTool(stack, toolToMatch)) {
-                        fixProblemWithTool(problemIndex, itemStack, entityPlayer);
+                    if (ToolHelper.isTool(itemStack, toolToMatch)) {
+                        fixProblemWithTool(i, itemStack, entityPlayer);
 
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
                         }
                     }
                 }
+
                 for (ItemStack stack : entityPlayer.inventory.mainInventory) {
                     if (ToolHelper.isTool(stack, toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);

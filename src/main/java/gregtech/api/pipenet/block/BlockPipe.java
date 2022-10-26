@@ -26,7 +26,6 @@ import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.FrameItemBlock;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
-import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
