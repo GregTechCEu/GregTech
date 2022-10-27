@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
  */
 
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = GTValues.MODID)
 public class FluidVisualHandler {
 
     private static final ResourceLocation SUBMERGED_FLUID_OVERLAY = new ResourceLocation(GTValues.MODID, "textures/blocks/fluids/submerged_fluid_overlay.png");
