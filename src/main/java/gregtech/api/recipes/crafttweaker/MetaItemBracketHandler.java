@@ -1,5 +1,6 @@
 package gregtech.api.recipes.crafttweaker;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
@@ -15,6 +16,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.integration.GroovyScriptCompat;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -26,7 +28,6 @@ import stanhebben.zenscript.type.natives.IJavaMethod;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @BracketHandler
 @ZenRegister
@@ -86,16 +87,19 @@ public class MetaItemBracketHandler implements IBracketHandler {
         if ((item = MetaTileEntityBracketHandler.getMetaTileEntityItem(name)) != null) {
             return item.copy();
         }
-        throw new NoSuchElementException("No meta item found for " + name);
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
+            GroovyLog.get().error("Could not resolve metaitem('{}')", name);
+        }
+        return ItemStack.EMPTY;
     }
 
     public static IItemStack getCtMetaItem(String name) {
-        try {
-            return new MCItemStack(getMetaItem(name));
-        } catch (Exception e) {
-            CraftTweakerAPI.logError(e.getMessage());
+        ItemStack itemStack = getMetaItem(name);
+        if (itemStack.isEmpty()) {
+            CraftTweakerAPI.logError("Could not resolve <metaitem:" + name + ">");
+            return MCItemStack.EMPTY;
         }
-        return MCItemStack.EMPTY;
+        return new MCItemStack(itemStack);
     }
 
     @Override

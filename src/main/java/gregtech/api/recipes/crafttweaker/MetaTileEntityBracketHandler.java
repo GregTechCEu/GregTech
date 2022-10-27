@@ -3,6 +3,8 @@ package gregtech.api.recipes.crafttweaker;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -16,6 +18,7 @@ import stanhebben.zenscript.parser.Token;
 import stanhebben.zenscript.symbols.IZenSymbol;
 import stanhebben.zenscript.type.natives.IJavaMethod;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @BracketHandler
@@ -28,13 +31,19 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
     private final IJavaMethod method;
 
     public MetaTileEntityBracketHandler() {
-        this.method = CraftTweakerAPI.getJavaMethod(MetaTileEntityBracketHandler.class, "getMetaTileEntityItem", String.class);
+        this.method = CraftTweakerAPI.getJavaMethod(MetaTileEntityBracketHandler.class, "getCtMetaTileEntityItem", String.class);
     }
 
+    @Nullable
     public static ItemStack getMetaTileEntityItem(String name) {
         String[] resultName = splitObjectName(name);
         MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(resultName[0], resultName[1]));
         return metaTileEntity == null ? null : metaTileEntity.getStackForm();
+    }
+
+    public static IItemStack getCtMetaTileEntityItem(String name) {
+        ItemStack itemStack = getMetaTileEntityItem(name);
+        return itemStack == null || itemStack.isEmpty() ? MCItemStack.EMPTY : new MCItemStack(itemStack);
     }
 
     public static String[] splitObjectName(String toSplit) {
