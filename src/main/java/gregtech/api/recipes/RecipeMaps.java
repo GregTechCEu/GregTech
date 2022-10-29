@@ -919,7 +919,7 @@ public class RecipeMaps {
     /**
      * Example:
      * <pre>
-     * 		RecipeMap.ORE_WASHER_RECIPES.recipeBuilder()
+     * 		RecipeMap.SLUICE_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.crushed, Materials.Aluminum)
      * 				.notConsumable(new IntCircuitIngredient(2))
      * 				.fluidInputs(Materials.Water.getFluid(100))
@@ -930,9 +930,8 @@ public class RecipeMaps {
      * Any Recipe added to the Ore Washer not specifying an <B>EUt</B> value will default to 16.
      * Any Recipe added to the Ore Washer not specifying a <B>duration</B> value will default to 400.
      */
-    @Deprecated
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 2, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
+    public static final RecipeMap<SimpleRecipeBuilder> SLUICE_RECIPES = new RecipeMap<>("sluice", 1, 2, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
