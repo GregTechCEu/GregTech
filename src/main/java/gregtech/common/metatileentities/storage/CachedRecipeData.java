@@ -4,6 +4,8 @@ import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -17,6 +19,7 @@ public class CachedRecipeData {
     private final ItemSources itemSources;
     private IRecipe recipe;
     private final Map<ItemStackKey, Integer> requiredItems = new HashMap<>();
+    private final Map<Integer,Map<ItemStackKey,Boolean>> replaceAttemptMap= new Int2ObjectArrayMap<>();
     private final InventoryCrafting inventory;
 
     public CachedRecipeData(ItemSources sourceList, IRecipe recipe, InventoryCrafting inventoryCrafting) {
@@ -74,17 +77,30 @@ public class CachedRecipeData {
             return true;
         }
 
+        ItemStack previousStack = recipe.getCraftingResult(inventory);
+
+        Map<ItemStackKey,Boolean> map = replaceAttemptMap.computeIfAbsent(slot,(m) -> new Object2BooleanOpenHashMap<>());
+
         //iterate stored items to find equivalent
         for (ItemStackKey itemStackKey : itemSources.getStoredItems()) {
+            if (map.containsKey(itemStackKey)) {
+                if(!map.get(itemStackKey)){
+                    continue;
+                } else {
+                    return true;
+                }
+            }
             ItemStack itemStack = itemStackKey.getItemStack();
             //update item in slot, and check that recipe matches and output item is equal to the expected one
             inventory.setInventorySlotContents(slot, itemStack);
-            if (recipe.matches(inventory, itemSources.getWorld())) {
+            if (recipe.matches(inventory, itemSources.getWorld()) && ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack)) {
+                map.put(itemStackKey, true);
                 //ingredient matched, attempt to extract it and return if successful
                 if (simulateExtractItem(itemStackKey)) {
                     return true;
                 }
             }
+            map.put(itemStackKey,false);
             inventory.setInventorySlotContents(slot, currentStack);
         }
         //nothing matched, so return null
@@ -110,6 +126,7 @@ public class CachedRecipeData {
 
     public void setRecipe(IRecipe newRecipe) {
         this.recipe = newRecipe;
+        this.replaceAttemptMap.clear();
     }
 
     public IRecipe getRecipe() {
