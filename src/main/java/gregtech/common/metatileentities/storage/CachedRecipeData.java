@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
@@ -90,7 +91,24 @@ public class CachedRecipeData {
                     return true;
                 }
             }
+
             ItemStack itemStack = itemStackKey.getItemStack();
+
+            boolean matched = false;
+            //Matching shapeless recipes actually is very bad for performance, as it checks the entire
+            //recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
+            //take the stack
+            for(Ingredient in : recipe.getIngredients()) {
+                if (in.apply(itemStack)){
+                    matched =true;
+                    break;
+                }
+            }
+            if (!matched) {
+                map.put(itemStackKey,false);
+                continue;
+            }
+
             //update item in slot, and check that recipe matches and output item is equal to the expected one
             inventory.setInventorySlotContents(slot, itemStack);
             if (recipe.matches(inventory, itemSources.getWorld()) && ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack)) {
