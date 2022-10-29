@@ -417,7 +417,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         super.addDisplayText(textList);
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
             long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+            String voltageName = GTValues.VNF[GTUtility.getTierForVoltageDisplay(maxVoltage)];
             textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
         }
 

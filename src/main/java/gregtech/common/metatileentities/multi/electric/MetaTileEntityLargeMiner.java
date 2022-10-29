@@ -206,7 +206,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         if (this.isStructureFormed()) {
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = energyContainer.getInputVoltage();
-                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+                String voltageName = GTValues.VNF[GTUtility.getTierForVoltageDisplay(maxVoltage)];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
