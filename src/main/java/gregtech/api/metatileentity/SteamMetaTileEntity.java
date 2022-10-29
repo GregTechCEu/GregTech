@@ -157,4 +157,9 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         getWorld().spawnParticle(smoke, x, y, z, 0, 0, 0);
         getWorld().spawnParticle(flame, x, y, z, 0, 0, 0);
     }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
 }

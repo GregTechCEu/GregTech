@@ -7,8 +7,8 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.client.renderer.handler.FacadeRenderer;
+import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -89,9 +89,11 @@ public class CoverFacade extends CoverBehavior implements IFacadeCover {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setTag("Facade", facadeStack.writeToNBT(new NBTTagCompound()));
+
+        return tagCompound;
     }
 
     @Override

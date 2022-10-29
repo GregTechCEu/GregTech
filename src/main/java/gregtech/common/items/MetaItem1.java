@@ -108,8 +108,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
         // Spray Cans: ID 60-77
-        SPRAY_EMPTY = addItem(61, "spray.empty")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, M * 2), new MaterialStack(Materials.Redstone, M)));
+        SPRAY_EMPTY = addItem(61, "spray.empty");
 
         // out of registry order so it can reference the Empty Spray Can
         SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
@@ -341,6 +340,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_FLUID_DETECTOR = addItem(304, "cover.fluid.detector");
         COVER_ITEM_DETECTOR = addItem(305, "cover.item.detector");
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
+        COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
         COVER_SCREEN = addItem(307, "cover.screen");
         COVER_CRAFTING = addItem(308, "cover.crafting");
         COVER_SHUTTER = addItem(309, "cover.shutter");

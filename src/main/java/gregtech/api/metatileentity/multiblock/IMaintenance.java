@@ -10,6 +10,8 @@ public interface IMaintenance {
 
     void setMaintenanceFixed(int index);
 
+    void causeMaintenanceProblems();
+
     void storeTaped(boolean isTaped);
 
     boolean hasMaintenanceMechanics();

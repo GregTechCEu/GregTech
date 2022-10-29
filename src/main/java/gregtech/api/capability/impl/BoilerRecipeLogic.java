@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
@@ -43,11 +44,16 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     public void update() {
-        if ((!isActive() || !isWorkingEnabled()) && currentHeat > 0) {
+        if ((!isActive() || !canProgressRecipe() || !isWorkingEnabled()) && currentHeat > 0) {
             setHeat(currentHeat - 1);
             setLastTickSteam(0);
         }
         super.update();
+    }
+
+    @Override
+    protected boolean canProgressRecipe() {
+        return super.canProgressRecipe() && !(metaTileEntity instanceof IMultiblockController && ((IMultiblockController) metaTileEntity).isStructureObstructed());
     }
 
     @Override
@@ -122,27 +128,29 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void updateRecipeProgress() {
-        int generatedSteam = this.recipeEUt * getMaximumHeatFromMaintenance() / getMaximumHeat();
-        if (generatedSteam > 0) {
-            long amount = (generatedSteam + STEAM_PER_WATER) / STEAM_PER_WATER;
-            excessWater += amount * STEAM_PER_WATER - generatedSteam;
-            amount -= excessWater / STEAM_PER_WATER;
-            excessWater %= STEAM_PER_WATER;
+        if (canRecipeProgress) {
+            int generatedSteam = this.recipeEUt * getMaximumHeatFromMaintenance() / getMaximumHeat();
+            if (generatedSteam > 0) {
+                long amount = (generatedSteam + STEAM_PER_WATER) / STEAM_PER_WATER;
+                excessWater += amount * STEAM_PER_WATER - generatedSteam;
+                amount -= excessWater / STEAM_PER_WATER;
+                excessWater %= STEAM_PER_WATER;
 
-            FluidStack drainedWater = ModHandler.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
-            if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
-                getMetaTileEntity().explodeMultiblock();
-            } else {
-                setLastTickSteam(generatedSteam);
-                getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
+                FluidStack drainedWater = ModHandler.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
+                if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
+                    getMetaTileEntity().explodeMultiblock();
+                } else {
+                    setLastTickSteam(generatedSteam);
+                    getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
+                }
             }
-        }
-        if (currentHeat < getMaximumHeat()) {
-            setHeat(currentHeat + 1);
-        }
+            if (currentHeat < getMaximumHeat()) {
+                setHeat(currentHeat + 1);
+            }
 
-        if (++progressTime > maxProgressTime) {
-            completeRecipe();
+            if (++progressTime > maxProgressTime) {
+                completeRecipe();
+            }
         }
     }
 
@@ -213,14 +221,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     @Override
     public MetaTileEntityLargeBoiler getMetaTileEntity() {
         return (MetaTileEntityLargeBoiler) super.getMetaTileEntity();
-    }
-
-    @Override
-    protected void setActive(boolean active) {
-        if (active != this.isActive) {
-            getMetaTileEntity().replaceFireboxAsActive(active);
-        }
-        super.setActive(active);
     }
 
     @Override

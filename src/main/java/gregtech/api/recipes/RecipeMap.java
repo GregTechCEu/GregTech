@@ -21,17 +21,21 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.VirtualizedRecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
@@ -54,8 +58,17 @@ import java.util.stream.Collectors;
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
-    private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration).thenComparingInt(Recipe::getEUt).thenComparing(Recipe::hashCode);
-    private static final IChanceFunction DEFAULT_CHANCE_FUNCTION = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
+
+    private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration)
+            .thenComparingInt(Recipe::getEUt)
+            .thenComparing(Recipe::hashCode);
+
+    public static final IChanceFunction DEFAULT_CHANCE_FUNCTION = (baseChance, boostPerTier, baseTier, machineTier) -> {
+        int tierDiff = machineTier - baseTier;
+        if (tierDiff <= 0) return baseChance; // equal or invalid tiers do not boost at all
+        if (baseTier == GTValues.ULV) tierDiff--; // LV does not boost over ULV
+        return baseChance + (boostPerTier * tierDiff);
+    };
 
     public IChanceFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
 
@@ -73,6 +86,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected MoveType moveType;
     public final boolean isHidden;
 
+    private final VirtualizedRecipeMap virtualizedRecipeMap;
     private final Branch lookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
@@ -104,6 +118,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
+
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        } else {
+            this.virtualizedRecipeMap = null;
+        }
     }
 
     @ZenMethod
@@ -188,6 +208,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         Recipe recipe = validationResult.getResult();
 
+        if (recipe.isGroovyRecipe()) {
+            this.virtualizedRecipeMap.addScripted(recipe);
+        }
         compileRecipe(recipe);
 
     }
@@ -202,12 +225,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public boolean removeRecipe(Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        return recurseIngredientTreeRemove(recipe, items, lookup, 0) != null;
+        if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
+            if (GroovyScriptCompat.isCurrentlyRunning()) {
+                this.virtualizedRecipeMap.addBackup(recipe);
+            }
+            return true;
+        }
+        return false;
     }
 
     protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
+        if (recipe.isGroovyRecipe()) {
+            return validationResult;
+        }
         if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
@@ -325,33 +357,41 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * pack them into one.
      * This uses a strict comparison, so it will not pack the same item with different NBT tags,
      * to allow the presence of, for example, more than one configured circuit in the input.
-     * @param input The Collection of GTRecipeInputs.
+     * @param inputs The Collection of GTRecipeInputs.
      * @return an array of unique itemstacks.
      */
 
-    public static ItemStack[] uniqueItems(Collection<ItemStack> input) {
-        List<ItemStack> list = new ObjectArrayList<>(input.size());
-        for (ItemStack item : input) {
-            if (item.isEmpty()) {
+    public static ItemStack[] uniqueItems(Collection<ItemStack> inputs) {
+        int index = 0;
+        ItemStack[] uniqueItems = new ItemStack[inputs.size()];
+        main: for (ItemStack input : inputs) {
+            if (input.isEmpty()) {
                 continue;
             }
-            boolean isEqual = false;
-            for (ItemStack obj: list) {
-                if (item.isItemEqual(obj) && ItemStack.areItemStackTagsEqual(item, obj)) {
-                    isEqual = true;
-                    break;
+            if (index > 0) {
+                for (int i = 0; i < uniqueItems.length; i++) {
+                    ItemStack unique = uniqueItems[i];
+                    if (unique == null) break;
+                    else if (input.isItemEqual(unique) && ItemStack.areItemStackTagsEqual(input, unique)) {
+                        continue main;
+                    }
                 }
             }
-            if (isEqual) continue;
-            list.add(item);
+            uniqueItems[index++] = input;
         }
-        return list.toArray(new ItemStack[0]);
+        if (index == uniqueItems.length) {
+            return uniqueItems;
+        }
+        ItemStack[] retUniqueItems = new ItemStack[index];
+        System.arraycopy(uniqueItems, 0, retUniqueItems, 0, index);
+        return retUniqueItems;
     }
 
     /**
      * Builds a list of unique inputs from the given list GTRecipeInputs.
      * Used to reduce the number inputs, if for example there is more than one of the same input,
      * pack them into one.
+     *
      * @param input The list of GTRecipeInputs.
      * @return The list of unique inputs.
      */
@@ -367,7 +407,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
             if (isEqual) continue;
-            list.add(item);
+            if (item instanceof IntCircuitIngredient) {
+                list.add(0, item);
+            } else {
+                list.add(item);
+            }
         }
         return list;
     }
@@ -447,7 +491,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * Exhaustively gathers all recipes that can be crafted with the given ingredients, into a Set.
-     * @param items the ingredients, in the form of a List of ItemStack. Usually the inputs of a Recipe
+     *
+     * @param items  the ingredients, in the form of a List of ItemStack. Usually the inputs of a Recipe
      * @param fluids the ingredients, in the form of a List of FluidStack. Usually the inputs of a Recipe
      * @return a Set of recipes that can be crafted with the given ingredients
      */
@@ -765,6 +810,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 } else {
                     ingredient = new MapOreDictIngredient(r.getOreDict());
                 }
+
                 WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
                 if (cached != null && cached.get() != null) {
                     list.add(Collections.singletonList(cached.get()));
@@ -772,22 +818,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
                     list.add(Collections.singletonList(ingredient));
                 }
+
             } else {
                 List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
+                if (r.hasNBTMatchingCondition()) {
+                    inner.addAll(MapItemStackNBTIngredient.from(r));
+                    hasNBTMatcherInputs = true;
+                } else {
+                    inner.addAll(MapItemStackIngredient.from(r));
+                }
 
-                for (ItemStack s : r.getInputStacks()) {
-                    if (r.hasNBTMatchingCondition()) {
-                        hasNBTMatcherInputs = true;
-                        ingredient = new MapItemStackNBTIngredient(s, r.getNBTMatcher(), r.getNBTMatchingCondition());
-                    } else {
-                        ingredient = new MapItemStackIngredient(s);
-                    }
-                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
+                for (int i = 0; i < inner.size(); i++) {
+                    AbstractMapIngredient mappedIngredient = inner.get(i);
+                    WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(mappedIngredient);
                     if (cached != null && cached.get() != null) {
-                        inner.add(cached.get());
+                        inner.set(i,cached.get());
                     } else {
-                        ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                        inner.add(ingredient);
+                        ingredientRoot.put(mappedIngredient, new WeakReference<>(mappedIngredient));
                     }
                 }
                 list.add(inner);
@@ -832,7 +879,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2], specialTexturePosition[3], specialTexture);
         return builder;
     }
-    
+
     public Collection<Recipe> getRecipeList() {
         return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
     }
@@ -975,7 +1022,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenClass("mods.gregtech.recipe.IChanceFunction")
     @ZenRegister
     public interface IChanceFunction {
-        int chanceFor(int chance, int boostPerTier, int boostTier);
+
+        /**
+         *
+         * @param baseChance the base chance of the recipe
+         * @param boostPerTier the amount the chance is changed per tier over the base
+         * @param baseTier the lowest tier used to obtain un-boosted chances
+         * @param boostTier the tier the chance should be calculated at
+         * @return the chance
+         */
+        int chanceFor(int baseChance, int boostPerTier, int baseTier, int boostTier);
     }
 
 }

@@ -35,11 +35,11 @@ public class GregtechDataCodes {
     public static final int SYNC_TILE_MODE = 500;
 
     // Clipboard
-    public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
     public static final int INIT_CLIPBOARD_NBT = 3;
 
+    public static final int UPDATE_UI = 10; // 10-36
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
 
@@ -69,6 +69,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_ROTOR_COLOR = 201;
     public static final int UPDATE_STRUCTURE_SIZE = 202;
     public static final int STRUCTURE_FORMED = 400;
+    public static final int VARIANT_RENDER_UPDATE = 410;
     public static final int IS_TAPED = 550;
     public static final int STORE_MAINTENANCE = 551;
     public static final int STORE_TAPED = 552;

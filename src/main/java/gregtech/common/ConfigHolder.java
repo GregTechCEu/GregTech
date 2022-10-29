@@ -107,6 +107,9 @@ public class ConfigHolder {
                 "This does nothing if B:enableCleanroom is false.",
                 "Default: false"})
         public boolean cleanMultiblocks = false;
+
+        @Config.Comment({"Block to replace mined ores with in the miner and multiblock miner.", "Default: minecraft:cobblestone"})
+        public String replaceMinedBlocksWith = "minecraft:cobblestone";
     }
 
     public static class WorldGenOptions {

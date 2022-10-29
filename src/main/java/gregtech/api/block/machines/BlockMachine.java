@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -202,13 +203,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean rotateBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if (metaTileEntity == null ||
-                !metaTileEntity.isValidFrontFacing(axis) ||
-                metaTileEntity.getFrontFacing() == axis ||
-                !metaTileEntity.hasFrontFacing())
-            return false;
-        metaTileEntity.setFrontFacing(axis);
-        return true;
+        if (metaTileEntity == null) return false;
+        if (metaTileEntity.hasFrontFacing() && metaTileEntity.isValidFrontFacing(axis)) {
+            metaTileEntity.setFrontFacing(axis);
+            return true;
+        }
+        return false;
     }
 
     @Nullable
@@ -254,6 +254,18 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
                 }
             }
+
+            // Color machines on place if holding spray can in off-hand
+            if (placer instanceof EntityPlayer) {
+                ItemStack offhand = placer.getHeldItemOffhand();
+                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        break;
+                    }
+                }
+            }
+
             metaTileEntity.onPlacement();
         }
     }

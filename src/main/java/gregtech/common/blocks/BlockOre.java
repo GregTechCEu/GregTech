@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTUtility;
@@ -21,6 +22,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -149,6 +151,15 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
             return super.getSilkTouchDrop(state);
         }
         return super.getSilkTouchDrop(this.getDefaultState());
+    }
+
+    @Override
+    public boolean isFireSource(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+        if (side != EnumFacing.UP) return false;
+
+        // if the stone type of the ore block is flammable, it will burn forever like Netherrack
+        StoneType stoneType = world.getBlockState(pos).getValue(STONE_TYPE);
+        return stoneType.stoneMaterial.hasFlag(MaterialFlags.FLAMMABLE);
     }
 
     @Override

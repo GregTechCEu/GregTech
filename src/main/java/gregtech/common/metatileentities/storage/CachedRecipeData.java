@@ -69,7 +69,6 @@ public class CachedRecipeData {
         if (currentStack.isEmpty()) {
             return true; //stack is empty, nothing to return
         }
-        ItemStack previousStack = recipe.getCraftingResult(inventory);
 
         if (simulateExtractItem(KeySharedStack.getRegisteredStack(currentStack))) {
             return true;
@@ -80,8 +79,7 @@ public class CachedRecipeData {
             ItemStack itemStack = itemStackKey.getItemStack();
             //update item in slot, and check that recipe matches and output item is equal to the expected one
             inventory.setInventorySlotContents(slot, itemStack);
-            if (recipe.matches(inventory, itemSources.getWorld()) &&
-                    ItemStack.areItemStacksEqual(previousStack, recipe.getCraftingResult(inventory))) {
+            if (recipe.matches(inventory, itemSources.getWorld())) {
                 //ingredient matched, attempt to extract it and return if successful
                 if (simulateExtractItem(itemStackKey)) {
                     return true;

@@ -419,7 +419,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so wrench will get damaged and animation will be played
      */
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        if (playerIn.isSneaking()) {
+        if (!needsSneakToRotate() || playerIn.isSneaking()) {
             if (wrenchSide == getFrontFacing() || !isValidFrontFacing(wrenchSide) || !hasFrontFacing()) {
                 return false;
             }
@@ -428,6 +428,13 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             }
             return true;
         }
+        return false;
+    }
+
+    /**
+     * @return true if the player must sneak to rotate this metatileentity, otherwise false
+     */
+    public boolean needsSneakToRotate() {
         return false;
     }
 
@@ -1065,6 +1072,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean isValidFrontFacing(EnumFacing facing) {
+        if (this.hasFrontFacing() && getFrontFacing() == facing) return false;
         return facing != EnumFacing.UP && facing != EnumFacing.DOWN;
     }
 

@@ -25,9 +25,9 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
-import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -86,6 +86,14 @@ public class GTUtility {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
+
+    private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
+
+    static {
+        for (int i = 0; i < V.length; i++) {
+            tierByVoltage.put(V[i], (byte) i);
+        }
+    }
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
@@ -283,7 +291,8 @@ public class GTUtility {
 
     public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
         if (!itemStackList.isEmpty()) {
-            for (ItemStack stackInList : itemStackList) {
+            for (int i = 0; i < itemStackList.size(); i++) {
+                ItemStack stackInList = itemStackList.get(i);
                 if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
                     if (stackInList.getCount() < stackInList.getMaxStackSize()) {
                         int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
@@ -439,15 +448,8 @@ public class GTUtility {
      * @return lowest tier that can handle passed voltage
      */
     public static byte getTierByVoltage(long voltage) {
-        byte tier = 0;
-        while (++tier < V.length) {
-            if (voltage == V[tier]) {
-                return tier;
-            } else if (voltage < V[tier]) {
-                return (byte) Math.max(0, tier - 1);
-            }
-        }
-        return (byte) Math.min(V.length - 1, tier);
+        if (voltage > V[GTValues.MAX]) return GTValues.MAX;
+        return tierByVoltage.ceilingEntry(voltage).getValue();
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
@@ -1050,5 +1052,36 @@ public class GTUtility {
             return false;
         }
         return world.isDaytime();
+    }
+
+    public static MapColor getMapColor(int rgb) {
+        MapColor color = MapColor.BLACK;
+        int originalR = (rgb >> 16) & 0xFF;
+        int originalG = (rgb >> 8) & 0xFF;
+        int originalB = rgb & 0xFF;
+        int distance = Integer.MAX_VALUE;
+
+        for (MapColor mapColor : MapColor.COLORS) {
+            // why is there a null in here mojang!?
+            if (mapColor == null) continue;
+
+            int colorValue = mapColor.colorValue;
+            if (colorValue == 0) continue;
+
+            int colorR = (colorValue >> 16) & 0xFF;
+            int colorG = (colorValue >> 8) & 0xFF;
+            int colorB = colorValue & 0xFF;
+
+            int distR = Math.abs(originalR - colorR);
+            int distG = Math.abs(originalG - colorG);
+            int distB = Math.abs(originalB - colorB);
+            int dist = distR * distR + distG * distG + distB * distB;
+
+            if (dist < distance) {
+                distance = dist;
+                color = mapColor;
+            }
+        }
+        return color;
     }
 }

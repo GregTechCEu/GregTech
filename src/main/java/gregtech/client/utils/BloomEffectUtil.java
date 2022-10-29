@@ -11,12 +11,16 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.lwjgl.opengl.GL11;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -36,6 +40,18 @@ public class BloomEffectUtil {
 
     public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
+        if (Loader.isModLoaded("nothirium")) {
+            try {
+                //Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to that too.
+                Class crp = Class.forName("meldexun.nothirium.api.renderer.chunk.ChunkRenderPass", false, Launch.classLoader);
+                EnumHelper.addEnum(crp, "BLOOM", new Class[]{});
+                Field all = FieldUtils.getField(crp, "ALL", false);
+                FieldUtils.removeFinalModifier(all);
+                FieldUtils.writeStaticField(all, crp.getEnumConstants());
+            } catch (ClassNotFoundException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
         RENDER_FAST = Maps.newHashMap();
     }
 

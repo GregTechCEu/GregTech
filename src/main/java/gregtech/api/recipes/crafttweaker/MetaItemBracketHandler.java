@@ -6,14 +6,9 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
-import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
@@ -31,6 +26,7 @@ import stanhebben.zenscript.type.natives.IJavaMethod;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @BracketHandler
 @ZenRegister
@@ -41,7 +37,7 @@ public class MetaItemBracketHandler implements IBracketHandler {
     private final IJavaMethod method;
 
     public MetaItemBracketHandler() {
-        this.method = CraftTweakerAPI.getJavaMethod(MetaItemBracketHandler.class, "getMetaItem", String.class);
+        this.method = CraftTweakerAPI.getJavaMethod(MetaItemBracketHandler.class, "getCtMetaItem", String.class);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -55,43 +51,51 @@ public class MetaItemBracketHandler implements IBracketHandler {
             }
         }
 
-        for(Map.Entry<Material, BlockCompressed> entry : MetaBlocks.COMPRESSED.entrySet()) {
+        for (Map.Entry<Material, BlockCompressed> entry : MetaBlocks.COMPRESSED.entrySet()) {
             metaBlockNames.put("block" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
         }
-        for(Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
+        for (Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
             metaBlockNames.put("frame" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
         }
 
-        for(BlockCable cable : MetaBlocks.CABLES) {
-            for(Material material : cable.getEnabledMaterials()) {
+        for (BlockCable cable : MetaBlocks.CABLES) {
+            for (Material material : cable.getEnabledMaterials()) {
                 metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
             }
         }
-        for(BlockItemPipe cable : MetaBlocks.ITEM_PIPES) {
-            for(Material material : cable.getEnabledMaterials()) {
+        for (BlockItemPipe cable : MetaBlocks.ITEM_PIPES) {
+            for (Material material : cable.getEnabledMaterials()) {
                 metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
             }
         }
-        for(BlockFluidPipe cable : MetaBlocks.FLUID_PIPES) {
-            for(Material material : cable.getEnabledMaterials()) {
+        for (BlockFluidPipe cable : MetaBlocks.FLUID_PIPES) {
+            for (Material material : cable.getEnabledMaterials()) {
                 metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
             }
         }
     }
 
-    public static IItemStack getMetaItem(String name) {
+    public static ItemStack getMetaItem(String name) {
         ItemStack item;
-        if((item = metaItemNames.get(name)) != null) {
-            return new MCItemStack(item);
+        if ((item = metaItemNames.get(name)) != null) {
+            return item.copy();
         }
-        if((item = metaBlockNames.get(name)) != null) {
-            return new MCItemStack(item);
+        if ((item = metaBlockNames.get(name)) != null) {
+            return item.copy();
         }
-        IItemStack iItemStack = MetaTileEntityBracketHandler.getMetaTileEntityItem(name);
-        if (iItemStack == null) {
-            CraftTweakerAPI.logError("Could not find meta item with name " + name);
+        if ((item = MetaTileEntityBracketHandler.getMetaTileEntityItem(name)) != null) {
+            return item.copy();
         }
-        return iItemStack;
+        throw new NoSuchElementException("No meta item found for " + name);
+    }
+
+    public static IItemStack getCtMetaItem(String name) {
+        try {
+            return new MCItemStack(getMetaItem(name));
+        } catch (Exception e) {
+            CraftTweakerAPI.logError(e.getMessage());
+        }
+        return MCItemStack.EMPTY;
     }
 
     @Override

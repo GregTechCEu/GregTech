@@ -1,13 +1,13 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
@@ -258,6 +258,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
+
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
 
@@ -321,7 +323,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
-        if (getMetaTileEntity() instanceof MultiblockWithDisplayBase && ConfigHolder.machines.cleanMultiblocks) return true;
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
 
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
@@ -438,13 +440,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && exportInventory.getSlots() > 0 && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && exportFluids.getTanks() > 0 && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -644,7 +646,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(overclockResults[1]);
         this.recipeEUt = overclockResults[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
+                GTUtility.getTierByVoltage(recipe.getEUt()),
+                getOverclockTier(),
+                getRecipeMap())
+        );
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;

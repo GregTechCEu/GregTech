@@ -145,9 +145,8 @@ public class PolymerRecipes {
                 .fluidInputs(Methane.getFluid(2000))
                 .fluidInputs(Chlorine.getFluid(12000))
                 .fluidOutputs(Tetrafluoroethylene.getFluid(1000))
-                .fluidOutputs(HydrochloricAcid.getFluid(6000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(6000))
-                .duration(540).EUt(240).buildAndRegister();
+                .fluidOutputs(HydrochloricAcid.getFluid(12000))
+                .duration(540).EUt(VA[IV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))

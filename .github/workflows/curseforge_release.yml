@@ -1,4 +1,5 @@
-# Requires a Release on GitHub of the current version
+# Requires a release on GitHub of the current version
+# Creates a release on Curseforge
 name: Release to CurseForge
 
 # manually run, or automatically after the GitHub release is done
@@ -16,21 +17,28 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Get Mod Version
-        id: get_version
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-executable: ".gradlew"
+          generate-job-summary: false
+
+      - name: Get Current Mod Version
+        id: get_current_version
         run: echo ::set-output name=version::$(./gradlew getVersionFromJava --q)
 
       - name: Get Mod Version without Extra
         id: get_version_no_extra
-        run: echo ::set-output name=version::$(./gradlew getVersionFromJavaNoExtra --q)
+        run: echo ::set-output name=version::$(echo "$(./gradlew getVersionFromJava --q | sed -E 's/1.12.2-|-.+//g')")
 
       - name: Retrieve Jar from Latest Release
-        uses: dsaltares/fetch-gh-release-asset@master
-        with:
-          repo: "${{ github.repository }}"
-          version: "tags/v${{ steps.get_version.outputs.version }}"
-          file: "gregtech-1.12.2-${{ steps.get_version.outputs.version }}.jar"
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: wget "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get_version_no_extra.outputs.version }}/gregtech-${{ steps.get_current_version.outputs.version }}.jar"
 
       - name: Create CurseForge Release
         uses: itsmeow/curseforge-upload@v3
@@ -41,6 +49,6 @@ jobs:
           changelog: "Changelog is available [here](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.get_version_no_extra.outputs.version }})."
           changelog_type: "markdown"
           relations: "codechicken-lib-1-8:requiredDependency,gregtechce:incompatible,gregtech-chill-edition:incompatible"
-          file_path: "$gregtech-1.12.2-${{ steps.get_version.outputs.version }}.jar"
+          file_path: "gregtech-${{ steps.get_current_version.outputs.version }}.jar"
           project_id: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
           token: "${{ secrets.CURSEFORGE_API_KEY }}"
