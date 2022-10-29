@@ -14,7 +14,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -108,7 +107,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        // start the machine on formation
+        // calculate the duration upon formation
         updateMaxProgressTime();
     }
 
@@ -268,15 +267,19 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void update() {
         super.update();
-        if (getWorld() != null && getWorld().isRemote && isActive) {
-            BlockPos pos = getPos();
-            EnumFacing facing = EnumFacing.UP;
-            float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.5F;
-            float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
-            float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.5F;
-            float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
+        if (getWorld() != null) {
+            if (!getWorld().isRemote && !this.isStructureFormed() && getOffsetTimer() % 20 == 0) {
+                this.reinitializeStructurePattern();
+            } else if (isActive) {
+                BlockPos pos = getPos();
+                EnumFacing facing = EnumFacing.UP;
+                float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.5F;
+                float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
+                float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.5F;
+                float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
 
-            getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, xPos, yPos, zPos, 0, ySpd, 0);
+                getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, xPos, yPos, zPos, 0, ySpd, 0);
+            }
         }
     }
 
@@ -297,6 +300,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         for (BlockPos pos : logPositions) {
             world.setBlockState(pos, MetaBlocks.BRITTLE_CHARCOAL.getDefaultState());
         }
+        logPositions.clear();
     }
 
     @Override
@@ -399,7 +403,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
             this.lDist = buf.readInt();
             this.rDist = buf.readInt();
             this.hDist = buf.readInt();
-            this.reinitializeStructurePattern();
         } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             scheduleRenderUpdate();
@@ -408,6 +411,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     /**
      * Add a block to the valid Charcoal Pile valid wall/roof blocks
+     *
      * @param block the block to add
      */
     @SuppressWarnings("unused")
@@ -449,9 +453,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        } else if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE) {
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
         }
 
@@ -462,22 +464,22 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     public static void onItemUse(@Nonnull PlayerInteractEvent.RightClickBlock event) {
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
         MetaTileEntity mte = null;
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        if (tileEntity instanceof IGregTechTileEntity) {
+            mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
         }
-        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((MetaTileEntityCharcoalPileIgniter) mte).isStructureFormed())  {
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((MetaTileEntityCharcoalPileIgniter) mte).isStructureFormed()) {
             if (event.getSide().isClient()) {
                 event.setCanceled(true);
                 event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
-                return;
-            } else {
+            } else if (!mte.isActive()) {
                 boolean shouldActivate = false;
                 ItemStack stack = event.getItemStack();
                 if (stack.getItem() instanceof ItemFlintAndSteel) {
                     // flint and steel
                     stack.damageItem(1, event.getEntityPlayer());
 
-                    // flint and steel does play its sound
+                    // flint and steel sound does not get played when handled like this
+                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
                     shouldActivate = true;
                 } else if (stack.getItem() instanceof ItemFireball) {
@@ -494,13 +496,14 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                     for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
                         if (behaviour instanceof LighterBehaviour) {
                             ((LighterBehaviour) behaviour).prepareLighter(stack);
-                            ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack);
+                            if (((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
 
-                            // lighter sound does not get played when handled like this
-                            event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                                // lighter sound does not get played when handled like this
+                                event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
-                            shouldActivate = true;
-                            break;
+                                shouldActivate = true;
+                                break;
+                            }
                         }
                     }
                 }
