@@ -1407,56 +1407,56 @@ public class FirstDegreeMaterials {
                 .fluidTemp(4)
                 .build();
 
-        BlueVitriol = new Material.Builder(450, "blue_vitriol")
+        BlueVitriol = new Material.Builder(451, "blue_vitriol")
                 .fluid()
                 .color(0x4242DE)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        GreenVitriol = new Material.Builder(451, "green_vitriol")
+        GreenVitriol = new Material.Builder(452, "green_vitriol")
                 .fluid()
                 .color(0x42DE42)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iron, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        RedVitriol = new Material.Builder(452, "red_vitriol")
+        RedVitriol = new Material.Builder(453, "red_vitriol")
                 .fluid()
                 .color(0xDE4242)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Cobalt, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        PinkVitriol = new Material.Builder(453, "pink_vitriol")
+        PinkVitriol = new Material.Builder(454, "pink_vitriol")
                 .fluid()
                 .color(0xDE6F6F)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        CyanVitriol = new Material.Builder(454, "cyan_vitriol")
+        CyanVitriol = new Material.Builder(455, "cyan_vitriol")
                 .fluid()
                 .color(0x6FDEDE)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nickel, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        WhiteVitriol = new Material.Builder(455, "white_vitriol")
+        WhiteVitriol = new Material.Builder(456, "white_vitriol")
                 .fluid()
                 .color(0xDEDEDE)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zinc, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        GrayVitriol = new Material.Builder(456, "gray_vitriol")
+        GrayVitriol = new Material.Builder(457, "gray_vitriol")
                 .fluid()
                 .color(0x6F6F6F)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Manganese, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        ClayVitriol = new Material.Builder(457, "clay_vitriol")
+        ClayVitriol = new Material.Builder(458, "clay_vitriol")
                 .fluid()
                 .color(0x42DEDE)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1464,14 +1464,14 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("Al2(SO4)3", true);
 
-        ChloroauricAcid = new Material.Builder(458, "chloroauric_acid")
+        ChloroauricAcid = new Material.Builder(459, "chloroauric_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xFFC846)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Gold, 1, Chlorine, 4)
                 .build();
 
-        ChloroplatinicAcid = new Material.Builder(459, "chloroplatinic_acid")
+        ChloroplatinicAcid = new Material.Builder(460, "chloroplatinic_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xFF4646)
                 .flags(DISABLE_DECOMPOSITION)
