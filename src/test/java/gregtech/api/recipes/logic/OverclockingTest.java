@@ -27,7 +27,7 @@ public class OverclockingTest {
 
         oc = testOC(recipeDuration, recipeTier, recipeVoltage, machineTier, (int) V[machineTier]);
 
-        // 0 overclocks
+        // 1 overclock
         assertEquals(recipeVoltage * 4, oc[0]);
         assertEquals(recipeDuration / 2, oc[1]);
 
@@ -36,7 +36,7 @@ public class OverclockingTest {
 
         oc = testOC(recipeDuration, recipeTier, recipeVoltage, machineTier, (int) V[machineTier]);
 
-        // 0 overclocks
+        // 2 overclocks
         assertEquals(recipeVoltage * ((int) Math.pow(4, 2)), oc[0]);
         assertEquals(recipeDuration / ((int) Math.pow(2, 2)), oc[1]);
     }
@@ -137,6 +137,37 @@ public class OverclockingTest {
         assertEquals(recipeDuration / 2 / 4, oc[1]);
     }
 
+    @Test
+    public void testFusionReactor() {
+        final int recipeDuration = 32768;
+        final int recipeTier = LuV;
+        final int recipeVoltage = (int) V[recipeTier];
+
+        // LuV recipe, LuV machine
+        int machineTier = LuV;
+
+        int[] oc = testFusionOC(recipeDuration, recipeTier, recipeVoltage, machineTier, (int) V[machineTier]);
+
+        assertEquals(recipeVoltage, oc[0]);
+        assertEquals(recipeDuration, oc[1]);
+
+        // LuV recipe, ZPM machine
+        machineTier = ZPM;
+
+        oc = testFusionOC(recipeDuration, recipeTier, recipeVoltage, machineTier, (int) V[machineTier]);
+
+        assertEquals(recipeVoltage * 2, oc[0]);
+        assertEquals(recipeDuration / 2, oc[1]);
+
+        // LuV recipe, UV machine
+        machineTier = UV;
+
+        oc = testFusionOC(recipeDuration, recipeTier, recipeVoltage, machineTier, (int) V[machineTier]);
+
+        assertEquals(recipeVoltage * ((int) Math.pow(2, 2)), oc[0]);
+        assertEquals(recipeDuration / ((int) Math.pow(2, 2)), oc[1]);
+    }
+
     private int[] testOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage) {
         int numberOfOCs = machineTier - recipeTier;
         if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
@@ -168,5 +199,21 @@ public class OverclockingTest {
                 numberOfOCs,
                 machineTemperature,
                 recipeTemperature);
+    }
+
+    private int[] testFusionOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage) {
+        int numberOfOCs = machineTier - recipeTier;
+        if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
+
+        // cannot overclock, so return the starting values
+        if (numberOfOCs <= 0) return new int[]{recipeVoltage, recipeDuration};
+
+        return OverclockingLogic.standardOverclockingLogic(
+                recipeVoltage,
+                maxVoltage,
+                recipeDuration,
+                numberOfOCs,
+                OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR,
+                2.0);
     }
 }
