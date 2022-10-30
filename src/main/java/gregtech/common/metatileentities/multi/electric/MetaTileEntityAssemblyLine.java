@@ -79,10 +79,18 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public void update() {
         super.update();
         if(ConfigHolder.client.shader.assemblyLineParticles) {
-            if (getRecipeMapWorkable().isWorking()) {
-                int count = (int) (getRecipeMapWorkable().getProgressPercent() * getAbilities(MultiblockAbility.IMPORT_ITEMS).size()) + 1;
-                if (count != beamCount) {
-                    beamCount = count;
+            if (getRecipeMapWorkable().isWorking() || getRecipeMapWorkable().isActive()) {
+                int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
+                int maxProgress = getRecipeMapWorkable().getMaxProgress();
+
+                // Each beam should be visible for an equal amount of time, which is derived from the maximum number of
+                // beams and the maximum progress in the recipe.
+                int beamTime = Math.max(1, maxProgress / maxBeams);
+
+                int currentBeamCount = Math.min(maxBeams, getRecipeMapWorkable().getProgress() / beamTime);
+
+                if (currentBeamCount != beamCount) {
+                    beamCount = currentBeamCount;
                     writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
                 }
                 return;

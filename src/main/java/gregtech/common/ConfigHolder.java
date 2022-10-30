@@ -348,7 +348,6 @@ public class ConfigHolder {
             public FusionBloom fusionBloom = new FusionBloom();
 
             @Config.Comment("Particle config option for the Assembly Line")
-            @Config.Name("Assembly Line Particles")
             public boolean assemblyLineParticles = false;
 
 
