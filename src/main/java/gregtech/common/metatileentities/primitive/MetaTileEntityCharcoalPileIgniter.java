@@ -121,6 +121,14 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (rDist < 1) rDist = MIN_RADIUS;
         if (hDist < 2) hDist = MIN_DEPTH;
 
+        //swap the left and right distances if the front facing is east or west
+        //i guess allows BlockPattern checkPatternAt to get the correct relative position, somehow.
+        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
+            int tmp = lDist;
+            lDist = rDist;
+            rDist = tmp;
+        }
+
         StringBuilder wallBuilder = new StringBuilder();       // " XXX "
         StringBuilder floorBuilder = new StringBuilder();      // " BBB "
         StringBuilder cornerBuilder = new StringBuilder();     // "     "
@@ -176,12 +184,17 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         slice[0] = floorBuilder.toString();
 
         String[] center = Arrays.copyOf(slice, slice.length); // " BBB ", "XCCCX", " XSX "
-        center[center.length - 1] = ctrlBuilder.toString();
+        //inverse the center slice if facing east or west.
+        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
+            center[center.length - 1] = ctrlBuilder.reverse().toString();
+        } else {
+            center[center.length - 1] = ctrlBuilder.toString();
+        }
 
         // slice is finished after center, so we can re-use it a bit more
         slice[slice.length - 1] = wallBuilder.toString();
 
-        return FactoryBlockPattern.start()
+            return FactoryBlockPattern.start()
                 .aisle(wall)
                 .aisle(slice).setRepeatable(0, 4)
                 .aisle(center)
