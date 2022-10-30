@@ -143,10 +143,18 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         }
     }
 
+    @Override
+    public void checkStructurePattern() {
+        if (!this.isStructureFormed()) {
+            reinitializeStructurePattern();
+        }
+        super.checkStructurePattern();
+    }
+
     /**
      * Scans for blocks around the controller to update the dimensions
      */
-    public void updateStructureDimensions() {
+    public boolean updateStructureDimensions() {
         World world = getWorld();
         EnumFacing front = getFrontFacing();
         EnumFacing back = front.getOpposite();
@@ -185,6 +193,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
         if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || fDist < MIN_RADIUS || hDist < MIN_DEPTH) {
             invalidateStructure();
+            return false;
         }
 
         this.lDist = lDist;
@@ -200,6 +209,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             buf.writeInt(this.fDist);
             buf.writeInt(this.hDist);
         });
+        return true;
     }
 
     /**
@@ -224,7 +234,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     protected BlockPattern createStructurePattern() {
-        if (getWorld() != null) updateStructureDimensions();
+        if (getWorld() != null) {
+            if (!updateStructureDimensions()) {
+                return null;
+            }
+        }
 
         // these can sometimes get set to 0 when loading the game, breaking JEI
         if (lDist == 0) lDist = MIN_RADIUS;
@@ -232,6 +246,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         if (bDist == 0) bDist = MIN_RADIUS;
         if (fDist == 0) fDist = MIN_RADIUS;
         if (hDist == 0) hDist = MIN_DEPTH;
+
+        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
+            int tmp = lDist;
+            lDist = rDist;
+            rDist = tmp;
+        }
 
         // build each row of the structure
         StringBuilder borderBuilder = new StringBuilder();     // BBBBB
@@ -297,8 +317,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         slice[slice.length - 1] = roofBuilder.toString();
 
         String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X   X", "X   X", "X   X", "BFSFB"
-        center[center.length - 1] = controllerBuilder.toString();
-        center[0] = centerBuilder.toString();
+        if (this.frontFacing == EnumFacing.NORTH || this.frontFacing == EnumFacing.SOUTH) {
+            center[0] = centerBuilder.reverse().toString();
+            center[center.length - 1] = controllerBuilder.reverse().toString();
+        } else {
+            center[0] = centerBuilder.toString();
+            center[center.length - 1] = controllerBuilder.toString();
+        }
 
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
         TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
