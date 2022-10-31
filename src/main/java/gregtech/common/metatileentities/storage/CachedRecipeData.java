@@ -20,7 +20,7 @@ public class CachedRecipeData {
     private final ItemSources itemSources;
     private IRecipe recipe;
     private final Map<ItemStackKey, Integer> requiredItems = new HashMap<>();
-    private final Map<Integer,Map<ItemStackKey,Boolean>> replaceAttemptMap= new Int2ObjectArrayMap<>();
+    private final Map<Integer, Map<ItemStackKey, Boolean>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting inventory;
 
     public CachedRecipeData(ItemSources sourceList, IRecipe recipe, InventoryCrafting inventoryCrafting) {
@@ -80,12 +80,12 @@ public class CachedRecipeData {
 
         ItemStack previousStack = recipe.getCraftingResult(inventory);
 
-        Map<ItemStackKey,Boolean> map = replaceAttemptMap.computeIfAbsent(slot,(m) -> new Object2BooleanOpenHashMap<>());
+        Map<ItemStackKey, Boolean> map = replaceAttemptMap.computeIfAbsent(slot, (m) -> new Object2BooleanOpenHashMap<>());
 
         //iterate stored items to find equivalent
         for (ItemStackKey itemStackKey : itemSources.getStoredItems()) {
             if (map.containsKey(itemStackKey)) {
-                if(!map.get(itemStackKey)){
+                if (!map.get(itemStackKey)) {
                     continue;
                 } else {
                     return true;
@@ -98,14 +98,14 @@ public class CachedRecipeData {
             //Matching shapeless recipes actually is very bad for performance, as it checks the entire
             //recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
             //take the stack
-            for(Ingredient in : recipe.getIngredients()) {
-                if (in.apply(itemStack)){
-                    matched =true;
+            for (Ingredient in : recipe.getIngredients()) {
+                if (in.apply(itemStack)) {
+                    matched = true;
                     break;
                 }
             }
             if (!matched) {
-                map.put(itemStackKey,false);
+                map.put(itemStackKey, false);
                 continue;
             }
 
@@ -118,7 +118,7 @@ public class CachedRecipeData {
                     return true;
                 }
             }
-            map.put(itemStackKey,false);
+            map.put(itemStackKey, false);
             inventory.setInventorySlotContents(slot, currentStack);
         }
         //nothing matched, so return null
