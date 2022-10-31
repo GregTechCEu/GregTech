@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -19,7 +20,6 @@ import static gregtech.common.items.MetaItems.*;
 public class AssemblerRecipeLoader {
 
     public static void init() {
-
         // Gearbox-like
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Bronze, 4)
@@ -171,68 +171,70 @@ public class AssemblerRecipeLoader {
                 .buildAndRegister();
 
         // Voltage Coils
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
-                .input(stick, IronMagnetic)
-                .input(wireFine, Lead, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_ULV.getStackForm())
-                .buildAndRegister();
+        if (GTRecipeLoaders.VOLTAGE_COILS.shouldRegister()) {
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
+                    .input(stick, IronMagnetic)
+                    .input(wireFine, Lead, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_ULV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(stick, IronMagnetic)
-                .input(wireFine, Steel, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_LV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                    .input(stick, IronMagnetic)
+                    .input(wireFine, Steel, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_LV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[MV])
-                .input(stick, SteelMagnetic)
-                .input(wireFine, Aluminium, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_MV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[MV])
+                    .input(stick, SteelMagnetic)
+                    .input(wireFine, Aluminium, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_MV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
-                .input(stick, SteelMagnetic)
-                .input(wireFine, BlackSteel, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_HV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
+                    .input(stick, SteelMagnetic)
+                    .input(wireFine, BlackSteel, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_HV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
-                .input(stick, NeodymiumMagnetic)
-                .input(wireFine, TungstenSteel, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_EV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+                    .input(stick, NeodymiumMagnetic)
+                    .input(wireFine, TungstenSteel, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_EV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV])
-                .input(stick, NeodymiumMagnetic)
-                .input(wireFine, Iridium, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_IV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV])
+                    .input(stick, NeodymiumMagnetic)
+                    .input(wireFine, Iridium, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_IV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LuV])
-                .input(stick, SamariumMagnetic)
-                .input(wireFine, Osmiridium, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_LuV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LuV])
+                    .input(stick, SamariumMagnetic)
+                    .input(wireFine, Osmiridium, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_LuV.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ZPM])
-                .input(stick, SamariumMagnetic)
-                .input(wireFine, Europium, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_ZPM.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ZPM])
+                    .input(stick, SamariumMagnetic)
+                    .input(wireFine, Europium, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_ZPM.getStackForm())
+                    .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[UV])
-                .input(stick, SamariumMagnetic)
-                .input(wireFine, Tritanium, 16)
-                .circuitMeta(1)
-                .outputs(VOLTAGE_COIL_UV.getStackForm())
-                .buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[UV])
+                    .input(stick, SamariumMagnetic)
+                    .input(wireFine, Tritanium, 16)
+                    .circuitMeta(1)
+                    .outputs(VOLTAGE_COIL_UV.getStackForm())
+                    .buildAndRegister();
+        }
 
         // Neutron Reflector
         ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(VA[MV])

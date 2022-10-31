@@ -18,6 +18,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -34,26 +35,26 @@ public class PartsRecipeHandler {
     }
 
     public static void register() {
-        OrePrefix.stick.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processStick);
-        OrePrefix.stickLong.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processLongStick);
-        OrePrefix.plate.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlate);
-        OrePrefix.plateDouble.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDouble);
-        OrePrefix.plateDense.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDense);
+        GTRecipeLoaders.STICK.register(() -> OrePrefix.stick.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processStick));
+        GTRecipeLoaders.STICK_LONG.register(() -> OrePrefix.stickLong.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processLongStick));
+        GTRecipeLoaders.PLATE.register(() -> OrePrefix.plate.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlate));
+        GTRecipeLoaders.PLATE_DOUBLE.register(() -> OrePrefix.plateDouble.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDouble));
+        GTRecipeLoaders.PLATE_DENSE.register(() -> OrePrefix.plateDense.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDense));
 
-        OrePrefix.turbineBlade.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processTurbine);
-        OrePrefix.rotor.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRotor);
-        OrePrefix.bolt.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processBolt);
-        OrePrefix.screw.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processScrew);
-        OrePrefix.wireFine.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFineWire);
-        OrePrefix.foil.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFoil);
-        OrePrefix.lens.addProcessingHandler(PropertyKey.GEM, PartsRecipeHandler::processLens);
+        GTRecipeLoaders.TURBINE_BlADE.register(() -> OrePrefix.turbineBlade.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processTurbine));
+        GTRecipeLoaders.ROTOR.register(() -> OrePrefix.rotor.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRotor));
+        GTRecipeLoaders.BOLT.register(() -> OrePrefix.bolt.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processBolt));
+        GTRecipeLoaders.SCREW.register(() -> OrePrefix.screw.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processScrew));
+        GTRecipeLoaders.WIRE_FINE.register(() -> OrePrefix.wireFine.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFineWire));
+        GTRecipeLoaders.FOIL.register(() -> OrePrefix.foil.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFoil));
+        GTRecipeLoaders.LENS.register(() -> OrePrefix.lens.addProcessingHandler(PropertyKey.GEM, PartsRecipeHandler::processLens));
 
-        OrePrefix.gear.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
-        OrePrefix.gearSmall.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
-        OrePrefix.ring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRing);
-        OrePrefix.springSmall.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpringSmall);
-        OrePrefix.spring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpring);
-        OrePrefix.round.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRound);
+        GTRecipeLoaders.GEAR.register(() -> OrePrefix.gear.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear));
+        GTRecipeLoaders.GEAR_SMALL.register(() -> OrePrefix.gearSmall.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear));
+        GTRecipeLoaders.RING.register(() -> OrePrefix.ring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRing));
+        GTRecipeLoaders.SPRING_SMALL.register(() -> OrePrefix.springSmall.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpringSmall));
+        GTRecipeLoaders.SPRING.register(() -> OrePrefix.spring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpring));
+        GTRecipeLoaders.ROUND.register(() -> OrePrefix.round.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRound));
     }
 
     public static void processBolt(OrePrefix boltPrefix, Material material, DustProperty property) {

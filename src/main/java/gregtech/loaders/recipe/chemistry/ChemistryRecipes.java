@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -13,21 +14,21 @@ public class ChemistryRecipes {
 
     public static void init() {
 
-        PetrochemRecipes.init();
-        DistillationRecipes.init();
+        GTRecipeLoaders.PETROCHEM.register(PetrochemRecipes::init);
+        GTRecipeLoaders.DISTILLATION.register(DistillationRecipes::init);
         SeparationRecipes.init();
         MixerRecipes.init();
         BrewingRecipes.init();
         ChemicalBathRecipes.init();
-        ReactorRecipes.init();
+        GTRecipeLoaders.REACTORS.register(ReactorRecipes::init);
         PolymerRecipes.init();
-        LCRCombined.init();
-        GrowthMediumRecipes.init();
-        NuclearRecipes.init();
-        FuelRecipeChains.init();
+        GTRecipeLoaders.LCR.register(LCRCombined::init);
+        GTRecipeLoaders.GROWTH_MEDIUM.register(GrowthMediumRecipes::init);
+        GTRecipeLoaders.URANIUM_REFINING.register(NuclearRecipes::init);
+        GTRecipeLoaders.FUELS.register(FuelRecipeChains::init);
         GemSlurryRecipes.init();
-        PlatGroupMetalsRecipes.init();
-        NaquadahRecipes.init();
+        GTRecipeLoaders.PLATINUM_REFINING.register(PlatGroupMetalsRecipes::init);
+        GTRecipeLoaders.NAQUADAH_REFINING.register(NaquadahRecipes::init);
         AcidRecipes.init();
 
 
@@ -49,30 +50,32 @@ public class ChemistryRecipes {
                 .fluidOutputs(Ice.getFluid(1000))
                 .duration(50).EUt(VA[LV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Air.getFluid(4000))
-                .fluidOutputs(LiquidAir.getFluid(4000))
-                .duration(80).EUt(VA[HV]).buildAndRegister();
+        if (GTRecipeLoaders.GAS_LIQUEFACTION.shouldRegister()) {
+            VACUUM_RECIPES.recipeBuilder()
+                    .fluidInputs(Air.getFluid(4000))
+                    .fluidOutputs(LiquidAir.getFluid(4000))
+                    .duration(80).EUt(VA[HV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(NetherAir.getFluid(4000))
-                .fluidOutputs(LiquidNetherAir.getFluid(4000))
-                .duration(80).EUt(VA[EV]).buildAndRegister();
+            VACUUM_RECIPES.recipeBuilder()
+                    .fluidInputs(NetherAir.getFluid(4000))
+                    .fluidOutputs(LiquidNetherAir.getFluid(4000))
+                    .duration(80).EUt(VA[EV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(EnderAir.getFluid(4000))
-                .fluidOutputs(LiquidEnderAir.getFluid(4000))
-                .duration(80).EUt(VA[IV]).buildAndRegister();
+            VACUUM_RECIPES.recipeBuilder()
+                    .fluidInputs(EnderAir.getFluid(4000))
+                    .fluidOutputs(LiquidEnderAir.getFluid(4000))
+                    .duration(80).EUt(VA[IV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(LiquidOxygen.getFluid(1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
+            VACUUM_RECIPES.recipeBuilder()
+                    .fluidInputs(Oxygen.getFluid(1000))
+                    .fluidOutputs(LiquidOxygen.getFluid(1000))
+                    .duration(240).EUt(VA[EV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Helium.getFluid(1000))
-                .fluidOutputs(LiquidHelium.getFluid(1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
+            VACUUM_RECIPES.recipeBuilder()
+                    .fluidInputs(Helium.getFluid(1000))
+                    .fluidOutputs(LiquidHelium.getFluid(1000))
+                    .duration(240).EUt(VA[EV]).buildAndRegister();
+        }
 
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, FerriteMixture)

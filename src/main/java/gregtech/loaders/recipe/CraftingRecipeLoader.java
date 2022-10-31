@@ -33,7 +33,7 @@ public class CraftingRecipeLoader {
         loadCraftingRecipes();
         GTLog.logger.info("Modifying vanilla recipes according to config. DON'T BE SCARED OF FML's WARNING ABOUT DANGEROUS ALTERNATIVE PREFIX.");
         VanillaOverrideRecipes.init();
-        VanillaStandardRecipes.init();
+        GTRecipeLoaders.VANILLA.register(VanillaStandardRecipes::init);
     }
 
     private static void loadCraftingRecipes() {

@@ -9,7 +9,7 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class LCRCombined {
 
-    static void init() {
+    public static void init() {
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))

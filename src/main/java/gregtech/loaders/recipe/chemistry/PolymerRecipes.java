@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -10,13 +11,16 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class PolymerRecipes {
 
     public static void init() {
-        polyethyleneProcess();
-        polyvinylChlorideProcess();
-        ptfeProcess();
-        epoxyProcess();
-        styreneButadieneProcess();
-        polybenzimidazoleProcess();
-        polycaprolactamProcess();
+        GTRecipeLoaders.POLYETHYLENE.register(PolymerRecipes::polyethyleneProcess);
+        GTRecipeLoaders.PVC.register(PolymerRecipes::polyvinylChlorideProcess);
+        GTRecipeLoaders.PTFE.register(PolymerRecipes::ptfeProcess);
+        GTRecipeLoaders.EPXOY.register(PolymerRecipes::epoxyProcess);
+        GTRecipeLoaders.SBR.register(PolymerRecipes::styreneButadieneProcess);
+        GTRecipeLoaders.PBI.register(PolymerRecipes::polybenzimidazoleProcess);
+        GTRecipeLoaders.POLYCAPROLACTAM.register(PolymerRecipes::polycaprolactamProcess);
+        GTRecipeLoaders.SILICONE.register(PolymerRecipes::siliconeProcess);
+        GTRecipeLoaders.POLYPHENYLENE_SULFIDE.register(PolymerRecipes::polyphenyleneSulfideProcess);
+        GTRecipeLoaders.POLYVINYL_BUTYRAL.register(PolymerRecipes::polyvinylButyralProcess);
     }
 
     private static void polyethyleneProcess() {
@@ -506,5 +510,111 @@ public class PolymerRecipes {
                 .output(ingot, Polycaprolactam, 1)
                 .buildAndRegister();
 
+    }
+
+    public static void siliconeProcess() {
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(3))
+                .fluidInputs(Chlorine.getFluid(2000))
+                .fluidInputs(Methane.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(1000))
+                .fluidOutputs(Chloromethane.getFluid(1000))
+                .duration(80).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidInputs(HydrochloricAcid.getFluid(1000))
+                .fluidInputs(Methanol.getFluid(1000))
+                .fluidOutputs(Water.getFluid(1000))
+                .fluidOutputs(Chloromethane.getFluid(1000))
+                .duration(160).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Silicon)
+                .fluidInputs(Chloromethane.getFluid(2000))
+                .fluidOutputs(Dimethyldichlorosilane.getFluid(1000))
+                .duration(240).EUt(96).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Silicon)
+                .fluidInputs(HydrochloricAcid.getFluid(2000))
+                .fluidInputs(Methanol.getFluid(2000))
+                .output(dust, Polydimethylsiloxane, 3)
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
+                .duration(480).EUt(96).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(2))
+                .input(dust, Silicon)
+                .fluidInputs(Water.getFluid(1000))
+                .fluidInputs(Chlorine.getFluid(4000))
+                .fluidInputs(Methane.getFluid(2000))
+                .output(dust, Polydimethylsiloxane, 3)
+                .fluidOutputs(HydrochloricAcid.getFluid(2000))
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
+                .duration(480).EUt(96).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Dimethyldichlorosilane.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .output(dust, Polydimethylsiloxane, 3)
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
+                .duration(240).EUt(96).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Polydimethylsiloxane, 9)
+                .input(dust, Sulfur)
+                .fluidOutputs(SiliconeRubber.getFluid(1296))
+                .duration(600).EUt(VA[LV]).buildAndRegister();
+    }
+
+    public static void polyphenyleneSulfideProcess() {
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sodium, 2)
+                .input(dust, Sulfur)
+                .output(dust, SodiumSulfide, 3)
+                .duration(60).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Chlorine.getFluid(4000))
+                .fluidInputs(Benzene.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .fluidOutputs(HydrochloricAcid.getFluid(2000))
+                .fluidOutputs(Dichlorobenzene.getFluid(1000))
+                .duration(120).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, SodiumSulfide, 3)
+                .fluidInputs(Dichlorobenzene.getFluid(1000))
+                .fluidInputs(Air.getFluid(16000))
+                .output(dust, Salt, 4)
+                .fluidOutputs(PolyphenyleneSulfide.getFluid(1000))
+                .duration(240).EUt(360).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, SodiumSulfide, 3)
+                .fluidInputs(Dichlorobenzene.getFluid(1000))
+                .fluidInputs(Oxygen.getFluid(8000))
+                .output(dust, Salt, 4)
+                .fluidOutputs(PolyphenyleneSulfide.getFluid(1500))
+                .duration(240).EUt(360).buildAndRegister();
+    }
+
+    public static void polyvinylButyralProcess() {
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Propene.getFluid(1000))
+                .fluidInputs(Hydrogen.getFluid(2000))
+                .fluidInputs(CarbonMonoxide.getFluid(1000))
+                .fluidOutputs(Butyraldehyde.getFluid(1000))
+                .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Butyraldehyde.getFluid(250))
+                .fluidInputs(PolyvinylAcetate.getFluid(144))
+                .fluidOutputs(PolyvinylButyral.getFluid(144))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
     }
 }

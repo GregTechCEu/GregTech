@@ -14,17 +14,17 @@ public class GTRecipeManager {
         MachineRecipeLoader.init();
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();
-        MetaTileEntityMachineRecipeLoader.init();
+        GTRecipeLoaders.POWER_DEVICES.register(MetaTileEntityMachineRecipeLoader::init);
         RecipeHandlerList.register();
     }
 
     public static void loadLatest() {
-        DecompositionRecipeHandler.runRecipeGeneration();
-        RecyclingRecipes.init();
-        WoodMachineRecipes.init();
+        GTRecipeLoaders.DECOMPOSITION.register(DecompositionRecipeHandler::runRecipeGeneration);
+        GTRecipeLoaders.RECYCLING.register(RecyclingRecipes::init);
+        GTRecipeLoaders.WOOD_PROCESSING.register(WoodMachineRecipes::init);
     }
 
     public static void postLoad() {
-        WoodMachineRecipes.postInit();
+        GTRecipeLoaders.WOOD_PROCESSING.register(WoodMachineRecipes::postInit);
     }
 }

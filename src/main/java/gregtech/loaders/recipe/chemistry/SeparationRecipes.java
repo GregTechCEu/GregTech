@@ -6,6 +6,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -84,20 +85,22 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.SLIME_BALL))
                 .buildAndRegister();
 
-        for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
-            if (item instanceof ItemFood) {
-                ItemFood itemFood = (ItemFood) item;
-                Collection<ItemStack> subItems = ModHandler.getAllSubItems(new ItemStack(item, 1, GTValues.W));
-                for (ItemStack itemStack : subItems) {
-                    int healAmount = itemFood.getHealAmount(itemStack);
-                    float saturationModifier = itemFood.getSaturationModifier(itemStack);
-                    if (healAmount > 0) {
-                        FluidStack outputStack = Methane.getFluid(Math.round(9 * healAmount * (1.0f + saturationModifier)));
+        if (GTRecipeLoaders.FOOD_TO_METHANE.shouldRegister()) {
+            for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
+                if (item instanceof ItemFood) {
+                    ItemFood itemFood = (ItemFood) item;
+                    Collection<ItemStack> subItems = ModHandler.getAllSubItems(new ItemStack(item, 1, GTValues.W));
+                    for (ItemStack itemStack : subItems) {
+                        int healAmount = itemFood.getHealAmount(itemStack);
+                        float saturationModifier = itemFood.getSaturationModifier(itemStack);
+                        if (healAmount > 0) {
+                            FluidStack outputStack = Methane.getFluid(Math.round(9 * healAmount * (1.0f + saturationModifier)));
 
-                        CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
-                                .inputs(itemStack)
-                                .fluidOutputs(outputStack)
-                                .buildAndRegister();
+                            CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
+                                    .inputs(itemStack)
+                                    .fluidOutputs(outputStack)
+                                    .buildAndRegister();
+                        }
                     }
                 }
             }
@@ -443,12 +446,14 @@ public class SeparationRecipes {
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, TungsticAcid, 7)
-                .output(dust, Tungsten)
-                .fluidOutputs(Hydrogen.getFluid(2000))
-                .fluidOutputs(Oxygen.getFluid(4000))
-                .duration(210).EUt(960).buildAndRegister();
+        if (GTRecipeLoaders.TUNGSTEN_PROCESSING.shouldRegister()) {
+            ELECTROLYZER_RECIPES.recipeBuilder()
+                    .input(dust, TungsticAcid, 7)
+                    .output(dust, Tungsten)
+                    .fluidOutputs(Hydrogen.getFluid(2000))
+                    .fluidOutputs(Oxygen.getFluid(4000))
+                    .duration(210).EUt(960).buildAndRegister();
+        }
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, SodiumHydroxide, 3)
@@ -476,49 +481,51 @@ public class SeparationRecipes {
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
-        List<Tuple<ItemStack, Integer>> seedEntries = GTUtility.getGrassSeedEntries();
-        for (Tuple<ItemStack, Integer> seedEntry : seedEntries) {
-            EXTRACTOR_RECIPES.recipeBuilder()
-                    .duration(32).EUt(2)
-                    .inputs(seedEntry.getFirst())
+        if (GTRecipeLoaders.BIO_OILS.shouldRegister()) {
+            List<Tuple<ItemStack, Integer>> seedEntries = GTUtility.getGrassSeedEntries();
+            for (Tuple<ItemStack, Integer> seedEntry : seedEntries) {
+                EXTRACTOR_RECIPES.recipeBuilder()
+                        .duration(32).EUt(2)
+                        .inputs(seedEntry.getFirst())
+                        .fluidOutputs(SeedOil.getFluid(10))
+                        .buildAndRegister();
+            }
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
+                    .inputs(new ItemStack(Items.BEETROOT_SEEDS))
                     .fluidOutputs(SeedOil.getFluid(10))
                     .buildAndRegister();
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
+                    .inputs(new ItemStack(Items.MELON_SEEDS, 1, GTValues.W))
+                    .fluidOutputs(SeedOil.getFluid(3))
+                    .buildAndRegister();
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
+                    .inputs(new ItemStack(Items.PUMPKIN_SEEDS, 1, GTValues.W))
+                    .fluidOutputs(SeedOil.getFluid(6))
+                    .buildAndRegister();
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                    .inputs(new ItemStack(Items.FISH))
+                    .fluidOutputs(FishOil.getFluid(40))
+                    .buildAndRegister();
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                    .inputs(new ItemStack(Items.FISH, 1, 1))
+                    .fluidOutputs(FishOil.getFluid(60))
+                    .buildAndRegister();
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                    .inputs(new ItemStack(Items.FISH, 1, 2))
+                    .fluidOutputs(FishOil.getFluid(70))
+                    .buildAndRegister();
+
+            EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                    .inputs(new ItemStack(Items.FISH, 1, 3))
+                    .fluidOutputs(FishOil.getFluid(30))
+                    .buildAndRegister();
         }
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
-                .inputs(new ItemStack(Items.BEETROOT_SEEDS))
-                .fluidOutputs(SeedOil.getFluid(10))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
-                .inputs(new ItemStack(Items.MELON_SEEDS, 1, GTValues.W))
-                .fluidOutputs(SeedOil.getFluid(3))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
-                .inputs(new ItemStack(Items.PUMPKIN_SEEDS, 1, GTValues.W))
-                .fluidOutputs(SeedOil.getFluid(6))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
-                .inputs(new ItemStack(Items.FISH))
-                .fluidOutputs(FishOil.getFluid(40))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
-                .inputs(new ItemStack(Items.FISH, 1, 1))
-                .fluidOutputs(FishOil.getFluid(60))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
-                .inputs(new ItemStack(Items.FISH, 1, 2))
-                .fluidOutputs(FishOil.getFluid(70))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
-                .inputs(new ItemStack(Items.FISH, 1, 3))
-                .fluidOutputs(FishOil.getFluid(30))
-                .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(600).EUt(28)
                 .input(dust, Quartzite)

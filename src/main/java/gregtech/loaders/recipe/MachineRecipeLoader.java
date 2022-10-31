@@ -54,15 +54,15 @@ public class MachineRecipeLoader {
 
     public static void init() {
         ChemistryRecipes.init();
-        FuelRecipes.registerFuels();
-        AssemblyLineLoader.init();
-        FusionLoader.init();
+        GTRecipeLoaders.POWER_GENERATION.register(FuelRecipes::registerFuels);
+        GTRecipeLoaders.ASSEMBLY_LINE.register(AssemblyLineLoader::init);
+        GTRecipeLoaders.FUSION.register(FusionLoader::init);
         AssemblerRecipeLoader.init();
         ComponentRecipes.register();
         MiscRecipeLoader.init();
-        BatteryRecipes.init();
+        GTRecipeLoaders.BATTERIES.register(BatteryRecipes::init);
 
-        CircuitRecipes.init();
+        GTRecipeLoaders.CIRCUITS.register(CircuitRecipes::init);
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
         registerAssemblerRecipes();

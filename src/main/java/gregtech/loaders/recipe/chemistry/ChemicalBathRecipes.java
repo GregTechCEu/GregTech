@@ -3,13 +3,14 @@ package gregtech.loaders.recipe.chemistry;
 import gregtech.common.blocks.BlockStoneSmooth;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.GTValues.VA;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class ChemicalBathRecipes {
 
@@ -63,18 +64,20 @@ public class ChemicalBathRecipes {
                 .outputs(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Scheelite, 6)
-                .fluidInputs(HydrochloricAcid.getFluid(2000))
-                .output(dust, TungsticAcid, 7)
-                .output(dust, CalciumChloride, 3)
-                .duration(210).EUt(960).buildAndRegister();
+        if (GTRecipeLoaders.TUNGSTEN_PROCESSING.shouldRegister()) {
+            CHEMICAL_BATH_RECIPES.recipeBuilder()
+                    .input(dust, Scheelite, 6)
+                    .fluidInputs(HydrochloricAcid.getFluid(2000))
+                    .output(dust, TungsticAcid, 7)
+                    .output(dust, CalciumChloride, 3)
+                    .duration(210).EUt(960).buildAndRegister();
 
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Tungstate, 7)
-                .fluidInputs(HydrochloricAcid.getFluid(2000))
-                .output(dust, TungsticAcid, 7)
-                .output(dust, LithiumChloride, 4)
-                .duration(210).EUt(960).buildAndRegister();
+            CHEMICAL_BATH_RECIPES.recipeBuilder()
+                    .input(dust, Tungstate, 7)
+                    .fluidInputs(HydrochloricAcid.getFluid(2000))
+                    .output(dust, TungsticAcid, 7)
+                    .output(dust, LithiumChloride, 4)
+                    .duration(210).EUt(960).buildAndRegister();
+        }
     }
 }

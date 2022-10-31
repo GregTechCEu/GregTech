@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.loaders.recipe.GTRecipeLoaders;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
@@ -11,10 +12,10 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 public class AcidRecipes {
 
     public static void init() {
-        sulfuricAcidRecipes();
-        nitricAcidRecipes();
-        phosphoricAcidRecipes();
-        aceticAcidRecipes();
+        GTRecipeLoaders.SULFURIC_ACID.register(AcidRecipes::sulfuricAcidRecipes);
+        GTRecipeLoaders.NITRIC_ACID.register(AcidRecipes::nitricAcidRecipes);
+        GTRecipeLoaders.PHOSPHORIC_ACID.register(AcidRecipes::phosphoricAcidRecipes);
+        GTRecipeLoaders.ACETIC_ACID.register(AcidRecipes::aceticAcidRecipes);
     }
 
     private static void sulfuricAcidRecipes() {
