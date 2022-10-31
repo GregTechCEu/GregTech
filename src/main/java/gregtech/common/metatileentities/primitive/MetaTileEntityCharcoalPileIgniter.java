@@ -114,7 +114,11 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     protected BlockPattern createStructurePattern() {
         // update the structure's dimensions just before we create it
-        if (getWorld() != null) updateStructureDimensions();
+        if (getWorld() != null) {
+            if (!updateStructureDimensions()){
+                return null;
+            }
+        }
 
         // these can sometimes get set to 0 when loading the game, breaking JEI
         if (lDist < 1) lDist = MIN_RADIUS;
@@ -220,7 +224,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         });
     }
 
-    private void updateStructureDimensions() {
+    private boolean updateStructureDimensions() {
         World world = getWorld();
         EnumFacing left = getFrontFacing().getOpposite().rotateYCCW();
         EnumFacing right = left.getOpposite();
@@ -247,6 +251,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
         if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) {
             invalidateStructure();
+            return false;
         }
 
         this.lDist = lDist;
@@ -258,6 +263,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
             buf.writeInt(this.rDist);
             buf.writeInt(this.hDist);
         });
+        return true;
     }
 
     private static boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
