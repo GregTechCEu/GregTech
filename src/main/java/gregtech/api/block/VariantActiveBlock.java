@@ -16,7 +16,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
@@ -40,7 +39,6 @@ import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
-    public static final IStateMapper mapper = new SimpleStateMapper(MODEL_LOCATION);
     public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
     public static final PropertyBool ACTIVE_DEPRECATED = PropertyBool.create("active");
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
@@ -120,7 +118,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        ModelLoader.setCustomStateMapper(this, mapper);
+        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=true," + statePropertiesToString(state.getProperties())));
             //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=false," + statePropertiesToString(state.getProperties())));
