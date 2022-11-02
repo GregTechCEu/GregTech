@@ -59,13 +59,8 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     }
 
     @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return layer == getRenderLayer() || layer == BloomEffectUtil.BLOOM;
+        return layer == getRenderLayer() || layer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @Nonnull
