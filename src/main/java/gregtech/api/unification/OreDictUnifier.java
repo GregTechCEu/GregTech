@@ -264,15 +264,16 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getDust(Material material, long materialAmount) {
-        if (!material.hasProperty(PropertyKey.DUST) || materialAmount <= 0)
+        if (!material.hasProperty(PropertyKey.DUST) || materialAmount < (M / 9))
             return ItemStack.EMPTY;
-        if (materialAmount % M == 0 || materialAmount >= M * 16)
-            return get(OrePrefix.dust, material, (int) (materialAmount / M));
-        else if ((materialAmount * 4) % M == 0 || materialAmount >= M * 8)
-            return get(OrePrefix.dustSmall, material, (int) ((materialAmount * 4) / M));
-        else if ((materialAmount * 9) >= M)
+        // pick tiny dusts if they fit under a stack and they are strictly more accurate than small dusts
+        if (materialAmount <= M / 9 * 64 && materialAmount % (M / 9) < materialAmount % (M / 4))
             return get(OrePrefix.dustTiny, material, (int) ((materialAmount * 9) / M));
-        return ItemStack.EMPTY;
+        // pick small dusts if they fit under a stack and they are strictly more accurate than full dusts
+        if (materialAmount <= M * 16 && materialAmount % (M / 4) < materialAmount % M)
+            return get(OrePrefix.dustSmall, material, (int) ((materialAmount * 4) / M));
+        // pick dusts
+        return get(OrePrefix.dust, material, (int) (materialAmount / M));
     }
 
     public static ItemStack getDust(MaterialStack materialStack) {
@@ -282,15 +283,17 @@ public class OreDictUnifier {
     public static ItemStack getIngot(Material material, long materialAmount) {
         if (material == null || !material.hasProperty(PropertyKey.INGOT) || materialAmount < (M / 9))
             return ItemStack.EMPTY;
-        if (materialAmount % (M * 9) == 0)
-            return get(OrePrefix.block, material, (int) (materialAmount / (M * 9)));
-        if (materialAmount % M == 0 || materialAmount >= M * 16)
+        // pick nuggets if they fit under a stack and they are strictly more accurate than chunks
+        if (materialAmount <= M / 9 * 64 && materialAmount % (M / 9) < materialAmount % (M / 4))
+            return get(OrePrefix.nugget, material, (int) (materialAmount * 9 / M));
+        // pick chunks if they fit under a stack and they are strictly more accurate than ingots
+        if (materialAmount <= M * 16 && materialAmount % (M / 4) < materialAmount % M)
+            return get(OrePrefix.chunk, material, (int) (materialAmount * 4 / M));
+        // pick ingots if they fit under a stack
+        if (materialAmount <= M * 64)
             return get(OrePrefix.ingot, material, (int) (materialAmount / M));
-        if (materialAmount % (M / 4) == 0 || materialAmount >= M * 8) {
-            int stackCount = (int) (materialAmount * 4 / M);
-            return get(OrePrefix.chunk, material, stackCount);
-        }
-        return get(OrePrefix.nugget, material, (int) (materialAmount * 9 / M));
+        // pick blocks
+        return get(OrePrefix.block, material, (int) (materialAmount / (M * 9)));
     }
 
     public static ItemStack getIngot(MaterialStack materialStack) {
