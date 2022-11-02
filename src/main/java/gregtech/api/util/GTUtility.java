@@ -460,11 +460,8 @@ public class GTUtility {
      * @return lowest tier that can handle passed voltage for display
      */
     public static byte getTierForVoltageDisplay(long voltage) {
-        byte tierDown = getTierByVoltage(voltage / 2);
-        byte tier = getTierByVoltage(voltage);
-        //noinspection RedundantIfStatement
-        if (tierDown != tier) return tierDown;
-        return tier;
+        if (voltage < V[GTValues.ULV]) return GTValues.ULV;
+        return tierByVoltage.floorEntry(voltage).getValue();
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
