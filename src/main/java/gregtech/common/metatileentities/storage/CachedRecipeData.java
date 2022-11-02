@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -111,7 +112,8 @@ public class CachedRecipeData {
 
             //update item in slot, and check that recipe matches and output item is equal to the expected one
             inventory.setInventorySlotContents(slot, itemStack);
-            if (recipe.matches(inventory, itemSources.getWorld()) && ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack)) {
+            if (recipe.matches(inventory, itemSources.getWorld()) &&
+                    (ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack) || recipe instanceof ShapedOreEnergyTransferRecipe)) {
                 map.put(itemStackKey, true);
                 //ingredient matched, attempt to extract it and return if successful
                 if (simulateExtractItem(itemStackKey)) {
