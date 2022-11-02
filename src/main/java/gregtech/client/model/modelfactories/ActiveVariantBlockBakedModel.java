@@ -60,7 +60,7 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
         TextureAtlasSprite textureAtlasSprite = m.getParticleTexture();
         particle.set(textureAtlasSprite);
-        if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
+        if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.getRealBloomLayer()) {
             if (ConfigHolder.client.casingsActiveEmissiveTextures) {
                 quads = new ArrayList<>();
                 for (BakedQuad b : m.getQuads(state, side, rand)) {
