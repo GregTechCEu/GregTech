@@ -28,7 +28,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.GroovyScriptCompat;
-import gregtech.integration.VirtualizedRecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
@@ -85,8 +84,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
     public final boolean isHidden;
-
-    private final VirtualizedRecipeMap virtualizedRecipeMap;
+    
     private final Branch lookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
@@ -118,12 +116,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
-
-        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
-            this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
-        } else {
-            this.virtualizedRecipeMap = null;
-        }
     }
 
     @ZenMethod
@@ -207,10 +199,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 return;
         }
         Recipe recipe = validationResult.getResult();
-
-        if (recipe.isGroovyRecipe()) {
-            this.virtualizedRecipeMap.addScripted(recipe);
-        }
         compileRecipe(recipe);
 
     }
@@ -226,9 +214,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public boolean removeRecipe(Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
-            if (GroovyScriptCompat.isCurrentlyRunning()) {
-                this.virtualizedRecipeMap.addBackup(recipe);
-            }
             return true;
         }
         return false;
