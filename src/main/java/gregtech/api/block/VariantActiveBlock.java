@@ -135,8 +135,8 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @SubscribeEvent(priority = EventPriority.LOWEST) // low priority to capture all event-registered models
     public static void onModelBake(ModelBakeEvent event) {
         block2blockRenderLayerMap.clear();
-        //Go over all the registered blocks checking if they are of a VariantActiveBlock type,
-        //then going over their model, if they have a quad to render on that render layer, add it to the map.
+        //Go over all VariantActiveBlock instances, then going over their model, and if they have a quad
+        //to render on that render layer, add it to the map.
         for (Block b : INSTANCES) {
             for (IBlockState state : b.getBlockState().getValidStates()) {
                 IBakedModel bakedModel = event.getModelRegistry().getObject(new ModelResourceLocation(b.getRegistryName(), statePropertiesToString(state.getProperties())));
