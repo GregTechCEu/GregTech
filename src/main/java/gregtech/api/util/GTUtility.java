@@ -452,6 +452,18 @@ public class GTUtility {
         return tierByVoltage.ceilingEntry(voltage).getValue();
     }
 
+    /**
+     * <strong>Do not</strong> use for calculation. Intended for displays in multiblock machines and similar.
+     * <p>
+     * Ex: This method turns 960EU/t and 480EU/t into HV.
+     *
+     * @return lowest tier that can handle passed voltage for display
+     */
+    public static byte getTierForVoltageDisplay(long voltage) {
+        if (voltage < V[GTValues.ULV]) return GTValues.ULV;
+        return tierByVoltage.floorEntry(voltage).getValue();
+    }
+
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
         Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null, "byName");
         return byName.get(name);

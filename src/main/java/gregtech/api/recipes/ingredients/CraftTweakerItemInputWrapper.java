@@ -62,7 +62,14 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
         IItemStack[] itemArray = this.ingredient.getItemArray();
         if (itemArray.length == 0) return true;
 
-        return ingredient.getItems().stream().anyMatch(ii -> ii.matches(CraftTweakerMC.getIItemStackForMatching(itemStack, ii.getMetadata() == GTValues.W)));
+        return ingredient.getItems().stream().anyMatch(ii -> {
+            if (ii.getAmount() > itemStack.getCount()) {
+                final ItemStack is = itemStack.copy();
+                is.setCount(ii.getAmount());
+                return ii.matches(CraftTweakerMC.getIItemStackForMatching(is, ii.getMetadata() == GTValues.W));
+            }
+            return ii.matches(CraftTweakerMC.getIItemStackForMatching(itemStack, ii.getMetadata() == GTValues.W));
+        });
     }
 
     @Override
