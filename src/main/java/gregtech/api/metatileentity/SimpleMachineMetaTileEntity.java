@@ -137,7 +137,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (cover != null && cover.shouldCoverInteractWithOutputside()) {
                 if (getOutputFacingItems() == side) {
                     setAllowInputFromOutputSideItems(true);
-                } else if (getOutputFacingFluids() == side) {
+                }
+                if (getOutputFacingFluids() == side) {
                     setAllowInputFromOutputSideFluids(true);
                 }
             }
