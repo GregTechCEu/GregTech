@@ -1765,7 +1765,7 @@ tile.concrete.light_bricks.chiseled.name=Точеные кирпичи свет�
 tile.concrete.dark_bricks.chiseled.name=Точеные кирпичи темного бетона
 
 # Паровые механизмы
-gregtech.machine.steam_boiler.tooltip_produces=Производит %,dмВ пара в секунду
+gregtech.machine.steam_boiler.tooltip_produces=Производит %,dмВ пара в тик
 gregtech.machine.steam_boiler_coal_bronze.name=Маленький угольный паровой котел
 gregtech.machine.steam_boiler_coal_bronze.tooltip=Ранний способ получить паровую энергию
 gregtech.machine.steam_boiler_coal_steel.name=Угольный паровой котел высокого давления
