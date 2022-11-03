@@ -251,24 +251,24 @@ public class RenderUtil {
      */
     public static Matrix4 adjustTrans(Matrix4 translation, EnumFacing side, int layer) {
         Matrix4 trans = translation.copy();
-        switch (side){
+        switch (side) {
             case DOWN:
-                trans.translate(0 , -0.001D * layer,0);
+                trans.translate(0 , -0.0005D * layer,0);
                 break;
             case UP:
-                trans.translate(0 , 0.001D * layer,0);
+                trans.translate(0 , 0.0005D * layer,0);
                 break;
             case NORTH:
-                trans.translate(0 , 0,-0.001D * layer);
+                trans.translate(0 , 0,-0.0005D * layer);
                 break;
             case SOUTH:
-                trans.translate(0 , 0,0.001D * layer);
+                trans.translate(0 , 0,0.0005D * layer);
                 break;
             case EAST:
-                trans.translate(0.001D * layer, 0,0);
+                trans.translate(0.0005D * layer, 0,0);
                 break;
             case WEST:
-                trans.translate(-0.001D * layer, 0,0);
+                trans.translate(-0.0005D * layer, 0,0);
                 break;
         }
         return trans;

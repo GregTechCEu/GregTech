@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.*;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.items.metaitem.stats.ItemFluidContainer;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
@@ -107,8 +108,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
         // Spray Cans: ID 60-77
-        SPRAY_EMPTY = addItem(61, "spray.empty")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, M * 2), new MaterialStack(Materials.Redstone, M)));
+        SPRAY_EMPTY = addItem(61, "spray.empty");
 
         // out of registry order so it can reference the Empty Spray Can
         SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
@@ -120,33 +120,33 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Fluid Cells: ID 78-88
-        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, false));
+        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, false), new ItemFluidContainer());
 
-        FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal").addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, true));
+        FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal").addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, true), new ItemFluidContainer());
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
-                .addComponents(new ThermalFluidStats(8000, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
+                .addComponents(new ThermalFluidStats(8000, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))); // ingot * 4
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
-                .addComponents(new ThermalFluidStats(32000, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
+                .addComponents(new ThermalFluidStats(32000, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))); // ingot * 4
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
-                .addComponents(new ThermalFluidStats(64000, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true, true, false, true))
+                .addComponents(new ThermalFluidStats(64000, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true, true, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))); // ingot * 6
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
-                .addComponents(new ThermalFluidStats(128000, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
+                .addComponents(new ThermalFluidStats(128000, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))); // ingot * 6
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
-                .addComponents(new ThermalFluidStats(512000, Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true))
+                .addComponents(new ThermalFluidStats(512000, Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))); // ingot * 8
 
         FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
-                .addComponents(new ThermalFluidStats(1000, 1200, false, true, false, false, true))
+                .addComponents(new ThermalFluidStats(1000, 1200, false, true, false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))); // small dust
 
         // Limited-Use Items: ID 89-95
@@ -340,6 +340,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_FLUID_DETECTOR = addItem(304, "cover.fluid.detector");
         COVER_ITEM_DETECTOR = addItem(305, "cover.item.detector");
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
+        COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
         COVER_SCREEN = addItem(307, "cover.screen");
         COVER_CRAFTING = addItem(308, "cover.crafting");
         COVER_SHUTTER = addItem(309, "cover.shutter");
@@ -660,5 +661,6 @@ public class MetaItem1 extends StandardMetaItem {
         // Misc 1000+
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
         FERTILIZER = addItem(1001, "fertilizer").addComponents(new FertilizerBehavior());
+        BLACKLIGHT = addItem(1002, "blacklight");
     }
 }

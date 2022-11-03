@@ -11,9 +11,9 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTUtility;
 import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -109,6 +110,11 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
                 writeCustomData(IS_WORKING, w -> w.writeBoolean(isActive));
             }
         }
+    }
+
+    @Override
+    public boolean isActive() {
+        return this.isActive;
     }
 
     @Override
@@ -204,4 +210,20 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         return null;
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (isActive() && !this.hasDragonEggAmplifier) {
+            final BlockPos pos = getPos();
+            for (int i = 0; i < 4; i++) {
+                getWorld().spawnParticle(EnumParticleTypes.PORTAL,
+                        pos.getX() + 0.5F,
+                        pos.getY() + GTValues.RNG.nextFloat(),
+                        pos.getZ() + 0.5F,
+                        (GTValues.RNG.nextFloat() - 0.5F) * 0.5F,
+                        (GTValues.RNG.nextFloat() - 0.5F) * 0.5F,
+                        (GTValues.RNG.nextFloat() - 0.5F) * 0.5F);
+            }
+        }
+    }
 }

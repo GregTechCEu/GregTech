@@ -7,8 +7,8 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.ConfigHolder;
+import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -28,8 +28,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
-
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
@@ -157,7 +155,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
         double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;
         double posZ = machinePos.getZ() + 0.5 + ventingSide.getZOffset() * 0.6;
 
-        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
+        world.spawnParticle(EnumParticleTypes.CLOUD, posX, posY, posZ,
                 7 + world.rand.nextInt(3),
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
@@ -180,7 +178,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected boolean checkRecipe(Recipe recipe) {
+    protected boolean checkRecipe(@Nonnull Recipe recipe) {
         return super.checkRecipe(recipe) && !this.needsVenting;
     }
 

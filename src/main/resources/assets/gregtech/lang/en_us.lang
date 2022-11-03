@@ -819,6 +819,8 @@ metaitem.cover.item.detector.name=Item Detector
 metaitem.cover.item.detector.tooltip=Gives out Item Amount as Redstone (as Cover)
 metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
+metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector
+metaitem.cover.energy.detector.advanced.tooltip=Gives RS-Latch controlled Energy Status as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
 metaitem.cover.drain.name=Drain Cover
@@ -1088,6 +1090,9 @@ metaitem.nan.certificate.tooltip=Challenge Accepted!
 
 metaitem.fertilizer.name=Fertilizer
 
+metaitem.blacklight.name=Blacklight
+metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
@@ -1185,6 +1190,14 @@ cover.ender_fluid_link.iomode.disabled=I/O Disabled
 cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
+
+cover.advanced_energy_detector.label=Advanced Energy Detector
+cover.advanced_energy_detector.min=Minimum EU
+cover.advanced_energy_detector.max=Maximum EU
+cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
+cover.advanced_energy_detector.invert_label=Inverted:
+cover.advanced_energy_detector.normal=Normal
+cover.advanced_energy_detector.inverted=Inverted
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -1458,6 +1471,7 @@ material.bauxite=Bauxite
 material.invar=Invar
 material.kanthal=Kanthal
 material.lazurite=Lazurite
+material.liquid_helium=Liquid Helium
 material.magnalium=Magnalium
 material.magnesite=Magnesite
 material.magnetite=Magnetite
@@ -2279,6 +2293,7 @@ behavior.tricorder.debug_machine_valid= valid
 behavior.tricorder.debug_machine_invalid= invalid!
 behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
+behavior.tricorder.debug_cpu_load_seconds=This is %s seconds.
 behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
@@ -2402,7 +2417,7 @@ tile.machine_casing.ultra_high_voltage.name=UHV Machine Casing
 tile.machine_casing.ultra_excessive_voltage.name=UEV Machine Casing
 tile.machine_casing.ultra_immense_voltage.name=UIV Machine Casing
 tile.machine_casing.ultra_extreme_voltage.name=UXV Machine Casing
-tile.machine_casing.Ultra Immense_voltage.name=OpV Machine Casing
+tile.machine_casing.overpowered_voltage.name=OpV Machine Casing
 tile.machine_casing.maximum_voltage.name=MAX Machine Casing
 
 # Steam casing blocks
@@ -2446,6 +2461,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
+tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -2499,6 +2515,13 @@ gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank v
 gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
+
+# Cleanroom Casings
+tile.cleanroom_casing.plascrete.name=Plascrete
+tile.cleanroom_casing.filter_casing.name=Filter Casing
+tile.cleanroom_casing.filter_casing_sterile.name=Sterilizing Filter Casing
+tile.cleanroom_casing.filter.tooltip=Creates a §aParticle-Free§7 environment
+tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environment
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -2617,7 +2640,7 @@ tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
 
 
 # Steam machines
-gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
+gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per tick
 
 gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_coal_bronze.tooltip=An early way to get Steam Power
@@ -4446,6 +4469,22 @@ gregtech.machine.fluid_drilling_rig.depletion=Depletion Rate: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7.
 gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
 
+gregtech.machine.cleanroom.name=Cleanroom
+gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
+gregtech.machine.cleanroom.tooltip.2=Uses §a30 EU/t§7 when dirty and §a4 EU/t§7 when clean.
+gregtech.machine.cleanroom.tooltip.3=Overclocking increases cleaning per cycle.
+gregtech.machine.cleanroom.tooltip.4=Can be any size from §b5x5x5§7 to §b15x15x15§7.
+gregtech.machine.cleanroom.tooltip.5=Requires Filter Casings in the ceiling, excluding the edges.
+gregtech.machine.cleanroom.tooltip.6=Accepts up to 4 doors! Remains clean when the door is open.
+gregtech.machine.cleanroom.tooltip.7=Generators, Mufflers, Drills, and Primitive Machines are too dirty for the cleanroom!
+gregtech.machine.cleanroom.tooltip.8=Send power through hulls or diodes in the walls.
+gregtech.machine.cleanroom.tooltip.9=Send items and fluids with Passthrough Hatches in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.channels=Send §a8 AE2 Channels§7 through hulls in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through hulls in the walls.
+gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
+gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
+gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4459,6 +4498,16 @@ gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-
 gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
 gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
 
+metaitem.cover.digital.mode.proxy.disabled=Click to enable Proxy Mode
+metaitem.cover.digital.mode.proxy.enabled=Proxy Mode enabled
+metaitem.cover.digital.mode.machine.disabled=Click to enable Machine Mode
+metaitem.cover.digital.mode.machine.enabled=Machine Mode enabled
+metaitem.cover.digital.mode.energy.disabled=Click to enable Energy Mode
+metaitem.cover.digital.mode.energy.enabled=Energy Mode enabled
+metaitem.cover.digital.mode.item.disabled=Click to enable Item Mode
+metaitem.cover.digital.mode.item.enabled=Item Mode enabled
+metaitem.cover.digital.mode.fluid.disabled=Click to enable Fluid Mode
+metaitem.cover.digital.mode.fluid.enabled=Fluid Mode enabled
 
 gregtech.machine.monitor_screen.name=Monitor Screen
 
@@ -4611,6 +4660,9 @@ gregtech.machine.maintenance_hatch_configurable.name=Configurable Maintenance Ha
 gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over Multiblocks/nStarts with no Maintenance problems!
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+gregtech.machine.maintenance_hatch_cleanroom_auto.name=Automatic Filtration Maintenance Hatch
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=For automatically maintaining Multiblocks with Cleaning!
+gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 
@@ -4650,6 +4702,11 @@ gregtech.machine.machine_hatch.locked=Machine Interface Locked
 gregtech.machine.machine_hatch.tooltip=Specialized Access Bus that only holds valid items
 gregtech.machine.machine_hatch.processing_array=When in the §eProcessing Array§7, only holds machines that work in the §eProcessing Array
 
+gregtech.machine.passthrough_hatch_item.name=Item Passthrough Hatch
+gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the other
+gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
+gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
+
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -4681,6 +4738,9 @@ gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
+gregtech.recipe.cleanroom=Requires %s
+gregtech.recipe.cleanroom.display_name=Cleanroom
+gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
@@ -4811,6 +4871,7 @@ gregtech.multiblock.pattern.error.limited.1=§cMinimum: %d§r
 gregtech.multiblock.pattern.error.limited.2=§cMaximum: %d per layer§r
 gregtech.multiblock.pattern.error.limited.3=§cMinimum: %d per layer§r
 gregtech.multiblock.pattern.error.coils=§cAll heating coils must be the same§r
+gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
@@ -4961,7 +5022,7 @@ terminal.pong.description=A classic pong game, if you're really that bored of wa
 terminal.minesweeper.description=A classic minesweeper game, if you're in class.
 terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 terminal.cape_selector.description=An app that allows you to equip GT capes that you've unlocked through advancements.
-
+terminal.teleport.description=Open portals to any coordinate in any dimension. Be careful not to teleport into a wall!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed

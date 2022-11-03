@@ -35,12 +35,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpack {
-
-    private static final Collection<Recipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
 
     public final int tankCapacity = 16000;
 
@@ -190,13 +189,13 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
-            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0)) && fluidStack.amount > 0) {
+            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0).getInputFluidStack()) && fluidStack.amount > 0) {
                 currentRecipe = previousRecipe;
                 return;
             } else if (fluidStack != null) {
-                Collection<Recipe> recipes = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipesForFluid(fluidStack);
-                if (!recipes.isEmpty()) {
-                    previousRecipe = (Recipe) recipes.toArray()[0];
+                Recipe recipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull));
+                if (recipe != null)  {
+                    previousRecipe = recipe;
                     currentRecipe = previousRecipe;
                     return;
                 }
@@ -207,7 +206,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
 
     public FluidStack getFuel() {
         if (currentRecipe != null)
-            return currentRecipe.getFluidInputs().get(0);
+            return currentRecipe.getFluidInputs().get(0).getInputFluidStack();
 
         return null;
     }
@@ -271,7 +270,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
             return new FluidHandlerItemStack(itemStack, maxCapacity) {
                 @Override
                 public boolean canFillFluidType(FluidStack fluidStack) {
-                    return !RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipesForFluid(fluidStack).isEmpty();
+                    return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
                 }
 
                 @Override

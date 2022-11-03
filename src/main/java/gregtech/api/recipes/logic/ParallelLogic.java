@@ -3,10 +3,10 @@ package gregtech.api.recipes.logic;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.*;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.*;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -270,26 +270,27 @@ public class ParallelLogic {
         int minMultiplier = Integer.MAX_VALUE;
         //map the recipe ingredients to account for duplicated and notConsumable ingredients.
         //notConsumable ingredients are not counted towards the max ratio
-        Object2IntOpenCustomHashMap<Ingredient> notConsumableMap = new Object2IntOpenCustomHashMap<>(IngredientHashStrategy.INSTANCE);
-        Object2IntOpenCustomHashMap<Ingredient> countableMap = new Object2IntOpenCustomHashMap<>(IngredientHashStrategy.INSTANCE);
-        for (CountableIngredient recipeInputs : recipe.getInputs()) {
-            int ingredientCount = recipeInputs.getCount();
-            if (recipeInputs.isNonConsumable()) {
-                notConsumableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + ingredientCount);
-                notConsumableMap.putIfAbsent(recipeInputs.getIngredient(), ingredientCount);
+        Object2IntOpenHashMap<GTRecipeInput> notConsumableMap = new Object2IntOpenHashMap<>();
+        Object2IntOpenHashMap<GTRecipeInput> countableMap = new Object2IntOpenHashMap<>();
+        for (GTRecipeInput recipeIngredient : recipe.getInputs()) {
+
+            int ingredientCount = recipeIngredient.getAmount();
+            if (recipeIngredient.isNonConsumable()) {
+                notConsumableMap.computeIfPresent(recipeIngredient, (k, v) -> v + ingredientCount);
+                notConsumableMap.putIfAbsent(recipeIngredient, ingredientCount);
             } else {
-                countableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + ingredientCount);
-                countableMap.putIfAbsent(recipeInputs.getIngredient(), ingredientCount);
+                countableMap.computeIfPresent(recipeIngredient, (k, v) -> v + ingredientCount);
+                countableMap.putIfAbsent(recipeIngredient, ingredientCount);
             }
         }
 
         // Iterate through the recipe inputs, excluding the not consumable ingredients from the inventory map
-        for (Map.Entry<Ingredient, Integer> recipeInputEntry : notConsumableMap.entrySet()) {
+        for (Map.Entry<GTRecipeInput, Integer> recipeInputEntry : notConsumableMap.entrySet()) {
             int needed = recipeInputEntry.getValue();
             int available = 0;
             // For every stack in the ingredients gathered from the input bus.
             for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
-                if (recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
+                if (recipeInputEntry.getKey().acceptsStack(inventoryEntry.getKey().getItemStackRaw())) {
                     available = inventoryEntry.getValue();
                     if (available > needed) {
                         inventoryEntry.setValue(available - needed);
@@ -317,12 +318,12 @@ public class ParallelLogic {
         }
 
         // Iterate through the recipe inputs
-        for (Map.Entry<Ingredient, Integer> recipeInputEntry : countableMap.entrySet()) {
+        for (Map.Entry<GTRecipeInput, Integer> recipeInputEntry : countableMap.entrySet()) {
             int needed = recipeInputEntry.getValue();
             int available = 0;
             // For every stack in the ingredients gathered from the input bus.
             for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
-                if (recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
+                if (recipeInputEntry.getKey().acceptsStack(inventoryEntry.getKey().getItemStackRaw())) {
                     available += inventoryEntry.getValue();
                 }
             }
@@ -352,14 +353,14 @@ public class ParallelLogic {
         //so their sum is counted against the total of fluids available in the input
         Map<FluidKey, Integer> fluidCountMap = new HashMap<>();
         Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
-        for (FluidStack fluidStack : recipe.getFluidInputs()) {
-            int fluidAmount = fluidStack.amount;
-            if (fluidStack.tag != null && fluidStack.tag.hasKey(NON_CONSUMED_NBT_KEY)) {
-                notConsumableMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
-                notConsumableMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
+        for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
+            int fluidAmount = fluidInput.getAmount();
+            if (fluidInput.isNonConsumable()) {
+                notConsumableMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()), (k, v) -> v + fluidAmount);
+                notConsumableMap.putIfAbsent(new FluidKey(fluidInput.getInputFluidStack()), fluidAmount);
             } else {
-                fluidCountMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
-                fluidCountMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
+                fluidCountMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()), (k, v) -> v + fluidAmount);
+                fluidCountMap.putIfAbsent(new FluidKey(fluidInput.getInputFluidStack()), fluidAmount);
             }
         }
 
@@ -371,12 +372,7 @@ public class ParallelLogic {
             for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
                 // Strip the Non-consumable tags here, as FluidKey compares the tags, which causes finding matching fluids
                 // in the input tanks to fail, because there is nothing in those hatches with a non-consumable tag
-                FluidKey ncFluid = notConsumableFluid.getKey().copy();
-                ncFluid.tag.removeTag(NON_CONSUMED_NBT_KEY);
-                if(ncFluid.tag.isEmpty()) {
-                    ncFluid.tag = null;
-                }
-                if (ncFluid.equals(inputFluid.getKey())) {
+                if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
                     available = inputFluid.getValue();
                     if (available > needed) {
                         inputFluid.setValue(available - needed);
@@ -486,11 +482,17 @@ public class ParallelLogic {
                     Collections.singletonList(currentInputItem),
                     Collections.emptyList(), 0);
 
-            CountableIngredient inputIngredient;
+            GTRecipeInput inputIngredient;
             if (matchingRecipe != null) {
                 inputIngredient = matchingRecipe.getInputs().get(0);
                 if (recipeBuilder == null) {
-                    recipeBuilder = recipeMap.recipeBuilder();
+                    //here we make a copy of the recipe builder of the current recipe map, while zeroing
+                    //the recipe builder EUt, since we're going to add to the total EUt of the recipes appended.
+                    //not zeroing means there is a base cost of 1 recipe EUt while doing parallel recipes
+                    //for example running 2 parallel recipes would cost the EUt of doing 3 recipes.
+                    //same should apply for the recipe map duration
+                    recipeBuilder = recipeMap.recipeBuilder().EUt(0).duration(0);
+
                 }
             } else
                 continue;
@@ -506,7 +508,7 @@ public class ParallelLogic {
 
 
             //equivalent of getting the max ratio from the inputs from Parallel logic
-            int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getCount(), 1));
+            int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getAmount(), 1));
 
             //how much we can add to the output inventory
             int limitByOutput = Integer.MAX_VALUE;

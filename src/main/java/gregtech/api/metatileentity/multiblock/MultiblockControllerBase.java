@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -12,14 +13,13 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
 import gregtech.api.sound.GTSoundManager;
+import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.api.block.VariantActiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -116,15 +116,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return 0;
-    }
-
-    @Override
-    public final int getActualLightValue() {
-        return getLightValueForPart(null);
-    }
-
     public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
@@ -143,12 +134,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
-        return () -> Arrays.stream(metaTileEntities).map(tile -> {
+    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
+        return ()->Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
@@ -171,7 +162,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return new TraceabilityPredicate(blockWorldState -> {
             IBlockState state = blockWorldState.getBlockState();
             if (state.getBlock() instanceof VariantActiveBlock) {
-                state = state.withProperty(VariantActiveBlock.ACTIVE, false);
                 blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             }
             return ArrayUtils.contains(allowedStates, state);
@@ -216,13 +206,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Override to disable MultiblockPart sharing for this Multiblock. (Rotor Holders always disallowed).
-     */
-    public boolean canShare() {
-        return true;
-    }
-
-    /**
      * Used if MultiblockPart Abilities need to be sorted a certain way, like
      * Distillation Tower and Assembly Line.
      */
@@ -239,7 +222,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
-                    if (!canShare() || !part.canPartShare()) {
+                    if (!part.canPartShare()) {
                         return;
                     }
                 }
@@ -402,7 +385,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void explodeMultiblock() {
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
-        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
+        for (IMultiblockPart part : parts) {
+            part.removeFromMultiBlock(this);
+            ((MetaTileEntity) part).doExplosion(8);
+        }
         doExplosion(8);
     }
 }

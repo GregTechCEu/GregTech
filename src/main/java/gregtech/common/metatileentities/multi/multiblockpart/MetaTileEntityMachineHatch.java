@@ -14,8 +14,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -54,11 +55,6 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return machineHandler;
-    }
-
-    @Override
-    public IItemHandlerModifiable getImportItems() {
         return machineHandler;
     }
 
@@ -108,23 +104,71 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
         @Nonnull
         @Override
+        // Insert item returns the remainder stack that was not inserted
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 
+            // If the item was not valid, nothing from the stack can be inserted
             if (!isItemValid(slot, stack)) {
                 return stack;
             }
 
-            return super.insertItem(slot, stack, simulate);
+            // Return Empty if passed Empty
+            if(stack.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+
+            // If the stacks do not match, nothing can be inserted
+            if(!ItemStackHashStrategy.comparingAllButCount().equals(stack, this.getStackInSlot(slot)) && !this.getStackInSlot(slot).isEmpty()) {
+                return stack;
+            }
+
+            int amountInSlot = this.getStackInSlot(slot).getCount();
+            int slotLimit = getSlotLimit(slot);
+
+            // If the current stack size in the slot is greater than the limit of the Multiblock, nothing can be inserted
+            if(amountInSlot >= slotLimit) {
+                return stack;
+            }
+
+            // This will always be positive and greater than zero if reached
+            int spaceAvailable = slotLimit - amountInSlot;
+
+            // Insert the minimum amount between the amount of space available and the amount being inserted
+            int amountToInsert = Math.min(spaceAvailable, stack.getCount());
+
+            // The remainder that was not inserted
+            int remainderAmount = stack.getCount() - amountToInsert;
+
+            // Handle any remainder
+            ItemStack remainder = ItemStack.EMPTY;
+
+            if(remainderAmount > 0) {
+                remainder = stack.copy();
+                remainder.setCount(remainderAmount);
+            }
+
+
+            if(!simulate) {
+                // Perform the actual insertion
+                ItemStack temp = stack.copy();
+                temp.setCount(amountInSlot + amountToInsert);
+                this.setStackInSlot(slot, temp);
+            }
+
+            return remainder;
         }
 
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+
+            boolean slotMatches = this.getStackInSlot(slot).isEmpty() || ItemStackHashStrategy.comparingAllButCount().equals(this.getStackInSlot(slot), stack);
+
             MultiblockControllerBase controller = getController();
             if (controller instanceof IMachineHatchMultiblock)
-                return GTUtility.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist());
+                return slotMatches && GTUtility.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist());
 
             //If the controller is null, this part is not attached to any Multiblock
-            return true;
+            return slotMatches;
         }
 
         @Nonnull
@@ -151,7 +195,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         }
 
         @Override
-        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+        public int getSlotLimit(int slot) {
             return MetaTileEntityMachineHatch.this.getMachineLimit();
         }
     }

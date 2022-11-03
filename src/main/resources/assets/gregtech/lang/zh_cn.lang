@@ -1098,7 +1098,7 @@ cover.filter.blacklist.disabled=白名单
 cover.filter.blacklist.enabled=黑名单
 
 cover.ore_dictionary_filter.title=矿物词典过滤
-cover.ore_dictionary_filter.info=§b支持复杂的表达式/n& = AND函数/n| = OR函数/n^ = XOR函数/n! = NOT函数/n( ) 是优先的/n* 是通配符/n§b比如:/n§6粉*金 | (板* & !*双精度浮点型*)/n将匹配所有大小的金粉或所有的板，但不是双重板
+cover.ore_dictionary_filter.info=§b支持复杂的表达式/n& = 与运算/n| = 或运算/n^ = 异或运算/n! = 非运算/n( ) 优先运算/n* 作通配符/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n将匹配所有大小的金粉或所有非双重板的板
 cover.ore_dictionary_filter.test_slot.info=插入一个物品以测试它是否与筛选器表达式匹配
 cover.ore_dictionary_filter.matches=物品匹配
 cover.ore_dictionary_filter.matches_not=物品不匹配
@@ -2434,7 +2434,7 @@ tile.machine_casing.ultra_high_voltage.name=UHV机械外壳
 tile.machine_casing.ultra_excessive_voltage.name=UEV机械外壳
 tile.machine_casing.ultra_immense_voltage.name=UIV机械外壳
 tile.machine_casing.ultra_extreme_voltage.name=UXV机械外壳
-tile.machine_casing.Ultra Immense_voltage.name=OpV机械外壳
+tile.machine_casing.overpowered_voltage.name=OpV机械外壳
 tile.machine_casing.maximum_voltage.name=MAX机械外壳
 
 # Steam casing blocks
@@ -4779,7 +4779,7 @@ gregtech.cable.amperage=最大安培: §e%d
 gregtech.cable.loss_per_block=线损: §c%d§7 EU-V
 gregtech.cable.superconductor=§d%s 超导体
 
-gregtech.fluid_pipe.throughput=§9传输效率: %,d L/s
+gregtech.fluid_pipe.throughput=§9传输效率: %,d L/t
 gregtech.fluid_pipe.capacity=§9内容物: %,d L
 gregtech.fluid_pipe.max_temperature=§c温度范围: %,d K
 gregtech.fluid_pipe.channels=§ee频道: %d

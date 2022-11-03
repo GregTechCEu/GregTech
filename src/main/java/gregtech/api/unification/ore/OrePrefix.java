@@ -244,7 +244,7 @@ public class OrePrefix {
     }
 
     static {
-        ingotHot.heatDamage = 3.0F;
+        ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
@@ -433,7 +433,7 @@ public class OrePrefix {
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
-    public float heatDamage = 0.0F; // Negative for Frost Damage
+    public Function<Integer, Float> heatDamageFunction = null; // Negative for Frost Damage
     public Function<Material, List<String>> tooltipFunc;
 
     private String alternativeOreName = null;
@@ -488,7 +488,8 @@ public class OrePrefix {
                 //glass, ice and obsidian gain only one dust
             else if (material == Materials.Glass ||
                     material == Materials.Ice ||
-                    material == Materials.Obsidian)
+                    material == Materials.Obsidian ||
+                    material == Materials.Concrete)
                 return M;
         } else if (this == stick) {
             if (material == Materials.Blaze)

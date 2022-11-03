@@ -119,6 +119,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
+        if (fluidHandler == null) return;
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
             GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
@@ -199,7 +200,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("Frequency", color);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
@@ -208,6 +209,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         tagCompound.setBoolean("Private", isPrivate);
         tagCompound.setString("PlacedUUID", playerUUID.toString());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+
+        return tagCompound;
     }
 
     @Override

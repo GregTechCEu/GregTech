@@ -6,6 +6,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Materials;
@@ -319,11 +320,12 @@ public class RecipeMaps {
             .onRecipeBuild(recipeBuilder -> {
                 recipeBuilder.invalidateOnBuildAction();
                 RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                        .inputs(recipeBuilder.getInputs().toArray(new CountableIngredient[0]))
+                        .inputs(recipeBuilder.getInputs().toArray(new GTRecipeInput[0]))
                         .fluidInputs(recipeBuilder.getFluidInputs())
                         .outputs(recipeBuilder.getOutputs())
                         .chancedOutputs(recipeBuilder.getChancedOutputs())
                         .fluidOutputs(recipeBuilder.getFluidOutputs())
+                        .cleanroom(recipeBuilder.getCleanroom())
                         .duration(recipeBuilder.duration)
                         .EUt(recipeBuilder.EUt)
                         .buildAndRegister();
@@ -1093,7 +1095,7 @@ public class RecipeMaps {
      * Any Recipe added to the Thermal Centrifuge not specifying an <B>EUt</B> value will default to 120.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().EUt(VA[MV]), false)
+    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 2, 0, 1, new SimpleRecipeBuilder().EUt(VA[MV]), false)
             .setSound(GTSounds.COOLING);
 
     /**

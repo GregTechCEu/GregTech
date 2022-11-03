@@ -3,6 +3,8 @@ package gregtech.api.util;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.recipes.FluidKey;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
@@ -17,8 +19,8 @@ public class OverlayedFluidHandler {
     private final OverlayedTank[] originalTanks;
     private final IMultipleTankHandler overlayed;
     private boolean allowSameFluidFill = true;
-    private final HashSet<IFluidTankProperties> tankDeniesSameFluidFill = new HashSet<>();
-    private final Map<IMultipleTankHandler, HashSet<FluidKey>> uniqueFluidMap = new HashMap<>();
+    private final ObjectOpenHashSet<IFluidTankProperties> tankDeniesSameFluidFill = new ObjectOpenHashSet<>();
+    private final Map<IMultipleTankHandler, ObjectOpenHashSet<FluidKey>> uniqueFluidMap = new Object2ObjectOpenHashMap<>();
 
     public OverlayedFluidHandler(IMultipleTankHandler toOverlay) {
         this.overlayedTanks = new OverlayedTank[toOverlay.getTankProperties().length];
@@ -57,10 +59,10 @@ public class OverlayedFluidHandler {
                 NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) overlayed.getTankAt(tank);
                 if (!nftfl.getFluidTankList().get().allowSameFluidFill()) {
                     this.tankDeniesSameFluidFill.add(overlayed.getTankProperties()[tank]);
-                    uniqueFluidMap.computeIfAbsent(nftfl.getFluidTankList().get(), list -> new HashSet<>());
+                    uniqueFluidMap.computeIfAbsent(nftfl.getFluidTankList().get(), list -> new ObjectOpenHashSet<>());
                 }
             } else if (!this.allowSameFluidFill) {
-                uniqueFluidMap.computeIfAbsent(overlayed, list -> new HashSet<>());
+                uniqueFluidMap.computeIfAbsent(overlayed, list -> new ObjectOpenHashSet<>());
             }
         }
     }

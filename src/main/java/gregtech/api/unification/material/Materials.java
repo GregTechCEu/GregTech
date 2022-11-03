@@ -307,6 +307,7 @@ public class Materials {
     public static Material Invar;
     public static Material Kanthal;
     public static Material Lazurite;
+    public static Material LiquidHelium;
     public static Material Magnalium;
     public static Material Magnesite;
     public static Material Magnetite;

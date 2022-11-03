@@ -34,6 +34,7 @@ public class CraftingRecipeLogic {
     private final ItemStackKey[] oldCraftingGrid = new ItemStackKey[9];
     private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new DummyContainer(), 3, 3);
     private final IInventory craftingResultInventory = new InventoryCraftResult();
+    private ItemStack oldResult = ItemStack.EMPTY;
     private final CachedRecipeData cachedRecipeData;
     private final CraftingRecipeMemory recipeMemory;
     private IRecipe cachedRecipe = null;
@@ -118,9 +119,13 @@ public class CraftingRecipeLogic {
                 continue;
             }
             ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
-            if (itemStack.isItemEqual(inventoryCrafting.getStackInSlot(i))) {
-                inventoryCrafting.setInventorySlotContents(i, itemStack);
+
+            ItemStack current = inventoryCrafting.getStackInSlot(i);
+            inventoryCrafting.setInventorySlotContents(i, itemStack);
+            if (!cachedRecipe.matches(inventoryCrafting, itemSources.getWorld())){
+                inventoryCrafting.setInventorySlotContents(i, current);
             }
+
             int remainingAmount = itemStack.getCount() - itemSources.insertItem(stackKey, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
@@ -162,12 +167,13 @@ public class CraftingRecipeLogic {
     }
 
     private void updateCurrentRecipe() {
-        if (!cachedRecipeData.matches(inventoryCrafting, world)) {
+        if (!cachedRecipeData.matches(inventoryCrafting, world) || !ItemStack.areItemStacksEqual(oldResult, cachedRecipe.getCraftingResult(inventoryCrafting))) {
             IRecipe newRecipe = CraftingManager.findMatchingRecipe(inventoryCrafting, world);
             this.cachedRecipe = newRecipe;
             ItemStack resultStack = ItemStack.EMPTY;
             if (newRecipe != null) {
                 resultStack = newRecipe.getCraftingResult(inventoryCrafting);
+                oldResult = resultStack.copy();
             }
             this.craftingResultInventory.setInventorySlotContents(0, resultStack);
             this.cachedRecipeData.setRecipe(newRecipe);

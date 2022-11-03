@@ -55,6 +55,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -95,6 +97,7 @@ public class MetaBlocks {
     public static BlockWarningSign WARNING_SIGN;
     public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
+    public static BlockCleanroomCasing CLEANROOM_CASING;
 
     public static BlockAsphalt ASPHALT;
 
@@ -172,6 +175,8 @@ public class MetaBlocks {
         WARNING_SIGN_1.setRegistryName("warning_sign_1");
         HERMETIC_CASING = new BlockHermeticCasing();
         HERMETIC_CASING.setRegistryName("hermetic_casing");
+        CLEANROOM_CASING = new BlockCleanroomCasing();
+        CLEANROOM_CASING.setRegistryName("cleanroom_casing");
 
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
@@ -316,18 +321,14 @@ public class MetaBlocks {
         for (BlockItemPipe pipe : ITEM_PIPES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.INSTANCE.getModelLocation());
         registerItemModel(BOILER_CASING);
-        registerItemModel(BOILER_FIREBOX_CASING);
         registerItemModel(METAL_CASING);
         registerItemModel(TURBINE_CASING);
         registerItemModel(MACHINE_CASING);
         registerItemModel(STEAM_CASING);
-        registerItemModel(MULTIBLOCK_CASING);
-        registerItemModel(TRANSPARENT_CASING);
-        registerItemModel(WIRE_COIL);
-        registerItemModel(FUSION_CASING);
         registerItemModel(WARNING_SIGN);
         registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
+        registerItemModel(CLEANROOM_CASING);
         registerItemModel(ASPHALT);
         registerItemModel(STONE_SMOOTH);
         registerItemModel(STONE_COBBLE);
@@ -349,6 +350,12 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
         registerItemModel(PLANKS);
+
+        BOILER_FIREBOX_CASING.onModelRegister();
+        WIRE_COIL.onModelRegister();
+        FUSION_CASING.onModelRegister();
+        MULTIBLOCK_CASING.onModelRegister();
+        TRANSPARENT_CASING.onModelRegister();
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);

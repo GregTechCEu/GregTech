@@ -1,6 +1,5 @@
 package gregtech.api.recipes.builders;
 
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -8,8 +7,9 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.annotation.Nonnull;
 
 public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuilder> {
 
@@ -27,12 +27,12 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         if (key.equals("circuit") && value instanceof Number) {
-            this.circuitMeta = ((Number) value).intValue();
+            circuitMeta(((Number) value).intValue());
             return true;
         }
-        return false;
+        return super.applyProperty(key, value);
     }
 
     @Override
@@ -52,14 +52,9 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     @Override
     protected EnumValidationResult finalizeAndValidate() {
         if (circuitMeta >= 0) {
-            inputs.add(new CountableIngredient(new IntCircuitIngredient(circuitMeta), 1).setNonConsumable());
+            inputs.add(IntCircuitIngredient.getOrCreate(new IntCircuitIngredient(circuitMeta)).setNonConsumable());
         }
         return super.finalizeAndValidate();
-    }
-
-    public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
     }
 
     @Override

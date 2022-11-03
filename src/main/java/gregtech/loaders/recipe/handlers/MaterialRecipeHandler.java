@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.handlers;
 
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
@@ -158,11 +157,21 @@ public class MaterialRecipeHandler {
 
         // Add Vacuum Freezer recipe if required.
         if (ingotHot.doGenerateItem(material)) {
-            RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                    .input(ingotHot, material)
-                    .output(ingot, material)
-                    .duration((int) material.getMass() * 3)
-                    .buildAndRegister();
+            if(blastTemp < 5000) {
+                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                        .input(ingotHot, material)
+                        .output(ingot, material)
+                        .duration((int) material.getMass() * 3)
+                        .buildAndRegister();
+            } else {
+                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                        .input(ingotHot, material)
+                        .fluidInputs(Materials.LiquidHelium.getFluid(500))
+                        .output(ingot, material)
+                        .fluidOutputs(Materials.Helium.getFluid(250))
+                        .duration((int) material.getMass() * 3)
+                        .buildAndRegister();
+            }
         }
     }
 
@@ -176,12 +185,12 @@ public class MaterialRecipeHandler {
                 dustStack, "XX", "XX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 4)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(dustStack)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(2), 0))
+                .notConsumable(new IntCircuitIngredient(2))
                 .outputs(GTUtility.copyAmount(4, smallDustStack))
                 .buildAndRegister();
     }
@@ -196,12 +205,12 @@ public class MaterialRecipeHandler {
                 dustStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(dustStack)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(GTUtility.copyAmount(9, tinyDustStack))
                 .buildAndRegister();
     }

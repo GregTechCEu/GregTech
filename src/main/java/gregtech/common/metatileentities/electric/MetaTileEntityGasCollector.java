@@ -11,6 +11,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -38,8 +39,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
     }
 
     protected boolean checkRecipe(@Nonnull Recipe recipe) {
-        List<Integer> recipeDimensions = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
-        for (Integer dimension : recipeDimensions) {
+        for (int dimension : recipe.getProperty(GasCollectorDimensionProperty.getInstance(), IntLists.EMPTY_LIST)) {
             if (dimension == this.getWorld().provider.getDimension()) {
                 return true;
             }
@@ -54,8 +54,8 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         }
 
         @Override
-        protected boolean checkRecipe(Recipe recipe) {
-            return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe);
+        protected boolean checkRecipe(@Nonnull Recipe recipe) {
+            return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe) && super.checkRecipe(recipe);
         }
     }
 }

@@ -12,7 +12,6 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GregFakePlayer;
@@ -140,8 +139,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
             EnumFacing currentOutputSide = getOutputFacing();
-            if (currentOutputSide == facing ||
-                    getFrontFacing() == facing) return false;
+            if (currentOutputSide == facing || getFrontFacing() == facing) return false;
             setOutputFacing(facing);
             return true;
         }
@@ -264,5 +262,10 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.machine.block_breaker.speed_bonus", (int) (getEfficiencyMultiplier() * 100)));
         tooltip.add(I18n.format("gregtech.machine.block_breaker.consumption", getEnergyPerBlockBreak()));
+    }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
     }
 }

@@ -189,10 +189,12 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidingMode", voidingMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
+
+        return tagCompound;
     }
 
     @Override

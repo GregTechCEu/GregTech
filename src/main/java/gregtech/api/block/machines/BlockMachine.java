@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
@@ -21,6 +22,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -55,16 +57,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
@@ -203,13 +203,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean rotateBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if (metaTileEntity == null ||
-                !metaTileEntity.isValidFrontFacing(axis) ||
-                metaTileEntity.getFrontFacing() == axis ||
-                !metaTileEntity.hasFrontFacing())
-            return false;
-        metaTileEntity.setFrontFacing(axis);
-        return true;
+        if (metaTileEntity == null) return false;
+        if (metaTileEntity.hasFrontFacing() && metaTileEntity.isValidFrontFacing(axis)) {
+            metaTileEntity.setFrontFacing(axis);
+            return true;
+        }
+        return false;
     }
 
     @Nullable
@@ -250,6 +249,22 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+            }
+            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+                if (metaTileEntity.getProxy() != null) {
+                    metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+                }
+            }
+
+            // Color machines on place if holding spray can in off-hand
+            if(placer instanceof EntityPlayer) {
+                ItemStack offhand = placer.getHeldItemOffhand();
+                for(int i  = 0; i < EnumDyeColor.values().length; i++) {
+                    if(offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -491,5 +506,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             return super.canEntityDestroy(state, world, pos, entity);
         }
         return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(@Nonnull IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
+        super.randomDisplayTick(stateIn, worldIn, pos, rand);
+        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
+        if (metaTileEntity != null) metaTileEntity.randomDisplayTick();
     }
 }

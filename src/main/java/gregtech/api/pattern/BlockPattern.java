@@ -85,7 +85,7 @@ public class BlockPattern {
             }
         }
         if (centerOffset == null) {
-            throw new IllegalArgumentException("Didn't found center predicate");
+            throw new IllegalArgumentException("Didn't find center predicate");
         }
     }
 

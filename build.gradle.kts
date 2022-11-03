@@ -3,19 +3,12 @@ import net.minecraftforge.gradle.user.UserBaseExtension
 buildscript {
     repositories {
         mavenCentral()
-        /*
-        maven {
-            name = "jitpack"
-            setUrl("https://jitpack.io")
-        }
-         */
         maven {
             name = "forge"
             setUrl("https://maven.minecraftforge.net/")
         }
     }
     dependencies {
-        // classpath("com.github.GregTechCE:ForgeGradle:FG_2.3-SNAPSHOT")
         classpath("net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT")
         classpath("org.eclipse.jgit:org.eclipse.jgit:5.8.0.202006091008-r")
         classpath("org.apache.commons:commons-lang3:3.12.0")
@@ -29,6 +22,7 @@ plugins {
 
 apply {
     plugin("net.minecraftforge.gradle.forge")
+    plugin("idea")
 }
 
 val mcVersion = "1.12.2"
@@ -58,6 +52,9 @@ repositories {
         name = "CurseMaven"
         setUrl("https://www.cursemaven.com")
     }
+    maven {
+        setUrl("https://maven.cleanroommc.com")
+    }
 }
 
 dependencies {
@@ -65,10 +62,14 @@ dependencies {
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
 
-    "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
+    "compile"("curse.maven:crafttweaker-239197:3935788")
+
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
     "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
+    "compile"(files("etc/groovyscript-0.0.1.jar"))
+
+    "deobfCompile"("zone.rong:mixinbooter:4.2")
 
     "testImplementation"("junit:junit:4.13.1")
     "implementation"("org.projectlombok:lombok:1.18.16")
@@ -141,18 +142,19 @@ val energyApiTask: Jar = tasks.create("energyApi", Jar::class.java) {
     classifier = "energy-api"
 }
 
-artifacts {
-    add("archives", jar)
-    add("archives", sourceTask)
-    add("archives", energyApiTask)
-}
-
 fun Project.idea(configure: org.gradle.plugins.ide.idea.model.IdeaModel.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("idea", configure)
 idea {
     module {
         inheritOutputDirs = true
+        setDownloadSources(true)
+        setDownloadJavadoc(true)
     }
+}
+
+// used for GitHub Actions CI releases
+task<Exec>("getVersionFromJava") {
+    commandLine("echo", getVersionFromJava(file("src/main/java/gregtech/GregTechVersion.java")))
 }
 
 fun getVersionFromJava(file: File): String  {

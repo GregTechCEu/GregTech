@@ -1,17 +1,18 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -45,6 +46,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
+    private int[] overclockResults;
 
     protected boolean canRecipeProgress = true;
 
@@ -181,20 +183,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
         if (this.isOutputsFull && !hasNotifiedOutputs()) {
-            if (!hasNotifiedInputs() && checkPreviousRecipe()) {
-                return false;
-            }
+            return false;
+        } else {
+            this.isOutputsFull = false;
+            metaTileEntity.getNotifiedItemOutputList().clear();
+            metaTileEntity.getNotifiedFluidOutputList().clear();
+            return true;
         }
-        this.isOutputsFull = false;
-        metaTileEntity.getNotifiedItemOutputList().clear();
-        metaTileEntity.getNotifiedFluidOutputList().clear();
-        return true;
     }
 
     protected boolean canWorkWithInputs() {
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
         if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
         else {
+            //the change in inputs (especially by removal of ingredient by the player) might change the current valid recipe.
+            //and if the previous recipe produced fluids and the new recipe doesn't, then outputs are not full.
+            this.isOutputsFull = false;
             this.invalidInputsForRecipes = false;
             this.metaTileEntity.getNotifiedItemInputList().clear();
             this.metaTileEntity.getNotifiedFluidInputList().clear();
@@ -244,7 +248,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return {@code true} if the recipe can progress, else false
      */
     protected boolean canProgressRecipe() {
-        return true;
+        if (previousRecipe == null)
+            return true;
+
+        CleanroomType requiredType = null;
+        if (previousRecipe.hasProperty(CleanroomProperty.getInstance())) {
+            requiredType = previousRecipe.getProperty(CleanroomProperty.getInstance(), null);
+        }
+
+        if (requiredType == null) return true;
+
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
+
+        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
+        if (cleanroomProvider == null) return false;
+
+        return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
     }
 
     /**
@@ -285,7 +304,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the previous recipe is valid and can be run again
      */
     protected boolean checkPreviousRecipe() {
-        return this.previousRecipe != null && this.previousRecipe.matches(false, getInputInventory(), getInputTank());
+        if (this.previousRecipe == null) return false;
+        if (this.previousRecipe.getEUt() > this.getMaxVoltage()) return false;
+        return this.previousRecipe.matches(false, getInputInventory(), getInputTank());
     }
 
     /**
@@ -294,8 +315,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
-    protected boolean checkRecipe(Recipe recipe) {
-        return true;
+    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+        CleanroomType requiredType = null;
+        if (recipe.hasProperty(CleanroomProperty.getInstance())) {
+            requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
+        }
+
+        if (requiredType == null) return true;
+
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
+
+        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
+        if (cleanroomProvider == null) return false;
+
+        return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
     }
 
     /**
@@ -393,7 +426,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
 
-        int[] overclockResults = calculateOverclock(recipe);
+        overclockResults = calculateOverclock(recipe);
 
         performNonOverclockBonuses(overclockResults);
 
@@ -553,7 +586,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
         return standardOverclockingLogic(Math.abs(recipeEUt),
                 maxVoltage,
                 duration,
@@ -609,12 +642,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to run
      */
     protected void setupRecipe(Recipe recipe) {
-        int[] resultOverclock = calculateOverclock(recipe);
         this.progressTime = 1;
-        setMaxProgress(resultOverclock[1]);
-        this.recipeEUt = resultOverclock[0];
+        setMaxProgress(overclockResults[1]);
+        this.recipeEUt = overclockResults[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
+                GTUtility.getTierByVoltage(recipe.getEUt()),
+                getOverclockTier(),
+                getRecipeMap())
+        );
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
@@ -637,6 +673,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
+        this.overclockResults = new int[]{0, 0};
     }
 
     public double getProgressPercent() {

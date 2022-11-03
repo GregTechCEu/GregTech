@@ -3,16 +3,33 @@ package gregtech.api.recipes.ingredients;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 
-public class IntCircuitIngredient extends Ingredient {
+public class IntCircuitIngredient extends GTRecipeItemInput {
 
     public static final int CIRCUIT_MAX = 32;
+    private final int matchingConfigurations;
+
+    public static IntCircuitIngredient getOrCreate(IntCircuitIngredient ri) {
+        return (IntCircuitIngredient) getFromCache(new IntCircuitIngredient(ri.matchingConfigurations));
+    }
+
+    @Override
+    protected IntCircuitIngredient copy() {
+        IntCircuitIngredient copy = new IntCircuitIngredient(this.matchingConfigurations);
+        copy.isConsumable = this.isConsumable;
+        copy.nbtMatcher = this.nbtMatcher;
+        copy.nbtCondition = this.nbtCondition;
+        return copy;
+    }
+
+    public IntCircuitIngredient(int matchingConfigurations) {
+        super(getIntegratedCircuit(matchingConfigurations));
+        this.matchingConfigurations = matchingConfigurations;
+    }
 
     public static ItemStack getIntegratedCircuit(int configuration) {
         ItemStack stack = MetaItems.INTEGRATED_CIRCUIT.getStackForm();
@@ -62,30 +79,10 @@ public class IntCircuitIngredient extends Ingredient {
         IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
     }
 
-    private static ItemStack[] gatherMatchingCircuits(int... matchingConfigurations) {
-        ItemStack[] resultItems = new ItemStack[matchingConfigurations.length];
-        for (int i = 0; i < resultItems.length; i++) {
-            resultItems[i] = getIntegratedCircuit(matchingConfigurations[i]);
-        }
-        return resultItems;
-    }
-
-    private final int[] matchingConfigurations;
-
-    public IntCircuitIngredient(int... matchingConfigurations) {
-        super(gatherMatchingCircuits(matchingConfigurations));
-        this.matchingConfigurations = matchingConfigurations;
-    }
-
     @Override
-    public boolean apply(@Nullable ItemStack itemStack) {
+    public boolean acceptsStack(@Nullable ItemStack itemStack) {
         return itemStack != null && MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack) &&
-                ArrayUtils.contains(matchingConfigurations, getCircuitConfiguration(itemStack));
-    }
-
-    @Override
-    public boolean isSimple() {
-        return false;
+                matchingConfigurations == getCircuitConfiguration(itemStack);
     }
 
 }

@@ -9,6 +9,7 @@ import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
@@ -18,6 +19,7 @@ import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.advancement.GTTrigger;
 import gregtech.common.advancement.GTTriggers;
@@ -34,6 +36,7 @@ import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
@@ -118,6 +121,7 @@ public class CommonProxy {
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
 
         registry.register(HERMETIC_CASING);
+        registry.register(CLEANROOM_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
         registry.register(PETRIFIED_FOAM);
@@ -213,6 +217,7 @@ public class CommonProxy {
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
 
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(CLEANROOM_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(METAL_CASING, VariantItemBlock::new));
@@ -279,6 +284,9 @@ public class CommonProxy {
         MetaBlocks.registerOreDict();
         OreDictionaryLoader.init();
         MaterialInfoLoader.init();
+
+        // post an event for addons to modify unification data before base GT registers recycling recipes
+        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, ItemMaterialInfo.class));
 
         GTLog.logger.info("Registering recipes...");
 
@@ -379,6 +387,7 @@ public class CommonProxy {
         if(Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
+        GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
     }
 
     public boolean isFancyGraphics() {

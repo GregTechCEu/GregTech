@@ -23,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -66,6 +67,11 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) getController();
         if (getWorld().isRemote && controller != null && controller.isActive())
             pollutionParticles();
+    }
+
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        clearInventory(itemBuffer, inventory);
     }
 
     public void recoverItemsTable(List<ItemStack> recoveryItems) {

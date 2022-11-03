@@ -5,7 +5,7 @@ import crafttweaker.api.item.*;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.player.IPlayer;
-import gregtech.api.recipes.CountableIngredient;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 
@@ -15,12 +15,14 @@ import java.util.List;
 @ZenRegister
 public class InputIngredient implements IIngredient {
 
+    // TODO YEET
+
     private final IIngredient iingredient;
 
-    public InputIngredient(CountableIngredient backingIngredient) {
+    public InputIngredient(GTRecipeInput backingIngredient) {
         iingredient = CraftTweakerMC
-                .getIIngredient(backingIngredient.getIngredient())
-                .amount(backingIngredient.getCount());
+                .getIIngredient(backingIngredient)
+                .amount(backingIngredient.getAmount());
     }
 
     @Override

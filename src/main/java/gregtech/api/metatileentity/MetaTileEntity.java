@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity;
 
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.me.helpers.AENetworkProxy;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
@@ -52,6 +55,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -61,6 +65,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -222,6 +227,15 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             }
         }
         return isPainted() ? paintingColor : getDefaultPaintingColor();
+    }
+
+    /**
+     * Used to display things like particles on random display ticks
+     * This method is typically used by torches or nether portals, as an example use-case
+     */
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick() {
+
     }
 
     /**
@@ -405,7 +419,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so wrench will get damaged and animation will be played
      */
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        if (playerIn.isSneaking()) {
+        if (!needsSneakToRotate() || playerIn.isSneaking()) {
             if (wrenchSide == getFrontFacing() || !isValidFrontFacing(wrenchSide) || !hasFrontFacing()) {
                 return false;
             }
@@ -414,6 +428,13 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             }
             return true;
         }
+        return false;
+    }
+
+    /**
+     * @return true if the player must sneak to rotate this metatileentity, otherwise false
+     */
+    public boolean needsSneakToRotate() {
         return false;
     }
 
@@ -970,6 +991,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             T otherCap = tileEntity.getCapability(capability, nearbyFacing.getOpposite());
             //use getCoverCapability so item/ore dictionary filter covers will work properly
             T thisCap = getCoverCapability(capability, nearbyFacing);
+            if (otherCap == null || thisCap == null) {
+                continue;
+            }
             transfer.accept(thisCap, otherCap);
         }
         blockPos.release();
@@ -1048,6 +1072,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean isValidFrontFacing(EnumFacing facing) {
+        if (this.hasFrontFacing() && getFrontFacing() == facing) return false;
         return facing != EnumFacing.UP && facing != EnumFacing.DOWN;
     }
 
@@ -1283,7 +1308,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public RecipeMap<?> getRecipeMap() {
-
         for (int i = 0; i < mteTraits.size(); i++) {
             if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
                 return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
@@ -1359,5 +1383,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     @Override
     public boolean canVoidRecipeFluidOutputs() {
         return false;
+    }
+
+    @Nonnull
+    @Method(modid = GTValues.MODID_APPENG)
+    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+        return AECableType.NONE;
+    }
+
+    @Nullable
+    @Method(modid = GTValues.MODID_APPENG)
+    public AENetworkProxy getProxy() {
+        return null;
+    }
+
+    @Method(modid = GTValues.MODID_APPENG)
+    public void gridChanged() {
     }
 }

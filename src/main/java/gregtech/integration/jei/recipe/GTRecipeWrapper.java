@@ -2,19 +2,17 @@ package gregtech.integration.jei.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
-import gregtech.integration.jei.utils.JEIHelpers;
 import gregtech.integration.jei.utils.JeiButton;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -36,7 +34,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
-    private String lastCopiedRemoval;
 
     public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipeMap = recipeMap;
@@ -53,10 +50,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
-            for (CountableIngredient ci : recipe.getInputs()) {
-                matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
-                        .sorted(OreDictUnifier.getItemStackComparator())
-                        .map(is -> GTUtility.copyAmount(ci.getCount(), is))
+            for (GTRecipeInput recipeInput : recipe.getInputs()) {
+                matchingInputs.add(Arrays.stream(recipeInput.getInputStacks())
+                        .map(ItemStack::copy)
                         .collect(Collectors.toList()));
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
@@ -66,17 +62,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getFluidInputs().isEmpty()) {
             List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
 
-            for (FluidStack fs : recipe.getFluidInputs()) {
-                if (fs.tag != null && fs.tag.hasKey("nonConsumable")) {
-                    FluidStack fluidCopy = GTUtility.copyAmount(fs.amount, fs);
-                    fluidCopy.tag.removeTag("nonConsumable");
-                    if (fluidCopy.tag.isEmpty()) {
-                        fluidCopy.tag = null;
-                    }
-                    matchingFluidInputs.add(fluidCopy);
-                } else {
-                    matchingFluidInputs.add(fs);
-                }
+            for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
+                FluidStack fluidStack = fluidInput.getInputFluidStack();
+                Collections.addAll(matchingFluidInputs, fluidStack);
             }
             ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
         }
@@ -134,7 +122,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         int yPosition = recipeHeight - getPropertyListHeight();
         if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
-            minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[JEIHelpers.getMinTierForVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
+            minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
         } else yPosition -= LINE_HEIGHT * 2;
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", recipe.getDuration() / 20f), 0, yPosition += LINE_HEIGHT, 0x111111);
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
@@ -159,7 +147,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     String copyString = output + recipeLine + "\n";
                     ClipboardUtil.copyToClipboard(copyString);
                     Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
-                    this.lastCopiedRemoval = copyString;
                     return true;
                 })
                 .setActiveSupplier(creativePlayerCtPredicate));
@@ -177,7 +164,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public boolean isNotConsumedFluid(int slot) {
         if (slot >= recipe.getFluidInputs().size()) return false;
-        return recipe.getFluidInputs().get(slot).tag != null && recipe.getFluidInputs().get(slot).tag.hasKey("nonConsumable");
+        return recipe.getFluidInputs().get(slot).isNonConsumable();
     }
 
     private int getPropertyListHeight() {

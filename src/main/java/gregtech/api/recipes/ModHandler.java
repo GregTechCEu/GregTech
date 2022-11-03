@@ -21,6 +21,8 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
+import gregtech.common.crafting.GTShapedOreRecipe;
+import gregtech.common.crafting.GTShapelessOreRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -39,6 +41,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -249,7 +252,7 @@ public class ModHandler {
             return;
         }
 
-        IRecipe shapedOreRecipe = new ShapedOreRecipe(new ResourceLocation(GTValues.MODID, "general"), result.copy(), finalizeShapedRecipeInput(recipe))
+        IRecipe shapedOreRecipe = new GTShapedOreRecipe(false, new ResourceLocation(GTValues.MODID, "general"), result.copy(), finalizeShapedRecipeInput(recipe))
                 .setMirrored(true)
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
@@ -287,10 +290,18 @@ public class ModHandler {
      * </ul>
      */
     public static void addShapedRecipe(String regName, ItemStack result, Object... recipe) {
-        addShapedRecipe(false, regName, result, recipe);
+        addShapedRecipe(false, regName, result, false, recipe);
+    }
+
+    public static void addShapedNBTClearingRecipe(String regName, ItemStack result, Object... recipe) {
+        addShapedRecipe(false, regName, result, true, recipe);
     }
 
     public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
+        addShapedRecipe(withUnificationData, regName, result, false, recipe);
+    }
+
+    public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
             GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
@@ -303,12 +314,15 @@ public class ModHandler {
             return;
         }
 
-        IRecipe shapedOreRecipe = new ShapedOreRecipe(null, result.copy(), finalizeShapedRecipeInput(recipe))
+        IRecipe shapedOreRecipe;
+        shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(), finalizeShapedRecipeInput(recipe))
                 .setMirrored(false) //make all recipes not mirrored by default
                 .setRegistryName(regName);
+
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
 
-        if (withUnificationData) OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
+        if (withUnificationData)
+            OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
     }
 
     public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
@@ -350,14 +364,17 @@ public class ModHandler {
                             .collect(Collectors.joining(", ")));
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             skip = true;
-        } else if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(GTValues.MODID, regName))) {
-            GTLog.logger.error("Tried to register recipe, {}, with duplicate key. Recipe: {}", regName,
-                    Arrays.stream(recipe)
-                            .map(Object::toString)
-                            .map(s -> "\"" + s + "\"")
-                            .collect(Collectors.joining(", ")));
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
-            skip = true;
+        } else {
+            ModContainer container = Loader.instance().activeModContainer();
+            if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(container == null ? GTValues.MODID : container.getModId().toLowerCase(), regName))) {
+                GTLog.logger.error("Tried to register recipe, {}, with duplicate key. Recipe: {}", regName,
+                        Arrays.stream(recipe)
+                                .map(Object::toString)
+                                .map(s -> "\"" + s + "\"")
+                                .collect(Collectors.joining(", ")));
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                skip = true;
+            }
         }
         return skip;
     }
@@ -491,7 +508,16 @@ public class ModHandler {
     /**
      * Add Shapeless Crafting Recipes
      */
+
     public static void addShapelessRecipe(String regName, ItemStack result, Object... recipe) {
+        addShapelessRecipe(regName, result, false, recipe);
+    }
+
+    public static void addShapelessNBTClearingRecipe(String regName, ItemStack result, Object... recipe) {
+        addShapelessRecipe(regName, result, true, recipe);
+    }
+
+    public static void addShapelessRecipe(String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
             GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
@@ -526,9 +552,9 @@ public class ModHandler {
                 throw new IllegalArgumentException(recipe.getClass().getSimpleName() + " type is not suitable for crafting input.");
             }
         }
-
-        IRecipe shapelessRecipe = new ShapelessOreRecipe(null, result.copy(), recipe)
-                .setRegistryName(regName);
+        IRecipe shapelessRecipe;
+            shapelessRecipe = new GTShapelessOreRecipe(isNBTClearing, null, result.copy(), recipe)
+                    .setRegistryName(regName);
 
         try {
             //workaround for MC bug that makes all shaped recipe inputs that have enchanted items

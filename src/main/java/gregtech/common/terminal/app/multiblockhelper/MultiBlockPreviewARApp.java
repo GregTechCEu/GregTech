@@ -76,7 +76,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
 
     private void drawBuilderButton(double x, double y, int width, int height) {
         if (Shaders.allowedShader()) {
-            float time =(gui.entityPlayer.ticksExisted + partialTicks) / 20f;
+            float time = (gui.entityPlayer.ticksExisted + partialTicks) / 20f;
 
             MultiblockControllerBase controllerBase = getController();
             int color = controllerBase == null ? -1 : controllerBase.getPaintingColorForRendering();
@@ -131,7 +131,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
     private void buildMode() {
         if (getAppTier() == 0) {
             TerminalDialogWidget.showInfoDialog(getOs(), "terminal.dialog.notice", "terminal.multiblock_ar.unlock").open();
-        } else if (getController() != null){
+        } else if (getController() != null) {
             widgets.forEach(this::waitToRemoved);
             MultiblockControllerBase controllerBase = getController();
             MachineBuilderWidget builderWidget = new MachineBuilderWidget(200, 16, 133, 200, controllerBase, getOs());

@@ -2,10 +2,10 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,9 +50,9 @@ public class SmartItemFilter extends ItemFilter {
                 filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
             } else {
-                CountableIngredient inputIngredient = recipe.getInputs().iterator().next();
-                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getCount());
-                cachedTransferRateValue = inputIngredient.getCount();
+                GTRecipeInput inputIngredient = recipe.getInputs().iterator().next();
+                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
+                cachedTransferRateValue = inputIngredient.getAmount();
             }
         }
 

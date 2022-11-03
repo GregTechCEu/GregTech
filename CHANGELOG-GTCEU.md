@@ -1,4 +1,6 @@
-<h1 align="center">Changes made by GregTech: CE Unofficial</h1>
+<h1 align="center">Changes made by GregTech: CE Unofficial as of v2.0.0</h1>
+
+<h2 align="center">For changes beyond v2.0.0, look here: https://github.com/GregTechCEu/GregTech/blob/master/CHANGELOG.md</h2>
 
 ## Table of Contents
 

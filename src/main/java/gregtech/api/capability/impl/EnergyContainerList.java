@@ -16,8 +16,9 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getInputPerSec() {
         long sum = 0;
-        for (IEnergyContainer energyContainer : energyContainerList) {
-            sum += energyContainer.getInputPerSec();
+        List<IEnergyContainer> energyContainerList = this.energyContainerList;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            sum += energyContainerList.get(i).getInputPerSec();
         }
         return sum;
     }
@@ -25,8 +26,9 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getOutputPerSec() {
         long sum = 0;
-        for (IEnergyContainer energyContainer : energyContainerList) {
-            sum += energyContainer.getOutputPerSec();
+        List<IEnergyContainer> energyContainerList = this.energyContainerList;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            sum += energyContainerList.get(i).getOutputPerSec();
         }
         return sum;
     }
@@ -34,9 +36,12 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
         long amperesUsed = 0L;
-        for (IEnergyContainer energyContainer : energyContainerList) {
-            amperesUsed += energyContainer.acceptEnergyFromNetwork(null, voltage, amperage);
-            if (amperage == amperesUsed) break;
+        List<IEnergyContainer> energyContainerList = this.energyContainerList;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            amperesUsed += energyContainerList.get(i).acceptEnergyFromNetwork(null, voltage, amperage);
+            if (amperage == amperesUsed) {
+                return amperesUsed;
+            }
         }
         return amperesUsed;
     }
@@ -44,25 +49,32 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long changeEnergy(long energyToAdd) {
         long energyAdded = 0L;
-        for (IEnergyContainer energyContainer : energyContainerList) {
-            energyAdded += energyContainer.changeEnergy(energyToAdd - energyAdded);
-            if (energyAdded == energyToAdd) break;
+        List<IEnergyContainer> energyContainerList = this.energyContainerList;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            energyAdded += energyContainerList.get(i).changeEnergy(energyToAdd - energyAdded);
+            if (energyAdded == energyToAdd) {
+                return energyAdded;
+            }
         }
         return energyAdded;
     }
 
     @Override
     public long getEnergyStored() {
-        return energyContainerList.stream()
-                .mapToLong(IEnergyContainer::getEnergyStored)
-                .sum();
+        long energyStored = 0L;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            energyStored += energyContainerList.get(i).getEnergyStored();
+        }
+        return energyStored;
     }
 
     @Override
     public long getEnergyCapacity() {
-        return energyContainerList.stream()
-                .mapToLong(IEnergyContainer::getEnergyCapacity)
-                .sum();
+        long energyCapacity = 0L;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            energyCapacity += energyContainerList.get(i).getEnergyCapacity();
+        }
+        return energyCapacity;
     }
 
     @Override
@@ -77,16 +89,22 @@ public class EnergyContainerList implements IEnergyContainer {
 
     @Override
     public long getInputVoltage() {
-        return energyContainerList.stream()
-                .mapToLong(v -> v.getInputVoltage() * v.getInputAmperage())
-                .sum();
+        long inputVoltage = 0L;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            IEnergyContainer container = energyContainerList.get(i);
+            inputVoltage += container.getInputVoltage() * container.getInputAmperage();
+        }
+        return inputVoltage;
     }
 
     @Override
     public long getOutputVoltage() {
-        return energyContainerList.stream()
-                .mapToLong(v -> v.getOutputVoltage() * v.getOutputAmperage())
-                .sum();
+        long outputVoltage = 0L;
+        for (int i = 0; i < energyContainerList.size(); i++) {
+            IEnergyContainer container = energyContainerList.get(i);
+            outputVoltage += container.getOutputVoltage() * container.getOutputAmperage();
+        }
+        return outputVoltage;
     }
 
     @Override

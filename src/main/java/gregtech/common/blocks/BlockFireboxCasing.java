@@ -25,20 +25,6 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
     }
 
     @Override
-    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        return state.getValue(ACTIVE) ? 15 : 0;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        if (state.getValue(ACTIVE)) {
-            return 0b10100000 << 16 | 0b10100000;
-        }
-        return source.getCombinedLight(pos, state.getLightValue(source, pos));
-    }
-
-    @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }

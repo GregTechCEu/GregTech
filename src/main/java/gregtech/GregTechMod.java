@@ -38,7 +38,7 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
-import gregtech.integration.jei.recipe.primitive.OreByProduct;
+import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraft.block.state.IBlockState;
@@ -58,7 +58,7 @@ import static gregtech.api.GregTechAPI.*;
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
         acceptedMinecraftVersions = "[1.12,1.13)",
-        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker")
+        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker@[4.1.20,);")
 public class GregTechMod {
 
     static {
@@ -77,6 +77,11 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
+
+        /* init GroovyScript compat */
+        if (Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT)) {
+            GroovyScriptCompat.init();
+        }
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
