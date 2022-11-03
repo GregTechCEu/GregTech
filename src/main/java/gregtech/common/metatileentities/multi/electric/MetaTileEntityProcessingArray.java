@@ -41,7 +41,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.unlockedVoltageOverclockingLogic;
+import static gregtech.api.GTValues.ULV;
+import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 
@@ -272,14 +273,21 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             // apply maintenance penalties
             Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
-            int originalTier = Math.max(1, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
+            int originalTier = Math.max(0, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
             int numOverclocks = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage())) - originalTier;
-            return unlockedVoltageOverclockingLogic(
-                    recipeEUt, getMaxVoltage(),
+
+            if (originalTier == ULV) numOverclocks--; // no ULV overclocking
+
+            // cannot overclock, so return the starting values
+            if (numOverclocks <= 0) return new int[]{recipe.getEUt(), recipe.getDuration()};
+
+            return standardOverclockingLogic(
+                    recipeEUt,
+                    getMaximumOverclockVoltage(),
                     (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
+                    numOverclocks,
                     getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier(),
-                    numOverclocks
+                    getOverclockingVoltageMultiplier()
             );
         }
 

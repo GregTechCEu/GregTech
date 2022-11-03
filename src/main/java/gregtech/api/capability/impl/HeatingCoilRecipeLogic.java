@@ -21,14 +21,15 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int amountOC) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
-        return heatingCoilOverclockingLogic(Math.abs(recipeEUt),
+        return heatingCoilOverclockingLogic(
+                Math.abs(recipeEUt),
                 maxVoltage,
                 (int) Math.round(duration * maintenanceValues.getSecond()),
-                maxOverclocks,
+                amountOC,
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
                 propertyStorage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0)
         );

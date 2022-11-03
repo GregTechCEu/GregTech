@@ -250,28 +250,31 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         int[] overclock = null;
         if (maintenanceValues.getSecond() != 1.0)
 
-            overclock = standardOverclockingLogic(Math.abs(recipeEUt),
+            overclock = standardOverclockingLogic(
+                    Math.abs(recipeEUt),
                     maxVoltage,
                     (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
+                    amountOC,
                     getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier(),
-                    maxOverclocks
+                    getOverclockingVoltageMultiplier()
             );
 
         if (overclock == null)
-            overclock = standardOverclockingLogic(Math.abs(recipeEUt),
+            overclock = standardOverclockingLogic(
+                    Math.abs(recipeEUt),
                     maxVoltage,
                     recipeDuration,
+                    amountOC,
                     getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier(),
-                    maxOverclocks);
+                    getOverclockingVoltageMultiplier()
+            );
 
         if (maintenanceValues.getFirst() > 0)
             overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
