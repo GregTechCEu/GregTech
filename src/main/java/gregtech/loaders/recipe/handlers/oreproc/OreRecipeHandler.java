@@ -52,7 +52,7 @@ public class OreRecipeHandler {
 
         crushed.addProcessingHandler(PropertyKey.ORE, CrushedRecipeHandler::processCrushed);
         crushedPurified.addProcessingHandler(PropertyKey.ORE, PurifiedRecipeHandler::processPurified);
-        crushedRefined.addProcessingHandler(PropertyKey.ORE, PurifiedRecipeHandler::processRefined);
+        crushedRefined.addProcessingHandler(PropertyKey.ORE, RefinedRecipeHandler::processRefined);
         dustImpure.addProcessingHandler(PropertyKey.ORE, DustRecipeHandler::processImpure);
         dust.addProcessingHandler(PropertyKey.ORE, DustRecipeHandler::processDust);
 

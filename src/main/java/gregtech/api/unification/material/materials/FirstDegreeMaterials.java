@@ -47,6 +47,7 @@ public class FirstDegreeMaterials {
         Hematite = new Material.Builder(255, "hematite")
                 .dust().ore()
                 .color(0x915A5A)
+                .flags(MAGNETIC_ORE)
                 .components(Iron, 2, Oxygen, 3)
                 .build();
 
@@ -92,6 +93,7 @@ public class FirstDegreeMaterials {
         BrownLimonite = new Material.Builder(261, "brown_limonite")
                 .dust(1).ore()
                 .color(0xC86400).iconSet(METALLIC)
+                .flags(MAGNETIC_ORE)
                 .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
                 .build();
 
@@ -250,14 +252,14 @@ public class FirstDegreeMaterials {
         Ilmenite = new Material.Builder(284, "ilmenite")
                 .dust(3).ore()
                 .color(0x463732).iconSet(METALLIC)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Iron, 1, Titanium, 1, Oxygen, 3)
                 .build();
 
         Rutile = new Material.Builder(285, "rutile")
                 .gem()
                 .color(0xD40D5C).iconSet(GEM_HORIZONTAL)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Titanium, 1, Oxygen, 2)
                 .build();
 
@@ -317,6 +319,7 @@ public class FirstDegreeMaterials {
         Magnetite = new Material.Builder(292, "magnetite")
                 .dust().ore()
                 .color(0x1E1E1E).iconSet(METALLIC)
+                .flags(MAGNETIC_ORE)
                 .components(Iron, 3, Oxygen, 4)
                 .build();
 
@@ -442,7 +445,7 @@ public class FirstDegreeMaterials {
         Pyrite = new Material.Builder(306, "pyrite")
                 .dust(1).ore()
                 .color(0x967828).iconSet(ROUGH)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Iron, 1, Sulfur, 2)
                 .build();
 
@@ -495,7 +498,7 @@ public class FirstDegreeMaterials {
         Scheelite = new Material.Builder(315, "scheelite")
                 .dust(3).ore()
                 .color(0xC88C14)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Calcium, 1, Tungsten, 1, Oxygen, 4)
                 .build()
                 .setFormula("Ca(WO3)O", true);
@@ -600,7 +603,7 @@ public class FirstDegreeMaterials {
         Tungstate = new Material.Builder(330, "tungstate")
                 .dust(3).ore()
                 .color(0x373223)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Tungsten, 1, Lithium, 2, Oxygen, 4)
                 .build()
                 .setFormula("Li2(WO3)O", true);
@@ -664,6 +667,7 @@ public class FirstDegreeMaterials {
         YellowLimonite = new Material.Builder(337, "yellow_limonite")
                 .dust().ore()
                 .color(0xC8C800).iconSet(METALLIC)
+                .flags(MAGNETIC_ORE)
                 .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
                 .build();
 
@@ -910,6 +914,7 @@ public class FirstDegreeMaterials {
         Bastnasite = new Material.Builder(379, "bastnasite")
                 .dust().ore()
                 .color(0xC86E2D).iconSet(FINE)
+                .flags(MAGNETIC_ORE)
                 .components(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3)
                 .build();
 

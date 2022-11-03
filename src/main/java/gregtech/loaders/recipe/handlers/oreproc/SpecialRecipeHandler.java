@@ -24,6 +24,7 @@ public class SpecialRecipeHandler {
     public static void init() {
 
         // Special Bathing Recipes
+        // TODO move these to refined -> dust ore processing
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPurified, Cassiterite)

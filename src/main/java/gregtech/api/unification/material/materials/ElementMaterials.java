@@ -344,7 +344,7 @@ public class ElementMaterials {
         Iron = new Material.Builder(51, "iron")
                 .ingot().fluid().plasma().ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, MAGNETIC_ORE)
                 .element(Elements.Fe)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 256, 2)
                         .enchantability(14).build())
@@ -402,7 +402,7 @@ public class ElementMaterials {
                 .build();
 
         Magnesium = new Material.Builder(59, "magnesium")
-                .dust().fluid()
+                .dust().fluid().ore()
                 .color(0xFFC8C8).iconSet(METALLIC)
                 .element(Elements.Mg)
                 .fluidTemp(923)
@@ -414,7 +414,7 @@ public class ElementMaterials {
                 .build();
 
         Manganese = new Material.Builder(61, "manganese")
-                .ingot().fluid()
+                .ingot().fluid().ore()
                 .color(0xCDE1B9)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .element(Elements.Mn)
@@ -450,7 +450,7 @@ public class ElementMaterials {
         Neodymium = new Material.Builder(66, "neodymium")
                 .ingot().fluid().ore()
                 .color(0x646464).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
+                .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW, MAGNETIC_ORE)
                 .element(Elements.Nd)
                 .rotorStats(7.0f, 2.0f, 512)
                 .blastTemp(1297, GasTier.MID)

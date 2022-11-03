@@ -12,8 +12,7 @@ import gregtech.common.ConfigHolder;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
-import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.info.MaterialFlags.HIGH_SIFTER_OUTPUT;
+import static gregtech.api.unification.material.info.MaterialFlags.MAGNETIC_ORE;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
@@ -42,100 +41,88 @@ public class PurifiedRecipeHandler {
                 .chancedOutput(dust, byproduct, 2000, chancePerTier ? 500 : 0)
                 .duration(400).EUt(2).buildAndRegister();
 
-        // Thermal Centrifuge recipe
         // Purified Ore -> Refined Ore
-        THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
-                .input(crushedPurified, material)
-                .output(crushedRefined, material)
-                .output(dustSmall, byproduct, 1)
-                .duration(400).EUt(VA[LV]).buildAndRegister();
+        if (material.hasProperty(PropertyKey.GEM)) {
+            // Gems go in the Sifter
+            // TODO add gem quality?
+            SIFTER_RECIPES.recipeBuilder()
+                    .input(crushedPurified, material)
+                    .output(crushedRefined, material)
+                    .chancedOutput(dust, byproduct, 2500, 0)
+                    .duration(400).EUt(VA[MV]).buildAndRegister();
+        } else if (material.hasFlag(MAGNETIC_ORE) || byproduct.hasFlag(MAGNETIC_ORE)) {
+            // Magnetic Materials or Byproducts go in the Magnetic Separator
+            ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
+                    .input(crushedPurified, material)
+                    .output(crushedRefined, material)
+                    .chancedOutput(dust, byproduct, 2500, 0)
+                    .duration(400).EUt(VA[MV]).buildAndRegister();
+        } else {
+            // Anything else goes in the Thermal Centrifuge
+            THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
+                    .input(crushedPurified, material)
+                    .output(crushedRefined, material)
+                    .chancedOutput(dust, byproduct, 2500, 0)
+                    .duration(400).EUt(VA[MV]).buildAndRegister();
+        }
+
 
         // Sifter recipe (if applicable)
         // Purified Ore -> Gems of various sizes
-        // TODO Fix these for crushedMultiplier
-        if (material.hasProperty(PropertyKey.GEM)) {
-            if (material.hasFlag(HIGH_SIFTER_OUTPUT)) {
-                SIFTER_RECIPES.recipeBuilder()
-                        .input(crushedPurified, material)
-                        .chancedOutput(gemExquisite, material, 500, 150)
-                        .chancedOutput(gemFlawless, material, 1500, 200)
-                        .chancedOutput(gem, material, 5000, 1000)
-                        .chancedOutput(dust, material, 2500, 500)
-                        .chancedOutput(gemFlawed, material, 2000, 500)
-                        .chancedOutput(gemChipped, material, 3000, 350)
-                        .duration(400).EUt(30).buildAndRegister();
-            } else {
-                SIFTER_RECIPES.recipeBuilder()
-                        .input(crushedPurified, material)
-                        .chancedOutput(gemExquisite, material, 300, 100)
-                        .chancedOutput(gemFlawless, material, 1000, 150)
-                        .chancedOutput(gem, material, 3500, 500)
-                        .chancedOutput(dust, material, 5000, 750)
-                        .chancedOutput(gemFlawed, material, 2500, 300)
-                        .chancedOutput(gemChipped, material, 3500, 400)
-                        .duration(400).EUt(30).buildAndRegister();
-            }
-        }
+        // TODO yeet
+//        if (material.hasProperty(PropertyKey.GEM)) {
+//            if (material.hasFlag(HIGH_SIFTER_OUTPUT)) {
+//                SIFTER_RECIPES.recipeBuilder()
+//                        .input(crushedPurified, material)
+//                        .chancedOutput(gemExquisite, material, 500, 150)
+//                        .chancedOutput(gemFlawless, material, 1500, 200)
+//                        .chancedOutput(gem, material, 5000, 1000)
+//                        .chancedOutput(dust, material, 2500, 500)
+//                        .chancedOutput(gemFlawed, material, 2000, 500)
+//                        .chancedOutput(gemChipped, material, 3000, 350)
+//                        .duration(400).EUt(30).buildAndRegister();
+//            } else {
+//                SIFTER_RECIPES.recipeBuilder()
+//                        .input(crushedPurified, material)
+//                        .chancedOutput(gemExquisite, material, 300, 100)
+//                        .chancedOutput(gemFlawless, material, 1000, 150)
+//                        .chancedOutput(gem, material, 3500, 500)
+//                        .chancedOutput(dust, material, 5000, 750)
+//                        .chancedOutput(gemFlawed, material, 2500, 300)
+//                        .chancedOutput(gemChipped, material, 3500, 400)
+//                        .duration(400).EUt(30).buildAndRegister();
+//            }
+//        }
 
         // Chemical Bath recipe (if applicable)
         // Purified Ore -> Refined Ore (+ chance to double, + Vitriol)
-        if (property.getVitriol() != null) {
-            if (property.getVitriol() == ClayVitriol) { // handle this one differently since it is a different composition
-                CHEMICAL_BATH_RECIPES.recipeBuilder()
-                        .input(crushedPurified, material)
-                        .fluidInputs(SulfuricAcid.getFluid(1500))
-                        .output(crushedRefined, material)
-                        .chancedOutput(crushedRefined, material, 5000, 0)
-                        .fluidOutputs(property.getVitriol().getFluid(500))
-                        .fluidOutputs(Hydrogen.getFluid(3000))
-                        .duration(400).EUt(VA[LV]).buildAndRegister();
-            } else {
-                CHEMICAL_BATH_RECIPES.recipeBuilder()
-                        .input(crushedPurified, material)
-                        .fluidInputs(SulfuricAcid.getFluid(500))
-                        .output(crushedRefined, material)
-                        .chancedOutput(crushedRefined, material, 5000, 0)
-                        .fluidOutputs(property.getVitriol().getFluid(500))
-                        .fluidOutputs(Hydrogen.getFluid(1000))
-                        .duration(400).EUt(VA[LV]).buildAndRegister();
-            }
-        }
+        // TODO yeet (moved to refined -> dust)
+//        if (property.getVitriol() != null) {
+//            if (property.getVitriol() == ClayVitriol) { // handle this one differently since it is a different composition
+//                CHEMICAL_BATH_RECIPES.recipeBuilder()
+//                        .input(crushedPurified, material)
+//                        .fluidInputs(SulfuricAcid.getFluid(1500))
+//                        .output(crushedRefined, material)
+//                        .chancedOutput(crushedRefined, material, 5000, 0)
+//                        .fluidOutputs(property.getVitriol().getFluid(500))
+//                        .fluidOutputs(Hydrogen.getFluid(3000))
+//                        .duration(400).EUt(VA[LV]).buildAndRegister();
+//            } else {
+//                CHEMICAL_BATH_RECIPES.recipeBuilder()
+//                        .input(crushedPurified, material)
+//                        .fluidInputs(SulfuricAcid.getFluid(500))
+//                        .output(crushedRefined, material)
+//                        .chancedOutput(crushedRefined, material, 5000, 0)
+//                        .fluidOutputs(property.getVitriol().getFluid(500))
+//                        .fluidOutputs(Hydrogen.getFluid(1000))
+//                        .duration(400).EUt(VA[LV]).buildAndRegister();
+//            }
+//        }
 
         // Hard Hammer crafting recipe
         // Purified Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("purified_ore_to_dust_%s", material),
                 OreDictUnifier.get(dust, material, crushedMultiplier), 'h', new UnificationEntry(crushedPurified, material));
-
-        processMetalSmelting(prefix, material, property);
-    }
-
-    public static void processRefined(OrePrefix prefix, Material material, OreProperty property) {
-        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
-        // Get the byproduct used for this step
-        Material byproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
-
-        int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
-
-        // Forge Hammer recipe
-        // Centrifuged Ore -> Dust
-        FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(crushedRefined, material)
-                .output(dust, material, crushedMultiplier)
-                .duration(10).EUt(16).buildAndRegister();
-
-        // Macerator recipe
-        // Centrifuged Ore -> Dust
-        MACERATOR_RECIPES.recipeBuilder()
-                .input(crushedRefined, material)
-                .output(dust, material, crushedMultiplier)
-                .chancedOutput(dust, material, crushedMultiplier, 3333, 0)
-                .chancedOutput(dust, byproduct, 2500, chancePerTier ? 500 : 0)
-                .duration(400).EUt(2).buildAndRegister();
-
-        // Hard Hammer crafting recipe
-        // Centrifuged Ore -> Dust
-        ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material),
-                OreDictUnifier.get(dust, material, crushedMultiplier), 'h', new UnificationEntry(crushedRefined, material));
 
         processMetalSmelting(prefix, material, property);
     }

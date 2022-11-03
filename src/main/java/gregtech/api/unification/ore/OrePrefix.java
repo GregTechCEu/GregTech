@@ -55,6 +55,7 @@ public class OrePrefix {
     // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", M * 2, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
+    // TODO adjust material amount
     // Third ore processing output from Ore blocks. Worth 1.33 Dust
     public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 4 / 3, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
     // Second ore processing output from Ore blocks. Worth 1.25 Dust
@@ -442,6 +443,10 @@ public class OrePrefix {
 
     public void setMarkerPrefix(boolean isMarkerPrefix) {
         this.isMarkerPrefix = isMarkerPrefix;
+    }
+
+    public long getMaterialAmount() {
+        return materialAmount;
     }
 
     public long getMaterialAmount(@Nullable Material material) {

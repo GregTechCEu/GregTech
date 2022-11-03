@@ -292,7 +292,7 @@ public class SecondDegreeMaterials {
         VanadiumMagnetite = new Material.Builder(2022, "vanadium_magnetite")
                 .dust().ore()
                 .color(0x23233C).iconSet(METALLIC)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, MAGNETIC_ORE)
                 .components(Magnetite, 1, Vanadium, 1)
                 .build();
 

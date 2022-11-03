@@ -4,8 +4,8 @@ import gregtech.api.unification.material.Material;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class OreProperty implements IMaterialProperty<OreProperty> {
 
@@ -50,21 +50,21 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      */
     private Material vitriol;
 
+    private Consumer<Material> bathRecipe;
+
     /**
      * Whether or not this Material should generate an actual Ore Block.
      * <p>
      * Default: true
      */
-    private boolean doGenerateBlock = true;
+    private boolean doGenerateBlock;
 
     public OreProperty(int oreMultiplier) {
-        this.oreMultiplier = oreMultiplier;
-        this.emissive = false;
+        this(oreMultiplier, false);
     }
 
     public OreProperty(int oreMultiplier, boolean emissive) {
-        this.oreMultiplier = oreMultiplier;
-        this.emissive = emissive;
+        this(oreMultiplier, emissive, true);
     }
 
     public OreProperty(int oreMultiplier, boolean emissive, boolean doGenerateBlock) {
@@ -114,8 +114,21 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         return vitriol;
     }
 
+    public void setBathHandler(Consumer<Material> c) {
+        this.bathRecipe = c;
+    }
+
+    @Nullable
+    public Consumer<Material> getBathRecipe() {
+        return bathRecipe;
+    }
+
     public void setOreByProducts(Material... materials) {
-        this.oreByProducts.addAll(Arrays.asList(materials));
+        for (Material m : materials) {
+            m.getProperties().ensureSet(PropertyKey.ORE);
+            this.oreByProducts.add(m);
+        }
+//        this.oreByProducts.addAll(Arrays.asList(materials));
     }
 
     public List<Material> getOreByProducts() {

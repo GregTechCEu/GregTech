@@ -288,6 +288,7 @@ public class UnknownCompositionMaterials {
         RareEarth = new Material.Builder(1598, "rare_earth")
                 .dust(0)
                 .color(0x808064).iconSet(FINE)
+                .flags(MAGNETIC_ORE)
                 .build();
 
         Stone = new Material.Builder(1599, "stone")

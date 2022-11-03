@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.loaders.recipe.handlers.oreproc.BathRecipeHandler;
 
 import static gregtech.api.unification.material.Materials.*;
 
@@ -11,6 +12,7 @@ public class MaterialFlagAddition {
         OreProperty oreProp = Aluminium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Bauxite, Bauxite, Ilmenite, Rutile);
         oreProp.setVitriol(ClayVitriol);
+        oreProp.setBathHandler(BathRecipeHandler::bathClayVitriol);
 
         oreProp = Beryllium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Emerald, Emerald, Thorium);
@@ -18,10 +20,12 @@ public class MaterialFlagAddition {
         oreProp = Cobalt.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobaltite);
         oreProp.setVitriol(RedVitriol);
+        oreProp.setBathHandler(BathRecipeHandler::bathRedVitriol);
 
         oreProp = Copper.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobalt, Gold, Nickel, Gold);
         oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathHandler(BathRecipeHandler::bathBlueVitriol);
 
         oreProp = Gold.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Copper, Nickel, Silver);
@@ -30,6 +34,7 @@ public class MaterialFlagAddition {
         oreProp = Iron.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, Tin, Tin, Gold);
         oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathHandler(BathRecipeHandler::bathGreenVitriol);
 
         oreProp = Lead.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Silver, Sulfur);
@@ -40,13 +45,13 @@ public class MaterialFlagAddition {
         oreProp = Molybdenum.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Molybdenum);
 
-        //oreProp = Magnesium.getProperty(PropertyKey.ORE);
-        //oreProp.setOreByProducts(Olivine);
-        //oreProp.setVitriol(MagnesiumSulfate);
+        oreProp = Magnesium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Olivine);
+        oreProp.setBathHandler(BathRecipeHandler::bathPinkVitriol);
 
-        //oreProp = Manganese.getProperty(PropertyKey.ORE);
-        //oreProp.setOreByProducts(Chrome, Iron);
-        //oreProp.setVitriol(ManganeseSulfate);
+        oreProp = Manganese.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Chrome, Iron);
+        oreProp.setBathHandler(BathRecipeHandler::bathGrayVitriol);
 
         oreProp = Neodymium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(RareEarth);
@@ -54,6 +59,7 @@ public class MaterialFlagAddition {
         oreProp = Nickel.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobalt, Iron, Platinum);
         oreProp.setVitriol(CyanVitriol);
+        oreProp.setBathHandler(BathRecipeHandler::bathCyanVitriol);
 
         oreProp = Platinum.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Platinum);
@@ -90,6 +96,7 @@ public class MaterialFlagAddition {
         oreProp = Zinc.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Zinc, Zinc, Gallium);
         oreProp.setVitriol(WhiteVitriol);
+        oreProp.setBathHandler(BathRecipeHandler::bathWhiteVitriol);
 
         oreProp = CertusQuartz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(NetherQuartz, Barite);

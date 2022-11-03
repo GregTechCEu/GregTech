@@ -264,4 +264,8 @@ public class MaterialFlags {
     public static final MaterialFlag WASHING_PERSULFATE = new MaterialFlag.Builder("washing_persulfate")
             .requireProps(PropertyKey.ORE)
             .build();
+
+    public static final MaterialFlag MAGNETIC_ORE = new MaterialFlag.Builder("magnetic_ore")
+            .requireProps(PropertyKey.ORE)
+            .build();
 }
