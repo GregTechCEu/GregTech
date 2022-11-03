@@ -34,12 +34,13 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
@@ -48,12 +49,14 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
     public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
+    private static final List<VariantActiveBlock<?>> INSTANCES = new ArrayList<>();
     public static final Object2ObjectOpenHashMap<Block, ObjectOpenHashSet<BlockRenderLayer>> block2blockRenderLayerMap = new Object2ObjectOpenHashMap<>();
     public static final PropertyBool ACTIVE_DEPRECATED = PropertyBool.create("active");
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
+        INSTANCES.add(this);
     }
 
     @Override
@@ -134,18 +137,16 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         block2blockRenderLayerMap.clear();
         //Go over all the registered blocks checking if they are of a VariantActiveBlock type,
         //then going over their model, if they have a quad to render on that render layer, add it to the map.
-        for (Block b : ForgeRegistries.BLOCKS) {
-            if (b instanceof VariantActiveBlock) {
-                for (IBlockState state : b.getBlockState().getValidStates()) {
-                    IBakedModel bakedModel = event.getModelRegistry().getObject(new ModelResourceLocation(b.getRegistryName(), statePropertiesToString(state.getProperties())));
-                    if (bakedModel != null) {
-                        for (BlockRenderLayer layer : BlockRenderLayer.values()) {
-                            for (EnumFacing facing : EnumFacing.VALUES) {
-                                if (bakedModel.getQuads(state, facing, 0).size() > 0) {
-                                    block2blockRenderLayerMap.putIfAbsent(b, new ObjectOpenHashSet<>());
-                                    block2blockRenderLayerMap.get(b).add(layer);
-                                    break;
-                                }
+        for (Block b : INSTANCES) {
+            for (IBlockState state : b.getBlockState().getValidStates()) {
+                IBakedModel bakedModel = event.getModelRegistry().getObject(new ModelResourceLocation(b.getRegistryName(), statePropertiesToString(state.getProperties())));
+                if (bakedModel != null) {
+                    for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+                        for (EnumFacing facing : EnumFacing.VALUES) {
+                            if (bakedModel.getQuads(state, facing, 0).size() > 0) {
+                                block2blockRenderLayerMap.putIfAbsent(b, new ObjectOpenHashSet<>());
+                                block2blockRenderLayerMap.get(b).add(layer);
+                                break;
                             }
                         }
                     }
