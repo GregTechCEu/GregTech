@@ -12,6 +12,7 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
 import mezz.jei.api.ingredients.IIngredients;
@@ -135,11 +136,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void initExtras() {
         BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && Loader.isModLoaded(GTValues.MODID_CT);
+        final String mod = GroovyScriptCompat.isLoaded() ? "GroovyScript" : "CraftTweaker";
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a CraftTweaker script, to remove this recipe, to the clipboard"))
+                .setTooltipBuilder(lines -> lines.add("Copies a " + mod + " script, to remove this recipe, to the clipboard"))
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
-                    String recipeLine = CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
+                    String recipeLine = GroovyScriptCompat.isLoaded() ?
+                            GroovyScriptCompat.getRecipeRemoveLine(recipeMap, recipe) :
+                            CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
                     String output = CTRecipeHelper.getFirstOutputString(recipe);
                     if (!output.isEmpty()) {
                         output = "// " + output + "\n";
