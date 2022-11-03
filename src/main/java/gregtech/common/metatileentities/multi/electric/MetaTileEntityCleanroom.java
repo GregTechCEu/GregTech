@@ -555,7 +555,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public int getEnergyTier() {
         if (energyContainer == null) return GTValues.LV;
-        return Math.max(GTValues.LV, GTUtility.getOvervoltTierByVoltage(energyContainer.getInputVoltage()));
+        return Math.max(GTValues.LV, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
     }
 
     @Override

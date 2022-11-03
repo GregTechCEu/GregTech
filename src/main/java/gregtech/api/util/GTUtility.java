@@ -453,13 +453,11 @@ public class GTUtility {
     }
 
     /**
-     * Returns the last tier voltage that the voltage will overvolt.
-     * <p>
-     * Ex: This method turns both 960EU/t and 480EU/t into HV.
+     * Ex: This method turns both 1024 and 512 into HV.
      *
-     * @return highest tier that cannot handle the passed voltage
+     * @return the highest tier below or equal to the voltage value given
      */
-    public static byte getOvervoltTierByVoltage(long voltage) {
+    public static byte getFloorTierByVoltage(long voltage) {
         if (voltage < V[GTValues.ULV]) return GTValues.ULV;
         return tierByVoltage.floorEntry(voltage).getValue();
     }

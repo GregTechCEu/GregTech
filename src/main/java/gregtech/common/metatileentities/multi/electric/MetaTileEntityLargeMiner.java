@@ -127,7 +127,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getEnergyTier() {
         if (energyContainer == null) return this.tier;
-        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getOvervoltTierByVoltage(energyContainer.getInputVoltage())));
+        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     @Override
