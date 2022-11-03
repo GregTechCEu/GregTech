@@ -125,9 +125,14 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
+    public int getEnergyTier() {
+        if (energyContainer == null) return this.tier;
+        return Math.max(this.tier, GTUtility.getOvervoltTierByVoltage(energyContainer.getInputVoltage()));
+    }
+
     @Override
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = GTValues.VA[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
+        long energyToDrain = GTValues.VA[GTUtility.getTierByVoltage(getEnergyTier())];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
@@ -206,7 +211,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         if (this.isStructureFormed()) {
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = energyContainer.getInputVoltage();
-                String voltageName = GTValues.VNF[GTUtility.getTierForVoltageDisplay(maxVoltage)];
+                String voltageName = GTValues.VNF[GTUtility.getOvervoltTierByVoltage(maxVoltage)];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 

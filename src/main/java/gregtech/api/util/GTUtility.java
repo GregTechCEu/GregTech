@@ -453,13 +453,13 @@ public class GTUtility {
     }
 
     /**
-     * <strong>Do not</strong> use for calculation. Intended for displays in multiblock machines and similar.
+     * Returns the last tier voltage that the voltage will overvolt.
      * <p>
-     * Ex: This method turns 960EU/t and 480EU/t into HV.
+     * Ex: This method turns both 960EU/t and 480EU/t into HV.
      *
-     * @return lowest tier that can handle passed voltage for display
+     * @return highest tier that cannot handle the passed voltage
      */
-    public static byte getTierForVoltageDisplay(long voltage) {
+    public static byte getOvervoltTierByVoltage(long voltage) {
         if (voltage < V[GTValues.ULV]) return GTValues.ULV;
         return tierByVoltage.floorEntry(voltage).getValue();
     }
