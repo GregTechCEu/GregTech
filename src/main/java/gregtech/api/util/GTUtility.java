@@ -453,13 +453,11 @@ public class GTUtility {
     }
 
     /**
-     * <strong>Do not</strong> use for calculation. Intended for displays in multiblock machines and similar.
-     * <p>
-     * Ex: This method turns 960EU/t and 480EU/t into HV.
+     * Ex: This method turns both 1024 and 512 into HV.
      *
-     * @return lowest tier that can handle passed voltage for display
+     * @return the highest tier below or equal to the voltage value given
      */
-    public static byte getTierForVoltageDisplay(long voltage) {
+    public static byte getFloorTierByVoltage(long voltage) {
         if (voltage < V[GTValues.ULV]) return GTValues.ULV;
         return tierByVoltage.floorEntry(voltage).getValue();
     }

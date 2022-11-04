@@ -42,13 +42,15 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
-        return standardOverclockingLogic(1,
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+        return standardOverclockingLogic(
+                1,
                 getMaxVoltage(),
                 recipeDuration,
+                amountOC,
                 getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier(),
-                maxOverclocks
+                getOverclockingVoltageMultiplier()
+
         );
     }
 

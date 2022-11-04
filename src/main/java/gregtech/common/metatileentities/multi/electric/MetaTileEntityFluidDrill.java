@@ -156,8 +156,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
             return;
 
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-            String voltageName = GTValues.VNF[GTUtility.getTierForVoltageDisplay(maxVoltage)];
+            int energyContainer = getEnergyTier();
+            long maxVoltage = GTValues.V[energyContainer];
+            String voltageName = GTValues.VNF[energyContainer];
             textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
         }
 
@@ -242,8 +243,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     public int getEnergyTier() {
-        int minVoltage = Math.max(this.tier, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
-        return Math.min(minVoltage, this.tier + 1);
+        if (energyContainer == null) return this.tier;
+        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     public long getEnergyInputPerSecond() {
