@@ -74,10 +74,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public final String unlocalizedName;
 
     private final R recipeBuilderSample;
-    private final int minInputs, maxInputs;
-    private final int minOutputs, maxOutputs;
-    private final int minFluidInputs, maxFluidInputs;
-    private final int minFluidOutputs, maxFluidOutputs;
+    private int minInputs, maxInputs;
+    private int minOutputs, maxOutputs;
+    private int minFluidInputs, maxFluidInputs;
+    private int minFluidOutputs, maxFluidOutputs;
     protected final TByteObjectMap<TextureArea> slotOverlays;
     protected TextureArea specialTexture;
     protected int[] specialTexturePosition;
@@ -1009,6 +1009,38 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxFluidOutputs;
     }
 
+    public void setMinInputs(int minInputs) {
+        this.minInputs = minInputs;
+    }
+
+    public void setMinOutputs(int minOutputs) {
+        this.minOutputs = minOutputs;
+    }
+
+    public void setMinFluidInputs(int minFluidInputs) {
+        this.minFluidInputs = minFluidInputs;
+    }
+
+    public void setMinFluidOutputs(int minFluidOutputs) {
+        this.minFluidOutputs = minFluidOutputs;
+    }
+
+    public void setMaxInputs(int maxInputs) {
+        this.maxInputs = maxInputs;
+    }
+
+    public void setMaxOutputs(int maxOutputs) {
+        this.maxOutputs = maxOutputs;
+    }
+
+    public void setMaxFluidInputs(int maxFluidInputs) {
+        this.maxFluidInputs = maxFluidInputs;
+    }
+
+    public void setMaxFluidOutputs(int maxFluidOutputs) {
+        this.maxFluidOutputs = maxFluidOutputs;
+    }
+    
     @Override
     @ZenMethod
     public String toString() {
