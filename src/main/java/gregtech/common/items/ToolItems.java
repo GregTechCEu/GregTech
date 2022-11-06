@@ -386,7 +386,7 @@ public class ToolItems {
                     // Push
                     IGTToolDefinition toolStats = tool.getToolStats();
                     if (toolStats.isSuitableForCrafting(stack)) {
-                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.crafting_uses", tool.getTotalMaxDurability(stack) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
+                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
                     }
                     if (toolStats.isSuitableForAttacking(stack)) {
                         tooltipIterator.add(I18n.format("metaitem.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
