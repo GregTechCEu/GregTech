@@ -31,6 +31,7 @@ import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.VirtualizedRecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
@@ -59,8 +60,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration)
-            .thenComparingInt(Recipe::getEUt)
-            .thenComparing(Recipe::hashCode);
+            .thenComparingInt(Recipe::getEUt);
 
     public static final IChanceFunction DEFAULT_CHANCE_FUNCTION = (baseChance, boostPerTier, baseTier, machineTier) -> {
         int tierDiff = machineTier - baseTier;
@@ -878,7 +878,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public Collection<Recipe> getRecipeList() {
-        return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
+        ObjectOpenHashSet<Recipe> recipes = new ObjectOpenHashSet<>();
+        return lookup.getRecipes(true).filter(recipes::add).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
     }
 
     public SoundEvent getSound() {
