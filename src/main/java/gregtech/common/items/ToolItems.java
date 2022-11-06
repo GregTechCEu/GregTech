@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -120,7 +121,7 @@ public class ToolItems {
         HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().suitableForCrafting())
                 .oreDict("craftingToolHammer")
-                .sound(GTSounds.FORGE_HAMMER)
+                .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .symbol('h')
                 .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER));
         SOFT_MALLET = register(ItemGTTool.Builder.of(GTValues.MODID, "mallet")
@@ -134,7 +135,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.PICKAXE));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse())
-                .sound(GTSounds.WRENCH_TOOL)
+                .sound(GTSounds.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .symbol('w')
                 .toolClasses(ToolClasses.WRENCH));
@@ -164,7 +165,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.MORTAR));
         WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting())
-                .sound(GTSounds.WIRECUTTER_TOOL)
+                .sound(GTSounds.WIRECUTTER_TOOL, true)
                 .oreDict("craftingToolWireCutter")
                 .symbol('x')
                 .toolClasses(ToolClasses.WIRE_CUTTER));
@@ -226,19 +227,19 @@ public class ToolItems {
                 .electric(3));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().efficiencyMultiplier(2.0F).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
-                .sound(GTSounds.WRENCH_TOOL)
+                .sound(GTSounds.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(1));
         WRENCH_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_mv")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().efficiencyMultiplier(3.0F).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
-                .sound(GTSounds.WRENCH_TOOL)
+                .sound(GTSounds.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(2));
         WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().efficiencyMultiplier(4.0F).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
-                .sound(GTSounds.WRENCH_TOOL)
+                .sound(GTSounds.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(3));

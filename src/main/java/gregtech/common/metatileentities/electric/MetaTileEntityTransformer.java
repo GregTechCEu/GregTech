@@ -7,8 +7,6 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -128,26 +126,21 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-            ToolHelper.damageItem(itemStack, playerIn);
-            if (isTransformUp) {
-                setTransformUp(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
-                        energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-            } else {
-                setTransformUp(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
-                        energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-            }
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
+            scheduleRenderUpdate();
             return true;
         }
-        return false;
+        if (isTransformUp) {
+            setTransformUp(false);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+        } else {
+            setTransformUp(true);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+        }
+        return true;
     }
 
     @Override
