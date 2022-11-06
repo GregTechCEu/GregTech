@@ -329,7 +329,7 @@ public class ToolHelper {
                 for (int x = 0; x <= layer; x++) {
                     // Special case for any additional column > 1: https://i.imgur.com/Dvcx7Vg.png
                     // Same behaviour as the Flux Bore
-                    for (int y = (row == 0 ? 0 : -1); y <= (row == 1 ? 1 : row + 1); y++) {
+                    for (int y = (row == 0 ? 0 : -1); y <= (row == 0 ? 0 : row * 2 - 1); y++) {
                         for (int z = -column; z <= column; z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));

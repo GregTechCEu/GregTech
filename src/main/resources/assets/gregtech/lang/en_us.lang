@@ -973,11 +973,9 @@ metaitem.turbine_rotor.tooltip=Turbine Rotors for your power station
 metaitem.clipboard.name=Clipboard
 metaitem.clipboard.tooltip=Can be written on (without any writing Instrument). Right-click on Wall to place, and Shift-Right-Click to remove
 
-metaitem.drill.mode.three_cube=3x3x3 Cube
-metaitem.drill.mode.five_cube=5x5x5 Cube
-metaitem.drill.mode.seven_cube=7x7x7 Cube
-metaitem.drill.mode.nine_cube=9x9x9 Cube
-metaitem.drill.mode.single_block=Single Block
+gt.tool.aoe.rows=Rows
+gt.tool.aoe.columns=Columns
+gt.tool.aoe.layers=Layers
 
 metaitem.behavior.mode_switch.tooltip=Use while sneaking to switch mode
 metaitem.behavior.mode_switch.mode_switched=§eMode Set to: %s
