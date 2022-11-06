@@ -93,6 +93,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     SoundEvent getSound();
 
+    boolean playSoundOnBlockDestroy();
+
     @Nullable
     String getOreDictName();
 
@@ -343,6 +345,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
                 damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
             }
+            if (entityLiving instanceof EntityPlayer && playSoundOnBlockDestroy() &&
+                    getToolStats().getAoEDefinition(stack) == AoESymmetrical.none()) {
+                playSound((EntityPlayer) entityLiving);
+            }
         }
         return true;
     }
@@ -393,7 +399,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (damage > 0) {
             EntityPlayer player = ForgeHooks.getCraftingPlayer();
             damageItem(stack, player, damage);
-            playCraftingSound(player);
+            playCraftingSound(player, stack);
             // We cannot simply return the copied stack here because Forge's bug
             // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
             // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
@@ -542,13 +548,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     // Sound Playing
-    default void playCraftingSound(EntityPlayer player) {
+    default void playCraftingSound(EntityPlayer player, ItemStack stack) {
         if (ConfigHolder.client.toolCraftingSounds && getSound() != null) {
-            if (!player.getCooldownTracker().hasCooldown(get())) {
-                player.getCooldownTracker().setCooldown(get(), 10);
+            if (canPlaySound(stack)) {
+                setLastCraftingSoundTime(stack);
                 player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
             }
         }
+    }
+
+    default void setLastCraftingSoundTime(ItemStack stack) {
+        getToolTag(stack).setInteger(LAST_CRAFTING_USE_KEY, (int) System.currentTimeMillis());
+    }
+
+    default boolean canPlaySound(ItemStack stack) {
+        return Math.abs((int) System.currentTimeMillis() - getToolTag(stack).getInteger(LAST_CRAFTING_USE_KEY)) > 20;
     }
 
     default void playSound(EntityPlayer player) {

@@ -286,14 +286,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (metaTileEntity == null || rayTraceResult == null) {
             return false;
         }
-        boolean toolClickResult = false;
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
-            toolClickResult = metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
-        } else if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.WRENCH)) {
-            toolClickResult = metaTileEntity.onWrenchClick(playerIn, hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
-        }
+        boolean toolClickResult = metaTileEntity.onToolClick(playerIn, itemStack.getItem().getToolClasses(itemStack),
+                hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
         // damage the tool and play sounds
-        if (toolClickResult) postToolClick( itemStack, playerIn);
+        if (toolClickResult) postToolClick(itemStack, playerIn);
         // if the tool did something, we don't bother with covers
         // otherwise we handle cover clicking
         return toolClickResult || metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);

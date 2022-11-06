@@ -8,8 +8,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -128,19 +126,14 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     }
 
     @Override
-    public boolean onRightClick(@Nonnull EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-            ToolHelper.damageItem(itemStack, playerIn);
-            setAmpMode();
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
+            scheduleRenderUpdate();
             return true;
         }
-        return false;
+        setAmpMode();
+        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+        return true;
     }
 
     @Override
