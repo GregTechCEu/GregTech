@@ -84,6 +84,7 @@ public class ToolHelper {
     public static final String ATTACK_DAMAGE_KEY = "AttackDamage";
     public static final String ENCHANTABILITY_KEY = "Enchantability";
     public static final String HARVEST_LEVEL_KEY = "HarvestLevel";
+    public static final String LAST_CRAFTING_USE_KEY = "LastCraftingUse";
 
     // Keys that resides in behaviours tag
 

@@ -70,6 +70,11 @@ public class ItemGTSword extends ItemSword implements IGTTool {
         return sound;
     }
 
+    @Override
+    public boolean playSoundOnBlockDestroy() {
+        return false;
+    }
+
     @Nullable
     @Override
     public String getOreDictName() {

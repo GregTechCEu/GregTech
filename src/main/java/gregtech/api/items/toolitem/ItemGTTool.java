@@ -43,14 +43,16 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final Set<String> toolClasses;
     protected final String oreDict;
     protected final SoundEvent sound;
+    protected final boolean playSoundOnBlockDestroy;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, String oreDict) {
+    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict) {
         super(0F, 0F, ToolMaterial.STONE, Collections.emptySet());
         this.domain = domain;
         this.id = id;
         this.tier = tier;
         this.toolStats = toolStats;
         this.sound = sound;
+        this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oreDict = oreDict;
         setMaxStackSize(1);
@@ -88,6 +90,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @Override
     public SoundEvent getSound() {
         return sound;
+    }
+
+    @Override
+    public boolean playSoundOnBlockDestroy() {
+        return playSoundOnBlockDestroy;
     }
 
     @Override
@@ -258,7 +265,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
         @Override
         public Supplier<ItemGTTool> supply() {
-            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDict);
+            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict);
         }
     }
 }

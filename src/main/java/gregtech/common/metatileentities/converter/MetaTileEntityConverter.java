@@ -9,8 +9,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -64,29 +62,23 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-            ToolHelper.damageItem(itemStack, playerIn);
-            if (converterTrait.isFeToEu()) {
-                setFeToEu(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage(),
-                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(false))));
-            } else {
-                setFeToEu(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
-                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage()));
-            }
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
+            scheduleRenderUpdate();
             return true;
         }
-
-        return super.onRightClick(playerIn, hand, facing, hitResult);
+        if (converterTrait.isFeToEu()) {
+            setFeToEu(false);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
+                    converterTrait.getBaseAmps(), converterTrait.getVoltage(),
+                    FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(false))));
+        } else {
+            setFeToEu(true);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
+                    FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
+                    converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+        }
+        return true;
     }
 
     public void setFeToEu(boolean feToEu) {

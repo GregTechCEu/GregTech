@@ -18,6 +18,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected int tier = -1;
     protected IGTToolDefinition toolStats;
     protected SoundEvent sound;
+    protected boolean playSoundOnBlockDestroy;
     protected Character symbol = null;
 
     public ToolBuilder(String domain, String id) {
@@ -41,7 +42,12 @@ public abstract class ToolBuilder<T extends IGTTool> {
     }
 
     public ToolBuilder<T> sound(SoundEvent sound) {
+        return sound(sound, false);
+    }
+
+    public ToolBuilder<T> sound(SoundEvent sound, boolean playSoundOnBlockDestroy) {
         this.sound = sound;
+        this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         return this;
     }
 
