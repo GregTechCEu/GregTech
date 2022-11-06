@@ -60,7 +60,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration)
-            .thenComparingInt(Recipe::getEUt);
+            .thenComparingInt(Recipe::getEUt)
+            .thenComparing(Recipe::hashCode);
 
     public static final IChanceFunction DEFAULT_CHANCE_FUNCTION = (baseChance, boostPerTier, baseTier, machineTier) -> {
         int tierDiff = machineTier - baseTier;
