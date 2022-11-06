@@ -284,7 +284,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default AoESymmetrical getMaxAoEDefinition(ItemStack stack) {
-        return AoESymmetrical.readMax(getToolTag(stack));
+        return AoESymmetrical.readMax(getBehavioursTag(stack));
     }
 
     default AoESymmetrical getAoEDefinition(ItemStack stack) {
@@ -572,12 +572,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        NBTTagCompound tag = getToolTag(holder.getCurrentItem());
+        NBTTagCompound tag = getBehavioursTag(holder.getCurrentItem());
         AoESymmetrical defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
         return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
-                .label(10, 10, "Column")
-                .label(52, 10, "Row")
-                .label(82, 10, "Layer")
+                .label(6, 10, "gt.tool.aoe.columns")
+                .label(49, 10, "gt.tool.aoe.rows")
+                .label(79, 10, "gt.tool.aoe.layers")
                 .widget(new ClickButtonWidget(15, 24, 20, 20, "+", data -> {
                     AoESymmetrical.increaseColumn(tag, defaultDefinition);
                     holder.markAsDirty();
@@ -602,9 +602,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     AoESymmetrical.decreaseLayer(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
-                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(AoESymmetrical.getColumn(getToolTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(AoESymmetrical.getRow(getToolTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(93, 65, () -> Integer.toString(AoESymmetrical.getLayer(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(23, 65, () ->
+                        Integer.toString(1 + 2 * AoESymmetrical.getColumn(getBehavioursTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(58, 65, () ->
+                        Integer.toString(1 + 2 * AoESymmetrical.getRow(getBehavioursTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(93, 65, () ->
+                        Integer.toString(1 + AoESymmetrical.getLayer(getBehavioursTag(holder.getCurrentItem()), defaultDefinition))))
                 .build(holder, entityPlayer);
     }
 
