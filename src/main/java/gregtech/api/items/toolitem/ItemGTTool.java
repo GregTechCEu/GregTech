@@ -3,7 +3,6 @@ package gregtech.api.items.toolitem;
 import com.google.common.collect.Multimap;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.LocalizationUtils;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -248,8 +247,14 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
     @Override
     public boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull ItemStack stack) {
-        Material material = state.getMaterial();
-        return super.canHarvestBlock(state, stack) || (toolClasses.contains(ToolClasses.PICKAXE) && material == Material.ANVIL);
+        if (super.canHarvestBlock(state, stack)) return true;
+
+        // special case vanilla behavior
+        if (state.getBlock().getHarvestTool(state) == null) {
+            return isToolEffectiveVanilla(state, stack);
+        }
+
+        return false;
     }
 
     public static class Builder extends ToolBuilder<ItemGTTool> {
