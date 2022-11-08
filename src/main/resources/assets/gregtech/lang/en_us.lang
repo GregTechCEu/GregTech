@@ -1291,15 +1291,15 @@ item.material.oreprefix.cableGtOctal=8x %s Cable
 item.material.oreprefix.cableGtQuadruple=4x %s Cable
 item.material.oreprefix.cableGtDouble=2x %s Cable
 item.material.oreprefix.cableGtSingle=1x %s Cable
-item.material.oreprefix.platePolymer=%s Sheet
-item.material.oreprefix.foilPolymer=Thin %s Sheet
-item.material.oreprefix.nuggetPolymer=%s Chip
-item.material.oreprefix.plateDensePolymer=Dense %s Sheet
-item.material.oreprefix.plateDoublePolymer=Double %s Sheet
-item.material.oreprefix.dustTinyPolymer=Tiny Pile of %s Pulp
-item.material.oreprefix.dustSmallPolymer=Small Pile of %s Pulp
-item.material.oreprefix.dustPolymer=%s Pulp
-item.material.oreprefix.ingotPolymer=%s Bar
+item.material.oreprefix.polymer.plate=%s Sheet
+item.material.oreprefix.polymer.foil=Thin %s Sheet
+item.material.oreprefix.polymer.nugget=%s Chip
+item.material.oreprefix.polymer.plateDense=Dense %s Sheet
+item.material.oreprefix.polymer.plateDouble=Double %s Sheet
+item.material.oreprefix.polymer.dustTiny=Tiny Pile of %s Pulp
+item.material.oreprefix.polymer.dustSmall=Small Pile of %s Pulp
+item.material.oreprefix.polymer.dust=%s Pulp
+item.material.oreprefix.polymer.ingot=%s Bar
 
 
 # Direct Element Materials

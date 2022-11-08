@@ -589,41 +589,14 @@ public class OrePrefix {
 
     private String findUnlocalizedName(Material material) {
 
-        String name = "";
-
-        // Avoid NPE from Materials.NULL
-        if(!material.getUnlocalizedName().equals("material.null") && material.hasProperty(PropertyKey.POLYMER)) {
-            if(this.equals(plate)) {
-                name = "item.material.oreprefix.platePolymer";
-            }
-            else if(this.equals(dust)) {
-                name = "item.material.oreprefix.dustPolymer";
-            }
-            else if(this.equals(dustSmall)) {
-                name = "item.material.oreprefix.dustSmallPolymer";
-            }
-            else if(this.equals(dustTiny)) {
-                name = "item.material.oreprefix.dustTinyPolymer";
-            }
-            else if(this.equals(nugget)) {
-                name = "item.material.oreprefix.nuggetPolymer";
-            }
-            else if(this.equals(ingot)) {
-                name = "item.material.oreprefix.ingotPolymer";
-            }
-            else if(this.equals(foil)) {
-                name = "item.material.oreprefix.foilPolymer";
-            }
-            else if(this.equals(plateDouble)) {
-                name = "item.material.oreprefix.plateDoublePolymer";
-            }
-            else if(this.equals(plateDense)) {
-                name = "item.material.oreprefix.plateDensePolymer";
+        if(material.hasProperty(PropertyKey.POLYMER)) {
+            String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
+            if(LocalizationUtils.hasKey(localizationKey)) {
+                return localizationKey;
             }
         }
 
-
-        return name.isEmpty() ? String.format("item.material.oreprefix.%s", this.name) : name;
+        return String.format("item.material.oreprefix.%s", this.name);
     }
 
     public boolean isIgnored(Material material) {
