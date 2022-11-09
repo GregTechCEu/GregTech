@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class DustProperty implements IMaterialProperty<DustProperty> {
+public class DustProperty implements IMaterialProperty {
 
     /**
      * Tool level needed to harvest block of this Material.

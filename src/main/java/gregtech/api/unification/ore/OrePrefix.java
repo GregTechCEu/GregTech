@@ -475,13 +475,8 @@ public class OrePrefix {
                 return M * 5;
             }
         } else if (this == crushed || this == crushedPurified || this == crushedRefined) {
-            if (material == Materials.Redstone) {
-                //redstone outputs 4 dust per crushed to match vanilla ore and expected demand
-                return M * 4;
-
-            } else if (material == Materials.Lapis || material == Materials.Sodalite || material == Materials.Lazurite) {
-                //lapis (and similar) outputs 5 dust per crushed to match vanilla ore and expected demand
-                return M * 5;
+            if (material.hasProperty(PropertyKey.ORE)) {
+                return materialAmount * material.getProperty(PropertyKey.ORE).getOreMultiplier();
             }
         }
         return materialAmount;
@@ -510,7 +505,7 @@ public class OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
+    public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));

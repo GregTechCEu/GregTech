@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import crafttweaker.CraftTweakerAPI;
 
-public class BlastProperty implements IMaterialProperty<BlastProperty> {
+public class BlastProperty implements IMaterialProperty {
 
     /**
      * Blast Furnace Temperature of this Material.

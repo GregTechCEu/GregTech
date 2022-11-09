@@ -64,31 +64,39 @@ public class OreRecipeHandler {
      */
     public static void processOre(OrePrefix prefix, Material material, OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
-        // Get the primary byproduct, the secondary output of the recipe. Prioritize Gem if possible
-        Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
-        ItemStack byproductStack = OreDictUnifier.get(gem, byproductMaterial);
-        if (byproductStack.isEmpty()) byproductStack = OreDictUnifier.get(dust, byproductMaterial);
+        // Get the primary byproduct
+        Material byproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
+        OrePrefix byproductPrefix = hasGem(byproduct) ? gem : dust;
+        int byproductMultiplier = 1;
+        if (byproduct.hasProperty(PropertyKey.ORE))
+            byproductMultiplier = byproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
+
+        // Calculate the base crushed output depending on the ore type
+        int oreTypeMultiplier = (int) (prefix.getMaterialAmount(material) / M);
+
+        // Forge Hammer recipe. Outputs a Gem if possible
+        if (hasGem(material)) {
+            FORGE_HAMMER_RECIPES.recipeBuilder()
+                    .input(prefix, material)
+                    .output(gem, material, property.getOreMultiplier() * oreTypeMultiplier)
+                    .duration(10).EUt(16)
+                    .buildAndRegister();
+        } else {
+            FORGE_HAMMER_RECIPES.recipeBuilder()
+                    .input(prefix, material)
+                    .output(crushed, material, oreTypeMultiplier)
+                    .duration(10).EUt(16)
+                    .buildAndRegister();
+        }
 
         // Get the stone type dust stack, the 3rd output of the recipe
         ItemStack stoneTypeDust = OreDictUnifier.getDust(prefix.secondaryMaterials.get(0));
 
-        // Calculate the base crushed output.
-        // Combines the Ore Multiplier, as well as the bonus crushed from certain ore types
-        int baseOutputAmount = property.getOreMultiplier();
-        int oreTypeMultiplier = (int) (prefix.getMaterialAmount(material) / M);
-
-        // Forge Hammer recipe. Outputs a Gem if possible
-        FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(prefix, material)
-                .output(hasGem(material) ? gem : crushed, material, baseOutputAmount * oreTypeMultiplier)
-                .duration(10).EUt(16)
-                .buildAndRegister();
-
         // Macerator recipe
         MACERATOR_RECIPES.recipeBuilder()
                 .input(prefix, material)
-                .output(crushed, material, baseOutputAmount * oreTypeMultiplier * 2)
-                .chancedOutput(byproductStack, 2000, chancePerTier ? 500 : 0)
+                .output(crushed, material, 2 * oreTypeMultiplier)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 2000, chancePerTier ? 500 : 0)
                 .chancedOutput(stoneTypeDust, 6000, chancePerTier ? 1000 : 0)
                 .duration(400).EUt(2)
                 .buildAndRegister();
@@ -116,12 +124,11 @@ public class OreRecipeHandler {
      * - This Material does not have an EBF Temperature
      *
      * Allowed Prefixes and their outputs for non-elements:
-     * - Ore Block:   1 Ingot * the passed OreProperty's Ore Multiplier, IF the passed Material is an Element
+     * - Ore Block:   1 Ingot * the passed inputPrefix' material amount multiplier (End & Nether Ores are M * 2)
      * - Impure Dust: 1 Ingot
      * - Pure Dust:   1 Ingot
      * - Dust:        1 Ingot
      */
-    // TODO crushedAmount anywhere in here?
     protected static void processMetalSmelting(OrePrefix inputPrefix, Material material, OreProperty property) {
         // Get the Material that should be output by smelting this Item
         // Exit early if the result material has an EBF temperature, or is not an Ingot
@@ -136,14 +143,9 @@ public class OreRecipeHandler {
                 // In the easy mode, always return prefix amount here and do not check for the components.
                 : inputPrefix.getMaterialAmount(material);
 
-        ItemStack outputStack = OreDictUnifier.getIngot(smeltingResult, amountOutput * getSmeltMultiplier(inputPrefix, property));
+        ItemStack outputStack = OreDictUnifier.getIngot(smeltingResult, amountOutput);
         if (!outputStack.isEmpty()) {
             ModHandler.addSmeltingRecipe(new UnificationEntry(inputPrefix, material), outputStack, 0.5f);
         }
-    }
-
-    private static final String ORE = "ore";
-    protected static int getSmeltMultiplier(OrePrefix prefix, OreProperty property) {
-        return prefix.name().startsWith(ORE) ? property.getOreMultiplier() : 1;
     }
 }

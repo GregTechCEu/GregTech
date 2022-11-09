@@ -172,7 +172,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
-                .gem(1).ore()
+                .gem(1).ore(5)
                 .color(0x4646DC).iconSet(LAPIS)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         GENERATE_PLATE, GENERATE_ROD)
@@ -580,7 +580,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Redstone = new Material.Builder(2064, "redstone")
-                .dust().ore(1, true).fluid()
+                .dust().ore(4, true).fluid()
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)

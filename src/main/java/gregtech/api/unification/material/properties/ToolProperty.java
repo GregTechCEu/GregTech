@@ -4,7 +4,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.enchantment.Enchantment;
 
-public class ToolProperty implements IMaterialProperty<ToolProperty> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ToolProperty implements IMaterialProperty {
 
     /**
      * Harvest speed of tools made from this Material.

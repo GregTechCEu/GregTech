@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class GemProperty implements IMaterialProperty<GemProperty> {
+public class GemProperty implements IMaterialProperty {
 
     @Override
     public void verifyProperty(MaterialProperties properties) {

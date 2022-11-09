@@ -1,13 +1,14 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.function.TriConsumer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class OreProperty implements IMaterialProperty<OreProperty> {
+public class OreProperty implements IMaterialProperty {
 
     /**
      * List of Ore byproducts.
@@ -17,7 +18,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     private final List<Material> oreByProducts = new ArrayList<>();
 
     /**
-     * Crushed Ore output amount multiplier during Maceration.
+     * Dust output amount from a Crushed Ore.
      * <p>
      * Default: 1 (no multiplier).
      */
@@ -50,12 +51,12 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      */
     private Material vitriol;
 
-    private Consumer<Material> bathRecipe;
+    private TriConsumer<Material, OreProperty, Material> bathRecipe;
 
     /**
      * Whether or not this Material should generate an actual Ore Block.
      * <p>
-     * Default: true
+     * Default: false
      */
     private boolean doGenerateBlock;
 
@@ -77,7 +78,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * Default values constructor.
      */
     public OreProperty() {
-        this(1);
+        this(1, false, false);
     }
 
     public void setOreMultiplier(int multiplier) {
@@ -114,21 +115,17 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         return vitriol;
     }
 
-    public void setBathHandler(Consumer<Material> c) {
+    public void setBathHandler(TriConsumer<Material, OreProperty, Material> c) {
         this.bathRecipe = c;
     }
 
     @Nullable
-    public Consumer<Material> getBathRecipe() {
+    public TriConsumer<Material, OreProperty, Material> getBathRecipe() {
         return bathRecipe;
     }
 
     public void setOreByProducts(Material... materials) {
-        for (Material m : materials) {
-            m.getProperties().ensureSet(PropertyKey.ORE);
-            this.oreByProducts.add(m);
-        }
-//        this.oreByProducts.addAll(Arrays.asList(materials));
+        this.oreByProducts.addAll(Arrays.asList(materials));
     }
 
     public List<Material> getOreByProducts() {
@@ -149,13 +146,19 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.INGOT, true);
         if (vitriol != null) vitriol.getProperties().ensureSet(PropertyKey.FLUID, true);
+    }
+
+    @Override
+    public void verifyPropertyLate(MaterialProperties properties) {
         for (int i = 0; i < oreByProducts.size(); i++) {
             Material byproduct = oreByProducts.get(i);
-            if (i == 3 || i == oreByProducts.size() - 1) {
-                byproduct.getProperties().ensureSet(PropertyKey.ORE, true);
-            } else {
-                // Dust only needs to be set if the Ore is not set above
-                byproduct.getProperties().ensureSet(PropertyKey.DUST, true);
+            if (byproduct == null) {
+                byproduct = properties.getMaterial();
+                oreByProducts.set(i, byproduct);
+            } else if (!byproduct.hasProperty(PropertyKey.DUST)) {
+                throw new IllegalArgumentException(
+                        "Ore Byproduct " + byproduct +
+                                " does not have a Dust property, which is not allowed!");
             }
         }
     }

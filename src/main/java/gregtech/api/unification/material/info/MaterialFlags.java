@@ -266,6 +266,5 @@ public class MaterialFlags {
             .build();
 
     public static final MaterialFlag MAGNETIC_ORE = new MaterialFlag.Builder("magnetic_ore")
-            .requireProps(PropertyKey.ORE)
             .build();
 }
