@@ -15,6 +15,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.function.QuadFunction;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -29,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -51,6 +53,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
@@ -106,6 +109,13 @@ public class ToolHelper {
 
     // Crafting Symbols
     private static final BiMap<Character, IGTTool> symbols = HashBiMap.create();
+
+    // Effective Vanilla Blocks
+    public static final Set<Block> PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.ACTIVATOR_RAIL, Blocks.COAL_ORE, Blocks.COBBLESTONE, Blocks.DETECTOR_RAIL, Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.DOUBLE_STONE_SLAB, Blocks.GOLDEN_RAIL, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.ICE, Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE, Blocks.LIT_REDSTONE_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.NETHERRACK, Blocks.PACKED_ICE, Blocks.RAIL, Blocks.REDSTONE_ORE, Blocks.SANDSTONE, Blocks.RED_SANDSTONE, Blocks.STONE, Blocks.STONE_SLAB, Blocks.STONE_BUTTON, Blocks.STONE_PRESSURE_PLATE);
+    public static final Set<Block> STONE_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE);
+    public static final Set<Block> IRON_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE);
+    public static final Set<Block> SHOVEL_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.CLAY, Blocks.DIRT, Blocks.FARMLAND, Blocks.GRASS, Blocks.GRAVEL, Blocks.MYCELIUM, Blocks.SAND, Blocks.SNOW, Blocks.SNOW_LAYER, Blocks.SOUL_SAND, Blocks.GRASS_PATH, Blocks.CONCRETE_POWDER);
+    public static final Set<Block> AXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.PLANKS, Blocks.BOOKSHELF, Blocks.LOG, Blocks.LOG2, Blocks.CHEST, Blocks.PUMPKIN, Blocks.LIT_PUMPKIN, Blocks.MELON_BLOCK, Blocks.LADDER, Blocks.WOODEN_BUTTON, Blocks.WOODEN_PRESSURE_PLATE);
 
     /**
      * @return finds the registered crafting symbol with the tool
@@ -295,7 +305,7 @@ public class ToolHelper {
         return false;
     }
 
-    public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
+    public static Set<BlockPos> iterateAoE(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult, QuadFunction<ItemStack, World, EntityPlayer, BlockPos, Boolean> function) {
         if (aoeDefinition != AoESymmetrical.none() && rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
             int column = aoeDefinition.column;
             int row = aoeDefinition.row;
@@ -304,7 +314,7 @@ public class ToolHelper {
             EnumFacing.Axis playerAxis = playerFacing.getAxis();
             EnumFacing.Axis sideHitAxis = rayTraceResult.sideHit.getAxis();
             EnumFacing.AxisDirection sideHitAxisDir = rayTraceResult.sideHit.getAxisDirection();
-            ImmutableSet.Builder<BlockPos> validPositions = ImmutableSet.builder();
+            Set<BlockPos> validPositions = new ObjectOpenHashSet<>();
             if (sideHitAxis.isVertical()) {
                 boolean isX = playerAxis == EnumFacing.Axis.X;
                 boolean isDown = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
@@ -313,11 +323,8 @@ public class ToolHelper {
                         for (int z = isX ? -column : -row; z <= (isX ? column : row); z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
-                                IBlockState state = world.getBlockState(pos);
-                                if (state.getBlock().canHarvestBlock(world, pos, player)) {
-                                    if (stack.getItem().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
-                                        validPositions.add(pos);
-                                    }
+                                if (function.apply(stack, world, player, pos)) {
+                                    validPositions.add(pos);
                                 }
                             }
                         }
@@ -333,20 +340,84 @@ public class ToolHelper {
                         for (int z = -column; z <= column; z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));
-                                IBlockState state = world.getBlockState(pos);
-                                if (state.getBlock().canHarvestBlock(world, pos, player)) {
-                                    if (stack.getItem().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
-                                        validPositions.add(pos);
-                                    }
+                                if (function.apply(stack, world, player, pos)) {
+                                    validPositions.add(pos);
                                 }
                             }
                         }
                     }
                 }
             }
-            return validPositions.build();
+            return validPositions;
         }
         return Collections.emptySet();
+    }
+
+    public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
+        return iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, ToolHelper::isBlockAoEHarvestable);
+    }
+
+    private static boolean isBlockAoEHarvestable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+        if (world.isAirBlock(pos)) return false;
+
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() instanceof BlockLiquid) return false;
+
+        if (state.getBlock().getHarvestTool(state) == null && state.getBlock().isReplaceable(world, pos)) {
+            return true;
+        }
+
+        if (stack.canHarvestBlock(state)) return true;
+        String tool = state.getBlock().getHarvestTool(state);
+        if (stack.isEmpty() || tool == null) return true;
+
+        return stack.getItem().getHarvestLevel(stack, tool, player, state) >= state.getBlock().getHarvestLevel(state);
+    }
+
+    // encompasses all vanilla special case tool checks for harvesting
+    public static boolean isToolEffectiveVanilla(IBlockState state, Set<String> toolClasses, int harvestLevel) {
+        Block block = state.getBlock();
+        net.minecraft.block.material.Material material = state.getMaterial();
+        if (toolClasses.contains(ToolClasses.PICKAXE)) {
+            if (Blocks.OBSIDIAN == block && harvestLevel >= 3) return true;
+            if (IRON_PICKAXE_HARVESTABLE_BLOCKS.contains(block) && harvestLevel >= 2) return true;
+            if (STONE_PICKAXE_HARVESTABLE_BLOCKS.contains(block) && harvestLevel >= 1) return true;
+            if (PICKAXE_HARVESTABLE_BLOCKS.contains(block)) return true;
+            if (material == net.minecraft.block.material.Material.ROCK ||
+                    material == net.minecraft.block.material.Material.IRON ||
+                    material == net.minecraft.block.material.Material.ANVIL) return true;
+        }
+        if (toolClasses.contains(ToolClasses.SHOVEL)) {
+            if (SHOVEL_HARVESTABLE_BLOCKS.contains(block)) return true;
+            if (block == Blocks.SNOW_LAYER || block == Blocks.SNOW) return true;
+        }
+        if (toolClasses.contains(ToolClasses.AXE)) {
+            if (AXE_HARVESTABLE_BLOCKS.contains(block)) return true;
+        }
+        if (toolClasses.contains(ToolClasses.SWORD)) {
+            if (block instanceof BlockWeb) return true;
+        }
+        if (toolClasses.contains(ToolClasses.SCYTHE)) {
+            if (material == net.minecraft.block.material.Material.LEAVES ||
+                    material == net.minecraft.block.material.Material.VINE ||
+                    material == net.minecraft.block.material.Material.CACTUS ||
+                    material == net.minecraft.block.material.Material.PLANTS) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Set<BlockPos> getTillableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
+        return iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, ToolHelper::isBlockTillable);
+    }
+
+    private static boolean isBlockTillable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+        if (world.isAirBlock(pos.up())) {
+            Block block = world.getBlockState(pos).getBlock();
+            return block == Blocks.GRASS || block == Blocks.GRASS_PATH || block == Blocks.DIRT;
+        }
+        return false;
     }
 
     public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
@@ -730,6 +801,74 @@ public class ToolHelper {
                 }
             }
         }
+    }
 
+    @Nonnull
+    public static EnumActionResult hoeGroundRoutine(EntityPlayer player, @Nonnull World world, EnumHand hand, @Nonnull EnumFacing facing) {
+        if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
+
+        Vec3d lookPos = player.getPositionEyes(1F);
+        Vec3d rotation = player.getLook(1);
+        Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
+
+        if (rayTraceResult == null) return EnumActionResult.PASS;
+        if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;
+        if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
+
+        ItemStack stack = player.getHeldItem(hand);
+        AoESymmetrical aoeDefinition = getAoEDefinition(stack);
+
+        Set<BlockPos> blocks;
+        // only attempt to till if the center block is tillable
+        if (world.isAirBlock(rayTraceResult.getBlockPos().up()) && isBlockTillable(stack, world, player, rayTraceResult.getBlockPos())) {
+            if (aoeDefinition == AoESymmetrical.none()) {
+                blocks = ImmutableSet.of(rayTraceResult.getBlockPos());
+            } else {
+                blocks = getTillableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
+                blocks.add(rayTraceResult.getBlockPos());
+            }
+        } else return EnumActionResult.PASS;
+
+        boolean tilled = false;
+        for (BlockPos pos : blocks) {
+            int hook = ForgeEventFactory.onHoeUse(stack, player, world, pos);
+            if (hook != 0) return hook > 0 ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+
+            IBlockState state = world.getBlockState(pos);
+            Block block = state.getBlock();
+            if (block == Blocks.GRASS || block == Blocks.GRASS_PATH) {
+                tillGround(world, player, stack, pos, Blocks.FARMLAND.getDefaultState());
+                tilled = true;
+            } else if (block == Blocks.DIRT) {
+                switch (state.getValue(BlockDirt.VARIANT)) {
+                    case DIRT: {
+                        tillGround(world, player, stack, pos, Blocks.FARMLAND.getDefaultState());
+                        tilled = true;
+                        break;
+                    }
+                    case COARSE_DIRT: {
+                        tillGround(world, player, stack, pos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
+                        tilled = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (tilled) {
+            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_HOE_TILL, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            player.swingArm(hand);
+            return EnumActionResult.SUCCESS;
+        }
+
+        return EnumActionResult.PASS;
+    }
+
+    private static void tillGround(@Nonnull World world, EntityPlayer player, ItemStack stack, BlockPos pos, IBlockState state) {
+        world.setBlockState(pos, state, 11);
+        if (!player.isCreative()) {
+            stack.damageItem(1, player);
+        }
     }
 }

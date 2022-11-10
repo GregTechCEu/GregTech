@@ -76,7 +76,7 @@ public class MaterialIconType {
     public static final MaterialIconType toolHeadBuzzSaw = new MaterialIconType("toolHeadBuzzSaw");
     public static final MaterialIconType toolHeadDrill = new MaterialIconType("toolHeadDrill");
     public static final MaterialIconType toolHeadChainsaw = new MaterialIconType("toolHeadChainsaw");
-    public static final MaterialIconType toolHeadSickle = new MaterialIconType("toolHeadSickle");
+    public static final MaterialIconType toolHeadScythe = new MaterialIconType("toolHeadScythe");
     public static final MaterialIconType toolHeadScrewdriver = new MaterialIconType("toolHeadScrewdriver");
     public static final MaterialIconType toolHeadWrench = new MaterialIconType("toolHeadWrench");
 

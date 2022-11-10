@@ -20,13 +20,11 @@ public class ToolClasses {
     public static final String SCREWDRIVER = "screwdriver";
     public static final String MORTAR = "mortar";
     public static final String WIRE_CUTTER = "wirecutter";
-    public static final String SICKLE = "sickle";
     public static final String SCYTHE = "scythe";
     public static final String SHEARS = "shears";
     public static final String KNIFE = "knife";
     public static final String BUTCHERY_KNIFE = "butchery_knife";
     public static final String PLUNGER = "plunger";
 
-    public static final Set<String> SCYTHES = ImmutableSet.of(SICKLE, SCYTHE);
     public static final Set<String> DRILL = ImmutableSet.of(PICKAXE, SHOVEL);
 }
