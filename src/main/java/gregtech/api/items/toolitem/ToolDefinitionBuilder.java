@@ -1,7 +1,6 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.ImmutableList;
-import gregtech.api.items.toolitem.aoe.AoEChained;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -38,7 +37,6 @@ public class ToolDefinitionBuilder {
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
     private AoESymmetrical aoeSymmetrical = AoESymmetrical.none();
-    private AoEChained aoeChained = AoEChained.none();
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
     private final Set<Material> effectiveMaterials = new ObjectOpenHashSet<>();
     private Predicate<IBlockState> effectiveStates;
@@ -144,15 +142,6 @@ public class ToolDefinitionBuilder {
         return aoeSymmetrical(AoESymmetrical.of(additionalColumns, additionalRows, additionalDepth));
     }
 
-    public ToolDefinitionBuilder aoeChained(AoEChained aoeChained) {
-        this.aoeChained = aoeChained;
-        return this;
-    }
-
-    public ToolDefinitionBuilder aoeChained(int limit) {
-        return aoeChained(AoEChained.of(limit));
-    }
-
     public ToolDefinitionBuilder effectiveBlocks(Block... blocks) {
         Collections.addAll(this.effectiveBlocks, blocks);
         return this;
@@ -187,7 +176,6 @@ public class ToolDefinitionBuilder {
             private final boolean sneakBypassUse = ToolDefinitionBuilder.this.sneakBypassUse;
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
             private final AoESymmetrical aoeSymmetrical = ToolDefinitionBuilder.this.aoeSymmetrical;
-            private final AoEChained aoeChained = ToolDefinitionBuilder.this.aoeChained;
             private final Predicate<IBlockState> effectiveStatePredicate;
 
             {
@@ -292,11 +280,6 @@ public class ToolDefinitionBuilder {
             @Override
             public AoESymmetrical getAoEDefinition(ItemStack stack) {
                 return aoeSymmetrical;
-            }
-
-            @Override
-            public AoEChained getAoEChainedDefinition(ItemStack stack) {
-                return aoeChained;
             }
         };
     }

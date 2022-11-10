@@ -247,11 +247,9 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
     @Override
     public boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull ItemStack stack) {
-        if (super.canHarvestBlock(state, stack)) return true;
-
         // special case vanilla behavior
         if (state.getBlock().getHarvestTool(state) == null) {
-            return isToolEffectiveVanilla(state, stack);
+            return ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack));
         }
 
         return false;

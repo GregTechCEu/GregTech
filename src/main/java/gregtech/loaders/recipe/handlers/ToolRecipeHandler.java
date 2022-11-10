@@ -45,7 +45,7 @@ public class ToolRecipeHandler {
         OrePrefix.toolHeadChainsaw.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processChainSawHead);
         OrePrefix.toolHeadDrill.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processDrillHead);
 
-        OrePrefix.toolHeadSickle.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processSickleHead);
+        OrePrefix.toolHeadScythe.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processScytheBlade);
         OrePrefix.toolHeadWrench.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processWrenchHead);
         OrePrefix.toolHeadBuzzSaw.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processBuzzSawHead);
         OrePrefix.toolHeadFile.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processFileHead);
@@ -353,8 +353,8 @@ public class ToolRecipeHandler {
                 .buildAndRegister();
     }
 
-    public static void processSickleHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, material, ToolItems.SICKLE, false, "PPI", "hf ");
+    public static void processScytheBlade(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, ToolItems.SCYTHE, false, "PPI", "hf ");
     }
 
     public static void processShovelHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
