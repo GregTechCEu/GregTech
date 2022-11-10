@@ -78,7 +78,7 @@ public class ToolItems {
     public static IGTTool SCREWDRIVER;
     public static IGTTool MORTAR;
     public static IGTTool WIRE_CUTTER;
-    public static IGTTool SICKLE;
+    public static IGTTool SCYTHE;
     public static IGTTool KNIFE;
     public static IGTTool BUTCHERY_KNIFE;
     public static IGTTool PLUNGER;
@@ -98,9 +98,9 @@ public class ToolItems {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ToolItems.class);
-        SWORD = register(ItemGTTool.Builder.of(GTValues.MODID, "sword")
-                .toolStats(b -> b.suitableForAttacking().suitableForBlockBreaking())
-                .toolClasses(ToolClasses.SWORD));
+        SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
+                        .toolStats(b -> b.suitableForAttacking().suitableForBlockBreaking())
+                        .toolClasses(ToolClasses.SWORD));
         PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
                 .toolClasses(ToolClasses.PICKAXE));
@@ -169,9 +169,9 @@ public class ToolItems {
                 .oreDict("craftingToolWireCutter")
                 .symbol('x')
                 .toolClasses(ToolClasses.WIRE_CUTTER));
-        SICKLE = register(ItemGTTool.Builder.of(GTValues.MODID, "sickle") //TODO Tools PR: Sickle AOE does not work
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().aoeChained(20))
-                .toolClasses(ToolClasses.SICKLE, ToolClasses.SCYTHE, ToolClasses.SHEARS, ToolClasses.HOE));
+        SCYTHE = register(ItemGTSword.Builder.of(GTValues.MODID, "scythe")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().aoeSymmetrical(1, 1, 2))
+                .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
         KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
                 .toolStats(b -> b.suitableForCrafting())
                 .oreDict("craftingToolKnife")

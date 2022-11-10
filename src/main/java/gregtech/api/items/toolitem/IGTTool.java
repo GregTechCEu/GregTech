@@ -5,7 +5,6 @@ import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
@@ -41,7 +40,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -81,10 +79,6 @@ import static gregtech.api.items.toolitem.ToolHelper.*;
         @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
 public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
-
-    Set<Block> STONE_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE);
-    Set<Block> IRON_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE);
-    Set<Block> AXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.PLANKS, Blocks.BOOKSHELF, Blocks.LOG, Blocks.LOG2, Blocks.CHEST, Blocks.PUMPKIN, Blocks.LIT_PUMPKIN, Blocks.MELON_BLOCK, Blocks.LADDER, Blocks.WOODEN_BUTTON, Blocks.WOODEN_PRESSURE_PLATE);
 
     String getDomain();
 
@@ -303,41 +297,33 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             if (type.equals(ToolClasses.SWORD)) {
                 Block block = state.getBlock();
                 if (block instanceof BlockWeb) {
-                    return 15F;
-                } else if (getToolStats().isToolEffective(state)) {
-                    return getTotalToolSpeed(stack);
+                    return 15.0F;
                 } else {
                     net.minecraft.block.material.Material material = state.getMaterial();
-                    return material != net.minecraft.block.material.Material.PLANTS &&
-                            material != net.minecraft.block.material.Material.VINE &&
-                            material != net.minecraft.block.material.Material.CORAL &&
-                            material != net.minecraft.block.material.Material.LEAVES &&
-                            material != net.minecraft.block.material.Material.GOURD ? 1.0F : 1.5F;
+                    if (material == net.minecraft.block.material.Material.PLANTS ||
+                            material == net.minecraft.block.material.Material.VINE ||
+                            material == net.minecraft.block.material.Material.CORAL ||
+                            material == net.minecraft.block.material.Material.LEAVES ||
+                            material == net.minecraft.block.material.Material.GOURD) {
+                        return 1.5F;
+                    }
                 }
-            } else if (state.getBlock().isToolEffective(type, state) || isToolEffectiveVanilla(state, stack)) {
+            } else if (type.equals(ToolClasses.AXE)) {
+                net.minecraft.block.material.Material material = state.getMaterial();
+                if (material == net.minecraft.block.material.Material.WOOD ||
+                        material == net.minecraft.block.material.Material.PLANTS ||
+                        material == net.minecraft.block.material.Material.VINE) {
+                    return getTotalToolSpeed(stack);
+                }
+            } else if (state.getBlock().isToolEffective(type, state)) {
                 return getTotalToolSpeed(stack);
             }
         }
-        return getToolStats().isToolEffective(state) ? getTotalToolSpeed(stack) : 1.0F;
-    }
+        if (ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
+            return getTotalToolSpeed(stack);
+        }
 
-    // encompasses all vanilla special case tool checks for harvesting
-    default boolean isToolEffectiveVanilla(IBlockState state, ItemStack stack) {
-        Block block = state.getBlock();
-        if (getToolClasses(stack).contains(ToolClasses.PICKAXE)) {
-            if (Blocks.OBSIDIAN == block && getTotalHarvestLevel(stack) >= 3) return true;
-            if (IRON_PICKAXE_HARVESTABLE_BLOCKS.contains(block) && getTotalHarvestLevel(stack) >= 2) return true;
-            if (STONE_PICKAXE_HARVESTABLE_BLOCKS.contains(block) && getTotalHarvestLevel(stack) >= 1) return true;
-            net.minecraft.block.material.Material material = state.getMaterial();
-            if (material == net.minecraft.block.material.Material.ROCK || material == net.minecraft.block.material.Material.IRON || material == net.minecraft.block.material.Material.ANVIL) return true;
-        }
-        if (getToolClasses(stack).contains(ToolClasses.SHOVEL)) {
-            if (block == Blocks.SNOW_LAYER || block == Blocks.SNOW) return true;
-        }
-        if (getToolClasses(stack).contains(ToolClasses.AXE)) {
-            return AXE_HARVESTABLE_BLOCKS.contains(block);
-        }
-        return false;
+        return getToolStats().isToolEffective(state) ? getTotalToolSpeed(stack) : 1.0F;
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
@@ -353,11 +339,27 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 result = ToolHelper.shearBlockRoutine(playerMP, stack, pos);
             }
             if (result != 0) {
-                if (!areaOfEffectBlockBreakRoutine(stack, playerMP)) {
-                    if (result == -1) {
-                        treeFellingRoutine(playerMP, stack, pos);
+                // prevent exploits with instantly breakable blocks
+                IBlockState state = player.world.getBlockState(pos);
+                boolean effective = false;
+                for (String type : getToolClasses(stack)) {
+                    if (state.getBlock().isToolEffective(type, state)) {
+                        effective = true;
+                        break;
+                    }
+                }
+
+                effective |= ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack));
+
+                if (effective) {
+                    if (areaOfEffectBlockBreakRoutine(stack, playerMP)) {
+                        playSound(player);
                     } else {
-                        return true;
+                        if (result == -1) {
+                            treeFellingRoutine(playerMP, stack, pos);
+                        } else {
+                            return true;
+                        }
                     }
                 }
             }
@@ -485,6 +487,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (placeTorchRoutine(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
             return EnumActionResult.SUCCESS;
         }
+        ItemStack stack = player.getHeldItem(hand);
+        if (getToolClasses(stack).contains(ToolClasses.HOE) && hoeGroundRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
+            return EnumActionResult.SUCCESS;
+        }
+
         return EnumActionResult.PASS;
     }
 
@@ -492,7 +499,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
-            if (getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
+            if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
                 PlayerInventoryHolder.openHandItemUI(player, hand);
                 return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
