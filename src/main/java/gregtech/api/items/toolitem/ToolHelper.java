@@ -323,8 +323,10 @@ public class ToolHelper {
                         for (int z = isX ? -column : -row; z <= (isX ? column : row); z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
-                                if (function.apply(stack, world, player, pos)) {
-                                    validPositions.add(pos);
+                                if (player.canPlayerEdit(pos.offset(rayTraceResult.sideHit), rayTraceResult.sideHit, stack)) {
+                                    if (function.apply(stack, world, player, pos)) {
+                                        validPositions.add(pos);
+                                    }
                                 }
                             }
                         }
@@ -416,6 +418,18 @@ public class ToolHelper {
         if (world.isAirBlock(pos.up())) {
             Block block = world.getBlockState(pos).getBlock();
             return block == Blocks.GRASS || block == Blocks.GRASS_PATH || block == Blocks.DIRT;
+        }
+        return false;
+    }
+
+    public static Set<BlockPos> getPathConvertableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
+        return iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, ToolHelper::isBlockPathConvertable);
+    }
+
+    private static boolean isBlockPathConvertable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+        if (world.isAirBlock(pos.up())) {
+            Block block = world.getBlockState(pos).getBlock();
+            return block == Blocks.GRASS || block == Blocks.DIRT; // native dirt to path
         }
         return false;
     }
@@ -870,5 +884,45 @@ public class ToolHelper {
         if (!player.isCreative()) {
             stack.damageItem(1, player);
         }
+    }
+
+    public static EnumActionResult shovelPathRoutine(EntityPlayer player, @Nonnull World world, EnumHand hand, @Nonnull EnumFacing facing) {
+        if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
+
+        Vec3d lookPos = player.getPositionEyes(1F);
+        Vec3d rotation = player.getLook(1);
+        Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
+
+        if (rayTraceResult == null) return EnumActionResult.PASS;
+        if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;
+        if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
+
+        ItemStack stack = player.getHeldItem(hand);
+        AoESymmetrical aoeDefinition = getAoEDefinition(stack);
+
+        Set<BlockPos> blocks;
+        // only attempt to till if the center block is tillable
+        if (world.isAirBlock(rayTraceResult.getBlockPos().up()) && isBlockPathConvertable(stack, world, player, rayTraceResult.getBlockPos())) {
+            if (aoeDefinition == AoESymmetrical.none()) {
+                blocks = ImmutableSet.of(rayTraceResult.getBlockPos());
+            } else {
+                blocks = getPathConvertableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
+                blocks.add(rayTraceResult.getBlockPos());
+            }
+        } else return EnumActionResult.PASS;
+
+        boolean pathed = false;
+        for (BlockPos pos : blocks) {
+             pathed |= world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState());
+        }
+
+        if (pathed) {
+            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            player.swingArm(hand);
+            return EnumActionResult.SUCCESS;
+        }
+
+        return EnumActionResult.PASS;
     }
 }
