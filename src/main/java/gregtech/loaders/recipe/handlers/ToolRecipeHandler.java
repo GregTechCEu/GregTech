@@ -181,8 +181,13 @@ public class ToolRecipeHandler {
                 "PP ", "PPR", "PP ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'R', new UnificationEntry(OrePrefix.stick, Materials.Wood));
-    }
 
+        ModHandler.addShapedRecipe(String.format("spade_%s", material),
+                ToolItems.SPADE.get(material),
+                " P ", "PRP", " R ",
+                'P', new UnificationEntry(OrePrefix.plate, material),
+                'R', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+    }
 
     public static void processDrillHead(OrePrefix drillHead, Material material, ToolProperty property) {
         if (ConfigHolder.tools.enableHighTierDrills) {

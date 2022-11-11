@@ -72,6 +72,7 @@ public class ToolItems {
     public static IGTTool HARD_HAMMER;
     public static IGTTool SOFT_MALLET;
     public static IGTTool MINING_HAMMER;
+    public static IGTTool SPADE;
     public static IGTTool WRENCH;
     public static IGTTool FILE;
     public static IGTTool CROWBAR;
@@ -133,6 +134,9 @@ public class ToolItems {
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).efficiencyMultiplier(0.4F))
                 .toolClasses(ToolClasses.PICKAXE));
+        SPADE = register(ItemGTTool.Builder.of(GTValues.MODID, "spade")
+                .toolStats(b -> b.suitableForBlockBreaking().aoeSymmetrical(1, 1, 0).efficiencyMultiplier(0.4F))
+                .toolClasses(ToolClasses.SHOVEL));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse())
                 .sound(GTSounds.WRENCH_TOOL, true)

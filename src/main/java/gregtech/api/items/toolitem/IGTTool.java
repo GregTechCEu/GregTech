@@ -488,7 +488,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             return EnumActionResult.SUCCESS;
         }
         ItemStack stack = player.getHeldItem(hand);
-        if (getToolClasses(stack).contains(ToolClasses.HOE) && hoeGroundRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
+        if (getToolClasses(stack).contains(ToolClasses.HOE) && ToolHelper.hoeGroundRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
+            return EnumActionResult.SUCCESS;
+        }
+        if (getToolClasses(stack).contains(ToolClasses.SHOVEL) && ToolHelper.shovelPathRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
             return EnumActionResult.SUCCESS;
         }
 
