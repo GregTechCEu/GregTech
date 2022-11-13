@@ -13,8 +13,8 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.TooltipHelper;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +34,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Function;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
@@ -164,9 +163,9 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.creative_tank.tooltip1")
-                + TooltipHelper.RAINBOW + I18n.format("gregtech.machine.creative_tank.tooltip2")
-                + I18n.format("gregtech.machine.creative_tank.tooltip3"));
+        tooltip.add(I18n.format("gregtech.creative_tooltip.1")
+                + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
+                + I18n.format("gregtech.creative_tooltip.2"));
         // do not append the normal tooltips
     }
 }

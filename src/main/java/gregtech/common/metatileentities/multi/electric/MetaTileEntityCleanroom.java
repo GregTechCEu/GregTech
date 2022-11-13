@@ -53,7 +53,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -466,19 +465,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.2"));
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.3"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.4"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.5"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.6"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.7"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.9"));
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ? "gregtech.machine.cleanroom.tooltip.ae2.channels" : "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));
-            }
-        } else {
-            tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.4"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.5"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.6"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.7"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.9"));
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ? "gregtech.machine.cleanroom.tooltip.ae2.channels" : "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));
         }
     }
 

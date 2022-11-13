@@ -1055,11 +1055,11 @@ metaitem.voltage_coil.uhv.name=Ultra High Voltage Coil
 metaitem.voltage_coil.uhv.tooltip=Ultra Coil
 metaitem.voltage_coil.uev.name=Ultra Excessive Voltage Coil
 metaitem.voltage_coil.uev.tooltip=Unreal Coil
-metaitem.voltage_coil.uiv.name=Ultra Insane Coil
+metaitem.voltage_coil.uiv.name=Ultra Immense Coil
 metaitem.voltage_coil.uiv.tooltip=Insane Coil
 metaitem.voltage_coil.uxv.name=Ultra Extreme Voltage Coil
 metaitem.voltage_coil.uxv.tooltip=Epic Coil
-metaitem.voltage_coil.opv.name=Ultra Immense Voltage Coil
+metaitem.voltage_coil.opv.name=Overpowered Voltage Coil
 metaitem.voltage_coil.opv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
@@ -2327,10 +2327,6 @@ tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.trinium.name=Trinium Coil Block
 tile.wire_coil.tritanium.name=Tritanium Coil Block
 
-# General casing block tooltip
-tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
-tile.machine_casing.tooltip2=This is NOT a TileEntity!
-
 # Warning sign blocks
 tile.warning_sign.yellow_stripes.name=Yellow Stripes Block
 tile.warning_sign.small_yellow_stripes.name=Yellow Stripes Block
@@ -3238,7 +3234,6 @@ gregtech.machine.extruder.uxv.tooltip=Shape Driver
 gregtech.machine.extruder.opv.name=Legendary Extruder
 gregtech.machine.extruder.opv.tooltip=Shape Driver
 
-# Fermenter TODO
 gregtech.machine.fermenter.lv.name=Basic Fermenter
 gregtech.machine.fermenter.lv.tooltip=Fermenting Fluids
 gregtech.machine.fermenter.mv.name=Advanced Fermenter
@@ -3743,14 +3738,11 @@ gregtech.machine.scanner.opv.name=Legendary Scanner
 gregtech.machine.scanner.opv.tooltip=Electron Microscope
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
-gregtech.machine.infinite_energy.tooltip=§7You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§7 to use this
 gregtech.machine.creative_chest.name=Creative Quantum Chest
-gregtech.machine.creative_chest.tooltip=§7You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§7 to use this
 gregtech.machine.creative_tank.name=Creative Quantum Tank
-gregtech.machine.creative_tank.tooltip1=§7You just need
-gregtech.machine.creative_tank.tooltip2= Creative Mode
-gregtech.machine.creative_tank.tooltip3=§7 to use this
-# §7You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§7 to use this
+gregtech.creative_tooltip.1=§7You just need
+gregtech.creative_tooltip.2= Creative Mode
+gregtech.creative_tooltip.3=§7 to use this
 
 
 # Machine hulls
@@ -4409,7 +4401,7 @@ gregtech.machine.fusion_reactor.overclocking=Overclocks double energy and halve 
 gregtech.machine.miner.lv.name=Basic Miner
 gregtech.machine.miner.mv.name=Advanced Miner
 gregtech.machine.miner.hv.name=Advanced Miner II
-gregtech.machine.miner.tooltip=Mines ores below the Miner! Starts as §f%,dx%,d §7area
+gregtech.machine.miner.tooltip=Mines ores below the Miner! Starts as §f%sx%s §7area
 gregtech.machine.miner.per_block=§7takes §f%,ds §7per Block
 
 gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
@@ -4485,40 +4477,41 @@ gregtech.machine.monitor_screen.name=Monitor Screen
 
 
 # Multiblock Tooltips
+gregtech.machine.primitive_water_pump.tooltip=Endervoir at Home
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Making your first Steel
-gregtech.machine.electric_blast_furnace.tooltip=
-gregtech.machine.vacuum_freezer.tooltip=
-gregtech.machine.implosion_compressor.tooltip=
-gregtech.machine.pyrolyse_oven.tooltip=
-gregtech.machine.distillation_tower.tooltip=
-gregtech.machine.multi_furnace.tooltip=Just like the Oven at home
-gregtech.machine.large_combustion_engine.tooltip=
-gregtech.machine.extreme_combustion_engine.tooltip=
-gregtech.machine.cracker.tooltip=
-gregtech.machine.large_turbine.steam.tooltip=
-gregtech.machine.large_turbine.gas.tooltip=
-gregtech.machine.large_turbine.plasma.tooltip=
+gregtech.machine.electric_blast_furnace.tooltip=Where's the electric smoker?
+gregtech.machine.vacuum_freezer.tooltip=Aluminium Ice Box
+gregtech.machine.implosion_compressor.tooltip=The only Machine you want to go Boom
+gregtech.machine.pyrolyse_oven.tooltip=Electric Coke Oven
+gregtech.machine.distillation_tower.tooltip=Fluid Refinery
+gregtech.machine.multi_furnace.tooltip=Just like the Oven at Home
+gregtech.machine.large_combustion_engine.tooltip=Fuel Ignition Chamber
+gregtech.machine.extreme_combustion_engine.tooltip=Extreme Chemical Energy Releaser
+gregtech.machine.cracker.tooltip=Makes Oil useful
+gregtech.machine.large_turbine.steam.tooltip=Do not put your Head in it
+gregtech.machine.large_turbine.gas.tooltip=Not a Jet Engine
+gregtech.machine.large_turbine.plasma.tooltip=Plasma Energy Siphon
 gregtech.machine.large_boiler.bronze.tooltip=We need more Steam!
-gregtech.machine.large_boiler.steel.tooltip=
-gregtech.machine.large_boiler.titanium.tooltip=
-gregtech.machine.large_boiler.tungstensteel.tooltip=
-gregtech.machine.coke_oven.tooltip=Making better fuels for Steel and power
+gregtech.machine.large_boiler.steel.tooltip=Charcoal Incinerator
+gregtech.machine.large_boiler.titanium.tooltip=Where's the Magic Super Fuel?
+gregtech.machine.large_boiler.tungstensteel.tooltip=How do you even fuel this thing?
+gregtech.machine.coke_oven.tooltip=Making better fuels for Steel and Power
 gregtech.machine.assembly_line.tooltip=Not a multiblock Assembling Machine!
-gregtech.machine.fusion_reactor.luv.tooltip=
-gregtech.machine.fusion_reactor.zpm.tooltip=
-gregtech.machine.fusion_reactor.uv.tooltip=
-gregtech.machine.large_chemical_reactor.tooltip=
+gregtech.machine.fusion_reactor.luv.tooltip=Atomic Alloy Smelter
+gregtech.machine.fusion_reactor.zpm.tooltip=A SUN DOWN ON EARTH
+gregtech.machine.fusion_reactor.uv.tooltip=A WHITE DWARF DOWN ON YOUR BASE
+gregtech.machine.large_chemical_reactor.tooltip=Black Box Reactor
 gregtech.machine.steam_oven.tooltip=Not to be confused with Multi-Smelter
-gregtech.machine.steam_grinder.tooltip=A multiblock Macerator without the byproducts
-gregtech.machine.large_miner.ev.tooltip=
-gregtech.machine.large_miner.iv.tooltip=
-gregtech.machine.large_miner.luv.tooltip=
-#gregtech.machine.central_monitor.tooltip=
-gregtech.machine.processing_array.tooltip=When a few machines just doesn't cut it
-gregtech.machine.advanced_processing_array.tooltip=Parallelize the world
-gregtech.machine.fluid_drilling_rig.mv.tooltip=
-gregtech.machine.fluid_drilling_rig.hv.tooltip=
-gregtech.machine.fluid_drilling_rig.ev.tooltip=
+gregtech.machine.steam_grinder.tooltip=A multiblock Macerator without the Byproducts
+gregtech.machine.large_miner.ev.tooltip=Digging Ore instead of You
+gregtech.machine.large_miner.iv.tooltip=Biome Excavator
+gregtech.machine.large_miner.luv.tooltip=Terrestrial Harvester
+gregtech.machine.central_monitor.tooltip=But can it run Doom?
+gregtech.machine.processing_array.tooltip=When a few Machines just doesn't cut it
+gregtech.machine.advanced_processing_array.tooltip=Parallelize the World
+gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
+gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
+gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
@@ -4715,7 +4708,6 @@ gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
 # TODO:
-# - Multiblock "controller for the ..." tooltip ("Recipe: ..." ?)
 # - Multiblock fun descriptions like normal machines
 # - JEI pins
 
@@ -4867,9 +4859,9 @@ gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
 gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
-gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
-gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
-gregtech.item_pipe.priority=§9Priority: %d
+gregtech.item_pipe.rate_items=§9Transfer Rate: %,d items/s
+gregtech.item_pipe.rate_stacks=§9Transfer Rate: %,d stacks/s
+gregtech.item_pipe.priority=§9Priority: %,d
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.

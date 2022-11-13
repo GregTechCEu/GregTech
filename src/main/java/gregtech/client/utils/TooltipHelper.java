@@ -1,7 +1,9 @@
-package gregtech.api.util;
+package gregtech.client.utils;
 
+import gregtech.api.util.GTLog;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +12,6 @@ import java.util.List;
 import static gregtech.api.GTValues.CLIENT_TIME;
 import static net.minecraft.util.text.TextFormatting.*;
 
-// TODO Move to client?
 public class TooltipHelper {
 
     private static final List<GTFormatCode> CODES = new ArrayList<>();
@@ -59,6 +60,14 @@ public class TooltipHelper {
         if (event.phase == TickEvent.Phase.END) {
             CODES.forEach(GTFormatCode::updateIndex);
         }
+    }
+
+    public static boolean isShiftDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+    }
+
+    public static boolean isCtrlDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
     }
 
     public static class GTFormatCode {

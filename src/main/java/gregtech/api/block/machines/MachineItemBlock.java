@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +26,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -136,7 +136,7 @@ public class MachineItemBlock extends ItemBlock {
 
         // tool usages tooltips
         if (metaTileEntity.showToolUsages()) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            if (TooltipHelper.isShiftDown()) {
                 metaTileEntity.addToolUsages(stack, worldIn, tooltip, flagIn.isAdvanced());
             } else {
                 tooltip.add(I18n.format("gregtech.tool_action.show_tooltips"));
