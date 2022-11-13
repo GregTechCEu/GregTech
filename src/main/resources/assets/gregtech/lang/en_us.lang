@@ -910,12 +910,15 @@ metaitem.wooden_form.brick.name=Brick Wooden Form
 
 metaitem.tool.behaves_like=§fBehaves like: %s
 metaitem.tool.behavior.behaviors=§eBehaviors
-metaitem.tool.behavior.silk_ice=§bSilk Harvest Ice
+metaitem.tool.behavior.silk_ice=§bSilk Harvests Ice
 metaitem.tool.behavior.torch_place=§eTorch Placing
 metaitem.tool.behavior.tree_felling=§4Tree Felling
 metaitem.tool.behavior.shield_disable=§7Disable Shields
 metaitem.tool.behavior.relocate_mining=§2Relocate Mined Blocks
 metaitem.tool.behavior.aoe_mining=§5%sx%sx%s AoE Mining
+metaitem.tool.behavior.ground_tilling=§eTills Ground
+metaitem.tool.behavior.grass_path=§eCreates Grass Paths
+metaitem.tool.behavior.rail_rotation=§eRotates Rails
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe

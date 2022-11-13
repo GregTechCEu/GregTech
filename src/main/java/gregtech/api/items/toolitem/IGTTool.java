@@ -20,6 +20,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
+import gregtech.api.items.toolitem.behaviour.IToolBehavior;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -132,21 +133,23 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set behaviours
         NBTTagCompound behaviourTag = getBehavioursTag(stack);
+        getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
+
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
-        behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
-        behaviourTag.setInteger(MAX_AOE_ROW_KEY, aoeDefinition.row);
-        behaviourTag.setInteger(MAX_AOE_LAYER_KEY, aoeDefinition.layer);
-        behaviourTag.setInteger(AOE_COLUMN_KEY, aoeDefinition.column);
-        behaviourTag.setInteger(AOE_ROW_KEY, aoeDefinition.row);
-        behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
+        if (aoeDefinition != AoESymmetrical.none()) {
+            behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
+            behaviourTag.setInteger(MAX_AOE_ROW_KEY, aoeDefinition.row);
+            behaviourTag.setInteger(MAX_AOE_LAYER_KEY, aoeDefinition.layer);
+            behaviourTag.setInteger(AOE_COLUMN_KEY, aoeDefinition.column);
+            behaviourTag.setInteger(AOE_ROW_KEY, aoeDefinition.row);
+            behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
+        }
 
         Set<String> toolClasses = stack.getItem().getToolClasses(stack);
 
-        behaviourTag.setBoolean(HARVEST_ICE_KEY, toolClasses.contains(ToolClasses.SAW));
-        behaviourTag.setBoolean(TORCH_PLACING_KEY, toolClasses.contains(ToolClasses.PICKAXE));
+        //TODO implement these
         behaviourTag.setBoolean(TREE_FELLING_KEY, toolClasses.contains(ToolClasses.AXE));
-        behaviourTag.setBoolean(DISABLE_SHIELDS_KEY, toolClasses.contains(ToolClasses.AXE));
         behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, false);
 
         return stack;
@@ -317,12 +320,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
+        getToolStats().getBehaviors().forEach(behavior -> behavior.hitEntity(stack, target, attacker));
         damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
     }
 
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
-        if (!player.world.isRemote && !player.isSneaking()) {
+        if (player.world.isRemote) return false;
+        getToolStats().getBehaviors().forEach(behavior -> behavior.onBlockStartBreak(stack, pos, player));
+
+        if (!player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             int result = -1;
             if (isTool(stack, ToolClasses.SHEARS)) {
@@ -359,6 +366,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
+            getToolStats().getBehaviors().forEach(behavior -> behavior.onBlockDestroyed(stack, worldIn, state, pos, entityLiving));
+
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
                 damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
             }
@@ -392,7 +401,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
-        return getBehavioursTag(stack).getBoolean(DISABLE_SHIELDS_KEY);
+        return getToolStats().getBehaviors().stream().anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
     }
 
     default boolean definition$doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
@@ -439,6 +448,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+        getToolStats().getBehaviors().forEach(behavior -> behavior.onEntitySwing(entityLiving, stack));
         return false;
     }
 
@@ -474,18 +484,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (placeTorchRoutine(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-            return EnumActionResult.SUCCESS;
-        }
-        ItemStack stack = player.getHeldItem(hand);
-        if (getToolClasses(stack).contains(ToolClasses.HOE) && ToolHelper.hoeGroundRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
-            return EnumActionResult.SUCCESS;
-        }
-        if (getToolClasses(stack).contains(ToolClasses.SHOVEL) && ToolHelper.shovelPathRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
-            return EnumActionResult.SUCCESS;
-        }
-        if (getToolClasses(stack).contains(ToolClasses.CROWBAR)) {
-            if (ToolHelper.rotateRailBlock(player, world, hand, pos) == EnumActionResult.SUCCESS) {
+        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)  {
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -499,6 +499,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
                 PlayerInventoryHolder.openHandItemUI(player, hand);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+            }
+        }
+
+        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+            if (behavior.onItemRightClick(world, player, hand).getType() == EnumActionResult.SUCCESS) {
                 return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
         }
@@ -520,19 +526,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 .map(s -> s.replaceAll("_", " "))
                 .map(WordUtils::capitalize)
                 .collect(Collectors.joining(", "))));
+
+        getToolStats().getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
+
         NBTTagCompound behavioursTag = getBehavioursTag(stack);
         List<String> behaviours = new ArrayList<>();
-        if (behavioursTag.getBoolean(HARVEST_ICE_KEY)) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.silk_ice"));
-        }
-        if (behavioursTag.getBoolean(TORCH_PLACING_KEY)) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.torch_place"));
-        }
         if (behavioursTag.getBoolean(TREE_FELLING_KEY)) {
             behaviours.add(" " + I18n.format("metaitem.tool.behavior.tree_felling"));
-        }
-        if (behavioursTag.getBoolean(DISABLE_SHIELDS_KEY)) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.shield_disable"));
         }
         if (behavioursTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
             behaviours.add(" " + I18n.format("metaitem.tool.behavior.relocate_mining"));

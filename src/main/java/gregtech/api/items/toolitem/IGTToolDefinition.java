@@ -1,7 +1,7 @@
 package gregtech.api.items.toolitem;
 
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
-import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
+import gregtech.api.items.toolitem.behaviour.IToolBehavior;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
@@ -16,7 +16,7 @@ public interface IGTToolDefinition {
     /**
      * Tool Component/Behaviours
      */
-    List<IToolBehaviour> getBehaviours();
+    List<IToolBehavior> getBehaviors();
 
     boolean isToolEffective(IBlockState state);
 

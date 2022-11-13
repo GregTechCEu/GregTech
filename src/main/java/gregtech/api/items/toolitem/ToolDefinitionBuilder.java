@@ -2,7 +2,7 @@ package gregtech.api.items.toolitem;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
-import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
+import gregtech.api.items.toolitem.behaviour.IToolBehavior;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 public class ToolDefinitionBuilder {
 
-    private final List<IToolBehaviour> behaviours = new ArrayList<>();
+    private final List<IToolBehavior> behaviours = new ArrayList<>();
     private int damagePerAction = 1;
     private boolean suitableForBlockBreaking = false;
     private boolean suitableForAttacking = false;
@@ -41,7 +41,7 @@ public class ToolDefinitionBuilder {
     private final Set<Material> effectiveMaterials = new ObjectOpenHashSet<>();
     private Predicate<IBlockState> effectiveStates;
 
-    public ToolDefinitionBuilder behaviours(IToolBehaviour... behaviours) {
+    public ToolDefinitionBuilder behaviors(IToolBehavior... behaviours) {
         Collections.addAll(this.behaviours, behaviours);
         return this;
     }
@@ -160,7 +160,7 @@ public class ToolDefinitionBuilder {
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
-            private final List<IToolBehaviour> behaviours = ImmutableList.copyOf(ToolDefinitionBuilder.this.behaviours);
+            private final List<IToolBehavior> behaviors = ImmutableList.copyOf(ToolDefinitionBuilder.this.behaviours);
             private final int damagePerAction = ToolDefinitionBuilder.this.damagePerAction;
             private final boolean suitableForBlockBreaking = ToolDefinitionBuilder.this.suitableForBlockBreaking;
             private final boolean suitableForAttacking = ToolDefinitionBuilder.this.suitableForAttacking;
@@ -198,8 +198,8 @@ public class ToolDefinitionBuilder {
             }
 
             @Override
-            public List<IToolBehaviour> getBehaviours() {
-                return behaviours;
+            public List<IToolBehavior> getBehaviors() {
+                return behaviors;
             }
 
             @Override
