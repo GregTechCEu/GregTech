@@ -1,9 +1,8 @@
 package gregtech.api.items.metaitem.stats;
 
-import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import net.minecraft.item.ItemStack;
 
-public interface IItemDurabilityManager extends IItemComponent, IToolBehaviour {
+public interface IItemDurabilityManager extends IItemComponent {
 
     boolean showsDurabilityBar(ItemStack itemStack);
 

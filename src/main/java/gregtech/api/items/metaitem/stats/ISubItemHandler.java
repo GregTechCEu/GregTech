@@ -1,11 +1,10 @@
 package gregtech.api.items.metaitem.stats;
 
-import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-public interface ISubItemHandler extends IItemComponent, IToolBehaviour {
+public interface ISubItemHandler extends IItemComponent {
 
     String getItemSubType(ItemStack itemStack);
 
