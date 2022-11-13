@@ -51,17 +51,17 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder suitableForBlockBreaking() {
+    public ToolDefinitionBuilder blockBreaking() {
         this.suitableForBlockBreaking = true;
         return this;
     }
 
-    public ToolDefinitionBuilder suitableForAttacking() {
+    public ToolDefinitionBuilder attacking() {
         this.suitableForAttacking = true;
         return this;
     }
 
-    public ToolDefinitionBuilder suitableForCrafting() {
+    public ToolDefinitionBuilder crafting() {
         this.suitableForCrafting = true;
         return this;
     }
@@ -133,13 +133,13 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder aoeSymmetrical(AoESymmetrical aoeSymmetrical) {
+    public ToolDefinitionBuilder aoe(AoESymmetrical aoeSymmetrical) {
         this.aoeSymmetrical = aoeSymmetrical;
         return this;
     }
 
-    public ToolDefinitionBuilder aoeSymmetrical(int additionalColumns, int additionalRows, int additionalDepth) {
-        return aoeSymmetrical(AoESymmetrical.of(additionalColumns, additionalRows, additionalDepth));
+    public ToolDefinitionBuilder aoe(int additionalColumns, int additionalRows, int additionalDepth) {
+        return aoe(AoESymmetrical.of(additionalColumns, additionalRows, additionalDepth));
     }
 
     public ToolDefinitionBuilder effectiveBlocks(Block... blocks) {

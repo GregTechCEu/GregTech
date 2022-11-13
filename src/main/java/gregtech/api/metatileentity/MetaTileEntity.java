@@ -431,6 +431,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         if (toolClasses.contains(ToolClasses.SCREWDRIVER)) {
             result |= onScrewdriverClick(playerIn, hand, side, hitResult);
         }
+        if (toolClasses.contains(ToolClasses.CROWBAR)) {
+            result |= onCrowbarClick(playerIn, hand, side, hitResult);
+        }
         if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
             result |= onSoftMalletClick(playerIn, hand, side, hitResult);
         }
@@ -464,6 +467,20 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        return false;
+    }
+
+    /**
+     * Called when player clicks a crowbar on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getCoverAtSide(facing) != null) {
+            removeCover(facing);
+            return true;
+        }
+
         return false;
     }
 
