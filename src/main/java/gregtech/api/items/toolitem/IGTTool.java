@@ -293,30 +293,20 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
-        for (String type : get().getToolClasses(stack)) {
-            if (type.equals(ToolClasses.SWORD)) {
-                Block block = state.getBlock();
-                if (block instanceof BlockWeb) {
-                    return 15.0F;
-                } else {
-                    net.minecraft.block.material.Material material = state.getMaterial();
-                    if (material == net.minecraft.block.material.Material.PLANTS ||
-                            material == net.minecraft.block.material.Material.VINE ||
-                            material == net.minecraft.block.material.Material.CORAL ||
-                            material == net.minecraft.block.material.Material.LEAVES ||
-                            material == net.minecraft.block.material.Material.GOURD) {
-                        return 1.5F;
-                    }
-                }
-            } else if (type.equals(ToolClasses.AXE)) {
+        // special case for the sword
+        if (get().getToolClasses(stack).contains(ToolClasses.SWORD)) {
+            Block block = state.getBlock();
+            if (block instanceof BlockWeb) {
+                return 15.0F;
+            } else {
                 net.minecraft.block.material.Material material = state.getMaterial();
-                if (material == net.minecraft.block.material.Material.WOOD ||
-                        material == net.minecraft.block.material.Material.PLANTS ||
-                        material == net.minecraft.block.material.Material.VINE) {
-                    return getTotalToolSpeed(stack);
+                if (material == net.minecraft.block.material.Material.PLANTS ||
+                        material == net.minecraft.block.material.Material.VINE ||
+                        material == net.minecraft.block.material.Material.CORAL ||
+                        material == net.minecraft.block.material.Material.LEAVES ||
+                        material == net.minecraft.block.material.Material.GOURD) {
+                    return 1.5F;
                 }
-            } else if (state.getBlock().isToolEffective(type, state)) {
-                return getTotalToolSpeed(stack);
             }
         }
         if (ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
@@ -493,6 +483,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
         if (getToolClasses(stack).contains(ToolClasses.SHOVEL) && ToolHelper.shovelPathRoutine(player, world, hand, facing) == EnumActionResult.SUCCESS) {
             return EnumActionResult.SUCCESS;
+        }
+        if (getToolClasses(stack).contains(ToolClasses.CROWBAR)) {
+            if (ToolHelper.rotateRailBlock(player, world, hand, pos) == EnumActionResult.SUCCESS) {
+                return EnumActionResult.SUCCESS;
+            }
         }
 
         return EnumActionResult.PASS;

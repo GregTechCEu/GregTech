@@ -38,10 +38,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -395,15 +392,33 @@ public class ToolHelper {
         }
         if (toolClasses.contains(ToolClasses.AXE)) {
             if (AXE_HARVESTABLE_BLOCKS.contains(block)) return true;
+            if (material == net.minecraft.block.material.Material.WOOD ||
+                    material == net.minecraft.block.material.Material.PLANTS ||
+                    material == net.minecraft.block.material.Material.VINE) return true;
         }
         if (toolClasses.contains(ToolClasses.SWORD)) {
             if (block instanceof BlockWeb) return true;
+            if (material == net.minecraft.block.material.Material.PLANTS ||
+                    material == net.minecraft.block.material.Material.VINE ||
+                    material == net.minecraft.block.material.Material.CORAL ||
+                    material == net.minecraft.block.material.Material.LEAVES ||
+                    material == net.minecraft.block.material.Material.GOURD) return true;
         }
         if (toolClasses.contains(ToolClasses.SCYTHE)) {
             if (material == net.minecraft.block.material.Material.LEAVES ||
                     material == net.minecraft.block.material.Material.VINE ||
                     material == net.minecraft.block.material.Material.CACTUS ||
                     material == net.minecraft.block.material.Material.PLANTS) {
+                return true;
+            }
+        }
+        if (toolClasses.contains(ToolClasses.FILE)) {
+            if (block instanceof BlockPane && material == net.minecraft.block.material.Material.IRON) {
+                return true;
+            }
+        }
+        if (toolClasses.contains(ToolClasses.CROWBAR)) {
+            if (block instanceof BlockRailBase || material == net.minecraft.block.material.Material.CIRCUITS) {
                 return true;
             }
         }
@@ -882,7 +897,7 @@ public class ToolHelper {
     private static void tillGround(@Nonnull World world, EntityPlayer player, ItemStack stack, BlockPos pos, IBlockState state) {
         world.setBlockState(pos, state, 11);
         if (!player.isCreative()) {
-            stack.damageItem(1, player);
+            ToolHelper.damageItem(stack, player);
         }
     }
 
@@ -914,13 +929,36 @@ public class ToolHelper {
 
         boolean pathed = false;
         for (BlockPos pos : blocks) {
-             pathed |= world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState());
+            pathed |= world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState());
+            ToolHelper.damageItem(stack, player);
+            if (stack.isEmpty()) break;
         }
 
         if (pathed) {
             world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.PLAYERS, 1.0F, 1.0F);
             player.swingArm(hand);
             return EnumActionResult.SUCCESS;
+        }
+
+        return EnumActionResult.PASS;
+    }
+
+    public static EnumActionResult rotateRailBlock(EntityPlayer player, @Nonnull World world, EnumHand hand, BlockPos pos) {
+        if (!world.isRemote) {
+            IBlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof BlockRailBase) {
+
+                //TODO Rail Rotation seems to not work
+                boolean rotated = world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90));
+
+                if (rotated) {
+                    ToolHelper.damageItem(player.getHeldItem(hand), player);
+
+                    world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat());
+                    player.swingArm(hand);
+                    return EnumActionResult.SUCCESS;
+                }
+            }
         }
 
         return EnumActionResult.PASS;
