@@ -6,7 +6,6 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.util.Position;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.utils.RenderUtil;
@@ -41,16 +40,6 @@ public class WidgetCoverList extends ScrollableListWidget {
         for (CoverDigitalInterface cover : covers) {
             ItemStack itemStack = cover.coverHolder.getStackForm();
             BlockPos pos = cover.coverHolder.getPos();
-            if (cover.coverHolder instanceof PipeCoverableImplementation) {
-                itemStack = null;
-                pos = pos.offset(cover.attachedSide);
-                TileEntity tileEntity = cover.coverHolder.getWorld().getTileEntity(pos);
-                IBlockState state = cover.coverHolder.getWorld().getBlockState(pos);
-                if (tileEntity != null) {
-                    itemStack = tileEntity.getBlockType().getItem(cover.coverHolder.getWorld(), pos, state);
-                }
-                if (itemStack == null) continue;
-            }
             ItemStackHandler itemStackHandler = new ItemStackHandler(1);
             itemStackHandler.insertItem(0, itemStack, false);
             WidgetGroup widgetGroup = new WidgetGroup();

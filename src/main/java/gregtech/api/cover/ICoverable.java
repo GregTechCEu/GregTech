@@ -7,8 +7,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.*;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.BlockPipe.PipeConnectionData;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -171,8 +169,6 @@ public interface ICoverable {
                 return determineGridSideHit(result);
             } else if (rayTraceResult.cuboid6.data instanceof CoverSideData) {
                 return ((CoverSideData) rayTraceResult.cuboid6.data).side;
-            } else if (rayTraceResult.cuboid6.data instanceof BlockPipe.PipeConnectionData) {
-                return ((PipeConnectionData) rayTraceResult.cuboid6.data).side;
             } else if (rayTraceResult.cuboid6.data instanceof PrimaryBoxData) {
                 PrimaryBoxData primaryBoxData = (PrimaryBoxData) rayTraceResult.cuboid6.data;
                 return primaryBoxData.usePlacementGrid ? determineGridSideHit(result) : result.sideHit;

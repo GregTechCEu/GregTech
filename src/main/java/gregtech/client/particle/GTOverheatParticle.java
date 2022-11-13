@@ -7,7 +7,6 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -186,10 +185,6 @@ public class GTOverheatParticle extends GTParticle {
     @Override
     public void onUpdate() {
         TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof TileEntityCable) || !((TileEntityCable) te).isParticleAlive()) {
-            setExpired();
-            return;
-        }
 
         if (temperature > 400 && GTValues.RNG.nextFloat() < 0.04) {
             spawnSmoke();

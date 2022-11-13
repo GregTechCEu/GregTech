@@ -15,9 +15,6 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
@@ -119,9 +116,6 @@ public class ClientProxy extends CommonProxy {
         }
 
         MetaTileEntityRenderer.preInit();
-        CableRenderer.INSTANCE.preInit();
-        FluidPipeRenderer.INSTANCE.preInit();
-        ItemPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }

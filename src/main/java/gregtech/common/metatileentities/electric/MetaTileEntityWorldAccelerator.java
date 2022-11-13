@@ -11,7 +11,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -44,7 +43,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
 
     private static boolean considerTile(TileEntity tile) {
         // TODO interface for this?
-        if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) {
+        if (tile instanceof IGregTechTileEntity) {
             return false;
         }
         if (cofhTileClass == null) {

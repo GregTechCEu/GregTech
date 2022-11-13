@@ -23,7 +23,6 @@ import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -74,6 +73,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         if (coverHolder.getWorld() != null && coverHolder.getWorld().isRemote) {
             // tile at cover holder pos
             TileEntity te = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
+            /*
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
@@ -82,6 +82,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
+            */
         }
     }
 
@@ -485,7 +486,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
+        /*
         if (coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
                 coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
@@ -494,6 +495,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                     .setTooltipHoverString(val -> DistributionMode.values()[val].getName());
             primaryGroup.addWidget(distributionModeButton);
         }
+         */
 
         this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 

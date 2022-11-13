@@ -4,7 +4,6 @@ import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -38,9 +37,6 @@ public class CTRecipeHelper {
             }
             if (block instanceof BlockFrame) {
                 return "frame" + ((BlockFrame) block).getGtMaterial(item.getMetadata()).toCamelCaseString();
-            }
-            if (block instanceof BlockMaterialPipe) {
-                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item).toCamelCaseString();
             }
         }
         return null;

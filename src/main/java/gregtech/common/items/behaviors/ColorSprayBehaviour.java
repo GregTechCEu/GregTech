@@ -122,15 +122,6 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
             }
         }
 
-        // TileEntityPipeBase special case
-        if (te instanceof IPipeTile) {
-            IPipeTile<?, ?> pipe = (IPipeTile<?, ?>) te;
-            if (pipe.isPainted()) {
-                pipe.setPaintingColor(-1);
-                return true;
-            } else return false;
-        }
-
         // AE2 cable special case
         if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
             if (te instanceof TileCableBus) {

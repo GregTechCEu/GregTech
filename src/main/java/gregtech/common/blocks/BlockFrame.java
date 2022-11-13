@@ -6,10 +6,6 @@ import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.ItemBlockPipe;
-import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -157,27 +153,6 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         if (stackInHand.isEmpty()) {
             return false;
         }
-        // replace frame with pipe and set the frame material to this frame
-        if (stackInHand.getItem() instanceof ItemBlockPipe) {
-            BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
-            if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
-                IBlockState pipeState = blockPipe.getDefaultState();
-                worldIn.setBlockState(pos, pipeState);
-                blockPipe.onBlockPlacedBy(worldIn, pos, pipeState, playerIn, stackInHand);
-                IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
-                if (pipeTile instanceof TileEntityPipeBase) {
-                    ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
-                } else {
-                    GTLog.logger.error("Pipe was not placed!");
-                    return false;
-                }
-                if (!playerIn.capabilities.isCreativeMode) {
-                    stackInHand.shrink(1);
-                }
-                return true;
-            }
-            return false;
-        }
 
         if (!(stackInHand.getItem() instanceof FrameItemBlock)) {
             return false;
@@ -190,10 +165,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                 continue;
             }
             TileEntity te = worldIn.getTileEntity(blockPos);
-            if (te instanceof IPipeTile && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
-                blockPos.move(EnumFacing.UP);
-                continue;
-            }
+
             if (canPlaceBlockAt(worldIn, blockPos)) {
                 worldIn.setBlockState(blockPos, ((FrameItemBlock) stackInHand.getItem()).getBlockState(stackInHand));
                 if (!playerIn.capabilities.isCreativeMode) {
@@ -201,15 +173,11 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                 }
                 blockPos.release();
                 return true;
-            } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
-                Material material = ((BlockFrame) ((FrameItemBlock) stackInHand.getItem()).getBlock()).getGtMaterial(stackInHand.getMetadata());
-                ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(material);
-                blockPos.release();
-                return true;
             } else {
                 blockPos.release();
                 return false;
             }
+
         }
         blockPos.release();
         return false;

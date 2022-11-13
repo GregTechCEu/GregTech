@@ -9,8 +9,6 @@ import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.block.state.IBlockState;
@@ -101,10 +99,7 @@ public class ToolOverlayRenderer {
                 RenderGlobal.drawSelectionBoundingBox(box, 1, 1, 1, 0.4F);
                 rColor = gColor = bColor = 0.2f + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
-                if (tileEntity instanceof TileEntityPipeBase)
-                    drawOverlayLines(facing, box, facing1 -> ((TileEntityPipeBase<?, ?>) tileEntity).isConnected(facing1) ||
-                            ((TileEntityPipeBase<?, ?>) tileEntity).getCoverableImplementation().getCoverAtSide(facing1) != null);
-                else if (tileEntity instanceof IGregTechTileEntity)
+                 if (tileEntity instanceof IGregTechTileEntity)
                     drawOverlayLines(facing, box, face -> ((IGregTechTileEntity) tileEntity).getMetaTileEntity().isSideUsed(face));
                 else
                     drawOverlayLines(facing, box, ignored -> false);
@@ -141,11 +136,6 @@ public class ToolOverlayRenderer {
                 return false;
             if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
                 return true;
-        }
-
-        // Pipes
-        if (state.getBlock() instanceof BlockPipe) {
-            return ((BlockPipe<?, ?, ?>) state.getBlock()).hasPipeCollisionChangingItem(tileEntity.getWorld(), tileEntity.getPos(), itemStack);
         }
 
         // ICoverable

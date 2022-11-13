@@ -13,9 +13,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.pipelike.cable.BlockCable;
-import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.integration.GroovyScriptCompat;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
@@ -57,22 +54,6 @@ public class MetaItemBracketHandler implements IBracketHandler {
         }
         for (Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
             metaBlockNames.put("frame" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
-        }
-
-        for (BlockCable cable : MetaBlocks.CABLES) {
-            for (Material material : cable.getEnabledMaterials()) {
-                metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
-            }
-        }
-        for (BlockItemPipe cable : MetaBlocks.ITEM_PIPES) {
-            for (Material material : cable.getEnabledMaterials()) {
-                metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
-            }
-        }
-        for (BlockFluidPipe cable : MetaBlocks.FLUID_PIPES) {
-            for (Material material : cable.getEnabledMaterials()) {
-                metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
-            }
         }
     }
 

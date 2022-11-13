@@ -220,30 +220,6 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.addAll(provider.getDataInfo());
             }
 
-        } else if (tileEntity instanceof IPipeTile) {
-            // pipes need special name handling
-            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-
-            if (pipeTile.getPipeBlock().getRegistryName() != null) {
-                list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                        new TextComponentTranslation(LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey())).setStyle(new Style().setColor(TextFormatting.BLUE)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(block.getMetaFromState(world.getBlockState(pos)))).setStyle(new Style().setColor(TextFormatting.BLUE))
-                ));
-            }
-
-            // pipe-specific info
-            if (tileEntity instanceof IDataInfoProvider) {
-                IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
-
-                list.add(new TextComponentTranslation("behavior.tricorder.divider"));
-
-                list.addAll(provider.getDataInfo());
-            }
-
-            if (tileEntity instanceof TileEntityFluidPipe) {
-                // getting fluid info always costs 500
-                energyCost += 500;
-            }
         } else if (tileEntity instanceof IDataInfoProvider) {
             IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
 

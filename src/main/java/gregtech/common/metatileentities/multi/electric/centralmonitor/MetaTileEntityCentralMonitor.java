@@ -22,7 +22,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -33,9 +32,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.monitor.WidgetScreenGrid;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.pipelike.cable.net.EnergyNet;
-import gregtech.common.pipelike.cable.net.WorldENet;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -72,7 +68,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     // run-time data
     public int width;
     private long lastUpdate;
-    private WeakReference<EnergyNet> currentEnergyNet;
+    // private WeakReference<EnergyNet> currentEnergyNet;
     private List<BlockPos> activeNodes;
     private Set<BlockPosFace> netCovers;
     private Set<BlockPosFace> remoteCovers;
@@ -88,6 +84,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         super(metaTileEntityId);
     }
 
+    /*
     private EnergyNet getEnergyNet() {
         if (!this.getWorld().isRemote) {
             TileEntity te = this.getWorld().getTileEntity(this.getPos().offset(frontFacing.getOpposite()));
@@ -126,6 +123,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         });
     }
 
+     */
+
     public void addRemoteCover(BlockPosFace cover) {
         if (remoteCovers != null) {
             if (remoteCovers.add(cover)) {
@@ -134,6 +133,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         }
     }
 
+    /*
     private boolean checkCovers() {
         boolean dirty = false;
         updateNodes();
@@ -181,6 +181,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         }
         return dirty;
     }
+
+     */
 
     private void writeCovers(PacketBuffer buf) {
         if(netCovers == null) {
@@ -367,6 +369,12 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     protected void updateFormedValid() {
+
+    }
+
+    /*
+    @Override
+    protected void updateFormedValid() {
         if (this.getOffsetTimer() % 20 ==0) {
             setActive(inputEnergy.changeEnergy(ENERGY_COST * this.getMultiblockParts().size()) == ENERGY_COST * this.getMultiblockParts().size());
             if (checkCovers()) {
@@ -380,6 +388,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             }
         }
     }
+
+     */
 
     public Set<BlockPosFace> getAllCovers() {
         Set<BlockPosFace> allCovers = new HashSet<>();
@@ -418,6 +428,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         return new String[]{I18n.format("gregtech.multiblock.central_monitor.tooltip.1")};
     }
 
+    /*
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
@@ -447,8 +458,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             packetBuffer.writeInt(height);
             writeCovers(packetBuffer);
             writeParts(packetBuffer);
+
         });
     }
+
+     */
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {

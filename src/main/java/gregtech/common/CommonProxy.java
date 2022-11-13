@@ -21,12 +21,6 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
-import gregtech.common.pipelike.cable.BlockCable;
-import gregtech.common.pipelike.cable.ItemBlockCable;
-import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
-import gregtech.common.pipelike.itempipe.BlockItemPipe;
-import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -72,43 +66,10 @@ public class CommonProxy {
         StoneType.init();
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-
-           if (material.hasProperty(PropertyKey.ORE)) {
+            if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
             }
-
-            if (material.hasProperty(PropertyKey.WIRE)) {
-                for (BlockCable cable : CABLES) {
-                    if (!cable.getItemPipeType(null).isCable() || !material.getProperty(PropertyKey.WIRE).isSuperconductor())
-                        cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
-                }
-            }
-            if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
-                for (BlockFluidPipe pipe : FLUID_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
-                        pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
-                    }
-                }
-            }
-            if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
-                for (BlockItemPipe pipe : ITEM_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
-                        pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
-                    }
-                }
-            }
         }
-        for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
-                    !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
-                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(340, 5, false, false, false, false));
-                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(340, 10, false, false, false, false));
-            }
-        }
-
-        for (BlockCable cable : CABLES) registry.register(cable);
-        for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(pipe);
-        for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
 
         registry.register(HERMETIC_CASING);
         registry.register(CLEANROOM_CASING);
@@ -201,10 +162,6 @@ public class CommonProxy {
         GTRecipeManager.preLoad();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
-
-        for (BlockCable cable : CABLES) registry.register(createItemBlock(cable, ItemBlockCable::new));
-        for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
-        for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
 
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(CLEANROOM_CASING, VariantItemBlock::new));

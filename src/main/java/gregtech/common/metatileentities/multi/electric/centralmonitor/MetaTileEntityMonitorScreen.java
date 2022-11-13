@@ -14,7 +14,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
@@ -118,9 +117,6 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         IGregTechTileEntity holder = getHolderFromPos(posFacing.pos);
         if (holder == null) {
             TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.pos);
-            if (te instanceof TileEntityPipeBase) {
-                mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
-            }
         } else {
             mte = holder.getMetaTileEntity();
         }
