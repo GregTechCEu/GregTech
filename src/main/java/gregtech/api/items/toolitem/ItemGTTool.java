@@ -197,6 +197,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
+    public boolean canDestroyBlockInCreative(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+        return definition$canDestroyBlockInCreative(world, pos, stack, player);
+    }
+
+    @Override
     public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
         return definition$shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
     }

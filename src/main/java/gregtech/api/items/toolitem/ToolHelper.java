@@ -30,15 +30,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -50,7 +48,6 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
@@ -425,30 +422,6 @@ public class ToolHelper {
         return false;
     }
 
-    public static Set<BlockPos> getTillableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
-        return iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, ToolHelper::isBlockTillable);
-    }
-
-    private static boolean isBlockTillable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
-        if (world.isAirBlock(pos.up())) {
-            Block block = world.getBlockState(pos).getBlock();
-            return block == Blocks.GRASS || block == Blocks.GRASS_PATH || block == Blocks.DIRT;
-        }
-        return false;
-    }
-
-    public static Set<BlockPos> getPathConvertableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
-        return iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, ToolHelper::isBlockPathConvertable);
-    }
-
-    private static boolean isBlockPathConvertable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
-        if (world.isAirBlock(pos.up())) {
-            Block block = world.getBlockState(pos).getBlock();
-            return block == Blocks.GRASS || block == Blocks.DIRT; // native dirt to path
-        }
-        return false;
-    }
-
     public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
         return getHarvestableBlocks(stack, getAoEDefinition(stack), world, player, rayTraceResult);
     }
@@ -609,76 +582,6 @@ public class ToolHelper {
         return successful;
     }
 
-    /**
-     * Called from {@link Item#onItemUse(EntityPlayer, World, BlockPos, EnumHand, EnumFacing, float, float, float)}
-     *
-     * Have to be called both sides.
-     */
-    public static EnumActionResult placeTorchRoutine(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
-        NBTTagCompound behaviourTag = getBehavioursTag(stack);
-        if (behaviourTag.getBoolean(TORCH_PLACING_KEY)) {
-            int cachedTorchSlot;
-            ItemStack slotStack;
-            if (behaviourTag.getBoolean(TORCH_PLACING_CACHE_SLOT_KEY)) {
-                cachedTorchSlot = behaviourTag.getInteger(TORCH_PLACING_CACHE_SLOT_KEY);
-                if (cachedTorchSlot < 0) {
-                    slotStack = player.inventory.offHandInventory.get(0);
-                } else {
-                    slotStack = player.inventory.mainInventory.get(cachedTorchSlot);
-                }
-                if (checkAndPlaceTorch(slotStack, player, world, pos, hand, facing, hitX, hitY, hitZ)) {
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-            for (int i = 0; i < player.inventory.offHandInventory.size(); i++) {
-                slotStack = player.inventory.offHandInventory.get(i);
-                if (checkAndPlaceTorch(slotStack, player, world, pos, hand, facing, hitX, hitY, hitZ)) {
-                    behaviourTag.setInteger(TORCH_PLACING_CACHE_SLOT_KEY, -(i + 1));
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-            for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
-                slotStack = player.inventory.mainInventory.get(i);
-                if (checkAndPlaceTorch(slotStack, player, world, pos, hand, facing, hitX, hitY, hitZ)) {
-                    behaviourTag.setInteger(TORCH_PLACING_CACHE_SLOT_KEY, i);
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-        }
-        return EnumActionResult.PASS;
-    }
-
-    private static boolean checkAndPlaceTorch(ItemStack slotStack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!slotStack.isEmpty()) {
-            Item slotItem = slotStack.getItem();
-            if (slotItem instanceof ItemBlock) {
-                ItemBlock slotItemBlock = (ItemBlock) slotItem;
-                Block slotBlock = slotItemBlock.getBlock();
-                if (slotBlock == Blocks.TORCH || OreDictUnifier.getOreDictionaryNames(slotStack).stream()
-                        .anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
-                    IBlockState state = world.getBlockState(pos);
-                    Block block = state.getBlock();
-                    if (!block.isReplaceable(world, pos)) {
-                        pos = pos.offset(facing);
-                    }
-                    if (player.canPlayerEdit(pos, facing, slotStack) && world.mayPlace(slotBlock, pos, false, facing, player)) {
-                        int i = slotItemBlock.getMetadata(slotStack.getMetadata());
-                        IBlockState slotState = slotBlock.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, i, player, hand);
-                        if (slotItemBlock.placeBlockAt(slotStack, player, world, pos, facing, hitX, hitY, hitZ, slotState)) {
-                            slotState = world.getBlockState(pos);
-                            SoundType soundtype = slotState.getBlock().getSoundType(slotState, world, pos, player);
-                            world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-                            if (!player.isCreative()) slotStack.shrink(1);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private ToolHelper() { }
 
     private static class TreeFellingListener {
@@ -830,137 +733,5 @@ public class ToolHelper {
                 }
             }
         }
-    }
-
-    @Nonnull
-    public static EnumActionResult hoeGroundRoutine(EntityPlayer player, @Nonnull World world, EnumHand hand, @Nonnull EnumFacing facing) {
-        if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
-
-        Vec3d lookPos = player.getPositionEyes(1F);
-        Vec3d rotation = player.getLook(1);
-        Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-        RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
-
-        if (rayTraceResult == null) return EnumActionResult.PASS;
-        if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;
-        if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
-
-        ItemStack stack = player.getHeldItem(hand);
-        AoESymmetrical aoeDefinition = getAoEDefinition(stack);
-
-        Set<BlockPos> blocks;
-        // only attempt to till if the center block is tillable
-        if (world.isAirBlock(rayTraceResult.getBlockPos().up()) && isBlockTillable(stack, world, player, rayTraceResult.getBlockPos())) {
-            if (aoeDefinition == AoESymmetrical.none()) {
-                blocks = ImmutableSet.of(rayTraceResult.getBlockPos());
-            } else {
-                blocks = getTillableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
-                blocks.add(rayTraceResult.getBlockPos());
-            }
-        } else return EnumActionResult.PASS;
-
-        boolean tilled = false;
-        for (BlockPos pos : blocks) {
-            int hook = ForgeEventFactory.onHoeUse(stack, player, world, pos);
-            if (hook != 0) return hook > 0 ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
-
-            IBlockState state = world.getBlockState(pos);
-            Block block = state.getBlock();
-            if (block == Blocks.GRASS || block == Blocks.GRASS_PATH) {
-                tillGround(world, player, stack, pos, Blocks.FARMLAND.getDefaultState());
-                tilled = true;
-            } else if (block == Blocks.DIRT) {
-                switch (state.getValue(BlockDirt.VARIANT)) {
-                    case DIRT: {
-                        tillGround(world, player, stack, pos, Blocks.FARMLAND.getDefaultState());
-                        tilled = true;
-                        break;
-                    }
-                    case COARSE_DIRT: {
-                        tillGround(world, player, stack, pos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
-                        tilled = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (tilled) {
-            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_HOE_TILL, SoundCategory.PLAYERS, 1.0F, 1.0F);
-            player.swingArm(hand);
-            return EnumActionResult.SUCCESS;
-        }
-
-        return EnumActionResult.PASS;
-    }
-
-    private static void tillGround(@Nonnull World world, EntityPlayer player, ItemStack stack, BlockPos pos, IBlockState state) {
-        world.setBlockState(pos, state, 11);
-        if (!player.isCreative()) {
-            ToolHelper.damageItem(stack, player);
-        }
-    }
-
-    public static EnumActionResult shovelPathRoutine(EntityPlayer player, @Nonnull World world, EnumHand hand, @Nonnull EnumFacing facing) {
-        if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
-
-        Vec3d lookPos = player.getPositionEyes(1F);
-        Vec3d rotation = player.getLook(1);
-        Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-        RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
-
-        if (rayTraceResult == null) return EnumActionResult.PASS;
-        if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;
-        if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
-
-        ItemStack stack = player.getHeldItem(hand);
-        AoESymmetrical aoeDefinition = getAoEDefinition(stack);
-
-        Set<BlockPos> blocks;
-        // only attempt to till if the center block is tillable
-        if (world.isAirBlock(rayTraceResult.getBlockPos().up()) && isBlockPathConvertable(stack, world, player, rayTraceResult.getBlockPos())) {
-            if (aoeDefinition == AoESymmetrical.none()) {
-                blocks = ImmutableSet.of(rayTraceResult.getBlockPos());
-            } else {
-                blocks = getPathConvertableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
-                blocks.add(rayTraceResult.getBlockPos());
-            }
-        } else return EnumActionResult.PASS;
-
-        boolean pathed = false;
-        for (BlockPos pos : blocks) {
-            pathed |= world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState());
-            ToolHelper.damageItem(stack, player);
-            if (stack.isEmpty()) break;
-        }
-
-        if (pathed) {
-            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.PLAYERS, 1.0F, 1.0F);
-            player.swingArm(hand);
-            return EnumActionResult.SUCCESS;
-        }
-
-        return EnumActionResult.PASS;
-    }
-
-    public static EnumActionResult rotateRailBlock(EntityPlayer player, @Nonnull World world, EnumHand hand, BlockPos pos) {
-        if (!world.isRemote) {
-            IBlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof BlockRailBase) {
-
-                //TODO Rail Rotation seems to not work
-                boolean rotated = world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90));
-
-                if (rotated) {
-                    ToolHelper.damageItem(player.getHeldItem(hand), player);
-
-                    world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat());
-                    player.swingArm(hand);
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-        }
-
-        return EnumActionResult.PASS;
     }
 }

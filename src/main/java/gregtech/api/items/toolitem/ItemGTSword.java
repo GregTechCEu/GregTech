@@ -129,6 +129,11 @@ public class ItemGTSword extends ItemSword implements IGTTool {
         return definition$getIsRepairable(toRepair, repair);
     }
 
+    @Override
+    public boolean canDestroyBlockInCreative(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+        return false;
+    }
+
     @Nonnull
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
