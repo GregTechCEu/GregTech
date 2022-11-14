@@ -65,7 +65,7 @@ public class OreRecipeHandler {
     public static void processOre(OrePrefix prefix, Material material, OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the primary byproduct
-        Material byproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
+        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 0, material);
         OrePrefix byproductPrefix = hasGem(byproduct) ? gem : dust;
         int byproductMultiplier = 1;
         if (byproduct.hasProperty(PropertyKey.ORE))
@@ -96,9 +96,9 @@ public class OreRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .output(crushed, material, 2 * oreTypeMultiplier)
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 2000, chancePerTier ? 500 : 0)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier * oreTypeMultiplier, 2000, chancePerTier ? 500 : 0)
                 .chancedOutput(stoneTypeDust, 6000, chancePerTier ? 1000 : 0)
-                .duration(400).EUt(2)
+                .duration(400 * oreTypeMultiplier).EUt(2)
                 .buildAndRegister();
 
         // Smelting recipe

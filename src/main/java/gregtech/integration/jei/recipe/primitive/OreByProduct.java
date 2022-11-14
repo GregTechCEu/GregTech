@@ -182,7 +182,7 @@ public class OreByProduct implements IRecipeWrapper {
         int baseOutputAmount = property.getOreMultiplier();
         int oreTypeMultiplier = (int) (ore.getMaterialAmount(material) / M);
 
-        Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
+        Material byproductMaterial = GTUtility.getOrDefault(property.getOreByProducts(), 0, material);
         ItemStack byproductStack = OreDictUnifier.get(gem, byproductMaterial);
         if (byproductStack.isEmpty()) byproductStack = OreDictUnifier.get(dust, byproductMaterial);
 
@@ -194,8 +194,8 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void crushedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
-        Material primaryByproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
-        Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
+        Material primaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 0, material);
+        Material secondaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
 
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
@@ -238,7 +238,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void purifiedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
-        Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
+        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
         // macerate purified crushed -> dust
@@ -323,7 +323,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void refinedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
-        Material byproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
+        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 2, material);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
         // macerate refined -> dust

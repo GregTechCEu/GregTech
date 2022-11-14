@@ -339,7 +339,7 @@ public class MaterialRecipeHandler {
                     "X", "m", 'X', new UnificationEntry(gemPrefix, material));
         }
 
-        OrePrefix prevPrefix = GTUtility.getItem(GEM_ORDER, GEM_ORDER.indexOf(gemPrefix) - 1, null);
+        OrePrefix prevPrefix = GTUtility.getOrDefault(GEM_ORDER, GEM_ORDER.indexOf(gemPrefix) - 1, null);
         ItemStack prevStack = prevPrefix == null ? ItemStack.EMPTY : OreDictUnifier.get(prevPrefix, material, 2);
         if (!prevStack.isEmpty()) {
             ModHandler.addShapelessRecipe(String.format("gem_to_gem_%s_%s", prevPrefix, material), prevStack,

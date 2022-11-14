@@ -22,12 +22,12 @@ public class PurifiedRecipeHandler {
     public static void processPurified(OrePrefix prefix, Material material, OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproducts used for this step
-        Material primaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
+        Material primaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
         OrePrefix primaryByproductPrefix = primaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
         int primaryByproductMultiplier = 1;
         if (primaryByproduct.hasProperty(PropertyKey.ORE))
             primaryByproductMultiplier = primaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
-        Material secondaryByproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
+        Material secondaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 2, material);
         OrePrefix secondaryByproductPrefix = secondaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
         int secondaryByproductMultiplier = 1;
         if (secondaryByproduct.hasProperty(PropertyKey.ORE))
@@ -37,15 +37,14 @@ public class PurifiedRecipeHandler {
         // Purified Ore -> Dust
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
-                .output(dust, material, property.getOreMultiplier())
+                .output(dustImpure, material, property.getOreMultiplier())
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
         // Purified Ore -> Dust
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
-                .output(dust, material, property.getOreMultiplier())
-                .chancedOutput(dust, material, primaryByproductMultiplier, 2500, 0)
+                .output(dustImpure, material, property.getOreMultiplier())
                 .chancedOutput(primaryByproductPrefix, primaryByproduct, 2000, chancePerTier ? 500 : 0)
                 .duration(400).EUt(2).buildAndRegister();
 
@@ -133,7 +132,7 @@ public class PurifiedRecipeHandler {
         // Hard Hammer crafting recipe
         // Purified Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("purified_ore_to_dust_%s", material),
-                OreDictUnifier.get(dust, material, property.getOreMultiplier()), 'h', new UnificationEntry(crushedPurified, material));
+                OreDictUnifier.get(dustImpure, material, property.getOreMultiplier()), 'h', new UnificationEntry(crushedPurified, material));
 
         processMetalSmelting(prefix, material, property);
     }

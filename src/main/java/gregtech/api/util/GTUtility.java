@@ -663,20 +663,7 @@ public class GTUtility {
                 ImmutableList.Builder<T>::build);
     }
 
-    public static <M> M selectItemInList(int index, M replacement, List<M> list, Class<M> minClass) {
-        if (list.isEmpty())
-            return replacement;
-
-        M maybeResult;
-        if (list.size() <= index || index < 0) {
-            maybeResult = list.get(0);
-        } else maybeResult = list.get(index);
-
-        if (maybeResult != null) return maybeResult;
-        return replacement;
-    }
-
-    public static <M> M getItem(List<? extends M> list, int index, M replacement) {
+    public static <M> M getOrDefault(List<? extends M> list, int index, M replacement) {
         if (index >= 0 && index < list.size())
             return list.get(index);
         return replacement;

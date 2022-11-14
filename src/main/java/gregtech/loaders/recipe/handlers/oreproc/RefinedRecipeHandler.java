@@ -24,7 +24,7 @@ public class RefinedRecipeHandler {
     public static void processRefined(OrePrefix prefix, Material material, OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproduct used for this step
-        Material byproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
+        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 0, material);
         OrePrefix byproductPrefix = byproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
         int byproductMultiplier = 1;
         if (byproduct.hasProperty(PropertyKey.ORE))

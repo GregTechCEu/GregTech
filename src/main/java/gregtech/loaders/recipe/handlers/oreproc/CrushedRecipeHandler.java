@@ -20,7 +20,7 @@ public class CrushedRecipeHandler {
     public static void processCrushed(OrePrefix prefix, Material material, OreProperty property) {
         boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproduct to use for this step
-        Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
+        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
         OrePrefix byproductPrefix = byproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
         int byproductMultiplier = 1;
         if (byproduct.hasProperty(PropertyKey.ORE))
@@ -52,51 +52,6 @@ public class CrushedRecipeHandler {
                 .output(dust, Stone)
                 .fluidOutputs(SluiceJuice.getFluid(1000))
                 .duration(400).EUt(16).buildAndRegister();
-
-        // Chemical Bath recipe
-        // Crushed Ore -> Purified Ore + Purified Ore Byproduct
-        // Only applies if a byproduct in this Material's byproduct
-        // list contains either the WASHING_MERCURY or
-        // WASHING_PERSULFATE flags
-        // TODO yeet (moved to refined)
-//        Material mercuryByproduct = null;
-//        Material persulfateByproduct = null;
-//        for (Material byproduct : property.getOreByProducts()) {
-//            // find the last byproduct in the list with one of these flags (if any)
-//            if (byproduct.hasFlag(WASHING_MERCURY)) mercuryByproduct = byproduct;
-//            if (byproduct.hasFlag(WASHING_PERSULFATE)) persulfateByproduct = byproduct;
-//        }
-//
-//        if (mercuryByproduct != null) {
-//            CHEMICAL_BATH_RECIPES.recipeBuilder()
-//                    .input(crushed, material)
-//                    .fluidInputs(Mercury.getFluid(100))
-//                    .output(crushedPurified, material)
-//                    .output(crushedPurified, mercuryByproduct)
-//                    .output(dust, SluiceSand)
-//                    .output(dust, Stone)
-//                    .duration(400).EUt(VA[LV]).buildAndRegister();
-//        }
-//
-//        if (persulfateByproduct != null) {
-//            CHEMICAL_BATH_RECIPES.recipeBuilder()
-//                    .input(crushed, material)
-//                    .fluidInputs(SodiumPersulfate.getFluid(100))
-//                    .output(crushedPurified, material)
-//                    .output(crushedPurified, persulfateByproduct)
-//                    .output(dust, SluiceSand)
-//                    .output(dust, Stone)
-//                    .duration(400).EUt(VA[LV]).buildAndRegister();
-//
-//            CHEMICAL_BATH_RECIPES.recipeBuilder()
-//                    .input(crushed, material)
-//                    .fluidInputs(PotassiumPersulfate.getFluid(100))
-//                    .output(crushedPurified, material)
-//                    .output(crushedPurified, persulfateByproduct)
-//                    .output(dust, SluiceSand)
-//                    .output(dust, Stone)
-//                    .duration(400).EUt(VA[LV]).buildAndRegister();
-//        }
 
         // Hard Hammer crafting recipe
         // Crushed Ore -> Impure Dust
