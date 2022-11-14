@@ -600,7 +600,6 @@ public class VanillaOverrideRecipes {
 
     }
 
-
     /**
      * Replaces Vanilla Beacon Recipe
      * Replaces Vanilla Jack-o-lantern Recipe
