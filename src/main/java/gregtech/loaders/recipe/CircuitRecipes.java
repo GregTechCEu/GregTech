@@ -202,13 +202,13 @@ public class CircuitRecipes {
         // Vacuum Tube
         ModHandler.addShapedRecipe("vacuum_tube", VACUUM_TUBE.getStackForm(),
                 "PTP", "WWW",
-                'P', new UnificationEntry(stick, Steel),
+                'P', new UnificationEntry(bolt, Steel),
                 'T', GLASS_TUBE.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper));
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(GLASS_TUBE)
-                .input(bolt, Steel, 2)
+                .input(bolt, Steel)
                 .input(wireGtSingle, Copper, 2)
                 .circuitMeta(1)
                 .output(VACUUM_TUBE, 2)
@@ -219,23 +219,15 @@ public class CircuitRecipes {
                 .input(bolt, Steel)
                 .input(wireGtSingle, Copper, 2)
                 .fluidInputs(RedAlloy.getFluid(18))
-                .output(VACUUM_TUBE, 4)
+                .output(VACUUM_TUBE, 3)
                 .duration(40).EUt(VA[ULV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(GLASS_TUBE)
-                .input(bolt, Steel, 2)
-                .input(wireGtSingle, AnnealedCopper, 2)
-                .circuitMeta(1)
-                .output(VACUUM_TUBE, 4)
-                .duration(120).EUt(VA[ULV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(GLASS_TUBE)
                 .input(bolt, Steel)
                 .input(wireGtSingle, AnnealedCopper, 2)
                 .fluidInputs(RedAlloy.getFluid(18))
-                .output(VACUUM_TUBE, 6)
+                .output(VACUUM_TUBE, 4)
                 .duration(40).EUt(VA[ULV]).buildAndRegister();
 
         ALLOY_SMELTER_RECIPES.recipeBuilder()
@@ -302,42 +294,42 @@ public class CircuitRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Coal)
                 .input(wireFine, Copper, 4)
-                .output(RESISTOR, 4)
+                .output(RESISTOR, 2)
                 .fluidInputs(Glue.getFluid(100))
                 .duration(160).EUt(6).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Charcoal)
                 .input(wireFine, Copper, 4)
-                .output(RESISTOR, 4)
+                .output(RESISTOR, 2)
                 .fluidInputs(Glue.getFluid(100))
                 .duration(160).EUt(6).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Carbon)
                 .input(wireFine, Copper, 4)
-                .output(RESISTOR, 4)
+                .output(RESISTOR, 2)
                 .fluidInputs(Glue.getFluid(100))
                 .duration(160).EUt(6).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Coal)
                 .input(wireFine, AnnealedCopper, 4)
-                .output(RESISTOR, 8)
+                .output(RESISTOR, 4)
                 .fluidInputs(Glue.getFluid(100))
                 .duration(160).EUt(6).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Charcoal)
                 .input(wireFine, AnnealedCopper, 4)
-                .output(RESISTOR, 8)
+                .output(RESISTOR, 4)
                 .fluidInputs(Glue.getFluid(100))
                 .duration(160).EUt(6).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Carbon)
                 .input(wireFine, AnnealedCopper, 4)
-                .output(RESISTOR, 8)
+                .output(RESISTOR, 4)
                 .fluidInputs(Glue.getFluid(100))
                 .duration(160).EUt(6).buildAndRegister();
 
@@ -366,9 +358,9 @@ public class CircuitRecipes {
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(wireFine, Copper, 4)
-                .input(SILICON_WAFER)
-                .fluidInputs(Glass.getFluid(L * 2))
+                .input(wireFine, AnnealedCopper, 4)
+                .input(dustSmall, GalliumArsenide)
+                .fluidInputs(Glass.getFluid(L))
                 .output(DIODE, 2)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
@@ -382,22 +374,22 @@ public class CircuitRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, Copper, 4)
                 .input(SILICON_WAFER)
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(DIODE, 2)
+                .duration(400).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, AnnealedCopper, 4)
+                .input(dustSmall, GalliumArsenide)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(DIODE, 4)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, AnnealedCopper, 4)
-                .input(dustSmall, GalliumArsenide)
-                .fluidInputs(Polyethylene.getFluid(L))
-                .output(DIODE, 6)
-                .duration(400).EUt(VA[LV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(wireFine, AnnealedCopper, 4)
                 .input(SILICON_WAFER)
                 .fluidInputs(Polyethylene.getFluid(L))
-                .output(DIODE, 8)
+                .output(DIODE, 4)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         // Inductor
@@ -672,34 +664,6 @@ public class CircuitRecipes {
                 .output(BASIC_CIRCUIT_BOARD)
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(foil, Copper, 4)
-                .input(plate, Wood)
-                .fluidInputs(Polyethylene.getFluid(L / 4))
-                .output(BASIC_CIRCUIT_BOARD, 2)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(foil, Copper, 4)
-                .input(plate, Wood)
-                .fluidInputs(Polytetrafluoroethylene.getFluid(L / 8))
-                .output(BASIC_CIRCUIT_BOARD, 2)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(foil, Copper, 4)
-                .input(plate, Wood)
-                .fluidInputs(Epoxy.getFluid(L / 8))
-                .output(BASIC_CIRCUIT_BOARD, 3)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(foil, Copper, 4)
-                .input(plate, Wood)
-                .fluidInputs(Polybenzimidazole.getFluid(L / 16))
-                .output(BASIC_CIRCUIT_BOARD, 4)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
-
         // Phenolic Board
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Wood)
@@ -931,7 +895,7 @@ public class CircuitRecipes {
 
         // MV
         ModHandler.addShapedRecipe("electronic_circuit_mv", ELECTRONIC_CIRCUIT_MV.getStackForm(),
-                "DPD", "CBC", "WWW",
+                "DPD", "CBC", "WCW",
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'P', new UnificationEntry(plate, Steel),
                 'C', ELECTRONIC_CIRCUIT_LV.getStackForm(),
@@ -943,7 +907,7 @@ public class CircuitRecipes {
                 .input(circuit, Tier.LV, 2)
                 .input(component, Component.Diode, 2)
                 .input(wireGtSingle, Copper, 2)
-                .output(ELECTRONIC_CIRCUIT_MV, 2)
+                .output(ELECTRONIC_CIRCUIT_MV)
                 .buildAndRegister();
 
         // T2: Integrated ==============================================================================================
@@ -963,8 +927,8 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(24).duration(400)
                 .input(GOOD_CIRCUIT_BOARD)
                 .input(INTEGRATED_CIRCUIT_LV, 2)
-                .input(component, Component.Resistor, 4)
-                .input(component, Component.Diode, 4)
+                .input(component, Component.Resistor, 2)
+                .input(component, Component.Diode, 2)
                 .input(wireFine, Gold, 4)
                 .input(bolt, Silver, 4)
                 .output(INTEGRATED_CIRCUIT_MV, 2)
