@@ -33,6 +33,8 @@ public class VanillaOverrideRecipes {
             redstoneRecipes();
         if (ConfigHolder.recipes.hardIronRecipes)
             metalRecipes();
+        if (ConfigHolder.recipes.hardAdvancedIronRecipes)
+            metalAdvancedRecipes();
         if (ConfigHolder.recipes.hardMiscRecipes)
             miscRecipes();
         if (ConfigHolder.recipes.hardDyeRecipes)
@@ -539,40 +541,19 @@ public class VanillaOverrideRecipes {
     }
 
     /**
-     * Changes vanilla recipes using metals to plates and other components
+     * Changes bucket, cauldron, hopper and iron bars to use plates, rods and gears
      */
     private static void metalRecipes() {
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:iron_door"));
-        ModHandler.addShapedRecipe("iron_door", new ItemStack(Items.IRON_DOOR), "PTh", "PRS", "PPd",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron),
-                'T', new ItemStack(Blocks.IRON_BARS),
-                'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
-                'S', new UnificationEntry(OrePrefix.screw, Materials.Steel)
-        );
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.IRON_BARS))
-                .input(OrePrefix.plate, Materials.Iron, 4)
-                .fluidInputs(Materials.Steel.getFluid(GTValues.L / 9))
-                .outputs(new ItemStack(Items.IRON_DOOR))
-                .duration(400).EUt(VA[ULV]).buildAndRegister();
-
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:cauldron"));
         ModHandler.addShapedRecipe("cauldron", new ItemStack(Items.CAULDRON), "X X", "XhX", "XXX",
                 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron)
         );
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 7)
-                .outputs(new ItemStack(Items.CAULDRON, 1))
-                .circuitMeta(7)
-                .duration(700).EUt(4).buildAndRegister();
-
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:hopper"));
         ModHandler.addShapedRecipe("hopper", new ItemStack(Blocks.HOPPER), "XCX", "XGX", "wXh",
                 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron),
                 'C', "chestWood",
-                'G', new UnificationEntry(OrePrefix.gear, Materials.Iron)
+                'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron)
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:iron_bars"));
@@ -580,11 +561,22 @@ public class VanillaOverrideRecipes {
                 'X', new UnificationEntry(OrePrefix.stick, Materials.Iron)
         );
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Iron, 3)
-                .outputs(new ItemStack(Blocks.IRON_BARS, 4))
-                .circuitMeta(3)
-                .duration(300).EUt(4).buildAndRegister();
+        ModHandler.addShapedRecipe("iron_bucket", new ItemStack(Items.BUCKET), "XhX", " X ", 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron));
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:bucket"));
+
+    }
+
+    /**
+     * Changes other vanilla recipes using metals to plates and other components
+     */
+    private static void metalAdvancedRecipes() {
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:iron_door"));
+        ModHandler.addShapedRecipe("iron_door", new ItemStack(Items.IRON_DOOR), "PTh", "PRS", "PPd",
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron),
+                'T', new ItemStack(Blocks.IRON_BARS),
+                'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
+                'S', new UnificationEntry(OrePrefix.screw, Materials.Steel)
+        );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:anvil"));
         ModHandler.addShapedRecipe("anvil", new ItemStack(Blocks.ANVIL), "BBB", "SBS", "PBP",
@@ -600,22 +592,14 @@ public class VanillaOverrideRecipes {
                 'T', new ItemStack(Blocks.TRAPDOOR)
         );
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 4)
-                .inputs(new ItemStack(Blocks.TRAPDOOR))
-                .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
-                .duration(100).EUt(16).buildAndRegister();
-
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:minecart"));
         ModHandler.addShapedRecipe("minecart", new ItemStack(Items.MINECART), "RhR", "PwP", "RPR",
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron)
         );
 
-        ModHandler.addShapedRecipe("iron_bucket", new ItemStack(Items.BUCKET), "XhX", " X ", 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron));
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:bucket"));
-
     }
+
 
     /**
      * Replaces Vanilla Beacon Recipe
