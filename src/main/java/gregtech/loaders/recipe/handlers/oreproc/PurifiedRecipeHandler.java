@@ -8,10 +8,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 
-import static gregtech.api.GTValues.MV;
-import static gregtech.api.GTValues.VA;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.info.MaterialFlags.MAGNETIC_ORE;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -20,14 +17,13 @@ import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processM
 public class PurifiedRecipeHandler {
 
     public static void processPurified(OrePrefix prefix, Material material, OreProperty property) {
-        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproducts used for this step
-        Material primaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
+        Material primaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 2, material);
         OrePrefix primaryByproductPrefix = primaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
         int primaryByproductMultiplier = 1;
         if (primaryByproduct.hasProperty(PropertyKey.ORE))
             primaryByproductMultiplier = primaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
-        Material secondaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 2, material);
+        Material secondaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
         OrePrefix secondaryByproductPrefix = secondaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
         int secondaryByproductMultiplier = 1;
         if (secondaryByproduct.hasProperty(PropertyKey.ORE))
@@ -45,7 +41,7 @@ public class PurifiedRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
                 .output(dustImpure, material, property.getOreMultiplier())
-                .chancedOutput(primaryByproductPrefix, primaryByproduct, 2000, chancePerTier ? 500 : 0)
+                .chancedOutput(secondaryByproductPrefix, primaryByproduct, 1500, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Purified Ore -> Refined Ore
@@ -55,17 +51,17 @@ public class PurifiedRecipeHandler {
             SIFTER_RECIPES.recipeBuilder()
                     .input(crushedPurified, material)
                     .output(crushedRefined, material)
-                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 2000, 0)
+                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(VA[MV]).buildAndRegister();
+                    .duration(400).EUt(64).buildAndRegister();
         } else if (material.hasFlag(MAGNETIC_ORE) || primaryByproduct.hasFlag(MAGNETIC_ORE)) {
             // Magnetic Materials or Byproducts go in the Magnetic Separator
             ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
                     .input(crushedPurified, material)
                     .output(crushedRefined, material)
-                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 2000, 0)
+                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(VA[MV]).buildAndRegister();
+                    .duration(400).EUt(64).buildAndRegister();
         } else {
             // Anything else goes in the Thermal Centrifuge
             THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
@@ -73,7 +69,7 @@ public class PurifiedRecipeHandler {
                     .output(crushedRefined, material)
                     .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 2000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(VA[MV]).buildAndRegister();
+                    .duration(400).EUt(64).buildAndRegister();
         }
 
 

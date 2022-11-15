@@ -8,7 +8,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -18,7 +17,6 @@ import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processM
 public class CrushedRecipeHandler {
 
     public static void processCrushed(OrePrefix prefix, Material material, OreProperty property) {
-        boolean chancePerTier = ConfigHolder.recipes.oreByproductChancePerTier;
         // Get the byproduct to use for this step
         Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
         OrePrefix byproductPrefix = byproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
@@ -38,7 +36,7 @@ public class CrushedRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushed, material)
                 .output(dustImpure, material, property.getOreMultiplier())
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 2000, chancePerTier ? 500 : 0)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 1500, 0)
                 .output(dust, Stone)
                 .duration(400).EUt(2).buildAndRegister();
 
