@@ -23,6 +23,10 @@ public class MaterialProperties {
         propertyMap = new HashMap<>();
     }
 
+    public boolean isEmpty() {
+        return propertyMap.isEmpty();
+    }
+
     public <T extends IMaterialProperty<T>> T getProperty(PropertyKey<T> key) {
         return key.cast(propertyMap.get(key));
     }
