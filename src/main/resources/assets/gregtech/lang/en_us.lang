@@ -825,13 +825,13 @@ metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
 metaitem.cover.drain.name=Drain Cover
 metaitem.cover.fluid.voiding.name=Fluid Voiding Cover
-metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)./nNeeds to be activated with Soft Mallet after placement
 metaitem.cover.fluid.voiding.advanced.name=Advanced Fluid Voiding Cover
-metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control./nNeeds to be activated with Soft Mallet after placement
 metaitem.cover.item.voiding.name=Item Voiding Cover
-metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)./nNeeds to be activated with Soft Mallet after placement
 metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
-metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control./nNeeds to be activated with Soft Mallet after placement
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
@@ -917,7 +917,7 @@ metaitem.tool.saw.name=%s Saw
 metaitem.tool.saw.tooltip=Can also harvest Ice
 metaitem.tool.hard_hammer.name=%s Hammer
 metaitem.tool.hard_hammer.tooltip=Crushes ores instead of harvesting them
-metaitem.tool.soft_hammer.name=%s Soft Hammer
+metaitem.tool.soft_hammer.name=%s Soft Mallet
 metaitem.tool.wrench.name=%s Wrench
 metaitem.tool.wrench.tooltip=Hold left click to dismantle machines
 metaitem.tool.file.name=%s File
@@ -3854,7 +3854,7 @@ gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
 
 # Transformers
-gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
+gregtech.machine.transformer.tooltip_tool_usage=Use Soft Mallet to invert (Starts as Transform Down)
 gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
 gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
@@ -3895,7 +3895,7 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Adjustable 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
 gregtech.machine.diode.tooltip_general=A simple Diode that will allow Energy Flow in only one direction.
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to change Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -3991,7 +3991,7 @@ gregtech.machine.energy_converter.max.4.name=MAX Energy Converter (4A)
 gregtech.machine.energy_converter.max.8.name=MAX Energy Converter (8A)
 gregtech.machine.energy_converter.max.16.name=MAX Energy Converter (16A)
 
-gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Hammer to invert (Starts as FE Converter)
+gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Mallet to invert (Starts as FE Converter)
 gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §c%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
 gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %dFE, Out: %dA %dEU
 gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%,dA %,dEU (§r%s§a)§7 -> §c%,dFE

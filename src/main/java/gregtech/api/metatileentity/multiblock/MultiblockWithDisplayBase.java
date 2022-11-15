@@ -70,7 +70,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * This value stores whether each of the 5 maintenance problems have been fixed.
      * A value of 0 means the problem is not fixed, else it is fixed
-     * Value positions correspond to the following from left to right: 0=Wrench, 1=Screwdriver, 2=Soft Hammer, 3=Hard Hammer, 4=Wire Cutter, 5=Crowbar
+     * Value positions correspond to the following from left to right: 0=Wrench, 1=Screwdriver, 2=Soft Mallet, 3=Hard Hammer, 4=Wire Cutter, 5=Crowbar
      */
     protected byte maintenance_problems;
 
