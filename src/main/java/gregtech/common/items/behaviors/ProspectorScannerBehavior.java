@@ -6,6 +6,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -116,6 +117,11 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
         builder.widget(this.widgetOreList);
         builder.widget(new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1));
+        //Cardinal directions
+        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14, "N", 0x404040).setShadow(true));
+        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0x404040).setShadow(true));
+        builder.widget(new LabelWidget(3, 15 + (16 * (radius * 2 - 1)) / 2, "W", 0x404040).setShadow(true));
+        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0x404040).setShadow(true));
         return builder.label(6, 6, getTranslationKey()).build(holder, entityPlayer);
     }
 

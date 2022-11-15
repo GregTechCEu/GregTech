@@ -18,7 +18,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class ProspectingTexture extends AbstractTexture {
@@ -109,17 +108,17 @@ public class ProspectingTexture extends AbstractTexture {
         BufferedImage image = new BufferedImage(wh, wh, BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
 
-        for (int i = 0; i < wh; i++){
+        for (int i = 0; i < wh; i++) {
             for (int j = 0; j < wh; j++) {
                 HashMap<Byte, String> data = this.map[this.mode == 0 ? i : i / 16][this.mode == 0 ? j : j / 16];
                 // draw bg
-                image.setRGB(i, j, ((data == null) ^ darkMode) ? Color.darkGray.getRGB(): Color.WHITE.getRGB());
+                image.setRGB(i, j, ((data == null) ^ darkMode) ? Color.darkGray.getRGB() : Color.WHITE.getRGB());
                 //draw ore
                 if (this.mode == 0 && data != null) {
                     for (String orePrefix : data.values()) {
                         if (!selected.equals("[all]") && !selected.equals(orePrefix)) continue;
                         MaterialStack mterialStack = OreDictUnifier.getMaterial(OreDictUnifier.get(orePrefix));
-                        image.setRGB(i, j, mterialStack==null? orePrefix.hashCode():mterialStack.material.getMaterialRGB() | 0XFF000000);
+                        image.setRGB(i, j, mterialStack == null ? orePrefix.hashCode() : mterialStack.material.getMaterialRGB() | 0XFF000000);
                         break;
                     }
                 }
@@ -144,12 +143,12 @@ public class ProspectingTexture extends AbstractTexture {
         imageHeight = (radius * 2 - 1) * 16;
     }
 
-    public void loadTexture(@Nullable IResourceManager resourceManager, String selected){
+    public void loadTexture(@Nullable IResourceManager resourceManager, String selected) {
         this.selected = selected;
         loadTexture(resourceManager);
     }
 
-    public void loadTexture(@Nullable IResourceManager resourceManager, boolean darkMode){
+    public void loadTexture(@Nullable IResourceManager resourceManager, boolean darkMode) {
         this.darkMode = darkMode;
         loadTexture(resourceManager);
     }
@@ -175,7 +174,7 @@ public class ProspectingTexture extends AbstractTexture {
             }
         }
         //draw red vertical line
-        if (playerXGui % 16 >7 || playerXGui % 16 == 0) {
+        if (playerXGui % 16 > 7 || playerXGui % 16 == 0) {
             Gui.drawRect(x + playerXGui - 1, y, x + playerXGui, y + imageHeight, Color.RED.getRGB());
         } else {
             Gui.drawRect(x + playerXGui, y, x + playerXGui + 1, y + imageHeight, Color.RED.getRGB());

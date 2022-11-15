@@ -6,7 +6,6 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.core.network.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.MaterialStack;
@@ -38,8 +37,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
@@ -71,7 +71,7 @@ public class WidgetProspectingMap extends Widget {
         this.scanTick = scanTick;
         oreList = widgetOreList;
         if (oreList != null) {
-            oreList.onSelected = name->{
+            oreList.onSelected = name -> {
                 if (texture != null) {
                     texture.loadTexture(null, name);
                 }
@@ -132,15 +132,14 @@ public class WidgetProspectingMap extends Widget {
                                     boolean added = false;
                                     String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream().findFirst().get();
                                     OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
-                                    for(StoneType type : StoneType.STONE_TYPE_REGISTRY) {
-                                        if(type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
+                                    for (StoneType type : StoneType.STONE_TYPE_REGISTRY) {
+                                        if (type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
                                             packet.addBlock(x, y, z, oreDictString);
                                             added = true;
                                             break;
-                                        }
-                                        else if(type.processingPrefix == prefix) {
+                                        } else if (type.processingPrefix == prefix) {
                                             MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
-                                            if(materialStack != null) {
+                                            if (materialStack != null) {
                                                 packet.addBlock(x, y, z, "ore" + materialStack.material.getLocalizedName());
                                                 added = true;
                                                 break;
@@ -148,7 +147,7 @@ public class WidgetProspectingMap extends Widget {
                                         }
                                     }
                                     // Probably other mod's ores
-                                    if(!added) {
+                                    if (!added) {
                                         // Fallback
                                         packet.addBlock(x, y, z, oreDictString);
                                     }
@@ -180,9 +179,8 @@ public class WidgetProspectingMap extends Widget {
     @SideOnly(Side.CLIENT)
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-
-        if(texture !=null) {
-            GlStateManager.color(1,1,1,1);
+        if (texture != null) {
+            GlStateManager.color(1, 1, 1, 1);
             texture.draw(this.getPosition().x, this.getPosition().y);
         }
     }
@@ -277,12 +275,12 @@ public class WidgetProspectingMap extends Widget {
                     if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
                         FluidStack fluidStack = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1), 1);
                         tooltips.add(I18n.format("terminal.prospector.fluid.info",
-                                        fluidStack.getLocalizedName(),
+                                fluidStack.getLocalizedName(),
                                 texture.map[cX][cZ].get((byte) 2),
                                 texture.map[cX][cZ].get((byte) 3)));
                         hoveredNames.add(fluidStack.getLocalizedName());
                         int amount = Integer.parseInt(texture.map[cX][cZ].get((byte) 2));
-                        if ( amount > maxAmount[0]) {
+                        if (amount > maxAmount[0]) {
                             maxAmount[0] = amount;
                             color = fluidStack.getFluid().getColor(fluidStack);
                         }
@@ -349,7 +347,7 @@ public class WidgetProspectingMap extends Widget {
         com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(hoveredNames.toString(),
                 b.getX(),
                 b.getZ(),
-                Minecraft.getMinecraft().world.getHeight(b.getX(),b.getZ()),
+                Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
                 true,
                 c.getRed(),
                 c.getGreen(),

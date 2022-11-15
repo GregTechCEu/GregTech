@@ -6,7 +6,7 @@ import com.google.common.collect.Tables;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.core.network.packets.PacketProspecting;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalOSWidget;
@@ -16,6 +16,7 @@ import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
+import gregtech.core.network.packets.PacketProspecting;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -74,13 +75,19 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
         });
         if (isClient) {
             loadPacketLocalConfig();
+            int color = this.widgetProspectingMap.getDarkMode() ? 0xF0F0F0 : 0x404040;
+            //Cardinal directions
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset, "N", color).setShadow(true));
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset - 6 + 16 * (chunkRadius * 2 - 1), "S", color).setShadow(true));
+            this.addWidget(new LabelWidget(0, offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "W", color).setShadow(true));
+            this.addWidget(new LabelWidget(-6 + 16 * (chunkRadius * 2 - 1), offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "E", color).setShadow(true));
         }
         return this;
     }
 
     @SideOnly(Side.CLIENT)
     protected void loadPacketLocalConfig() {
-        new Thread(()-> { // thread for better QoL
+        new Thread(() -> { // thread for better QoL
             int posX = gui.entityPlayer.getPosition().getX();
             int posZ = gui.entityPlayer.getPosition().getZ();
             int playerChunkX = posX >> 4;
@@ -110,7 +117,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
 
     @SideOnly(Side.CLIENT)
     protected void savePacketLocalConfig() {
-        new Thread(()->{ // thread for better QoL
+        new Thread(() -> { // thread for better QoL
             File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode));
             if (!folder.exists()) {
                 if (!folder.mkdirs()) return;
