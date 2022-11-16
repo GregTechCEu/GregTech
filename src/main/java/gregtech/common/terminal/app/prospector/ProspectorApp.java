@@ -90,8 +90,21 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
         new Thread(() -> { // thread for better QoL
             int posX = gui.entityPlayer.getPosition().getX();
             int posZ = gui.entityPlayer.getPosition().getZ();
-            int playerChunkX = posX >> 4;
-            int playerChunkZ = posZ >> 4;
+
+            if (posX % 16 > 7 || posX % 16 == 0) {
+                posX -= 1;
+            } else {
+                posX += 1;
+            }
+            //draw red horizontal line
+            if (posZ % 16 > 7 || posZ % 16 == 0) {
+                posZ -= 1;
+            } else {
+                posZ += 1;
+            }
+
+            int playerChunkX = gui.entityPlayer.chunkCoordX;
+            int playerChunkZ = gui.entityPlayer.chunkCoordZ;
             int chunkRadius = getAppTier() + 3 - 1;
             for (int i = playerChunkX - chunkRadius; i <= playerChunkX + chunkRadius; i++) {
                 for (int j = playerChunkZ - chunkRadius; j <= playerChunkZ + chunkRadius; j++) {
