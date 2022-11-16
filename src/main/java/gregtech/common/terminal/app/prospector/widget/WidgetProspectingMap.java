@@ -13,6 +13,9 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
+import gregtech.api.worldgen.config.OreDepositDefinition;
+import gregtech.api.worldgen.config.WorldGenRegistry;
+import gregtech.api.worldgen.filler.FillerEntry;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import journeymap.client.model.Waypoint;
 import journeymap.client.waypoint.WaypointStore;
@@ -41,11 +44,14 @@ import xaero.common.minimap.waypoints.WaypointWorld;
 
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
 
 public class WidgetProspectingMap extends Widget {
     private final int chunkRadius;
@@ -314,6 +320,8 @@ public class WidgetProspectingMap extends Widget {
         BlockPos b = new BlockPos(xPos, Minecraft.getMinecraft().world.getHeight(xPos, zPos), zPos);
         if (System.currentTimeMillis() - lastClicked < 200) {
             boolean added = false;
+            trimHoveredNames();
+
             if (Loader.isModLoaded("journeymap")) {
                 added = addJourneymapWaypoint(b);
             } else if (Loader.isModLoaded("voxelmap")) {
@@ -327,6 +335,50 @@ public class WidgetProspectingMap extends Widget {
         }
         this.lastClicked = System.currentTimeMillis();
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    List<String> trimHoveredNames() {
+        List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
+        for (OreDepositDefinition odd : oreVeins) {
+            for (FillerEntry fillerEntry : odd.getBlockFiller().getAllPossibleStates()) {
+                List<String> matches = new ArrayList<>();
+                Collection<IBlockState> pr = fillerEntry.getPossibleResults();
+                for (IBlockState bs : pr) {
+                    Set<String> ores = OreDictUnifier.getOreDictionaryNames(new ItemStack(bs.getBlock()));
+                    for (String dict : ores) {
+                        String name = OreDictUnifier.get(dict).getDisplayName();
+                        if (hoveredNames.contains(name)) {
+                            matches.add(name);
+                        }
+                    }
+                }
+                if (matches.size() > pr.size() / 2) {
+                    this.hoveredNames.removeAll(matches);
+                    this.hoveredNames.add(makePrettyName(odd.getDepositName()));
+                }
+            }
+        }
+        return this.hoveredNames;
+    }
+
+    public String makePrettyName(String name) {
+        FileSystem fs = FileSystems.getDefault();
+        String separator = fs.getSeparator();
+
+        //Remove the leading "folderName\"
+        String[] tempName = name.split(Matcher.quoteReplacement(separator));
+        //Take the last entry in case of nested folders
+        String newName = tempName[tempName.length - 1];
+        //Remove the ".json"
+        tempName = newName.split("\\.");
+        //Take the first entry
+        newName = tempName[0];
+        //Replace all "_" with a space
+        newName = newName.replaceAll("_", " ");
+        //Capitalize the first letter
+        newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
+
+        return newName;
     }
 
     @Optional.Method(modid = "journeymap")
