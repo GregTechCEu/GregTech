@@ -298,6 +298,7 @@ public class WidgetProspectingMap extends Widget {
                     }
                 }
             }
+            tooltips.add(I18n.format("terminal.prospector.waypoint.add"));
             this.drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0F, 1.0F, 1.0F);
         }
