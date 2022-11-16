@@ -35,8 +35,12 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xaero.common.XaeroMinimapSession;
+import xaero.common.minimap.waypoints.WaypointSet;
+import xaero.common.minimap.waypoints.WaypointWorld;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
@@ -314,6 +318,8 @@ public class WidgetProspectingMap extends Widget {
                 added = addJourneymapWaypoint(b);
             } else if (Loader.isModLoaded("voxelmap")) {
                 added = addVoxelMapWaypoint(b);
+            } else if (Loader.isModLoaded("xaerominimap")) {
+                added = addXaeroMapWaypoint(b);
             }
             if (added) {
                 Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("behavior.prospector.added_waypoint"), false);
@@ -359,6 +365,28 @@ public class WidgetProspectingMap extends Widget {
         if (!waypointManager.getWaypoints().contains(voxelMapWaypoint)) {
             waypointManager.addWaypoint(voxelMapWaypoint);
             waypointManager.saveWaypoints();
+            return true;
+        }
+        return false;
+    }
+
+    @Optional.Method(modid = "xaerominimap")
+    boolean addXaeroMapWaypoint(BlockPos b) {
+        XaeroMinimapSession minimapSession = XaeroMinimapSession.getCurrentSession();
+        WaypointSet wps = minimapSession.getWaypointsManager().getWaypoints();
+        WaypointWorld ww = minimapSession.getWaypointsManager().getCurrentWorld();
+        xaero.common.minimap.waypoints.Waypoint xaeroWaypoint = new xaero.common.minimap.waypoints.Waypoint(
+                b.getX(),
+                Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
+                b.getZ(),
+                hoveredNames.toString(), "", 1);
+        if (!wps.getList().contains(xaeroWaypoint)) {
+            wps.getList().add(xaeroWaypoint);
+            try {
+                minimapSession.getModMain().getSettings().saveWaypoints(ww);
+            } catch (IOException e) {
+                return false;
+            }
             return true;
         }
         return false;
