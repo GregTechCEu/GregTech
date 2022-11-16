@@ -430,27 +430,20 @@ public class WidgetProspectingMap extends Widget {
         int blue = clamp(color & 0xFF);
 
         Color wpc = new Color(red, green, blue);
-        int xc = 0;
-        int diffR = Integer.MAX_VALUE;
-        int diffG = Integer.MAX_VALUE;
-        int diffB = Integer.MAX_VALUE;
+        int bestColorIndex = 0;
+        int closestDistance = Integer.MAX_VALUE;
 
         for (int i = 0; i < xaerosColors.length; i++) {
             Color c = xaerosColors[i];
             int diffRinner = Math.abs(c.getRed() - wpc.getRed());
             int diffGinner = Math.abs(c.getGreen() - wpc.getGreen());
             int diffBinner = Math.abs(c.getBlue() - wpc.getBlue());
-
-            if (diffRinner <= diffR) {
-                if (diffGinner <= diffG) {
-                    if (diffBinner <= diffB) {
-                        diffR = diffRinner;
-                        diffG = diffGinner;
-                        diffB = diffBinner;
-                        xc = i;
-                    }
-                }
+            int distance = diffRinner * diffRinner + diffGinner * diffGinner + diffBinner * diffBinner;
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                bestColorIndex = i;
             }
+
         }
 
         XaeroMinimapSession minimapSession = XaeroMinimapSession.getCurrentSession();
@@ -460,7 +453,7 @@ public class WidgetProspectingMap extends Widget {
                 b.getX(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
                 b.getZ(),
-                hoveredNames.toString(), "", xc);
+                hoveredNames.toString(), "", bestColorIndex);
         if (!wps.getList().contains(xaeroWaypoint)) {
             wps.getList().add(xaeroWaypoint);
             try {
