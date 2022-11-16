@@ -425,6 +425,34 @@ public class WidgetProspectingMap extends Widget {
 
     @Optional.Method(modid = "xaerominimap")
     boolean addXaeroMapWaypoint(BlockPos b) {
+        int red = clamp(color >> 16 & 0xFF);
+        int green = clamp(color >> 8 & 0xFF);
+        int blue = clamp(color & 0xFF);
+
+        Color wpc = new Color(red, green, blue);
+        int xc = 0;
+        int diffR = Integer.MAX_VALUE;
+        int diffG = Integer.MAX_VALUE;
+        int diffB = Integer.MAX_VALUE;
+
+        for (int i = 0; i < xaerosColors.length; i++) {
+            Color c = xaerosColors[i];
+            int diffRinner = Math.abs(c.getRed() - wpc.getRed());
+            int diffGinner = Math.abs(c.getGreen() - wpc.getGreen());
+            int diffBinner = Math.abs(c.getBlue() - wpc.getBlue());
+
+            if (diffRinner <= diffR) {
+                if (diffGinner <= diffG) {
+                    if (diffBinner <= diffB) {
+                        diffR = diffRinner;
+                        diffG = diffGinner;
+                        diffB = diffBinner;
+                        xc = i;
+                    }
+                }
+            }
+        }
+
         XaeroMinimapSession minimapSession = XaeroMinimapSession.getCurrentSession();
         WaypointSet wps = minimapSession.getWaypointsManager().getWaypoints();
         WaypointWorld ww = minimapSession.getWaypointsManager().getCurrentWorld();
@@ -432,7 +460,7 @@ public class WidgetProspectingMap extends Widget {
                 b.getX(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
                 b.getZ(),
-                hoveredNames.toString(), "", 1);
+                hoveredNames.toString(), "", xc);
         if (!wps.getList().contains(xaeroWaypoint)) {
             wps.getList().add(xaeroWaypoint);
             try {
@@ -444,4 +472,35 @@ public class WidgetProspectingMap extends Widget {
         }
         return false;
     }
+
+    private int clamp(int color) {
+        if (color < 32) {
+            return 0;
+        } else if (color < 128) {
+            return 128;
+        } else if (color < 192) {
+            return 192;
+        } else {
+            return 255;
+        }
+    }
+
+    private Color[] xaerosColors = new Color[]{
+            new Color(0, 0, 0),
+            new Color(0, 0, 128),
+            new Color(0, 128, 0),
+            new Color(0, 128, 128),
+            new Color(128, 0, 0),
+            new Color(128, 0, 128),
+            new Color(128, 128, 0),
+            new Color(192, 192, 192),
+            new Color(128, 128, 128),
+            new Color(0, 0, 255),
+            new Color(0, 255, 0),
+            new Color(0, 255, 255),
+            new Color(255, 0, 0),
+            new Color(255, 0, 255),
+            new Color(255, 255, 0),
+            new Color(255, 255, 255),
+    };
 }
