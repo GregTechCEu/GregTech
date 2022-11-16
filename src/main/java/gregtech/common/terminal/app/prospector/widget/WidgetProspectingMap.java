@@ -150,7 +150,8 @@ public class WidgetProspectingMap extends Widget {
                                         } else if (type.processingPrefix == prefix) {
                                             MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
                                             if (materialStack != null) {
-                                                packet.addBlock(x, y, z, "ore" + materialStack.material.getLocalizedName());
+                                                String oreDict = "ore" + oreDictString.replaceFirst(prefix.name(), "");
+                                                packet.addBlock(x, y, z, oreDict);
                                                 added = true;
                                                 break;
                                             }
