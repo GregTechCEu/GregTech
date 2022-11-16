@@ -17,6 +17,7 @@ import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.api.worldgen.filler.FillerEntry;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
+import gregtech.integration.xaero.ColorUtility;
 import journeymap.client.model.Waypoint;
 import journeymap.client.waypoint.WaypointStore;
 import net.minecraft.block.state.IBlockState;
@@ -431,15 +432,16 @@ public class WidgetProspectingMap extends Widget {
         int blue = clamp(color & 0xFF);
 
         Color wpc = new Color(red, green, blue);
+        double[] labWPC = ColorUtility.getLab(wpc);
         int bestColorIndex = 0;
-        int closestDistance = Integer.MAX_VALUE;
+        double closestDistance = Double.MAX_VALUE;
 
         for (int i = 0; i < xaerosColors.length; i++) {
-            Color c = xaerosColors[i];
-            int diffRinner = Math.abs(c.getRed() - wpc.getRed());
-            int diffGinner = Math.abs(c.getGreen() - wpc.getGreen());
-            int diffBinner = Math.abs(c.getBlue() - wpc.getBlue());
-            int distance = diffRinner * diffRinner + diffGinner * diffGinner + diffBinner * diffBinner;
+            double[] c = xaerosColors[i];
+            double diffLinner = Math.abs(c[0] - labWPC[0]);
+            double diffAinner = Math.abs(c[1] - labWPC[1]);
+            double diffBinner = Math.abs(c[2] - labWPC[2]);
+            double distance = diffLinner * diffLinner + diffAinner * diffAinner + diffBinner * diffBinner;
             if (distance < closestDistance) {
                 closestDistance = distance;
                 bestColorIndex = i;
@@ -479,22 +481,22 @@ public class WidgetProspectingMap extends Widget {
         }
     }
 
-    private Color[] xaerosColors = new Color[]{
-            new Color(0, 0, 0),
-            new Color(0, 0, 128),
-            new Color(0, 128, 0),
-            new Color(0, 128, 128),
-            new Color(128, 0, 0),
-            new Color(128, 0, 128),
-            new Color(128, 128, 0),
-            new Color(192, 192, 192),
-            new Color(128, 128, 128),
-            new Color(0, 0, 255),
-            new Color(0, 255, 0),
-            new Color(0, 255, 255),
-            new Color(255, 0, 0),
-            new Color(255, 0, 255),
-            new Color(255, 255, 0),
-            new Color(255, 255, 255),
+    private final double[][] xaerosColors = new double[][]{
+            ColorUtility.getLab(new Color(0, 0, 0)),
+            ColorUtility.getLab(new Color(0, 0, 128)),
+            ColorUtility.getLab(new Color(0, 128, 0)),
+            ColorUtility.getLab(new Color(0, 128, 128)),
+            ColorUtility.getLab(new Color(128, 0, 0)),
+            ColorUtility.getLab(new Color(128, 0, 128)),
+            ColorUtility.getLab(new Color(128, 128, 0)),
+            ColorUtility.getLab(new Color(192, 192, 192)),
+            ColorUtility.getLab(new Color(128, 128, 128)),
+            ColorUtility.getLab(new Color(0, 0, 255)),
+            ColorUtility.getLab(new Color(0, 255, 0)),
+            ColorUtility.getLab(new Color(0, 255, 255)),
+            ColorUtility.getLab(new Color(255, 0, 0)),
+            ColorUtility.getLab(new Color(255, 0, 255)),
+            ColorUtility.getLab(new Color(255, 255, 0)),
+            ColorUtility.getLab(new Color(255, 255, 255)),
     };
 }
