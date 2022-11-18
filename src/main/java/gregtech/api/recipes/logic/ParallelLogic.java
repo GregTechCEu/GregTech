@@ -437,18 +437,18 @@ public class ParallelLogic {
 
         // Simulate the merging of the maximum amount of recipes
         // and limit by the amount we can successfully merge
+        // Note that limitByOutput will be less than or equal to multiplierByInputs after this, so Math.min does not need using
         int limitByOutput;
         limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs, voidItems, voidFluids);
 
-        int parallelizable = Math.min(multiplierByInputs, limitByOutput);
-
         if (currentRecipe.getEUt() != 0) {
             int limitByVoltage = Math.abs((int) (maxVoltage / currentRecipe.getEUt()));
-            parallelizable = Math.min(limitByVoltage, parallelizable);
-        }
-        if (parallelizable > 0) {
+            int parallelizable = Math.min(limitByVoltage, limitByOutput);
             recipeBuilder.append(currentRecipe, parallelizable, false);
+        } else if (limitByOutput > 0) {
+            recipeBuilder.append(currentRecipe, limitByOutput, false);
         }
+
 
         return recipeBuilder;
     }
