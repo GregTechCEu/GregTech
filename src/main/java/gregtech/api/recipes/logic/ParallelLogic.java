@@ -440,9 +440,12 @@ public class ParallelLogic {
         int limitByOutput;
         limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs, voidItems, voidFluids);
 
-        int limitByVoltage = Math.abs((int) (maxVoltage / currentRecipe.getEUt()));
-        int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
+        int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
+        if (currentRecipe.getEUt() != 0) {
+            int limitByVoltage = Math.abs((int) (maxVoltage / currentRecipe.getEUt()));
+            parallelizable = Math.min(limitByVoltage, parallelizable);
+        }
         if (parallelizable > 0) {
             recipeBuilder.append(currentRecipe, parallelizable, false);
         }
