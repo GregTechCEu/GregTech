@@ -43,7 +43,7 @@ public class NetworkHandler implements INetworkHandler {
     }
 
     public void registerPacket(Class<? extends IPacket> packetClass) {
-        if (GregTechAPI.moduleManager.getStage() != ModuleStage.M_SETUP) {
+        if (GregTechAPI.moduleManager.hasPassedStage(ModuleStage.M_SETUP)) {
             CoreModule.logger.error("Could not register packet {}, as packet registration has ended!", packetClass.getName());
             return;
         }

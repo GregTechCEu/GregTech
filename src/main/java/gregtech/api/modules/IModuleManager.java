@@ -19,4 +19,6 @@ public interface IModuleManager {
     IModuleContainer getLoadedContainer();
 
     ModuleStage getStage();
+
+    boolean hasPassedStage(ModuleStage stage);
 }

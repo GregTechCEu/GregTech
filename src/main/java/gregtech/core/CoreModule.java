@@ -19,7 +19,6 @@ import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -90,11 +89,11 @@ public class CoreModule implements IGregTechModule {
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
-        GTLog.logger.info("Registering GTCEu UI Factories");
+        logger.info("Registering GTCEu UI Factories");
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
-        GTLog.logger.info("Registering addon UI Factories");
+        logger.info("Registering addon UI Factories");
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(UI_FACTORY_REGISTRY, UIFactory.class));
         UI_FACTORY_REGISTRY.freeze();
         /* End UI Factory Registration */
@@ -105,16 +104,16 @@ public class CoreModule implements IGregTechModule {
 
         // First, register CEu Materials
         MATERIAL_REGISTRY.unfreeze();
-        GTLog.logger.info("Registering GTCEu Materials");
+        logger.info("Registering GTCEu Materials");
         Materials.register();
 
         // Then, register addon Materials
-        GTLog.logger.info("Registering addon Materials");
+        logger.info("Registering addon Materials");
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.MaterialEvent());
 
         // Then, run CraftTweaker Material registration scripts
         if (Loader.isModLoaded(GTValues.MODID_CT)) {
-            GTLog.logger.info("Running early CraftTweaker initialization scripts...");
+            logger.info("Running early CraftTweaker initialization scripts...");
             runEarlyCraftTweakerScripts();
             MinecraftForge.EVENT_BUS.register(this);
         }
@@ -139,7 +138,7 @@ public class CoreModule implements IGregTechModule {
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();
-        GTLog.logger.info("Registering GTCEu Meta Tile Entities");
+        logger.info("Registering GTCEu Meta Tile Entities");
         MetaTileEntities.init();
         /* End CEu MetaTileEntity Registration */
         /* Addons not done via an Event due to how much must be initialized for MTEs to register */
@@ -178,22 +177,22 @@ public class CoreModule implements IGregTechModule {
         MTE_REGISTRY.freeze(); // freeze once addon preInit is finished
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
-            GTLog.logger.fatal("Seems like invalid recipe was found.");
+            logger.fatal("Seems like invalid recipe was found.");
             //crash if config setting is set to false, or we are in deobfuscated environment
             if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {
-                GTLog.logger.fatal("Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
+                logger.fatal("Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
                 throw new LoaderException("Found at least one invalid recipe. Please read the log above for more details.");
             } else {
-                GTLog.logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                GTLog.logger.fatal("Ignoring invalid recipes and continuing loading");
-                GTLog.logger.fatal("Some things may lack recipes or have invalid ones, proceed at your own risk");
-                GTLog.logger.fatal("Report to GTCEu GitHub to get more help and fix the problem");
-                GTLog.logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                logger.fatal("Ignoring invalid recipes and continuing loading");
+                logger.fatal("Some things may lack recipes or have invalid ones, proceed at your own risk");
+                logger.fatal("Report to GTCEu GitHub to get more help and fix the problem");
+                logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
         }
 
         if (Loader.isModLoaded(GTValues.MODID_TOP)) {
-            GTLog.logger.info("TheOneProbe found. Enabling integration...");
+            logger.info("TheOneProbe found. Enabling integration...");
             TheOneProbeCompatibility.registerCompatibility();
         }
 

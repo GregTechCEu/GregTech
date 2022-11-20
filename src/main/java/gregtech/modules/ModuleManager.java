@@ -61,6 +61,11 @@ public class ModuleManager implements IModuleManager {
     }
 
     @Override
+    public boolean hasPassedStage(ModuleStage stage) {
+        return currentStage.ordinal() > stage.ordinal();
+    }
+
+    @Override
     public void registerContainer(IModuleContainer container) {
         if (currentStage != ModuleStage.C_SETUP) {
             logger.error("Failed to register module container {}, as module loading has already begun", container);
@@ -78,12 +83,14 @@ public class ModuleManager implements IModuleManager {
 
         // Separate loops for strict ordering
         for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
             module.getLogger().debug("Registering event handlers");
             for (Class<?> clazz : module.getEventBusSubscribers()) {
                 MinecraftForge.EVENT_BUS.register(clazz);
             }
         }
         for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
             module.getLogger().debug("Registering packets");
             module.registerPackets();
         }
@@ -102,8 +109,8 @@ public class ModuleManager implements IModuleManager {
     public void onInit(FMLInitializationEvent event) {
         currentStage = ModuleStage.INIT;
         for (IGregTechModule module : loadedModules) {
-            module.getLogger().debug("Init start");
             currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Init start");
             module.init(event);
             module.getLogger().debug("Init complete");
         }
@@ -112,8 +119,8 @@ public class ModuleManager implements IModuleManager {
     public void onPostInit(FMLPostInitializationEvent event) {
         currentStage = ModuleStage.POST_INIT;
         for (IGregTechModule module : loadedModules) {
-            module.getLogger().debug("Post-init start");
             currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Post-init start");
             module.postInit(event);
             module.getLogger().debug("Post-init complete");
         }
@@ -122,8 +129,8 @@ public class ModuleManager implements IModuleManager {
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         currentStage = ModuleStage.FINISHED;
         for (IGregTechModule module : loadedModules) {
-            module.getLogger().debug("Load-complete start");
             currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Load-complete start");
             module.loadComplete(event);
             module.getLogger().debug("Load-complete complete");
         }
@@ -132,6 +139,7 @@ public class ModuleManager implements IModuleManager {
     public void onServerStarting(FMLServerStartingEvent event) {
         currentStage = ModuleStage.SERVER_STARTING;
         for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
             module.getLogger().debug("Server-starting start");
             module.serverStarting(event);
             module.getLogger().debug("Server-starting complete");
@@ -141,8 +149,8 @@ public class ModuleManager implements IModuleManager {
     public void onServerStarted(FMLServerStartedEvent event) {
         currentStage = ModuleStage.SERVER_STARTED;
         for (IGregTechModule module : loadedModules) {
-            module.getLogger().debug("Server-started start");
             currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Server-started start");
             module.serverStarted(event);
             module.getLogger().debug("Server-started complete");
         }

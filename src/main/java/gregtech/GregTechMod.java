@@ -19,8 +19,8 @@ import net.minecraftforge.fml.common.event.*;
         acceptedMinecraftVersions = "[1.12,1.13)",
         dependencies = "required:forge@[14.23.5.2847,);"
                 + "required-after:codechickenlib@[3.2.3,);"
-                + "after:forestry;" +
-                "after:jei@[4.15.0,);"
+                + "after:forestry;"
+                + "after:jei@[4.15.0,);"
                 + "after:crafttweaker@[4.1.20,);")
 public class GregTechMod {
 
