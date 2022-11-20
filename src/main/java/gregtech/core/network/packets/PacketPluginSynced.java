@@ -1,10 +1,11 @@
-package gregtech.api.net.packets;
+package gregtech.core.network.packets;
 
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.net.IPacket;
-import gregtech.api.net.NetworkUtils;
+import gregtech.api.network.IPacket;
+import gregtech.api.network.IServerExecutor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
+import gregtech.core.network.NetworkUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
@@ -12,14 +13,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 @NoArgsConstructor
-public class CPacketPluginSynced implements IPacket {
+public class PacketPluginSynced implements IPacket, IServerExecutor {
 
     private int dimension;
     private BlockPos pos;
     private int id;
     private PacketBuffer updateData;
 
-    public CPacketPluginSynced(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
+    public PacketPluginSynced(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
         this.dimension = dimension;
         this.pos = pos;
         this.id = id;

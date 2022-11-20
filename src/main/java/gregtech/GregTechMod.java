@@ -12,7 +12,6 @@ import gregtech.api.fluids.MetaFluids;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
-import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.sound.GTSounds;
@@ -38,6 +37,8 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
+import gregtech.core.network.internal.NetworkHandler;
+import gregtech.core.network.packets.*;
 import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
@@ -76,7 +77,8 @@ public class GregTechMod {
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
-        NetworkHandler.init();
+        GregTechAPI.networkHandler = NetworkHandler.getInstance();
+        registerPackets();
 
         /* init GroovyScript compat */
         GroovyScriptCompat.init();
@@ -148,6 +150,22 @@ public class GregTechMod {
 
         proxy.onPreLoad();
         KeyBind.init();
+    }
+
+    private void registerPackets() {
+        GregTechAPI.networkHandler.registerPacket(PacketUIOpen.class);
+        GregTechAPI.networkHandler.registerPacket(PacketUIWidgetUpdate.class);
+        GregTechAPI.networkHandler.registerPacket(PacketUIClientAction.class);
+        GregTechAPI.networkHandler.registerPacket(PacketBlockParticle.class);
+        GregTechAPI.networkHandler.registerPacket(PacketClipboard.class);
+        GregTechAPI.networkHandler.registerPacket(PacketClipboardUIWidgetUpdate.class);
+        GregTechAPI.networkHandler.registerPacket(PacketPluginSynced.class);
+        GregTechAPI.networkHandler.registerPacket(PacketRecoverMTE.class);
+        GregTechAPI.networkHandler.registerPacket(PacketKeysPressed.class);
+        GregTechAPI.networkHandler.registerPacket(PacketFluidVeinList.class);
+        GregTechAPI.networkHandler.registerPacket(PacketNotifyCapeChange.class);
+        GregTechAPI.networkHandler.registerPacket(PacketReloadShaders.class);
+        GregTechAPI.networkHandler.registerPacket(PacketClipboardNBTUpdate.class);
     }
 
     @Mod.EventHandler

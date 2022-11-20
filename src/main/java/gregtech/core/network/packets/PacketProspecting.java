@@ -1,4 +1,4 @@
-package gregtech.api.net.packets;
+package gregtech.core.network.packets;
 
 import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;

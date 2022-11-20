@@ -1,8 +1,9 @@
-package gregtech.api.net.packets;
+package gregtech.core.network.packets;
 
 import gregtech.api.gui.impl.ModularUIGui;
-import gregtech.api.net.IPacket;
-import gregtech.api.net.NetworkUtils;
+import gregtech.api.network.IClientExecutor;
+import gregtech.api.network.IPacket;
+import gregtech.core.network.NetworkUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -12,13 +13,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
-public class SPacketUIWidgetUpdate implements IPacket {
+public class PacketUIWidgetUpdate implements IPacket, IClientExecutor {
 
     public int windowId;
     public int widgetId;
     public PacketBuffer updateData;
 
-    public SPacketUIWidgetUpdate(int windowId, int widgetId, PacketBuffer updateData) {
+    public PacketUIWidgetUpdate(int windowId, int widgetId, PacketBuffer updateData) {
         this.windowId = windowId;
         this.widgetId = widgetId;
         this.updateData = updateData;

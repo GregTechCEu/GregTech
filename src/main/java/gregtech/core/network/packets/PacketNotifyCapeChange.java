@@ -1,6 +1,7 @@
-package gregtech.api.net.packets;
+package gregtech.core.network.packets;
 
-import gregtech.api.net.IPacket;
+import gregtech.api.network.IClientExecutor;
+import gregtech.api.network.IPacket;
 import gregtech.api.util.CapesRegistry;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -10,12 +11,12 @@ import net.minecraft.util.ResourceLocation;
 import java.util.UUID;
 
 @NoArgsConstructor
-public class SPacketNotifyCapeChange implements IPacket {
+public class PacketNotifyCapeChange implements IPacket, IClientExecutor {
 
     public ResourceLocation cape;
     public UUID uuid;
 
-    public SPacketNotifyCapeChange(UUID uuid, ResourceLocation cape) {
+    public PacketNotifyCapeChange(UUID uuid, ResourceLocation cape) {
         this.uuid = uuid;
         this.cape = cape;
     }

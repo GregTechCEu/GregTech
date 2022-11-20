@@ -1,6 +1,5 @@
-package gregtech.api.net;
+package gregtech.core.network;
 
-import gregtech.api.GTValues;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
@@ -10,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 public class NetworkUtils {
 
@@ -32,20 +30,6 @@ public class NetworkUtils {
 
     public static IBlockState getIBlockStateServer(int dimension, BlockPos pos) {
         return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getBlockState(pos);
-    }
-
-    public static FMLProxyPacket packet2proxy(IPacket packet) {
-        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-        buf.writeVarInt(PacketHandler.getPacketId(packet.getClass()));
-        packet.encode(buf);
-        return new FMLProxyPacket(buf, GTValues.MODID);
-    }
-
-    public static IPacket proxy2packet(FMLProxyPacket proxyPacket) throws Exception {
-        PacketBuffer payload = (PacketBuffer) proxyPacket.payload();
-        IPacket packet = PacketHandler.getPacketClass(payload.readVarInt()).newInstance();
-        packet.decode(payload);
-        return packet;
     }
 
     public static NetworkRegistry.TargetPoint blockPoint(World world, BlockPos blockPos) {
