@@ -9,9 +9,9 @@ import net.minecraft.network.PacketBuffer;
  * {@link IPacket#decode(PacketBuffer)}, and register the packet to {@link gregtech.api.GregTechAPI#networkHandler}.<br><br>
  * <p>
  * Additionally, do one of the following:<p>
- *     - If this Packet is to be received on the SERVER, implement {@link IServerExecutor}.
+ * - If this Packet is to be received on the SERVER, implement {@link IServerExecutor}.
  * <p>
- *     - If this Packet is to be received on the CLIENT, implement {@link IClientExecutor}.<br><br>
+ * - If this Packet is to be received on the CLIENT, implement {@link IClientExecutor}.<br><br>
  * <p>
  * Lastly, add the {@link lombok.NoArgsConstructor} annotation to your Packet class.
  */

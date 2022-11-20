@@ -3,8 +3,8 @@ package gregtech.core.network.packets;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
-import gregtech.core.network.NetworkUtils;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
+import gregtech.core.network.NetworkUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
@@ -48,7 +48,8 @@ public class PacketClipboardNBTUpdate implements IPacket, IServerExecutor {
         if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
             try {
                 ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).setClipboardNBT(updateData.readCompoundTag());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 }

@@ -1,7 +1,10 @@
 package gregtech.core.network.internal;
 
 import gregtech.api.GTValues;
-import gregtech.api.network.*;
+import gregtech.api.network.IClientExecutor;
+import gregtech.api.network.INetworkHandler;
+import gregtech.api.network.IPacket;
+import gregtech.api.network.IServerExecutor;
 import gregtech.api.util.GTLog;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -44,15 +47,15 @@ public class NetworkHandler implements INetworkHandler {
             GTLog.logger.error("Could not register packet {}, as packet registration has ended!", packetClass.getName());
             return;
         }
+
         boolean hasServerExecutor = IServerExecutor.class.isAssignableFrom(packetClass);
         boolean hasClientExecutor = IClientExecutor.class.isAssignableFrom(packetClass);
-
-        if (hasServerExecutor == hasClientExecutor) {
-            if (hasServerExecutor) {
-                GTLog.logger.error("Could not register packet {}, as it is both a Server and Client executor! Only one allowed. Skipping...", packetClass.getName());
-            } else {
-                GTLog.logger.error("Could not register packet {}, as it does not have an executor! Must have either IServerExecutor OR IClientExecutor. Skipping...", packetClass.getName());
-            }
+        if (hasServerExecutor && hasClientExecutor) {
+            GTLog.logger.error("Could not register packet {}, as it is both a Server and Client executor! Only one allowed. Skipping...", packetClass.getName());
+            return;
+        }
+        if (!hasServerExecutor && !hasClientExecutor) {
+            GTLog.logger.error("Could not register packet {}, as it does not have an executor! Must have either IServerExecutor OR IClientExecutor. Skipping...", packetClass.getName());
             return;
         }
         packetHandler.registerPacket(packetClass);

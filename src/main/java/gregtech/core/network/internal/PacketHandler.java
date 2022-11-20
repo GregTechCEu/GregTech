@@ -18,6 +18,7 @@ public class PacketHandler {
     }
 
     private int ID = 1;
+
     public void registerPacket(Class<? extends IPacket> packetClass) {
         packetMap.put(packetClass, ID++);
     }
