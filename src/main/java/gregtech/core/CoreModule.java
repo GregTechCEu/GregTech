@@ -30,7 +30,10 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.command.GregTechCommand;
+import gregtech.common.command.CommandHand;
+import gregtech.common.command.CommandRecipeCheck;
+import gregtech.common.command.CommandShaders;
+import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
@@ -239,7 +242,10 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
-        event.registerServerCommand(new GregTechCommand());
+        GregTechAPI.commandManager.addCommand(new CommandWorldgen());
+        GregTechAPI.commandManager.addCommand(new CommandHand());
+        GregTechAPI.commandManager.addCommand(new CommandRecipeCheck());
+        GregTechAPI.commandManager.addCommand(new CommandShaders());
         CapesRegistry.load();
     }
 
