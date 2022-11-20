@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
-import gregtech.api.advancement.IAdvancementInstance;
+import gregtech.api.advancement.IAdvancementCriterion;
 import gregtech.api.advancement.IAdvancementTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,13 +13,15 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public abstract class AdvancementTrigger<T extends IAdvancementInstance> implements IAdvancementTrigger<T> {
+public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdvancementTrigger<T> {
 
     private final ResourceLocation id;
+    private final T criterion;
     private final Map<PlayerAdvancements, AdvancementListeners<T>> listeners = Maps.newHashMap();
 
-    public AdvancementTrigger(String name) {
+    public AdvancementTrigger(String name, @Nonnull T criterion) {
         this.id = new ResourceLocation(GTValues.MODID, name);
+        this.criterion = criterion;
     }
 
     @Nonnull
@@ -61,7 +63,7 @@ public abstract class AdvancementTrigger<T extends IAdvancementInstance> impleme
     @Nonnull
     @Override
     public T deserializeInstance(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context) {
-        return create();
+        return criterion;
     }
 
     @Override

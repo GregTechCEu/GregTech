@@ -2,6 +2,7 @@ package gregtech.api;
 
 import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.command.ICommandManager;
@@ -35,10 +36,16 @@ import java.util.Map;
 
 public class GregTechAPI {
 
+    /** Will always be available */
     public static Object instance;
+    /** Will be available at the FMLConstructionEvent stage */
     public static IModuleManager moduleManager;
+    /** Will be available at the FMLPreInitializationEvent stage */
     public static INetworkHandler networkHandler;
+    /** Will be available at the FMLServerStartingEvent stage */
     public static ICommandManager commandManager;
+    /** Will be available at the FMLPreInitialization stage */
+    public static IAdvancementManager advancementManager;
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
