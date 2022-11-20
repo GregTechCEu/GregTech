@@ -362,16 +362,6 @@ public class CommonProxy {
     }
 
     public void onLoad() {
-        Method triggerRegistry = ObfuscationReflectionHelper.findMethod(CriteriaTriggers.class, "func_192118_a", ICriterionTrigger.class, ICriterionTrigger.class);
-        triggerRegistry.setAccessible(true);
-        for (IAdvancementTrigger<?> trigger : GregTechAPI.advancementManager.getTriggers()) {
-            try {
-                triggerRegistry.invoke(null, trigger);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                GTLog.logger.error("Failed to register Advancement trigger: {}", trigger.getId());
-                GTLog.logger.error("Stacktrace:", e);
-            }
-        }
     }
 
     public void onPostLoad() {

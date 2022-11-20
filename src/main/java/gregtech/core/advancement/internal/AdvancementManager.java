@@ -6,28 +6,17 @@ import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.advancement.IAdvancementTrigger;
 import gregtech.api.modules.ModuleStage;
 import gregtech.core.CoreModule;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import net.minecraft.advancements.CriteriaTriggers;
 
 public class AdvancementManager implements IAdvancementManager {
 
     private static final AdvancementManager INSTANCE = new AdvancementManager();
 
-    private final List<IAdvancementTrigger<?>> triggers;
-
     private AdvancementManager() {
-        this.triggers = new ArrayList<>();
     }
 
     public static AdvancementManager getInstance() {
         return INSTANCE;
-    }
-
-    @Override
-    public Collection<IAdvancementTrigger<?>> getTriggers() {
-        return triggers;
     }
 
     @Override
@@ -38,7 +27,7 @@ public class AdvancementManager implements IAdvancementManager {
         }
         IAdvancementTrigger<T> trigger = new AdvancementTrigger<>(id, criterion);
         criterion.setId(trigger.getId());
-        triggers.add(trigger);
+        CriteriaTriggers.register(trigger);
         return trigger;
     }
 }
