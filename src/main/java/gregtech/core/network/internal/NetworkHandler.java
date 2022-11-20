@@ -5,7 +5,9 @@ import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.INetworkHandler;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
-import gregtech.api.util.GTLog;
+import gregtech.api.GregTechAPI;
+import gregtech.api.modules.ModuleStage;
+import gregtech.core.CoreModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
@@ -14,8 +16,6 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -43,19 +43,20 @@ public class NetworkHandler implements INetworkHandler {
     }
 
     public void registerPacket(Class<? extends IPacket> packetClass) {
-        if (Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
-            GTLog.logger.error("Could not register packet {}, as packet registration has ended!", packetClass.getName());
+        if (GregTechAPI.moduleManager.getStage() != ModuleStage.M_SETUP) {
+            CoreModule.logger.error("Could not register packet {}, as packet registration has ended!", packetClass.getName());
             return;
         }
 
         boolean hasServerExecutor = IServerExecutor.class.isAssignableFrom(packetClass);
         boolean hasClientExecutor = IClientExecutor.class.isAssignableFrom(packetClass);
+
         if (hasServerExecutor && hasClientExecutor) {
-            GTLog.logger.error("Could not register packet {}, as it is both a Server and Client executor! Only one allowed. Skipping...", packetClass.getName());
+            CoreModule.logger.error("Could not register packet {}, as it is both a Server and Client executor! Only one allowed. Skipping...", packetClass.getName());
             return;
         }
         if (!hasServerExecutor && !hasClientExecutor) {
-            GTLog.logger.error("Could not register packet {}, as it does not have an executor! Must have either IServerExecutor OR IClientExecutor. Skipping...", packetClass.getName());
+            CoreModule.logger.error("Could not register packet {}, as it does not have an executor! Must have either IServerExecutor OR IClientExecutor. Skipping...", packetClass.getName());
             return;
         }
         packetHandler.registerPacket(packetClass);
