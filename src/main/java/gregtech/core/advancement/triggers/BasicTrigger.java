@@ -8,20 +8,20 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Use this class if a Trigger should always pass when called.
  */
-public class BasicTrigger extends AdvancementTrigger<BasicTrigger.BasicInstance> {
+public class BasicTrigger extends AdvancementTrigger<BasicTrigger.Instance> {
 
     public BasicTrigger(String id) {
         super(id);
     }
 
     @Override
-    public BasicInstance create() {
-        return new BasicInstance(getId());
+    public Instance create() {
+        return new Instance(getId());
     }
 
-    protected static class BasicInstance extends AdvancementInstance {
+    protected static class Instance extends AdvancementInstance {
 
-        public BasicInstance(ResourceLocation id) {
+        public Instance(ResourceLocation id) {
             super(id);
         }
 

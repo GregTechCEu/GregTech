@@ -8,20 +8,20 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Use this class if a Trigger should fail unless the player is killed.
  */
-public class TriggerDeath extends AdvancementTrigger<TriggerDeath.RotorInstance> {
+public class TriggerDeath extends AdvancementTrigger<TriggerDeath.Instance> {
 
     public TriggerDeath(String id) {
         super(id);
     }
 
     @Override
-    public RotorInstance create() {
-        return new TriggerDeath.RotorInstance(getId());
+    public Instance create() {
+        return new TriggerDeath.Instance(getId());
     }
 
-    protected static class RotorInstance extends AdvancementInstance {
+    protected static class Instance extends AdvancementInstance {
 
-        public RotorInstance(ResourceLocation id) {
+        public Instance(ResourceLocation id) {
             super(id);
         }
 
