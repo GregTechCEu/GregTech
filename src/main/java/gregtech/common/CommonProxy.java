@@ -21,6 +21,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
+import gregtech.common.pipes.MetaPipes;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -109,6 +110,10 @@ public class CommonProxy {
         registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
 
+        // TODO: Replace with proper registration.
+        MetaPipes.init();
+        registry.register(MetaPipes.PIPE);
+
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
         SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
@@ -196,6 +201,9 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
+
+        // TODO: Replace with proper registration
+        registry.register(createItemBlock(MetaPipes.PIPE, ItemBlock::new));
 
         COMPRESSED.values()
                 .stream().distinct()
