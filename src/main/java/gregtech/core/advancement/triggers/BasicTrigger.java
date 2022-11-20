@@ -1,14 +1,14 @@
-package gregtech.common.advancement.criterion;
+package gregtech.core.advancement.triggers;
 
-import gregtech.api.util.advancement.GTInstance;
-import gregtech.api.util.advancement.GTTrigger;
+import gregtech.core.advancement.internal.AdvancementInstance;
+import gregtech.core.advancement.internal.AdvancementTrigger;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 /**
  * Use this class if a Trigger should always pass when called.
  */
-public class BasicTrigger extends GTTrigger<BasicTrigger.BasicInstance> {
+public class BasicTrigger extends AdvancementTrigger<BasicTrigger.BasicInstance> {
 
     public BasicTrigger(String id) {
         super(id);
@@ -19,7 +19,7 @@ public class BasicTrigger extends GTTrigger<BasicTrigger.BasicInstance> {
         return new BasicInstance(getId());
     }
 
-    protected static class BasicInstance extends GTInstance {
+    protected static class BasicInstance extends AdvancementInstance {
 
         public BasicInstance(ResourceLocation id) {
             super(id);

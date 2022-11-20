@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -147,7 +147,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
                 .forEach(entity -> {
                     entity.attackEntityFrom(DamageSources.getHeatDamage(), this.isHighPressure ? 12.0f : 6.0f);
                     if (entity instanceof EntityPlayerMP) {
-                        GTTriggers.STEAM_VENT_DEATH.trigger((EntityPlayerMP) entity);
+                        AdvancementTriggers.STEAM_VENT_DEATH.trigger((EntityPlayerMP) entity);
                     }
                 });
         WorldServer world = (WorldServer) metaTileEntity.getWorld();

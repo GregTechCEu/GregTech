@@ -1,14 +1,14 @@
-package gregtech.common.advancement.criterion;
+package gregtech.core.advancement.triggers;
 
-import gregtech.api.util.advancement.GTInstance;
-import gregtech.api.util.advancement.GTTrigger;
+import gregtech.core.advancement.internal.AdvancementInstance;
+import gregtech.core.advancement.internal.AdvancementTrigger;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 /**
  * Use this class if a Trigger should fail unless the player is killed.
  */
-public class TriggerDeath extends GTTrigger<TriggerDeath.RotorInstance> {
+public class TriggerDeath extends AdvancementTrigger<TriggerDeath.RotorInstance> {
 
     public TriggerDeath(String id) {
         super(id);
@@ -19,7 +19,7 @@ public class TriggerDeath extends GTTrigger<TriggerDeath.RotorInstance> {
         return new TriggerDeath.RotorInstance(getId());
     }
 
-    protected static class RotorInstance extends GTInstance {
+    protected static class RotorInstance extends AdvancementInstance {
 
         public RotorInstance(ResourceLocation id) {
             super(id);
