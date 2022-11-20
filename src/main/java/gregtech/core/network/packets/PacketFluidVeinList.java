@@ -1,6 +1,7 @@
-package gregtech.api.net.packets;
+package gregtech.core.network.packets;
 
-import gregtech.api.net.IPacket;
+import gregtech.api.network.IClientExecutor;
+import gregtech.api.network.IPacket;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -14,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NoArgsConstructor
-public class CPacketFluidVeinList implements IPacket {
+public class PacketFluidVeinList implements IPacket, IClientExecutor {
 
     private Map<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map;
 
-    public CPacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
+    public PacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
         this.map = map;
     }
 

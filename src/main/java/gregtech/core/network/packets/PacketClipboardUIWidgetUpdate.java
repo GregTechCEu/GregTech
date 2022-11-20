@@ -1,8 +1,9 @@
-package gregtech.api.net.packets;
+package gregtech.core.network.packets;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.net.IPacket;
-import gregtech.api.net.NetworkUtils;
+import gregtech.api.network.IPacket;
+import gregtech.api.network.IServerExecutor;
+import gregtech.core.network.NetworkUtils;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -11,13 +12,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 @NoArgsConstructor
-public class CPacketClipboardNBTUpdate implements IPacket {
+public class PacketClipboardUIWidgetUpdate implements IPacket, IServerExecutor {
+
     private int dimension;
     private BlockPos pos;
     private int id;
     private PacketBuffer updateData;
 
-    public CPacketClipboardNBTUpdate(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
+    public PacketClipboardUIWidgetUpdate(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
         this.dimension = dimension;
         this.pos = pos;
         this.id = id;
@@ -45,9 +47,7 @@ public class CPacketClipboardNBTUpdate implements IPacket {
     public void executeServer(NetHandlerPlayServer handler) {
         TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
         if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
-            try {
-                ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).setClipboardNBT(updateData.readCompoundTag());
-            } catch (Exception ignored) {}
+            ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).readUIAction(handler.player, id, updateData);
         }
     }
 }

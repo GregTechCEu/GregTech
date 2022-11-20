@@ -7,6 +7,7 @@ import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.network.INetworkHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 public class GregTechAPI {
+
+    public static INetworkHandler networkHandler;
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
