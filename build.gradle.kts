@@ -105,7 +105,7 @@ val jar: Jar by tasks
 jar.apply {
     manifest {
         attributes(mapOf("FMLAT" to "gregtech_at.cfg",
-            "FMLCorePlugin" to "gregtech.core.GregTechLoadingPlugin",
+            "FMLCorePlugin" to "gregtech.asm.GregTechLoadingPlugin",
             "FMLCorePluginContainsFMLMod" to "true"))
     }
 }
