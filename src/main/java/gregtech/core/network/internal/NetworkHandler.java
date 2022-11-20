@@ -44,9 +44,15 @@ public class NetworkHandler implements INetworkHandler {
             GTLog.logger.error("Could not register packet {}, as packet registration has ended!", packetClass.getName());
             return;
         }
-        if (IServerExecutor.class.isAssignableFrom(packetClass)
-                && IClientExecutor.class.isAssignableFrom(packetClass)) {
-            GTLog.logger.error("Could not register packet {}, as it is both a Server and Client executor! Only one allowed. Skipping...", packetClass.getName());
+        boolean hasServerExecutor = IServerExecutor.class.isAssignableFrom(packetClass);
+        boolean hasClientExecutor = IClientExecutor.class.isAssignableFrom(packetClass);
+
+        if (hasServerExecutor == hasClientExecutor) {
+            if (hasServerExecutor) {
+                GTLog.logger.error("Could not register packet {}, as it is both a Server and Client executor! Only one allowed. Skipping...", packetClass.getName());
+            } else {
+                GTLog.logger.error("Could not register packet {}, as it does not have an executor! Must have either IServerExecutor OR IClientExecutor. Skipping...", packetClass.getName());
+            }
             return;
         }
         packetHandler.registerPacket(packetClass);
