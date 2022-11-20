@@ -2,6 +2,7 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.advancement.IAdvancementTrigger;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
@@ -21,8 +22,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.advancement.GTTrigger;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -31,6 +30,7 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -362,16 +362,6 @@ public class CommonProxy {
     }
 
     public void onLoad() {
-        Method triggerRegistry = ObfuscationReflectionHelper.findMethod(CriteriaTriggers.class, "func_192118_a", ICriterionTrigger.class, ICriterionTrigger.class);
-        triggerRegistry.setAccessible(true);
-        for (GTTrigger<?> trigger : GTTriggers.GT_TRIGGERS) {
-            try {
-                triggerRegistry.invoke(null, trigger);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                GTLog.logger.error("Failed to register Advancement trigger: {}", trigger.getId());
-                GTLog.logger.error("Stacktrace:", e);
-            }
-        }
     }
 
     public void onPostLoad() {

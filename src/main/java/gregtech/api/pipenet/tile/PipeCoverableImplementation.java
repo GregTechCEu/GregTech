@@ -7,7 +7,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -80,7 +80,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
-        GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
+        AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
     }
 

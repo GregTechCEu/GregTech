@@ -1,10 +1,11 @@
-package gregtech.api.util.advancement;
+package gregtech.core.advancement.internal;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
-import net.minecraft.advancements.ICriterionTrigger;
+import gregtech.api.advancement.IAdvancementCriterion;
+import gregtech.api.advancement.IAdvancementTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -12,29 +13,29 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigger<T> {
+public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdvancementTrigger<T> {
 
-    private final ResourceLocation ID;
-    private final Map<PlayerAdvancements, GTListeners<T>> listeners = Maps.newHashMap();
+    private final ResourceLocation id;
+    private final T criterion;
+    private final Map<PlayerAdvancements, AdvancementListeners<T>> listeners = Maps.newHashMap();
 
-    public GTTrigger(String name) {
-        ID = new ResourceLocation(GTValues.MODID, name);
+    public AdvancementTrigger(String name, @Nonnull T criterion) {
+        this.id = new ResourceLocation(GTValues.MODID, name);
+        this.criterion = criterion;
     }
-
-    public abstract T create();
 
     @Nonnull
     @Override
     public ResourceLocation getId() {
-        return ID;
+        return id;
     }
 
     @Override
     public void addListener(@Nonnull PlayerAdvancements playerAdvancementsIn, @Nonnull Listener<T> listener) {
-        GTListeners<T> gtListener = listeners.get(playerAdvancementsIn);
+        AdvancementListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener == null) {
-            gtListener = new GTListeners<>(playerAdvancementsIn);
+            gtListener = new AdvancementListeners<>(playerAdvancementsIn);
             listeners.put(playerAdvancementsIn, gtListener);
         }
 
@@ -43,7 +44,7 @@ public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigg
 
     @Override
     public void removeListener(@Nonnull PlayerAdvancements playerAdvancementsIn, @Nonnull Listener<T> listener) {
-        GTListeners<T> gtListener = listeners.get(playerAdvancementsIn);
+        AdvancementListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener != null) {
             gtListener.remove(listener);
@@ -62,11 +63,12 @@ public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigg
     @Nonnull
     @Override
     public T deserializeInstance(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context) {
-        return create();
+        return criterion;
     }
 
+    @Override
     public void trigger(EntityPlayerMP player) {
-        GTListeners<T> listener = listeners.get(player.getAdvancements());
+        AdvancementListeners<T> listener = listeners.get(player.getAdvancements());
 
         if (listener != null) {
             listener.trigger(player);
