@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.core.command.internal.CommandManager;
 import gregtech.core.network.internal.NetworkHandler;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
@@ -71,9 +72,9 @@ public class GregTechMod {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-        //CommandManager commandManager = CommandManager.getInstance();
-        //GregTechAPI.commandManager = commandManager;
-        //commandManager.registerServerCommand(event);
+        CommandManager commandManager = CommandManager.getInstance();
+        GregTechAPI.commandManager = commandManager;
+        commandManager.registerServerCommand(event);
         moduleManager.onServerStarting(event);
     }
 

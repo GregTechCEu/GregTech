@@ -1,8 +1,7 @@
-package gregtech.common.command;
+package gregtech.core.command.internal;
 
 import com.google.common.collect.Lists;
 import gregtech.api.util.ClipboardUtil;
-import gregtech.common.command.worldgen.CommandWorldgen;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,14 +15,7 @@ import net.minecraftforge.server.command.CommandTreeBase;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class GregTechCommand extends CommandTreeBase {
-
-    public GregTechCommand() {
-        addSubcommand(new CommandWorldgen());
-        addSubcommand(new CommandHand());
-        addSubcommand(new CommandRecipeCheck());
-        addSubcommand(new CommandShaders());
-    }
+class GregTechCommand extends CommandTreeBase {
 
     @Nonnull
     @Override
