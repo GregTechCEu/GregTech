@@ -13,11 +13,11 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.tools.DamageValues;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -172,7 +172,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                     float damageAmount = (float) ((GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4);
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
                     if (entityLiving instanceof EntityPlayerMP) {
-                        GTTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);
+                        AdvancementTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);
                     }
                 }
             }

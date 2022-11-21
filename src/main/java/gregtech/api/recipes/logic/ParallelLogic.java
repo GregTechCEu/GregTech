@@ -435,16 +435,19 @@ public class ParallelLogic {
         boolean voidFluids = mte.canVoidRecipeFluidOutputs();
 
 
-        // Simulate the merging of the maximum amount of recipes
+        // Simulate the merging of the maximum amount of recipes that can be run with these items
         // and limit by the amount we can successfully merge
         int limitByOutput;
         limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs, voidItems, voidFluids);
 
-        int limitByVoltage = Math.abs((int) (maxVoltage / currentRecipe.getEUt()));
-        int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
-
-        if (parallelizable > 0) {
-            recipeBuilder.append(currentRecipe, parallelizable, false);
+        int recipeEUt = currentRecipe.getEUt();
+        if (recipeEUt != 0) {
+            int limitByVoltage = Math.abs((int) (maxVoltage / recipeEUt));
+            int parallelizable = Math.min(limitByVoltage, limitByOutput);
+            if (parallelizable != 0)
+                recipeBuilder.append(currentRecipe, parallelizable, false);
+        } else if (limitByOutput > 0) {
+            recipeBuilder.append(currentRecipe, limitByOutput, false);
         }
 
         return recipeBuilder;

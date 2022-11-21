@@ -6,7 +6,7 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.sound.GTSounds;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockStainedGlass;
@@ -48,7 +48,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
         useItemDurability(player, hand, stack, empty.copy());
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSounds.SPRAY_CAN_TOOL, SoundCategory.PLAYERS, 1.0f, 1.0f);
+        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL, SoundCategory.PLAYERS, 1.0f, 1.0f);
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 

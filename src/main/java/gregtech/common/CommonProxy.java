@@ -4,8 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.enchants.EnchantmentEnderDamage;
-import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
@@ -21,8 +19,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.advancement.GTTrigger;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -37,10 +33,7 @@ import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -53,7 +46,6 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -61,8 +53,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -316,12 +306,6 @@ public class CommonProxy {
     }
 
     @SubscribeEvent
-    public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
-        EnchantmentEnderDamage.INSTANCE.register(event);
-        EnchantmentHardHammer.INSTANCE.register(event);
-    }
-
-    @SubscribeEvent
     public static void syncConfigValues(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.getModID().equals(GTValues.MODID)) {
             ConfigManager.sync(GTValues.MODID, Type.INSTANCE);
@@ -362,16 +346,6 @@ public class CommonProxy {
     }
 
     public void onLoad() {
-        Method triggerRegistry = ObfuscationReflectionHelper.findMethod(CriteriaTriggers.class, "func_192118_a", ICriterionTrigger.class, ICriterionTrigger.class);
-        triggerRegistry.setAccessible(true);
-        for (GTTrigger<?> trigger : GTTriggers.GT_TRIGGERS) {
-            try {
-                triggerRegistry.invoke(null, trigger);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                GTLog.logger.error("Failed to register Advancement trigger: {}", trigger.getId());
-                GTLog.logger.error("Stacktrace:", e);
-            }
-        }
     }
 
     public void onPostLoad() {

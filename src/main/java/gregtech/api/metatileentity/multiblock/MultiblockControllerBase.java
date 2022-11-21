@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
@@ -12,7 +13,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
-import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
@@ -293,7 +293,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (dataId == STRUCTURE_FORMED) {
             this.structureFormed = buf.readBoolean();
             if (!structureFormed) {
-                GTSoundManager.stopTileSound(getPos());
+                GregTechAPI.soundManager.stopTileSound(getPos());
             }
         }
     }

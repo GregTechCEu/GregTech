@@ -16,8 +16,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -184,7 +184,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     @Override
     public SoundEvent getSound() {
-        return GTSounds.BOILER;
+        return GTSoundEvents.BOILER;
     }
 
     @Override

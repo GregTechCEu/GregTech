@@ -1,7 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.damagesources.DamageSources;
-import gregtech.common.advancement.GTTriggers;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
@@ -57,7 +57,7 @@ public class EntityDamageUtil {
 
         entity.attackEntityFrom(DamageSources.getHeatDamage(), damage);
         if (entity instanceof EntityPlayerMP)
-            GTTriggers.HEAT_DEATH.trigger((EntityPlayerMP) entity);
+            AdvancementTriggers.HEAT_DEATH.trigger((EntityPlayerMP) entity);
     }
 
     /**
@@ -86,7 +86,7 @@ public class EntityDamageUtil {
 
         entity.attackEntityFrom(DamageSources.getFrostDamage(), damage);
         if (entity instanceof EntityPlayerMP) {
-            GTTriggers.COLD_DEATH.trigger((EntityPlayerMP) entity);
+            AdvancementTriggers.COLD_DEATH.trigger((EntityPlayerMP) entity);
         }
     }
 
@@ -103,6 +103,6 @@ public class EntityDamageUtil {
 
         entity.attackEntityFrom(DamageSources.getChemicalDamage(), damage);
         entity.addPotionEffect(new PotionEffect(MobEffects.POISON, damage * 100, 1));
-        if (entity instanceof EntityPlayerMP) GTTriggers.CHEMICAL_DEATH.trigger((EntityPlayerMP) entity);
+        if (entity instanceof EntityPlayerMP) AdvancementTriggers.CHEMICAL_DEATH.trigger((EntityPlayerMP) entity);
     }
 }
