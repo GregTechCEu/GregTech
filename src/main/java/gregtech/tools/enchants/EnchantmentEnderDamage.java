@@ -1,4 +1,4 @@
-package gregtech.api.enchants;
+package gregtech.tools.enchants;
 
 import gregtech.api.GTValues;
 import net.minecraft.enchantment.Enchantment;
@@ -13,7 +13,6 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
 
 import javax.annotation.Nonnull;
 
@@ -23,12 +22,8 @@ public class EnchantmentEnderDamage extends Enchantment {
 
     private EnchantmentEnderDamage() {
         super(Rarity.UNCOMMON, EnumEnchantmentType.WEAPON, new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
-    }
-
-    public void register(RegistryEvent.Register<Enchantment> event) {
         this.setRegistryName(new ResourceLocation(GTValues.MODID, "disjunction"));
-        setName("disjunction");
-        event.getRegistry().register(this);
+        this.setName("disjunction");
     }
 
     @Override

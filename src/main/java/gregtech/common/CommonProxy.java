@@ -2,11 +2,8 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.advancement.IAdvancementTrigger;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.enchants.EnchantmentEnderDamage;
-import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
@@ -30,17 +27,13 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -53,7 +46,6 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -61,8 +53,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -313,12 +303,6 @@ public class CommonProxy {
         if (Loader.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
         }
-    }
-
-    @SubscribeEvent
-    public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
-        EnchantmentEnderDamage.INSTANCE.register(event);
-        EnchantmentHardHammer.INSTANCE.register(event);
     }
 
     @SubscribeEvent

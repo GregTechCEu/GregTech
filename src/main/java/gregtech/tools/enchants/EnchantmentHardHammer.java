@@ -1,4 +1,4 @@
-package gregtech.api.enchants;
+package gregtech.tools.enchants;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolMetaItem;
@@ -10,21 +10,17 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
 
 import javax.annotation.Nonnull;
 
 public class EnchantmentHardHammer extends Enchantment {
+
     public static final EnchantmentHardHammer INSTANCE = new EnchantmentHardHammer();
 
     private EnchantmentHardHammer() {
         super(Rarity.UNCOMMON, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
-    }
-
-    public void register(RegistryEvent.Register<Enchantment> event) {
         this.setRegistryName(new ResourceLocation(GTValues.MODID, "hard_hammer"));
-        setName("hard_hammer");
-        event.getRegistry().register(this);
+        this.setName("hard_hammer");
     }
 
     @Override
@@ -42,7 +38,7 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     @Override
-    public boolean canApply(ItemStack stack) {
+    public boolean canApply(@Nonnull ItemStack stack) {
         return this.canApplyAtEnchantingTable(stack);
     }
 
