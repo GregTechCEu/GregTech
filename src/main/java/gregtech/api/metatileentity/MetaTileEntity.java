@@ -24,7 +24,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -679,10 +678,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (--playSoundCooldown > 0) {
                 return;
             }
-            GTSoundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
+            GregTechAPI.soundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
             playSoundCooldown = 20;
         } else {
-            GTSoundManager.stopTileSound(getPos());
+            GregTechAPI.soundManager.stopTileSound(getPos());
             playSoundCooldown = 0;
         }
     }
@@ -874,7 +873,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
             if (muffled) {
-                GTSoundManager.stopTileSound(getPos());
+                GregTechAPI.soundManager.stopTileSound(getPos());
             }
         }
     }
@@ -1195,7 +1194,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public void invalidate() {
         if (getWorld() != null && getWorld().isRemote) {
-            GTSoundManager.stopTileSound(getPos());
+            GregTechAPI.soundManager.stopTileSound(getPos());
         }
     }
 

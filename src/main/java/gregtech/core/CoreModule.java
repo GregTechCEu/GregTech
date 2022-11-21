@@ -15,7 +15,6 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
@@ -43,6 +42,8 @@ import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.core.advancement.internal.AdvancementManager;
 import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
+import gregtech.core.sound.GTSoundEvents;
+import gregtech.core.sound.internal.SoundManager;
 import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
@@ -90,6 +91,9 @@ public class CoreModule implements IGregTechModule {
 
         GregTechAPI.advancementManager = AdvancementManager.getInstance();
         AdvancementTriggers.register();
+
+        GregTechAPI.soundManager = SoundManager.getInstance();
+        GTSoundEvents.register();
 
         /* init GroovyScript compat */
         GroovyScriptCompat.init();
@@ -141,8 +145,6 @@ public class CoreModule implements IGregTechModule {
         MetaBlocks.init();
         MetaItems.init();
         MetaFluids.init();
-
-        GTSounds.registerSounds();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();

@@ -1,4 +1,3 @@
-
 package gregtech.common.metatileentities.multi.electric;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -27,7 +26,6 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -35,6 +33,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -436,7 +435,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public SoundEvent getSound() {
-        return GTSounds.MINER;
+        return GTSoundEvents.MINER;
     }
 
     @Override

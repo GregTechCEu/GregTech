@@ -11,6 +11,7 @@ import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
+import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -38,14 +39,16 @@ public class GregTechAPI {
 
     /** Will always be available */
     public static Object instance;
-    /** Will be available at the FMLConstructionEvent stage */
+    /** Will be available at the Construction stage */
     public static IModuleManager moduleManager;
-    /** Will be available at the FMLPreInitializationEvent stage */
+    /** Will be available at the Pre-Initialization stage */
     public static INetworkHandler networkHandler;
-    /** Will be available at the FMLServerStartingEvent stage */
+    /** Will be available at the Server-Starting stage */
     public static ICommandManager commandManager;
-    /** Will be available at the FMLPreInitialization stage */
+    /** Will be available at the Pre-Initialization stage */
     public static IAdvancementManager advancementManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static ISoundManager soundManager;
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
