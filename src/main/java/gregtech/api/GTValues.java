@@ -17,6 +17,9 @@ import static net.minecraft.util.text.TextFormatting.*;
  */
 public class GTValues {
 
+    private GTValues() {
+    }
+
     /**
      * Version String for use in addon mods' @Mod(dependencies = "...") block.
      */

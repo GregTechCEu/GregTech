@@ -10,7 +10,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.modules.IModuleManager;
+import gregtech.api.module.IModuleManager;
 import gregtech.api.network.INetworkHandler;
 import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.OreDictUnifier;
@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.Map;
 
 public class GregTechAPI {
+
+    private GregTechAPI() {
+    }
 
     /** Will always be available */
     public static Object instance;

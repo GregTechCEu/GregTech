@@ -1,8 +1,8 @@
-package gregtech.modules;
+package gregtech.module;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import gregtech.api.modules.*;
+import gregtech.api.module.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;

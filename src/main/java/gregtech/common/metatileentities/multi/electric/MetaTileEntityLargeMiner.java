@@ -33,7 +33,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.core.sound.GTSoundEvents;
+import gregtech.machine.sound.MachineSounds;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -446,7 +446,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public SoundEvent getSound() {
-        return GTSoundEvents.MINER;
+        return MachineSounds.MINER;
     }
 
     @Override

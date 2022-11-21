@@ -4,7 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.advancement.IAdvancementCriterion;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.advancement.IAdvancementTrigger;
-import gregtech.api.modules.ModuleStage;
+import gregtech.api.module.ModuleStage;
 import gregtech.core.CoreModule;
 import net.minecraft.advancements.CriteriaTriggers;
 

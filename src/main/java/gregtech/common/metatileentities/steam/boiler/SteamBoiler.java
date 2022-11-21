@@ -24,7 +24,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
-import gregtech.core.sound.GTSoundEvents;
+import gregtech.machine.sound.MachineSounds;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -346,7 +346,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @Override
     public SoundEvent getSound() {
-        return GTSoundEvents.BOILER;
+        return MachineSounds.BOILER;
     }
 
     @Override

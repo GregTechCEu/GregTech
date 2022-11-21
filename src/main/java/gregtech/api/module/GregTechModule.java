@@ -1,4 +1,4 @@
-package gregtech.api.modules;
+package gregtech.api.module;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

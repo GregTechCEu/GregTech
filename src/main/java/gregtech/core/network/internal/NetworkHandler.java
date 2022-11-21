@@ -6,7 +6,7 @@ import gregtech.api.network.INetworkHandler;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.api.GregTechAPI;
-import gregtech.api.modules.ModuleStage;
+import gregtech.api.module.ModuleStage;
 import gregtech.core.CoreModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -42,6 +42,7 @@ public class NetworkHandler implements INetworkHandler {
         return INSTANCE;
     }
 
+    @Override
     public void registerPacket(Class<? extends IPacket> packetClass) {
         if (GregTechAPI.moduleManager.hasPassedStage(ModuleStage.PRE_INIT)) {
             CoreModule.logger.error("Could not register packet {}, as packet registration has ended!", packetClass.getName());

@@ -1,4 +1,4 @@
-package gregtech.api.modules;
+package gregtech.api.module;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.event.*;

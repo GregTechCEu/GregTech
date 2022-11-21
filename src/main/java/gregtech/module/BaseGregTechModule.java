@@ -1,6 +1,6 @@
-package gregtech.modules;
+package gregtech.module;
 
-import gregtech.api.modules.IGregTechModule;
+import gregtech.api.module.IGregTechModule;
 import gregtech.api.GTValues;
 import net.minecraft.util.ResourceLocation;
 

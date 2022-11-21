@@ -1,4 +1,4 @@
-package gregtech.tools.enchants;
+package gregtech.tool.enchantment;
 
 import gregtech.api.GTValues;
 import net.minecraft.enchantment.Enchantment;

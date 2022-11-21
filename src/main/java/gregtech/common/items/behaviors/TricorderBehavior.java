@@ -15,7 +15,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.core.sound.GTSoundEvents;
+import gregtech.tool.sound.ToolSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -64,7 +64,7 @@ public class TricorderBehavior implements IItemBehaviour {
                     player.sendMessage(line);
                 }
                 if (ConfigHolder.client.toolUseSounds)
-                    world.playSound(null, pos, GTSoundEvents.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
+                    world.playSound(null, pos, ToolSounds.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
             } else {
                 player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
             }
