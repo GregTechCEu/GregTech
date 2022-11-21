@@ -1,7 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.api.enchants.EnchantmentHardHammer;
+import gregtech.tools.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;

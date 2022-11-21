@@ -1,8 +1,8 @@
 package gregtech.common.tools;
 
 import com.google.common.collect.Lists;
-import gregtech.api.enchants.EnchantmentData;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
