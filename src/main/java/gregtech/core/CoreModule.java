@@ -40,6 +40,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.core.advancement.internal.AdvancementManager;
+import gregtech.core.command.internal.CommandManager;
 import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
@@ -62,7 +63,6 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
-import static gregtech.api.GregTechAPI.COVER_REGISTRY;
 
 @GregTechModule(
         moduleID = GregTechModules.MODULE_CORE,
@@ -78,6 +78,10 @@ public class CoreModule implements IGregTechModule {
     @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
+    public CoreModule() {
+        GregTechAPI.networkHandler = NetworkHandler.getInstance();
+    }
+
     @Nonnull
     @Override
     public Logger getLogger() {
@@ -86,9 +90,6 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        GregTechAPI.networkHandler = NetworkHandler.getInstance();
-        registerPackets();
-
         GregTechAPI.advancementManager = AdvancementManager.getInstance();
         AdvancementTriggers.register();
 
@@ -249,6 +250,10 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
+        CommandManager commandManager = CommandManager.getInstance();
+        GregTechAPI.commandManager = commandManager;
+        commandManager.registerServerCommand(event);
+
         GregTechAPI.commandManager.addCommand(new CommandWorldgen());
         GregTechAPI.commandManager.addCommand(new CommandHand());
         GregTechAPI.commandManager.addCommand(new CommandRecipeCheck());

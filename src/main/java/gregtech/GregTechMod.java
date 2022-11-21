@@ -4,8 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.core.command.internal.CommandManager;
-import gregtech.core.network.internal.NetworkHandler;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,7 +15,7 @@ import net.minecraftforge.fml.common.event.*;
 
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
-        acceptedMinecraftVersions = "[1.12,1.13)",
+        acceptedMinecraftVersions = "[1.12.2,1.13)",
         dependencies = "required:forge@[14.23.5.2847,);"
                 + "required-after:codechickenlib@[3.2.3,);"
                 + "after:forestry;"
@@ -42,14 +40,11 @@ public class GregTechMod {
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
         moduleManager.registerContainer(new GregTechModules());
-
-        MinecraftForge.EVENT_BUS.register(moduleManager);
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        GregTechAPI.networkHandler = NetworkHandler.getInstance();
         moduleManager.setup(event);
         moduleManager.onPreInit(event);
     }
@@ -72,9 +67,6 @@ public class GregTechMod {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-        CommandManager commandManager = CommandManager.getInstance();
-        GregTechAPI.commandManager = commandManager;
-        commandManager.registerServerCommand(event);
         moduleManager.onServerStarting(event);
     }
 
