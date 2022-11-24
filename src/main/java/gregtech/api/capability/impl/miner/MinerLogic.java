@@ -164,7 +164,13 @@ public class MinerLogic {
             NonNullList<ItemStack> blockDrops = NonNullList.create();
             IBlockState blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
 
-            // if the block is not air or cobblestone., harvest it
+            // check to make sure the ore is still there,
+            while(!GTUtility.isOre(GTUtility.toItem(blockState))) {
+                blocksToMine.removeFirst();
+                if (blocksToMine.isEmpty()) break;
+                blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
+            }
+            // When we are here we have an ore to mine! I'm glad we aren't threaded
             if (GTUtility.isOre(GTUtility.toItem(blockState))) {
                 // get the small ore drops, if a small ore
                 getSmallOreBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
@@ -172,14 +178,10 @@ public class MinerLogic {
                 getRegularBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // try to insert them
                 mineAndInsertItems(blockDrops, world);
-            } else {
-                // the block attempted to mine was air or cobblestone, so remove it from the queue and move on
-                // This can occur because of block destruction when lowering the pipe or when two miners are attempting
-                // to mine the same area
-                blocksToMine.removeFirst();
             }
 
-        } else if (blocksToMine.isEmpty()) {
+        }
+        if (blocksToMine.isEmpty()) {
             // there were no blocks to mine, so the current position is the previous position
             x.set(mineX.get());
             y.set(mineY.get());
