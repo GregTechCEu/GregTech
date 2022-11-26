@@ -22,6 +22,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
@@ -49,10 +50,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.*;
@@ -75,6 +79,7 @@ import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
@@ -1040,6 +1045,26 @@ public class GTUtility {
             }
         }
         return color;
+    }
+
+    /**
+     * Gather a list of all registered dimensions. Done as a Supplier so that it can be called at any time and catch
+     * dimensions that are registered late
+     *
+     * @param filter An Optional filter to restrict the returned dimensions
+     * @return A Supplier containing a list of all registered dimensions
+     */
+    public static Supplier<List<Integer>> getAllRegisteredDimensions(@Nullable Predicate<WorldProvider> filter) {
+        List<Integer> dims = new ArrayList<>();
+
+        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
+        dimMap.values().stream()
+                .flatMap(Collection::stream)
+                .mapToInt(Integer::intValue)
+                .filter(num -> filter == null || filter.test(DimensionManager.createProviderFor(num)))
+                .forEach(dims::add);
+
+        return () -> dims;
     }
 
     /**

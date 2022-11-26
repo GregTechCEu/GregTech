@@ -3,6 +3,7 @@ package gregtech.integration.jei.basic;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -69,7 +70,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Get the Name and trim unneeded information
         if (definition.getAssignedName() == null) {
-            this.name = GTUtility.trimFileName(definition.getDepositName());
+            this.name = FileUtility.trimFileName(definition.getDepositName());
         } else {
             this.name = definition.getAssignedName();
         }

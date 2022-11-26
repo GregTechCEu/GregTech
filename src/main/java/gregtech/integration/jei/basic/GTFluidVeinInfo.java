@@ -1,6 +1,6 @@
 package gregtech.integration.jei.basic;
 
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.FileUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class GTFluidVeinInfo implements IRecipeWrapper {
 
     private final BedrockFluidDepositDefinition definition;
-    private final String name;
+    private String name;
     private final String description;
     private final int weight;
     private final int[] yields; // the [minimum, maximum) yields
@@ -36,10 +36,9 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
         this.definition = definition;
 
         //Get the Name and trim unneeded information
-        if (definition.getAssignedName() == null) {
-            this.name = GTUtility.trimFileName(definition.getDepositName());
-        } else {
-            this.name = definition.getAssignedName();
+        this.name = definition.getAssignedName();
+        if (this.name == null) {
+            this.name = FileUtility.trimFileName(definition.getDepositName());
         }
 
         this.description = definition.getDescription();

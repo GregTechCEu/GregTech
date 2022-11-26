@@ -2,11 +2,11 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.integration.jei.recipe.primitive.BasicRecipeCategory;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
@@ -20,8 +20,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -40,7 +38,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     protected List<Integer> dimensionIDs;
     protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
-    private final Supplier<List<Integer>> dimension = this::getAllRegisteredDimensions;
+    private Supplier<List<Integer>> dimension;
     private final int NUM_OF_SLOTS = 5;
     private final int SLOT_WIDTH = 18;
     private final int SLOT_HEIGHT = 18;
@@ -84,6 +82,25 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         outputCount = recipeWrapper.getOutputCount();
         weight = recipeWrapper.getWeight();
         definition = recipeWrapper.getDefinition();
+
+        this.dimension = GTUtility.getAllRegisteredDimensions(definition.getDimensionFilter());
+
+        //Slight cleanup of the list if Advanced Rocketry is installed
+        if (Loader.isModLoaded(MODID_AR)) {
+            try {
+                int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
+
+                //Remove Space from the dimension list
+                for (int spaceDim : spaceDims) {
+                    if (this.dimension.get().contains(spaceDim)) {
+                        this.dimension.get().remove((Integer) spaceDim);
+                    }
+                }
+            } catch (IllegalArgumentException e) {
+                GTLog.logger.error("Something went wrong with AR JEI integration, No DimensionType found");
+                GTLog.logger.error(e);
+            }
+        }
     }
 
     @Nonnull
@@ -196,36 +213,5 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         fontRenderer.drawString(veinNameToDraw, startPosition, 1, 0x111111);
     }
 
-    public List<Integer> getAllRegisteredDimensions() {
-        List<Integer> dims = new ArrayList<>();
-        /*
-        Gather the registered dimensions here instead of at the top of the class to catch very late registered dimensions
-        such as Advanced Rocketry
-         */
-        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
-        dimMap.values().stream()
-                .flatMap(Collection::stream)
-                .mapToInt(Integer::intValue)
-                .filter(num -> definition.getDimensionFilter().test(DimensionManager.createProviderFor(num)))
-                .forEach(dims::add);
 
-        //Slight cleanup of the list if Advanced Rocketry is installed
-        if (Loader.isModLoaded(MODID_AR)) {
-            try {
-                int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
-
-                //Remove Space from the dimension list
-                for (int spaceDim : spaceDims) {
-                    if (dims.contains(spaceDim)) {
-                        dims.remove((Integer) spaceDim);
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                GTLog.logger.error("Something went wrong with AR JEI integration, No DimensionType found");
-                GTLog.logger.error(e);
-            }
-        }
-
-        return dims;
-    }
 }
