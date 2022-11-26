@@ -517,6 +517,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
             int id = buf.readInt();
             boolean isActive = buf.readBoolean();
+            //the server can send a packet to the client before the map is initialized by the world loading client-side
+            VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
             int size = buf.readInt();
             for (int i = 0; i < size; i++) {
                 BlockPos blockPos = buf.readBlockPos();
