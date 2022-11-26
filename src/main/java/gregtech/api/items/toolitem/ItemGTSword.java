@@ -37,14 +37,19 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     private final Set<String> toolClasses;
     private final SoundEvent sound;
 
-    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses) {
+    private final boolean playSoundOnBlockDestroy;
+    private final String oredict;
+
+    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict) {
         super(ToolMaterial.STONE);
         this.domain = domain;
         this.id = id;
         this.tier = tier;
         this.toolStats = toolStats;
         this.sound = sound;
+        this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
+        this.oredict = oreDict;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -90,13 +95,13 @@ public class ItemGTSword extends ItemSword implements IGTTool {
 
     @Override
     public boolean playSoundOnBlockDestroy() {
-        return false;
+        return playSoundOnBlockDestroy;
     }
 
     @Nullable
     @Override
     public String getOreDictName() {
-        return null;
+        return oredict;
     }
 
     @Override
@@ -236,7 +241,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     public boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull ItemStack stack) {
         // special case vanilla behavior
         if (state.getBlock().getHarvestTool(state) == null) {
-            return ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack));
+            return ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
         }
 
         return false;
@@ -255,7 +260,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
 
         @Override
         public Supplier<ItemGTSword> supply() {
-            return () -> new ItemGTSword(domain, id, tier, toolStats, sound, toolClasses);
+            return () -> new ItemGTSword(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict);
         }
     }
 }

@@ -1,11 +1,12 @@
 package gregtech.common.items.tool;
 
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.items.toolitem.behaviour.IToolBehavior;
+import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.unification.OreDictUnifier;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -72,7 +73,7 @@ public class TorchPlaceBehavior implements IToolBehavior {
                 ItemBlock slotItemBlock = (ItemBlock) slotItem;
                 Block slotBlock = slotItemBlock.getBlock();
                 if (slotBlock == Blocks.TORCH || OreDictUnifier.getOreDictionaryNames(slotStack).stream()
-                        .anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
+                        .anyMatch(s -> "torch".equals(s) || "blockTorch".equals(s))) {
                     IBlockState state = world.getBlockState(pos);
                     Block block = state.getBlock();
                     if (!block.isReplaceable(world, pos)) {
@@ -102,6 +103,6 @@ public class TorchPlaceBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add("metaitem.tool.behavior.torch_place");
+        tooltip.add(" " + I18n.format("item.gt.tool.behavior.torch_place"));
     }
 }

@@ -20,7 +20,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
-import gregtech.api.items.toolitem.behaviour.IToolBehavior;
+import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -149,7 +149,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Set<String> toolClasses = stack.getItem().getToolClasses(stack);
 
         //TODO implement these
-        behaviourTag.setBoolean(TREE_FELLING_KEY, toolClasses.contains(ToolClasses.AXE));
         behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, false);
 
         return stack;
@@ -312,7 +311,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 }
             }
         }
-        if (ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
+        if (ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
             return getTotalToolSpeed(stack);
         }
 
@@ -346,10 +345,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     }
                 }
 
-                effective |= ToolHelper.isToolEffectiveVanilla(state, getToolClasses(stack), getTotalHarvestLevel(stack));
+                effective |= ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
 
                 if (effective) {
-                    if (areaOfEffectBlockBreakRoutine(stack, playerMP)) {
+                    if (areaOfEffectBlockBreakRoutine(stack, playerMP, state.getBlockHardness(player.world, pos))) {
                         playSound(player);
                     } else {
                         if (result == -1) {
@@ -522,28 +521,26 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             tooltip.add("");
         }
 
-        tooltip.add(I18n.format("metaitem.tool.behaves_like", stack.getItem().getToolClasses(stack).stream()
+        tooltip.add(I18n.format("item.gt.tool.behaves_like", stack.getItem().getToolClasses(stack).stream()
                 .map(s -> s.replaceAll("_", " "))
                 .map(WordUtils::capitalize)
                 .collect(Collectors.joining(", "))));
 
-        getToolStats().getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
-
         NBTTagCompound behavioursTag = getBehavioursTag(stack);
-        List<String> behaviours = new ArrayList<>();
-        if (behavioursTag.getBoolean(TREE_FELLING_KEY)) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.tree_felling"));
-        }
+        List<String> behaviors = new ArrayList<>();
         if (behavioursTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.relocate_mining"));
+            behaviors.add(" " + I18n.format("item.gt.tool.behavior.relocate_mining"));
         }
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
         if (aoeDefinition != AoESymmetrical.none()) {
-            behaviours.add(" " + I18n.format("metaitem.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer + 1));
+            behaviors.add(" " + I18n.format("item.gt.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer + 1));
         }
-        if (!behaviours.isEmpty()) {
-            tooltip.add(I18n.format("metaitem.tool.behavior.behaviors"));
-            tooltip.addAll(behaviours);
+
+        getToolStats().getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, behaviors, flag));
+
+        if (!behaviors.isEmpty()) {
+            tooltip.add(I18n.format("item.gt.tool.behavior.behaviors"));
+            tooltip.addAll(behaviors);
         }
     }
 
@@ -605,9 +602,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         NBTTagCompound tag = getBehavioursTag(holder.getCurrentItem());
         AoESymmetrical defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
         return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
-                .label(6, 10, "gt.tool.aoe.columns")
-                .label(49, 10, "gt.tool.aoe.rows")
-                .label(79, 10, "gt.tool.aoe.layers")
+                .label(6, 10, "item.gt.tool.aoe.columns")
+                .label(49, 10, "item.gt.tool.aoe.rows")
+                .label(79, 10, "item.gt.tool.aoe.layers")
                 .widget(new ClickButtonWidget(15, 24, 20, 20, "+", data -> {
                     AoESymmetrical.increaseColumn(tag, defaultDefinition);
                     holder.markAsDirty();

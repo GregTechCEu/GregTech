@@ -2,7 +2,7 @@ package gregtech.api.items.toolitem;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
-import gregtech.api.items.toolitem.behaviour.IToolBehavior;
+import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

@@ -1,4 +1,4 @@
-package gregtech.api.items.toolitem.behaviour;
+package gregtech.api.items.toolitem.behavior;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;

@@ -127,14 +127,6 @@ public class ToolRecipeHandler {
     }
 
     public static void processStick(OrePrefix stickPrefix, Material material, ToolProperty property) {
-        if (material.hasProperty(PropertyKey.INGOT)) {
-            ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
-                    ToolItems.PLUNGER.get(material),
-                    "xRR", " SR", "S f",
-                    'S', new UnificationEntry(OrePrefix.stick, material),
-                    'R', new UnificationEntry(OrePrefix.plate, Materials.Rubber));
-        }
-
         if (material.hasFlag(GENERATE_ROD)) {
             ModHandler.addMirroredShapedRecipe(String.format("screwdriver_%s", material),
                     ToolItems.SCREWDRIVER.get(material),
@@ -206,9 +198,8 @@ public class ToolRecipeHandler {
     }
 
     public static void processChainSawHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
-        processSimpleElectricToolHead(toolPrefix, material, new IGTTool[]{ToolItems.CHAINSAW_LV, ToolItems.CHAINSAW_MV, ToolItems.CHAINSAW_HV});
-
-        if(material.hasFlag(GENERATE_PLATE)) {
+        if (material.hasFlag(GENERATE_PLATE)) {
+            processSimpleElectricToolHead(toolPrefix, material, new IGTTool[]{ToolItems.CHAINSAW_LV});
             ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
                     "SRS", "XhX", "SRS",
@@ -219,7 +210,7 @@ public class ToolRecipeHandler {
     }
 
     public static void processWrenchHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
-        processSimpleElectricToolHead(toolPrefix, material, new IGTTool[]{ToolItems.WRENCH_LV, ToolItems.WRENCH_MV, ToolItems.WRENCH_HV});
+        processSimpleElectricToolHead(toolPrefix, material, new IGTTool[]{ToolItems.WRENCH_LV, ToolItems.WRENCH_IV, ToolItems.WRENCH_HV});
 
         if(material.hasFlag(GENERATE_PLATE)) {
             ModHandler.addShapedRecipe(String.format("wrench_head_%s", material),
