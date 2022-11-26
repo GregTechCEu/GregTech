@@ -38,7 +38,7 @@ public class MiscRecipeLoader {
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
         // Potin Recipe
-        ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 9),
+        ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 8),
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Copper),
