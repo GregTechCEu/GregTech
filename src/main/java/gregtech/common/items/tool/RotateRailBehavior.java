@@ -1,7 +1,7 @@
 package gregtech.common.items.tool;
 
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.items.toolitem.behaviour.IToolBehavior;
+import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -44,6 +44,6 @@ public class RotateRailBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(I18n.format("metaitem.tool.behavior.rail_rotation"));
+        tooltip.add(" " + I18n.format("item.gt.tool.behavior.rail_rotation"));
     }
 }

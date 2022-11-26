@@ -3,7 +3,7 @@ package gregtech.common.items.tool;
 import com.google.common.collect.ImmutableSet;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
-import gregtech.api.items.toolitem.behaviour.IToolBehavior;
+import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
@@ -114,6 +114,6 @@ public class HoeGroundBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(I18n.format("metaitem.tool.behavior.ground_tilling"));
+        tooltip.add(" " + I18n.format("item.gt.tool.behavior.ground_tilling"));
     }
 }

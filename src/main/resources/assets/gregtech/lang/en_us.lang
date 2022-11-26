@@ -908,17 +908,17 @@ metaitem.brick.coke.name=Coke Oven Brick
 metaitem.wooden_form.empty.name=Empty Wooden Form
 metaitem.wooden_form.brick.name=Brick Wooden Form
 
-metaitem.tool.behaves_like=§fBehaves like: %s
-metaitem.tool.behavior.behaviors=§eBehaviors
-metaitem.tool.behavior.silk_ice=§bSilk Harvests Ice
-metaitem.tool.behavior.torch_place=§eTorch Placing
-metaitem.tool.behavior.tree_felling=§4Tree Felling
-metaitem.tool.behavior.shield_disable=§7Disable Shields
-metaitem.tool.behavior.relocate_mining=§2Relocate Mined Blocks
-metaitem.tool.behavior.aoe_mining=§5%sx%sx%s AoE Mining
-metaitem.tool.behavior.ground_tilling=§eTills Ground
-metaitem.tool.behavior.grass_path=§eCreates Grass Paths
-metaitem.tool.behavior.rail_rotation=§eRotates Rails
+item.gt.tool.behaves_like=§fBehaves like: %s
+item.gt.tool.behavior.behaviors=§eBehaviors
+item.gt.tool.behavior.silk_ice=§bSilk Harvests Ice
+item.gt.tool.behavior.torch_place=§eTorch Placing
+item.gt.tool.behavior.tree_felling=§4Tree Felling
+item.gt.tool.behavior.shield_disable=§7Disables Shields
+item.gt.tool.behavior.relocate_mining=§2Relocate Mined Blocks
+item.gt.tool.behavior.aoe_mining=§5%sx%sx%s AoE Mining
+item.gt.tool.behavior.ground_tilling=§eTills Ground
+item.gt.tool.behavior.grass_path=§eCreates Grass Paths
+item.gt.tool.behavior.rail_rotation=§eRotates Rails
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
@@ -945,7 +945,6 @@ item.gt.tool.butchery_knife.name=%s Butchery Knife
 item.gt.tool.butchery_knife.tooltip=Has a slow Attack Rate
 item.gt.tool.scythe.name=%s Scythe
 item.gt.tool.scythe.tooltip=Because a Scythe doesn't make Sense
-item.gt.tool.plunger.name=%s Plunger
 item.gt.tool.rolling_pin.name=%s Rolling Pin
 item.gt.tool.drill_lv.name=%s Drill (LV)
 item.gt.tool.drill_mv.name=%s Drill (MV)
@@ -964,32 +963,36 @@ item.gt.tool.chainsaw_hv.name=%s Chainsaw (HV)
 item.gt.tool.chainsaw_hv.tooltip=Can also harvest Ice
 item.gt.tool.wrench_lv.name=%s Wrench (LV)
 item.gt.tool.wrench_lv.tooltip=Hold Leftclick to dismantle Machines
-item.gt.tool.wrench_mv.name=%s Wrench (MV)
-item.gt.tool.wrench_mv.tooltip=Hold Leftclick to dismantle Machines
 item.gt.tool.wrench_hv.name=%s Wrench (HV)
 item.gt.tool.wrench_hv.tooltip=Hold Leftclick to dismantle Machines
+item.gt.tool.wrench_iv.name=%s Wrench (MV)
+item.gt.tool.wrench_iv.tooltip=Hold Leftclick to dismantle Machines
 item.gt.tool.buzzsaw.name=%s Buzzsaw (LV)
 item.gt.tool.buzzsaw.tooltip=Not suitable for harvesting Blocks
 item.gt.tool.screwdriver_lv.name=%s Screwdriver (LV)
 item.gt.tool.screwdriver_lv.tooltip=Adjusts Covers and Machines
+
+
+item.gt.tool.tooltip.crafting_uses=§a %s Crafting Uses
+item.gt.tool.tooltip.attack_damage=§c %s Attack Damage
+item.gt.tool.tooltip.mining_speed=§d %s Mining Speed
+item.gt.tool.tooltip.harvest_level=§e %s Harvest Level
+
+item.gt.tool.aoe.rows=Rows
+item.gt.tool.aoe.columns=Columns
+item.gt.tool.aoe.layers=Layers
+
 metaitem.turbine_rotor.name=%s Turbine Rotor
 metaitem.turbine_rotor.tooltip=Turbine Rotors for your power station
 
 metaitem.clipboard.name=Clipboard
 metaitem.clipboard.tooltip=Can be written on (without any writing Instrument). Right-click on Wall to place, and Shift-Right-Click to remove
 
-gt.tool.aoe.rows=Rows
-gt.tool.aoe.columns=Columns
-gt.tool.aoe.layers=Layers
 
 metaitem.behavior.mode_switch.tooltip=Use while sneaking to switch mode
 metaitem.behavior.mode_switch.mode_switched=§eMode Set to: %s
 metaitem.behavior.mode_switch.current_mode=Mode: %s
 
-metaitem.tool.tooltip.crafting_uses=§a %s Crafting Uses
-metaitem.tool.tooltip.attack_damage=§c %s Attack Damage
-metaitem.tool.tooltip.mining_speed=§d %s Mining Speed
-metaitem.tool.tooltip.harvest_level=§e %s Harvest Level
 metaitem.tool.tooltip.primary_material=§fMaterial: §e%s (%s lvl)
 metaitem.tool.tooltip.durability=§fDurability: §a%,d / %,d
 metaitem.tool.tooltip.rotor.efficiency=Turbine Efficiency: §9%,d%%
@@ -2171,7 +2174,6 @@ behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.fluid.tooltip=Can light things on fire with Butane or Propane
 behaviour.lighter.uses=Remaining uses: %,d
-behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
 enchantment.damage.disjunction=Disjunction

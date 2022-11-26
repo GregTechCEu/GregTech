@@ -17,6 +17,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.function.QuadFunction;
 import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -43,20 +44,16 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IShearable;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 /**
  * Collection of tool related helper methods
  */
-public class ToolHelper {
+public final class ToolHelper {
 
     public static final String TOOL_TAG_KEY = "GT.Tool";
     public static final String BEHAVIOURS_TAG_KEY = "GT.Behaviours";
@@ -107,9 +104,16 @@ public class ToolHelper {
     // Effective Vanilla Blocks
     public static final Set<Block> PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.ACTIVATOR_RAIL, Blocks.COAL_ORE, Blocks.COBBLESTONE, Blocks.DETECTOR_RAIL, Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.DOUBLE_STONE_SLAB, Blocks.GOLDEN_RAIL, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.ICE, Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE, Blocks.LIT_REDSTONE_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.NETHERRACK, Blocks.PACKED_ICE, Blocks.RAIL, Blocks.REDSTONE_ORE, Blocks.SANDSTONE, Blocks.RED_SANDSTONE, Blocks.STONE, Blocks.STONE_SLAB, Blocks.STONE_BUTTON, Blocks.STONE_PRESSURE_PLATE);
     public static final Set<Block> STONE_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE);
-    public static final Set<Block> IRON_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE);
+    public static final Set<Block> IRON_PICKAXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE);
     public static final Set<Block> SHOVEL_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.CLAY, Blocks.DIRT, Blocks.FARMLAND, Blocks.GRASS, Blocks.GRAVEL, Blocks.MYCELIUM, Blocks.SAND, Blocks.SNOW, Blocks.SNOW_LAYER, Blocks.SOUL_SAND, Blocks.GRASS_PATH, Blocks.CONCRETE_POWDER);
     public static final Set<Block> AXE_HARVESTABLE_BLOCKS = ImmutableSet.of(Blocks.PLANKS, Blocks.BOOKSHELF, Blocks.LOG, Blocks.LOG2, Blocks.CHEST, Blocks.PUMPKIN, Blocks.LIT_PUMPKIN, Blocks.MELON_BLOCK, Blocks.LADDER, Blocks.WOODEN_BUTTON, Blocks.WOODEN_PRESSURE_PLATE);
+
+    // Suppliers for broken tool stacks
+    public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_LV = () -> MetaItems.POWER_UNIT_LV.getStackForm();
+    public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_MV = () -> MetaItems.POWER_UNIT_MV.getStackForm();
+    public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_HV = () -> MetaItems.POWER_UNIT_HV.getStackForm();
+    public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_EV = () -> MetaItems.POWER_UNIT_EV.getStackForm();
+    public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_IV = () -> MetaItems.POWER_UNIT_IV.getStackForm();
 
     /**
      * @return finds the registered crafting symbol with the tool
@@ -286,10 +290,13 @@ public class ToolHelper {
     /**
      * AoE Block Breaking Routine.
      */
-    public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player) {
+    public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player, float maximumHardness) {
         Set<BlockPos> harvestableBlocks = getHarvestableBlocks(stack, player);
         if (!harvestableBlocks.isEmpty()) {
             for (BlockPos pos : harvestableBlocks) {
+                if (player.world.getBlockState(pos).getBlockHardness(player.world, pos) > maximumHardness) {
+                    continue; // if mining a block takes longer than the center block, do not mine it
+                }
                 if (!breakBlockRoutine(player, stack, pos)) {
                     return true;
                 }
@@ -371,8 +378,10 @@ public class ToolHelper {
     }
 
     // encompasses all vanilla special case tool checks for harvesting
-    public static boolean isToolEffectiveVanilla(IBlockState state, Set<String> toolClasses, int harvestLevel) {
+    public static boolean isToolEffective(IBlockState state, Set<String> toolClasses, int harvestLevel) {
         Block block = state.getBlock();
+        if (toolClasses.contains(block.getHarvestTool(state))) return true;
+
         net.minecraft.block.material.Material material = state.getMaterial();
         if (toolClasses.contains(ToolClasses.PICKAXE)) {
             if (Blocks.OBSIDIAN == block && harvestLevel >= 3) return true;
@@ -583,155 +592,4 @@ public class ToolHelper {
     }
 
     private ToolHelper() { }
-
-    private static class TreeFellingListener {
-
-        private static void start(IBlockState state, ItemStack tool, BlockPos start, EntityPlayerMP player) {
-            World world = player.world;
-            Block block = state.getBlock();
-            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-            Queue<BlockPos> checking = new ArrayDeque<>();
-            Set<BlockPos> visited = new ObjectOpenHashSet<>();
-            checking.add(start);
-            while (!checking.isEmpty()) {
-                BlockPos check = checking.remove();
-                if (check != start) {
-                    visited.add(check);
-                }
-                for (int x = -1; x <= 1; x++) {
-                    for (int y = 0; y <= 1; y++) {
-                        for (int z = -1; z <= 1; z++) {
-                            if (x != 0 || y != 0 || z != 0) {
-                                mutablePos.setPos(check.getX() + x, check.getY() + y, check.getZ() + z);
-                                if (!visited.contains(mutablePos)) {
-                                    BlockPos immutablePos = mutablePos.toImmutable();
-                                    // isWood(?)
-                                    if (block == world.getBlockState(immutablePos).getBlock()) {
-                                        checking.add(immutablePos);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (!visited.isEmpty()) {
-                Deque<BlockPos> orderedBlocks = visited.stream()
-                        .sorted(Comparator.comparingInt(pos -> start.getY() - pos.getY()))
-                        .collect(Collectors.toCollection(ArrayDeque::new));
-                MinecraftForge.EVENT_BUS.register(new TreeFellingListener(player, tool, orderedBlocks));
-            }
-        }
-
-        private final EntityPlayerMP player;
-        private final ItemStack tool;
-        private final Deque<BlockPos> orderedBlocks;
-        private final BlockPos samplePos;
-        private final int minY;
-
-        private int minX, maxX, minZ, maxZ;
-        private boolean purgeLeaves;
-        private Block targetLeaves;
-        private Iterator<BlockPos.MutableBlockPos> leavesToPurge;
-
-        private TreeFellingListener(EntityPlayerMP player, ItemStack tool, Deque<BlockPos> orderedBlocks) {
-            this.player = player;
-            this.tool = tool;
-            this.orderedBlocks = orderedBlocks;
-            this.samplePos = orderedBlocks.getFirst();
-            this.minY = orderedBlocks.getLast().getY();
-            this.minX = this.maxX = this.samplePos.getX();
-            this.minZ = this.maxZ = this.samplePos.getZ();
-        }
-
-        @SubscribeEvent
-        public void onWorldTick(TickEvent.WorldTickEvent event) {
-            if (event.phase == TickEvent.Phase.START) {
-                if (purgeLeaves) {
-                    if (targetLeaves == null) {
-                        targetLeaves = Arrays.stream(EnumFacing.VALUES)
-                                .map(facing -> player.world.getBlockState(this.samplePos).getBlock())
-                                // Cannot use fastutil map::new here as setValue throws UOE
-                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                                .entrySet()
-                                .stream()
-                                .max(Map.Entry.comparingByValue())
-                                .map(Map.Entry::getKey)
-                                .orElse(Blocks.AIR);
-                        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(this.samplePos);
-                        int topY = mutablePos.getY();
-                        int tries = 2;
-                        while (tries > 0) {
-                            IBlockState state;
-                            do {
-                                mutablePos.setY(topY = mutablePos.getY() + 1);
-                            } while (targetLeaves == Blocks.AIR ?
-                                    (state = player.world.getBlockState(mutablePos)).getBlock().isLeaves(state, player.world, mutablePos) :
-                                    player.world.getBlockState(mutablePos).getBlock() == targetLeaves);
-                            tries--;
-                        }
-                        int offsetMinX = 3;
-                        int offsetMaxX = 3;
-                        int offsetMinZ = 3;
-                        int offsetMaxZ = 3;
-                        for (BlockPos.MutableBlockPos check : BlockPos.getAllInBoxMutable(this.minX - offsetMinX, this.minY, this.minZ - offsetMinZ, this.maxX + offsetMaxX, this.minY, this.maxZ + offsetMaxZ)) {
-                            if (check.getX() == this.samplePos.getX() && check.getZ() == this.samplePos.getZ()) {
-                                continue;
-                            }
-                            if (player.world.getBlockState(check).getBlock().isWood(player.world, check)) {
-                                int diff = this.samplePos.getX() - check.getX();
-                                if (diff > 0 && diff < offsetMaxX) {
-                                    offsetMaxX = diff;
-                                } else if (Math.abs(diff) < offsetMinX) {
-                                    offsetMinX = Math.abs(diff);
-                                }
-                                diff = this.samplePos.getZ() - check.getZ();
-                                if (diff > 0 && diff < offsetMaxZ) {
-                                    offsetMaxZ = diff;
-                                } else if (Math.abs(diff) < offsetMinZ) {
-                                    offsetMinZ = Math.abs(diff);
-                                }
-                            }
-                        }
-                        leavesToPurge = BlockPos.getAllInBoxMutable(this.minX - offsetMinX, this.minY, this.minZ - offsetMinZ, this.maxX + offsetMaxX, topY, this.maxZ + offsetMaxZ).iterator();
-                        return;
-                    }
-                    while (leavesToPurge.hasNext()) {
-                        BlockPos.MutableBlockPos check = leavesToPurge.next();
-                        IBlockState state = player.world.getBlockState(check);
-                        if (targetLeaves == Blocks.AIR ? state.getBlock().isLeaves(state, player.world, check) : state.getBlock() == targetLeaves) {
-                            state.getBlock().dropBlockAsItem(player.world, check, state, 0);
-                            player.world.setBlockToAir(check);
-                        }
-                    }
-                    MinecraftForge.EVENT_BUS.unregister(this);
-                    return;
-                }
-                if (event.world != this.player.world || tool.isEmpty()) {
-                    MinecraftForge.EVENT_BUS.unregister(this);
-                    return;
-                }
-                if (!orderedBlocks.isEmpty()) {
-                    BlockPos posToBreak = orderedBlocks.removeLast();
-                    int x = posToBreak.getX();
-                    if (x > this.maxX) {
-                        this.maxX = x;
-                    } else if (x < this.minX) {
-                        this.minX = x;
-                    }
-                    int z = posToBreak.getZ();
-                    if (z > this.maxZ) {
-                        this.maxZ = z;
-                    } else if (z < this.minZ) {
-                        this.minZ = z;
-                    }
-                    if (!breakBlockRoutine(player, tool, posToBreak)) {
-                        purgeLeaves = true;
-                    }
-                } else {
-                    purgeLeaves = true;
-                }
-            }
-        }
-    }
 }
