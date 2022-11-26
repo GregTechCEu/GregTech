@@ -12,7 +12,7 @@ import java.awt.*;
 
 // Thanks to EnderIO
 @SideOnly(Side.CLIENT)
-public class ToolChargeBarRenderer {
+public final class ToolChargeBarRenderer {
 
     private static final double BAR_W = 12d;
 

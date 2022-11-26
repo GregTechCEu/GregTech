@@ -15,6 +15,7 @@ import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.tool.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -83,25 +84,22 @@ public class ToolItems {
     public static IGTTool SCYTHE;
     public static IGTTool KNIFE;
     public static IGTTool BUTCHERY_KNIFE;
-    public static IGTTool PLUNGER;
     public static IGTTool DRILL_LV;
     public static IGTTool DRILL_MV;
     public static IGTTool DRILL_HV;
     public static IGTTool DRILL_EV;
     public static IGTTool DRILL_IV;
     public static IGTTool CHAINSAW_LV;
-    public static IGTTool CHAINSAW_MV;
-    public static IGTTool CHAINSAW_HV;
     public static IGTTool WRENCH_LV;
-    public static IGTTool WRENCH_MV;
     public static IGTTool WRENCH_HV;
+    public static IGTTool WRENCH_IV;
     public static IGTTool BUZZSAW;
     public static IGTTool SCREWDRIVER_LV;
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ToolItems.class);
         SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
-                        .toolStats(b -> b.attacking().blockBreaking())
+                        .toolStats(b -> b.blockBreaking().attacking())
                         .toolClasses(ToolClasses.SWORD));
         PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
                 .toolStats(b -> b.blockBreaking().attacking().behaviors(new TorchPlaceBehavior()))
@@ -112,7 +110,7 @@ public class ToolItems {
         AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
                 .toolStats(b -> b.blockBreaking().attacking().attackDamage(3.0F)
                         .attackSpeed(-2.6F).baseEfficiency(2.0F)
-                        .behaviors(new DisableShieldBehavior()))
+                        .behaviors(new DisableShieldBehavior(), new TreeFellingBehavior()))
                 .toolClasses(ToolClasses.AXE));
         HOE = register(ItemGTTool.Builder.of(GTValues.MODID, "hoe")
                 .toolStats(b -> b.behaviors(new HoeGroundBehavior()))
@@ -150,7 +148,7 @@ public class ToolItems {
                 .symbol('w')
                 .toolClasses(ToolClasses.WRENCH));
         FILE = register(ItemGTTool.Builder.of(GTValues.MODID, "file")
-                .toolStats(b -> b.blockBreaking().crafting())
+                .toolStats(b -> b.crafting())
                 .sound(GTSounds.FILE_TOOL)
                 .oreDict("craftingToolFile")
                 .symbol('f')
@@ -194,109 +192,92 @@ public class ToolItems {
                 .toolStats(b -> b.crafting().attacking())
                 .oreDict("craftingToolButcheryKnife")
                 .toolClasses(ToolClasses.BUTCHERY_KNIFE));
-        PLUNGER = register(ItemGTTool.Builder.of(GTValues.MODID, "plunger")
-                .toolStats(b -> b.crafting())
-                .oreDict("craftingToolPlunger")
-                .toolClasses(ToolClasses.PLUNGER));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm())
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(new TorchPlaceBehavior()))
                 .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
-                .electric(1));
+                .electric(GTValues.LV));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 2)
                         .efficiencyMultiplier(2.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm())
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
                         .behaviors(new TorchPlaceBehavior()))
                 .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
-                .electric(2));
+                .electric(GTValues.MV));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
                 .toolStats(b -> b.blockBreaking().aoe(2, 2, 4)
                         .efficiencyMultiplier(3.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm())
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
                         .behaviors(new TorchPlaceBehavior()))
                 .sound(GTSounds.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
-                .electric(3));
-        DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
-                        .efficiencyMultiplier(4.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm())
-                        .behaviors(new TorchPlaceBehavior()))
-                .sound(GTSounds.DRILL_TOOL)
-                .toolClasses(ToolClasses.DRILL)
-                .electric(4));
-        DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
-                        .efficiencyMultiplier(5.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm())
-                        .behaviors(new TorchPlaceBehavior()))
-                .sound(GTSounds.DRILL_TOOL)
-                .toolClasses(ToolClasses.DRILL)
-                .electric(5));
+                .electric(GTValues.HV));
+        if (ConfigHolder.tools.enableHighTierDrills) {
+            DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
+                    .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
+                            .efficiencyMultiplier(4.0F)
+                            .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
+                            .behaviors(new TorchPlaceBehavior()))
+                    .sound(GTSounds.DRILL_TOOL)
+                    .toolClasses(ToolClasses.DRILL)
+                    .electric(GTValues.EV));
+            DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
+                    .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
+                            .efficiencyMultiplier(5.0F)
+                            .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
+                            .behaviors(new TorchPlaceBehavior()))
+                    .sound(GTSounds.DRILL_TOOL)
+                    .toolClasses(ToolClasses.DRILL)
+                    .electric(GTValues.IV));
+        }
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
-                .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
+                .toolStats(b -> b.blockBreaking().aoe(1, 1, 2)
                         .efficiencyMultiplier(2.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm())
-                        .behaviors(new HarvestIceBehavior(), new DisableShieldBehavior()))
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
+                        .behaviors(new HarvestIceBehavior(), new DisableShieldBehavior(), new TreeFellingBehavior()))
                 .sound(GTSounds.CHAINSAW_TOOL)
                 .toolClasses(ToolClasses.AXE)
-                .electric(1));
-        CHAINSAW_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_mv")
-                .toolStats(b -> b.blockBreaking().aoe(1, 1, 1)
-                        .efficiencyMultiplier(3.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm())
-                        .behaviors(new HarvestIceBehavior(), new DisableShieldBehavior()))
-                .sound(GTSounds.CHAINSAW_TOOL)
-                .toolClasses(ToolClasses.AXE)
-                .electric(2));
-        CHAINSAW_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_hv")
-                .toolStats(b -> b.blockBreaking().aoe(2, 2, 2)
-                        .efficiencyMultiplier(4.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm())
-                        .behaviors(new HarvestIceBehavior(), new DisableShieldBehavior()))
-                .sound(GTSounds.CHAINSAW_TOOL)
-                .toolClasses(ToolClasses.AXE)
-                .electric(3));
+                .electric(GTValues.LV));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(2.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSounds.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
-                .electric(1));
-        WRENCH_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_mv")
-                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
-                        .efficiencyMultiplier(3.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
-                .sound(GTSounds.WRENCH_TOOL, true)
-                .oreDict("craftingToolWrench")
-                .toolClasses(ToolClasses.WRENCH)
-                .electric(2));
+                .electric(GTValues.LV));
         WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
-                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse().
-                        efficiencyMultiplier(4.0F)
-                        .brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
+                        .efficiencyMultiplier(8.0F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV))
                 .sound(GTSounds.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
-                .electric(3));
+                .electric(GTValues.HV));
+        WRENCH_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_iv")
+                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
+                        .efficiencyMultiplier(16.0F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV))
+                .sound(GTSounds.WRENCH_TOOL, true)
+                .oreDict("craftingToolWrench")
+                .toolClasses(ToolClasses.WRENCH)
+                .electric(GTValues.IV));
         BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")
-                .toolStats(b -> b.crafting().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .toolStats(b -> b.crafting().brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSounds.CHAINSAW_TOOL)
                 .oreDict("craftingToolSaw")
                 .toolClasses(ToolClasses.SAW)
-                .electric(1));
+                .electric(GTValues.LV));
         SCREWDRIVER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver_lv")
                 .toolStats(b -> b.crafting().sneakBypassUse()
-                        .brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSounds.SCREWDRIVER_TOOL)
                 .oreDict("craftingToolScrewdriver")
                 .toolClasses(ToolClasses.SCREWDRIVER)
-                .electric(1));
+                .electric(GTValues.LV));
     }
 
     private static IGTTool register(@Nonnull ToolBuilder<?> builder) {
@@ -431,14 +412,14 @@ public class ToolItems {
                     // Push
                     IGTToolDefinition toolStats = tool.getToolStats();
                     if (toolStats.isSuitableForCrafting(stack)) {
-                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
                     }
                     if (toolStats.isSuitableForAttacking(stack)) {
-                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
                     }
                     if (toolStats.isSuitableForBlockBreak(stack)) {
-                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));
-                        tooltipIterator.add(I18n.format("metaitem.tool.tooltip.harvest_level", tool.getTotalHarvestLevel(stack)));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.harvest_level", tool.getTotalHarvestLevel(stack)));
                     }
                     break; // Exit early
                 }
