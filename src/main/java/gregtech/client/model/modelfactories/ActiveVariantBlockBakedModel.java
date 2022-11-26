@@ -35,18 +35,17 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         List<BakedQuad> quads;
         if (side == null || state == null) return Collections.emptyList();
         ModelResourceLocation mrl;
-        /*
-        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
-            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                    "active=true," + statePropertiesToString(state.getProperties()));
+        boolean activeState;
+        //Some mods like to call this without getting the extendedBlockState leading to a NPE crash since the
+        //unlisted ACTIVE property is null.
+        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE) == null) {
+            activeState = false;
         } else {
-            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                    "active=false," + statePropertiesToString(state.getProperties()));
+            activeState = ((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE);
         }
-        */
-        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
+        if (activeState) {
             mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                    "active=true,variant="+ state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
+                    "active=true,variant=" + state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
                         IProperty<?> p = e.getKey();
                         return getPropertyName(p, e.getValue());
                     }).collect(Collectors.joining()));
