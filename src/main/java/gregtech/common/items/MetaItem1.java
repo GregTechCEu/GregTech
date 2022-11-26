@@ -379,11 +379,11 @@ public class MetaItem1 extends StandardMetaItem {
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
         WOODEN_FORM_EMPTY = addItem(347, "wooden_form.empty");
         WOODEN_FORM_BRICK = addItem(348, "wooden_form.brick").addComponents(selfContainerItemProvider);
-        COMPRESSED_CLAY = addItem(349, "compressed.clay");
-        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay");
-        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay");
-        FIRECLAY_BRICK = addItem(352, "brick.fireclay");
-        COKE_OVEN_BRICK = addItem(353, "brick.coke");
+        COMPRESSED_CLAY = addItem(349, "compressed.clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        FIRECLAY_BRICK = addItem(352, "brick.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        COKE_OVEN_BRICK = addItem(353, "brick.coke").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
 
         if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();
