@@ -2,6 +2,7 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -13,7 +14,6 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
@@ -109,11 +109,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     @Override
     public void drawExtras(@Nonnull Minecraft minecraft) {
 
-        String dimName;
-        String fullDimName;
-        int dimDisplayLength;
-
-        drawVeinName(minecraft.fontRenderer);
+        GTStringUtils.drawCenteredStringWithCutoff(veinName, minecraft.fontRenderer, 176);
 
         this.slot.draw(minecraft, SLOT_CENTER - 1, 18);
 
@@ -152,43 +148,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         int dimensionLength = minecraft.fontRenderer.getStringWidth(veinDimension);
         minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, 0x111111);
 
-        List<Integer> dimensionIDs = dimension.get();
-
-        //Will attempt to write dimension IDs in a single line, separated by commas. If the list is so long such that it
-        //would run off the end of the page, the list is continued on a new line.
-        int dimStartYPos = startPosY + 6 * FONT_HEIGHT + 1;
-        int dimDisplayPos = textStartX + dimensionLength;
-        for (int i = 0; i < dimensionIDs.size(); i++) {
-
-            //If the dimension name is included, append it to the dimension number
-            if (namedDimensions.containsKey(dimensionIDs.get(i))) {
-                dimName = namedDimensions.get(dimensionIDs.get(i));
-                fullDimName = i == dimensionIDs.size() - 1 ?
-                        dimensionIDs.get(i) + " (" + dimName + ")" :
-                        dimensionIDs.get(i) + " (" + dimName + "), ";
-            }
-            //If the dimension name is not included, just add the dimension number
-            else {
-
-                fullDimName = i == dimensionIDs.size() - 1 ?
-                        Integer.toString(dimensionIDs.get(i)) :
-                        dimensionIDs.get(i) + ", ";
-            }
-
-            //Find the length of the dimension name string
-            dimDisplayLength = minecraft.fontRenderer.getStringWidth(fullDimName);
-
-            //If the length of the string would go off the edge of screen, instead increment the y position
-            if (dimDisplayLength > (176 - dimDisplayPos)) {
-                dimStartYPos = dimStartYPos + FONT_HEIGHT;
-                dimDisplayPos = 70;
-            }
-
-            minecraft.fontRenderer.drawString(fullDimName, dimDisplayPos, dimStartYPos, 0x111111);
-
-            //Increment the dimension name display position
-            dimDisplayPos = dimDisplayPos + dimDisplayLength;
-        }
+        GTStringUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
 
     }
 
@@ -217,53 +177,4 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
 
         return Collections.emptyList();
     }
-
-    public void drawVeinName(final FontRenderer fontRenderer) {
-        final int maxVeinNameLength = 176;
-
-        String veinNameToDraw = veinName;
-
-        //Account for really long names
-        if (fontRenderer.getStringWidth(veinNameToDraw) > maxVeinNameLength) {
-            veinNameToDraw = fontRenderer.trimStringToWidth(veinName, maxVeinNameLength - 3, false) + "...";
-        }
-
-        //Ensure that the vein name is centered
-        int startPosition = (maxVeinNameLength - fontRenderer.getStringWidth(veinNameToDraw)) / 2;
-
-        fontRenderer.drawString(veinNameToDraw, startPosition, 1, 0x111111);
-    }
-
-   /* public List<Integer> getAllRegisteredDimensions() {
-        List<Integer> dims = new ArrayList<>();
-        /
-        Gather the registered dimensions here instead of at the top of the class to catch very late registered dimensions
-        such as Advanced Rocketry
-         /
-        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
-        dimMap.values().stream()
-                .flatMap(Collection::stream)
-                .mapToInt(Integer::intValue)
-                .filter(num -> definition.getDimensionFilter().test(DimensionManager.createProviderFor(num)))
-                .forEach(dims::add);
-
-        //Slight cleanup of the list if Advanced Rocketry is installed
-        if (Loader.isModLoaded(MODID_AR)) {
-            try {
-                int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
-
-                //Remove Space from the dimension list
-                for (int spaceDim : spaceDims) {
-                    if (dims.contains(spaceDim)) {
-                        dims.remove((Integer) spaceDim);
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                GTLog.logger.error("Something went wrong with AR JEI integration, No DimensionType found");
-                GTLog.logger.error(e);
-            }
-        }
-
-        return dims;
-    } */
 }

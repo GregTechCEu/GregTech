@@ -2,6 +2,7 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -14,7 +15,6 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Loader;
@@ -35,7 +35,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     protected int maxHeight;
     protected int outputCount;
     protected int weight;
-    protected List<Integer> dimensionIDs;
     protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
     private Supplier<List<Integer>> dimension;
@@ -115,9 +114,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         int baseXPos = 70;
         int baseYPos = 19;
         int dimDisplayPos = 70;
-        int dimDisplayLength;
-        String dimName;
-        String fullDimName;
 
         //Selected Ore
         this.slot.draw(minecraft, 22, baseYPos);
@@ -136,7 +132,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         //Must account for the fact that yPos is the top corner of the slot, so add in another slot height
         baseYPos = yPos + SLOT_HEIGHT;
 
-        drawVeinName(minecraft.fontRenderer);
+        GTStringUtils.drawCenteredStringWithCutoff(veinName, minecraft.fontRenderer, 176);
 
         //Begin Drawing information, depending on how many rows of ore outputs were created
         //Give room for 5 lines of 5 ores each, so 25 unique ores in the vein
@@ -155,63 +151,10 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         //Create the Dimensions
         minecraft.fontRenderer.drawString("Dimensions: ", 70, baseYPos + (2 * FONT_HEIGHT), 0x111111);
 
-        dimensionIDs = dimension.get();
-
-        //Will attempt to write dimension IDs in a single line, separated by commas. If the list is so long such that it
-        //would run off the end of the page, the list is continued on a new line.
-        for (int i = 0; i < dimensionIDs.size(); i++) {
-
-            //If the dimension name is included, append it to the dimension number
-            if (namedDimensions.containsKey(dimensionIDs.get(i))) {
-                dimName = namedDimensions.get(dimensionIDs.get(i));
-                fullDimName = i == dimensionIDs.size() - 1 ?
-                        dimensionIDs.get(i) + " (" + dimName + ")" :
-                        dimensionIDs.get(i) + " (" + dimName + "), ";
-            }
-            //If the dimension name is not included, just add the dimension number
-            else {
-
-                fullDimName = i == dimensionIDs.size() - 1 ?
-                        Integer.toString(dimensionIDs.get(i)) :
-                        dimensionIDs.get(i) + ", ";
-            }
-
-            //Find the length of the dimension name string
-            dimDisplayLength = minecraft.fontRenderer.getStringWidth(fullDimName);
-
-            //If the length of the string would go off the edge of screen, instead increment the y position
-            if (dimDisplayLength > (176 - dimDisplayPos)) {
-                baseYPos = baseYPos + FONT_HEIGHT;
-                dimDisplayPos = 70;
-            }
-
-            minecraft.fontRenderer.drawString(fullDimName, dimDisplayPos, baseYPos + (3 * FONT_HEIGHT), 0x111111);
-
-            //Increment the dimension name display position
-            dimDisplayPos = dimDisplayPos + dimDisplayLength;
-        }
-
+        GTStringUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), baseYPos + 3 * FONT_HEIGHT, dimDisplayPos);
 
         //Label the Surface Identifier
         minecraft.fontRenderer.drawSplitString("SurfaceMaterial", 15, 92, minecraft.fontRenderer.getStringWidth("Surface"), 0x111111);
 
     }
-
-    private void drawVeinName(final FontRenderer fontRenderer) {
-        final int maxVeinNameLength = 176;
-
-        String veinNameToDraw = veinName;
-
-        //Account for really long names
-        if (fontRenderer.getStringWidth(veinNameToDraw) > maxVeinNameLength) {
-            veinNameToDraw = fontRenderer.trimStringToWidth(veinName, maxVeinNameLength - 3, false) + "...";
-        }
-
-        //Ensure that the vein name is centered
-        int startPosition = (maxVeinNameLength - fontRenderer.getStringWidth(veinNameToDraw)) / 2;
-
-        fontRenderer.drawString(veinNameToDraw, startPosition, 1, 0x111111);
-    }
-
-
 }
