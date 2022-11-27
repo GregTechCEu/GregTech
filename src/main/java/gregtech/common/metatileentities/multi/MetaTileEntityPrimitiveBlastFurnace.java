@@ -151,9 +151,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
         if (getOffsetTimer() % 10 == 0) {
             IBlockState state = getWorld().getBlockState(middlePos);
-            if (GTUtility.isBlockSnowLayer(state)) {
-                getWorld().destroyBlock(middlePos, false);
-            }
+            GTUtility.tryBreakSnowLayer(getWorld(), middlePos, state, true);
         }
     }
 

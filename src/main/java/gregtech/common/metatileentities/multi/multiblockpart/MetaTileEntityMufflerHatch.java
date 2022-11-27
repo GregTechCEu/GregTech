@@ -102,13 +102,13 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) getController();
 
         // break a snow layer if it exists, and if this machine is running
-        boolean isSnowLayer = GTUtility.isBlockSnowLayer(blockState);
         if (controller != null && controller.isActive()) {
-            if (isSnowLayer) {
-                getWorld().destroyBlock(frontPos, false);
+            if (GTUtility.tryBreakSnowLayer(getWorld(), frontPos, blockState, true)) {
+                return true;
             }
+            return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
         }
-        return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || isSnowLayer;
+        return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnowLayer(blockState);
     }
 
     @SideOnly(Side.CLIENT)

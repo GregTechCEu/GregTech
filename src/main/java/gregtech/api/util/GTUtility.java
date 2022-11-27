@@ -36,6 +36,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -46,10 +47,7 @@ import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -1099,5 +1097,17 @@ public class GTUtility {
 
     public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
         return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+    }
+
+    /** Return true if the passed IBlockState was a snow layer */
+    public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
+        if (isBlockSnowLayer(blockState)) {
+            world.destroyBlock(pos, false);
+            if (playSound) {
+                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            }
+            return true;
+        }
+        return false;
     }
 }
