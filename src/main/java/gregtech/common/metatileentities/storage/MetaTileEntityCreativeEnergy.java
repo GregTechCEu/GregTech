@@ -181,7 +181,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         setTier = data.getByte("Tier");
         active = data.getBoolean("Active");
         source = data.getBoolean("Source");
-        lastEnergyIOPerSec = data.getLong("EnergyIOPerSec");
+        if (data.hasKey("EnergyIOPerSec"))
+            lastEnergyIOPerSec = data.getLong("EnergyIOPerSec");
         super.readFromNBT(data);
     }
 
