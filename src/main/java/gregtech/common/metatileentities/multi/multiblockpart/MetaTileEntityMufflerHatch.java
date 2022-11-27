@@ -17,11 +17,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -104,7 +102,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) getController();
 
         // break a snow layer if it exists, and if this machine is running
-        boolean isSnowLayer = blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+        boolean isSnowLayer = GTUtility.isBlockSnowLayer(blockState);
         if (controller != null && controller.isActive()) {
             if (isSnowLayer) {
                 getWorld().destroyBlock(frontPos, false);
