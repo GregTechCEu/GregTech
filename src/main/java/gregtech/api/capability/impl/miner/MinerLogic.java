@@ -171,7 +171,7 @@ public class MinerLogic {
                 blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
             }
             // When we are here we have an ore to mine! I'm glad we aren't threaded
-            if (GTUtility.isOre(GTUtility.toItem(blockState))) {
+            if (!blocksToMine.isEmpty() & GTUtility.isOre(GTUtility.toItem(blockState))) {
                 // get the small ore drops, if a small ore
                 getSmallOreBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // get the block's drops.
