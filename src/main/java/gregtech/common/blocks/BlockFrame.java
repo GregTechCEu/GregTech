@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -157,6 +158,30 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return false;
     }
 
+    public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, ItemStack stackInHand, EnumFacing facing) {
+        BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
+        if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
+            ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
+            IBlockState pipeState = blockPipe.getDefaultState();
+            // these 0 values are not actually used by forge
+            itemBlock.placeBlockAt(stackInHand, playerIn, worldIn, pos, facing, 0, 0, 0, pipeState);
+            IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
+            if (pipeTile instanceof TileEntityPipeBase) {
+                ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
+            } else {
+                GTLog.logger.error("Pipe was not placed!");
+                return false;
+            }
+            SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
+            worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+            if (!playerIn.capabilities.isCreativeMode) {
+                stackInHand.shrink(1);
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
@@ -165,26 +190,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         }
         // replace frame with pipe and set the frame material to this frame
         if (stackInHand.getItem() instanceof ItemBlockPipe) {
-            BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
-            if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
-                IBlockState pipeState = blockPipe.getDefaultState();
-                worldIn.setBlockState(pos, pipeState);
-                blockPipe.onBlockPlacedBy(worldIn, pos, pipeState, playerIn, stackInHand);
-                IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
-                if (pipeTile instanceof TileEntityPipeBase) {
-                    ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
-                } else {
-                    GTLog.logger.error("Pipe was not placed!");
-                    return false;
-                }
-                SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
-                worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
-                if (!playerIn.capabilities.isCreativeMode) {
-                    stackInHand.shrink(1);
-                }
-                return true;
-            }
-            return false;
+            return replaceWithFramedPipe(worldIn, pos, state, playerIn, stackInHand, facing);
         }
 
         if (!(stackInHand.getItem() instanceof FrameItemBlock)) {
