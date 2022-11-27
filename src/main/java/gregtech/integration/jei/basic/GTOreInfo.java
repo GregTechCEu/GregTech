@@ -31,7 +31,10 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import static gregtech.api.GTValues.M;
@@ -256,7 +259,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Only add the Biome Information to the selected Ore
         if (slotIndex == 0) {
-            tooltip.addAll(createBiomeTooltip());
+            tooltip.addAll(GTUtility.createSpawnPageBiomeTooltip(biomeFunction, weight));
             if (description != null) {
                 tooltip.add(description);
             }
@@ -275,44 +278,6 @@ public class GTOreInfo implements IRecipeWrapper {
                 tooltip.addAll(createOreWeightingTooltip(slotIndex));
             }
         }
-    }
-
-    //Creates a tooltip showing the Biome weighting of the ore vein
-    public List<String> createBiomeTooltip() {
-
-        Iterator<Biome> biomeIterator = Biome.REGISTRY.iterator();
-        int biomeWeight;
-        Map<Biome, Integer> modifiedBiomeMap = new HashMap<>();
-        List<String> tooltip = new ArrayList<>();
-
-        //Tests biomes against all registered biomes to find which biomes have had their weights modified
-        while (biomeIterator.hasNext()) {
-
-            Biome biome = biomeIterator.next();
-
-            //Gives the Biome Weight
-            biomeWeight = biomeFunction.apply(biome);
-            //Check if the biomeWeight is modified
-            if (biomeWeight != weight) {
-                modifiedBiomeMap.put(biome, weight + biomeWeight);
-            }
-        }
-
-        for (Map.Entry<Biome, Integer> entry : modifiedBiomeMap.entrySet()) {
-
-            //Don't show non changed weights, to save room
-            if (!(entry.getValue() == weight)) {
-                //Cannot Spawn
-                if (entry.getValue() <= 0) {
-                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
-                } else {
-                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
-                }
-            }
-        }
-
-
-        return tooltip;
     }
 
     //Creates a tooltip show the weighting of the individual ores in the ore vein

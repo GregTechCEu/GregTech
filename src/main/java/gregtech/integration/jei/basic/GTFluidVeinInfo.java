@@ -1,18 +1,19 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.util.FileUtility;
+import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 public class GTFluidVeinInfo implements IRecipeWrapper {
@@ -59,7 +60,6 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
         fluidList2.add(fluid);
         fluidList.add(fluidList2);
 
-        //todo, dimension, biome weight
         this.biomeFunction =  definition.getBiomeWeightModifier();
 
     }
@@ -82,50 +82,10 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
             tooltip.add(description);
         }
 
-        List<String> biomeTooltip = createBiomeTooltip();
+        List<String> biomeTooltip = GTUtility.createSpawnPageBiomeTooltip(biomeFunction, weight);
         if(!biomeTooltip.isEmpty()) {
             tooltip.addAll(biomeTooltip);
         }
-    }
-
-    //Creates a tooltip showing the Biome weighting of the Fluid vein
-    public List<String> createBiomeTooltip() {
-
-        Iterator<Biome> biomeIterator = Biome.REGISTRY.iterator();
-        int biomeWeight;
-        Map<Biome, Integer> modifiedBiomeMap = new HashMap<>();
-        List<String> tooltip = new ArrayList<>();
-
-        //Tests biomes against all registered biomes to find which biomes have had their weights modified
-        while (biomeIterator.hasNext()) {
-
-            Biome biome = biomeIterator.next();
-
-            //Gives the Biome Weight
-            biomeWeight = biomeFunction.apply(biome);
-            //Check if the biomeWeight is modified
-            if (biomeWeight != weight) {
-                modifiedBiomeMap.put(biome, weight + biomeWeight);
-            }
-        }
-
-        if(!modifiedBiomeMap.isEmpty()) {
-            tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("gregtech.jei.ore.biome_weighting_title"));
-        }
-        for (Map.Entry<Biome, Integer> entry : modifiedBiomeMap.entrySet()) {
-
-            //Don't show non changed weights, to save room
-            if (!(entry.getValue() == weight)) {
-                //Cannot Spawn
-                if (entry.getValue() <= 0) {
-                    tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
-                } else {
-                    tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
-                }
-            }
-        }
-
-        return tooltip;
     }
 
     public BedrockFluidDepositDefinition getDefinition() {
