@@ -24,6 +24,7 @@ import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -146,10 +147,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
         }
 
-        Set<String> toolClasses = stack.getItem().getToolClasses(stack);
-
-        //TODO implement these
-        behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, false);
+        behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, material.hasFlag(MaterialFlags.IS_MAGNETIC));
 
         return stack;
     }
@@ -296,7 +294,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
         // special case for the sword
-        if (get().getToolClasses(stack).contains(ToolClasses.SWORD)) {
+        if (getToolClasses(stack).contains(ToolClasses.SWORD)) {
             Block block = state.getBlock();
             if (block instanceof BlockWeb) {
                 return 15.0F;
@@ -679,6 +677,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      * @param rayTrace - The object that is being wrenched */
     @Override
     default void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
+        damageItem(player.getHeldItem(hand), player);
+        playSound(player);
     }
 
     // IToolHammer
@@ -694,10 +694,15 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @Override
     default void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
+        damageItem(item, user);
+        if (user instanceof EntityPlayer) {
+            playSound((EntityPlayer) user);
+        }
     }
 
     @Override
     default void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) {
+        damageItem(item, user);
     }
 
     // ITool
@@ -708,6 +713,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @Override
     default void used(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+        damageItem(player.getHeldItem(hand), player);
+        playSound(player);
     }
 
     // IHideFacades
@@ -728,7 +735,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      */
     @Override
     default float getSaplingModifier(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
-        return get().getToolClasses(stack).contains("grafter") ? 100F : 1.0F;
+        return getToolClasses(stack).contains(ToolClasses.GRAFTER) ? 100F : 1.0F;
     }
 
     // IOverlayRenderAware

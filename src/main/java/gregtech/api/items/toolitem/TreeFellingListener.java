@@ -54,8 +54,7 @@ public final class TreeFellingListener {
         Set<BlockPos> visited = new ObjectOpenHashSet<>();
         checking.add(start);
 
-        while (operations < MAX_SCANS && !checking.isEmpty()) {
-            operations++;
+        while (operations++ < MAX_SCANS && !checking.isEmpty()) {
             BlockPos check = checking.remove();
             if (check != start) {
                 visited.add(check);
