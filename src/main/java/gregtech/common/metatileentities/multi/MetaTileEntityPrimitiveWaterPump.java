@@ -22,6 +22,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -171,8 +172,16 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
         ).flatMap(Stream::of).toArray(String[]::new);
     }
 
+    private boolean isRainingInBiome() {
+        World world = getWorld();
+        if (!world.isRaining()) {
+            return false;
+        }
+        return world.getBiome(getPos()).canRain();
+    }
+
     @Override
     public int getFluidProduction() {
-        return biomeModifier * hatchModifier;
+        return (int) (biomeModifier * hatchModifier * (isRainingInBiome() ? 1.5 : 1));
     }
 }
