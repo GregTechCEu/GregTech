@@ -477,8 +477,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      */
     public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (getCoverAtSide(facing) != null) {
-            removeCover(facing);
-            return true;
+            return removeCover(facing);
         }
 
         return false;
