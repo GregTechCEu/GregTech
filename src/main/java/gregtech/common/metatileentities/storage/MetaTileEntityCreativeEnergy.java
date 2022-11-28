@@ -47,7 +47,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
     private long ampsReceived = 0;
     private boolean doExplosion = false;
-    private byte ticks;
 
     public MetaTileEntityCreativeEnergy() {
         super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
@@ -137,7 +136,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     public void update() {
         super.update();
         if (getWorld().isRemote) return;
-        if (ticks == 20) {
+        if (getOffsetTimer() % 20 == 0) {
             this.setIOSpeed(energyIOPerSec);
             energyIOPerSec = 0;
             if (doExplosion) {
@@ -145,9 +144,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                         1, false);
                 doExplosion = false;
             }
-            ticks = 0;
         }
-        ticks++;
         ampsReceived = 0;
         if (!active || !source || voltage <= 0 || amps <= 0) return;
         int ampsUsed = 0;
