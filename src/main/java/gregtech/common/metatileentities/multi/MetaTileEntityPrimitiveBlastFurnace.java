@@ -18,7 +18,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.ColourOperation;
@@ -28,6 +30,7 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -39,6 +42,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import javax.annotation.Nonnull;
 
 public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMultiblockController {
+
+    private static final TraceabilityPredicate IS_SNOW_LAYER = new TraceabilityPredicate(bws -> GTUtility.isBlockSnowLayer(bws.getBlockState()));
 
     public MetaTileEntityPrimitiveBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES);
@@ -53,10 +58,11 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX", "XXX")
-                .aisle("XXX", "X#X", "X#X", "X#X")
+                .aisle("XXX", "X&X", "X#X", "X#X")
                 .aisle("XXX", "XYX", "XXX", "XXX")
                 .where('X', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS)))
                 .where('#', air())
+                .where('&', air().or(IS_SNOW_LAYER)) // this won't stay in the structure, and will be broken while running
                 .where('Y', selfPredicate())
                 .build();
     }
@@ -122,7 +128,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
             if (getWorld().isRemote) {
                 pollutionParticles();
             } else {
-                damageEntities();
+                damageEntitiesAndBreakSnow();
             }
         }
     }
@@ -138,10 +144,15 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         runMufflerEffect(xPos, yPos, zPos, 0, ySpd, 0);
     }
 
-    private void damageEntities() {
+    private void damageEntitiesAndBreakSnow() {
         BlockPos middlePos = this.getPos();
         middlePos = middlePos.offset(getFrontFacing().getOpposite());
         this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(middlePos)).forEach(entity -> entity.attackEntityFrom(DamageSource.LAVA, 3.0f));
+
+        if (getOffsetTimer() % 10 == 0) {
+            IBlockState state = getWorld().getBlockState(middlePos);
+            GTUtility.tryBreakSnowLayer(getWorld(), middlePos, state, true);
+        }
     }
 
     @Override

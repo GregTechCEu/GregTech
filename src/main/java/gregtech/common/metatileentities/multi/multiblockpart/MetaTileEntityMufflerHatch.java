@@ -99,7 +99,16 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     private boolean checkFrontFaceFree() {
         BlockPos frontPos = getPos().offset(getFrontFacing());
         IBlockState blockState = getWorld().getBlockState(frontPos);
-        return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) getController();
+
+        // break a snow layer if it exists, and if this machine is running
+        if (controller != null && controller.isActive()) {
+            if (GTUtility.tryBreakSnowLayer(getWorld(), frontPos, blockState, true)) {
+                return true;
+            }
+            return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
+        }
+        return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnowLayer(blockState);
     }
 
     @SideOnly(Side.CLIENT)
