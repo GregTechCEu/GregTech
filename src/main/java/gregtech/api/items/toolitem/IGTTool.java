@@ -346,7 +346,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 effective |= ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
 
                 if (effective) {
-                    if (areaOfEffectBlockBreakRoutine(stack, playerMP, state.getBlockHardness(player.world, pos))) {
+                    if (areaOfEffectBlockBreakRoutine(stack, playerMP)) {
                         if (playSoundOnBlockDestroy()) playSound(player);
                     } else {
                         if (result == -1) {

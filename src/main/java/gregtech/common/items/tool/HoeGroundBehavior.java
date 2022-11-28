@@ -40,7 +40,7 @@ public class HoeGroundBehavior implements IToolBehavior {
 
         Set<BlockPos> blocks;
         // only attempt to till if the center block is tillable
-        if (world.isAirBlock(pos.up()) && isBlockTillable(stack, world, player, pos)) {
+        if (world.isAirBlock(pos.up()) && isBlockTillable(stack, world, player, pos, null)) {
             if (aoeDefinition == AoESymmetrical.none()) {
                 blocks = ImmutableSet.of(pos);
             } else {
@@ -97,7 +97,7 @@ public class HoeGroundBehavior implements IToolBehavior {
         return ToolHelper.iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, HoeGroundBehavior::isBlockTillable);
     }
 
-    private static boolean isBlockTillable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+    private static boolean isBlockTillable(ItemStack stack, World world, EntityPlayer player, BlockPos pos, @Nullable BlockPos hitBlockPos) {
         if (world.isAirBlock(pos.up())) {
             Block block = world.getBlockState(pos).getBlock();
             return block == Blocks.GRASS || block == Blocks.GRASS_PATH || block == Blocks.DIRT;
