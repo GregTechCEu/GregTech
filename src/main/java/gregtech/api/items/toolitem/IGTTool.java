@@ -30,8 +30,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -217,7 +215,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (isElectric()) {
             NBTTagCompound tag = stack.getTagCompound();
             if (tag != null && tag.hasKey(MAX_CHARGE_KEY, Constants.NBT.TAG_LONG)) {
-                return stack.getTagCompound().getLong(MAX_CHARGE_KEY);
+                return tag.getLong(MAX_CHARGE_KEY);
             }
         }
         return -1L;
@@ -227,7 +225,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (isElectric()) {
             NBTTagCompound tag = stack.getTagCompound();
             if (tag != null && tag.hasKey(CHARGE_KEY, Constants.NBT.TAG_LONG)) {
-                return stack.getTagCompound().getLong(CHARGE_KEY);
+                return tag.getLong(CHARGE_KEY);
             }
         }
         return -1L;
@@ -293,22 +291,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
-        // special case for the sword
-        if (getToolClasses(stack).contains(ToolClasses.SWORD)) {
-            Block block = state.getBlock();
-            if (block instanceof BlockWeb) {
-                return 15.0F;
-            } else {
-                net.minecraft.block.material.Material material = state.getMaterial();
-                if (material == net.minecraft.block.material.Material.PLANTS ||
-                        material == net.minecraft.block.material.Material.VINE ||
-                        material == net.minecraft.block.material.Material.CORAL ||
-                        material == net.minecraft.block.material.Material.LEAVES ||
-                        material == net.minecraft.block.material.Material.GOURD) {
-                    return 1.5F;
-                }
-            }
-        }
+        // special case check (mostly for the sword)
+        float specialValue = ToolHelper.getDestroySpeed(state, getToolClasses(stack));
+        if (specialValue != -1) return specialValue;
+
         if (ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
             return getTotalToolSpeed(stack);
         }

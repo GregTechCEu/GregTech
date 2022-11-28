@@ -21,12 +21,12 @@ public class DisableShieldBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.shield_disable"));
+    public void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {
+        tag.setBoolean(ToolHelper.DISABLE_SHIELDS_KEY, true);
     }
 
     @Override
-    public void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {
-        tag.setBoolean(ToolHelper.DISABLE_SHIELDS_KEY, true);
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+        tooltip.add(" " + I18n.format("item.gt.tool.behavior.shield_disable"));
     }
 }

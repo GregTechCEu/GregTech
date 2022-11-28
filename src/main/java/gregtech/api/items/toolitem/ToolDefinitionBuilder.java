@@ -77,8 +77,7 @@ public class ToolDefinitionBuilder {
     }
 
     public ToolDefinitionBuilder baseQuality() {
-        baseQuality(0);
-        return this;
+        return baseQuality(0);
     }
 
     public ToolDefinitionBuilder attackDamage(float attackDamage) {

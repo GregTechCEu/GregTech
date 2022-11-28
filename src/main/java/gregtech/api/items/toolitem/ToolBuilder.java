@@ -66,6 +66,11 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
+    public ToolBuilder<T> oreDict(ToolOreDicts oreDict) {
+        this.oreDict = oreDict.name();
+        return this;
+    }
+
     public ToolBuilder<T> symbol(char symbol) {
         this.symbol = symbol;
         return this;
