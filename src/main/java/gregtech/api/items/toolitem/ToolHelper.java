@@ -359,7 +359,6 @@ public final class ToolHelper {
 
     private static boolean isBlockAoEHarvestable(ItemStack stack, World world, EntityPlayer player, BlockPos pos, BlockPos hitBlockPos) {
         if (world.isAirBlock(pos)) return false;
-        if (!(stack.getItem() instanceof IGTTool)) return false;
 
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockLiquid) return false;
