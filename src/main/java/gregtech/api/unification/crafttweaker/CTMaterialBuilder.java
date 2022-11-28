@@ -86,13 +86,7 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder polymer() {
-        backingBuilder.polymer();
-        return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder polymer(@Optional() int harvestLevel) {
+    public CTMaterialBuilder polymer(@Optional int harvestLevel) {
         if (harvestLevel == 0) harvestLevel = 2;
         backingBuilder.polymer(harvestLevel);
         return this;

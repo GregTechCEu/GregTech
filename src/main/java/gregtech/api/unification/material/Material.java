@@ -572,7 +572,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add an {@link PolymerProperty} to this Material.<br>
+         * Add a {@link PolymerProperty} to this Material.<br>
          * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).<br>
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
@@ -584,7 +584,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add an {@link PolymerProperty} to this Material.<br>
+         * Add a {@link PolymerProperty} to this Material.<br>
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          * Will have a burn time of 0
          *
