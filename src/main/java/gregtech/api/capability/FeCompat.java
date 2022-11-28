@@ -30,6 +30,15 @@ public class FeCompat {
     }
 
     /**
+     * Converts eu to fe, using a specified ratio, and with a specified upper bound.
+     * This can be useful for dealing with int-overflows when converting from a long to an int.
+     * @return fe
+     */
+    public static int toFeBounded(long eu, int ratio, int max) {
+        return (int) Math.min(max, toFeLong(eu, ratio));
+    }
+
+    /**
      * Converts fe to eu, using specified ratio
      * @return eu
      */

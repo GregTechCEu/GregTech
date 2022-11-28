@@ -251,12 +251,12 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public int getEnergyStored() {
-            return (int) Math.min(Integer.MAX_VALUE, FeCompat.toFeLong(storedEU, FeCompat.ratio(feToEu)));
+            return FeCompat.toFeBounded(storedEU, FeCompat.ratio(feToEu), Integer.MAX_VALUE);
         }
 
         @Override
         public int getMaxEnergyStored() {
-            return (int) Math.min(Integer.MAX_VALUE, FeCompat.toFeLong(baseCapacity, FeCompat.ratio(feToEu)));
+            return FeCompat.toFeBounded(baseCapacity, FeCompat.ratio(feToEu), Integer.MAX_VALUE);
         }
 
         @Override
