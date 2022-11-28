@@ -347,10 +347,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
                 if (effective) {
                     if (areaOfEffectBlockBreakRoutine(stack, playerMP, state.getBlockHardness(player.world, pos))) {
-                        playSound(player);
+                        if (playSoundOnBlockDestroy()) playSound(player);
                     } else {
                         if (result == -1) {
                             treeFellingRoutine(playerMP, stack, pos);
+                            if (playSoundOnBlockDestroy()) playSound(player);
                         } else {
                             return true;
                         }
@@ -368,9 +369,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
                 damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
             }
-            if (entityLiving instanceof EntityPlayer && playSoundOnBlockDestroy() &&
-                    getToolStats().getAoEDefinition(stack) == AoESymmetrical.none()) {
-                playSound((EntityPlayer) entityLiving);
+            if (entityLiving instanceof EntityPlayer && playSoundOnBlockDestroy()) {
+                // sneaking disables AOE, which means it is okay to play the sound
+                // not checking this means the sound will play for every AOE broken block, which is very loud
+                if (entityLiving.isSneaking()) {
+                    playSound((EntityPlayer) entityLiving);
+                }
             }
         }
         return true;
