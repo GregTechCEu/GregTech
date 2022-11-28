@@ -1,7 +1,7 @@
 package gregtech.common.tools;
 
 import com.google.common.collect.ImmutableSet;
-import gregtech.api.enchants.EnchantmentHardHammer;
+import gregtech.tools.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;

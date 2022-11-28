@@ -12,7 +12,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.enchants.EnchantmentData;
 import gregtech.api.items.IToolItem;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
@@ -33,6 +32,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -861,21 +861,21 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
                 for (EnchantmentData enchantmentData : prop.toolEnchantments) {
                     if (enchantments.containsKey(enchantmentData.enchantment)) {
-                        int level = Math.min(enchantments.get(enchantmentData.enchantment) + enchantmentData.level,
+                        int level = Math.min(enchantments.get(enchantmentData.enchantment) + enchantmentData.enchantmentLevel,
                                 enchantmentData.enchantment.getMaxLevel());
                         enchantments.put(enchantmentData.enchantment, level);
                     } else {
-                        enchantments.put(enchantmentData.enchantment, enchantmentData.level);
+                        enchantments.put(enchantmentData.enchantment, enchantmentData.enchantmentLevel);
                     }
                 }
             }
             for (EnchantmentData enchantmentData : toolStats.getEnchantments(itemStack)) {
                 if (enchantments.containsKey(enchantmentData.enchantment)) {
-                    int level = Math.min(enchantments.get(enchantmentData.enchantment) + enchantmentData.level,
+                    int level = Math.min(enchantments.get(enchantmentData.enchantment) + enchantmentData.enchantmentLevel,
                             enchantmentData.enchantment.getMaxLevel());
                     enchantments.put(enchantmentData.enchantment, level);
                 } else {
-                    enchantments.put(enchantmentData.enchantment, enchantmentData.level);
+                    enchantments.put(enchantmentData.enchantment, enchantmentData.enchantmentLevel);
                 }
             }
             enchantments.keySet().removeIf(enchantment -> !enchantment.canApply(itemStack));

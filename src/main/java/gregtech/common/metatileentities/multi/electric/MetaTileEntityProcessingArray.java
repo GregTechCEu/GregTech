@@ -16,7 +16,6 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -24,6 +23,7 @@ import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -131,7 +131,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @Override
     public SoundEvent getSound() {
-        return GTSounds.ARC;
+        return GTSoundEvents.ARC;
     }
 
     @Override

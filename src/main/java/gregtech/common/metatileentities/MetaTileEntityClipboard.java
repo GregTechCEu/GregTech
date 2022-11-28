@@ -7,6 +7,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
@@ -18,8 +19,7 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.CPacketClipboardNBTUpdate;
+import gregtech.core.network.packets.PacketClipboardNBTUpdate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
@@ -427,10 +427,10 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     private void sendNBTToServer() {
         PacketBuffer packetBuffer = new PacketBuffer(Unpooled.buffer());
         packetBuffer.writeCompoundTag(this.getClipboard().getTagCompound());
-        NetworkHandler.channel.sendToServer(new CPacketClipboardNBTUpdate(
+        GregTechAPI.networkHandler.sendToServer(new PacketClipboardNBTUpdate(
                 this.getWorld().provider.getDimension(),
                 this.getPos(),
-                1, packetBuffer).toFMLPacket());
+                1, packetBuffer));
     }
 
     @Override

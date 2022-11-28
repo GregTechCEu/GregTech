@@ -1,11 +1,11 @@
 package gregtech.api.items.toolitem;
 
-import gregtech.api.enchants.EnchantmentData;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.material.Material;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

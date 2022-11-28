@@ -1,7 +1,7 @@
 package gregtech.api.unification.material.properties;
 
-import gregtech.api.enchants.EnchantmentData;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 
 import java.util.ArrayList;
 import java.util.List;
