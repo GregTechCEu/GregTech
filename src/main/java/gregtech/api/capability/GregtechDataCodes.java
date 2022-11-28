@@ -115,4 +115,7 @@ public class GregtechDataCodes {
     public static final int WORKABLE_ACTIVE = 1;
     public static final int WORKING_ENABLED = 5;
 
+    // Creative Energy
+    public static final int UPDATE_IO_SPEED = 1;
+
 }
