@@ -1099,7 +1099,10 @@ public class GTUtility {
         return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
     }
 
-    /** Return true if the passed IBlockState was a snow layer */
+    /**
+     * Attempt to break a (single) snow layer at the given BlockPos.
+     * @return true if the passed IBlockState was a snow layer
+     */
     public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
         if (isBlockSnowLayer(blockState)) {
             world.destroyBlock(pos, false);
