@@ -2,10 +2,10 @@ package gregtech.common.items;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.*;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.tool.*;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -86,7 +86,7 @@ public class ToolItems {
         SOFT_MALLET = register(ItemGTTool.Builder.of(GTValues.MODID, "mallet")
                 .toolStats(b -> b.crafting())
                 .oreDict("craftingToolMallet")
-                .sound(GTSounds.MALLET_TOOL)
+                .sound(GTSoundEvents.SOFT_MALLET_TOOL)
                 .symbol('r')
                 .toolClasses(ToolClasses.SOFT_MALLET));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
@@ -100,13 +100,13 @@ public class ToolItems {
                 .toolClasses(ToolClasses.SHOVEL));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse())
-                .sound(GTSounds.WRENCH_TOOL, true)
+                .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .symbol('w')
                 .toolClasses(ToolClasses.WRENCH));
         FILE = register(ItemGTTool.Builder.of(GTValues.MODID, "file")
                 .toolStats(b -> b.crafting())
-                .sound(GTSounds.FILE_TOOL)
+                .sound(GTSoundEvents.FILE_TOOL)
                 .oreDict("craftingToolFile")
                 .symbol('f')
                 .toolClasses(ToolClasses.FILE));
@@ -119,19 +119,19 @@ public class ToolItems {
                 .toolClasses(ToolClasses.CROWBAR));
         SCREWDRIVER = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver")
                 .toolStats(b -> b.crafting().sneakBypassUse())
-                .sound(GTSounds.SCREWDRIVER_TOOL)
+                .sound(GTSoundEvents.SCREWDRIVER_TOOL)
                 .oreDict("craftingToolScrewdriver")
                 .symbol('d')
                 .toolClasses(ToolClasses.SCREWDRIVER));
         MORTAR = register(ItemGTTool.Builder.of(GTValues.MODID, "mortar")
                 .toolStats(b -> b.crafting())
-                .sound(GTSounds.MORTAR_TOOL)
+                .sound(GTSoundEvents.MORTAR_TOOL)
                 .oreDict("craftingToolMortar")
                 .symbol('m')
                 .toolClasses(ToolClasses.MORTAR));
         WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter")
                 .toolStats(b -> b.blockBreaking().crafting())
-                .sound(GTSounds.WIRECUTTER_TOOL, true)
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
                 .oreDict("craftingToolWireCutter")
                 .symbol('x')
                 .toolClasses(ToolClasses.WIRE_CUTTER));
@@ -153,7 +153,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(new TorchPlaceBehavior()))
-                .sound(GTSounds.DRILL_TOOL)
+                .sound(GTSoundEvents.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.LV));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
@@ -161,7 +161,7 @@ public class ToolItems {
                         .efficiencyMultiplier(2.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
                         .behaviors(new TorchPlaceBehavior()))
-                .sound(GTSounds.DRILL_TOOL)
+                .sound(GTSoundEvents.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.MV));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
@@ -169,7 +169,7 @@ public class ToolItems {
                         .efficiencyMultiplier(3.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
                         .behaviors(new TorchPlaceBehavior()))
-                .sound(GTSounds.DRILL_TOOL)
+                .sound(GTSoundEvents.DRILL_TOOL)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.HV));
         if (ConfigHolder.tools.enableHighTierDrills) {
@@ -178,7 +178,7 @@ public class ToolItems {
                             .efficiencyMultiplier(4.0F)
                             .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
                             .behaviors(new TorchPlaceBehavior()))
-                    .sound(GTSounds.DRILL_TOOL)
+                    .sound(GTSoundEvents.DRILL_TOOL)
                     .toolClasses(ToolClasses.DRILL)
                     .electric(GTValues.EV));
             DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
@@ -186,7 +186,7 @@ public class ToolItems {
                             .efficiencyMultiplier(5.0F)
                             .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
                             .behaviors(new TorchPlaceBehavior()))
-                    .sound(GTSounds.DRILL_TOOL)
+                    .sound(GTSoundEvents.DRILL_TOOL)
                     .toolClasses(ToolClasses.DRILL)
                     .electric(GTValues.IV));
         }
@@ -195,14 +195,14 @@ public class ToolItems {
                         .efficiencyMultiplier(2.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(new HarvestIceBehavior(), new DisableShieldBehavior(), new TreeFellingBehavior()))
-                .sound(GTSounds.CHAINSAW_TOOL)
+                .sound(GTSoundEvents.CHAINSAW_TOOL)
                 .toolClasses(ToolClasses.AXE)
                 .electric(GTValues.LV));
         WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(2.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
-                .sound(GTSounds.WRENCH_TOOL, true)
+                .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.LV));
@@ -210,7 +210,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(8.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV))
-                .sound(GTSounds.WRENCH_TOOL, true)
+                .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.HV));
@@ -218,20 +218,20 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(16.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV))
-                .sound(GTSounds.WRENCH_TOOL, true)
+                .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.IV));
         BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")
                 .toolStats(b -> b.crafting().brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
-                .sound(GTSounds.CHAINSAW_TOOL)
+                .sound(GTSoundEvents.CHAINSAW_TOOL)
                 .oreDict("craftingToolSaw")
                 .toolClasses(ToolClasses.SAW)
                 .electric(GTValues.LV));
         SCREWDRIVER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver_lv")
                 .toolStats(b -> b.crafting().sneakBypassUse()
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
-                .sound(GTSounds.SCREWDRIVER_TOOL)
+                .sound(GTSoundEvents.SCREWDRIVER_TOOL)
                 .oreDict("craftingToolScrewdriver")
                 .toolClasses(ToolClasses.SCREWDRIVER)
                 .electric(GTValues.LV));
