@@ -354,12 +354,12 @@ public class MinerLogic {
                         x.incrementAndGet();
                     } else {
                         // reset x and move to the next z layer
-                        x.set(x.get() - currentRadius * 2);
+                        x.set(startX.get());
                         z.incrementAndGet();
                     }
                 } else {
                     // reset z and move to the next y layer
-                    z.set(z.get() - currentRadius * 2);
+                    z.set(startZ.get());
                     y.decrementAndGet();
                 }
             } else
