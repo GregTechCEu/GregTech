@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -15,6 +16,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public interface IItemBehaviour extends IItemComponent {
@@ -47,5 +49,8 @@ public interface IItemBehaviour extends IItemComponent {
 
     default ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+    }
+
+    default void addPropertyOverride(@Nonnull Item item) {
     }
 }

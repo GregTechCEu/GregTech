@@ -816,6 +816,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 }
                 if (itemComponent instanceof IItemBehaviour) {
                     this.behaviours.add((IItemBehaviour) itemComponent);
+                    ((IItemBehaviour) itemComponent).addPropertyOverride(getMetaItem());
                 }
                 if (itemComponent instanceof IEnchantabilityHelper) {
                     this.enchantabilityHelper = (IEnchantabilityHelper) itemComponent;

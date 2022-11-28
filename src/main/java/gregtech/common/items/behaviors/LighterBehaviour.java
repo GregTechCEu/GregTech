@@ -63,8 +63,9 @@ public class LighterBehaviour implements IItemBehaviour {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         if (entity instanceof EntityCreeper) {
-            prepareLighter(stack);
-            if (consumeFuel(player, stack)) {
+            NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
+            // If this item does not have opening mechanics, or if it does and is currently open
+            if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
                 player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
                 ((EntityCreeper) entity).ignite();
                 return true;
@@ -76,18 +77,16 @@ public class LighterBehaviour implements IItemBehaviour {
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
 
-        if (canOpen) {
-            NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
-            if (player.isSneaking() && compound.getBoolean(LIGHTER_OPEN)) {
-                compound.setBoolean(LIGHTER_OPEN, false);
-                stack.setTagCompound(compound);
-                return EnumActionResult.PASS;
-            }
+        if (canOpen && player.isSneaking()) {
+            compound.setBoolean(LIGHTER_OPEN, !compound.getBoolean(LIGHTER_OPEN));
+            stack.setTagCompound(compound);
+            return EnumActionResult.PASS;
         }
 
-        prepareLighter(stack);
-        if (consumeFuel(player, stack)) {
+        // If this item does not have opening mechanics, or if it does and is currently open
+        if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
             player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
             IBlockState blockState = world.getBlockState(pos);
             Block block = blockState.getBlock();
@@ -113,17 +112,6 @@ public class LighterBehaviour implements IItemBehaviour {
         lines.add(I18n.format(usesFluid ? "behaviour.lighter.fluid.tooltip" : "behaviour.lighter.tooltip"));
         if (hasMultipleUses && !usesFluid) {
             lines.add(I18n.format("behaviour.lighter.uses", getUsesLeft(itemStack)));
-        }
-    }
-
-    private void prepareLighter(ItemStack stack) {
-        if (canOpen) {
-            NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
-            // open the lighter
-            if (!tagCompound.getBoolean(LIGHTER_OPEN)) {
-                tagCompound.setBoolean(LIGHTER_OPEN, true);
-                stack.setTagCompound(tagCompound);
-            }
         }
     }
 
@@ -183,12 +171,11 @@ public class LighterBehaviour implements IItemBehaviour {
         }
     }
 
-    //TODO Reimplement onAddedToItem
-//    @Override
-//    public void onAddedToItem(@Nonnull MetaItem.MetaValueItem metaValueItem) {
-//        if (overrideLocation != null) {
-//            metaValueItem.getMetaItem().addPropertyOverride(overrideLocation,
-//                    (stack, worldIn, entityIn) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
-//        }
-//    }
+    @Override
+    public void addPropertyOverride(@Nonnull Item item) {
+        if (overrideLocation != null) {
+            item.addPropertyOverride(overrideLocation,
+                    (stack, world, entity) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
+        }
+    }
 }
