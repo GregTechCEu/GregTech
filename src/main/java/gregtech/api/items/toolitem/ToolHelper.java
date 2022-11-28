@@ -14,7 +14,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.function.QuadFunction;
+import gregtech.api.util.function.QuintFunction;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.tools.enchants.EnchantmentHardHammer;
@@ -290,13 +290,10 @@ public final class ToolHelper {
     /**
      * AoE Block Breaking Routine.
      */
-    public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player, float maximumHardness) {
+    public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player) {
         Set<BlockPos> harvestableBlocks = getHarvestableBlocks(stack, player);
         if (!harvestableBlocks.isEmpty()) {
             for (BlockPos pos : harvestableBlocks) {
-                if (player.world.getBlockState(pos).getBlockHardness(player.world, pos) > maximumHardness) {
-                    continue; // if mining a block takes longer than the center block, do not mine it
-                }
                 if (!breakBlockRoutine(player, stack, pos)) {
                     return true;
                 }
@@ -306,7 +303,7 @@ public final class ToolHelper {
         return false;
     }
 
-    public static Set<BlockPos> iterateAoE(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult, QuadFunction<ItemStack, World, EntityPlayer, BlockPos, Boolean> function) {
+    public static Set<BlockPos> iterateAoE(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult, QuintFunction<ItemStack, World, EntityPlayer, BlockPos, BlockPos, Boolean> function) {
         if (aoeDefinition != AoESymmetrical.none() && rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
             int column = aoeDefinition.column;
             int row = aoeDefinition.row;
@@ -325,7 +322,7 @@ public final class ToolHelper {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
                                 if (player.canPlayerEdit(pos.offset(rayTraceResult.sideHit), rayTraceResult.sideHit, stack)) {
-                                    if (function.apply(stack, world, player, pos)) {
+                                    if (function.apply(stack, world, player, pos, rayTraceResult.getBlockPos())) {
                                         validPositions.add(pos);
                                     }
                                 }
@@ -343,7 +340,7 @@ public final class ToolHelper {
                         for (int z = -column; z <= column; z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));
-                                if (function.apply(stack, world, player, pos)) {
+                                if (function.apply(stack, world, player, pos, rayTraceResult.getBlockPos())) {
                                     validPositions.add(pos);
                                 }
                             }
@@ -360,27 +357,31 @@ public final class ToolHelper {
         return iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, ToolHelper::isBlockAoEHarvestable);
     }
 
-    private static boolean isBlockAoEHarvestable(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+    private static boolean isBlockAoEHarvestable(ItemStack stack, World world, EntityPlayer player, BlockPos pos, BlockPos hitBlockPos) {
         if (world.isAirBlock(pos)) return false;
+        if (!(stack.getItem() instanceof IGTTool)) return false;
 
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockLiquid) return false;
 
-        if (state.getBlock().getHarvestTool(state) == null && state.getBlock().isReplaceable(world, pos)) {
-            return true;
+        IBlockState hitBlockState = world.getBlockState(hitBlockPos);
+        if (state.getBlockHardness(world, pos) - hitBlockState.getBlockHardness(world, hitBlockPos) > 5) {
+            // If mining a block takes significantly longer than the center block, do not mine it.
+            // Originally this was just a check for if it is at all harder of a block, however that
+            // would cause some annoyances, like Grass Block not being broken if a Dirt Block was the
+            // hit block for AoE. This value is somewhat arbitrary, but should cause things to feel
+            // natural to mine, but avoid exploits like mining Obsidian quickly by instead targeting Stone.
+            return false;
         }
-
-        if (stack.canHarvestBlock(state)) return true;
-        String tool = state.getBlock().getHarvestTool(state);
-        if (stack.isEmpty() || tool == null) return true;
-
-        return stack.getItem().getHarvestLevel(stack, tool, player, state) >= state.getBlock().getHarvestLevel(state);
+        return stack.canHarvestBlock(state);
     }
 
     // encompasses all vanilla special case tool checks for harvesting
     public static boolean isToolEffective(IBlockState state, Set<String> toolClasses, int harvestLevel) {
         Block block = state.getBlock();
-        if (toolClasses.contains(block.getHarvestTool(state))) return true;
+        if (toolClasses.contains(block.getHarvestTool(state))) {
+            return block.getHarvestLevel(state) <= harvestLevel;
+        }
 
         net.minecraft.block.material.Material material = state.getMaterial();
         if (toolClasses.contains(ToolClasses.PICKAXE)) {
