@@ -16,8 +16,13 @@
       "conditions": {
         "items": [
           {
-            "type": "forge:ore_dict",
-            "ore": "craftingToolMiningDrill"
+            "items": [
+              "gregtech:drill_lv",
+              "gregtech:drill_mv",
+              "gregtech:drill_hv",
+              "gregtech:drill_ev",
+              "gregtech:drill_iv"
+            ]
           }
         ]
       }
