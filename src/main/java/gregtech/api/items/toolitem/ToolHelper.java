@@ -431,6 +431,30 @@ public final class ToolHelper {
         return false;
     }
 
+    /**
+     * Special cases for vanilla destroy speed changes.
+     * If return -1, no special case was found, and some other method
+     * should be used to determine the destroy speed.
+     */
+    public static float getDestroySpeed(IBlockState state, Set<String> toolClasses) {
+        if (toolClasses.contains(ToolClasses.SWORD)) {
+            Block block = state.getBlock();
+            if (block instanceof BlockWeb) {
+                return 15.0F;
+            } else {
+                net.minecraft.block.material.Material material = state.getMaterial();
+                if (material == net.minecraft.block.material.Material.PLANTS ||
+                        material == net.minecraft.block.material.Material.VINE ||
+                        material == net.minecraft.block.material.Material.CORAL ||
+                        material == net.minecraft.block.material.Material.LEAVES ||
+                        material == net.minecraft.block.material.Material.GOURD) {
+                    return 1.5F;
+                }
+            }
+        }
+        return -1;
+    }
+
     public static Set<BlockPos> getHarvestableBlocks(ItemStack stack, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
         return getHarvestableBlocks(stack, getAoEDefinition(stack), world, player, rayTraceResult);
     }

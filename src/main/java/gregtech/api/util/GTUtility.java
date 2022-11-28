@@ -103,7 +103,7 @@ public class GTUtility {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
 
-    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean unused) {
+    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
             dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
