@@ -74,18 +74,18 @@ public class ToolItems {
                 .toolClasses(ToolClasses.HOE));
         SAW = register(ItemGTTool.Builder.of(GTValues.MODID, "saw")
                 .toolStats(b -> b.attacking().crafting().behaviors(new HarvestIceBehavior()))
-                .oreDict("craftingToolSaw")
+                .oreDict(ToolOreDicts.craftingToolSaw)
                 .symbol('s')
                 .toolClasses(ToolClasses.SAW));
         HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
                 .toolStats(b -> b.blockBreaking().attacking().crafting())
-                .oreDict("craftingToolHammer")
+                .oreDict(ToolOreDicts.craftingToolHammer)
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .symbol('h')
                 .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER));
         SOFT_MALLET = register(ItemGTTool.Builder.of(GTValues.MODID, "mallet")
                 .toolStats(b -> b.crafting())
-                .oreDict("craftingToolMallet")
+                .oreDict(ToolOreDicts.craftingToolMallet)
                 .sound(GTSoundEvents.SOFT_MALLET_TOOL)
                 .symbol('r')
                 .toolClasses(ToolClasses.SOFT_MALLET));
@@ -101,38 +101,38 @@ public class ToolItems {
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse())
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
-                .oreDict("craftingToolWrench")
+                .oreDict(ToolOreDicts.craftingToolWrench)
                 .symbol('w')
                 .toolClasses(ToolClasses.WRENCH));
         FILE = register(ItemGTTool.Builder.of(GTValues.MODID, "file")
                 .toolStats(b -> b.crafting())
                 .sound(GTSoundEvents.FILE_TOOL)
-                .oreDict("craftingToolFile")
+                .oreDict(ToolOreDicts.craftingToolFile)
                 .symbol('f')
                 .toolClasses(ToolClasses.FILE));
         CROWBAR = register(ItemGTTool.Builder.of(GTValues.MODID, "crowbar")
                 .toolStats(b -> b.blockBreaking().crafting().attacking()
                         .sneakBypassUse().behaviors(new RotateRailBehavior()))
                 .sound(SoundEvents.ENTITY_ITEM_BREAK)
-                .oreDict("craftingToolCrowbar")
+                .oreDict(ToolOreDicts.craftingToolCrowbar)
                 .symbol('c')
                 .toolClasses(ToolClasses.CROWBAR));
         SCREWDRIVER = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver")
                 .toolStats(b -> b.crafting().sneakBypassUse())
                 .sound(GTSoundEvents.SCREWDRIVER_TOOL)
-                .oreDict("craftingToolScrewdriver")
+                .oreDict(ToolOreDicts.craftingToolScrewdriver)
                 .symbol('d')
                 .toolClasses(ToolClasses.SCREWDRIVER));
         MORTAR = register(ItemGTTool.Builder.of(GTValues.MODID, "mortar")
                 .toolStats(b -> b.crafting())
                 .sound(GTSoundEvents.MORTAR_TOOL)
-                .oreDict("craftingToolMortar")
+                .oreDict(ToolOreDicts.craftingToolMortar)
                 .symbol('m')
                 .toolClasses(ToolClasses.MORTAR));
         WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter")
                 .toolStats(b -> b.blockBreaking().crafting())
                 .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
-                .oreDict("craftingToolWireCutter")
+                .oreDict(ToolOreDicts.craftingToolWireCutter)
                 .symbol('x')
                 .toolClasses(ToolClasses.WIRE_CUTTER));
         SCYTHE = register(ItemGTSword.Builder.of(GTValues.MODID, "scythe")
@@ -142,12 +142,12 @@ public class ToolItems {
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
         KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
                 .toolStats(b -> b.crafting())
-                .oreDict("craftingToolKnife")
+                .oreDict(ToolOreDicts.craftingToolKnife)
                 .symbol('k')
                 .toolClasses(ToolClasses.KNIFE, ToolClasses.SWORD));
         BUTCHERY_KNIFE = register(ItemGTSword.Builder.of(GTValues.MODID, "butchery_knife")
                 .toolStats(b -> b.crafting().attacking())
-                .oreDict("craftingToolButcheryKnife")
+                .oreDict(ToolOreDicts.craftingToolButcheryKnife)
                 .toolClasses(ToolClasses.BUTCHERY_KNIFE));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
@@ -203,7 +203,7 @@ public class ToolItems {
                         .efficiencyMultiplier(2.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
-                .oreDict("craftingToolWrench")
+                .oreDict(ToolOreDicts.craftingToolWrench)
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.LV));
         WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
@@ -211,7 +211,7 @@ public class ToolItems {
                         .efficiencyMultiplier(8.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
-                .oreDict("craftingToolWrench")
+                .oreDict(ToolOreDicts.craftingToolWrench)
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.HV));
         WRENCH_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_iv")
@@ -219,20 +219,20 @@ public class ToolItems {
                         .efficiencyMultiplier(16.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
-                .oreDict("craftingToolWrench")
+                .oreDict(ToolOreDicts.craftingToolWrench)
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.IV));
         BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")
                 .toolStats(b -> b.crafting().brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.CHAINSAW_TOOL, true)
-                .oreDict("craftingToolSaw")
+                .oreDict(ToolOreDicts.craftingToolSaw)
                 .toolClasses(ToolClasses.SAW)
                 .electric(GTValues.LV));
         SCREWDRIVER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver_lv")
                 .toolStats(b -> b.crafting().sneakBypassUse()
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.SCREWDRIVER_TOOL)
-                .oreDict("craftingToolScrewdriver")
+                .oreDict(ToolOreDicts.craftingToolScrewdriver)
                 .toolClasses(ToolClasses.SCREWDRIVER)
                 .electric(GTValues.LV));
     }

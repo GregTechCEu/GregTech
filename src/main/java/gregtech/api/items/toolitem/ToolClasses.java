@@ -24,7 +24,6 @@ public class ToolClasses {
     public static final String SHEARS = "shears";
     public static final String KNIFE = "knife";
     public static final String BUTCHERY_KNIFE = "butchery_knife";
-    public static final String PLUNGER = "plunger";
     public static final String GRAFTER = "grafter";
 
     public static final Set<String> DRILL = ImmutableSet.of(PICKAXE, SHOVEL);

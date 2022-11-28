@@ -436,15 +436,6 @@ public class ToolRecipeHandler {
     }
 
     private static void registerFlintToolRecipes() {
-        /*
-        Function<MetaToolValueItem, ItemStack> toolDataApplier = item -> {
-            ItemStack itemStack = item.setToolData(item.getStackForm(), Materials.Flint, 80, 1, 6.0f, 2.0f);
-            if (itemStack.getItem().canApplyAtEnchantingTable(itemStack, Enchantments.FIRE_ASPECT)) {
-                itemStack.addEnchantment(Enchantments.FIRE_ASPECT, 2);
-            }
-            return itemStack;
-        };
-         */
         ModHandler.addShapedRecipe("mortar_flint", ToolItems.MORTAR.get(Materials.Flint),
                 " I ", "SIS", "SSS",
                 'I', new ItemStack(Items.FLINT, 1),
