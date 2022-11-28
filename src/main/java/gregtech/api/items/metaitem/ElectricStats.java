@@ -5,12 +5,10 @@ import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
-import gregtech.api.items.metaitem.stats.IItemComponent;
-import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
+import gregtech.api.items.metaitem.stats.*;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -19,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -29,7 +28,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour {
+public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour, ISubItemHandler {
 
     public static final ElectricStats EMPTY = new ElectricStats(0, 0, false, false);
 
@@ -174,6 +173,23 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
         return new ElectricItem(itemStack, maxCharge, tier, chargeable, dischargeable);
+    }
+
+    @Override
+    public String getItemSubType(ItemStack itemStack) {
+        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        return electricItem != null && electricItem.getCharge() != 0 ? "creative" : "normal";
+    }
+
+    @Override
+    public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        subItems.add(itemStack);
+        ItemStack copy = itemStack.copy();
+        IElectricItem electricItem = copy.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            electricItem.charge(Long.MAX_VALUE, electricItem.getTier(), true, false);
+            subItems.add(copy);
+        }
     }
 
     public static ElectricStats createElectricItem(long maxCharge, long tier) {
