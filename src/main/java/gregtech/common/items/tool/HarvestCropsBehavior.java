@@ -45,11 +45,10 @@ public class HarvestCropsBehavior implements IToolBehavior {
 
             blocks = ToolHelper.iterateAoE(stack, aoeDefinition, player.world, player, rayTraceResult, HarvestCropsBehavior::isBlockCrops);
             blocks.add(rayTraceResult.getBlockPos());
-
         }
 
         for (BlockPos blockPos : blocks) {
-            harvestBlockRoutine(blockPos, player);
+            harvestBlockRoutine(stack, blockPos, player);
         }
     }
 
@@ -61,7 +60,7 @@ public class HarvestCropsBehavior implements IToolBehavior {
         return false;
     }
 
-    private static void harvestBlockRoutine(BlockPos pos, EntityPlayer player) {
+    private static void harvestBlockRoutine(ItemStack stack, BlockPos pos, EntityPlayer player) {
         IBlockState blockState = player.world.getBlockState(pos);
         Block block = blockState.getBlock();
         BlockCrops blockCrops = (BlockCrops) block;
@@ -69,7 +68,11 @@ public class HarvestCropsBehavior implements IToolBehavior {
             NonNullList<ItemStack> drops = NonNullList.create();
             blockCrops.getDrops(drops, player.world, pos, blockState, 0);
             dropListOfItems(player.world, pos, drops);
+            player.world.playEvent(2001, pos, Block.getStateId(blockState));
             player.world.setBlockState(pos, blockCrops.withAge(0));
+            if (!player.isCreative()) {
+                ToolHelper.damageItem(stack, player);
+            }
         }
     }
 
