@@ -31,21 +31,24 @@ public class AoESymmetrical {
             column = tag.getInteger(ToolHelper.AOE_COLUMN_KEY);
         } else {
             column = defaultDefinition == null ? 0 : defaultDefinition.column;
-            tag.setInteger(ToolHelper.AOE_COLUMN_KEY, column);
         }
         if (tag.hasKey(ToolHelper.AOE_ROW_KEY, Constants.NBT.TAG_INT)) {
             row = tag.getInteger(ToolHelper.AOE_ROW_KEY);
         } else {
             row = defaultDefinition == null ? 0 : defaultDefinition.row;
-            tag.setInteger(ToolHelper.AOE_ROW_KEY, row);
         }
         if (tag.hasKey(ToolHelper.AOE_LAYER_KEY, Constants.NBT.TAG_INT)) {
             layer = tag.getInteger(ToolHelper.AOE_LAYER_KEY);
         } else {
             layer = defaultDefinition == null ? 0 : defaultDefinition.layer;
-            tag.setInteger(ToolHelper.AOE_LAYER_KEY, layer);
         }
-        return column == 0 && row == 0 && layer == 0 ? NONE : new AoESymmetrical(column, row, layer);
+        if (column == 0 && row == 0 && layer == 0) {
+            return NONE;
+        }
+        tag.setInteger(ToolHelper.AOE_COLUMN_KEY, column);
+        tag.setInteger(ToolHelper.AOE_ROW_KEY, row);
+        tag.setInteger(ToolHelper.AOE_LAYER_KEY, layer);
+        return new AoESymmetrical(column, row, layer);
     }
 
     public static int getColumn(NBTTagCompound tag, AoESymmetrical defaultDefinition) {

@@ -145,7 +145,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
         }
 
-        behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, material.hasFlag(MaterialFlags.IS_MAGNETIC));
+        if (material.hasFlag(MaterialFlags.IS_MAGNETIC)) {
+            behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, true);
+        }
 
         return stack;
     }
