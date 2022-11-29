@@ -21,12 +21,11 @@ public class RotateRailBehavior implements IToolBehavior {
 
     @Nonnull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
         if (!world.isRemote) {
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof BlockRailBase) {
 
-                //TODO Rail Rotation seems to not work
                 boolean rotated = world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90));
 
                 if (rotated) {

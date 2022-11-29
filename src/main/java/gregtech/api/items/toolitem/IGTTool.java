@@ -480,6 +480,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
     }
 
+    default EnumActionResult definition$onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+            if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) == EnumActionResult.SUCCESS)  {
+                return EnumActionResult.SUCCESS;
+            }
+        }
+
+        return EnumActionResult.PASS;
+    }
+
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
             if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)  {
