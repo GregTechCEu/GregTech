@@ -3,17 +3,16 @@ package gregtech.common.items.behaviors;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
@@ -23,13 +22,11 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour {
+public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour, ISubItemHandler {
 
     private static final int FLUID_PER_BLOCK = 100;
 
@@ -70,16 +67,6 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
         FluidStack fluidStack = fluidTankProperties.getContents();
         return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
-    }
-
-    @Override
-    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
-        return null;
-    }
-
-    @Override
-    public boolean doDamagedStateColors(ItemStack itemStack) {
-        return true;
     }
 
     @Override
@@ -193,5 +180,22 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         }
         resultFrameBlocks.sort(Comparator.comparing(it -> it.distanceSq(centerPos)));
         return resultFrameBlocks;
+    }
+
+    @Override
+    public String getItemSubType(ItemStack itemStack) {
+        return "";
+    }
+
+    @Override
+    public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        ItemStack copy = itemStack.copy();
+        IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        if (fluidHandlerItem != null) {
+            fluidHandlerItem.fill(Materials.ConstructionFoam.getFluid(10000), true);
+            subItems.add(copy);
+        } else {
+            subItems.add(itemStack);
+        }
     }
 }

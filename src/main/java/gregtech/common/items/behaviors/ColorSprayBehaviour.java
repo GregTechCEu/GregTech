@@ -3,9 +3,11 @@ package gregtech.common.items.behaviors;
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
 import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.util.GradientUtil;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -23,10 +25,13 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
+import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.List;
 
-public class ColorSprayBehaviour extends AbstractUsableBehaviour {
+public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IItemDurabilityManager {
 
     private final ItemStack empty;
     private final EnumDyeColor color;
@@ -175,5 +180,23 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
             lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack itemStack) {
+        return (double) getUsesLeft(itemStack) / totalUses;
+    }
+
+    @Nullable
+    @Override
+    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+        // pick a gray color for solvent spray (which has null color)
+        int colorValue = color == null ? 0x969696 : color.colorValue;
+        return GradientUtil.getGradient(colorValue, 10);
+    }
+
+    @Override
+    public boolean doDamagedStateColors(ItemStack itemStack) {
+        return false;
     }
 }
