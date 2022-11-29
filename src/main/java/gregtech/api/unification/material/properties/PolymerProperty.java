@@ -8,6 +8,7 @@ public class PolymerProperty implements IMaterialProperty<PolymerProperty>{
     @Override
     public void verifyProperty(MaterialProperties properties) {
 
+        properties.ensureSet(PropertyKey.DUST, true);
         properties.ensureSet(PropertyKey.INGOT, true);
         properties.ensureSet(PropertyKey.FLUID, true);
 
