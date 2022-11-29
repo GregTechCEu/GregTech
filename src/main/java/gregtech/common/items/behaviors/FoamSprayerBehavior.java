@@ -5,6 +5,7 @@ import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GradientUtil;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.material.Material;
@@ -22,13 +23,22 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour, ISubItemHandler {
 
     private static final int FLUID_PER_BLOCK = 100;
+
+    private final Pair<Color, Color> durabilityBarColors;
+
+    public FoamSprayerBehavior() {
+        this.durabilityBarColors = GradientUtil.getGradient(Materials.ConstructionFoam.getMaterialRGB(), 10);
+    }
 
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -67,6 +77,12 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
         FluidStack fluidStack = fluidTankProperties.getContents();
         return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
+    }
+
+    @Nullable
+    @Override
+    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+        return durabilityBarColors;
     }
 
     @Override

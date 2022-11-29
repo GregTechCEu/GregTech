@@ -13,6 +13,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GradientUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -35,8 +36,11 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -242,9 +246,11 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour, ISubItemHandler {
 
         public final int maxCapacity;
+        private final Pair<Color, Color> durabilityBarColors;
 
         public Behaviour(int internalCapacity) {
             this.maxCapacity = internalCapacity;
+            this.durabilityBarColors = GradientUtil.getGradient(0xB7AF08, 10);
         }
 
         @Override
@@ -254,6 +260,12 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
             IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = fluidTankProperties.getContents();
             return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
+        }
+
+        @Nullable
+        @Override
+        public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+            return durabilityBarColors;
         }
 
         @Override
