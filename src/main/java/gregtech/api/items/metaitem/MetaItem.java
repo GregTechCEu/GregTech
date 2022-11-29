@@ -194,14 +194,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return -1.0;
     }
 
-    public Pair<Color, Color> getDurabilityColorsForDisplay(@Nonnull ItemStack stack) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().getDurabilityColorsForDisplay(stack);
-        }
-        return null;
-    }
-
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
