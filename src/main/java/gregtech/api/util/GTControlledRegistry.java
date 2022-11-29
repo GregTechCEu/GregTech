@@ -2,7 +2,7 @@ package gregtech.api.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import gregtech.api.GregTechAPI;
+import gregtech.api.GTValues;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.registry.RegistrySimple;
 import net.minecraftforge.fml.common.Loader;
@@ -33,10 +33,11 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         if (frozen) {
             throw new IllegalStateException("Registry is already frozen!");
         }
-        ModContainer container = Loader.instance().activeModContainer();
-        if (container == null || container.getMod() != GregTechAPI.instance) {
+
+        if (!checkActiveModContainerIsGregtech()) {
             return;
         }
+
         this.frozen = true;
     }
 
@@ -44,11 +45,21 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         if (!frozen) {
             throw new IllegalStateException("Registry is already unfrozen!");
         }
-        ModContainer container = Loader.instance().activeModContainer();
-        if (container == null || container.getMod() != GregTechAPI.instance) {
+
+        if (!checkActiveModContainerIsGregtech()) {
             return;
         }
+
         this.frozen = false;
+    }
+
+    private boolean checkActiveModContainerIsGregtech() {
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container != null && container.getModId().equals(GTValues.MODID)) {
+            return true;
+        }
+
+        return false;
     }
 
     public void register(int id, K key, V value) {
