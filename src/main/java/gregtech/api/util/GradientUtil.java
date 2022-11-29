@@ -11,10 +11,6 @@ public class GradientUtil {
 
     public static Pair<Color, Color> getGradient(Color rgb, int luminanceDifference) {
         float[] hsl = RGBtoHSL(rgb);
-        float l = hsl[2];
-        System.out.println("R: " + rgb.getRed() + " G: " + rgb.getGreen() + " B: " + rgb.getBlue());
-        System.out.println("H: " + hsl[0] + " S: " + hsl[1] + " L: " + hsl[2]);
-
         float[] upshade = new float[3];
         float[] downshade = new float[3];
         System.arraycopy(hsl, 0, upshade, 0, 3);
@@ -23,16 +19,8 @@ public class GradientUtil {
         if (upshade[2] > 100.0F) upshade[2] = 100.0F;
         downshade[2] = downshade[2] - luminanceDifference;
         if (downshade[2] < 0.0F) downshade[2] = 0.0F;
-
         Color upshadeRgb = toRGB(upshade);
         Color downshadeRgb = toRGB(downshade);
-
-        System.out.println("Upshade: ");
-        System.out.println("H: " + upshade[0] + " S: " + upshade[1] + " L: " + upshade[2]);
-        System.out.println("R: " + upshadeRgb.getRed() + " G: " + upshadeRgb.getGreen() + " B: " + upshadeRgb.getBlue());
-        System.out.println("Downshade: ");
-        System.out.println("H: " + downshade[0] + " S: " + downshade[1] + " L: " + downshade[2]);
-        System.out.println("R: " + downshadeRgb.getRed() + " G: " + downshadeRgb.getGreen() + " B: " + downshadeRgb.getBlue());
         return Pair.of(downshadeRgb, upshadeRgb);
     }
 
