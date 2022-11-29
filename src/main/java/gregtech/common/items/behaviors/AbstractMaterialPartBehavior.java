@@ -85,6 +85,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
 
     @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        return (double) getPartDamage(itemStack) / (double) getPartMaxDurability(itemStack);
+        int maxDurability = getPartMaxDurability(itemStack);
+        return (double) (maxDurability - getPartDamage(itemStack)) / (double) maxDurability;
     }
 }
