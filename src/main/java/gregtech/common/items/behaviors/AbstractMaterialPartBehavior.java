@@ -13,9 +13,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.awt.*;
 import java.util.List;
 
 public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager, IItemColorProvider, IItemNameProvider {
@@ -87,16 +85,6 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
 
     @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        return getPartDamage(itemStack) / (getPartMaxDurability(itemStack) * 1.0);
-    }
-
-    @Override
-    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
-        return null;
-    }
-
-    @Override
-    public boolean doDamagedStateColors(ItemStack itemStack) {
-        return true;
+        return (double) getPartDamage(itemStack) / (double) getPartMaxDurability(itemStack);
     }
 }

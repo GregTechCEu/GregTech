@@ -120,12 +120,11 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
 
     @Override
     public String getItemSubType(ItemStack itemStack) {
-        return itemStack.getOrCreateSubCompound("terminal").getBoolean("_creative") ? "creative" : "normal";
+        return "";
     }
 
     @Override
     public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
-        subItems.add(itemStack);
         ItemStack copy = itemStack.copy();
         copy.getOrCreateSubCompound("terminal").setBoolean("_creative", true);
         subItems.add(copy);
