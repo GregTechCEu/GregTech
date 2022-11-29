@@ -82,6 +82,22 @@ public interface IToolBehavior {
     }
 
     /**
+     * Called when a Block is right-clicked with this Item, but before the block is activated
+     *
+     * @param player the player clicking with the item
+     * @param world  the world in which the block is clicked
+     * @param pos    the position of the blocked clicked
+     * @param facing the face of the block hit
+     * @param hitX   the x location of the block hit
+     * @param hitY   the y location of the block hit
+     * @param hitZ   the z location of the block hit
+     * @param hand   the hand holding the item
+     */
+    default EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+        return EnumActionResult.PASS;
+    }
+
+    /**
      * Called when a Block is right-clicked with this Item
      *
      * @param player the player clicking with the item
