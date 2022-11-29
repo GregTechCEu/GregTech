@@ -33,8 +33,10 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -246,23 +248,22 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         }
 
         @Override
-        public boolean showsDurabilityBar(ItemStack itemStack) {
-            return true;
-        }
-
-        @Override
         public double getDurabilityForDisplay(@Nonnull ItemStack itemStack) {
             IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandlerItem == null)
-                return 1.0;
+            if (fluidHandlerItem == null) return 0;
             IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = fluidTankProperties.getContents();
-            return fluidStack == null ? 1.0 : (1.0 - fluidStack.amount / (fluidTankProperties.getCapacity() * 1.0));
+            return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
         }
 
         @Override
-        public int getRGBDurabilityForDisplay(ItemStack itemStack) {
-            return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
+        public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+            return null;
+        }
+
+        @Override
+        public boolean doDamagedStateColors(ItemStack itemStack) {
+            return true;
         }
 
         @Override

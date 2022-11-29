@@ -12,9 +12,10 @@ import gregtech.api.util.LocalizationUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.awt.*;
 import java.util.List;
 
 public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager, IItemColorProvider, IItemNameProvider {
@@ -85,17 +86,17 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
     }
 
     @Override
-    public boolean showsDurabilityBar(ItemStack itemStack) {
-        return getPartDamage(itemStack) > 0;
-    }
-
-    @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
         return getPartDamage(itemStack) / (getPartMaxDurability(itemStack) * 1.0);
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack itemStack) {
-        return MathHelper.hsvToRGB((1.0f - (float) getDurabilityForDisplay(itemStack)) / 3.0f, 1.0f, 1.0f);
+    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+        return null;
+    }
+
+    @Override
+    public boolean doDamagedStateColors(ItemStack itemStack) {
+        return true;
     }
 }
