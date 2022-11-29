@@ -29,6 +29,7 @@ import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -467,6 +468,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         toolTag.setInteger(DURABILITY_KEY, durability);
     }
 
+    default double definition$getDurabilityForDisplay(ItemStack stack) {
+        int damage = stack.getItem().getDamage(stack);
+        int maxDamage = stack.getItem().getMaxDamage(stack);
+        if (damage == 0) return 1.0;
+        return (double) (maxDamage - damage) / (double) maxDamage;
+    }
+
     @Nullable
     default ICapabilityProvider definition$initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
@@ -531,21 +539,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!behaviors.isEmpty()) {
             tooltip.add(I18n.format("item.gt.tool.behavior.behaviors"));
             tooltip.addAll(behaviors);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    default void renderElectricBar(@Nonnull ItemStack stack, int xPosition, int yPosition) {
-        if (isElectric()) {
-            long maxCharge = getMaxCharge(stack);
-            if (maxCharge != -1L) {
-                long charge = getCharge(stack);
-                if (charge < maxCharge) {
-                    double level = (double) charge / (double) maxCharge;
-                    boolean showDurability = stack.getItem().showDurabilityBar(stack);
-                    ToolChargeBarRenderer.render(level, xPosition, yPosition, showDurability ? 2 : 0, true);
-                }
-            }
         }
     }
 
@@ -733,6 +726,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // IOverlayRenderAware
     @Override
     default void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
-        renderElectricBar(stack, xPosition, yPosition);
+        ToolChargeBarRenderer.renderBarsTool(this, stack, xPosition, yPosition);
     }
 }
