@@ -326,6 +326,15 @@ public class MinerLogic {
     }
 
     /**
+     * Recalculates the mining area and refills the block list
+     */
+    public void resetArea() {
+        initPos(metaTileEntity.getPos(), currentRadius);
+        blocksToMine.clear();
+        checkBlocksToMine();
+    }
+
+    /**
      * Gets the blocks to mine
      * @return a {@link LinkedList} of {@link BlockPos} for each ore to mine
      */

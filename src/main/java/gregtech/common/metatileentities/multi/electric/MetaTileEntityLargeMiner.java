@@ -366,7 +366,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             else
                 this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH);
 
-            this.minerLogic.checkBlocksToMine();
+            this.minerLogic.resetArea();
 
             playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius()));
         } else {

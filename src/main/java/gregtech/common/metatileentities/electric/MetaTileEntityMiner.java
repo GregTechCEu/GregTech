@@ -202,7 +202,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             else
                 this.minerLogic.setCurrentRadius(Math.max(1, currentRadius - 1));
 
-            this.minerLogic.checkBlocksToMine();
+            this.minerLogic.resetArea();
 
             playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
         } else {
