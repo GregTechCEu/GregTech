@@ -58,13 +58,16 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 
 /**
  * MetaItem is item that can have up to Short.MAX_VALUE items inside one id.
@@ -178,12 +181,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Override
     public boolean showDurabilityBar(@Nonnull ItemStack stack) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().showsDurabilityBar(stack);
-        }
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return electricItem != null && (stack.getMaxStackSize() == 1 || electricItem.getCharge() > 0L);
+        // meta items now handle durability bars via custom rendering
+        return false;
     }
 
     @Override
@@ -192,20 +191,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
             return metaValueItem.getDurabilityManager().getDurabilityForDisplay(stack);
         }
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return 1.0 - electricItem.getCharge() / (1.0 * electricItem.getMaxCharge());
-        }
-        return 0.0;
+        return -1.0;
     }
 
-    @Override
-    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+    public Pair<Color, Color> getDurabilityColorsForDisplay(@Nonnull ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().getRGBDurabilityForDisplay(stack);
+            return metaValueItem.getDurabilityManager().getDurabilityColorsForDisplay(stack);
         }
-        return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
+        return null;
     }
 
     @Nonnull

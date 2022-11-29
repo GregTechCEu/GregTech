@@ -226,6 +226,16 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         definition$setDamage(stack, damage);
     }
 
+    @Override
+    public boolean showDurabilityBar(@Nonnull ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
+        return definition$getDurabilityForDisplay(stack);
+    }
+
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
