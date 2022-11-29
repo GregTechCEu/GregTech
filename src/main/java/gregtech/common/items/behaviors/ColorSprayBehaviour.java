@@ -35,12 +35,16 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
 
     private final ItemStack empty;
     private final EnumDyeColor color;
+    private final Pair<Color, Color> durabilityBarColors;
 
     public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
         super(totalUses);
         this.empty = empty;
         EnumDyeColor[] colors = EnumDyeColor.values();
         this.color = color >= colors.length || color < 0 ? null : colors[color];
+        // default to a gray color if this.color is null (like for solvent spray)
+        int colorValue = this.color == null ? 0x969696 : this.color.colorValue;
+        this.durabilityBarColors = GradientUtil.getGradient(colorValue, 10);
     }
 
     @Override
@@ -190,9 +194,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     @Nullable
     @Override
     public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
-        // pick a gray color for solvent spray (which has null color)
-        int colorValue = color == null ? 0x969696 : color.colorValue;
-        return GradientUtil.getGradient(colorValue, 10);
+        return durabilityBarColors;
     }
 
     @Override
