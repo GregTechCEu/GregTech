@@ -9,10 +9,10 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
-import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockPosFace;
+import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
+import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -195,7 +195,7 @@ public class MachineSceneWidget extends WidgetGroup {
         cores = new HashSet<>();
         around = new HashSet<>();
         cores.add(pos);
-        if (mte instanceof MultiblockControllerBase) {
+        if (mte instanceof MultiblockControllerBase && ((MultiblockControllerBase) mte).isStructureFormed()) {
             PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
             if (context != null) {
                 List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());
