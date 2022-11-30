@@ -54,7 +54,9 @@ public class HoeGroundBehavior implements IToolBehavior {
                 if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
 
                 blocks = getTillableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
-                blocks.add(rayTraceResult.getBlockPos());
+                if(isBlockTillable(stack, world, player, rayTraceResult.getBlockPos(), null)) {
+                    blocks.add(rayTraceResult.getBlockPos());
+                }
             }
         } else return EnumActionResult.PASS;
 

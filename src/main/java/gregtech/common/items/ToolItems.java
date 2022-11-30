@@ -137,7 +137,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.WIRE_CUTTER));
         SCYTHE = register(ItemGTSword.Builder.of(GTValues.MODID, "scythe")
                 .toolStats(b -> b.blockBreaking().attacking()
-                        .aoe(1, 1, 2)
+                        .aoe(2, 2, 2)
                         .behaviors(new HoeGroundBehavior(), new HarvestCropsBehavior()))
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
         KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
