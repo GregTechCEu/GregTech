@@ -11,6 +11,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -24,8 +27,14 @@ import java.util.Set;
 
 public class HarvestCropsBehavior implements IToolBehavior {
 
+    @Nonnull
     @Override
-    public void onBlockStartBreak(@Nonnull ItemStack stack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+
+        if(world.isRemote) {
+            return EnumActionResult.PASS;
+        }
+        ItemStack stack = player.getHeldItem(hand);
 
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
 
@@ -39,17 +48,24 @@ public class HarvestCropsBehavior implements IToolBehavior {
             Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
             RayTraceResult rayTraceResult = player.world.rayTraceBlocks(lookPos, realLookPos);
 
-            if (rayTraceResult == null) return;
-            if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return;
-            if (rayTraceResult.sideHit == null) return;
+            if (rayTraceResult == null) return EnumActionResult.PASS;
+            if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;
+            if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
 
             blocks = ToolHelper.iterateAoE(stack, aoeDefinition, player.world, player, rayTraceResult, HarvestCropsBehavior::isBlockCrops);
-            blocks.add(rayTraceResult.getBlockPos());
+            if(isBlockCrops(stack, world, player, rayTraceResult.getBlockPos(), null))  {
+                blocks.add(rayTraceResult.getBlockPos());
+            }
         }
 
+        boolean harvested = false;
         for (BlockPos blockPos : blocks) {
-            harvestBlockRoutine(stack, blockPos, player);
+            if(harvestBlockRoutine(stack, blockPos, player)) {
+                harvested = true;
+            }
         }
+
+        return harvested ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
     }
 
     private static boolean isBlockCrops(ItemStack stack, World world, EntityPlayer player, BlockPos pos, @Nullable BlockPos hitBlockPos) {
@@ -60,7 +76,7 @@ public class HarvestCropsBehavior implements IToolBehavior {
         return false;
     }
 
-    private static void harvestBlockRoutine(ItemStack stack, BlockPos pos, EntityPlayer player) {
+    private static boolean harvestBlockRoutine(ItemStack stack, BlockPos pos, EntityPlayer player) {
         IBlockState blockState = player.world.getBlockState(pos);
         Block block = blockState.getBlock();
         BlockCrops blockCrops = (BlockCrops) block;
@@ -73,7 +89,10 @@ public class HarvestCropsBehavior implements IToolBehavior {
             if (!player.isCreative()) {
                 ToolHelper.damageItem(stack, player);
             }
+            return true;
         }
+
+        return false;
     }
 
     private static void dropListOfItems(World world, BlockPos pos, List<ItemStack> drops) {
