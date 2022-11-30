@@ -136,8 +136,6 @@ public class MinerLogic {
         // if the inventory is not full, drain energy etc. from the miner
         // the storages have already been checked earlier
         if (!miner.isInventoryFull()) {
-            // actually drain the energy
-            drainStorages(false);
 
             // since energy is being consumed the miner is now active
             if (!this.isActive)
@@ -181,6 +179,7 @@ public class MinerLogic {
             }
 
         }
+
         if (blocksToMine.isEmpty()) {
             // there were no blocks to mine, so the current position is the previous position
             x.set(mineX.get());
@@ -194,6 +193,9 @@ public class MinerLogic {
                 this.wasActiveAndNeedsUpdate = true;
                 this.setActive(false);
             }
+        } else {
+            // we drain the energy at the end here to ensure that we only drain if a block was found
+            drainStorages(false);
         }
     }
 
