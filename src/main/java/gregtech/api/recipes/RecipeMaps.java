@@ -404,10 +404,10 @@ public class RecipeMaps {
      * </pre>
      *
      * Any Recipe added to the Compressor not specifying an <B>EUt</B> value will default to 2.
-     * Any Recipe added to the Compressor not specifying a <B>duration</B> value will default to 400.
+     * Any Recipe added to the Compressor not specifying a <B>duration</B> value will default to 200.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> COMPRESSOR_RECIPES = new RecipeMap<>("compressor", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(2), false)
+    public static final RecipeMap<SimpleRecipeBuilder> COMPRESSOR_RECIPES = new RecipeMap<>("compressor", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(200).EUt(2), false)
             .setSlotOverlay(false, false, GuiTextures.COMPRESSOR_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.COMPRESSOR);
