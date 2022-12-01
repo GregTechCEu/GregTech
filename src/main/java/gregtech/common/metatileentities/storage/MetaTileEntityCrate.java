@@ -43,6 +43,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     private final int inventorySize;
     private ItemStackHandler inventory;
     private boolean isTaped;
+    private final String TAPED_NBT = "Taped";
 
     public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize) {
         super(metaTileEntityId);
@@ -107,6 +108,9 @@ public class MetaTileEntityCrate extends MetaTileEntity {
             int baseColor = ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.METAL_CRATE.render(renderState, translation, baseColor, pipeline);
         }
+        if(isTaped) {
+            Textures.TAPED_OVERLAY.render(renderState, translation, pipeline);
+        }
     }
 
     @Override
@@ -148,7 +152,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("Inventory", inventory.serializeNBT());
-        data.setBoolean("Taped", isTaped);
+        data.setBoolean(TAPED_NBT, isTaped);
         return data;
     }
 
@@ -156,14 +160,15 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.inventory.deserializeNBT(data.getCompoundTag("Inventory"));
-        if(data.hasKey("Taped")) {
-            this.isTaped = data.getBoolean("Taped");
+        if(data.hasKey(TAPED_NBT)) {
+            this.isTaped = data.getBoolean(TAPED_NBT);
         }
     }
 
     @Override
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
+        this.isTaped = itemStack.getBoolean(TAPED_NBT);
         if(isTaped) {
             this.inventory.deserializeNBT(itemStack.getCompoundTag("Inventory"));
         }
@@ -172,6 +177,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     public void writeItemStackData(NBTTagCompound itemStack) {
         super.writeItemStackData(itemStack);
+        itemStack.setBoolean(TAPED_NBT, isTaped);
         if(isTaped) {
             itemStack.setTag("Inventory", inventory.serializeNBT());
         }
