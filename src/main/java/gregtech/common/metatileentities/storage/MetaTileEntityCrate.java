@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.colour.ColourRGBA;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -14,11 +15,15 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.items.MetaItems;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -30,11 +35,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
+
 public class MetaTileEntityCrate extends MetaTileEntity {
 
     private final Material material;
     private final int inventorySize;
     private ItemStackHandler inventory;
+    private boolean isTaped;
 
     public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize) {
         super(metaTileEntityId);
@@ -72,7 +80,9 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     @Override
     public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
-        clearInventory(itemBuffer, inventory);
+        if(!isTaped) {
+            clearInventory(itemBuffer, inventory);
+        }
     }
 
     @Override
@@ -116,9 +126,29 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+
+        ItemStack stack = playerIn.getHeldItem(hand);
+        if(playerIn.isSneaking() && stack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm())) {
+            if(!playerIn.isCreative()) {
+                stack.shrink(1);
+            }
+            isTaped = true;
+            if (!getWorld().isRemote) {
+                writeCustomData(IS_TAPED, buf -> buf.writeBoolean(isTaped));
+                markDirty();
+            }
+            return true;
+        }
+
+        return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("Inventory", inventory.serializeNBT());
+        data.setBoolean("Taped", isTaped);
         return data;
     }
 
@@ -126,6 +156,36 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.inventory.deserializeNBT(data.getCompoundTag("Inventory"));
+        if(data.hasKey("Taped")) {
+            this.isTaped = data.getBoolean("Taped");
+        }
+    }
+
+    @Override
+    public void initFromItemStackData(NBTTagCompound itemStack) {
+        super.initFromItemStackData(itemStack);
+        if(isTaped) {
+            this.inventory.deserializeNBT(itemStack.getCompoundTag("Inventory"));
+        }
+    }
+
+    @Override
+    public void writeItemStackData(NBTTagCompound itemStack) {
+        super.writeItemStackData(itemStack);
+        if(isTaped) {
+            itemStack.setTag("Inventory", inventory.serializeNBT());
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+
+        if(dataId == IS_TAPED) {
+            this.isTaped = buf.readBoolean();
+            scheduleRenderUpdate();
+            markDirty();
+        }
     }
 
     @Override
