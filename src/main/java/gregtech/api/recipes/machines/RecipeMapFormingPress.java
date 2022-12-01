@@ -20,6 +20,8 @@ import java.util.List;
 
 public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
+    private static ItemStack NAME_MOLD = ItemStack.EMPTY;
+
     public RecipeMapFormingPress(String unlocalizedName, int minInputs, int maxInputs, int minOutputs, int maxOutputs, int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
         super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
@@ -28,19 +30,30 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
         Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, exactVoltage);
-        if (inputs.size() < 2 || inputs.get(0).isEmpty() || inputs.get(1).isEmpty()) {
-            return recipe;
-        }
-        if (recipe == null) {
+
+        // Item Mold renaming - min of 2 inputs required
+        if (recipe == null && inputs.size() > 1) {
+            // cache name mold target comparison stack so a new one is not made every lookup
+            // cannot statically initialize as RecipeMaps are registered before items, throwing a NullPointer
+            if (NAME_MOLD.isEmpty()) {
+                NAME_MOLD = MetaItems.SHAPE_MOLD_NAME.getStackForm();
+            }
+
+            // find the mold and the stack to rename
             ItemStack moldStack = ItemStack.EMPTY;
             ItemStack itemStack = ItemStack.EMPTY;
             for (ItemStack inputStack : inputs) {
-                if (MetaItems.SHAPE_MOLD_NAME.getStackForm().isItemEqual(moldStack)) {
+                // early exit
+                if (!moldStack.isEmpty() && !itemStack.isEmpty()) break;
+
+                if (moldStack.isEmpty() && inputStack.isItemEqual(NAME_MOLD)) {
                     moldStack = inputStack;
-                } else {
+                } else if (itemStack.isEmpty()) {
                     itemStack = inputStack;
                 }
             }
+
+            // make the mold recipe if the two required inputs were found
             if (!moldStack.isEmpty() && !itemStack.isEmpty()) {
                 ItemStack output = GTUtility.copyAmount(1, itemStack);
                 output.setStackDisplayName(inputs.get(0).getDisplayName());
