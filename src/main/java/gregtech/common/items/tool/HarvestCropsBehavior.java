@@ -8,6 +8,8 @@ import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -105,5 +107,10 @@ public class HarvestCropsBehavior implements IToolBehavior {
             entityItem.setDefaultPickupDelay();
             world.spawnEntity(entityItem);
         }
+    }
+
+    @Override
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+        tooltip.add(" " + I18n.format("item.gt.tool.behavior.crop_harvesting"));
     }
 }
