@@ -919,6 +919,7 @@ item.gt.tool.behavior.aoe_mining=§5%sx%sx%s AoE Mining
 item.gt.tool.behavior.ground_tilling=§eTills Ground
 item.gt.tool.behavior.grass_path=§eCreates Grass Paths
 item.gt.tool.behavior.rail_rotation=§eRotates Rails
+item.gt.tool.behavior.crop_harvesting=§aHarvests Crops
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
