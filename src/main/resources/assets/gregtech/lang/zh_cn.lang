@@ -2659,9 +2659,9 @@ gregtech.machine.steam_boiler_solar_bronze.name=简易太阳能锅炉
 gregtech.machine.steam_boiler_solar_bronze.tooltip=来自太阳的蒸汽能源
 gregtech.machine.steam_boiler_solar_steel.name=高压太阳能锅炉
 gregtech.machine.steam_boiler_solar_steel.tooltip=来自太阳的蒸汽能源
-gregtech.machine.steam_boiler_lava_bronze.name=小型岩浆锅炉
+gregtech.machine.steam_boiler_lava_bronze.name=小型液体锅炉
 gregtech.machine.steam_boiler_lava_bronze.tooltip=锅炉运行排出流体
-gregtech.machine.steam_boiler_lava_steel.name=高压岩浆锅炉
+gregtech.machine.steam_boiler_lava_steel.name=高压液体锅炉
 gregtech.machine.steam_boiler_lava_steel.tooltip=比小型岩浆锅炉快
 
 gregtech.machine.steam_boiler.heat_amount=温度: %s %%
