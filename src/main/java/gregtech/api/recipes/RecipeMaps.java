@@ -139,7 +139,7 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<AssemblyLineRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine("assembly_line", 16, 1, 4, 0, new AssemblyLineRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.ASSEMBLER);
+            .setSound(GTSoundEvents.ASSEMBLER)
             .onRecipeBuild(recipeBuilder -> {
                 if (!ConfigHolder.machines.enableResearch) return;
 
