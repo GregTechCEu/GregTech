@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/wire_fine",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/wire_fine",
     "layer1": "gregtech:items/material_sets/magnetic/wire_fine_overlay"
   }
 }

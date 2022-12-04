@@ -158,7 +158,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         for (IBlockState state : this.getBlockState().getValidStates()) {
             Material m = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(m.getMaterialIconSet()));
+            event.getMap().registerSprite(MaterialIconType.block.getBlockTexturePath(m.getMaterialIconSet()));
         }
     }
 

@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "gregtech:items/material_sets/diamond/screw",
-    "layer1": "gregtech:items/material_sets/diamond/screw_overlay"
-  }
-}
