@@ -9,13 +9,25 @@ import java.util.HashMap;
 public class PipeNetwork implements INBTSerializable<NBTTagCompound> {
     private final HashMap<BlockPos, Node> nodes = new HashMap<BlockPos, Node>();
 
+    public PipeNetwork() {
+        NetworkController.INSTANCE.register(this);
+    }
+
     public void removeNode(BlockPos position) {
-        nodes.remove(position);
+        this.nodes.remove(position);
+
+        if (nodes.size() == 0) {
+            NetworkController.INSTANCE.deregister(this);
+        }
     }
 
     public void addNode(BlockPos position, Node node) {
-        nodes.put(position, node);
+        this.nodes.put(position, node);
         node.setParent(this);
+    }
+
+    public int size() {
+        return this.nodes.size();
     }
 
     @Override

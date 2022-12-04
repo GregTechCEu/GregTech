@@ -5,7 +5,6 @@ import appeng.tile.networking.TileCableBus;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
