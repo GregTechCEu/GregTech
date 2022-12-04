@@ -31,7 +31,7 @@ public class ToolDefinitionBuilder {
     private float attackDamage = 0F;
     private float baseEfficiency = 4F;
     private float efficiencyMultiplier = 1.0F;
-    private boolean isEnchantable = true;
+    private boolean isEnchantable;
     private BiPredicate<ItemStack, Enchantment> canApplyEnchantment;
     private float attackSpeed = 0F;
     private boolean sneakBypassUse = false;
@@ -100,19 +100,12 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder enchantable() {
-        this.isEnchantable = true;
-        return this;
-    }
-
     public ToolDefinitionBuilder canApplyEnchantment(BiPredicate<ItemStack, Enchantment> canApplyEnchantment) {
-        this.isEnchantable = true;
         this.canApplyEnchantment = canApplyEnchantment;
         return this;
     }
 
     public ToolDefinitionBuilder canApplyEnchantment(EnumEnchantmentType... enchantmentTypes) {
-        this.isEnchantable = true;
         this.canApplyEnchantment = (stack, enchantment) -> {
             for (EnumEnchantmentType type : enchantmentTypes) {
                 if (type == enchantment.type) {
@@ -265,7 +258,7 @@ public class ToolDefinitionBuilder {
 
             @Override
             public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
-                return canApplyEnchantment != null && canApplyEnchantment.test(stack, enchantment);
+                return canApplyEnchantment.test(stack, enchantment);
             }
 
             @Override
