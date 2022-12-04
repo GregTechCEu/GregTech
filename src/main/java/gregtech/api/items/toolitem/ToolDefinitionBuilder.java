@@ -101,11 +101,13 @@ public class ToolDefinitionBuilder {
     }
 
     public ToolDefinitionBuilder canApplyEnchantment(BiPredicate<ItemStack, Enchantment> canApplyEnchantment) {
+        this.isEnchantable = true;
         this.canApplyEnchantment = canApplyEnchantment;
         return this;
     }
 
     public ToolDefinitionBuilder canApplyEnchantment(EnumEnchantmentType... enchantmentTypes) {
+        this.isEnchantable = true;
         this.canApplyEnchantment = (stack, enchantment) -> {
             for (EnumEnchantmentType type : enchantmentTypes) {
                 if (type == enchantment.type) {

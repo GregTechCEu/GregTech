@@ -564,7 +564,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             return false;
         }
 
-        return !property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment);
+        // Check for any special enchantments specified by the material of this Tool, or any additional Enchantment Types added in the builder
+        return (!property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment)) ||
+                (getToolStats().isEnchantable(stack) && getToolStats().canApplyEnchantment(stack, enchantment));
     }
 
     @SideOnly(Side.CLIENT)
