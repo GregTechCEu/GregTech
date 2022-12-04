@@ -35,6 +35,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -550,6 +551,28 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             tooltip.add(I18n.format("item.gt.tool.behavior.behaviors"));
             tooltip.addAll(behaviors);
         }
+    }
+
+    default boolean definition$canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if(stack.isEmpty()) {
+            return false;
+        }
+
+        ToolProperty property = getToolProperty(stack);
+
+        if(property == null)  {
+            return false;
+        }
+
+        Material material = getToolMaterial(stack);
+
+        // This is the default fallback material, so if the tool material is null, this will be returned
+        // Exclude this material in case of incorrect tool materials, although this means neutronium cannot have default enchants
+        if(material == Materials.Neutronium) {
+            return false;
+        }
+
+        return !property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment);
     }
 
     @SideOnly(Side.CLIENT)
