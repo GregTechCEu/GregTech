@@ -564,14 +564,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             return false;
         }
 
-        Material material = getToolMaterial(stack);
-
-        // This is the default fallback material, so if the tool material is null, this will be returned
-        // Exclude this material in case of incorrect tool materials, although this means neutronium cannot have default enchants
-        if(material == Materials.Neutronium) {
-            return false;
-        }
-
         return !property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment);
     }
 
