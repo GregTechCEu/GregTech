@@ -254,7 +254,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         @Override
         protected int getOverclockForTier(long voltage) {
-            return super.getOverclockForTier(machineVoltage);
+            return super.getOverclockForTier(Math.min(machineVoltage, getEnergyCapacity()));
         }
 
         @Override
