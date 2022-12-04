@@ -331,11 +331,13 @@ public class CoverFluidRegulator extends CoverPump {
 
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
         tagCompound.setTag("filterv2", new NBTTagCompound());
+
+        return tagCompound;
     }
 
     @Override

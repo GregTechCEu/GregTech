@@ -7,10 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
@@ -25,6 +22,7 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -43,9 +41,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -56,7 +56,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private final boolean hasFrontFacing;
 
     protected final ItemStackHandler chargerInventory;
-    protected final ItemStackHandler circuitInventory;
+    protected ItemStackHandler circuitInventory;
     private EnumFacing outputFacingItems;
     private EnumFacing outputFacingFluids;
 
@@ -67,6 +67,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
+    protected IItemHandlerModifiable importItemsWithCircuit;
 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
@@ -79,7 +80,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
         this.hasFrontFacing = hasFrontFacing;
         this.chargerInventory = new ItemStackHandler(1);
-        this.circuitInventory = new ItemStackHandler(1);
     }
 
     @Override
@@ -92,6 +92,22 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super.initializeInventory();
         this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
+        this.circuitInventory = new NotifiableItemStackHandler(1, this, false);
+
+        List<IItemHandlerModifiable> temp = new ArrayList<>();
+        temp.add(importItems);
+        temp.add(circuitInventory);
+        this.importItemsWithCircuit = new ItemHandlerList(temp);
+    }
+
+    @Override
+    public IItemHandlerModifiable getImportItems() {
+        ItemStack circStack = circuitInventory != null ? circuitInventory.getStackInSlot(0) : ItemStack.EMPTY;
+        if (circStack != ItemStack.EMPTY && IntCircuitIngredient.isIntegratedCircuit(circStack)) {
+            return importItemsWithCircuit;
+        } else {
+            return super.getImportItems();
+        }
     }
 
     @Override
@@ -102,13 +118,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
-            //TODO Separate the setters
-            EnumFacing currentOutputSide = getOutputFacing();
-            if (currentOutputSide == facing || getFrontFacing() == facing) {
-                return false;
-            }
+            //TODO Separate into two output getters
+            if (getOutputFacing() == facing) return false;
+            if (hasFrontFacing() && facing == getFrontFacing()) return false;
             if (!getWorld().isRemote) {
-                //TODO Separate two setters
+                //TODO Separate into two output setters
                 setOutputFacing(facing);
             }
             return true;
@@ -124,7 +138,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (cover != null && cover.shouldCoverInteractWithOutputside()) {
                 if (getOutputFacingItems() == side) {
                     setAllowInputFromOutputSideItems(true);
-                } else if (getOutputFacingFluids() == side) {
+                }
+                if (getOutputFacingFluids() == side) {
                     setAllowInputFromOutputSideFluids(true);
                 }
             }
@@ -137,16 +152,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (outputFacingFluids != null && getExportFluids().getTanks() > 0) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingFluids, renderState, RenderUtil.adjustTrans(translation, outputFacingFluids, 2), pipeline);
         }
         if (outputFacingItems != null && getExportItems().getSlots() > 0) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingItems, renderState, RenderUtil.adjustTrans(translation, outputFacingItems, 2), pipeline);
         }
         if (isAutoOutputItems() && outputFacingItems != null) {
-            Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
+            Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacingItems, renderState, RenderUtil.adjustTrans(translation, outputFacingItems, 2), pipeline);
         }
         if (isAutoOutputFluids() && outputFacingFluids != null) {
-            Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
+            Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacingFluids, renderState, RenderUtil.adjustTrans(translation, outputFacingFluids, 2), pipeline);
         }
     }
 
@@ -455,6 +470,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         ItemStack stack;
         if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
             IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? 5 : 1);
+            this.notifiedItemInputList.add(circuitInventory);
         }
     }
 
@@ -462,6 +478,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         ItemStack stack;
         if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
             IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? -5 : -1);
+            this.notifiedItemInputList.add(circuitInventory);
         }
     }
 
@@ -488,5 +505,10 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         if (I18n.hasKey(mainKey)) {
             tooltip.add(1, mainKey);
         }
+    }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
     }
 }

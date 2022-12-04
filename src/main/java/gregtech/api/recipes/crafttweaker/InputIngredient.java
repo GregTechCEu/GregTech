@@ -15,6 +15,8 @@ import java.util.List;
 @ZenRegister
 public class InputIngredient implements IIngredient {
 
+    // TODO YEET
+
     private final IIngredient iingredient;
 
     public InputIngredient(GTRecipeInput backingIngredient) {

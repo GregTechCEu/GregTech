@@ -131,6 +131,11 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
         return 1.0D;
     }
 
+    @Override
+    public float getHeatResistance() {
+        return 0.75f;
+    }
+
     @SideOnly(Side.CLIENT)
     public boolean isNeedDrawHUD() {
         return true;

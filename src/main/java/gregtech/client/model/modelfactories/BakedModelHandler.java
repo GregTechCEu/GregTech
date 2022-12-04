@@ -3,6 +3,7 @@ package gregtech.client.model.modelfactories;
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
+import gregtech.api.block.VariantActiveBlock;
 import gregtech.common.blocks.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -82,6 +83,7 @@ public class BakedModelHandler {
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
+        event.getModelRegistry().putObject(VariantActiveBlock.MODEL_LOCATION, new ActiveVariantBlockBakedModel());
         event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, new OreBakedModel());
         event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION,  new CompressedBlockBakedModel());
         event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION,  new FrameBakedModel());

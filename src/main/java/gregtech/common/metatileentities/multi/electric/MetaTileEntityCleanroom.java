@@ -5,7 +5,6 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
@@ -59,8 +58,6 @@ import org.lwjgl.input.Keyboard;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_FRONT_FACING;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
@@ -143,10 +140,18 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         }
     }
 
+    @Override
+    public void checkStructurePattern() {
+        if (!this.isStructureFormed()) {
+            reinitializeStructurePattern();
+        }
+        super.checkStructurePattern();
+    }
+
     /**
      * Scans for blocks around the controller to update the dimensions
      */
-    public void updateStructureDimensions() {
+    public boolean updateStructureDimensions() {
         World world = getWorld();
         EnumFacing front = getFrontFacing();
         EnumFacing back = front.getOpposite();
@@ -185,6 +190,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
         if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || fDist < MIN_RADIUS || hDist < MIN_DEPTH) {
             invalidateStructure();
+            return false;
         }
 
         this.lDist = lDist;
@@ -200,6 +206,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             buf.writeInt(this.fDist);
             buf.writeInt(this.hDist);
         });
+        return true;
     }
 
     /**
@@ -224,14 +231,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     protected BlockPattern createStructurePattern() {
-        if (getWorld() != null) updateStructureDimensions();
+        if (getWorld() != null && !updateStructureDimensions()) {
+            return null;
+        }
 
         // these can sometimes get set to 0 when loading the game, breaking JEI
-        if (lDist == 0) lDist = MIN_RADIUS;
-        if (rDist == 0) rDist = MIN_RADIUS;
-        if (bDist == 0) bDist = MIN_RADIUS;
-        if (fDist == 0) fDist = MIN_RADIUS;
-        if (hDist == 0) hDist = MIN_DEPTH;
+        if (lDist < MIN_RADIUS) lDist = MIN_RADIUS;
+        if (rDist < MIN_RADIUS) rDist = MIN_RADIUS;
+        if (bDist < MIN_RADIUS) bDist = MIN_RADIUS;
+        if (fDist < MIN_RADIUS) fDist = MIN_RADIUS;
+        if (hDist < MIN_DEPTH) hDist = MIN_DEPTH;
+
+        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
+            int tmp = lDist;
+            lDist = rDist;
+            rDist = tmp;
+        }
 
         // build each row of the structure
         StringBuilder borderBuilder = new StringBuilder();     // BBBBB
@@ -297,8 +312,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         slice[slice.length - 1] = roofBuilder.toString();
 
         String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X   X", "X   X", "X   X", "BFSFB"
-        center[center.length - 1] = controllerBuilder.toString();
-        center[0] = centerBuilder.toString();
+        if (this.frontFacing == EnumFacing.NORTH || this.frontFacing == EnumFacing.SOUTH) {
+            center[0] = centerBuilder.reverse().toString();
+            center[center.length - 1] = controllerBuilder.reverse().toString();
+        } else {
+            center[0] = centerBuilder.toString();
+            center[center.length - 1] = controllerBuilder.toString();
+        }
 
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
         TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
@@ -415,22 +435,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
-            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
-        }
-
-        if (!cleanroomLogic.isWorkingEnabled()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        } else if (cleanroomLogic.isActive()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
-        } else {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-        }
-
         if (isStructureFormed()) {
+            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+            }
+
+            if (!cleanroomLogic.isWorkingEnabled()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+            } else if (cleanroomLogic.isActive()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
+            } else {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
+            }
+
             if (!drainEnergy(true)) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
             }
@@ -534,10 +554,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public int getEnergyTier() {
-        if (energyContainer == null)
-            return GTValues.LV;
-
-        return Math.max(GTValues.LV, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
+        if (energyContainer == null) return GTValues.LV;
+        return Math.max(GTValues.LV, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
     }
 
     @Override
@@ -557,28 +575,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        Preconditions.checkNotNull(frontFacing, "frontFacing");
-        this.frontFacing = frontFacing;
-        if (getWorld() != null && !getWorld().isRemote) {
-            notifyBlockUpdate();
-            markDirty();
-            writeCustomData(UPDATE_FRONT_FACING, buf -> buf.writeByte(frontFacing.getIndex()));
-            mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
-        }
-        if (getWorld() != null && !getWorld().isRemote) {
-            // clear cache since the cache has no concept of pre-existing facing
-            // for the controller block (or any block) in the structure
-            structurePattern.clearCache();
-            // need to reinitialize structure again since it depends on the machine's facing
-            this.reinitializeStructurePattern();
-            // recheck structure pattern immediately to avoid a slight "lag"
-            // on deforming when rotating a multiblock controller
-            checkStructurePattern();
-        }
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
@@ -594,10 +590,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             this.lDist = buf.readInt();
             this.rDist = buf.readInt();
             this.hDist = buf.readInt();
-            this.reinitializeStructurePattern();
-        } else if (dataId == GregtechDataCodes.IS_WORKING) {
-            this.cleanroomLogic.setActive(buf.readBoolean());
-            scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.cleanroomLogic.setActive(buf.readBoolean());
             scheduleRenderUpdate();

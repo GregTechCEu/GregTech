@@ -69,7 +69,8 @@ public class OverlayedItemHandler {
         //if the amountToInsert is still greater than 0, we need to insert it into a new slot
         if (amountToInsert > 0) {
             //loop through all slots, again, looking for empty ones.
-            for (OverlayedItemHandlerSlot slot : this.slots) {
+            for (int i = 0; i < this.slots.length; i++) {
+                OverlayedItemHandlerSlot slot = this.slots[i];
                 //if the slot is empty
                 if (slot.getItemStackKey() == null) {
                     int canInsertUpTo = Math.min(key.getMaxStackSize(), slot.slotLimit);

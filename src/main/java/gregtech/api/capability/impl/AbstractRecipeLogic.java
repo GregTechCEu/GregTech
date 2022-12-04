@@ -1,13 +1,13 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
@@ -258,6 +259,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
+
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
 
@@ -321,7 +324,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (requiredType == null) return true;
 
-        if (getMetaTileEntity() instanceof MultiblockWithDisplayBase && ConfigHolder.machines.cleanMultiblocks) return true;
+        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
 
         ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
         if (cleanroomProvider == null) return false;
@@ -438,13 +441,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && exportInventory.getSlots() > 0 && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && exportFluids.getTanks() > 0 && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -505,7 +508,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] calculateOverclock(@Nonnull Recipe recipe) {
-
         int recipeEUt = recipe.getEUt();
         int recipeDuration = recipe.getDuration();
         // Cannot overclock, keep recipe the same
@@ -519,8 +521,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         int[] overclockResult = performOverclocking(recipe);
 
         // make the EU negative after it has been made further away from 0
-        if (negativeEU)
-            overclockResult[0] *= -1;
+        if (negativeEU) overclockResult[0] *= -1;
 
         return overclockResult;
     }
@@ -531,8 +532,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe is able to overclock, else false
      */
     protected boolean checkCanOverclock(int recipeEUt) {
-        if (!isAllowOverclocking())
-            return false;
+        if (!isAllowOverclocking()) return false;
 
         // Check if the voltage to run at is higher than the recipe, and that it is not ULV tier
 
@@ -540,9 +540,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         int overclockTier = getOverclockForTier(getMaximumOverclockVoltage());
         // If the maximum tier that the machine can overclock to is ULV, return false.
         // There is no overclocking allowed in ULV
-        if(overclockTier == GTValues.ULV) {
-            return false;
-        }
+        if (overclockTier <= GTValues.LV) return false;
         int recipeTier = GTUtility.getTierByVoltage(recipeEUt);
 
         // Do overclock if the overclock tier is greater than the recipe tier
@@ -558,17 +556,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] performOverclocking(Recipe recipe) {
+        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        int maximumTier = getOverclockForTier(getMaximumOverclockVoltage());
 
         // The maximum number of overclocks is determined by the difference between the tier the recipe is running at,
         // and the maximum tier that the machine can overclock to.
-        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
-        int maximumOverclockTier = getOverclockForTier(getMaximumOverclockVoltage());
+        int numberOfOCs = maximumTier - recipeTier;
+        if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 
-        // At this point, this value should not be negative or zero, as that is filtered out in CheckCanOverclock
-        // Subtract 1 to get the desired behavior instead of filtering out LV recipes earlier, as that does not work all the time
-        int maxOverclocks = maximumOverclockTier - recipeTier - 1;
+        // cannot overclock, so return the starting values
+        if (numberOfOCs <= 0) return new int[]{recipe.getEUt(), recipe.getDuration()};
 
-        return runOverclockingLogic(recipe.getRecipePropertyStorage(), recipe.getEUt(), getMaximumOverclockVoltage(), recipe.getDuration(), maxOverclocks);
+        return runOverclockingLogic(recipe.getRecipePropertyStorage(), recipe.getEUt(), getMaximumOverclockVoltage(), recipe.getDuration(), numberOfOCs);
     }
 
     /**
@@ -580,17 +579,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipeEUt the EUt of the recipe
      * @param maxVoltage the maximum voltage the recipe is allowed to be run at
      * @param duration the duration of the recipe
-     * @param maxOverclocks the maximum amount of overclocks to perform
+     * @param amountOC the maximum amount of overclocks to perform
      *
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
-        return standardOverclockingLogic(Math.abs(recipeEUt),
+    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int amountOC) {
+        return standardOverclockingLogic(
+                Math.abs(recipeEUt),
                 maxVoltage,
                 duration,
+                amountOC,
                 getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier(),
-                maxOverclocks
+                getOverclockingVoltageMultiplier()
         );
     }
 
@@ -644,7 +644,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(overclockResults[1]);
         this.recipeEUt = overclockResults[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
+                GTUtility.getTierByVoltage(recipe.getEUt()),
+                getOverclockTier(),
+                getRecipeMap())
+        );
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;

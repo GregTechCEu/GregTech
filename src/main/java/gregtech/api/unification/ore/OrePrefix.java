@@ -244,7 +244,7 @@ public class OrePrefix {
     }
 
     static {
-        ingotHot.heatDamage = 3.0F;
+        ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
@@ -433,7 +433,7 @@ public class OrePrefix {
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
-    public float heatDamage = 0.0F; // Negative for Frost Damage
+    public Function<Integer, Float> heatDamageFunction = null; // Negative for Frost Damage
     public Function<Material, List<String>> tooltipFunc;
 
     private String alternativeOreName = null;
@@ -581,10 +581,22 @@ public class OrePrefix {
     public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
         if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
-        String unlocalized = "item.material.oreprefix." + this.name;
+        String unlocalized = findUnlocalizedName(material);
         String matLocalized = material.getLocalizedName();
         String formatted = LocalizationUtils.format(unlocalized, matLocalized);
         return formatted.equals(unlocalized) ? matLocalized : formatted;
+    }
+
+    private String findUnlocalizedName(Material material) {
+        if(material.hasProperty(PropertyKey.POLYMER)) {
+            String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
+            // Not every polymer ore prefix gets a special name
+            if(LocalizationUtils.hasKey(localizationKey)) {
+                return localizationKey;
+            }
+        }
+
+        return String.format("item.material.oreprefix.%s", this.name);
     }
 
     public boolean isIgnored(Material material) {

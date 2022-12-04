@@ -70,9 +70,11 @@ public class CoverShutter extends CoverBehavior implements IControllable {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
+
+        return tagCompound;
     }
 
     @Override

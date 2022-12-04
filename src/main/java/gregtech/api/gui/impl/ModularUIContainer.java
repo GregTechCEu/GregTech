@@ -1,13 +1,13 @@
 package gregtech.api.gui.impl;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.CPacketUIClientAction;
-import gregtech.api.net.packets.SPacketUIWidgetUpdate;
+import gregtech.core.network.packets.PacketUIClientAction;
+import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickIntCounter;
 import io.netty.buffer.Unpooled;
@@ -30,7 +30,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     private final ModularUI modularUI;
 
     public boolean accumulateWidgetUpdateData = false;
-    public final List<SPacketUIWidgetUpdate> accumulatedUpdates = new ArrayList<>();
+    public final List<PacketUIWidgetUpdate> accumulatedUpdates = new ArrayList<>();
 
     public ModularUIContainer(ModularUI modularUI) {
         this.modularUI = modularUI;
@@ -246,7 +246,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         packetBuffer.writeVarInt(updateId);
         payloadWriter.accept(packetBuffer);
         if (modularUI.entityPlayer instanceof EntityPlayerSP) {
-            NetworkHandler.channel.sendToServer(new CPacketUIClientAction(windowId, widgetId, packetBuffer).toFMLPacket());
+            GregTechAPI.networkHandler.sendToServer(new PacketUIClientAction(windowId, widgetId, packetBuffer));
         }
     }
 
@@ -257,9 +257,9 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         packetBuffer.writeVarInt(updateId);
         payloadWriter.accept(packetBuffer);
         if (modularUI.entityPlayer instanceof EntityPlayerMP) {
-            SPacketUIWidgetUpdate widgetUpdate = new SPacketUIWidgetUpdate(windowId, widgetId, packetBuffer);
+            PacketUIWidgetUpdate widgetUpdate = new PacketUIWidgetUpdate(windowId, widgetId, packetBuffer);
             if (!accumulateWidgetUpdateData) {
-                NetworkHandler.channel.sendTo(widgetUpdate.toFMLPacket(), (EntityPlayerMP) modularUI.entityPlayer);
+                GregTechAPI.networkHandler.sendTo(widgetUpdate, (EntityPlayerMP) modularUI.entityPlayer);
             } else {
                 accumulatedUpdates.add(widgetUpdate);
             }

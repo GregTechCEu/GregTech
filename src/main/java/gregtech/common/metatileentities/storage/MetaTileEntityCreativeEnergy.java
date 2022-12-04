@@ -21,6 +21,7 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -29,6 +30,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
+
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
 
@@ -39,10 +42,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     private boolean active = false;
     private boolean source = true;
 
-    private long lastEnergyOutputPerSec = 0;
-    private long lastEnergyInputPerSec = 0;
-    private long energyOutputPerSec = 0;
-    private long energyInputPerSec = 0;
+    private long lastEnergyIOPerSec = 0;
+    private long energyIOPerSec = 0;
 
     private long ampsReceived = 0;
     private boolean doExplosion = false;
@@ -107,7 +108,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             }
         }));
 
-        builder.dynamicLabel(7, 110, () -> "Energy I/O per sec: " + (source ? lastEnergyOutputPerSec : lastEnergyInputPerSec), 0x232323);
+        builder.dynamicLabel(7, 110, () -> "Energy I/O per sec: " + this.lastEnergyIOPerSec, 0x232323);
 
         builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
         builder.widget(new CycleButtonWidget(85, 139, 77, 20, () -> source, value -> {
@@ -128,17 +129,16 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
     @Override
     public long getOutputPerSec() {
-        return lastEnergyOutputPerSec;
+        return lastEnergyIOPerSec;
     }
 
     @Override
     public void update() {
         super.update();
+        if (getWorld().isRemote) return;
         if (getOffsetTimer() % 20 == 0) {
-            lastEnergyOutputPerSec = energyOutputPerSec;
-            lastEnergyInputPerSec = energyInputPerSec;
-            energyOutputPerSec = 0;
-            energyInputPerSec = 0;
+            this.setIOSpeed(energyIOPerSec);
+            energyIOPerSec = 0;
             if (doExplosion) {
                 getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                         1, false);
@@ -146,7 +146,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             }
         }
         ampsReceived = 0;
-        if (getWorld().isRemote || !active || !source || voltage <= 0 || amps <= 0) return;
+        if (!active || !source || voltage <= 0 || amps <= 0) return;
         int ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             EnumFacing opposite = facing.getOpposite();
@@ -160,7 +160,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                     break;
             }
         }
-        energyOutputPerSec += ampsUsed * voltage;
+        energyIOPerSec += ampsUsed * voltage;
     }
 
     @Override
@@ -170,6 +170,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         data.setByte("Tier", (byte) setTier);
         data.setBoolean("Active", active);
         data.setBoolean("Source", source);
+        data.setLong("EnergyIOPerSec", lastEnergyIOPerSec);
         return super.writeToNBT(data);
     }
 
@@ -180,6 +181,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         setTier = data.getByte("Tier");
         active = data.getBoolean("Active");
         source = data.getBoolean("Source");
+        if (data.hasKey("EnergyIOPerSec"))
+            lastEnergyIOPerSec = data.getLong("EnergyIOPerSec");
         super.readFromNBT(data);
     }
 
@@ -197,7 +200,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         long amperesAccepted = Math.min(amperage, getInputAmperage() - ampsReceived);
         if (amperesAccepted > 0) {
             ampsReceived += amperesAccepted;
-            energyInputPerSec += amperesAccepted * voltage;
+            energyIOPerSec += amperesAccepted * voltage;
             return amperesAccepted;
         }
         return 0;
@@ -218,7 +221,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         if (source || !active) {
             return 0;
         }
-        energyInputPerSec += differenceAmount;
+        energyIOPerSec += differenceAmount;
         return differenceAmount;
     }
 
@@ -230,6 +233,11 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     @Override
     public long getEnergyCapacity() {
         return 420;
+    }
+
+    @Override
+    public long addEnergy(long energyToAdd) {
+        return IEnergyContainer.super.addEnergy(energyToAdd);
     }
 
     @Override
@@ -250,6 +258,21 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     @Override
     public long getOutputAmperage() {
         return source ? amps : 0;
+    }
+
+    public void setIOSpeed(long energyIOPerSec) {
+        if (this.lastEnergyIOPerSec != energyIOPerSec) {
+            this.lastEnergyIOPerSec = energyIOPerSec;
+            this.writeCustomData(UPDATE_IO_SPEED, packetBuffer -> packetBuffer.writeLong(energyIOPerSec));
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == UPDATE_IO_SPEED) {
+            this.lastEnergyIOPerSec = buf.readLong();
+        }
     }
 
     public Function<String, String> getTextFieldValidator() {

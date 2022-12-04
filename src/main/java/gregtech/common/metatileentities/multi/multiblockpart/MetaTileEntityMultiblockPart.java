@@ -8,9 +8,9 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.PacketBuffer;
@@ -50,12 +50,6 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
             baseTexture.render(renderState, translation, ArrayUtils.add(pipeline,
                     new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
         }
-    }
-
-    @Override
-    public int getActualLightValue() {
-        MultiblockControllerBase controller = getController();
-        return controller == null ? 0 : controller.getLightValueForPart(this);
     }
 
     public int getTier() {

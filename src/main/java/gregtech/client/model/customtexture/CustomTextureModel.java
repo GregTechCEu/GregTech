@@ -3,7 +3,7 @@ package gregtech.client.model.customtexture;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import gregtech.core.hooks.CTMHooks;
+import gregtech.asm.hooks.CTMHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.IBakedModel;

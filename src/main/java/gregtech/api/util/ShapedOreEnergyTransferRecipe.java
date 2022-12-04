@@ -3,6 +3,7 @@ package gregtech.api.util;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
     private void fixOutputItemMaxCharge() {
         long totalMaxCharge = getIngredients().stream()
                 .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
+                        .filter(itemStack -> !(itemStack.getItem() instanceof ToolMetaItem))
                         .map(stack -> stack.copy().getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
                         .filter(Objects::nonNull)
                         .mapToLong(IElectricItem::getMaxCharge)

@@ -1,4 +1,3 @@
-
 package gregtech.common.metatileentities.multi.electric;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -27,7 +26,6 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -35,6 +33,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -125,9 +124,14 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
+    public int getEnergyTier() {
+        if (energyContainer == null) return this.tier;
+        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+    }
+
     @Override
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = GTValues.VA[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
+        long energyToDrain = GTValues.VA[GTUtility.getTierByVoltage(getEnergyTier())];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
@@ -205,8 +209,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
         if (this.isStructureFormed()) {
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = energyContainer.getInputVoltage();
-                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+                int energyContainer = getEnergyTier();
+                long maxVoltage = GTValues.V[energyContainer];
+                String voltageName = GTValues.VNF[energyContainer];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
@@ -430,7 +435,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public SoundEvent getSound() {
-        return GTSounds.MINER;
+        return GTSoundEvents.MINER;
     }
 
     @Override

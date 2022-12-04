@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @ZenRegister
 public class CTRecipeBuilder {
 
+    // TODO YEET
+
     public final RecipeBuilder<?> backingBuilder;
 
     public CTRecipeBuilder(RecipeBuilder<?> backingBuilder) {
@@ -77,8 +79,7 @@ public class CTRecipeBuilder {
                 this.backingBuilder.input(
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
             } else {
-                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
-                        new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount()));
+                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient, ingredient.getAmount()));
             }
         }
         return this;
@@ -95,8 +96,8 @@ public class CTRecipeBuilder {
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
                                 .setNonConsumable());
             } else {
-                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(
-                                new CraftTweakerItemInputWrapper(ingredient), ingredient.getAmount())
+                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(
+                                ingredient, ingredient.getAmount())
                         .setNonConsumable());
             }
         }
@@ -222,27 +223,6 @@ public class CTRecipeBuilder {
     @Override
     public String toString() {
         return this.backingBuilder.toString();
-    }
-
-    public static class CraftTweakerItemInputWrapper extends GTRecipeItemInput {
-
-        private final IIngredient ingredient;
-
-        public CraftTweakerItemInputWrapper(IIngredient ingredient) {
-            super(CraftTweakerMC.getItemStack(ingredient.getItems().get(0)));
-            this.ingredient = ingredient;
-        }
-
-        @Override
-        public boolean acceptsStack(@Nullable ItemStack itemStack) {
-            if (itemStack == null) {
-                return false;
-            }
-            itemStack = itemStack.copy();
-            //because CT is dump enough to compare stack sizes by default...
-            itemStack.setCount(ingredient.getAmount());
-            return ingredient.matches(CraftTweakerMC.getIItemStack(itemStack));
-        }
     }
 
 }

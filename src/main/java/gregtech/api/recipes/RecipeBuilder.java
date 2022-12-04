@@ -1,5 +1,8 @@
 package gregtech.api.recipes;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.api.IIngredient;
+import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
@@ -12,7 +15,10 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.recipeproperties.*;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -21,19 +27,21 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.GroovyScriptCompat;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -537,6 +545,47 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R inputs(IIngredient ingredient) {
+        return input(ofGroovyIngredient(ingredient));
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R inputs(IIngredient... ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R inputs(Collection<IIngredient> ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R notConsumable(IIngredient ingredient) {
+        return notConsumable(ofGroovyIngredient(ingredient));
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
+        if (ingredient instanceof OreDictIngredient) {
+            return GTRecipeOreInput.getOrCreate(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
+        }
+        Object oIngredient = ingredient;
+        if (oIngredient instanceof ItemStack) {
+            return GTRecipeItemInput.getOrCreate((ItemStack) oIngredient);
+        }
+        if (ingredient instanceof FluidStack) {
+            return GTRecipeFluidInput.getOrCreate((FluidStack) ingredient, ingredient.getAmount());
+        }
+        throw new IllegalArgumentException("Could not add groovy ingredient " + ingredient + " to recipe!");
+    }
+
     /**
      * Copies the chanced outputs of a Recipe numberOfOperations times, so every chanced output
      * gets an individual roll, instead of an all or nothing situation
@@ -684,6 +733,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult validate() {
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
+            GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
+            validateGroovy(msg);
+            return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
+        }
         if (EUt == 0) {
             GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
             if (isCTRecipe) {
@@ -705,6 +759,34 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             recipePropertyStorage.freeze(true);
         }
         return recipeStatus;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    protected void validateGroovy(GroovyLog.Msg errorMsg) {
+        errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
+        errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");
+        int minInput = recipeMap.getMinInputs(), maxInput = recipeMap.getMaxInputs(), minOutput = recipeMap.getMinOutputs(), maxOutput = recipeMap.getMaxOutputs();
+        int minFluidInput = recipeMap.getMinFluidInputs(), maxFluidInput = recipeMap.getMaxFluidInputs(), minFluidOutput = recipeMap.getMinFluidOutputs(), maxFluidOutput = recipeMap.getMaxFluidOutputs();
+        errorMsg.add(inputs.size() < minInput || inputs.size() > maxInput, () -> getRequiredString(minInput, maxInput, " item input") + ", but found " + inputs.size());
+        errorMsg.add(outputs.size() < minOutput || outputs.size() > maxOutput, () -> getRequiredString(minOutput, maxOutput, "item output") + ", but found " + outputs.size());
+        errorMsg.add(fluidInputs.size() < minFluidInput || fluidInputs.size() > maxFluidInput, () -> getRequiredString(minFluidInput, maxFluidInput, "fluid input") + ", but found " + fluidInputs.size());
+        errorMsg.add(fluidOutputs.size() < minFluidOutput || fluidOutputs.size() > maxFluidOutput, () -> getRequiredString(minFluidOutput, maxFluidOutput, "fluid output") + ", but found " + fluidOutputs.size());
+    }
+
+    protected static String getRequiredString(int min, int max, String type) {
+        if (max <= 0) {
+            return "No " + type + "s allowed";
+        }
+        String out = "Must have ";
+        if (min == max) {
+            out += "exactly " + min + " " + type;
+        } else {
+            out += min + " - " + max + " " + type;
+        }
+        if (max != 1) {
+            out += "s";
+        }
+        return out;
     }
 
     protected R onBuild(Consumer<RecipeBuilder<?>> consumer) {
@@ -749,7 +831,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
-        stacks.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        for (int i = 0; i < this.chancedOutputs.size(); i++) {
+            ChanceEntry entry = this.chancedOutputs.get(i);
+            stacks.add(entry.getItemStack());
+        }
 
         return stacks;
     }

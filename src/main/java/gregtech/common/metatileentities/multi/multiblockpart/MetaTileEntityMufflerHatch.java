@@ -23,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -68,6 +69,11 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             pollutionParticles();
     }
 
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        clearInventory(itemBuffer, inventory);
+    }
+
     public void recoverItemsTable(List<ItemStack> recoveryItems) {
         int numRolls = Math.min(recoveryItems.size(), inventory.getSlots());
         List<ItemStack> items = new ArrayList<>();
@@ -93,7 +99,16 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     private boolean checkFrontFaceFree() {
         BlockPos frontPos = getPos().offset(getFrontFacing());
         IBlockState blockState = getWorld().getBlockState(frontPos);
-        return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) getController();
+
+        // break a snow layer if it exists, and if this machine is running
+        if (controller != null && controller.isActive()) {
+            if (GTUtility.tryBreakSnowLayer(getWorld(), frontPos, blockState, true)) {
+                return true;
+            }
+            return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
+        }
+        return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnowLayer(blockState);
     }
 
     @SideOnly(Side.CLIENT)

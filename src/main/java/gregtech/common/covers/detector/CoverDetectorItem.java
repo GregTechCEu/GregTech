@@ -93,9 +93,11 @@ public class CoverDetectorItem extends CoverBehavior implements ITickable {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("isInverted", this.isInverted);
+
+        return tagCompound;
     }
 
     @Override
