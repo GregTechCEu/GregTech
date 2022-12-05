@@ -554,13 +554,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if(stack.isEmpty()) {
+        if (stack.isEmpty()) {
             return false;
         }
 
         ToolProperty property = getToolProperty(stack);
 
-        if(property == null)  {
+        if (property == null) {
             return false;
         }
 
