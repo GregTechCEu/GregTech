@@ -6,6 +6,7 @@ import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -264,6 +265,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
         definition$addInformation(stack, world, tooltip, flag);
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
+        return definition$canApplyAtEnchantingTable(stack, enchantment) || super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
     @Override

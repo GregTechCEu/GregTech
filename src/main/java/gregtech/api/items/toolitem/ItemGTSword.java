@@ -5,6 +5,7 @@ import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -122,6 +123,11 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     @Override
     public boolean onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {
         return definition$onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
+        return definition$canApplyAtEnchantingTable(stack, enchantment) || super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
     @Override
