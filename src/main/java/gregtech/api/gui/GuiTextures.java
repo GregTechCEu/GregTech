@@ -38,14 +38,14 @@ public class GuiTextures {
     public static final TextureArea BUTTON_CLEAR_GRID = TextureArea.fullImage("textures/gui/widget/button_clear_grid.png");
     public static final TextureArea BUTTON_FILTER_DAMAGE = TextureArea.fullImage("textures/gui/widget/button_filter_damage.png");
     public static final TextureArea BUTTON_FILTER_NBT = TextureArea.fullImage("textures/gui/widget/button_filter_nbt.png");
-    public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output.png");
-    public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output.png");
+    public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output_overlay.png");
+    public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output_overlay.png");
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
     public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
     public static final TextureArea BUTTON_VOID_PARTIAL = TextureArea.fullImage("textures/gui/widget/button_void_partial.png");
     public static final TextureArea BUTTON_VOID_MULTIBLOCK = TextureArea.fullImage("textures/gui/widget/button_void_multiblock.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
-    public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
+    public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock_base.png");
     public static final TextureArea BUTTON_PUBLIC_PRIVATE = TextureArea.fullImage("textures/gui/widget/button_public_private.png");
     public static final TextureArea BUTTON_RIGHT = TextureArea.fullImage("textures/gui/widget/right.png");
     public static final TextureArea BUTTON_SILK_TOUCH_MODE = TextureArea.fullImage("textures/gui/widget/button_silk_touch_mode.png");
