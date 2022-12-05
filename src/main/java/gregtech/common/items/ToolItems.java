@@ -7,6 +7,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
@@ -138,7 +139,7 @@ public class ToolItems {
         SCYTHE = register(ItemGTSword.Builder.of(GTValues.MODID, "scythe")
                 .toolStats(b -> b.blockBreaking().attacking()
                         .aoe(2, 2, 2)
-                        .behaviors(new HoeGroundBehavior(), new HarvestCropsBehavior()))
+                        .behaviors(new HoeGroundBehavior(), new HarvestCropsBehavior()).canApplyEnchantment(EnumEnchantmentType.DIGGER))
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
         KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
                 .toolStats(b -> b.crafting().attacking())
