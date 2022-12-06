@@ -240,7 +240,7 @@ public final class ToolHelper {
                     CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
                 }
                 stack.setItemDamage(newDurability);
-                if (newDurability > stack.getMaxDamage()) {
+                if (newDurability >= stack.getMaxDamage()) {
                     if (entity instanceof EntityPlayer) {
                         EntityPlayer entityplayer = (EntityPlayer) entity;
                         entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
