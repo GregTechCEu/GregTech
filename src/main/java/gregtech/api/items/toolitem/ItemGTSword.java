@@ -1,6 +1,7 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.Multimap;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -103,6 +104,17 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     @Override
     public String getOreDictName() {
         return oredict;
+    }
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+        if (this.isInCreativeTab(tab)) {
+            if (isElectric()) {
+                items.add(get(Materials.Neutronium, Integer.MAX_VALUE));
+            } else {
+                items.add(get(Materials.Neutronium));
+            }
+        }
     }
 
     @Override
