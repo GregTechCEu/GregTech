@@ -185,7 +185,7 @@ public final class ToolHelper {
     /**
      * Damages tools appropriately.
      * This supports both vanilla-esque and GT tools in case it does get called on a vanilla-esque tool.
-     *
+     * <p>
      * This method only takes 1 durability off, it ignores the tool's effectiveness because of the lack of context.
      *
      * @param stack  stack to be damaged
@@ -291,9 +291,17 @@ public final class ToolHelper {
      * AoE Block Breaking Routine.
      */
     public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player) {
+        int currentDurability = getToolTag(stack).getInteger(DURABILITY_KEY);
+        int maximumDurability = getToolTag(stack).getInteger(MAX_DURABILITY_KEY);
+        int remainingUses = maximumDurability - currentDurability;
         Set<BlockPos> harvestableBlocks = getHarvestableBlocks(stack, player);
         if (!harvestableBlocks.isEmpty()) {
             for (BlockPos pos : harvestableBlocks) {
+                remainingUses--;
+
+                if(remainingUses == 0) {
+                    return true;
+                }
                 if (!breakBlockRoutine(player, stack, pos)) {
                     return true;
                 }
