@@ -170,6 +170,10 @@ public class ToolEventHandlers {
                     if (toolStats.isSuitableForCrafting(stack)) {
                         tooltipIterator.add(I18n.format("item.gt.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
                     }
+
+                    // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
+                    tooltipIterator.add(I18n.format("item.gt.tool.tooltip.general_uses", tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1));
+
                     if (toolStats.isSuitableForAttacking(stack)) {
                         tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
                     }
