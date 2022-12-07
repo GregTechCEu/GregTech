@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
 # Corresponding Version: .. - beta
-# 対応バージョン: 2.4.0 - beta
+# 対応バージョン: 2.4.4 - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
@@ -29,6 +29,8 @@ gregtech.machine.steam_oven.name=蒸気式オーブン
 gregtech.machine.steam_oven.tooltip=1回につき同一アイテムを8個まで一度に製錬.  アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
 gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルター. ブロンズ製外装が最低6個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要. 蒸気ハッチは最下段に一つだけ置ける.
 
+gregtech.top.working_disabled=停止中
+
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
 
@@ -42,8 +44,6 @@ gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
 
 gregtech.top.fuel_min_consume=必要量
 gregtech.top.fuel_none=燃料がありません
-
-gregtech.top.working_disabled=停止中
 
 gregtech.top.invalid_structure=構造に不備あり
 gregtech.top.valid_structure=構造に問題なし
@@ -824,6 +824,8 @@ metaitem.cover.item.detector.name=アイテム検出器
 metaitem.cover.item.detector.tooltip=レッドストーン信号としてアイテム量を検出するカバー
 metaitem.cover.energy.detector.name=エネルギー検出器
 metaitem.cover.energy.detector.tooltip=レッドストーン信号としてエネルギー量を検出するカバー
+metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector //TODO
+metaitem.cover.energy.detector.advanced.tooltip=Gives RS-Latch controlled Energy Status as Redstone (as Cover) //TODO
 metaitem.cover.player.detector.name=プレイヤー検出器
 metaitem.cover.player.detector.tooltip=レッドストーン信号として付近のプレイヤーを検出するカバー
 metaitem.cover.drain.name=ドレインカバー
@@ -878,22 +880,22 @@ metaitem.gelled_toluene.tooltip=爆発物の原料
 metaitem.bottle.purple.drink.name=パープルドリンク
 metaitem.bottle.purple.drink.tooltip=レモネードはいかが? それともアイスティーは? いや, 私にはこのパープルドリンクがあります!
 
-metaitem.dye.white.name=白色の化学染料
-metaitem.dye.orange.name=橙色の化学染料
-metaitem.dye.magenta.name=赤紫色の化学染料
-metaitem.dye.light_blue.name=空色の化学染料
-metaitem.dye.yellow.name=黄色の化学染料
-metaitem.dye.lime.name=黄緑色の化学染料
-metaitem.dye.pink.name=桃色の化学染料
-metaitem.dye.gray.name=灰色の化学染料
-metaitem.dye.silver.name=薄灰色の化学染料
-metaitem.dye.cyan.name=青緑色の化学染料
-metaitem.dye.purple.name=紫色の化学染料
-metaitem.dye.blue.name=青色の化学染料
-metaitem.dye.brown.name=茶色の化学染料
-metaitem.dye.green.name=緑色の化学染料
-metaitem.dye.red.name=赤色の化学染料
 metaitem.dye.black.name=黒色の化学染料
+metaitem.dye.red.name=赤色の化学染料
+metaitem.dye.green.name=緑色の化学染料
+metaitem.dye.brown.name=茶色の化学染料
+metaitem.dye.blue.name=青色の化学染料
+metaitem.dye.purple.name=紫色の化学染料
+metaitem.dye.cyan.name=青緑色の化学染料
+metaitem.dye.silver.name=薄灰色の化学染料
+metaitem.dye.gray.name=灰色の化学染料
+metaitem.dye.pink.name=桃色の化学染料
+metaitem.dye.lime.name=黄緑色の化学染料
+metaitem.dye.yellow.name=黄色の化学染料
+metaitem.dye.light_blue.name=空色の化学染料
+metaitem.dye.magenta.name=赤紫色の化学染料
+metaitem.dye.orange.name=橙色の化学染料
+metaitem.dye.white.name=白色の化学染料
 
 metaitem.rubber_drop.name=粘性樹脂
 metaitem.plant_ball.name=プラントボール
@@ -1093,6 +1095,9 @@ metaitem.nan.certificate.tooltip=挑戦を受けました!
 
 metaitem.fertilizer.name=肥料
 
+metaitem.blacklight.name=Blacklight //TODO
+metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source //TODO
+
 gui.widget.incrementButton.default_tooltip=Shift, Ctrlまたはその両方で量を変更
 gui.widget.recipeProgressWidget.default_tooltip=レシピを表示
 
@@ -1191,6 +1196,14 @@ cover.ender_fluid_link.private.tooltip.disabled=個人タンクモードに切�
 cover.ender_fluid_link.private.tooltip.enabled=公開タンクモードに切り替え
 cover.ender_fluid_link.incomplete_hex=入力した色が不完全です!/n8桁の16進数すべてが入力されると反映されます./nGUIを閉じると編集内容が失われます!
 
+cover.advanced_energy_detector.label=Advanced Energy Detector //TODO
+cover.advanced_energy_detector.min=Minimum EU //TODO
+cover.advanced_energy_detector.max=Maximum EU //TODO
+cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU //TODO
+cover.advanced_energy_detector.invert_label=Inverted: //TODO
+cover.advanced_energy_detector.normal=Normal //TODO
+cover.advanced_energy_detector.inverted=Inverted //TODO
+
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=%s鉱石 (黒色花崗岩)
 item.material.oreprefix.oreRedgranite=%s鉱石 (赤色花崗岩)
@@ -1283,6 +1296,15 @@ item.material.oreprefix.cableGtOctal=8倍%sケーブル
 item.material.oreprefix.cableGtQuadruple=4倍%sケーブル
 item.material.oreprefix.cableGtDouble=2倍%sケーブル
 item.material.oreprefix.cableGtSingle=1倍%sケーブル
+item.material.oreprefix.polymer.plate=%s Sheet //TODO
+item.material.oreprefix.polymer.foil=Thin %s Sheet //TODO
+item.material.oreprefix.polymer.nugget=%s Chip //TODO
+item.material.oreprefix.polymer.plateDense=Dense %s Sheet //TODO
+item.material.oreprefix.polymer.plateDouble=Double %s Sheet //TODO
+item.material.oreprefix.polymer.dustTiny=Tiny Pile of %s Pulp //TODO
+item.material.oreprefix.polymer.dustSmall=Small Pile of %s Pulp //TODO
+item.material.oreprefix.polymer.dust=%s Pulp //TODO
+item.material.oreprefix.polymer.ingot=%s Bar //TODO
 
 
 # Direct Element Materials
@@ -1345,9 +1367,9 @@ material.lithium=リチウム
 material.livermorium=リバモリウム
 material.lutetium=ルテチウム
 material.magnesium=マグネシウム
+material.mendelevium=メンデレビウム
 material.manganese=マンガン
 material.meitnerium=マイトネリウム
-material.mendelevium=メンデレビウム
 material.mercury=水銀
 material.molybdenum=モリブデン
 material.moscovium=モスコビウム
@@ -1364,10 +1386,10 @@ material.osmium=オスミウム
 material.oxygen=酸素
 material.palladium=パラジウム
 material.phosphorus=リン
+material.polonium=ポロニウム
 material.platinum=プラチナ
 material.plutonium=プルトニウム239
 material.plutonium_241=プルトニウム241
-material.polonium=ポロニウム
 material.potassium=カリウム
 material.praseodymium=プラセオジム
 material.promethium=プロメシウム
@@ -1394,8 +1416,8 @@ material.technetium=テクネチウム
 material.tellurium=テルル
 material.tennessine=テネシン
 material.terbium=テルビウム
-material.thallium=タリウム
 material.thorium=トリウム
+material.thallium=タリウム
 material.thulium=ツリウム
 material.tin=錫
 material.titanium=チタン
@@ -1421,7 +1443,7 @@ material.duranium=デュラニウム
 material.trinium=トリニウム
 
 
-# FIrst Degree Compounds
+# First Degree Compounds
 material.almandine=鉄礬柘榴石
 material.andradite=灰鉄柘榴石
 material.annealed_copper=なまし銅
@@ -1463,7 +1485,9 @@ material.bauxite=ボーキサイト
 material.invar=インバー
 material.kanthal=カンタル
 material.lazurite=青金石
+material.liquid_helium=Liquid Helium //TODO
 material.magnalium=マグナリウム
+material.magnesite=菱苦土鉱
 material.magnetite=磁鉄鉱
 material.molybdenite=輝水鉛鉱
 material.nichrome=ニクロム
@@ -1522,6 +1546,7 @@ material.calcium_chloride=塩化カルシウム
 material.lithium_chloride=塩化リチウム
 material.bornite=斑銅鉱
 material.chalcocite=輝銅鉱
+
 material.gallium_arsenide=ヒ化ガリウム
 material.potash=炭酸カリウム
 material.soda_ash=炭酸ナトリウム
@@ -1535,7 +1560,6 @@ material.quicklime=酸化カルシウム
 material.sodium_bisulfate=硫酸水素ナトリウム
 material.ferrite_mixture=フェライト混合物
 material.magnesia=酸化マグネシウム
-material.magnesite=菱苦土鉱
 material.platinum_group_sludge=白金族泥
 material.realgar=鶏冠石
 material.sodium_bicarbonate=炭酸水素ナトリウム
@@ -1650,8 +1674,8 @@ material.isoprene=イソプレン
 material.propane=プロパン
 material.propene=プロペン
 material.ethane=エタン
-material.butane=ブタン
 material.butene=ブテン
+material.butane=ブタン
 material.dissolved_calcium_acetate=酢酸カルシウム溶液
 material.vinyl_acetate=酢酸ビニル
 material.methyl_acetate=酢酸メチル
@@ -1835,7 +1859,6 @@ material.uu_matter=UU-マター
 material.glass=ガラス
 material.perlite=パーライト
 material.borax=ホウ砂
-material.salt_water=塩水
 material.olivine=オリビン
 material.opal=オパール
 material.amethyst=アメジスト
@@ -1872,8 +1895,8 @@ material.naquadah_alloy=ナクアダ合金
 material.sulfuric_nickel_solution=硫酸ニッケル溶液
 material.sulfuric_copper_solution=硫酸銅溶液
 material.lead_zinc_solution=鉛-亜鉛溶液
-material.diluted_sulfuric_acid=希硫酸
 material.nitration_mixture=ニトロ化混合物
+material.diluted_sulfuric_acid=希硫酸
 material.diluted_hydrochloric_acid=希塩酸
 material.flint=火打石
 material.air=空気
@@ -1883,6 +1906,7 @@ material.liquid_nether_air=ネザーの液体空気
 material.ender_air=エンドの空気
 material.liquid_ender_air=エンドの液体空気
 material.aqua_regia=王水
+material.salt_water=塩水
 material.clay=粘土
 material.redstone=レッドストーン
 
@@ -1952,8 +1976,8 @@ item.cassiterite_sand.crushedPurified=洗浄した錫砂
 item.cassiterite_sand.crushed=砕いた錫砂
 item.cassiterite_sand.dustTiny=極小の錫砂の粉
 item.cassiterite_sand.dustSmall=小さな錫砂の粉
-item.cassiterite_sand.dustPure=ほぼ綺麗な錫砂の粉
 item.cassiterite_sand.dustImpure=汚れた錫砂の粉
+item.cassiterite_sand.dustPure=ほぼ綺麗な錫砂の粉
 item.cassiterite_sand.dust=錫砂の粉
 item.dark_ash.dustTiny=極小の黒色灰の粉
 item.dark_ash.dustSmall=小さな黒色灰の粉
@@ -1962,98 +1986,18 @@ item.ice.dustTiny=極小の砕いた氷
 item.ice.dustSmall=小さな砕いた氷
 item.ice.dust=砕いた氷
 item.sugar.gem=砂糖の塊
-item.sugar.gemFlawed=極小の砂糖の塊
 item.sugar.gemChipped=小さな砂糖の塊
-item.plastic.dustTiny=極小のポリエチレン (PE) のパルプ
-item.plastic.dustSmall=小さなポリエチレン (PE) のパルプ
-item.plastic.dust=ポリエチレンのパルプ
-item.plastic.plate=ポリエチレンのシート
-item.plastic.nugget=ポリエチレン (PE) のチップ
-item.plastic.ingot=ポリエチレン (PE) のバー
-item.epoxy.ingot=エポキシ樹脂のバー
-item.epoxy.dustTiny=極小のエポキシ樹脂のパルプ
-item.epoxy.dustSmall=小さなエポキシ樹脂のパルプ
-item.epoxy.dust=エポキシ樹脂のパルプ
-item.epoxy.nugget=エポキシ樹脂のチップ
-item.epoxy.plateDense=高密度なエポキシ樹脂のシート
-item.epoxy.plate=エポキシ樹脂のシート
-item.epoxy.foil=薄いエポキシ樹脂のシート
-item.reinforced_epoxy_resin.ingot=繊維強化エポキシ樹脂のバー
-item.reinforced_epoxy_resin.dustTiny=極小の繊維強化エポキシ樹脂のパルプ
-item.reinforced_epoxy_resin.dustSmall=小さな繊維強化エポキシ樹脂のパルプ
-item.reinforced_epoxy_resin.dust=繊維強化エポキシ樹脂のパルプ
-item.reinforced_epoxy_resin.nugget=繊維強化エポキシ樹脂のチップ
-item.reinforced_epoxy_resin.plateDense=高密度な繊維強化エポキシ樹脂シート
-item.reinforced_epoxy_resin.plate=繊維強化エポキシ樹脂シート
-item.reinforced_epoxy_resin.foil=薄い繊維強化エポキシ樹脂シート
-item.polycaprolactam.dustTiny=極小のポリカプロラクタムのパルプ
-item.polycaprolactam.dustSmall=小さなポリカプロラクタムのパルプ
-item.polycaprolactam.dust=ポリカプロラクタムのパルプ
-item.polycaprolactam.plateDense=高密度なポリカプロラクタムのシート
-item.polycaprolactam.plate=ポリカプロラクタムのシート
-item.polycaprolactam.nugget=ポリカプロラクタムのナゲット
-item.polycaprolactam.ingot=ポリカプロラクタム のバー
-item.polytetrafluoroethylene.dustTiny=極小のポリテトラフルオロエチレン (PTFE) のパルプ
-item.polytetrafluoroethylene.dustSmall=小さなポリテトラフルオロエチレン (PTFE) のパルプ
-item.polytetrafluoroethylene.dust=ポリテトラフルオロエチレン (PTFE) のパルプ
-item.polytetrafluoroethylene.plateDense=高密度なポリテトラフルオロエチレン (PTFE) のシート
-item.polytetrafluoroethylene.plate=ポリテトラフルオロエチレン (PTFE) のシート
-item.polytetrafluoroethylene.nugget=ポリテトラフルオロエチレン (PTFE) のチップ
-item.polytetrafluoroethylene.ingot=ポリテトラフルオロエチレン (PTFE) のバー
-item.polyvinyl_chloride.dustTiny=極小のポリ塩化ビニルのパルプ
-item.polyvinyl_chloride.dustSmall=小さなポリ塩化ビニルのパルプ
-item.polyvinyl_chloride.dust=ポリ塩化ビニルのパルプ
-item.polyvinyl_chloride.nugget=ポリ塩化ビニルのチップ
-item.polyvinyl_chloride.ingot=ポリ塩化ビニルのバー
-item.polyvinyl_chloride.plate=ポリ塩化ビニルシート
-item.polyvinyl_chloride.foil=薄いポリ塩化ビニルシート
-item.polyphenylene_sulfide.dustTiny=極小のポリフェニレンサルファイドのパルプ
-item.polyphenylene_sulfide.dustSmall=小さなポリフェニレンサルファイドのパルプ
-item.polyphenylene_sulfide.dust=ポリフェニレンサルファイドのパルプ
-item.polyphenylene_sulfide.nugget=ポリフェニレンサルファイドのチップ
-item.polyphenylene_sulfide.ingot=ポリフェニレンサルファイドのバー
-item.polyphenylene_sulfide.plate=ポリフェニレンサルファイドのシート
-item.polyphenylene_sulfide.foil=薄いポリフェニレンサルファイドのシート
-item.polybenzimidazole.dustTiny=極小のポリベンゾイミダゾール (PBI) のパルプ
-item.polybenzimidazole.dustSmall=小さなポリベンゾイミダゾール (PBI) のパルプ
-item.polybenzimidazole.dust=ポリベンゾイミダゾール (PBI) のパルプ
-item.polybenzimidazole.nugget=ポリベンゾイミダゾール (PBI)のチップ
-item.polybenzimidazole.ingot=ポリベンゾイミダゾール (PBI)のバー
-item.polybenzimidazole.plate=ポリベンゾイミダゾール (PBI)のシート
-item.polybenzimidazole.foil=薄いポリベンゾイミダゾール (PBI)のシート
+item.sugar.gemFlawed=極小の砂糖の塊
 item.rock_salt.dustTiny=極小の岩塩の粉
 item.rock_salt.dustSmall=小さな岩塩の粉
 item.rock_salt.dustImpure=汚れた岩塩の粉
 item.rock_salt.dustPure=ほぼ綺麗な岩塩の粉
 item.rock_salt.dust=岩塩の粉
-item.rubber.ingot=ゴムのバー
-item.rubber.dustTiny=極小のゴムのパルプ
-item.rubber.dustSmall=小さなゴムのパルプ
-item.rubber.dust=ゴムのパルプ
-item.rubber.nugget=ゴムのチップ
-item.rubber.plate=ゴムのシート
-item.raw_rubber.dustTiny=極小の未加工ゴムのパルプ
-item.raw_rubber.dustSmall=小さな未加工ゴムのパルプ
-item.raw_rubber.dust=未加工ゴムのパルプ
 item.salt.dustTiny=極小の塩の粉
 item.salt.dustSmall=小さな塩の粉
 item.salt.dustImpure=汚れた塩の粉
 item.salt.dustPure=ほぼ綺麗な塩の粉
 item.salt.dust=塩の粉
-item.silicone_rubber.dustTiny=極小のシリコンゴムのパルプ
-item.silicone_rubber.dustSmall=小さなシリコンゴムのパルプ
-item.silicone_rubber.dust=シリコンゴムのパルプ
-item.silicone_rubber.nugget=シリコンゴムのチップ
-item.silicone_rubber.ingot=シリコンゴムのバー
-item.silicone_rubber.plate=シリコンゴムシート
-item.silicone_rubber.foil=薄いシリコンゴムシート
-item.styrene_butadiene_rubber.dustTiny=極小のスチレン-ブタジエンゴムのパルプ
-item.styrene_butadiene_rubber.dustSmall=小さなスチレン-ブタジエンゴムのパルプ
-item.styrene_butadiene_rubber.dust=スチレン-ブタジエンゴムのパルプ
-item.styrene_butadiene_rubber.nugget=スチレン-ブタジエンゴムのチップ
-item.styrene_butadiene_rubber.ingot=スチレン-ブタジエンゴムのバー
-item.styrene_butadiene_rubber.plate=スチレン-ブタジエンゴムシート
-item.styrene_butadiene_rubber.foil=薄いスチレン-ブタジエンゴムシート
 item.wood.dustTiny=極小の木のパルプ
 item.wood.dustSmall=小さな木のパルプ
 item.wood.dust=木のパルプ
@@ -2063,7 +2007,7 @@ item.wood.bolt=木のボルト
 item.treated_wood.dustTiny=極小の防腐木材パルプ
 item.treated_wood.dustSmall=小さな防腐木材パルプ
 item.treated_wood.dust=防腐木材パルプ
-item.treated_wood.plate= 防腐木材の板
+item.treated_wood.plate=防腐木材の板
 item.treated_wood.stick=防腐木材の棒
 item.treated_wood.stickLong=長い防腐木材の棒
 item.treated_wood.bolt=短い防腐木材の棒
@@ -2095,10 +2039,10 @@ item.glauconite_sand.dust=砂状海緑石の粉
 item.bentonite.crushedCentrifuged=遠心分離したベントナイト
 item.bentonite.crushedPurified=洗浄したベントナイト
 item.bentonite.crushed=砕いたベントナイト
-item.bentonite.dustImpure=汚れたベントナイトの粉
-item.bentonite.dustPure=ほぼ綺麗なベントナイトの粉
 item.bentonite.dustTiny=極小のベントナイトの粉
 item.bentonite.dustSmall=小さなベントナイトの粉
+item.bentonite.dustImpure=汚れたベントナイトの粉
+item.bentonite.dustPure=ほぼ綺麗なベントナイトの粉
 item.bentonite.dust=ベントナイトの粉
 item.fullers_earth.dustTiny=極小のフラー土の粉
 item.fullers_earth.dustSmall=小さなフラー土の粉
@@ -2114,10 +2058,10 @@ item.pitchblende.dust=瀝青ウラン鉱の粉
 item.talc.crushedCentrifuged=遠心分離した滑石
 item.talc.crushedPurified=洗浄した滑石
 item.talc.crushed=砕いた滑石
-item.talc.dustImpure=汚れた滑石の粉
-item.talc.dustPure=ほぼ綺麗な滑石の粉
 item.talc.dustTiny=極小の滑石の粉
 item.talc.dustSmall=小さな滑石の粉
+item.talc.dustImpure=汚れた滑石の粉
+item.talc.dustPure=ほぼ綺麗な滑石の粉
 item.talc.dust=滑石の粉
 item.wheat.dustTiny=極小の小麦粉
 item.wheat.dustSmall=小さな小麦粉
@@ -2254,6 +2198,7 @@ metaitem.debug_scanner.tooltip=トライコーダー
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
 behavior.tricorder.block_hardness=硬さ: %s / 爆破耐性: %s
 behavior.tricorder.block_name=名称: %s / MetaData: %s
+behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=タンク %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=すべてのタンクが空
@@ -2796,6 +2741,7 @@ gregtech.machine.alloy_smelter.uxv.name=史上最高の合金製錬炉 IV
 gregtech.machine.alloy_smelter.uxv.tooltip=金属混合機
 gregtech.machine.alloy_smelter.opv.name=伝説の合金製錬炉
 gregtech.machine.alloy_smelter.opv.tooltip=金属混合機
+
 # Arc Furnace
 gregtech.machine.arc_furnace.lv.name=基本型アーク炉
 gregtech.machine.arc_furnace.lv.tooltip=EBFなんていらない
@@ -3918,7 +3864,6 @@ gregtech.machine.charger.uxv.name=UXV高速充電器
 gregtech.machine.charger.opv.name=OpV高速充電器
 gregtech.machine.charger.max.name=MAX高速充電器
 
-# Energy Converter
 gregtech.machine.energy_converter.ulv.1.name=ULV 1Aエネルギー変換機
 gregtech.machine.energy_converter.ulv.4.name=ULV 4Aエネルギー変換機
 gregtech.machine.energy_converter.ulv.8.name=ULV 8Aエネルギー変換機
@@ -4062,7 +4007,7 @@ tile.hermetic_casing.hermetic_casing_zpm.name=気密外装 VII
 tile.hermetic_casing.hermetic_casing_uv.name=気密外装 VIII
 tile.hermetic_casing.hermetic_casing_uhv.name=気密外装 IX
 
-# Gas Collector
+#Gas Collectors
 gregtech.machine.gas_collector.lv.name=基本型ガス収集機
 gregtech.machine.gas_collector.lv.tooltip=ディメンション依存の空気を収集
 gregtech.machine.gas_collector.mv.name=発展型ガス収集機
@@ -4090,7 +4035,7 @@ gregtech.machine.gas_collector.uxv.tooltip=太陽系からディメンション�
 gregtech.machine.gas_collector.opv.name=伝説のガス収集機
 gregtech.machine.gas_collector.opv.tooltip=宇宙からディメンション依存のガスを収集
 
-# Rock Breaker
+#Rock Breakers
 gregtech.machine.rock_breaker.lv.name=基本型破砕機
 gregtech.machine.rock_breaker.lv.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.rock_breaker.mv.name=発展型破砕機
@@ -4118,7 +4063,7 @@ gregtech.machine.rock_breaker.uxv.tooltip=火山形成室
 gregtech.machine.rock_breaker.opv.name=伝説の破砕機
 gregtech.machine.rock_breaker.opv.tooltip=火山形成室
 
-# Fisher
+#Fisher
 gregtech.machine.fisher.lv.name=基本型魚釣り機
 gregtech.machine.fisher.mv.name=発展型魚釣り機
 gregtech.machine.fisher.hv.name=発展型魚釣り機 II
@@ -4497,7 +4442,6 @@ metaitem.cover.digital.mode.item.disabled=クリックでアイテムモード�
 metaitem.cover.digital.mode.item.enabled=アイテムモードが有効
 metaitem.cover.digital.mode.fluid.disabled=クリックで液体モードを有効化
 metaitem.cover.digital.mode.fluid.enabled=液体モードが有効
-
 
 gregtech.machine.monitor_screen.name=モニタースクリーン
 
