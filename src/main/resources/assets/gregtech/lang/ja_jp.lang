@@ -1,6 +1,6 @@
 # Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
-# Corresponding Version: .. - beta
+# Corresponding Version: 2.4.4 - beta
 # 対応バージョン: 2.4.4 - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
@@ -91,9 +91,9 @@ gregtech.multiblock.fusion_reactor.uv.description=核融合炉Mark 3は, 元素�
 gregtech.multiblock.fusion_reactor.energy=EU: %d / %d
 gregtech.multiblock.fusion_reactor.heat=熱: %d
 gregtech.multiblock.large_chemical_reactor.description=大型化学反応炉は化学反応を100%%のエネルギー効率で実現します. オーバークロックは速度とエネルギーの両方を4倍にします. マルチブロックには丁度1つのキュプロニッケルコイルブロックを中央にあるPTFEパイプ外装に隣接して配置する必要があります.
-gregtech.multiblock.primitive_water_pump.description=初歩的な揚水ポンプは蒸気時代以前のマルチブロックであり, 1秒に1回バイオームに応じた水量を収集します. ポンプ, ULV, またはLV出力ハッチを使用することにより, バイオーム係数*ハッチ乗数に従ってティアごとの水の量を増やすことができます.
+gregtech.multiblock.primitive_water_pump.description=初歩的な揚水ポンプは蒸気時代以前のマルチブロックであり, 1秒に1回バイオームに応じた水量を収集します. ポンプ, ULV, またはLV出力ハッチを使用することにより, バイオーム係数*ハッチ係数に従ってティアごとの水の量を増やすことができます.
 gregtech.multiblock.primitive_water_pump.extra1=バイオーム係数:/n  海, 川: 1000 L/s/n  湿地: 800 L/s/n  ジャングル: 350 L/s/n  雪原: 300 L/s/n  草原, 森林: 250 L/s/n  タイガ: 175 L/s/n  海岸: 170 L/s/n  他: 100 L/s
-gregtech.multiblock.primitive_water_pump.extra2=ハッチ乗数:/n  ポンプハッチ: 1x/n  ULV搬出ハッチ: 2x/n  LV出力ハッチ: 4x
+gregtech.multiblock.primitive_water_pump.extra2=ハッチ係数:/n  ポンプハッチ: 1x/n  ULV搬出ハッチ: 2x/n  LV搬出ハッチ: 4x/n/n稼働中のバイオームで雨が降っていた場合, 生産量が50%%増になる.
 gregtech.multiblock.processing_array.description=処理アレイは1つのマルチブロックに同じ機械を最大16個まで組み込め, 自動化を効率化して楽するためのマルチブロック機械です.
 gregtech.multiblock.advanced_processing_array.description=発展型処理アレイは1つのマルチブロックに同じ機械を最大64個まで組み込め, 自動化を効率化して楽するためのマルチブロック機械です.
 
@@ -824,19 +824,19 @@ metaitem.cover.item.detector.name=アイテム検出器
 metaitem.cover.item.detector.tooltip=レッドストーン信号としてアイテム量を検出するカバー
 metaitem.cover.energy.detector.name=エネルギー検出器
 metaitem.cover.energy.detector.tooltip=レッドストーン信号としてエネルギー量を検出するカバー
-metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector //TODO
-metaitem.cover.energy.detector.advanced.tooltip=Gives RS-Latch controlled Energy Status as Redstone (as Cover) //TODO
+metaitem.cover.energy.detector.advanced.name=発展型エネルギー検出器
+metaitem.cover.energy.detector.advanced.tooltip=エネルギー量に基づいたRSラッチを与えるカバー
 metaitem.cover.player.detector.name=プレイヤー検出器
 metaitem.cover.player.detector.tooltip=レッドストーン信号として付近のプレイヤーを検出するカバー
 metaitem.cover.drain.name=ドレインカバー
 metaitem.cover.fluid.voiding.name=液体消去カバー
-metaitem.cover.fluid.voiding.tooltip=液体を消去するカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.fluid.voiding.tooltip=液体を消去するカバー./n設置後にソフトマレットで有効化する必要がある.
 metaitem.cover.fluid.voiding.advanced.name=発展型液体消去カバー
-metaitem.cover.fluid.voiding.advanced.tooltip=液体を消去する量を制御できるカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.fluid.voiding.advanced.tooltip=液体を消去する量を制御できるカバー./n設置後にソフトマレットで有効化する必要がある.
 metaitem.cover.item.voiding.name=アイテム消去カバー
-metaitem.cover.item.voiding.tooltip=アイテムを消去するカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.item.voiding.tooltip=アイテムを消去するカバー./n設置後にソフトマレットで有効化する必要がある.
 metaitem.cover.item.voiding.advanced.name=発展型アイテム消去カバー
-metaitem.cover.item.voiding.advanced.tooltip=アイテムを消去する量を制御できるカバー./n設置後にソフトハンマーで有効化する必要がある.
+metaitem.cover.item.voiding.advanced.tooltip=アイテムを消去する量を制御できるカバー./n設置後にソフトマレットで有効化する必要がある.
 
 metaitem.cover.facade.name=%sの外装
 metaitem.cover.facade.tooltip=装飾品
@@ -922,7 +922,7 @@ metaitem.tool.saw.name=%s製のこぎり
 metaitem.tool.saw.tooltip=氷も収集できる
 metaitem.tool.hard_hammer.name=%s製ハンマー
 metaitem.tool.hard_hammer.tooltip=鉱石を採掘する代わりに砕く
-metaitem.tool.soft_hammer.name=%s製ソフトハンマー
+metaitem.tool.soft_hammer.name=%s製ソフトマレット
 metaitem.tool.wrench.name=%s製レンチ
 metaitem.tool.wrench.tooltip=左クリックで機械を撤去
 metaitem.tool.file.name=%s製やすり
@@ -1095,8 +1095,8 @@ metaitem.nan.certificate.tooltip=挑戦を受けました!
 
 metaitem.fertilizer.name=肥料
 
-metaitem.blacklight.name=Blacklight //TODO
-metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source //TODO
+metaitem.blacklight.name=紫外線
+metaitem.blacklight.tooltip=長波長§d紫外線§7照射装置
 
 gui.widget.incrementButton.default_tooltip=Shift, Ctrlまたはその両方で量を変更
 gui.widget.recipeProgressWidget.default_tooltip=レシピを表示
@@ -1196,13 +1196,13 @@ cover.ender_fluid_link.private.tooltip.disabled=個人タンクモードに切�
 cover.ender_fluid_link.private.tooltip.enabled=公開タンクモードに切り替え
 cover.ender_fluid_link.incomplete_hex=入力した色が不完全です!/n8桁の16進数すべてが入力されると反映されます./nGUIを閉じると編集内容が失われます!
 
-cover.advanced_energy_detector.label=Advanced Energy Detector //TODO
-cover.advanced_energy_detector.min=Minimum EU //TODO
-cover.advanced_energy_detector.max=Maximum EU //TODO
-cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU //TODO
-cover.advanced_energy_detector.invert_label=Inverted: //TODO
-cover.advanced_energy_detector.normal=Normal //TODO
-cover.advanced_energy_detector.inverted=Inverted //TODO
+cover.advanced_energy_detector.label=発展型エネルギー検出器
+cover.advanced_energy_detector.min=最小EU
+cover.advanced_energy_detector.max=最大EU
+cover.advanced_energy_detector.invert_tooltip=赤石ロジックを反転させます/nデフォルトでは, 信号は最小EUを下回った時に出力され, 最大EUを上回った時に信号出力が停止します.
+cover.advanced_energy_detector.invert_label=反転: //TODO
+cover.advanced_energy_detector.normal=通常 //TODO
+cover.advanced_energy_detector.inverted=反転 //TODO
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=%s鉱石 (黒色花崗岩)
@@ -1296,15 +1296,15 @@ item.material.oreprefix.cableGtOctal=8倍%sケーブル
 item.material.oreprefix.cableGtQuadruple=4倍%sケーブル
 item.material.oreprefix.cableGtDouble=2倍%sケーブル
 item.material.oreprefix.cableGtSingle=1倍%sケーブル
-item.material.oreprefix.polymer.plate=%s Sheet //TODO
-item.material.oreprefix.polymer.foil=Thin %s Sheet //TODO
-item.material.oreprefix.polymer.nugget=%s Chip //TODO
-item.material.oreprefix.polymer.plateDense=Dense %s Sheet //TODO
-item.material.oreprefix.polymer.plateDouble=Double %s Sheet //TODO
-item.material.oreprefix.polymer.dustTiny=Tiny Pile of %s Pulp //TODO
-item.material.oreprefix.polymer.dustSmall=Small Pile of %s Pulp //TODO
-item.material.oreprefix.polymer.dust=%s Pulp //TODO
-item.material.oreprefix.polymer.ingot=%s Bar //TODO
+item.material.oreprefix.polymer.plate=%sシート
+item.material.oreprefix.polymer.foil=薄い%sシート
+item.material.oreprefix.polymer.nugget=%sチップ
+item.material.oreprefix.polymer.plateDense=高密度な%sシート
+item.material.oreprefix.polymer.plateDouble=二重%sシート
+item.material.oreprefix.polymer.dustTiny=極小の%sパルプ
+item.material.oreprefix.polymer.dustSmall=小さな%sパルプ
+item.material.oreprefix.polymer.dust=%sパルプ
+item.material.oreprefix.polymer.ingot=%sバー
 
 
 # Direct Element Materials
@@ -1485,7 +1485,7 @@ material.bauxite=ボーキサイト
 material.invar=インバー
 material.kanthal=カンタル
 material.lazurite=青金石
-material.liquid_helium=Liquid Helium //TODO
+material.liquid_helium=液体ヘリウム
 material.magnalium=マグナリウム
 material.magnesite=菱苦土鉱
 material.magnetite=磁鉄鉱
@@ -1895,8 +1895,8 @@ material.naquadah_alloy=ナクアダ合金
 material.sulfuric_nickel_solution=硫酸ニッケル溶液
 material.sulfuric_copper_solution=硫酸銅溶液
 material.lead_zinc_solution=鉛-亜鉛溶液
-material.nitration_mixture=ニトロ化混合物
 material.diluted_sulfuric_acid=希硫酸
+material.nitration_mixture=ニトロ化混合物
 material.diluted_hydrochloric_acid=希塩酸
 material.flint=火打石
 material.air=空気
@@ -2038,11 +2038,11 @@ item.glauconite_sand.dustSmall=小さな砂状海緑石の粉
 item.glauconite_sand.dust=砂状海緑石の粉
 item.bentonite.crushedCentrifuged=遠心分離したベントナイト
 item.bentonite.crushedPurified=洗浄したベントナイト
-item.bentonite.crushed=砕いたベントナイト
+item.bentonite.dustPure=ほぼ綺麗なベントナイトの粉
 item.bentonite.dustTiny=極小のベントナイトの粉
 item.bentonite.dustSmall=小さなベントナイトの粉
+item.bentonite.crushed=砕いたベントナイト
 item.bentonite.dustImpure=汚れたベントナイトの粉
-item.bentonite.dustPure=ほぼ綺麗なベントナイトの粉
 item.bentonite.dust=ベントナイトの粉
 item.fullers_earth.dustTiny=極小のフラー土の粉
 item.fullers_earth.dustSmall=小さなフラー土の粉
@@ -2574,7 +2574,7 @@ tile.stone_bricks_square.concrete_dark.name=暗色コンクリートの大レン
 
 
 # Steam machines
-gregtech.machine.steam_boiler.tooltip_produces=%,dmb/秒で蒸気を生産
+gregtech.machine.steam_boiler.tooltip_produces=%,dmb/tickで蒸気を生産
 
 gregtech.machine.steam_boiler_coal_bronze.name=固形燃料用小型ボイラー
 gregtech.machine.steam_boiler_coal_bronze.tooltip=蒸気の力を得るための最初の手段
@@ -3788,7 +3788,7 @@ gregtech.battery_buffer.average_input=入力平均: %s EU/t
 gregtech.battery_buffer.average_output=出力平均: %s EU/t
 
 # Transformers
-gregtech.machine.transformer.tooltip_tool_usage=ソフトハンマーで反転. 最初は降圧
+gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転. 最初は降圧
 gregtech.machine.transformer.tooltip_transform_down=降圧: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
 gregtech.machine.transformer.message_transform_down=降圧;  In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=昇圧: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
@@ -3829,7 +3829,7 @@ gregtech.machine.transformer.adjustable.opv.name=OpV可変変圧器
 # Diodes
 gregtech.machine.diode.message=通す最大アンペア数: %s
 gregtech.machine.diode.tooltip_general=一方向にのみエネルギーを流すことができるシンプルなダイオード.
-gregtech.machine.diode.tooltip_tool_usage=ソフトハンマーで叩いて通すアンペア数を切り替えます.
+gregtech.machine.diode.tooltip_tool_usage=ソフトマレットで叩いて通すアンペア数を切り替えます.
 
 gregtech.machine.diode.ulv.name=ULVダイオード
 gregtech.machine.diode.lv.name=LVダイオード
@@ -3925,7 +3925,7 @@ gregtech.machine.energy_converter.max.4.name=MAX 4Aエネルギー変換機
 gregtech.machine.energy_converter.max.8.name=MAX 8Aエネルギー変換機
 gregtech.machine.energy_converter.max.16.name=MAX 16Aエネルギー変換機
 
-gregtech.machine.energy_converter.tooltip_tool_usage=ソフトハンマーで効果を反転. 最初はFE -> EU
+gregtech.machine.energy_converter.tooltip_tool_usage=ソフトマレットで効果を反転. 最初はFE -> EU
 gregtech.machine.energy_converter.tooltip_conversion_fe=FE変換: §c%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
 gregtech.machine.energy_converter.message_conversion_fe=FE変換, In: %dFE, Out: %dA %dEU
 gregtech.machine.energy_converter.tooltip_conversion_eu=EU変換: §a%,dA %,dEU (§r%s§a)§7 -> §c%,dFE
@@ -4777,7 +4777,7 @@ gregtech.multiblock.universal.has_problems=問題アリ!
 gregtech.multiblock.universal.has_problems_header=メンテナンスハッチで以下の問題を修理してください:
 gregtech.multiblock.universal.problem.wrench=%s§7パイプが緩い. (§aレンチ§7)
 gregtech.multiblock.universal.problem.screwdriver=%s§7ネジが緩い. (§aスクリュードライバー§7)
-gregtech.multiblock.universal.problem.soft_mallet=%s§7何かが詰まっている. (§aソフトハンマー§7)
+gregtech.multiblock.universal.problem.soft_mallet=%s§7何かが詰まっている. (§aソフトマレット§7)
 gregtech.multiblock.universal.problem.hard_hammer=%s§7メッキがへこんでいる. (§aハンマー§7)
 gregtech.multiblock.universal.problem.wire_cutter=%s§7ワイヤーが焼き切れている. (§aワイヤーカッター§7)
 gregtech.multiblock.universal.problem.crowbar=%s§7部品がずれている. (§aバール§7)
@@ -4956,6 +4956,7 @@ terminal.pong.description=昔ながらのピンポンゲーム. タングステ�
 terminal.minesweeper.description=昔ながらのマインスイーパー.
 terminal.maze.description=ミノタウロスから生き延びるために無限の迷宮を駆け抜けるGTOS限定ゲーム!
 terminal.cape_selector.description=進捗によって解放されたGTマントを装備できるアプリ.
+terminal.teleport.description=任意ディメンションの任意座標へのポータルを開く. 「壁の中にいる」状態にならないように!
 
 
 texture.modify_gui_texture.missing=Missing Texture
