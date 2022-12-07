@@ -14,7 +14,6 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.ToolItems;
 import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -220,18 +219,6 @@ public class MaterialRecipeHandler {
         if (material.hasFlag(MORTAR_GRINDABLE)) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
                     OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X', new UnificationEntry(ingotPrefix, material));
-        }
-
-        if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            if (ConfigHolder.recipes.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        ToolItems.WRENCH.get(material),
-                        "PhP", "PPP", " P ", 'P', new UnificationEntry(OrePrefix.plate, material));
-            } else {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        ToolItems.WRENCH.get(material),
-                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
-            }
         }
 
         if (material.hasFlag(GENERATE_ROD)) {

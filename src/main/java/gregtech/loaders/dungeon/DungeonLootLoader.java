@@ -69,8 +69,8 @@ public class DungeonLootLoader {
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.gem, Materials.GarnetYellow), 1, 4, 4);
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.gem, Materials.Ruby), 1, 4, 2);
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.gem, Materials.Emerald), 1, 4, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.toolHeadPickaxe, Materials.DamascusSteel), 1, 4, 1);
-            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.toolHeadShovel, Materials.DamascusSteel), 1, 4, 1);
+            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.ingot, Materials.DamascusSteel), 3, 12, 1);
+            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.ingot, Materials.DamascusSteel), 1, 4, 1);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.dust, Materials.Chrome), 1, 4, 6);
             ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium), 2, 8, 6);
@@ -87,8 +87,8 @@ public class DungeonLootLoader {
             ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CROSSING, OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium), 4, 8, 6);
             ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CROSSING, OreDictUnifier.get(OrePrefix.dust, Materials.Chrome), 2, 4, 6);
 
-            ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CORRIDOR, OreDictUnifier.get(OrePrefix.toolHeadSword, Materials.DamascusSteel), 1, 4, 6);
-            ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CORRIDOR, OreDictUnifier.get(OrePrefix.toolHeadAxe, Materials.DamascusSteel), 1, 4, 6);
+            ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CORRIDOR, OreDictUnifier.get(OrePrefix.ingot, Materials.DamascusSteel), 2, 8, 6);
+            ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CORRIDOR, OreDictUnifier.get(OrePrefix.ingot, Materials.DamascusSteel), 3, 12, 6);
         }
         if (ConfigHolder.worldgen.increaseDungeonLoot) {
             ChestGenHooks.addRolls(LootTableList.CHESTS_SPAWN_BONUS_CHEST, 2, 4);
