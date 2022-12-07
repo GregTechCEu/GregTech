@@ -82,8 +82,14 @@ import static gregtech.api.items.toolitem.ToolHelper.*;
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
 public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
 
+    /**
+     * @return the modid of the tool
+     */
     String getDomain();
 
+    /**
+     * @return the name of the tool
+     */
     String getId();
 
     boolean isElectric();

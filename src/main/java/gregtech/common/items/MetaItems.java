@@ -589,18 +589,9 @@ public final class MetaItems {
         add(OrePrefix.rotor);
         add(OrePrefix.lens);
         add(OrePrefix.turbineBlade);
-        add(OrePrefix.toolHeadSword);
-        add(OrePrefix.toolHeadPickaxe);
-        add(OrePrefix.toolHeadShovel);
-        add(OrePrefix.toolHeadAxe);
-        add(OrePrefix.toolHeadHoe);
-        add(OrePrefix.toolHeadHammer);
-        add(OrePrefix.toolHeadFile);
-        add(OrePrefix.toolHeadSaw);
         add(OrePrefix.toolHeadDrill);
         add(OrePrefix.toolHeadChainsaw);
         add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadScythe);
         add(OrePrefix.toolHeadBuzzSaw);
         add(OrePrefix.toolHeadScrewdriver);
     }};
