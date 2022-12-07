@@ -975,6 +975,7 @@ item.gt.tool.screwdriver_lv.tooltip=Adjusts Covers and Machines
 
 
 item.gt.tool.tooltip.crafting_uses=§a %s Crafting Uses
+item.gt.tool.tooltip.general_uses=§b %s Uses Remaining
 item.gt.tool.tooltip.attack_damage=§c %s Attack Damage
 item.gt.tool.tooltip.mining_speed=§d %s Mining Speed
 item.gt.tool.tooltip.harvest_level=§e %s Harvest Level
