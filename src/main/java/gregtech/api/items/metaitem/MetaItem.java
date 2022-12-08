@@ -1,5 +1,6 @@
 package gregtech.api.items.metaitem;
 
+import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
@@ -21,6 +22,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.ToolChargeBarRenderer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
@@ -44,7 +46,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -52,18 +53,17 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -81,7 +81,8 @@ import java.util.List;
  * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) }
  * This will add single-use (not rechargeable) LV battery with initial capacity 10000 EU
  */
-public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory {
+@Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory, IOverlayRenderAware {
 
     private static final List<MetaItem<?>> META_ITEMS = new ArrayList<>();
 
@@ -655,6 +656,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         T metaValueItem = getItem(itemStack);
         ItemUIFactory uiFactory = metaValueItem == null ? null : metaValueItem.getUIManager();
         return uiFactory == null ? null : uiFactory.createUI(holder, entityPlayer);
+    }
+
+    // IOverlayRenderAware
+    @Override
+    public void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+        ToolChargeBarRenderer.renderBarsItem(this, stack, xPosition, yPosition);
     }
 
     public class MetaValueItem {
