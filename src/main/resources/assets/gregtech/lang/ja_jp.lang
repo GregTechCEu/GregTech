@@ -1200,9 +1200,9 @@ cover.advanced_energy_detector.label=発展型エネルギー検出器
 cover.advanced_energy_detector.min=最小EU
 cover.advanced_energy_detector.max=最大EU
 cover.advanced_energy_detector.invert_tooltip=赤石ロジックを反転させます/nデフォルトでは, 信号は最小EUを下回った時に出力され, 最大EUを上回った時に信号出力が停止します.
-cover.advanced_energy_detector.invert_label=反転: //TODO
-cover.advanced_energy_detector.normal=通常 //TODO
-cover.advanced_energy_detector.inverted=反転 //TODO
+cover.advanced_energy_detector.invert_label=反転: 
+cover.advanced_energy_detector.normal=しない
+cover.advanced_energy_detector.inverted=する
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=%s鉱石 (黒色花崗岩)
