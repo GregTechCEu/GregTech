@@ -7,10 +7,15 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
 
@@ -125,12 +130,16 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
-                if (Loader.isModLoaded("enderio")) {
+                if (Loader.isModLoaded("endercore")) {
                     return basicClass;
                 }
+                ClassNode classNode = new ClassNode();
                 ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, RenderItemVisitor.TARGET_METHOD, RenderItemVisitor::new), 0);
+                classReader.accept(classNode, 0);
+                Iterator<MethodNode> methods = classNode.methods.iterator();
+                RenderItemVisitor.transform(methods);
+                ClassWriter classWriter = new ClassWriter(0);
+                classNode.accept(classWriter);
                 return classWriter.toByteArray();
             }
         }
