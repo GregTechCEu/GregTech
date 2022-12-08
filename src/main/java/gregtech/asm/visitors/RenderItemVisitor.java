@@ -2,59 +2,58 @@ package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
-public class RenderItemVisitor extends MethodVisitor implements Opcodes {
+import java.util.Iterator;
+
+public class RenderItemVisitor implements Opcodes {
 
     public static final String TARGET_CLASS_NAME = "net/minecraft/client/renderer/RenderItem";
     public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_180453_a", "(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V"); // renderItemOverlayIntoGUI
-    private static final ObfMapping METHOD_RENDER_ITEM_OVERLAY = new ObfMapping(
-            "gregtech/asm/hooks/RenderItemHooks",
-            "renderElectricBar",
-            "(Lnet/minecraft/item/ItemStack;II)V");
 
-    private boolean primed, onFrame, applied;
-    private Label target;
+    public static void transform(Iterator<MethodNode> methods) {
+        while (methods.hasNext()) {
+            MethodNode m = methods.next();
+            if (TARGET_METHOD.matches(m)) {
+                InsnList toAdd = new InsnList();
+                toAdd.add(new VarInsnNode(ALOAD, 2));
+                toAdd.add(new VarInsnNode(ILOAD, 3));
+                toAdd.add(new VarInsnNode(ILOAD, 4));
+                toAdd.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks", "renderElectricBar", "(Lnet/minecraft/item/ItemStack;II)V", false));
 
-    public RenderItemVisitor(MethodVisitor mv) {
-        super(ASM5, mv);
-    }
+                boolean primed = false, onFrame = false, applied = false;
+                Label target = null;
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode next = m.instructions.get(i);
 
-    @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (!this.applied && !this.primed && this.target == null && opcode == INVOKEVIRTUAL && "showDurabilityBar".equals(name)) {
-            this.primed = true;
+                    if (!primed && target == null && next.getOpcode() == INVOKEVIRTUAL && next instanceof MethodInsnNode) {
+                        if ("showDurabilityBar".equals(((MethodInsnNode) next).name)) {
+                            primed = true;
+                        }
+                    }
+
+                    if (primed && next.getOpcode() == IFEQ && next instanceof JumpInsnNode) {
+                        target = ((JumpInsnNode) next).label.getLabel();
+                        primed = false;
+                    }
+
+                    if (target != null && next instanceof LabelNode && ((LabelNode) next).getLabel() == target) {
+                        onFrame = true;
+                        continue;
+                    }
+
+                    if (onFrame && next instanceof FrameNode) {
+                        m.instructions.insert(next, toAdd);
+                        applied = true;
+                        break;
+                    }
+                }
+                if (!applied) {
+                    m.instructions.insert(toAdd);
+                }
+                break;
+            }
         }
-        super.visitMethodInsn(opcode, owner, name, desc, itf);
-    }
-
-    @Override
-    public void visitJumpInsn(int opcode, Label label) {
-        if (!this.applied && this.primed && opcode == IFEQ) {
-            this.target = label;
-            this.primed = false;
-        }
-        super.visitJumpInsn(opcode, label);
-    }
-
-    @Override
-    public void visitLabel(Label label) {
-        if (!this.applied && this.target == label) {
-            this.onFrame = true;
-        }
-        super.visitLabel(label);
-    }
-
-    @Override
-    public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
-        if (!this.applied && this.onFrame) {
-            super.visitVarInsn(ALOAD, 2);
-            super.visitVarInsn(ILOAD, 3);
-            super.visitVarInsn(ILOAD, 4);
-            METHOD_RENDER_ITEM_OVERLAY.visitMethodInsn(this, INVOKESTATIC);
-            this.applied = true;
-        }
-        super.visitFrame(type, nLocal, local, nStack, stack);
     }
 }
