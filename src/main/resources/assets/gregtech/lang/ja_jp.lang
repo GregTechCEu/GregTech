@@ -11,7 +11,7 @@ death.attack.radiation=%s は青白い光で満ち溢れた.
 death.attack.turbine=%s はタービンで散髪しようとした.
 death.attack.explosion=%s の遺体が全国各地で発見された.
 death.attack.explosion.player=%s は %s のおかげで爆発した.
-death.attack.heat.player= %s は %s の水餃子の具になった.
+death.attack.heat.player=%s は %s の水餃子の具になった.
 
 enchantment.disjunction=ディスジャンクション
 
@@ -2223,8 +2223,8 @@ behavior.tricorder.multiblock_energy_output=最大エネルギー出力: %s EU/t
 behavior.tricorder.multiblock_maintenance=問題: %s
 behavior.tricorder.multiblock_parallel=並行処理: %s
 behavior.tricorder.debug_machine=Meta-ID: %s
-behavior.tricorder.debug_machine_valid= 有効
-behavior.tricorder.debug_machine_invalid= 無効!
+behavior.tricorder.debug_machine_valid=有効
+behavior.tricorder.debug_machine_invalid=無効!
 behavior.tricorder.debug_machine_invalid_null=無効! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=CPUの平均ロード時間は ~%sns ( %s tickの間集計) 最長ロード時間は %sns.
 behavior.tricorder.debug_cpu_load_seconds=これは %s秒.
@@ -2264,12 +2264,12 @@ tile.casing.iv=IVマシン筐体
 # Wire coil blocks
 tile.wire_coil.tooltip_heat=基本最大温度: §e%,dK
 tile.wire_coil.tooltip_smelter=§aマルチスメルター§7:
-tile.wire_coil.tooltip_parallel_smelter=  最大並行処理数: §e%s§7
-tile.wire_coil.tooltip_energy_smelter=  エネルギー使用量: §e%s EU/t毎レシピ§7
+tile.wire_coil.tooltip_parallel_smelter=最大並行処理数: §e%s§7
+tile.wire_coil.tooltip_energy_smelter=エネルギー使用量: §e%s EU/t毎レシピ§7
 tile.wire_coil.tooltip_pyro=§a熱分解炉§7:
-tile.wire_coil.tooltip_speed_pyro=  処理速度: §e%s%%§7
+tile.wire_coil.tooltip_speed_pyro=処理速度: §e%s%%§7
 tile.wire_coil.tooltip_cracking=§a接触分解装置§7:
-tile.wire_coil.tooltip_energy_cracking=  エネルギー使用量: §e%s%%§7
+tile.wire_coil.tooltip_energy_cracking=エネルギー使用量: §e%s%%§7
 
 tile.wire_coil.cupronickel.name=キュプロニッケルコイルブロック
 tile.wire_coil.kanthal.name=カンタルコイルブロック
@@ -4957,7 +4957,6 @@ terminal.minesweeper.description=昔ながらのマインスイーパー.
 terminal.maze.description=ミノタウロスから生き延びるために無限の迷宮を駆け抜けるGTOS限定ゲーム!
 terminal.cape_selector.description=進捗によって解放されたGTマントを装備できるアプリ.
 terminal.teleport.description=任意ディメンションの任意座標へのポータルを開く. 「壁の中にいる」状態にならないように!
-
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=読み込み失敗
