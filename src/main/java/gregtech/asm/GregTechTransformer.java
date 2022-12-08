@@ -1,5 +1,6 @@
 package gregtech.asm;
 
+import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
@@ -7,8 +8,6 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -130,7 +129,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
-                if (Loader.isModLoaded("endercore")) {
+                if (Loader.isModLoaded(GTValues.MODID_ECORE)) {
                     return basicClass;
                 }
                 ClassNode classNode = new ClassNode();
