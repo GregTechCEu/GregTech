@@ -34,7 +34,7 @@ public interface IParallelableRecipeLogic {
      * @param fluidOutputs  output fluid handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @param maxVoltage    the voltage limit on the number of parallel recipes to be performed
-     * @param voidable      the MetaTileEntity performing the parallel recipe
+     * @param voidable      the voidable performing the parallel recipe
      * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
     default RecipeBuilder<?> findMultipliedParallelRecipe(@Nonnull RecipeMap<?> recipeMap, @Nonnull Recipe currentRecipe, @Nonnull IItemHandlerModifiable inputs, @Nonnull IMultipleTankHandler fluidInputs, @Nonnull IItemHandlerModifiable outputs, @Nonnull IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, @Nonnull IVoidable voidable) {
@@ -59,7 +59,7 @@ public interface IParallelableRecipeLogic {
      * @param outputs       output item handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @param maxVoltage    the voltage limit on the number of parallel recipes to be performed
-     * @param voidable      the MetaTileEntity performing the parallel recipe
+     * @param voidable      the voidable performing the parallel recipe
      * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
     default RecipeBuilder<?> findAppendedParallelItemRecipe(@Nonnull RecipeMap<?> recipeMap, @Nonnull IItemHandlerModifiable inputs, @Nonnull IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, @Nonnull IVoidable voidable) {
