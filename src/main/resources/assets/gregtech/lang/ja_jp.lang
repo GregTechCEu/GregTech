@@ -4756,7 +4756,7 @@ gregtech.fluid_pipe.gas_proof=§6気体を運搬可能
 gregtech.fluid_pipe.acid_proof=§6酸性の液体を運搬可能
 gregtech.fluid_pipe.cryo_proof=§6極低温の液体を運搬可能
 gregtech.fluid_pipe.plasma_proof=§6全てのプラズマを運搬可能
-gregtech.fluid_pipe.not_gas_proof=§4気体が漏れてしまう!
+gregtech.fluid_pipe.not_gas_proof=§4気体は漏れてしまう!
 
 gregtech.item_pipe.rate_items=§9運搬速度: %d items/s
 gregtech.item_pipe.rate_stacks=§9運搬速度: %d stacks/s
