@@ -1200,7 +1200,7 @@ cover.advanced_energy_detector.label=発展型エネルギー検出器
 cover.advanced_energy_detector.min=最小EU
 cover.advanced_energy_detector.max=最大EU
 cover.advanced_energy_detector.invert_tooltip=赤石ロジックを反転させます/nデフォルトでは, 信号は最小EUを下回った時に出力され, 最大EUを上回った時に信号出力が停止します.
-cover.advanced_energy_detector.invert_label=反転: 
+cover.advanced_energy_detector.invert_label=反転:
 cover.advanced_energy_detector.normal=しない
 cover.advanced_energy_detector.inverted=する
 
@@ -4716,7 +4716,7 @@ gregtech.gui.silktouch.enabled=シルクタッチが有効: クリックで無�
 gregtech.gui.silktouch.disabled=シルクタッチが無効: クリックで有効化./n§7切り替えには機械の一時停止が必要.
 gregtech.gui.chunkmode.enabled=チャンクモードが有効: クリックで無効化./n§7切り替えには機械の一時停止が必要.
 gregtech.gui.chunkmode.disabled=チャンクモードが無効: クリックで有効化./n§7切り替えには機械の一時停止が必要.
-gregtech.gui.multiblock_item_voiding=消去モード/n§6アイテム§7を消去 
+gregtech.gui.multiblock_item_voiding=消去モード/n§6アイテム§7を消去
 gregtech.gui.multiblock_fluid_voiding=消去モード/n§6液体§7を消去
 gregtech.gui.multiblock_item_fluid_voiding=消去モード/n§6アイテム§7と§6液体§7を消去
 gregtech.gui.multiblock_no_voiding=消去モード/n§7何も消去しない
