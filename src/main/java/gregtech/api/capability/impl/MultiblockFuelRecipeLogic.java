@@ -20,7 +20,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // apply maintenance penalties
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
@@ -44,6 +44,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         return overclock;
     }
 
+    @Nonnull
     @Override
     public Enum<ParallelLogicType> getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
