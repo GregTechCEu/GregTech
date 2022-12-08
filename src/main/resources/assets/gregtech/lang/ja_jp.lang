@@ -880,11 +880,11 @@ metaitem.gelled_toluene.tooltip=爆発物の原料
 metaitem.bottle.purple.drink.name=パープルドリンク
 metaitem.bottle.purple.drink.tooltip=レモネードはいかが? それともアイスティーは? いや, 私にはこのパープルドリンクがあります!
 
-metaitem.dye.black.name=黒色の化学染料
-metaitem.dye.red.name=赤色の化学染料
+metaitem.dye.black.name=黒の化学染料
+metaitem.dye.red.name=赤の化学染料
 metaitem.dye.green.name=緑色の化学染料
 metaitem.dye.brown.name=茶色の化学染料
-metaitem.dye.blue.name=青色の化学染料
+metaitem.dye.blue.name=青の化学染料
 metaitem.dye.purple.name=紫色の化学染料
 metaitem.dye.cyan.name=青緑色の化学染料
 metaitem.dye.silver.name=薄灰色の化学染料
@@ -895,7 +895,7 @@ metaitem.dye.yellow.name=黄色の化学染料
 metaitem.dye.light_blue.name=空色の化学染料
 metaitem.dye.magenta.name=赤紫色の化学染料
 metaitem.dye.orange.name=橙色の化学染料
-metaitem.dye.white.name=白色の化学染料
+metaitem.dye.white.name=白の化学染料
 
 metaitem.rubber_drop.name=粘性樹脂
 metaitem.plant_ball.name=プラントボール
@@ -4756,7 +4756,7 @@ gregtech.fluid_pipe.gas_proof=§6気体を運搬可能
 gregtech.fluid_pipe.acid_proof=§6酸性の液体を運搬可能
 gregtech.fluid_pipe.cryo_proof=§6極低温の液体を運搬可能
 gregtech.fluid_pipe.plasma_proof=§6全てのプラズマを運搬可能
-gregtech.fluid_pipe.not_gas_proof=§4気体は漏れてしまう!
+gregtech.fluid_pipe.not_gas_proof=§4気体を密封できない!
 
 gregtech.item_pipe.rate_items=§9運搬速度: %d items/s
 gregtech.item_pipe.rate_stacks=§9運搬速度: %d stacks/s
@@ -4956,7 +4956,7 @@ terminal.pong.description=昔ながらのピンポンゲーム. タングステ�
 terminal.minesweeper.description=昔ながらのマインスイーパー.
 terminal.maze.description=ミノタウロスから生き延びるために無限の迷宮を駆け抜けるGTOS限定ゲーム!
 terminal.cape_selector.description=進捗によって解放されたGTマントを装備できるアプリ.
-terminal.teleport.description=任意ディメンションの任意座標へのポータルを開く. 「壁の中にいる」状態にならないように!
+terminal.teleport.description=例え土の中雲の中あの火の要塞の中(ねざ～!) なかなか 大変だけどどこでもワープだぜ! でも「壁の中にいる」にはならないように!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=読み込み失敗
