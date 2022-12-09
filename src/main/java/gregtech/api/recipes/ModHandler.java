@@ -57,7 +57,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class ModHandler {
+public final class ModHandler {
+
+    private ModHandler() {/**/}
 
     /**
      * Returns if that Liquid is Water or Distilled Water, or a valid Boiler Fluid.
@@ -182,12 +184,12 @@ public class ModHandler {
     public static void addSmeltingRecipe(ItemStack input, ItemStack output, float experience) {
         boolean skip = false;
         if (input.isEmpty()) {
-            GTLog.logger.error("Input cannot be an empty ItemStack", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Input cannot be an empty ItemStack"));
             skip = true;
             RecipeMap.setFoundInvalidRecipe(true);
         }
         if (output.isEmpty()) {
-            GTLog.logger.error("Output cannot be an empty ItemStack", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Output cannot be an empty ItemStack"));
             skip = true;
             RecipeMap.setFoundInvalidRecipe(true);
         }
@@ -241,11 +243,10 @@ public class ModHandler {
         result = OreDictUnifier.getUnificated(result);
         boolean skip = false;
         if (result.isEmpty()) {
-            GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
             skip = true;
         }
-        skip |= validateRecipe(regName, recipe);
+        skip = skip || validateRecipe(regName, recipe);
         if (skip) {
             RecipeMap.setFoundInvalidRecipe(true);
             return;
@@ -303,11 +304,10 @@ public class ModHandler {
     public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
-            GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
             skip = true;
         }
-        skip |= validateRecipe(regName, recipe);
+        skip = skip || validateRecipe(regName, recipe);
         if (skip) {
             RecipeMap.setFoundInvalidRecipe(true);
             return;
@@ -327,11 +327,10 @@ public class ModHandler {
     public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
-            GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
             skip = true;
         }
-        skip |= validateRecipe(regName, recipe);
+        skip = skip || validateRecipe(regName, recipe);
         if (skip) {
             RecipeMap.setFoundInvalidRecipe(true);
             return;
@@ -346,32 +345,28 @@ public class ModHandler {
     private static boolean validateRecipe(String regName, Object... recipe) {
         boolean skip = false;
         if (recipe == null) {
-            GTLog.logger.error("Recipe cannot be null", new IllegalArgumentException());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Recipe cannot be null"));
             skip = true;
         } else if (recipe.length == 0) {
-            GTLog.logger.error("Recipe cannot be empty", new IllegalArgumentException());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Recipe cannot be empty"));
             skip = true;
         } else if (Arrays.asList(recipe).contains(null) || Arrays.asList(recipe).contains(ItemStack.EMPTY)) {
-            GTLog.logger.error("Recipe cannot contain null elements or Empty ItemStacks. Recipe: {}",
-                    Arrays.stream(recipe)
-                            .map(o -> o == null ? "NULL" : o)
-                            .map(o -> o == ItemStack.EMPTY ? "EMPTY STACK" : o)
-                            .map(Object::toString)
-                            .map(s -> "\"" + s + "\"")
-                            .collect(Collectors.joining(", ")));
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            String recipeMessage = Arrays.stream(recipe)
+                    .map(o -> o == null ? "NULL" : o)
+                    .map(o -> o == ItemStack.EMPTY ? "EMPTY STACK" : o)
+                    .map(Object::toString)
+                    .map(s -> "\"" + s + "\"")
+                    .collect(Collectors.joining(", "));
+            GTLog.logger.error(new IllegalArgumentException("Recipe cannot contain null elements or Empty ItemStacks. Recipe: " + recipeMessage));
             skip = true;
         } else {
             ModContainer container = Loader.instance().activeModContainer();
             if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(container == null ? GTValues.MODID : container.getModId().toLowerCase(), regName))) {
-                GTLog.logger.error("Tried to register recipe, {}, with duplicate key. Recipe: {}", regName,
-                        Arrays.stream(recipe)
-                                .map(Object::toString)
-                                .map(s -> "\"" + s + "\"")
-                                .collect(Collectors.joining(", ")));
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                String recipeMessage = Arrays.stream(recipe)
+                        .map(Object::toString)
+                        .map(s -> "\"" + s + "\"")
+                        .collect(Collectors.joining(", "));
+                GTLog.logger.error(new IllegalArgumentException("Tried to register recipe, " + regName + ", with duplicate key. Recipe: " + recipeMessage));
                 skip = true;
             }
         }
@@ -383,12 +378,12 @@ public class ModHandler {
             recipe[i] = finalizeIngredient(recipe[i]);
         }
         int idx = 0;
-        ArrayList<Object> recipeList = new ArrayList<>(Arrays.asList(recipe));
+        List<Object> recipeList = new ArrayList<>(Arrays.asList(recipe));
 
         while (recipe[idx] instanceof String) {
             StringBuilder s = new StringBuilder((String) recipe[idx++]);
             while (s.length() < 3) s.append(" ");
-            if (s.length() > 3) throw new IllegalArgumentException();
+            if (s.length() > 3) throw new IllegalArgumentException("Recipe row cannot be larger than 3. Index: " + idx);
             for (char c : s.toString().toCharArray()) {
                 String toolName = getToolNameByCharacter(c);
                 if (toolName != null) {
@@ -409,8 +404,9 @@ public class ModHandler {
             ingredient = ((OrePrefix) ingredient).name();
         } else if (ingredient instanceof UnificationEntry) {
             UnificationEntry entry = (UnificationEntry) ingredient;
-            if(ConfigHolder.misc.debug && entry.material != null && !entry.orePrefix.isIgnored(entry.material) && !entry.orePrefix.doGenerateItem(entry.material)) {
-                GTLog.logger.error("Attempted to create recipe for invalid/missing Unification Entry {}", ingredient.toString(), new IllegalArgumentException());
+            if (ConfigHolder.misc.debug && entry.material != null && !entry.orePrefix.isIgnored(entry.material) &&
+                    !entry.orePrefix.doGenerateItem(entry.material)) {
+                GTLog.logger.error(new IllegalArgumentException("Attempted to create recipe for invalid/missing Unification Entry " + ingredient));
             }
             ingredient = ingredient.toString();
         } else if (!(ingredient instanceof ItemStack
@@ -486,7 +482,8 @@ public class ModHandler {
 
             // Then try to get a single Material (UnificationEntry needs this, for example)
             MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
-            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial)) func.accept(materialStack, lastChar);
+            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial))
+                func.accept(materialStack, lastChar);
 
             // Gather any secondary materials if this item has an OrePrefix
             OrePrefix prefix = OreDictUnifier.getPrefix(stack);
@@ -519,11 +516,10 @@ public class ModHandler {
     public static void addShapelessRecipe(String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
-            GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
             skip = true;
         }
-        skip |= validateRecipe(regName, recipe);
+        skip = skip || validateRecipe(regName, recipe);
         if (skip) {
             RecipeMap.setFoundInvalidRecipe(true);
             return;
@@ -552,8 +548,8 @@ public class ModHandler {
             }
         }
         IRecipe shapelessRecipe;
-            shapelessRecipe = new GTShapelessOreRecipe(isNBTClearing, null, result.copy(), recipe)
-                    .setRegistryName(regName);
+        shapelessRecipe = new GTShapelessOreRecipe(isNBTClearing, null, result.copy(), recipe)
+                .setRegistryName(regName);
 
         try {
             //workaround for MC bug that makes all shaped recipe inputs that have enchanted items
@@ -633,7 +629,7 @@ public class ModHandler {
         boolean result = false;
         List<ItemStack> allStacks = OreDictUnifier.getAll(input);
         for (ItemStack inputStack : allStacks) {
-            result |= removeFurnaceSmelting(inputStack);
+            result = result || removeFurnaceSmelting(inputStack);
         }
         return result;
     }
@@ -643,8 +639,7 @@ public class ModHandler {
      */
     public static boolean removeFurnaceSmelting(ItemStack input) {
         if (input.isEmpty()) {
-            GTLog.logger.error("Cannot remove furnace recipe with empty input.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error(new IllegalArgumentException("Cannot remove furnace recipe with empty input."));
             RecipeMap.setFoundInvalidRecipe(true);
             return false;
         }
@@ -652,9 +647,11 @@ public class ModHandler {
         boolean wasRemoved = FurnaceRecipes.instance().getSmeltingList().keySet().removeIf(currentStack -> currentStack.getItem() == input.getItem() && (currentStack.getMetadata() == GTValues.W || currentStack.getMetadata() == input.getMetadata()));
 
         if (ConfigHolder.misc.debug) {
-            if (wasRemoved)
+            if (wasRemoved) {
                 GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
-            else GTLog.logger.error("Failed to Remove Smelting Recipe for Input: {}", input.getDisplayName());
+            } else {
+                GTLog.logger.error("Failed to Remove Smelting Recipe for Input: {}", input.getDisplayName());
+            }
         }
 
         return wasRemoved;
@@ -664,9 +661,11 @@ public class ModHandler {
         int recipesRemoved = removeRecipes(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
 
         if (ConfigHolder.misc.debug) {
-            if (recipesRemoved != 0)
+            if (recipesRemoved != 0) {
                 GTLog.logger.info("Removed {} Recipe(s) with Output: {}", recipesRemoved, output.getDisplayName());
-            else GTLog.logger.error("Failed to Remove Recipe with Output: {}", output.getDisplayName());
+            } else {
+                GTLog.logger.error("Failed to Remove Recipe with Output: {}", output.getDisplayName());
+            }
         }
         return recipesRemoved;
     }
@@ -711,21 +710,19 @@ public class ModHandler {
 
     /**
      * Removes Crafting Table Recipes with a range of names, being {@link GTValues} voltage names.
-     * An example of how to use it:
      *
-     * <cr>
-     *     removeTieredRecipeByName("gregtech:transformer_", EV, UV);
-     * </cr>
-     *
+     * <p>
+     * An example of how to use it: {@code removeTieredRecipeByName("gregtech:transformer_", EV, UV);}
+     * <p>
      * This will remove recipes with names:
      *
-     * <cr>
-     *     gregtech:transformer_ev
-     *     gregtech:transformer_iv
-     *     gregtech:transformer_luv
-     *     gregtech:transformer_zpm
-     *     gregtech:transformer_uv
-     * </cr>
+     * <ul>
+     * <li>gregtech:transformer_ev</li>
+     * <li>gregtech:transformer_iv</li>
+     * <li>gregtech:transformer_luv</li>
+     * <li>gregtech:transformer_zpm</li>
+     * <li>gregtech:transformer_uv</li>
+     * </ul>
      *
      * @param recipeName The base name of the Recipes to remove.
      * @param startTier  The starting tier index, inclusive.
