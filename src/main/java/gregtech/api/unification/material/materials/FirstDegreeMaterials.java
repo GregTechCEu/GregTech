@@ -960,7 +960,6 @@ public class FirstDegreeMaterials {
         SodiumPersulfate = new Material.Builder(378, "sodium_persulfate")
                 .fluid()
                 .components(Sodium, 2, Sulfur, 2, Oxygen, 8)
-                .fluidTemp(453)
                 .build();
 
         Bastnasite = new Material.Builder(379, "bastnasite")
@@ -1071,7 +1070,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         TitaniumTetrachloride = new Material.Builder(398, "titanium_tetrachloride")
-                .fluid().fluidTemp(2220)
+                .fluid()
                 .color(0xD40D5C)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Chlorine, 4)
@@ -1152,7 +1151,6 @@ public class FirstDegreeMaterials {
                 .color(0x060B0B)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Iron, 1, Chlorine, 3)
-                .fluidTemp(589)
                 .build();
 
         UraniumHexafluoride = new Material.Builder(412, "uranium_hexafluoride")
