@@ -7,6 +7,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
@@ -175,7 +176,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                     NBTTagCompound tagCompound = buffer.readCompoundTag();
                     this.lastFluidStack = FluidStack.loadFluidStackFromNBT(tagCompound);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    GTLog.logger.error("Could not read NBT from PhantomFluidWidget buffer", e);
                 }
             } else {
                 this.lastFluidStack = null;

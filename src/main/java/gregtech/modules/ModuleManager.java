@@ -301,8 +301,7 @@ public class ModuleManager implements IModuleManager {
                 Class<?> clazz = Class.forName(data.getClassName());
                 instances.add((IGregTechModule) clazz.newInstance());
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                logger.error("Could not initialize module {}", data.getAnnotationInfo().get("moduleID"));
-                e.printStackTrace();
+                logger.error("Could not initialize module " + data.getAnnotationInfo().get("moduleID"), e);
             }
         }
         return instances;
