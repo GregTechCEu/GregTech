@@ -258,6 +258,7 @@ public class SecondDegreeMaterials {
                 .color(0x646464).iconSet(ROUGH)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Stone, 1)
+                .fluidTemp(286)
                 .build();
 
         SteelMagnetic = new Material.Builder(2035, "steel_magnetic")
