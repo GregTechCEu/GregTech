@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pipenet.longdist.MetaTileEntityLDItemEndpoint;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
@@ -224,6 +225,7 @@ public class MetaTileEntities {
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
+    public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -743,6 +745,8 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+
+        LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1730, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
 
         /*
          * FOR ADDON DEVELOPERS:

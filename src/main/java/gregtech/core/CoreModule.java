@@ -13,6 +13,8 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.pipenet.longdist.LDItemPipeType;
+import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -153,6 +155,8 @@ public class CoreModule implements IGregTechModule {
 
         proxy.onPreLoad();
         KeyBind.init();
+
+        LDItemPipeType.INSTANCE.getName();
     }
 
     @Override
@@ -253,6 +257,7 @@ public class CoreModule implements IGregTechModule {
                     world.setData(BedrockFluidVeinSaveData.dataName, saveData);
                 }
                 BedrockFluidVeinSaveData.setInstance(saveData);
+                LongDistanceNetwork.WorldData.get(world);
             }
         }
     }
