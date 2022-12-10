@@ -2524,6 +2524,10 @@ tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
 tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
+# Long Distance Pipeline Blocks
+tile.long_distance_item_pipeline.name=Long Distance Item Pipe
+tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
+
 # Creative tabs
 itemGroup.gregtech.main=GregTech
 itemGroup.gregtech.machines=Machines (GT)
@@ -4222,6 +4226,9 @@ gregtech.machine.muffle.on=Sound Muffling: Enabled
 gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
+
+gregtech.machine.ld_item_endpoint.name=Long Distance Item Pipeline Endpoint
+gregtech.machine.ld_fluid_endpoint.name=Long Distance Fluid Pipeline Endpoint
 
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age

@@ -1,0 +1,25 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all",
+    "textures": {
+      "all": "gregtech:blocks/pipe/long_distance_fluid_pipeline/long_distance_fluid_pipeline"
+    }
+  },
+  "variants": {
+    "normal": [
+      {
+        "textures": {
+          "all": "gregtech:blocks/pipe/long_distance_fluid_pipeline/long_distance_fluid_pipeline"
+        }
+      }
+    ],
+    "inventory": [
+      {
+        "textures": {
+          "all": "gregtech:blocks/pipe/long_distance_fluid_pipeline/long_distance_fluid_pipeline"
+        }
+      }
+    ]
+  }
+}

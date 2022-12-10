@@ -1,4 +1,4 @@
-package gregtech.api.pipenet.longdist;
+package gregtech.common.pipelike.itempipe.longdistance;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
@@ -7,7 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTLog;
+import gregtech.api.pipenet.longdist.MetaTileEntityLongDistanceEndpoint;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.tileentity.TileEntity;
@@ -35,9 +35,7 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
                 TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
-                T t = te != null ? te.getCapability(capability, outputFacing.getOpposite()) : null;
-                GTLog.logger.info(t);
-                return t;
+                return te != null ? te.getCapability(capability, outputFacing.getOpposite()) : null;
             }
         }
         return super.getCapability(capability, side);
