@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
@@ -644,7 +645,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not read fluids from NBT buffer", e);
         }
     }
 
@@ -677,7 +678,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not read items from NBT buffer", e);
         }
     }
 

@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -310,7 +311,7 @@ public class ObfMapping extends Remapper {
                 Resources.readLines(mappings[1].toURI().toURL(), Charsets.UTF_8, this);
                 Resources.readLines(mappings[2].toURI().toURL(), Charsets.UTF_8, this);
             } catch (IOException e) {
-                e.printStackTrace();
+                FMLLog.log.error("Could not instantiate GregTech MCPRemapper", e);
             }
         }
 

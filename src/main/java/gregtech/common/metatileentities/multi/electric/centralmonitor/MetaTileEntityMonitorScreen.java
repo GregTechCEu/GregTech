@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.WidgetARGB;
@@ -36,7 +37,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -331,7 +335,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 plugin.receiveInitialSyncData(buf);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not initialize Monitor Screen from InitialSyncData buffer", e);
         }
     }
 
@@ -355,7 +359,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     loadPlugin(behavior);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                GTLog.logger.error("Could not initialize Monitor Screen from CustomData buffer", e);
             }
         }
     }

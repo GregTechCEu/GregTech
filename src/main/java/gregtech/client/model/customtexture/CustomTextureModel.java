@@ -3,6 +3,7 @@ package gregtech.client.model.customtexture;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import gregtech.api.util.GTLog;
 import gregtech.asm.hooks.CTMHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BlockPart;
@@ -151,7 +152,7 @@ public class CustomTextureModel implements IModel {
             ret.modelInfo.textures.putAll(textures);
             return ret;
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not create CustomTextureModel texture deep copy", e);
             return ModelLoaderRegistry.getMissingModel();
         }
     }
@@ -185,7 +186,7 @@ public class CustomTextureModel implements IModel {
         try {
             return deepCopy(newParent, ao, gui3d);
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not create texture deep copy", e);
             return ModelLoaderRegistry.getMissingModel();
         }
     }

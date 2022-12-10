@@ -16,6 +16,7 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
@@ -228,7 +229,7 @@ public class GTJeiPlugin implements IModPlugin {
             showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not reflect JEI Internal inputHandler", e);
         }
     }
 
