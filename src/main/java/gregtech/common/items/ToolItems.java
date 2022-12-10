@@ -154,6 +154,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(new TorchPlaceBehavior()))
+                .oreDict(ToolOreDicts.craftingToolDrill)
                 .sound(GTSoundEvents.DRILL_TOOL, true)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.LV));
@@ -162,6 +163,7 @@ public class ToolItems {
                         .efficiencyMultiplier(2.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
                         .behaviors(new TorchPlaceBehavior()))
+                .oreDict(ToolOreDicts.craftingToolDrill)
                 .sound(GTSoundEvents.DRILL_TOOL, true)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.MV));
@@ -170,6 +172,7 @@ public class ToolItems {
                         .efficiencyMultiplier(3.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
                         .behaviors(new TorchPlaceBehavior()))
+                .oreDict(ToolOreDicts.craftingToolDrill)
                 .sound(GTSoundEvents.DRILL_TOOL, true)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.HV));
@@ -179,6 +182,7 @@ public class ToolItems {
                             .efficiencyMultiplier(4.0F)
                             .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
                             .behaviors(new TorchPlaceBehavior()))
+                    .oreDict(ToolOreDicts.craftingToolDrill)
                     .sound(GTSoundEvents.DRILL_TOOL, true)
                     .toolClasses(ToolClasses.DRILL)
                     .electric(GTValues.EV));
@@ -187,6 +191,7 @@ public class ToolItems {
                             .efficiencyMultiplier(5.0F)
                             .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
                             .behaviors(new TorchPlaceBehavior()))
+                    .oreDict(ToolOreDicts.craftingToolDrill)
                     .sound(GTSoundEvents.DRILL_TOOL, true)
                     .toolClasses(ToolClasses.DRILL)
                     .electric(GTValues.IV));

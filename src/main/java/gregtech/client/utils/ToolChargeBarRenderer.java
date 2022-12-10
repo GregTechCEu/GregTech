@@ -112,7 +112,7 @@ public final class ToolChargeBarRenderer {
     }
 
     private static void renderElectricBar(long charge, long maxCharge, int xPosition, int yPosition, boolean renderedDurability) {
-        if (maxCharge > 0) {
+        if (charge > 0 && maxCharge > 0) {
             double level = (double) charge / (double) maxCharge;
             render(level, xPosition, yPosition, renderedDurability ? 2 : 0, true, colorBarLeftEnergy, colorBarRightEnergy, true);
         }

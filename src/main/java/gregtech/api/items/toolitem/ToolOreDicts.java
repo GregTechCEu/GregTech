@@ -13,4 +13,5 @@ public enum ToolOreDicts {
     craftingToolKnife,
     craftingToolButcheryKnife,
     craftingToolMortar,
+    craftingToolDrill,
 }
