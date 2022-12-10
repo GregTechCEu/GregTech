@@ -19,12 +19,12 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.core.network.packets.PacketClipboardNBTUpdate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehavior;
+import gregtech.core.network.packets.PacketClipboardNBTUpdate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -385,7 +385,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 this.setClipboard(clipboard);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not initialize Clipboard from InitialSyncData buffer", e);
         }
     }
 
@@ -419,7 +419,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                     this.setClipboard(clipboard);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                GTLog.logger.error("Could not read Clipboard Init NBT from CustomData buffer", e);
             }
         }
     }

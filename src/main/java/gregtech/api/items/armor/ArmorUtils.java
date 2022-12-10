@@ -249,11 +249,11 @@ public class ArmorUtils {
             } else if (ConfigHolder.client.armorHud.hudLocation == 3) {
                 posX = 1 + ConfigHolder.client.armorHud.hudOffsetX;
                 posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.client.armorHud.hudOffsetY;
-            } else if (ConfigHolder.client.armorHud.hudLocation == 4){
+            } else if (ConfigHolder.client.armorHud.hudLocation == 4) {
                 posX = windowWidth - (1 + ConfigHolder.client.armorHud.hudOffsetX) - stringWidth;
                 posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.client.armorHud.hudOffsetY;
             } else {
-                    throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Armor Hud config hudLocation is improperly configured.");
             }
             return Pair.of(posX, posY);
         }

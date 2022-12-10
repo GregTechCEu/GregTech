@@ -173,7 +173,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     private void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState, int connections) {
         Material frameMaterial = pipeTile.getFrameMaterial();
         if (frameMaterial != null) {
-            ResourceLocation rl = MaterialIconType.frameGt.getBlockPath(frameMaterial.getMaterialIconSet());
+            ResourceLocation rl = MaterialIconType.frameGt.getBlockTexturePath(frameMaterial.getMaterialIconSet());
             TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString());
             IVertexOperation[] pipeline = {
                     new Translation(pos),

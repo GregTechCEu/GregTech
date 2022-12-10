@@ -3,9 +3,6 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
-import gregtech.api.util.GTUtility;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -15,6 +12,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.common.blocks.properties.PropertyMaterial;
@@ -268,7 +266,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         for (IBlockState state : this.getBlockState().getValidStates()) {
             Material material = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.frameGt.getBlockPath(material.getMaterialIconSet()));
+            event.getMap().registerSprite(MaterialIconType.frameGt.getBlockTexturePath(material.getMaterialIconSet()));
         }
     }
 

@@ -191,7 +191,8 @@ public class GTUtility {
         try {
             Field itemField = Arrays.stream(ItemStack.class.getDeclaredFields())
                     .filter(field -> field.getType() == Item.class)
-                    .findFirst().orElseThrow(ReflectiveOperationException::new);
+                    .findFirst()
+                    .orElseThrow(() -> new ReflectiveOperationException("Could not reflect ItemStack item field"));
             itemField.setAccessible(true);
             //replace item field instance
             itemField.set(itemStack, newStack.getItem());
@@ -203,9 +204,8 @@ public class GTUtility {
             forgeInit.setAccessible(true);
             //reinitialize forge capabilities and delegate reference
             forgeInit.invoke(itemStack);
-        } catch (ReflectiveOperationException exception) {
-            //should be impossible, actually
-            throw new RuntimeException(exception);
+        } catch (ReflectiveOperationException impossible) {
+            throw new RuntimeException(impossible);
         }
     }
 

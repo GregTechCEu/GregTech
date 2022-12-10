@@ -5,6 +5,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
@@ -53,6 +54,7 @@ public final class StreamUtils {
      */
     public static Iterable<ItemStack> iterableFrom(IItemHandler inventory) {
         return new Iterable<ItemStack>() {
+            @Nonnull
             @Override
             public Iterator<ItemStack> iterator() {
                 return new Iterator<ItemStack>() {
@@ -65,8 +67,7 @@ public final class StreamUtils {
 
                     @Override
                     public ItemStack next() {
-                        if (!hasNext())
-                            throw new NoSuchElementException();
+                        if (!hasNext()) throw new NoSuchElementException("ItemStack iterator does not have next value");
 
                         ItemStack next = inventory.getStackInSlot(cursor);
                         cursor++;
@@ -94,6 +95,7 @@ public final class StreamUtils {
      */
     public static Iterable<FluidStack> iterableFrom(IFluidHandler fluidInventory) {
         return new Iterable<FluidStack>() {
+            @Nonnull
             @Override
             public Iterator<FluidStack> iterator() {
                 return new Iterator<FluidStack>() {
@@ -106,8 +108,7 @@ public final class StreamUtils {
 
                     @Override
                     public FluidStack next() {
-                        if (!hasNext())
-                            throw new NoSuchElementException();
+                        if (!hasNext()) throw new NoSuchElementException("FluidStack iterator does not have next value");
 
                         FluidStack next = fluidInventory.getTankProperties()[cursor].getContents();
                         cursor++;

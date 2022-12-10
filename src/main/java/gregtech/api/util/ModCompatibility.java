@@ -15,7 +15,6 @@ import java.util.Objects;
 public class ModCompatibility {
 
     private static RefinedStorage refinedStorage;
-    private static AppliedEnergistics2 appliedEnergistics2;
 
     public static void initCompat() {
         try {
@@ -27,23 +26,11 @@ public class ModCompatibility {
         } catch (Throwable exception) {
             GTLog.logger.error("Failed to enable RefinedStorage integration", exception);
         }
-        try {
-            Class<?> itemClass = Class.forName("appeng.items.misc.ItemEncodedPattern");
-            appliedEnergistics2 = new AppliedEnergistics2(itemClass);
-            GTLog.logger.info("AppliedEnergistics2 found; enabling integration.");
-        } catch (ClassNotFoundException ignored) {
-            GTLog.logger.info("AppliedEnergistics2 not found; skipping integration.");
-        } catch (Throwable exception) {
-            GTLog.logger.error("Failed to enable AppliedEnergistics2 integration", exception);
-        }
     }
 
     public static ItemStack getRealItemStack(ItemStack itemStack) {
         if (refinedStorage != null && refinedStorage.canHandleItemStack(itemStack)) {
             return refinedStorage.getRealItemStack(itemStack);
-        }
-        if (appliedEnergistics2 != null && appliedEnergistics2.canHandleItemStack(itemStack)) {
-            return appliedEnergistics2.getRealItemStack(itemStack);
         }
         return itemStack;
     }
@@ -70,28 +57,6 @@ public class ModCompatibility {
                 return outputs.isEmpty() ? itemStack : outputs.get(0);
             } catch (ReflectiveOperationException ex) {
                 throw new RuntimeException("Failed to obtain item from ItemPattern", ex);
-            }
-        }
-    }
-
-    private static class AppliedEnergistics2 {
-        private final Method getOutputMethod;
-
-        public AppliedEnergistics2(Class<?> itemEncodedPatternClass) throws ReflectiveOperationException {
-            this.getOutputMethod = itemEncodedPatternClass.getMethod("getOutput", ItemStack.class);
-        }
-
-        public boolean canHandleItemStack(ItemStack itemStack) {
-            ResourceLocation registryName = Objects.requireNonNull(itemStack.getItem().getRegistryName());
-            return registryName.getNamespace().equals("appliedenergistics2") &&
-                    registryName.getPath().equals("encoded_pattern");
-        }
-
-        public ItemStack getRealItemStack(ItemStack itemStack) {
-            try {
-                return (ItemStack) getOutputMethod.invoke(itemStack.getItem(), itemStack);
-            } catch (ReflectiveOperationException ex) {
-                throw new RuntimeException("Failed to obtain item from ItemEncodedPattern", ex);
             }
         }
     }

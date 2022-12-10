@@ -48,5 +48,4 @@ public class Bootstrap {
         MetaItems.init();
         bootstrapped = true;
     }
-
 }

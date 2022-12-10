@@ -204,7 +204,7 @@ public interface ICoverable {
             case EAST:
                 return new Cuboid6(1.0 - plateThickness, 0.0, 0.0, 1.0, 1.0, 1.0);
             default:
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Cannot get cover plate box at side " + side);
         }
     }
 
