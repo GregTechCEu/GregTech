@@ -47,19 +47,6 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
 
     @Nonnull
     @Override
-    public ItemStack getRecipeOutput() {
-        ItemStack result =  super.getRecipeOutput();
-        if (result.getItem() instanceof IGTTool) {
-            if (result.getTagCompound() != null && !result.getTagCompound().hasKey("Charge")) {
-                result.getTagCompound().setLong("Charge", 0);
-            }
-        }
-
-        return result;
-    }
-
-    @Nonnull
-    @Override
     public ItemStack getCraftingResult(@Nonnull InventoryCrafting inventoryCrafting) {
         ItemStack resultStack = super.getCraftingResult(inventoryCrafting);
         chargeStackFromComponents(resultStack, inventoryCrafting, chargePredicate, transferMaxCharge);
@@ -82,10 +69,6 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                 totalMaxCharge += batteryItem.getMaxCharge();
                 long discharged = batteryItem.discharge(Long.MAX_VALUE, Integer.MAX_VALUE, true, true, true);
                 electricItem.charge(discharged, Integer.MAX_VALUE, true, false);
-
-                if (toolStack.getTagCompound() != null && !toolStack.getTagCompound().hasKey("Charge")) {
-                    toolStack.getTagCompound().setLong("Charge", 0);
-                }
             }
         }
         if (electricItem instanceof ElectricItem && transferMaxCharge) {

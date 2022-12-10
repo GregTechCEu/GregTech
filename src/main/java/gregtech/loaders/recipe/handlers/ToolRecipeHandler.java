@@ -3,6 +3,7 @@ package gregtech.loaders.recipe.handlers;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -286,8 +287,9 @@ public class ToolRecipeHandler {
     public static void addElectricToolRecipe(OrePrefix toolHead, Material material, IGTTool[] toolItems) {
         for (IGTTool toolItem : toolItems) {
             int tier = toolItem.getElectricTier();
-            ItemStack tool = toolItem.get(material);
             ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
+            IElectricItem powerUnit = powerUnitStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            ItemStack tool = toolItem.get(material, 0, powerUnit.getMaxCharge());
             ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getId(), material),
                     tool,
                     Ingredient.fromStacks(powerUnitStack), true, true,
