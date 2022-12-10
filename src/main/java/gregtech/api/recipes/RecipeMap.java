@@ -31,6 +31,7 @@ import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.VirtualizedRecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
@@ -878,7 +879,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public Collection<Recipe> getRecipeList() {
-        return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
+        ObjectOpenHashSet<Recipe> recipes = new ObjectOpenHashSet<>();
+        return lookup.getRecipes(true).filter(recipes::add).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
     }
 
     public SoundEvent getSound() {
