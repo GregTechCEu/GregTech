@@ -516,7 +516,7 @@ metaitem.circuit.microprocessor.name=Микропроцессор
 metaitem.circuit.microprocessor.tooltip=Улучшенная обычная микросхема/n§eLV уровень
 
 # T3: Processor
-metaitem.circuit.processor.name=Интегриральный микропроцессор
+metaitem.circuit.processor.name=Интегральный микропроцессор
 metaitem.circuit.processor.tooltip=Удивительная скорость вычислений!/n§eMV уровень
 metaitem.circuit.assembly.name=Вычислительный блок
 metaitem.circuit.assembly.tooltip=Невероятная скорость вычислений!/n§eHV уровень
