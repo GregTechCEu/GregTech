@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -21,6 +22,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
@@ -29,10 +34,10 @@ import static gregtech.api.unification.material.properties.PropertyKey.GEM;
 
 public class ToolRecipeHandler {
 
-    public static MetaValueItem[] motorItems;
-    public static Material[] baseMaterials;
-    public static MetaValueItem[][] batteryItems;
-    public static MetaValueItem[] powerUnitItems;
+    public static Map<Integer, MetaValueItem> motorItems = new HashMap<>();
+    public static Map<Integer, Material> baseMaterials = new HashMap<>();
+    public static Map<Integer, List<MetaValueItem>> batteryItems = new HashMap<>();
+    public static Map<Integer, MetaValueItem> powerUnitItems = new HashMap<>();
 
     public static void register() {
         OrePrefix.plate.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processTool);
@@ -40,36 +45,52 @@ public class ToolRecipeHandler {
     }
 
     public static void initializeMetaItems() {
-        motorItems = new MetaValueItem[]{MetaItems.ELECTRIC_MOTOR_LV, MetaItems.ELECTRIC_MOTOR_MV, MetaItems.ELECTRIC_MOTOR_HV, MetaItems.ELECTRIC_MOTOR_EV, MetaItems.ELECTRIC_MOTOR_IV};
-        baseMaterials = new Material[]{Materials.Steel, Materials.Aluminium, Materials.StainlessSteel, Materials.Titanium, Materials.TungstenSteel};
-        powerUnitItems = new MetaValueItem[]{MetaItems.POWER_UNIT_LV, MetaItems.POWER_UNIT_MV, MetaItems.POWER_UNIT_HV, MetaItems.POWER_UNIT_EV, MetaItems.POWER_UNIT_IV};
-        batteryItems = new MetaValueItem[][]{
-                {MetaItems.BATTERY_ULV_TANTALUM},
-                {MetaItems.BATTERY_LV_LITHIUM, MetaItems.BATTERY_LV_CADMIUM, MetaItems.BATTERY_LV_SODIUM},
-                {MetaItems.BATTERY_MV_LITHIUM, MetaItems.BATTERY_MV_CADMIUM, MetaItems.BATTERY_MV_SODIUM},
-                {MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM, MetaItems.ENERGIUM_CRYSTAL},
-                {MetaItems.BATTERY_EV_VANADIUM, MetaItems.LAPOTRON_CRYSTAL},
-                {MetaItems.BATTERY_IV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB},
-                {MetaItems.BATTERY_LUV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER},
-                {MetaItems.BATTERY_ZPM_NAQUADRIA, MetaItems.ENERGY_MODULE},
-                {MetaItems.BATTERY_UV_NAQUADRIA, MetaItems.ENERGY_CLUSTER}};
+        motorItems.put(GTValues.LV, MetaItems.ELECTRIC_MOTOR_LV);
+        motorItems.put(GTValues.MV, MetaItems.ELECTRIC_MOTOR_MV);
+        motorItems.put(GTValues.HV, MetaItems.ELECTRIC_MOTOR_HV);
+        motorItems.put(GTValues.EV, MetaItems.ELECTRIC_MOTOR_EV);
+        motorItems.put(GTValues.IV, MetaItems.ELECTRIC_MOTOR_IV);
+
+        baseMaterials.put(GTValues.LV, Materials.Steel);
+        baseMaterials.put(GTValues.MV, Materials.Aluminium);
+        baseMaterials.put(GTValues.HV, Materials.StainlessSteel);
+        baseMaterials.put(GTValues.EV, Materials.Titanium);
+        baseMaterials.put(GTValues.IV, Materials.TungstenSteel);
+
+        powerUnitItems.put(GTValues.LV, MetaItems.POWER_UNIT_LV);
+        powerUnitItems.put(GTValues.MV, MetaItems.POWER_UNIT_MV);
+        powerUnitItems.put(GTValues.HV, MetaItems.POWER_UNIT_HV);
+        powerUnitItems.put(GTValues.EV, MetaItems.POWER_UNIT_EV);
+        powerUnitItems.put(GTValues.IV, MetaItems.POWER_UNIT_IV);
+
+        batteryItems.put(GTValues.ULV, Collections.singletonList(MetaItems.BATTERY_ULV_TANTALUM));
+        batteryItems.put(GTValues.LV, ImmutableList.of(MetaItems.BATTERY_LV_LITHIUM, MetaItems.BATTERY_LV_CADMIUM, MetaItems.BATTERY_LV_SODIUM));
+        batteryItems.put(GTValues.MV, ImmutableList.of(MetaItems.BATTERY_MV_LITHIUM, MetaItems.BATTERY_MV_CADMIUM, MetaItems.BATTERY_MV_SODIUM));
+        batteryItems.put(GTValues.HV, ImmutableList.of(MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM, MetaItems.ENERGIUM_CRYSTAL));
+        batteryItems.put(GTValues.EV, ImmutableList.of(MetaItems.BATTERY_EV_VANADIUM, MetaItems.LAPOTRON_CRYSTAL));
+        batteryItems.put(GTValues.IV, ImmutableList.of(MetaItems.BATTERY_IV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB));
+        batteryItems.put(GTValues.LuV, ImmutableList.of(MetaItems.BATTERY_LUV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER));
+        batteryItems.put(GTValues.ZPM, ImmutableList.of(MetaItems.BATTERY_ZPM_NAQUADRIA, MetaItems.ENERGY_MODULE));
+        batteryItems.put(GTValues.UV, ImmutableList.of(MetaItems.BATTERY_UV_NAQUADRIA, MetaItems.ENERGY_CLUSTER));
+
     }
 
     public static void registerPowerUnitRecipes() {
-        for (int i = 0; i < powerUnitItems.length; i++) {
-            for (MetaValueItem batteryItem : batteryItems[i + 1]) {
+        for (int tier : powerUnitItems.keySet()) {
+            List<MetaValueItem> tieredBatteryItems = batteryItems.get(tier);
+            for (MetaValueItem batteryItem : tieredBatteryItems) {
                 ItemStack batteryStack = batteryItem.getStackForm();
                 long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getMaxCharge();
-                ItemStack powerUnitStack = powerUnitItems[i].getMaxChargeOverrideStack(maxCharge);
-                String recipeName = String.format("%s_%s", powerUnitItems[i].unlocalizedName, batteryItem.unlocalizedName);
+                ItemStack powerUnitStack = powerUnitItems.get(tier).getMaxChargeOverrideStack(maxCharge);
+                String recipeName = String.format("%s_%s", powerUnitItems.get(tier).unlocalizedName, batteryItem.unlocalizedName);
 
                 ModHandler.addShapedEnergyTransferRecipe(recipeName, powerUnitStack,
                         Ingredient.fromStacks(batteryStack), true, false,
                         "S d", "GMG", "PBP",
-                        'M', motorItems[i].getStackForm(),
-                        'S', new UnificationEntry(OrePrefix.screw, baseMaterials[i]),
-                        'P', new UnificationEntry(OrePrefix.plate, baseMaterials[i]),
-                        'G', new UnificationEntry(OrePrefix.gearSmall, baseMaterials[i]),
+                        'M', motorItems.get(tier).getStackForm(),
+                        'S', new UnificationEntry(OrePrefix.screw, baseMaterials.get(tier)),
+                        'P', new UnificationEntry(OrePrefix.plate, baseMaterials.get(tier)),
+                        'G', new UnificationEntry(OrePrefix.gearSmall, baseMaterials.get(tier)),
                         'B', batteryStack);
             }
         }
@@ -222,7 +243,7 @@ public class ToolRecipeHandler {
 
             // wrench
             toolPrefix = OrePrefix.toolHeadWrench;
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.WRENCH_LV, ToolItems.WRENCH_IV, ToolItems.WRENCH_HV});
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.WRENCH_LV, ToolItems.WRENCH_HV, ToolItems.WRENCH_IV});
 
             ModHandler.addShapedRecipe(String.format("wrench_head_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
@@ -263,10 +284,11 @@ public class ToolRecipeHandler {
     }
 
     public static void addElectricToolRecipe(OrePrefix toolHead, Material material, IGTTool[] toolItems) {
-        for (int i = 0; i < toolItems.length; i++) {
-            ItemStack tool = toolItems[i].get(material);
-            ItemStack powerUnitStack = powerUnitItems[i].getStackForm();
-            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItems[i].getId(), material),
+        for (IGTTool toolItem : toolItems) {
+            int tier = toolItem.getElectricTier();
+            ItemStack tool = toolItem.get(material);
+            ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
+            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getId(), material),
                     tool,
                     Ingredient.fromStacks(powerUnitStack), true, true,
                     "wHd", " U ",
@@ -373,7 +395,7 @@ public class ToolRecipeHandler {
     }
 
     private static void registerElectricRecipes() {
-        for (MetaValueItem batteryItem : batteryItems[GTValues.LV]) {
+        for (MetaValueItem batteryItem : batteryItems.get(LV)) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
@@ -393,7 +415,7 @@ public class ToolRecipeHandler {
                     'B', batteryItem.getStackForm());
         }
 
-        for (MetaValueItem batteryItem : batteryItems[GTValues.MV]) {
+        for (MetaValueItem batteryItem : batteryItems.get(MV)) {
             ModHandler.addShapedEnergyTransferRecipe("tricorder_" + batteryItem.unlocalizedName, MetaItems.TRICORDER_SCANNER.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
@@ -405,7 +427,7 @@ public class ToolRecipeHandler {
                     'B', batteryItem.getStackForm());
         }
 
-        for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {
+        for (MetaValueItem batteryItem : batteryItems.get(HV)) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_hv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_HV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
@@ -425,7 +447,7 @@ public class ToolRecipeHandler {
                     'B', batteryItem.getStackForm());
         }
 
-        for (MetaValueItem batteryItem : batteryItems[GTValues.LuV]) {
+        for (MetaValueItem batteryItem : batteryItems.get(LuV)) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LUV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
