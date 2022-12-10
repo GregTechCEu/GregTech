@@ -20,6 +20,6 @@ public class LDFluidPipeType extends LongDistancePipeType {
 
     @Override
     public boolean isValidEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
-        return false;
+        return endpoint instanceof MetaTileEntityLDFluidEndpoint;
     }
 }
