@@ -13,7 +13,6 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
-import gregtech.api.pipenet.longdist.LDItemPipeType;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
@@ -40,6 +39,8 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.pipelike.fluidpipe.longdistance.LDFluidPipeType;
+import gregtech.common.pipelike.itempipe.longdistance.LDItemPipeType;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.core.advancement.internal.AdvancementManager;
@@ -157,6 +158,7 @@ public class CoreModule implements IGregTechModule {
         KeyBind.init();
 
         LDItemPipeType.INSTANCE.getName();
+        LDFluidPipeType.INSTANCE.getName();
     }
 
     @Override

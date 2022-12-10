@@ -1,9 +1,12 @@
 package gregtech.api.pipenet.longdist;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.client.renderer.texture.Textures;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -12,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
 
     private final LongDistancePipeType pipeType;
     private MetaTileEntityLongDistanceEndpoint link;
+    private boolean placed = false;
 
     public MetaTileEntityLongDistanceEndpoint(ResourceLocation metaTileEntityId, LongDistancePipeType pipeType) {
         super(metaTileEntityId);
@@ -46,23 +51,45 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     @Override
     public void onAttached(Object... data) {
         if (getWorld() == null || getWorld().isRemote) return;
-        List<LongDistanceNetwork> networks = new ArrayList<>();
-        BlockPos.PooledMutableBlockPos offsetPos = BlockPos.PooledMutableBlockPos.retain();
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            offsetPos.setPos(getPos()).move(facing);
-            LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), offsetPos);
-            if (network != null && pipeType == network.getPipeType()) {
-                networks.add(network);
+        this.placed = true;
+    }
+
+    public void updateNetwork() {
+        LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
+        if (network != null) {
+            if (network.getTotalSize() == 1) {
+                return;
             }
+            network.onRemoveEndpoint(this);
         }
-        offsetPos.release();
+
+        // only check input and output side
+        List<LongDistanceNetwork> networks = new ArrayList<>();
+        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getFrontFacing()));
+        if (network != null && pipeType == network.getPipeType()) {
+            networks.add(network);
+        }
+        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
+        if (network != null && pipeType == network.getPipeType()) {
+            networks.add(network);
+        }
 
         if (networks.isEmpty()) {
-            LongDistanceNetwork network = this.pipeType.createNetwork(getWorld());
+            network = this.pipeType.createNetwork(getWorld());
             network.onPlaceEndpoint(this);
         } else if (networks.size() == 1) {
             networks.get(0).onPlaceEndpoint(this);
         }
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        boolean changed = getFrontFacing() != frontFacing;
+        super.setFrontFacing(frontFacing);
+        if ((changed || placed) && getWorld() != null && !getWorld().isRemote) {
+            updateNetwork();
+        }
+        this.placed = false;
     }
 
     @Override
@@ -77,15 +104,18 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     @Override
     public void onNeighborChanged() {
         List<LongDistanceNetwork> networks = new ArrayList<>();
-        BlockPos.PooledMutableBlockPos offsetPos = BlockPos.PooledMutableBlockPos.retain();
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            offsetPos.setPos(getPos()).move(facing);
-            LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), offsetPos);
-            if (network != null && network.getPipeType() == this.pipeType) {
-                networks.add(network);
-            }
+        LongDistanceNetwork network;
+        // only check input and output side
+        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getFrontFacing()));
+        if (network != null && pipeType == network.getPipeType()) {
+            networks.add(network);
         }
-        LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
+        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
+        if (network != null && pipeType == network.getPipeType()) {
+            networks.add(network);
+        }
+
+        network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network == null) {
             if (networks.isEmpty()) {
                 network = this.pipeType.createNetwork(getWorld());
@@ -98,6 +128,11 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
                 network.onRemoveEndpoint(this);
             }
         }
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.LV].getParticleSprite(), 0xFFFFFF);
     }
 
     public MetaTileEntityLongDistanceEndpoint getLink() {

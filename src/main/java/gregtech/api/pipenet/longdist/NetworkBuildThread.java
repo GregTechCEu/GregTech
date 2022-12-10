@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This bad boy is responsible for building the network
+ */
 public class NetworkBuildThread implements Runnable {
 
     private final LinkedList<BlockPos> starts = new LinkedList<>();
@@ -38,6 +41,7 @@ public class NetworkBuildThread implements Runnable {
 
     @Override
     public void run() {
+        // iterate over each given starting point and try to build a network
         boolean first = true;
         while (!starts.isEmpty()) {
             BlockPos start = starts.pollFirst();
@@ -46,8 +50,10 @@ public class NetworkBuildThread implements Runnable {
             } else {
                 LongDistanceNetwork ldn = worldData.getNetwork(start);
                 if (ldn != null) {
+                    // this starting point was caught during a previous iteration, so we don't need to create another network here
                     continue;
                 }
+                // create a new network, since the current was already calculated
                 this.network = this.network.getPipeType().createNetwork(this.worldData);
                 this.currentPoints.clear();
                 this.walked.clear();
@@ -60,10 +66,12 @@ public class NetworkBuildThread implements Runnable {
     }
 
     private void checkNetwork(BlockPos start) {
+        // current points stores all current branches of the network
         this.currentPoints.add(start);
         checkPos(world.getBlockState(start), start);
         BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         while (!currentPoints.isEmpty()) {
+            // get and remove the first stored branch
             BlockPos current = currentPoints.pollFirst();
             for (EnumFacing facing : EnumFacing.VALUES) {
                 pos.setPos(current).move(facing);
@@ -78,13 +86,19 @@ public class NetworkBuildThread implements Runnable {
             }
         }
         pos.release();
+        // the whole net was checked
+        // now send the data to the given network
         network.setData(pipes, endpoints);
     }
 
+    /**
+     * Checks a pos for a pipe or a endpoint
+     */
     private void checkPos(IBlockState blockState, BlockPos pos) {
         BlockPos bp = pos.toImmutable();
         if (blockState.getBlock() instanceof BlockLongDistancePipe && network.getPipeType().isValidBlock(blockState)) {
             pipes.add(bp);
+            // add another branch/block for processing
             currentPoints.addLast(bp);
         } else {
             MetaTileEntityLongDistanceEndpoint endpoint = MetaTileEntityLongDistanceEndpoint.tryGet(world, pos);

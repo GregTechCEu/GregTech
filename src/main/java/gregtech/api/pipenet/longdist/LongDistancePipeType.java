@@ -40,6 +40,14 @@ public abstract class LongDistancePipeType {
 
     public abstract boolean isValidEndpoint(MetaTileEntityLongDistanceEndpoint endpoint);
 
+    /**
+     * Not yet implemented
+     */
+    @Deprecated
+    private boolean allowOnlyStraight() {
+        return false;
+    }
+
     @Nonnull
     public LongDistanceNetwork createNetwork(LongDistanceNetwork.WorldData worldData) {
         return new LongDistanceNetwork(this, worldData);

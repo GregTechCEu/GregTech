@@ -28,8 +28,11 @@ public class LongDistanceNetwork {
 
     private final LongDistancePipeType pipeType;
     private final WorldData world;
+    // all pipes and endpoints in this net
     public final ObjectOpenHashSet<BlockPos> longDistancePipeBlocks = new ObjectOpenHashSet<>();
+    // stores all connected endpoints, but only the first two are being used
     private final List<MetaTileEntityLongDistanceEndpoint> endpoints = new ArrayList<>();
+    // all endpoint positions, for nbt
     private final List<BlockPos> endpointPoss = new ArrayList<>();
     private boolean calculating = false;
 
@@ -38,6 +41,10 @@ public class LongDistanceNetwork {
         this.world = world;
     }
 
+    /**
+     * Calculates one or more networks based on the given starting points.
+     * For this it will start a new thread to keep the main thread free.
+     */
     protected void recalculateNetwork(Collection<BlockPos> starts) {
         this.calculating = true;
         // remove the every pipe from the network
@@ -54,6 +61,9 @@ public class LongDistanceNetwork {
         thread.start();
     }
 
+    /**
+     * Called from the {@link NetworkBuildThread} to set the gathered data
+     */
     protected void setData(Collection<BlockPos> pipes, List<MetaTileEntityLongDistanceEndpoint> endpoints) {
         boolean wasEmpty = this.longDistancePipeBlocks.isEmpty();
         this.calculating = false;
@@ -73,6 +83,9 @@ public class LongDistanceNetwork {
         }
     }
 
+    /**
+     * Removes the pipe at the given position and recalculates all neighbour positions if necessary
+     */
     public void onRemovePipe(BlockPos pos) {
         this.longDistancePipeBlocks.remove(pos);
         this.world.removeNetwork(pos);
@@ -102,6 +115,7 @@ public class LongDistanceNetwork {
     }
 
     public void onRemoveEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
+        // invalidate all linked endpoints
         endpoint.invalidateLink();
         if (this.endpoints.remove(endpoint)) {
             for (MetaTileEntityLongDistanceEndpoint endpoint1 : this.endpoints) {
@@ -111,19 +125,27 @@ public class LongDistanceNetwork {
         onRemovePipe(endpoint.getPos());
     }
 
+    /**
+     * Adds a new pipe to the network
+     */
     public void onPlacePipe(BlockPos pos) {
         this.longDistancePipeBlocks.add(pos);
         this.world.putNetwork(pos, this);
     }
 
+    /**
+     * Adds a new endpoint to the network
+     */
     public void onPlaceEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
         addEndpoint(endpoint);
         this.longDistancePipeBlocks.add(endpoint.getPos());
         this.world.putNetwork(endpoint.getPos(), this);
     }
 
+    /**
+     * Merge a network into this network
+     */
     protected void mergePipeNet(LongDistanceNetwork network) {
-        // merge network into this network
         if (getPipeType() != network.getPipeType()) {
             throw new IllegalStateException("Can't merge unequal pipe types!");
         }
@@ -138,8 +160,10 @@ public class LongDistanceNetwork {
         network.onDestroy();
     }
 
+    /**
+     * invalidate this network
+     */
     protected void onDestroy() {
-        // invalidate this network
         this.longDistancePipeBlocks.clear();
         this.world.networkList.remove(this);
         for (MetaTileEntityLongDistanceEndpoint endpoint : this.endpoints) {
@@ -167,6 +191,18 @@ public class LongDistanceNetwork {
         return this.endpoints.size() > 1 ? this.endpoints.get(1) : null;
     }
 
+    public int getTotalSize() {
+        return this.longDistancePipeBlocks.size();
+    }
+
+    public int getEndpointAmount() {
+        return this.endpoints.size();
+    }
+
+    public int getPipeAmount() {
+        return getTotalSize() - getEndpointAmount();
+    }
+
     public boolean isValid() {
         return this.endpoints.size() > 1;
     }
@@ -179,6 +215,9 @@ public class LongDistanceNetwork {
         return pipeType;
     }
 
+    /**
+     * Stores all pipe data for a world/dimension
+     */
     public static class WorldData extends WorldSavedData {
 
         private static final Object2ObjectOpenHashMap<World, WorldData> WORLD_DATA_MAP = new Object2ObjectOpenHashMap<>();
@@ -199,6 +238,8 @@ public class LongDistanceNetwork {
             return netWorldData;
         }
 
+        // all ld pipes in this world to their respective network
+        // might change to Map<Chunk, Map<BlockPos, LongDistanceNetwork>>
         private final Object2ObjectOpenHashMap<BlockPos, LongDistanceNetwork> networks = new Object2ObjectOpenHashMap<>();
         private final ObjectOpenHashSet<LongDistanceNetwork> networkList = new ObjectOpenHashSet<>();
         private WeakReference<World> world_ref = new WeakReference<>(null);
@@ -207,6 +248,9 @@ public class LongDistanceNetwork {
             super(name);
         }
 
+        /**
+         * set world and load all endpoints
+         */
         protected void setWorldAndInit(World world) {
             if (this.world_ref.get() != world) {
                 for (LongDistanceNetwork ld : this.networkList) {
