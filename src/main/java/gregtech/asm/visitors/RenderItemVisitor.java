@@ -10,7 +10,7 @@ import java.util.Iterator;
 public class RenderItemVisitor implements Opcodes {
 
     public static final String TARGET_CLASS_NAME = "net/minecraft/client/renderer/RenderItem";
-    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_180453_a", "(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V"); // renderItemOverlayIntoGUI
+    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_180453_a", "(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V").toRuntime(); // renderItemOverlayIntoGUI
 
     public static void transform(Iterator<MethodNode> methods) {
         while (methods.hasNext()) {
