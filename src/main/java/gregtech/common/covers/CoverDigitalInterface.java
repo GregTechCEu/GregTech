@@ -495,7 +495,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
-                    } else if(content != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents()))) {
+                    } else if (content != null && (fluids[i] != null && fluids[i].getContents() != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents())))) {
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);

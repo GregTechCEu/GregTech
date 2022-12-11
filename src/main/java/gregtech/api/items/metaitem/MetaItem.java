@@ -485,11 +485,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 oldStack.hasTagCompound() && newStack.hasTagCompound()) {
             oldStack = oldStack.copy();
             newStack = newStack.copy();
-            oldStack.getTagCompound().removeTag("Charge");
-            newStack.getTagCompound().removeTag("Charge");
-            if (oldStack.getTagCompound().hasKey("terminal")) {
-                oldStack.getTagCompound().getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
-                newStack.getTagCompound().getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+            NBTTagCompound oldTag = oldStack.getTagCompound();
+            NBTTagCompound newTag = newStack.getTagCompound();
+            if (oldTag != null && newTag != null) {
+                oldTag.removeTag("Charge");
+                newTag.removeTag("Charge");
+                if (oldTag.hasKey("terminal")) {
+                    oldTag.getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+                    newTag.getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+                }
             }
         }
         return !ItemStack.areItemStacksEqual(oldStack, newStack);

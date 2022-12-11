@@ -31,6 +31,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -338,7 +339,10 @@ public class GTUtility {
             playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
         } else {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.getConnection().sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+            NetHandlerPlayClient connection = mc.getConnection();
+            if (connection != null) {
+                connection.sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+            }
         }
         return wasRemovedByPlayer;
     }

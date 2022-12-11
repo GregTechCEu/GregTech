@@ -142,7 +142,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
         for (ItemStack stack : inputStacks) {
             hash = 31 * hash + stack.getItem().hashCode();
             hash = 31 * hash + stack.getMetadata();
-            if (stack.hasTagCompound() && this.nbtMatcher == null) {
+            if (stack.hasTagCompound() && stack.getTagCompound() != null && this.nbtMatcher == null) {
                 hash = 31 * hash + stack.getTagCompound().hashCode();
             }
         }

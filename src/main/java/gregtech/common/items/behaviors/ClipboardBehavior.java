@@ -107,8 +107,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     }
 
     private static NBTTagCompound getPageCompound(ItemStack stack) {
-        if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            return null;
+        if (!MetaItems.CLIPBOARD.isItemEqual(stack)) return null;
         short pageNum = stack.getTagCompound().getShort("PageIndex");
         return stack.getTagCompound().getCompoundTag("Page" + pageNum);
     }

@@ -352,7 +352,7 @@ public class MetaBlocks {
         registerItemModel(RUBBER_LEAVES);
         registerItemModel(RUBBER_SAPLING);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
-                new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
+                new ModelResourceLocation(Objects.requireNonNull(RUBBER_SAPLING.getRegistryName()), "inventory"));
         registerItemModel(PLANKS);
         registerItemModel(BRITTLE_CHARCOAL);
 

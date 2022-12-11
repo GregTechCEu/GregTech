@@ -169,7 +169,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
                 itemStack = itemStack.copy();
                 itemStack.setCount(this.dragSplittingRemnant);
             }
-            this.drawItemStack(itemStack, mouseX - guiLeft - 8, mouseY - guiTop - dragOffset, null);
+            this.drawItemStack(itemStack, mouseX - guiLeft - 8, mouseY - guiTop - dragOffset, "");
         }
     }
 

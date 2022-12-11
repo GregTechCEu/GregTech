@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.*;
@@ -89,13 +90,23 @@ public class FileUtility {
     public static void extractJarFiles(String resource, File targetPath, boolean replace) { //terminal/guide
         FileSystem zipFileSystem = null;
         try {
-            URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
+            URL sampleUrl = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot");
+            if (sampleUrl == null) {
+                GTLog.logger.warn("Could not find .gtassetroot resource.");
+                return;
+            }
+            URI sampleUri = sampleUrl.toURI();
             Path resourcePath;
             if (sampleUri.getScheme().equals("jar") || sampleUri.getScheme().equals("zip")) {
                 zipFileSystem = FileSystems.newFileSystem(sampleUri, Collections.emptyMap());
                 resourcePath = zipFileSystem.getPath(resource);
             } else if (sampleUri.getScheme().equals("file")) {
-                resourcePath = Paths.get(WorldGenRegistry.class.getResource(resource).toURI());
+                URL resourceURL = WorldGenRegistry.class.getResource(resource);
+                if (resourceURL == null) {
+                    GTLog.logger.warn("Could not find resource file for {}.", resource);
+                    return;
+                }
+                resourcePath = Paths.get(resourceURL.toURI());
             } else {
                 throw new IllegalStateException("Unable to locate absolute path to directory: " + sampleUri);
             }

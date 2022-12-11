@@ -27,10 +27,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
@@ -320,7 +322,9 @@ public class WorldGenRegistry {
         Path extractLockPath = configPath.resolve("worldgen_extracted.json");
         FileSystem zipFileSystem = null;
         try {
-            URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
+            URL sampleUrl = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot");
+            if (sampleUrl == null) throw new FileNotFoundException("Could not find .gtassetsroot");
+            URI sampleUri = sampleUrl.toURI();
             // The Path for representing the worldgen folder in the assets folder in the Gregtech resources folder in the jar
             Path worldgenJarRootPath;
             // The Path for representing the vein folder in the vein folder in the assets folder in the Gregtech resources folder in the jar
@@ -333,9 +337,17 @@ public class WorldGenRegistry {
                 oreVeinJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/vein");
                 bedrockFluidJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/fluid");
             } else if (sampleUri.getScheme().equals("file")) {
-                worldgenJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen").toURI());
-                oreVeinJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/vein").toURI());
-                bedrockFluidJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/fluid").toURI());
+                URL url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen");
+                if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen");
+                worldgenJarRootPath = Paths.get(url.toURI());
+
+                url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/vein");
+                if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen/vein");
+                oreVeinJarRootPath = Paths.get(url.toURI());
+
+                url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/fluid");
+                if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen/fluid");
+                bedrockFluidJarRootPath = Paths.get(url.toURI());
             } else {
                 throw new IllegalStateException("Unable to locate absolute path to worldgen root directory: " + sampleUri);
             }

@@ -13,6 +13,7 @@ import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -148,11 +149,14 @@ public class CTRecipeHelper {
                             .append(itemId)
                             .append(">");
                 } else {
-                    builder.append("<")
-                            .append(itemStack.getItem().getRegistryName().toString())
-                            .append(":")
-                            .append(itemStack.getItemDamage())
-                            .append(">");
+                    ResourceLocation registryName = itemStack.getItem().getRegistryName();
+                    if (registryName != null) {
+                        builder.append("<")
+                                .append(registryName)
+                                .append(":")
+                                .append(itemStack.getItemDamage())
+                                .append(">");
+                    }
                 }
 
                 if (itemStack.serializeNBT().hasKey("tag")) {
