@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.itempipe.longdistance;
 
-import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import gregtech.api.pipenet.longdist.MetaTileEntityLongDistanceEndpoint;
 import gregtech.common.blocks.MetaBlocks;
@@ -22,5 +21,10 @@ public class LDItemPipeType extends LongDistancePipeType {
     @Override
     public boolean isValidEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
         return endpoint instanceof MetaTileEntityLDItemEndpoint;
+    }
+
+    @Override
+    public int getMinLength() {
+        return 50;
     }
 }

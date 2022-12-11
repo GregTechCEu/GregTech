@@ -44,7 +44,7 @@ public abstract class LongDistancePipeType {
      * Not yet implemented
      */
     @Deprecated
-    private boolean allowOnlyStraight() {
+    public boolean allowOnlyStraight() {
         return false;
     }
 
