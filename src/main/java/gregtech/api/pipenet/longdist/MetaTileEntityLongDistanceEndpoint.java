@@ -51,12 +51,6 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         return null;
     }
 
-    @Override
-    public void onAttached(Object... data) {
-        if (getWorld() == null || getWorld().isRemote) return;
-        this.placed = true;
-    }
-
     public void updateNetwork() {
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network != null) {
@@ -87,12 +81,11 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        boolean changed = getFrontFacing() != frontFacing;
+        this.placed = true;
         super.setFrontFacing(frontFacing);
-        if ((changed || placed) && getWorld() != null && !getWorld().isRemote) {
+        if (getWorld() != null && !getWorld().isRemote) {
             updateNetwork();
         }
-        this.placed = false;
     }
 
     @Override
@@ -106,6 +99,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
 
     @Override
     public void onNeighborChanged() {
+        if (!placed || getWorld() == null || getWorld().isRemote) return;
         List<LongDistanceNetwork> networks = new ArrayList<>();
         LongDistanceNetwork network;
         // only check input and output side
