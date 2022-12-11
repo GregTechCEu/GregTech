@@ -48,6 +48,10 @@ public abstract class LongDistancePipeType {
         return false;
     }
 
+    public int getMinLength() {
+        return 0;
+    }
+
     @Nonnull
     public LongDistanceNetwork createNetwork(LongDistanceNetwork.WorldData worldData) {
         return new LongDistanceNetwork(this, worldData);

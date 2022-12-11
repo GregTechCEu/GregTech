@@ -174,6 +174,19 @@ public class LongDistanceNetwork {
 
     public MetaTileEntityLongDistanceEndpoint getOtherEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
         if (!isValid()) return null;
+        if (this.pipeType.getMinLength() > 0) {
+            for (int i = 0; i < this.endpoints.size(); i++) {
+                MetaTileEntityLongDistanceEndpoint other = this.endpoints.get(i);
+                if (endpoint != other && endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) >= this.pipeType.getMinLength()) {
+                    if (i > 1) {
+                        this.endpoints.remove(i);
+                        this.endpoints.add(i, other);
+                    }
+                    return other;
+                }
+            }
+            return null;
+        }
         if (this.endpoints.get(0) == endpoint) {
             return this.endpoints.get(1);
         }
@@ -204,7 +217,7 @@ public class LongDistanceNetwork {
     }
 
     public boolean isValid() {
-        return this.endpoints.size() > 1;
+        return getEndpointAmount() > 1;
     }
 
     public boolean isCalculating() {
