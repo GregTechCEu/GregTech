@@ -28,7 +28,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -202,7 +201,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     public void renderPipeBlock(CCRenderState renderState, PipeRenderContext renderContext) {
-        Cuboid6 cuboid6 = BlockItemPipe.getSideBox(null, renderContext.pipeThickness);
+        Cuboid6 cuboid6 = BlockPipe.getSideBox(null, renderContext.pipeThickness);
         if ((renderContext.connections & 63) == 0) {
             // base pipe without connections
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
@@ -229,7 +228,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     private void renderPipeCube(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side) {
-        Cuboid6 cuboid = BlockItemPipe.getSideBox(side, renderContext.pipeThickness);
+        Cuboid6 cuboid = BlockPipe.getSideBox(side, renderContext.pipeThickness);
         boolean doRenderBlockedOverlay = (renderContext.blockedConnections & (1 << side.getIndex())) > 0;
         // render connection cuboid
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
@@ -248,7 +247,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         } else {
             if ((renderContext.connections & 1 << (12 + side.getIndex())) > 0) {
                 // if face has a cover offset face by 0.001 to avoid z fighting
-                cuboid = BlockItemPipe.getCoverSideBox(side, renderContext.pipeThickness);
+                cuboid = BlockPipe.getCoverSideBox(side, renderContext.pipeThickness);
             }
             renderOpenFace(renderState, renderContext, side, cuboid);
         }
@@ -294,11 +293,11 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         float thickness = pipeType.getThickness();
         int connectedSidesMask = pipeTile.getConnections();
-        Cuboid6 baseBox = BlockItemPipe.getSideBox(null, thickness);
+        Cuboid6 baseBox = BlockPipe.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             if ((connectedSidesMask & (1 << renderSide.getIndex())) > 0) {
-                Cuboid6 sideBox = BlockItemPipe.getSideBox(renderSide, thickness);
+                Cuboid6 sideBox = BlockPipe.getSideBox(renderSide, thickness);
                 BlockRenderer.renderCuboid(renderState, sideBox, 0);
             }
         }

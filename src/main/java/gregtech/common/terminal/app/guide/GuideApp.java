@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class GuideApp<T> extends AbstractApplication implements
         SearchComponent.IWidgetSearch<Stack<TreeNode<String, T>>> {
@@ -106,8 +107,14 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         try {
             Path guidePath = TerminalRegistry.TERMINAL_PATH.toPath().resolve("guide/" + this.getRegistryName());
             Path en_us = guidePath.resolve("en_us");
-            Files.walk(en_us).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".json")).forEach(file -> {
-                File langFile = guidePath.resolve(lang + "/" + en_us.relativize(file).toString()).toFile();
+            List<Path> configPaths;
+            try (Stream<Path> stream = Files.walk(en_us)) {
+                configPaths = stream.filter(Files::isRegularFile)
+                        .filter(f -> f.toString().endsWith(".json"))
+                        .collect(Collectors.toList());
+            }
+            configPaths.forEach(file -> {
+                File langFile = guidePath.resolve(lang + "/" + en_us.relativize(file)).toFile();
                 JsonObject json = this.getConfig(langFile);
                 if (json == null) {
                     json = this.getConfig(file.toFile());

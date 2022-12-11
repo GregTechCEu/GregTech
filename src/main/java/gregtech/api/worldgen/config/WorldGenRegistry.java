@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WorldGenRegistry {
 
@@ -200,10 +201,18 @@ public class WorldGenRegistry {
         }
 
         //attempt extraction if worldgen root directory is empty
-        if (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()) {
+        boolean shouldExtract = false;
+        try (Stream<Path> stream = Files.list(worldgenRootPath.resolve(veinPath))) {
+            shouldExtract = !stream.findFirst().isPresent();
+        }
+        if (shouldExtract) {
             extractJarVeinDefinitions(configPath, veinPath);
         }
-        if (!Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent()) {
+
+        try (Stream<Path> stream = Files.list(worldgenRootPath.resolve(bedrockVeinPath))) {
+            shouldExtract = !stream.findFirst().isPresent();
+        }
+        if (shouldExtract) {
             extractJarVeinDefinitions(configPath, bedrockVeinPath);
         }
 
@@ -220,10 +229,12 @@ public class WorldGenRegistry {
         }
 
         // Gather the worldgen vein files from the various folders in the config
-        List<Path> veinFiles = Files.walk(veinPath)
-                .filter(path -> path.toString().endsWith(".json"))
-                .filter(Files::isRegularFile)
-                .collect(Collectors.toList());
+        List<Path> veinFiles;
+        try (Stream<Path> stream = Files.walk(veinPath)) {
+            veinFiles = stream.filter(path -> path.toString().endsWith(".json"))
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+        }
 
         for (Path worldgenDefinition : veinFiles) {
 
@@ -249,10 +260,12 @@ public class WorldGenRegistry {
         GTLog.logger.info("Loaded {} vein worldgen definitions", registeredVeinDefinitions.size());
 
         // Gather the worldgen vein files from the various folders in the config
-        List<Path> bedrockFluidVeinFiles = Files.walk(bedrockVeinPath)
-                .filter(path -> path.toString().endsWith(".json"))
-                .filter(Files::isRegularFile)
-                .collect(Collectors.toList());
+        List<Path> bedrockFluidVeinFiles;
+        try (Stream<Path> stream = Files.walk(bedrockVeinPath)) {
+            bedrockFluidVeinFiles = stream.filter(path -> path.toString().endsWith(".json"))
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+        }
 
         for (Path worldgenDefinition : bedrockFluidVeinFiles) {
 
@@ -332,9 +345,10 @@ public class WorldGenRegistry {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
                         oreVeinJarRootPath, oreVeinRootPath);
                 // Find all the default worldgen files in the assets folder
-                List<Path> jarFiles = Files.walk(oreVeinJarRootPath)
-                        .filter(Files::isRegularFile)
-                        .collect(Collectors.toList());
+                List<Path> jarFiles;
+                try (Stream<Path> stream = Files.walk(oreVeinJarRootPath)) {
+                    jarFiles = stream.filter(Files::isRegularFile).collect(Collectors.toList());
+                }
 
                 // Replaces or creates the default worldgen files
                 for (Path jarFile : jarFiles) {
@@ -348,9 +362,10 @@ public class WorldGenRegistry {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
                         bedrockFluidJarRootPath, bedrockFluidVeinRootPath);
                 // Find all the default worldgen files in the assets folder
-                List<Path> jarFiles = Files.walk(bedrockFluidJarRootPath)
-                        .filter(Files::isRegularFile)
-                        .collect(Collectors.toList());
+                List<Path> jarFiles;
+                try (Stream<Path> stream = Files.walk(bedrockFluidJarRootPath)) {
+                    jarFiles = stream.filter(Files::isRegularFile).collect(Collectors.toList());
+                }
 
                 // Replaces or creates the default worldgen files
                 for (Path jarFile : jarFiles) {
@@ -410,19 +425,21 @@ public class WorldGenRegistry {
     }
 
     private <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
-        for(IWorldgenDefinition definition : definitions) {
+        Iterator<T> it = definitions.iterator();
+        while (it.hasNext()) {
+            T definition = it.next();
 
             JsonObject element = FileUtility.tryExtractFromFile(root.resolve(definition.getDepositName()));
 
             if(element == null) {
                 GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
-                definitions.remove(definition);
+                it.remove();
                 continue;
             }
 
             try {
                 definition.initializeFromConfig(element);
-                registeredDefinitions.add((T) definition);
+                registeredDefinitions.add(definition);
             }
             catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse addon worldgen definition {}", definition.getDepositName(), exception);

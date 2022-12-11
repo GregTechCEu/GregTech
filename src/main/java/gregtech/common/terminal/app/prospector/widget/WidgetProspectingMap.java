@@ -2,7 +2,6 @@ package gregtech.common.terminal.app.prospector.widget;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.core.network.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
@@ -12,6 +11,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
+import gregtech.core.network.packets.PacketProspecting;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -117,7 +117,9 @@ public class WidgetProspectingMap extends Widget {
                                 ItemStack itemBlock = GTUtility.toItem(state);
                                 if (GTUtility.isOre(itemBlock)) {
                                     boolean added = false;
-                                    String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream().findFirst().get();
+                                    String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream()
+                                            .findFirst()
+                                            .orElse("");
                                     OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
                                     for(StoneType type : StoneType.STONE_TYPE_REGISTRY) {
                                         if(type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileUtility {
     public static final JsonParser jsonParser = new JsonParser();
@@ -58,7 +59,7 @@ public class FileUtility {
     public static JsonElement loadJson(File file) {
         try {
             if (!file.isFile()) return null;
-            Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
             JsonElement json = jsonParser.parse(new JsonReader(reader));
             reader.close();
             return json;
@@ -75,7 +76,7 @@ public class FileUtility {
                     GTLog.logger.error("Failed to create file dirs on path {}", file);
                 }
             }
-            Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+            Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
             writer.write(gson.toJson(element));
             writer.close();
             return true;
@@ -99,9 +100,11 @@ public class FileUtility {
                 throw new IllegalStateException("Unable to locate absolute path to directory: " + sampleUri);
             }
 
-            List<Path> jarFiles = Files.walk(resourcePath)
-                    .filter(Files::isRegularFile)
-                    .collect(Collectors.toList());
+            List<Path> jarFiles;
+            try (Stream<Path> stream = Files.walk(resourcePath)) {
+                jarFiles = stream.filter(Files::isRegularFile).collect(Collectors.toList());
+            }
+
             for (Path jarFile : jarFiles) {
                 Path genPath = targetPath.toPath().resolve(resourcePath.relativize(jarFile).toString());
                 Files.createDirectories(genPath.getParent());
