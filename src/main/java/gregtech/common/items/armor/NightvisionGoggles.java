@@ -81,11 +81,6 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     }
 
     @Override
-    public double getDamageAbsorption() {
-        return 0;
-    }
-
-    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "gregtech:textures/armor/nightvision_goggles.png";
     }

@@ -44,11 +44,13 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     private final OrePrefix prefix;
 
-    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
-        put(OrePrefix.crushed, OrePrefix.crushedPurified);
-        put(OrePrefix.dustImpure, OrePrefix.dust);
-        put(OrePrefix.dustPure, OrePrefix.dust);
-    }};
+    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<>();
+
+    static {
+        purifyMap.put(OrePrefix.crushed, OrePrefix.crushedPurified);
+        purifyMap.put(OrePrefix.dustImpure, OrePrefix.dust);
+        purifyMap.put(OrePrefix.dustPure, OrePrefix.dust);
+    }
 
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();

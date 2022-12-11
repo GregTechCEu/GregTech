@@ -191,7 +191,7 @@ public class TextEditorWidget extends WidgetGroup {
 
         private static String formatFromMarkdown(String markdown) {
             StringBuilder builder = new StringBuilder();
-            Stack<TextFormatting> stack = new Stack<>();
+            Deque<TextFormatting> stack = new ArrayDeque<>();
             int[] chars = markdown.chars().toArray();
             for (int i = 0; i < chars.length; i++) {
                 if (chars[i] == '\\' && i + 1 < chars.length){
@@ -256,7 +256,7 @@ public class TextEditorWidget extends WidgetGroup {
                 for (int i = 0; i < patterns.length; i++) {
                     Matcher matcher = patterns[i].matcher(code);
                     if (matcher.find() && matcher.start() == 0) {
-                        builder.append(colors[i].toString()).append(code, 0, matcher.end()).append(TextFormatting.RESET.toString());
+                        builder.append(colors[i]).append(code, 0, matcher.end()).append(TextFormatting.RESET);
                         find = true;
                         code = code.substring(matcher.end());
                         break;
@@ -270,9 +270,9 @@ public class TextEditorWidget extends WidgetGroup {
             return builder.toString();
         }
 
-        private static void checkTextFormatting(StringBuilder builder, TextFormatting formatting, Stack<TextFormatting> stack) {
+        private static void checkTextFormatting(StringBuilder builder, TextFormatting formatting, Deque<TextFormatting> stack) {
             if (!stack.isEmpty() && stack.peek() == formatting) {
-                builder.append(TextFormatting.RESET.toString());
+                builder.append(TextFormatting.RESET);
                 stack.pop();
                 for (TextFormatting pre : stack) {
                     builder.append(pre.toString());

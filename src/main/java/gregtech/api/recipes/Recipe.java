@@ -215,8 +215,7 @@ public class Recipe {
         int indexed = 0;
 
         List<GTRecipeInput> gtRecipeInputs = this.inputs;
-        for (int i = 0; i < gtRecipeInputs.size(); i++) {
-            GTRecipeInput ingredient = gtRecipeInputs.get(i);
+        for (GTRecipeInput ingredient : gtRecipeInputs) {
             int ingredientAmount = ingredient.getAmount();
             for (int j = 0; j < inputs.size(); j++) {
                 ItemStack inputStack = inputs.get(j);
@@ -247,8 +246,7 @@ public class Recipe {
         int indexed = 0;
 
         List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
-        for (int i = 0; i < gtRecipeInputs.size(); i++) {
-            GTRecipeInput fluid = gtRecipeInputs.get(i);
+        for (GTRecipeInput fluid : gtRecipeInputs) {
             int fluidAmount = fluid.getAmount();
             for (int j = 0; j < fluidInputs.size(); j++) {
                 FluidStack tankFluid = fluidInputs.get(j);

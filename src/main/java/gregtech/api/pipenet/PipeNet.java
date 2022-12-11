@@ -26,7 +26,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     private long lastUpdate;
     boolean isValid = false;
 
-    public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet> world) {
+    public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>> world) {
         //noinspection unchecked
         this.worldData = (WorldPipeNet<NodeDataType, PipeNet<NodeDataType>>) world;
     }
@@ -275,7 +275,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         observedSet.put(startPos, getNodeAt(startPos));
         Node<NodeDataType> firstNode = getNodeAt(startPos);
         MutableBlockPos currentPos = new MutableBlockPos(startPos);
-        Stack<EnumFacing> moveStack = new Stack<>();
+        Deque<EnumFacing> moveStack = new ArrayDeque<>();
         main:
         while (true) {
             for (EnumFacing facing : EnumFacing.VALUES) {

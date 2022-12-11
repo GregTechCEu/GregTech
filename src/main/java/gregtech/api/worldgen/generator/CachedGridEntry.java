@@ -82,7 +82,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         this.gridX = gridX;
         this.gridZ = gridZ;
         long worldSeed = world.getSeed();
-        this.gridRandom = new XSTR(31 * 31 * gridX + gridZ * 31 + Long.hashCode(worldSeed));
+        this.gridRandom = new XSTR(31L * 31 * gridX + gridZ * 31L + Long.hashCode(worldSeed));
 
         int gridSizeX = WorldGeneratorImpl.GRID_SIZE_X * 16;
         int gridSizeZ = WorldGeneratorImpl.GRID_SIZE_Z * 16;

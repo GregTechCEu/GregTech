@@ -1408,9 +1408,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public RecipeMap<?> getRecipeMap() {
-        for (int i = 0; i < mteTraits.size(); i++) {
-            if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
-                return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
+        for (MTETrait mteTrait : mteTraits) {
+            if (mteTrait.getName().equals("RecipeMapWorkable")) {
+                return ((AbstractRecipeLogic) mteTrait).getRecipeMap();
             }
         }
         return null;

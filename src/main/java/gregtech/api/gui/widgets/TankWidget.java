@@ -142,7 +142,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidInTank.amount, 4) + "L";
 
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();

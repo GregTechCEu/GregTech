@@ -427,15 +427,13 @@ public abstract class Widget {
             buffer.pos(x + width, y, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
             buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y + height, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            tessellator.draw();
         } else {
             buffer.pos(x + width, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            tessellator.draw();
         }
+        buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();

@@ -40,10 +40,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
@@ -62,9 +59,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * Items to recover in a muffler hatch
      */
-    protected final List<ItemStack> recoveryItems = new ArrayList<ItemStack>() {{
-        add(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash));
-    }};
+    protected final List<ItemStack> recoveryItems = new ArrayList<>(Collections.singleton(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash)));
 
     private int timeActive;
     private static final int minimumMaintenanceTime = 3456000; // 48 real-life hours = 3456000 ticks

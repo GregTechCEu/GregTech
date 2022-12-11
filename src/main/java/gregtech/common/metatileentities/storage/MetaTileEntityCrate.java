@@ -67,12 +67,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler(inventorySize) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                super.onContentsChanged(slot);
-            }
-        };
+        this.inventory = new ItemStackHandler(inventorySize);
         this.itemInventory = inventory;
     }
 

@@ -192,7 +192,7 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
             if (fluidTank instanceof FluidTank) {
                 writeTag = ((FluidTank) fluidTank).writeToNBT(new NBTTagCompound());
             } else if (fluidTank instanceof INBTSerializable) {
-                writeTag = ((INBTSerializable) fluidTank).serializeNBT();
+                writeTag = ((INBTSerializable<?>) fluidTank).serializeNBT();
             } else writeTag = new NBTTagCompound();
 
             tanks.appendTag(writeTag);

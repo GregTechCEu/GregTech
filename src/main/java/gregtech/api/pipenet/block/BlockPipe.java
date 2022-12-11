@@ -525,7 +525,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     public IPipeTile<PipeType, NodeDataType> getPipeTileEntity(TileEntity tileEntityAtPos) {
-        if (tileEntityAtPos instanceof IPipeTile && isThisPipeBlock(((IPipeTile) tileEntityAtPos).getPipeBlock())) {
+        if (tileEntityAtPos instanceof IPipeTile && isThisPipeBlock(((IPipeTile<PipeType, NodeDataType>) tileEntityAtPos).getPipeBlock())) {
             return (IPipeTile<PipeType, NodeDataType>) tileEntityAtPos;
         }
         return null;

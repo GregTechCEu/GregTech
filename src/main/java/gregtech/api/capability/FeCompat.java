@@ -47,15 +47,17 @@ public class FeCompat {
     }
 
     /**
-     * @deprecated Specify ratio
+     * @deprecated Specify ratio with {@link FeCompat#toFe(long, int)}
      */
+    @Deprecated
     public static int toFe(long eu) {
         return (int) (eu * ratio(false));
     }
 
     /**
-     * @deprecated Specify ratio
+     * @deprecated Specify ratio with {@link FeCompat#toEu(long, int)}
      */
+    @Deprecated
     public static long toEu(long fe) {
         return fe / ratio(true);
     }

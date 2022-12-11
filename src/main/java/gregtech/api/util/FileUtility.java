@@ -37,10 +37,10 @@ public class FileUtility {
     }
 
     /**
-     * Tries to extract <code>JsonObject</code> from file on given path
+     * Tries to extract {@code JsonObject} from file on given path
      *
      * @param filePath path to file
-     * @return <code>JsonObject</code> if extraction succeeds; otherwise <code>null</code>
+     * @return {@code JsonObject} if extraction succeeds; otherwise {@code null}
      */
     public static JsonObject tryExtractFromFile(Path filePath) {
         try (InputStream fileStream = Files.newInputStream(filePath)) {

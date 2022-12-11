@@ -17,8 +17,8 @@ public class EnergyContainerList implements IEnergyContainer {
     public long getInputPerSec() {
         long sum = 0;
         List<IEnergyContainer> energyContainerList = this.energyContainerList;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            sum += energyContainerList.get(i).getInputPerSec();
+        for (IEnergyContainer iEnergyContainer : energyContainerList) {
+            sum += iEnergyContainer.getInputPerSec();
         }
         return sum;
     }
@@ -27,8 +27,8 @@ public class EnergyContainerList implements IEnergyContainer {
     public long getOutputPerSec() {
         long sum = 0;
         List<IEnergyContainer> energyContainerList = this.energyContainerList;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            sum += energyContainerList.get(i).getOutputPerSec();
+        for (IEnergyContainer iEnergyContainer : energyContainerList) {
+            sum += iEnergyContainer.getOutputPerSec();
         }
         return sum;
     }
@@ -37,8 +37,8 @@ public class EnergyContainerList implements IEnergyContainer {
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
         long amperesUsed = 0L;
         List<IEnergyContainer> energyContainerList = this.energyContainerList;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            amperesUsed += energyContainerList.get(i).acceptEnergyFromNetwork(null, voltage, amperage);
+        for (IEnergyContainer iEnergyContainer : energyContainerList) {
+            amperesUsed += iEnergyContainer.acceptEnergyFromNetwork(null, voltage, amperage);
             if (amperage == amperesUsed) {
                 return amperesUsed;
             }
@@ -50,8 +50,8 @@ public class EnergyContainerList implements IEnergyContainer {
     public long changeEnergy(long energyToAdd) {
         long energyAdded = 0L;
         List<IEnergyContainer> energyContainerList = this.energyContainerList;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            energyAdded += energyContainerList.get(i).changeEnergy(energyToAdd - energyAdded);
+        for (IEnergyContainer iEnergyContainer : energyContainerList) {
+            energyAdded += iEnergyContainer.changeEnergy(energyToAdd - energyAdded);
             if (energyAdded == energyToAdd) {
                 return energyAdded;
             }
@@ -62,8 +62,8 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getEnergyStored() {
         long energyStored = 0L;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            energyStored += energyContainerList.get(i).getEnergyStored();
+        for (IEnergyContainer iEnergyContainer : energyContainerList) {
+            energyStored += iEnergyContainer.getEnergyStored();
         }
         return energyStored;
     }
@@ -71,8 +71,8 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getEnergyCapacity() {
         long energyCapacity = 0L;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            energyCapacity += energyContainerList.get(i).getEnergyCapacity();
+        for (IEnergyContainer iEnergyContainer : energyContainerList) {
+            energyCapacity += iEnergyContainer.getEnergyCapacity();
         }
         return energyCapacity;
     }
@@ -90,8 +90,7 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getInputVoltage() {
         long inputVoltage = 0L;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            IEnergyContainer container = energyContainerList.get(i);
+        for (IEnergyContainer container : energyContainerList) {
             inputVoltage += container.getInputVoltage() * container.getInputAmperage();
         }
         return inputVoltage;
@@ -100,8 +99,7 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getOutputVoltage() {
         long outputVoltage = 0L;
-        for (int i = 0; i < energyContainerList.size(); i++) {
-            IEnergyContainer container = energyContainerList.get(i);
+        for (IEnergyContainer container : energyContainerList) {
             outputVoltage += container.getOutputVoltage() * container.getOutputAmperage();
         }
         return outputVoltage;

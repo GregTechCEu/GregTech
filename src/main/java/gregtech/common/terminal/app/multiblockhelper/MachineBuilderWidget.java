@@ -112,10 +112,7 @@ public class MachineBuilderWidget extends WidgetGroup {
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 6; col++) {
                 int index = col + row * 6;
-                boolean isActive = false;
-                if (inventoryPlayer.getStackInSlot(index).getItem() instanceof ItemBlock) {
-                    isActive = true;
-                }
+                boolean isActive = inventoryPlayer.getStackInSlot(index).getItem() instanceof ItemBlock;
                 slotWidgets[index] = new SlotWidget(inventoryPlayer, index, 12 + col * 18, 12 + row * 18, false, false) {
                     @Override
                     public boolean mouseClicked(int mouseX, int mouseY, int button) {

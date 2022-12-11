@@ -255,11 +255,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
-    public long addEnergy(long energyToAdd) {
-        return IEnergyContainer.super.addEnergy(energyToAdd);
-    }
-
-    @Override
     public long getInputAmperage() {
         return source ? 0 : amps;
     }

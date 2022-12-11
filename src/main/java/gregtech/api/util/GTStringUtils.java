@@ -25,7 +25,7 @@ public final class GTStringUtils {
     public static String prettyPrintItemStack(@Nonnull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
-            MetaItem.MetaValueItem metaValueItem = metaItem.getItem(stack);
+            MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
                 if (metaItem instanceof MetaPrefixItem) {
                     Material material = MetaPrefixItem.getMaterial(stack);

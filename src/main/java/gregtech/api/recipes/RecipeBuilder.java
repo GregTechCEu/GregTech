@@ -34,7 +34,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -831,8 +830,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
-        for (int i = 0; i < this.chancedOutputs.size(); i++) {
-            ChanceEntry entry = this.chancedOutputs.get(i);
+        for (ChanceEntry entry : this.chancedOutputs) {
             stacks.add(entry.getItemStack());
         }
 

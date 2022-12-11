@@ -287,7 +287,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 GlStateManager.scale(0.5, 0.5, 1);
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidStack.amount, 4) + "L";
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();

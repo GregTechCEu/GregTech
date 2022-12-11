@@ -87,8 +87,8 @@ public class CycleButtonWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = I18n.format(optionNames[currentOption]);
         fontRenderer.drawStringWithShadow(text,
-                pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
-                pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
+                pos.x + size.width / 2F - fontRenderer.getStringWidth(text) / 2F,
+                pos.y + size.height / 2F - fontRenderer.FONT_HEIGHT / 2F + 1, textColor);
     }
 
     @Override

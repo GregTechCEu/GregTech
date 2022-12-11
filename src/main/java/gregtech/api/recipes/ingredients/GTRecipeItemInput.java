@@ -109,20 +109,17 @@ public class GTRecipeItemInput extends GTRecipeInput {
         }
         List<ItemToMetaList> itemList = this.itemList;
         Item inputItem = input.getItem();
-        for (int i = 0; i < itemList.size(); i++) {
-            ItemToMetaList metaList = itemList.get(i);
+        for (ItemToMetaList metaList : itemList) {
             if (metaList.item == inputItem) {
                 List<MetaToTAGList> tagLists = metaList.metaToTAGList;
-                for (int j = 0; j < tagLists.size(); j++) {
-                    MetaToTAGList tagList = tagLists.get(j);
+                for (MetaToTAGList tagList : tagLists) {
                     if (tagList.meta == input.getMetadata()) {
                         final NBTTagCompound inputNBT = input.getTagCompound();
                         if (nbtMatcher != null) {
                             return nbtMatcher.evaluate(inputNBT, nbtCondition);
                         } else {
                             List<TagToStack> tagMaps = tagList.tagToStack;
-                            for (int k = 0; k < tagMaps.size(); k++) {
-                                TagToStack tagMapping = tagMaps.get(k);
+                            for (TagToStack tagMapping : tagMaps) {
                                 if ((inputNBT == null && tagMapping.tag == null) ||
                                         (inputNBT != null && inputNBT.equals(tagMapping.tag))) {
                                     return tagMapping.stack.areCapsCompatible(input);
