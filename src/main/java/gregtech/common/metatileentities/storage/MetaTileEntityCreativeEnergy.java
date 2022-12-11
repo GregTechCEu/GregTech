@@ -294,7 +294,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         }
     }
 
-    public Function<String, String> getTextFieldValidator() {
+    public static Function<String, String> getTextFieldValidator() {
         return val -> {
             if (val.isEmpty()) {
                 return "0";

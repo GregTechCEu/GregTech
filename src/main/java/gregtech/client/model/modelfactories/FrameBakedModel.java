@@ -26,13 +26,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class FrameBakedModel implements IBakedModel {
 
-    private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
+    private final Map<MaterialIconSet, EnumMap<EnumFacing, BakedQuad>> materialFaces;
     private final ThreadLocal<TextureAtlasSprite> particle;
 
     public FrameBakedModel() {
@@ -47,23 +48,22 @@ public class FrameBakedModel implements IBakedModel {
         if (side == null) return quads;
         if (state != null) {
             Material material = state.getValue(((BlockFrame) state.getBlock()).variantProperty);
+            materialFaces.putIfAbsent(material.getMaterialIconSet(), new EnumMap<>(EnumFacing.class));
+
             Map<EnumFacing, BakedQuad> materialFace = materialFaces.get(material.getMaterialIconSet());
-            if (materialFace == null) {
-                materialFaces.put(material.getMaterialIconSet(), materialFace = new Object2ObjectOpenHashMap<>());
-            }
+
+            materialFace.putIfAbsent(side, ModelFactory.getBakery().makeBakedQuad(
+                    new Vector3f(0F, 0F, 0F),
+                    new Vector3f(16F, 16F, 16F),
+                    new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
+                    ModelLoader.defaultTextureGetter().apply(MaterialIconType.frameGt.getBlockTexturePath(material.getMaterialIconSet())),
+                    side,
+                    ModelRotation.X0_Y0,
+                    null,
+                    true,
+                    true));
+
             BakedQuad materialFaceQuad = materialFace.get(side);
-            if (materialFaceQuad == null) {
-                materialFace.put(side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
-                        new Vector3f(0F, 0F, 0F),
-                        new Vector3f(16F, 16F, 16F),
-                        new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
-                        ModelLoader.defaultTextureGetter().apply(MaterialIconType.frameGt.getBlockTexturePath(material.getMaterialIconSet())),
-                        side,
-                        ModelRotation.X0_Y0,
-                        null,
-                        true,
-                        true));
-            }
             quads.add(materialFaceQuad);
             particle.set(materialFaceQuad.getSprite());
         } else {

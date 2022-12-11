@@ -1,5 +1,6 @@
 package gregtech.api.terminal.app;
 
+import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.api.gui.resources.TextureArea;
@@ -24,8 +25,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public abstract class AbstractApplication extends AnimaWidgetGroup {
+
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\\\\n");
+
     protected final String name;
     protected TerminalOSWidget os;
     protected boolean isClient;
@@ -76,7 +81,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     @SideOnly(Side.CLIENT)
     public String getDescription() {
         if (I18n.hasKey("terminal." + getRegistryName() + ".description")) {
-            return I18n.format("terminal." + getRegistryName() + ".description").replaceAll("\\\\n", "\n");
+            return NEW_LINE_PATTERN.matcher(I18n.format("terminal." + getRegistryName() + ".description")).replaceAll("\n");
         }
         return I18n.format("terminal.app_name.description");
     }
@@ -116,7 +121,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     /**
      * Will be called when try to open this app. you should return an instance here.
-     * Due to INative's poor synchronization, do not add the INativeWidget {@link gregtech.api.gui.INativeWidget} here.
+     * Due to INative's poor synchronization, do not add the INativeWidget {@link INativeWidget} here.
      * Instead, It's probably best not to initialize your app here. initialize should in initApp {@link #initApp()}
      */
     public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {

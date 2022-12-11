@@ -20,7 +20,7 @@ public class SpecialArmorApplyVisitor extends SafeMethodVisitor {
         super(Opcodes.ASM5, mv);
     }
 
-    private boolean checkTargetInsn(int opcode, String owner, String name, String desc) {
+    private static boolean checkTargetInsn(int opcode, String owner, String name, String desc) {
         return opcode == Opcodes.INVOKESTATIC && METHOD_MAPPING.s_owner.equals(owner) && METHOD_MAPPING.matches(name, desc);
     }
 

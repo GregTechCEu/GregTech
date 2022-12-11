@@ -4,8 +4,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.util.math.MathHelper;
 
@@ -15,10 +15,11 @@ import java.util.stream.Collectors;
 
 public class ScrollableListWidget extends AbstractWidgetGroup {
 
+    protected static final int scrollPaneWidth = 10;
+
     protected int totalListHeight;
     protected int slotHeight;
     protected int scrollOffset;
-    protected final int scrollPaneWidth = 10;
     protected int lastMouseX;
     protected int lastMouseY;
     protected boolean draggedOnScrollBar;

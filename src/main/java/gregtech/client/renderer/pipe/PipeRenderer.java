@@ -114,7 +114,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
         BlockPipe<?, ?, ?> blockFluidPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stack.getItem()).getBlock();
         IPipeType<?> pipeType = blockFluidPipe.getItemPipeType(stack);
-        Material material = blockFluidPipe instanceof BlockMaterialPipe ? ((BlockMaterialPipe<?, ?, ?>) blockFluidPipe).getItemMaterial(stack) : null;
+        Material material = blockFluidPipe instanceof BlockMaterialPipe ? BlockMaterialPipe.getItemMaterial(stack) : null;
         if (pipeType != null) {
             // 12 == 0b1100 is North and South connection (index 2 & 3)
             PipeRenderContext renderContext = new PipeRenderContext(12, 0, pipeType.getThickness());
@@ -169,7 +169,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    private void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState, int connections) {
+    private static void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState, int connections) {
         Material frameMaterial = pipeTile.getFrameMaterial();
         if (frameMaterial != null) {
             ResourceLocation rl = MaterialIconType.frameGt.getBlockTexturePath(frameMaterial.getMaterialIconSet());
@@ -193,7 +193,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    private int getPipeColor(Material material, int paintingColor) {
+    private static int getPipeColor(Material material, int paintingColor) {
         if (paintingColor == -1) {
             return material == null ? 0xFFFFFF : material.getMaterialRGB();
         }
@@ -253,19 +253,19 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    private void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    private static void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.openFaceRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    private void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    private static void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.pipeSideRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    private void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
+    private static void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
         BlockRenderer.BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(cuboid6, side.getIndex());
         renderState.setPipeline(blockFace, 0, blockFace.verts.length, pipeline);

@@ -34,7 +34,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
         tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLossPerBlock()));
 
         if (ConfigHolder.misc.debug) {
-            tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getItemMaterial(stack).toCamelCaseString());
+            tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString());
         }
     }
 }

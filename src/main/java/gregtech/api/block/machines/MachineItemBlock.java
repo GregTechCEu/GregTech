@@ -116,7 +116,7 @@ public class MachineItemBlock extends ItemBlock {
         //item specific tooltip like: gregtech.machine.lathe.lv.tooltip
         String tooltipLocale = metaTileEntity.getMetaName() + ".tooltip";
         if (I18n.hasKey(tooltipLocale)) {
-            String[] lines = I18n.format(tooltipLocale).split("/n");
+            String[] lines = GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipLocale));
             tooltip.addAll(Arrays.asList(lines));
         }
 
@@ -126,7 +126,7 @@ public class MachineItemBlock extends ItemBlock {
             //only add tierless tooltip if it's key is not equal to normal tooltip key (i.e if machine name has dot in it's name)
             //case when it's not true would be any machine extending from TieredMetaTileEntity but having only one tier
             if (!tooltipLocale.equals(tierlessTooltipLocale) && I18n.hasKey(tierlessTooltipLocale)) {
-                String[] lines = I18n.format(tierlessTooltipLocale).split("/n");
+                String[] lines = GTUtility.getForwardNewLineRegex().split(I18n.format(tierlessTooltipLocale));
                 tooltip.addAll(Arrays.asList(lines));
             }
         }

@@ -420,7 +420,7 @@ public class WorldGenRegistry {
         }
     }
 
-    private void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
+    private static void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
         for(IWorldgenDefinition definition : definitions) {
             Path filePath = root.resolve(Paths.get(definition.getDepositName()));
 
@@ -436,7 +436,7 @@ public class WorldGenRegistry {
         }
     }
 
-    private <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
+    private static <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
         Iterator<T> it = definitions.iterator();
         while (it.hasNext()) {
             T definition = it.next();

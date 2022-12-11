@@ -189,7 +189,7 @@ public class TextEditorWidget extends WidgetGroup {
             return true;
         }
 
-        private String formatFromMarkdown(String markdown) {
+        private static String formatFromMarkdown(String markdown) {
             StringBuilder builder = new StringBuilder();
             Stack<TextFormatting> stack = new Stack<>();
             int[] chars = markdown.chars().toArray();
@@ -239,7 +239,7 @@ public class TextEditorWidget extends WidgetGroup {
             return builder.toString();
         }
 
-        private String checkCode(String code) {
+        private static String checkCode(String code) {
             Pattern[] patterns = new Pattern[]{COMMENT, STRING, BOOL, KEYWORD, KEYWORD_2, VARIABLE, NUMBER, ANY};
             TextFormatting[] colors = new TextFormatting[]{
                     TextFormatting.DARK_GRAY, // comment
@@ -270,7 +270,7 @@ public class TextEditorWidget extends WidgetGroup {
             return builder.toString();
         }
 
-        private void checkTextFormatting(StringBuilder builder, TextFormatting formatting,  Stack<TextFormatting> stack) {
+        private static void checkTextFormatting(StringBuilder builder, TextFormatting formatting, Stack<TextFormatting> stack) {
             if (!stack.isEmpty() && stack.peek() == formatting) {
                 builder.append(TextFormatting.RESET.toString());
                 stack.pop();
@@ -407,7 +407,7 @@ public class TextEditorWidget extends WidgetGroup {
                 if(stringUpdate != null) {
                     stringUpdate.accept(content);
                 }
-                textHeight = this.fontRenderer.getWordWrappedHeight(content + "" + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
+                textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
             }
         }
 
@@ -416,7 +416,7 @@ public class TextEditorWidget extends WidgetGroup {
             if(stringUpdate != null) {
                 stringUpdate.accept(content);
             }
-            textHeight = this.fontRenderer.getWordWrappedHeight(content + "" + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
+            textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
         }
 
         @Override

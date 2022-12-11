@@ -52,7 +52,7 @@ public class TerminalDesktopWidget extends WidgetGroup {
     }
 
     @SideOnly(Side.CLIENT)
-    private boolean topWidgetsMouseOver(Widget widget, int mouseX, int mouseY) {
+    private static boolean topWidgetsMouseOver(Widget widget, int mouseX, int mouseY) {
         if (widget.isMouseOverElement(mouseX, mouseY)) {
             return true;
         }

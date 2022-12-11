@@ -7,10 +7,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.Position;
-import gregtech.api.util.Size;
-import gregtech.api.util.TextFormattingUtil;
+import gregtech.api.util.*;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
@@ -62,7 +59,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidStackUpdater = fluidTank::setFluid;
     }
 
-    private FluidStack drainFrom(Object ingredient) {
+    private static FluidStack drainFrom(Object ingredient) {
         if (ingredient instanceof ItemStack) {
             ItemStack itemStack = (ItemStack) ingredient;
             IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
@@ -306,7 +303,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 hoverStringList.add(fluidName);
                 if (showTip) {
                     hoverStringList.add(lastFluidStack.amount + " L");
-                    hoverStringList.addAll(Arrays.asList(I18n.format("cover.fluid_filter.config_amount").split("/n")));
+                    hoverStringList.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format("cover.fluid_filter.config_amount"))));
                 }
                 drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
             }

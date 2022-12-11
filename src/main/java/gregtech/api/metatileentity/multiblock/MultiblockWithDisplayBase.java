@@ -19,7 +19,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,6 +51,9 @@ import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
 public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
 
+    private static final String NBT_VOIDING_MODE = "VoidingMode";
+    private static final String NBT_VOIDING_ITEMS = "VoidingItems";
+    private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -76,10 +78,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     // Used for data preservation with Maintenance Hatch
     private boolean storedTaped = false;
-
-    private final String NBT_VOIDING_MODE = "VoidingMode";
-    private final String NBT_VOIDING_ITEMS = "VoidingItems";
-    private final String NBT_VOIDING_FLUIDS = "VoidingFluids";
 
     protected List<BlockPos> variantActiveBlocks;
     protected boolean lastActive;
@@ -411,7 +409,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if(shouldShowVoidingModeButton()) {
             builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(this::getVoidingModeTooltip));
+                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
         }
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
@@ -441,7 +439,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         markDirty();
     }
 
-    private String getVoidingModeTooltip(int mode) {
+    private static String getVoidingModeTooltip(int mode) {
         return VoidingMode.VALUES[mode].getName();
     }
 

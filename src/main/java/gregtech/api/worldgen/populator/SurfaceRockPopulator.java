@@ -50,8 +50,8 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     public void initializeForVein(OreDepositDefinition definition) {
     }
 
-    private Set<Material> findUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
-        HashSet<Material> result = new HashSet<>();
+    private static Set<Material> findUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
+        Set<Material> result = new HashSet<>();
         for (IBlockState blockState : generatedBlocks) {
             Material resultMaterial;
             if (blockState.getBlock() instanceof IFluidBlock || blockState.getBlock() instanceof BlockLiquid) {

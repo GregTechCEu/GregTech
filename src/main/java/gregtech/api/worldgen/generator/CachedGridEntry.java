@@ -108,7 +108,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         triggerVeinsGeneration();
     }
 
-    private BlockPos findOptimalSpot(int gridX, int gridZ, int chunkX, int chunkZ) {
+    private static BlockPos findOptimalSpot(int gridX, int gridZ, int chunkX, int chunkZ) {
         int gridCenterX = (gridX * WorldGeneratorImpl.GRID_SIZE_X + WorldGeneratorImpl.GRID_SIZE_X / 2) * 16 + 7;
         int gridCenterZ = (gridZ * WorldGeneratorImpl.GRID_SIZE_Z + WorldGeneratorImpl.GRID_SIZE_Z / 2) * 16 + 7;
         int chunkBaseX = chunkX * 16;
@@ -201,7 +201,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         return Collections.emptyList();
     }
 
-    private GTWorldGenCapability retrieveCapability(World world, int chunkX, int chunkZ) {
+    private static GTWorldGenCapability retrieveCapability(World world, int chunkX, int chunkZ) {
         return world.getChunk(chunkX, chunkZ).getCapability(GTWorldGenCapability.CAPABILITY, null);
     }
 

@@ -37,7 +37,7 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
         color[2] *= a;
     }
 
-    protected float calcLightmap(float[][][][] light, float x, float y, float z) {
+    protected static float calcLightmap(float[][][][] light, float x, float y, float z) {
         x *= 2;
         y *= 2;
         z *= 2;

@@ -41,7 +41,7 @@ public class CTRecipeHelper {
                 return "frame" + ((BlockFrame) block).getGtMaterial(item.getMetadata()).toCamelCaseString();
             }
             if (block instanceof BlockMaterialPipe) {
-                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item).toCamelCaseString();
+                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(item).toCamelCaseString();
             }
         }
         return null;

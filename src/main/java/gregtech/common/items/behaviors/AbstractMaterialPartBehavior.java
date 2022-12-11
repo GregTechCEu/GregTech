@@ -18,15 +18,15 @@ import java.util.List;
 
 public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager, IItemColorProvider, IItemNameProvider {
 
-    protected NBTTagCompound getPartStatsTag(ItemStack itemStack) {
+    protected static NBTTagCompound getPartStatsTag(ItemStack itemStack) {
         return itemStack.getSubCompound("GT.PartStats");
     }
 
-    protected NBTTagCompound getOrCreatePartStatsTag(ItemStack itemStack) {
+    protected static NBTTagCompound getOrCreatePartStatsTag(ItemStack itemStack) {
         return itemStack.getOrCreateSubCompound("GT.PartStats");
     }
 
-    public Material getPartMaterial(ItemStack itemStack) {
+    public static Material getPartMaterial(ItemStack itemStack) {
         NBTTagCompound compound = getPartStatsTag(itemStack);
         Material defaultMaterial = Materials.Neutronium;
         if (compound == null || !compound.hasKey("Material", NBT.TAG_STRING)) {
@@ -40,7 +40,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         return material;
     }
 
-    public void setPartMaterial(ItemStack itemStack, Material material) {
+    public static void setPartMaterial(ItemStack itemStack, Material material) {
         if (!material.hasProperty(PropertyKey.INGOT))
             throw new IllegalArgumentException("Part material must have an Ingot!");
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);
@@ -49,7 +49,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
 
     public abstract int getPartMaxDurability(ItemStack itemStack);
 
-    public int getPartDamage(ItemStack itemStack) {
+    public static int getPartDamage(ItemStack itemStack) {
         NBTTagCompound compound = getPartStatsTag(itemStack);
         if (compound == null || !compound.hasKey("Damage", NBT.TAG_ANY_NUMERIC)) {
             return 0;

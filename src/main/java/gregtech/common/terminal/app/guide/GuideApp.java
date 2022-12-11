@@ -115,9 +115,9 @@ public abstract class GuideApp<T> extends AbstractApplication implements
             }
             configPaths.forEach(file -> {
                 File langFile = guidePath.resolve(lang + "/" + en_us.relativize(file)).toFile();
-                JsonObject json = this.getConfig(langFile);
+                JsonObject json = GuideApp.getConfig(langFile);
                 if (json == null) {
-                    json = this.getConfig(file.toFile());
+                    json = GuideApp.getConfig(file.toFile());
                 }
                 if (json != null) {
                     jsons.add(json);
@@ -139,7 +139,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
 
     public abstract T ofJson(JsonObject json);
 
-    private JsonObject getConfig(File file) {
+    private static JsonObject getConfig(File file) {
         JsonElement je = FileUtility.loadJson(file);
         return je == null ? null : je.isJsonObject() ? je.getAsJsonObject() : null;
     }

@@ -39,7 +39,7 @@ public class ChestGenHooks {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(LootTableLoadEvent event) {
+    public static void onWorldLoad(LootTableLoadEvent event) {
         LootPool mainPool = event.getTable().getPool("main");
         if (mainPool != null && lootEntryItems.containsKey(event.getName())) {
             List<LootEntryItem> entryItems = lootEntryItems.get(event.getName());

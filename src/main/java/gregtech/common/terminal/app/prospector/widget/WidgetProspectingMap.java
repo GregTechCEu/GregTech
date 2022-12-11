@@ -151,7 +151,7 @@ public class WidgetProspectingMap extends Widget {
                     if (fStack != null && fStack.getDefinition() != null) {
                         packet.addBlock(0, 3, 0, GTUtility.formatNumbers(100.0 * BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z)
                                 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
-                        packet.addBlock(0, 2, 0, "" + BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z));
+                        packet.addBlock(0, 2, 0, String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
                         packet.addBlock(0, 1, 0, BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z).getName());
                     }
                     break;

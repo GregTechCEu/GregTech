@@ -254,7 +254,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         return !first.isBlocked(firstFacing) && !second.isBlocked(firstFacing.getOpposite());
     }
 
-    private boolean areMarksCompatible(int mark1, int mark2) {
+    private static boolean areMarksCompatible(int mark1, int mark2) {
         return mark1 == mark2 || mark1 == Node.DEFAULT_MARK || mark2 == Node.DEFAULT_MARK;
     }
 

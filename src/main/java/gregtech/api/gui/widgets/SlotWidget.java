@@ -7,6 +7,7 @@ import gregtech.api.gui.ISizeProvider;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
@@ -82,7 +83,7 @@ public class SlotWidget extends Widget implements INativeWidget {
     public void drawInForeground(int mouseX, int mouseY) {
         ((ISlotWidget) slotReference).setHover(isMouseOverElement(mouseX, mouseY) && isActive());
         if (tooltipText != null && isMouseOverElement(mouseX, mouseY) && !slotReference.getHasStack()) {
-            List<String> hoverList = Arrays.asList(I18n.format(tooltipText, tooltipArgs).split("/n"));
+            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipText, tooltipArgs)));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

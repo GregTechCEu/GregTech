@@ -1033,7 +1033,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     };
 
     @SideOnly(Side.CLIENT)
-    private String readAmountOrCountOrEnergy(long number, MODE mode) {
+    private static String readAmountOrCountOrEnergy(long number, MODE mode) {
         int unit = mode == MODE.FLUID ? 1 : mode == MODE.ITEM ? 2 : mode == MODE.ENERGY ? 3 : 0;
         if (mode == MODE.MACHINE) {
             return number + "%";

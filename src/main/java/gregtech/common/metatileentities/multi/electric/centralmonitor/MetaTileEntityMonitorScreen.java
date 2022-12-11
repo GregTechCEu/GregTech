@@ -633,7 +633,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return false;
     }
 
-    private double[] handleRayTraceResult(RayTraceResult rayTraceResult) {
+    private static double[] handleRayTraceResult(RayTraceResult rayTraceResult) {
         double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.x - rayTraceResult.getBlockPos().getX();

@@ -37,6 +37,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.MODID_CC;
@@ -156,7 +158,7 @@ public class GTOreInfo implements IRecipeWrapper {
         return containedBlocksAsItemStacks;
     }
 
-    private Collection<IBlockState> getPossibleStates(FillerEntry entry, Collection<IBlockState> collection) {
+    private static Collection<IBlockState> getPossibleStates(FillerEntry entry, Collection<IBlockState> collection) {
         for (IBlockState state : entry.getPossibleResults()) {
             if (state.getBlock() instanceof BlockOre) {
                 if (!state.getValue(((BlockOre) state.getBlock()).STONE_TYPE).shouldBeDroppedAsItem) {
@@ -168,7 +170,7 @@ public class GTOreInfo implements IRecipeWrapper {
         return collection;
     }
 
-    private List<ItemStack> getStacksFromStates(Collection<IBlockState> states, List<ItemStack> list) {
+    private static List<ItemStack> getStacksFromStates(Collection<IBlockState> states, List<ItemStack> list) {
         for (IBlockState state : states) {
             list.add(GTUtility.toItem(state));
         }
@@ -220,7 +222,7 @@ public class GTOreInfo implements IRecipeWrapper {
     }
 
     // Finds the generated surface block or material. In the case of Fluid generation, finds a bucket of the fluid.
-    public ItemStack findSurfaceBlock(IVeinPopulator veinPopulator) {
+    public static ItemStack findSurfaceBlock(IVeinPopulator veinPopulator) {
 
         Material mat;
         IBlockState state;

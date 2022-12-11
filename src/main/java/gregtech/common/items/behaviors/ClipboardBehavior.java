@@ -79,7 +79,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         return builder.build(holder, entityPlayer);
     }
 
-    public ModularUI createMTEUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) { // So that people don't click on any text fields
+    public static ModularUI createMTEUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) { // So that people don't click on any text fields
         initNBT(holder.getCurrentItem());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.CLIPBOARD_PAPER_BACKGROUND, 170, 238);
 

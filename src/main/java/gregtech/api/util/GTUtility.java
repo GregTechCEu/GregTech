@@ -95,6 +95,8 @@ public class GTUtility {
 
     private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
 
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
+
     static {
         for (int i = 0; i < V.length; i++) {
             tierByVoltage.put(V[i], (byte) i);
@@ -1091,6 +1093,11 @@ public class GTUtility {
     @Nonnull
     public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
         return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
+    }
+
+    @Nonnull
+    public static Pattern getForwardNewLineRegex() {
+        return NEW_LINE_PATTERN;
     }
 
     /**

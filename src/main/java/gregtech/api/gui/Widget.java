@@ -590,17 +590,17 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void playButtonClickSound() {
+    protected static void playButtonClickSound() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @SideOnly(Side.CLIENT)
-    protected boolean isShiftDown() {
+    protected static boolean isShiftDown() {
         return TooltipHelper.isShiftDown();
     }
 
     @SideOnly(Side.CLIENT)
-    protected boolean isCtrlDown() {
+    protected static boolean isCtrlDown() {
         return TooltipHelper.isCtrlDown();
     }
 
