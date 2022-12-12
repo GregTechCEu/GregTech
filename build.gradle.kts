@@ -71,7 +71,8 @@ dependencies {
 
     "deobfCompile"("zone.rong:mixinbooter:4.2")
 
-    "testImplementation"("junit:junit:4.13.1")
+    "testImplementation"("org.junit.jupiter:junit-jupiter:5.9.1")
+    "testImplementation"("org.hamcrest:hamcrest:2.2")
     "implementation"("org.projectlombok:lombok:1.18.16")
 }
 
@@ -119,6 +120,7 @@ tasks.withType<Test>() {
         showCauses = true
         showStandardStreams = false
     }
+    useJUnitPlatform()
 }
 
 val sourceTask: Jar = tasks.create("source", Jar::class.java) {

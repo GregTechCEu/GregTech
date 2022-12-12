@@ -14,14 +14,15 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class AbstractRecipeLogicTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
     }
@@ -91,48 +92,48 @@ public class AbstractRecipeLogicTest {
         arl.trySearchNewRecipe();
 
         // no recipe found
-        assertTrue(arl.invalidInputsForRecipes);
-        assertFalse(arl.isActive);
-        assertNull(arl.previousRecipe);
+        MatcherAssert.assertThat(arl.invalidInputsForRecipes, is(true));
+        MatcherAssert.assertThat(arl.isActive, is(false));
+        MatcherAssert.assertThat(arl.previousRecipe, nullValue());
 
         // put an item in the inventory that will trigger recipe recheck
         arl.getInputInventory().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
         // Inputs change. did we detect it ?
-        assertTrue(arl.hasNotifiedInputs());
+        MatcherAssert.assertThat(arl.hasNotifiedInputs(), is(true));
         arl.trySearchNewRecipe();
-        assertFalse(arl.invalidInputsForRecipes);
-        assertNotNull(arl.previousRecipe);
-        assertTrue(arl.isActive);
-        assertEquals(15, arl.getInputInventory().getStackInSlot(0).getCount());
+        MatcherAssert.assertThat(arl.invalidInputsForRecipes, is(false));
+        MatcherAssert.assertThat(arl.previousRecipe, notNullValue());
+        MatcherAssert.assertThat(arl.isActive, is(true));
+        MatcherAssert.assertThat(arl.getInputInventory().getStackInSlot(0).getCount(), is(15));
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = arl.previousRecipe;
 
         // Finish the recipe, the output should generate, and the next iteration should begin
         arl.update();
-        assertEquals(prev, arl.previousRecipe);
-        assertTrue(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
-                new ItemStack(Blocks.STONE, 1)));
-        assertTrue(arl.isActive);
+        MatcherAssert.assertThat(arl.previousRecipe, is(prev));
+        MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
+                new ItemStack(Blocks.STONE, 1)), is(true));
+        MatcherAssert.assertThat(arl.isActive, is(true));
 
         // Complete the second iteration, but the machine stops because its output is now full
         arl.getOutputInventory().setStackInSlot(0, new ItemStack(Blocks.STONE, 63));
         arl.getOutputInventory().setStackInSlot(1, new ItemStack(Blocks.STONE, 64));
         arl.update();
-        assertFalse(arl.isActive);
-        assertTrue(arl.isOutputsFull);
+        MatcherAssert.assertThat(arl.isActive, is(false));
+        MatcherAssert.assertThat(arl.isOutputsFull, is(true));
 
         // Try to process again and get failed out because of full buffer.
         arl.update();
-        assertFalse(arl.isActive);
-        assertTrue(arl.isOutputsFull);
+        MatcherAssert.assertThat(arl.isActive, is(false));
+        MatcherAssert.assertThat(arl.isOutputsFull, is(true));
 
         // Some room is freed in the output bus, so we can continue now.
         arl.getOutputInventory().setStackInSlot(1, ItemStack.EMPTY);
         arl.update();
-        assertTrue(arl.isActive);
-        assertFalse(arl.isOutputsFull);
-        assertTrue(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
-                new ItemStack(Blocks.STONE, 1)));
+        MatcherAssert.assertThat(arl.isActive, is(true));
+        MatcherAssert.assertThat(arl.isOutputsFull, is(false));
+        MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
+                new ItemStack(Blocks.STONE, 1)), is(true));
     }
 }

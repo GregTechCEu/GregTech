@@ -14,23 +14,25 @@ import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
@@ -42,7 +44,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     private static MetaTileEntityFluidHatch exportFluidBus;
     private static boolean enableBonusOverride = false;
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
     }
@@ -213,18 +215,18 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
-        assertEquals(4, parallelRecipe.getParallel());
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         //Check that the EUt of the recipe was multiplied correctly
-        assertEquals(120, parallelRecipe.getEUt());
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(120));
 
         //Check if the recipe duration was not modified
-        assertEquals(100, parallelRecipe.getDuration());
+        MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
 
         //Check the recipe outputs
-        assertFalse(parallelRecipe.getOutputs().isEmpty());
+        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        assertTrue(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)));
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
 
         //Check the recipe inputs
         //assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4), parallelRecipe.getInputs().get(0));
@@ -267,18 +269,18 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
-        assertEquals(2, parallelRecipe.getParallel());
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         //Check that the EUt of the recipe was multiplied correctly
-        assertEquals(60, parallelRecipe.getEUt());
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(60));
 
         //Check if the recipe duration was not modified
-        assertEquals(100, parallelRecipe.getDuration());
+        MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
 
         //Check the recipe outputs
-        assertFalse(parallelRecipe.getOutputs().isEmpty());
+        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        assertTrue(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)));
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
 
         //Check the recipe inputs
         //assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4), parallelRecipe.getInputs().get(0));
@@ -321,19 +323,18 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
         //Check if the correct number of parallels were done
-        assertEquals(4, parallelRecipe.getParallel());
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         //Check that the EUt of the recipe was not modified
-        assertEquals(30, parallelRecipe.getEUt());
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
 
         //Check if the recipe duration was multiplied correctly
-        assertEquals(400, parallelRecipe.getDuration());
+        MatcherAssert.assertThat(parallelRecipe.getDuration(), is(400));
 
         //Check the recipe outputs
-        assertFalse(parallelRecipe.getOutputs().isEmpty());
+        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        assertTrue(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)));
-
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
     }
 
     @Test
@@ -372,22 +373,21 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
         //Check if the correct number of parallels were done
-        assertEquals(2, parallelRecipe.getParallel());
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         //Check that the EUt of the recipe was not modified
-        assertEquals(30, parallelRecipe.getEUt());
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
 
         //Check if the recipe duration was multiplied correctly
-        assertEquals(200, parallelRecipe.getDuration());
+        MatcherAssert.assertThat(parallelRecipe.getDuration(), is(200));
 
         //Check the recipe outputs
-        assertFalse(parallelRecipe.getOutputs().isEmpty());
+        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        assertTrue(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)));
-
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
     }
 
-    // An end to end test for finding parallel recipes
+    // An end-to-end test for finding parallel recipes
     @Test
     public void findParallelRecipe_Test() {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(515);
@@ -452,19 +452,19 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
 
         //Check that the EUt of the recipe was multiplied correctly
-        assertEquals(120, outputRecipe.getEUt());
+        MatcherAssert.assertThat(outputRecipe.getEUt(), is(120));
 
         //Check if the recipe duration was not modified
-        assertEquals(100, outputRecipe.getDuration());
+        MatcherAssert.assertThat(outputRecipe.getDuration(), is(100));
 
         //Check the recipe outputs
-        assertFalse(outputRecipe.getOutputs().isEmpty());
+        MatcherAssert.assertThat(outputRecipe.getOutputs().isEmpty(), is(false));
 
-        assertTrue(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)));
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)), is(true));
 
     }
 
-    // An end to end test for finding parallel recipes
+    // An end-to-end test for finding parallel recipes
     @Test
     public void findParallelRecipe_FailingFromInputTest() {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(516);
@@ -527,10 +527,10 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 32, parallelLimit);
 
-        assertNull(outputRecipe);
+        MatcherAssert.assertThat(outputRecipe, nullValue());
     }
 
-    // An end to end test for finding parallel recipes
+    // An end-to-end test for finding parallel recipes
     @Test
     public void findParallelRecipe_FailingFromOutputTest() {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(517);
@@ -595,7 +595,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), Integer.MAX_VALUE, parallelLimit);
 
-        assertNull(outputRecipe);
+        MatcherAssert.assertThat(outputRecipe, nullValue());
     }
 
     @Test
@@ -663,15 +663,15 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
 
         //Check that the EUt of the recipe was not modified
-        assertEquals(1, outputRecipe.getEUt());
+        MatcherAssert.assertThat(outputRecipe.getEUt(), is(1));
 
         //Check if the recipe duration was multiplied correctly
-        assertEquals(50, outputRecipe.getDuration());
+        MatcherAssert.assertThat(outputRecipe.getDuration(), is(50));
 
         //Check the recipe outputs
-        assertFalse(outputRecipe.getOutputs().isEmpty());
+        MatcherAssert.assertThat(outputRecipe.getOutputs().isEmpty(), is(false));
 
-        assertTrue(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)));
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)), is(true));
 
         enableBonusOverride = false;
 
