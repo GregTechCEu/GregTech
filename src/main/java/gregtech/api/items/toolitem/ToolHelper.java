@@ -302,7 +302,11 @@ public final class ToolHelper {
                 }
 
                 remainingUses--;
-                if(remainingUses == 0) {
+                if(stack.getItem() instanceof IGTTool && !((IGTTool) stack.getItem()).isElectric() && remainingUses == 0) {
+                    return true;
+                }
+                // If the tool is an electric tool, catch the tool breaking and cancel the remaining AOE
+                else if(!player.getHeldItemMainhand().isItemEqualIgnoreDurability(stack)) {
                     return true;
                 }
             }
