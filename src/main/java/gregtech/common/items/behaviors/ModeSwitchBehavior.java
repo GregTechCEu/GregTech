@@ -40,8 +40,7 @@ public class ModeSwitchBehavior<T extends Enum<T> & ILocalizationKey> implements
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound == null) tagCompound = GTUtility.getOrCreateNbtCompound(itemStack);
+        NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(itemStack);
         tagCompound.setInteger("Mode", ArrayUtils.indexOf(enumConstants, newMode));
     }
 

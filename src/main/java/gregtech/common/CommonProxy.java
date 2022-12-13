@@ -376,7 +376,7 @@ public class CommonProxy {
         }
     }
 
-    public static void onLoadComplete(FMLLoadCompleteEvent event) {
+    public void onLoadComplete(FMLLoadCompleteEvent event) {
         if(Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
