@@ -2,7 +2,9 @@ package gregtech.common;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.toolitem.IGTTool;
@@ -65,6 +67,12 @@ public class ToolEventHandlers {
         if (item instanceof IGTTool) {
             IGTTool def = (IGTTool) item;
             ItemStack brokenStack = def.getToolStats().getBrokenStack();
+            // Transfer over remaining charge to power units
+            if (brokenStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) && def.isElectric()) {
+                long remainingCharge = def.getCharge(event.getOriginal());
+                IElectricItem electricStack = brokenStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                electricStack.charge(Math.min(remainingCharge, def.getMaxCharge(event.getOriginal())), def.getElectricTier(), true, false);
+            }
             if (!brokenStack.isEmpty()) {
                 if (event.getHand() == null) {
                     if (!event.getEntityPlayer().addItemStackToInventory(brokenStack)) {
