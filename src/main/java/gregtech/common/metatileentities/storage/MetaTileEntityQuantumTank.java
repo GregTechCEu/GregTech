@@ -5,7 +5,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.*;
@@ -21,7 +20,6 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -514,11 +512,5 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public boolean needsSneakToRotate() {
         return true;
-    }
-
-    public static boolean isItemSuperTank(ItemStack stack) {
-        if (stack.getItemDamage() < 1575 || stack.getItemDamage() > 1589) return false; // not in ID range
-        if (!(stack.getItem() instanceof ItemBlock)) return false; // not a block
-        return ((ItemBlock) stack.getItem()).getBlock() == GregTechAPI.MACHINE;
     }
 }

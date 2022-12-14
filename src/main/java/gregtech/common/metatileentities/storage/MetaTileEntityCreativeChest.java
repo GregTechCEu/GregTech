@@ -174,7 +174,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.creative_tooltip.1")
                 + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
-                + I18n.format("gregtech.creative_tooltip.2"));
+                + I18n.format("gregtech.creative_tooltip.3"));
         // do not append the normal tooltips
         }
 }

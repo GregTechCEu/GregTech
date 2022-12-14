@@ -10,6 +10,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.IBlockOre;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
@@ -24,6 +25,7 @@ import gregtech.common.MetaEntities;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -50,6 +52,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -62,8 +65,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank.isItemSuperTank;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -172,7 +173,17 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
-        if (isItemSuperTank(itemStack)) return; // do not apply this tooltip to Super Tanks/Quantum Tanks that are filled
+        if (itemStack.getItem() instanceof ItemBlock) {
+            Block block = ((ItemBlock) itemStack.getItem()).getBlock();
+            if (!(block instanceof BlockFrame) && !(block instanceof BlockCompressed) && !(block instanceof IBlockOre) && !(block instanceof IFluidBlock)) {
+                // Do not apply this tooltip to blocks other than:
+                // - Frames
+                // - Compressed Blocks
+                // - Ores
+                // - Fluids
+                return;
+            }
+        }
 
         // Handles Item tooltips
         List<String> tooltips = new ArrayList<>();

@@ -291,21 +291,23 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
-
-        if (ModHandler.isMaterialWood(material)) {
-            tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", 340));
-            tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
-        } else {
-            FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-            if (TooltipHelper.isShiftDown()) {
+        if (TooltipHelper.isShiftDown()) {
+            if (ModHandler.isMaterialWood(material)) {
+                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", 340));
+                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
+            } else {
+                FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
                 tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
                 if (pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
                 if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
                 if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
                 if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
-            } else {
-                tooltip.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
             }
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode"));
+            tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
         }
 
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -316,11 +318,10 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         }
     }
 
+    // Override this so that we can control the "Hold SHIFT" tooltip manually
     @Override
-    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
-        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode"));
-        super.addToolUsages(stack, world, tooltip, advanced);
+    public boolean showToolUsages() {
+        return false;
     }
 
     @Override

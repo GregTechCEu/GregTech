@@ -44,7 +44,7 @@ gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Stea
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s / %s mb
 gregtech.machine.steam_hatch.name=Steam Hatch
-gregtech.machine.steam.steam_hatch.tooltip=Accepted Fluid: §eSteam
+gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
 gregtech.machine.steam_import_bus.name=Input Bus (Steam)
 gregtech.machine.steam_export_bus.name=Output Bus (Steam)
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
@@ -124,8 +124,9 @@ gregtech.multiblock.advanced_processing_array.description=The Processing Array c
 item.invalid.name=Invalid item
 fluid.empty=Empty
 
-gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
-gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
+gregtech.tooltip.hold_shift=Hold SHIFT for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold SHIFT to show Fluid Containment Info
+gregtech.tooltip.tool_fluid_hold_shift=Hold SHIFT to show Fluid Containment and Tool Info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -2308,7 +2309,7 @@ tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
 
 # Wire coil blocks
-tile.wire_coil.tooltip_extended_info=§8Hold SHIFT for Coil Bonus info
+tile.wire_coil.tooltip_extended_info=Hold SHIFT to show Coil Bonus Info
 tile.wire_coil.tooltip_heat=§cBase Heat Capacity: §f%,d K
 tile.wire_coil.tooltip_smelter=§8Multi Smelter:
 tile.wire_coil.tooltip_parallel_smelter=  §5Max Parallel: §f%s
@@ -2696,9 +2697,7 @@ gregtech.machine.block_breaker.mv.name=Advanced Block Breaker
 gregtech.machine.block_breaker.hv.name=Advanced Block Breaker II
 gregtech.machine.block_breaker.ev.name=Advanced Block Breaker III
 gregtech.machine.block_breaker.tooltip=Mines block on front face and collects its drops
-gregtech.machine.block_breaker.redstone=Only works when powered with Redstone
-gregtech.machine.block_breaker.consumption=Consumes §e%,d EU§7 per operation
-gregtech.machine.block_breaker.speed_bonus=Speed Bonus: §e%,d%%
+gregtech.machine.block_breaker.speed_bonus=§eSpeed Bonus: §f%,d%%
 
 # Electric Furnace
 gregtech.machine.electric_furnace.lv.name=Basic Electric Furnace
@@ -4362,11 +4361,11 @@ gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above �
 gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
-gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
+gregtech.machine.pyrolyse_oven.tooltip.1=§6Cupronickel §7coils are §f25%%§7 slower. Every coil after §bKanthal§7 increases speed by §f50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Oil Cracking Unit
-gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a10%%§7.
+gregtech.machine.cracker.tooltip.1=Every coil after §6Cupronickel§7 reduces energy usage by §f10%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.advanced_processing_array.name=Advanced Processing Array
@@ -4374,14 +4373,11 @@ gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
-
-
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
-gregtech.machine.large_combustion_engine.tooltip.1=Produces up to §e%s§7 EU/t.
-gregtech.machine.large_combustion_engine.tooltip.2=Requires §e1000 L/hr§7 of Lubricant to run.
-gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §e20 L/s§7 of Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
-gregtech.machine.large_combustion_engine.tooltip.boost_extreme=Supply §e80 L/s§7 of Liquid Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
 gregtech.machine.extreme_combustion_engine.name=Extreme Combustion Engine
+gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §f20 L/s§7 of Oxygen to produce up to §f%s EU/t§7 at §f2x§7 fuel consumption.
+gregtech.machine.large_combustion_engine.tooltip.boost_extreme=Supply §f80 L/s§7 of Liquid Oxygen to produce up to §f%s EU/t§7 at §f2x§7 fuel consumption.
+
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
 gregtech.machine.large_turbine.gas.name=Large Gas Turbine
 gregtech.machine.large_turbine.plasma.name=Large Plasma Turbine
@@ -4435,16 +4431,17 @@ gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production 
 
 gregtech.machine.cleanroom.name=Cleanroom
 gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
-gregtech.machine.cleanroom.tooltip.2=Uses §a30 EU/t§7 when dirty and §a4 EU/t§7 when clean.
+gregtech.machine.cleanroom.tooltip.2=Uses §f30 EU/t§7 when dirty, §f4 EU/t§7 when clean.
 gregtech.machine.cleanroom.tooltip.3=Overclocking increases cleaning per cycle.
-gregtech.machine.cleanroom.tooltip.4=Can be any size from §b5x5x5§7 to §b15x15x15§7.
-gregtech.machine.cleanroom.tooltip.5=Requires Filter Casings in the ceiling, excluding the edges.
-gregtech.machine.cleanroom.tooltip.6=Accepts up to 4 doors! Remains clean when the door is open.
+gregtech.machine.cleanroom.tooltip.4=§bSize: §f5x5x5 to 15x15x15
+gregtech.machine.cleanroom.tooltip.hold_ctrl=Hold CTRL to show additional Structure Information
+gregtech.machine.cleanroom.tooltip.5=Requires §fFilter Casings §7in the ceiling, excluding the edges.
+gregtech.machine.cleanroom.tooltip.6=Accepts up to §f4 Doors§7! Remains clean when the door is open.
 gregtech.machine.cleanroom.tooltip.7=Generators, Mufflers, Drills, and Primitive Machines are too dirty for the cleanroom!
-gregtech.machine.cleanroom.tooltip.8=Send power through hulls or diodes in the walls.
-gregtech.machine.cleanroom.tooltip.9=Send items and fluids with Passthrough Hatches in the walls.
-gregtech.machine.cleanroom.tooltip.ae2.channels=Send §a8 AE2 Channels§7 through hulls in the walls.
-gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through hulls in the walls.
+gregtech.machine.cleanroom.tooltip.8=Send power through §fHulls §7or §fDiodes §7in the walls.
+gregtech.machine.cleanroom.tooltip.9=Send items and fluids with §fPassthrough Hatches §7in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.channels=Send up to §f8 AE2 Channels §7through §fHulls§7 in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through §fHulls§7 in the walls.
 gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
 gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
 gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
@@ -4512,6 +4509,7 @@ gregtech.machine.advanced_processing_array.tooltip=Parallelize the World
 gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
 gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
 gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
+gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
@@ -4736,11 +4734,14 @@ gregtech.universal.tooltip.working_area=§bWorking Area: §f%,dx%,d
 gregtech.universal.tooltip.working_area_max=§bMax Working Area: §f%,dx%,d
 gregtech.universal.tooltip.uses_per_tick=Uses §f%,d EU/t §7while working
 gregtech.universal.tooltip.uses_per_tick_steam=Uses §f%,d L/t §7of Steam while working
+gregtech.universal.tooltip.uses_per_hour_lubricant=Uses §f%,d L/hr §7of Lubricant while working
 gregtech.universal.tooltip.uses_per_second=Uses §f%,d EU/s §7while working
 gregtech.universal.tooltip.uses_per_op=Uses §f%,d EU/operation
 gregtech.universal.tooltip.base_production_eut=§eBase Production: §f%,d EU/t
 gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
+gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
+gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
@@ -4761,7 +4762,7 @@ gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the t
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
 
-gregtech.tool_action.show_tooltips=§8Hold SHIFT to show Tool Info
+gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
 gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle Modes or access Covers
 gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
@@ -4849,19 +4850,19 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
-gregtech.fluid_pipe.capacity=§9Capacity: %,d L
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
-gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.throughput=§bTransfer Rate: §f%,d L/t
+gregtech.fluid_pipe.capacity=§9Capacity: §f%,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: §f%,d K
+gregtech.fluid_pipe.channels=§eChannels: §f%d
 gregtech.fluid_pipe.gas_proof=§6Can handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids
 gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
 gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
-gregtech.item_pipe.rate_items=§9Transfer Rate: %,d items/s
-gregtech.item_pipe.rate_stacks=§9Transfer Rate: %,d stacks/s
-gregtech.item_pipe.priority=§9Priority: %,d
+gregtech.item_pipe.rate_items=§bTransfer Rate: §f%,d items/s
+gregtech.item_pipe.rate_stacks=§bTransfer Rate: §f%,d stacks/s
+gregtech.item_pipe.priority=§9Priority: §f%,d
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.
