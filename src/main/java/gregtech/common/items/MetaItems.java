@@ -84,14 +84,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_LARGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_HUGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BLOCK;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_SWORD;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PICKAXE;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_SHOVEL;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_AXE;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_HOE;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_HAMMER;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FILE;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_SAW;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOTTLE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
