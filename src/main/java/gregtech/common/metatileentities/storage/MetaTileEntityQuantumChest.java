@@ -61,8 +61,8 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity
-                                        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
+public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler> implements ITieredMetaTileEntity, IActiveOutputSide {
+
 
     private final int tier;
     protected final long maxStoredItems;
@@ -352,6 +352,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                                 .setTooltipText("gregtech.gui.item_voiding.tooltip")
                                 .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory);
+        if (isConnected()) {
+            // todo testing purposes
+            builder.image(100, 100, 20, 20, GuiTextures.INFO_ICON);
+        }
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -550,6 +554,16 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
         if (!getWorld().isRemote) {
             markDirty();
         }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ITEM;
+    }
+
+    @Override
+    public IItemHandler getTypeValue() {
+        return itemInventory;
     }
 
     @Override
