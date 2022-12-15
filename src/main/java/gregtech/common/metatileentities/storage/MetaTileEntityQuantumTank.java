@@ -35,6 +35,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -49,7 +50,7 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUID
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
+public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFluidTank> implements ITieredMetaTileEntity, IActiveOutputSide {
 
     // This field (ranging from 1 to 99) is the percentage filled
     // at which the Partial Void feature will start voiding Fluids.
@@ -480,5 +481,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public boolean needsSneakToRotate() {
         return true;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.FLUID;
+    }
+
+    @Override
+    public IFluidTank getTypeValue() {
+        return fluidTank;
     }
 }

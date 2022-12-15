@@ -266,6 +266,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     }
                 }
             }
+            metaTileEntity.onBlockPlaced();
         }
     }
 
@@ -286,6 +287,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             tileEntities.set(metaTileEntity);
         }
         super.breakBlock(worldIn, pos, state);
+        if (metaTileEntity != null) metaTileEntity.postBreakBlock();
     }
 
     @Override

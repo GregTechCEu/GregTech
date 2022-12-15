@@ -53,8 +53,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
-
+public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler> implements ITieredMetaTileEntity, IActiveOutputSide {
 
     private final int tier;
     private final long maxStoredItems;
@@ -283,15 +282,20 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         int leftButtonStartX = 7;
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
         builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, 0xFFFFFF));
-        return builder.label(6, 6, getMetaFullName())
+        builder.label(6, 6, getMetaFullName())
                 .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
                 .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY)).widget(new ToggleButtonWidget(leftButtonStartX, 53, 18, 18,
                         GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems).shouldUseBaseBackground()
                         .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
-                .bindPlayerInventory(entityPlayer.inventory)
-                .build(getHolder(), entityPlayer);
+                .bindPlayerInventory(entityPlayer.inventory);
+        if (isConnected()) {
+            // todo testing purposes
+            builder.image(100, 100, 20, 20, GuiTextures.INFO_ICON);
+        }
+
+        return builder.build(getHolder(), entityPlayer);
     }
 
     public EnumFacing getOutputFacing() {
@@ -432,6 +436,16 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (!getWorld().isRemote) {
             markDirty();
         }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ITEM;
+    }
+
+    @Override
+    public IItemHandler getTypeValue() {
+        return itemInventory;
     }
 
     private class QuantumChestItemHandler implements IItemHandler {

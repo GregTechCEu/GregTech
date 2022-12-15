@@ -49,6 +49,10 @@ public class GregtechDataCodes {
     // Adjustable Transformer, Adjustable Energy Hatch, Diode
     public static final int AMP_INDEX = 101;
 
+    // Quantum Storage
+    public static final int UPDATE_CONTROLLER_POS = 109;
+    public static final int REMOVE_CONTROLLER = 110;
+
     // Pipe implementation update codes
     public static final int UPDATE_INSULATION_COLOR = -1;
     public static final int UPDATE_CONNECTIONS = -2;
