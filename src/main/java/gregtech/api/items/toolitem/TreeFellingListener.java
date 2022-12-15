@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServerMulti;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -149,7 +150,8 @@ public final class TreeFellingListener {
                 MinecraftForge.EVENT_BUS.unregister(this);
                 return;
             }
-            if (event.world != this.player.world || tool.isEmpty()) {
+            // Don't ask me what a WorldServerMulti is
+            if ((event.world != this.player.world && (event.world instanceof WorldServerMulti && ((WorldServerMulti) event.world).delegate != this.player.world)) || tool.isEmpty()) {
                 MinecraftForge.EVENT_BUS.unregister(this);
                 return;
             }
