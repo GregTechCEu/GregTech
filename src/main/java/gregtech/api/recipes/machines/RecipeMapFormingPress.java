@@ -12,6 +12,7 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -47,16 +48,19 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
                 if (!moldStack.isEmpty() && !itemStack.isEmpty()) break;
 
                 if (moldStack.isEmpty() && inputStack.isItemEqual(NAME_MOLD)) {
-                    moldStack = inputStack;
+                    // only valid if the name mold has a name, which is stored in the "display" sub-compound
+                    if (inputStack.getTagCompound() != null && inputStack.getTagCompound().hasKey("display", Constants.NBT.TAG_COMPOUND)) {
+                        moldStack = inputStack;
+                    }
                 } else if (itemStack.isEmpty()) {
                     itemStack = inputStack;
                 }
             }
 
             // make the mold recipe if the two required inputs were found
-            if (!moldStack.isEmpty() && !itemStack.isEmpty()) {
+            if (!moldStack.isEmpty() && moldStack.getTagCompound() != null && !itemStack.isEmpty()) {
                 ItemStack output = GTUtility.copyAmount(1, itemStack);
-                output.setStackDisplayName(inputs.get(0).getDisplayName());
+                output.setStackDisplayName(moldStack.getDisplayName());
                 return this.recipeBuilder()
                         .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
                         .inputs(GTUtility.copyAmount(1, itemStack))
