@@ -209,7 +209,7 @@ public class LongDistanceNetwork {
             if (endpoint != other &&
                     (other.isOutput() || other.isInput()) &&
                     other.isInput() != endpoint.isInput() &&
-                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) >= this.pipeType.getMinLength()) {
+                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) >= this.pipeType.getMinLength() + 1) {
                 if (i > 1) {
                     this.endpoints.remove(i);
                     this.endpoints.add(i, other);
