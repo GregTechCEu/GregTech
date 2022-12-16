@@ -34,6 +34,7 @@ public class LongDistanceNetwork {
     private final List<MetaTileEntityLongDistanceEndpoint> endpoints = new ArrayList<>();
     // all endpoint positions, for nbt
     private final List<BlockPos> endpointPoss = new ArrayList<>();
+    private int activeInput = -1, activeOutput = -1;
 
     protected LongDistanceNetwork(LongDistancePipeType pipeType, WorldData world) {
         this.pipeType = pipeType;
@@ -49,9 +50,7 @@ public class LongDistanceNetwork {
         for (BlockPos pos : this.longDistancePipeBlocks) {
             this.world.removeNetwork(pos);
         }
-        for (MetaTileEntityLongDistanceEndpoint endpoint1 : this.endpoints) {
-            endpoint1.invalidateLink();
-        }
+        invalidateEndpoints();
         this.endpoints.clear();
         this.longDistancePipeBlocks.clear();
         // start a new thread where all given starting points are being walked
@@ -115,9 +114,7 @@ public class LongDistanceNetwork {
         // invalidate all linked endpoints
         endpoint.invalidateLink();
         if (this.endpoints.remove(endpoint)) {
-            for (MetaTileEntityLongDistanceEndpoint endpoint1 : this.endpoints) {
-                endpoint1.invalidateLink();
-            }
+            invalidateEndpoints();
         }
         onRemovePipe(endpoint.getPos());
     }
@@ -163,42 +160,72 @@ public class LongDistanceNetwork {
     protected void onDestroy() {
         this.longDistancePipeBlocks.clear();
         this.world.networkList.remove(this);
-        for (MetaTileEntityLongDistanceEndpoint endpoint : this.endpoints) {
-            endpoint.invalidateLink();
-        }
+        invalidateEndpoints();
         this.endpoints.clear();
     }
 
+    protected void invalidateEndpoints() {
+        this.activeInput = -1;
+        this.activeOutput = -1;
+        for (MetaTileEntityLongDistanceEndpoint endpoint : this.endpoints) {
+            endpoint.invalidateLink();
+        }
+    }
+
     public MetaTileEntityLongDistanceEndpoint getOtherEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
-        if (!isValid()) return null;
-        if (this.pipeType.getMinLength() > 0) {
-            for (int i = 0; i < this.endpoints.size(); i++) {
-                MetaTileEntityLongDistanceEndpoint other = this.endpoints.get(i);
-                if (endpoint != other && endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) >= this.pipeType.getMinLength()) {
-                    if (i > 1) {
-                        this.endpoints.remove(i);
-                        this.endpoints.add(i, other);
-                    }
-                    return other;
-                }
+        if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
+
+        if (this.activeInput >= 0 && this.activeOutput >= 0) {
+            MetaTileEntityLongDistanceEndpoint in = this.endpoints.get(this.activeInput);
+            MetaTileEntityLongDistanceEndpoint out = this.endpoints.get(this.activeOutput);
+            if (in == endpoint) {
+                if (!endpoint.isInput()) throw new IllegalStateException();
+                return out;
+            }
+            if (out == endpoint) {
+                if (!endpoint.isOutput()) throw new IllegalStateException();
+                return in;
             }
             return null;
+        } else if (this.activeInput < 0 != this.activeOutput < 0) {
+            invalidateEndpoints(); // shouldn't happen
         }
-        if (this.endpoints.get(0) == endpoint) {
-            return this.endpoints.get(1);
-        }
-        if (this.endpoints.get(1) == endpoint) {
-            return this.endpoints.get(0);
+
+        int otherIndex = find(endpoint);
+        if (otherIndex >= 0) {
+            int thisIndex = this.endpoints.indexOf(endpoint);
+            if (thisIndex < 0) throw new IllegalStateException();
+            MetaTileEntityLongDistanceEndpoint other = this.endpoints.get(otherIndex);
+            this.activeOutput = endpoint.isOutput() ? thisIndex : otherIndex;
+            this.activeInput = endpoint.isInput() ? thisIndex : otherIndex;
+            return other;
         }
         return null;
     }
 
-    public MetaTileEntityLongDistanceEndpoint getFirstEndpoint() {
-        return this.endpoints.isEmpty() ? null : this.endpoints.get(0);
+    private int find(MetaTileEntityLongDistanceEndpoint endpoint) {
+        for (int i = 0; i < this.endpoints.size(); i++) {
+            MetaTileEntityLongDistanceEndpoint other = this.endpoints.get(i);
+            if (endpoint != other &&
+                    (other.isOutput() || other.isInput()) &&
+                    other.isInput() != endpoint.isInput() &&
+                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) >= this.pipeType.getMinLength()) {
+                if (i > 1) {
+                    this.endpoints.remove(i);
+                    this.endpoints.add(i, other);
+                }
+                return i;
+            }
+        }
+        return -1;
     }
 
-    public MetaTileEntityLongDistanceEndpoint getSecondEndpoint() {
-        return this.endpoints.size() > 1 ? this.endpoints.get(1) : null;
+    public MetaTileEntityLongDistanceEndpoint getActiveInput() {
+        return this.activeInput >= 0 ? this.endpoints.get(this.activeInput) : null;
+    }
+
+    public MetaTileEntityLongDistanceEndpoint getActiveOutput() {
+        return this.activeOutput >= 0 ? this.endpoints.get(this.activeOutput) : null;
     }
 
     public int getTotalSize() {
@@ -296,6 +323,8 @@ public class LongDistanceNetwork {
                 NBTTagCompound tag = (NBTTagCompound) nbt;
                 LongDistancePipeType pipeType = LongDistancePipeType.getPipeType(tag.getString("class"));
                 LongDistanceNetwork ld = pipeType.createNetwork(this);
+                ld.activeInput = tag.getInteger("in");
+                ld.activeOutput = tag.getInteger("out");
                 this.networkList.add(ld);
                 NBTTagList posList = tag.getTagList("pipes", Constants.NBT.TAG_LONG);
                 for (NBTBase nbtPos : posList) {
@@ -322,6 +351,8 @@ public class LongDistanceNetwork {
                 String name = network.getPipeType().getName();
                 Objects.requireNonNull(name);
                 tag.setString("class", name);
+                tag.setInteger("in", network.activeInput);
+                tag.setInteger("out", network.activeOutput);
 
                 NBTTagList posList = new NBTTagList();
                 tag.setTag("pipes", posList);
