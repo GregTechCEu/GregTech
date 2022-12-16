@@ -40,14 +40,6 @@ public abstract class LongDistancePipeType {
 
     public abstract boolean isValidEndpoint(MetaTileEntityLongDistanceEndpoint endpoint);
 
-    /**
-     * Not yet implemented
-     */
-    @Deprecated
-    public boolean allowOnlyStraight() {
-        return false;
-    }
-
     public int getMinLength() {
         return 0;
     }
@@ -66,7 +58,6 @@ public abstract class LongDistancePipeType {
         LongDistanceNetwork network = worldData.getNetwork(pos);
         if (network == null) {
             network = createNetwork(worldData);
-            GTLog.logger.info("Created LD Item network");
             if (calculate) {
                 network.recalculateNetwork(Collections.singleton(pos));
             }

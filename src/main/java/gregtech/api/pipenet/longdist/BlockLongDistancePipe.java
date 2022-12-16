@@ -8,7 +8,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockLongDistancePipe extends Block {
-
-    //public static final PropertyEnum<Type> TYPE = PropertyEnum.create("type", Type.class);
 
     private final LongDistancePipeType pipeType;
 
@@ -78,28 +75,6 @@ public class BlockLongDistancePipe extends Block {
     public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         if (itemIn == GregTechAPI.TAB_GREGTECH) {
             items.add(new ItemStack(this));
-        }
-    }
-
-    public enum Type implements IStringSerializable {
-        FULL,
-        X,
-        Y,
-        Z,
-        X_PLUS,
-        Y_PLUS,
-        Z_PLUS,
-        X_MINUS,
-        Y_MINUS,
-        Z_MINUS,
-        X_BOTH,
-        Y_BOTH,
-        Z_BOTH;
-
-        @Nonnull
-        @Override
-        public String getName() {
-            return name().toLowerCase();
         }
     }
 }
