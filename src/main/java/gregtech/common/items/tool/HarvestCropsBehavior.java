@@ -19,7 +19,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -45,10 +44,7 @@ public class HarvestCropsBehavior implements IToolBehavior {
         if(aoeDefinition == AoESymmetrical.none()) {
             blocks = ImmutableSet.of(pos);
         } else {
-            Vec3d lookPos = player.getPositionEyes(1F);
-            Vec3d rotation = player.getLook(1);
-            Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-            RayTraceResult rayTraceResult = player.world.rayTraceBlocks(lookPos, realLookPos);
+            RayTraceResult rayTraceResult = ToolHelper.getPlayerDefaultRaytrace(player);
 
             if (rayTraceResult == null) return EnumActionResult.PASS;
             if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;

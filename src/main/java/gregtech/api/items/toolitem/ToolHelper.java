@@ -46,6 +46,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
@@ -476,11 +477,17 @@ public final class ToolHelper {
         if (aoeDefiniton == AoESymmetrical.none()) {
             return Collections.emptySet();
         }
+
+        RayTraceResult rayTraceResult = getPlayerDefaultRaytrace(player);
+        return getHarvestableBlocks(stack, aoeDefiniton, player.world, player, rayTraceResult);
+    }
+
+    public static RayTraceResult getPlayerDefaultRaytrace(@Nonnull EntityPlayer player) {
+
         Vec3d lookPos = player.getPositionEyes(1F);
         Vec3d rotation = player.getLook(1);
         Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-        RayTraceResult rayTraceResult = player.world.rayTraceBlocks(lookPos, realLookPos);
-        return getHarvestableBlocks(stack, aoeDefiniton, player.world, player, rayTraceResult);
+        return player.world.rayTraceBlocks(lookPos, realLookPos);
     }
 
     /**
