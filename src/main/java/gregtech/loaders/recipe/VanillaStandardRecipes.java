@@ -906,12 +906,29 @@ public class VanillaStandardRecipes {
                 'P', new UnificationEntry(OrePrefix.ring, Materials.Iron)
         );
 
-        if (!ConfigHolder.recipes.hardIronRecipes)
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.plate, Materials.Iron, 4)
-                    .circuitMeta(4)
-                    .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
-                    .duration(100).EUt(16).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 7)
+                .outputs(new ItemStack(Items.CAULDRON, 1))
+                .circuitMeta(7)
+                .duration(700).EUt(4).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.stick, Materials.Iron, 3)
+                .outputs(new ItemStack(Blocks.IRON_BARS, 4))
+                .circuitMeta(3)
+                .duration(300).EUt(4).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 4)
+                .circuitMeta(4)
+                .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
+                .duration(100).EUt(16).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 6)
+                .circuitMeta(6)
+                .outputs(new ItemStack(Blocks.IRON_DOOR))
+                .duration(100).EUt(16).buildAndRegister();
     }
 
     /**
