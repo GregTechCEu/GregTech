@@ -198,9 +198,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          * @return {@code true} if the provided recipeMap is valid for use
          */
         @Override
-        public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
-            if (recipeMap == null || GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist()))
+        public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
+            if (GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist())) {
                 return false;
+            }
 
             return GTUtility.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
         }
@@ -224,6 +225,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             return (!currentMachineStack.isEmpty() && this.activeRecipeMap != null);
         }
 
+        @Nullable
         @Override
         public RecipeMap<?> getRecipeMap() {
             return activeRecipeMap;

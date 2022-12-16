@@ -109,7 +109,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(3)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(2))
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(1)))
                 .where('C', states(getCasingState()))
                 .where('F', states(getFrameState()))

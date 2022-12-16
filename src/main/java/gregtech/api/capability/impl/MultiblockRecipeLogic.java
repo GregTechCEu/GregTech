@@ -12,6 +12,7 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -238,7 +239,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 getInputTank(),
                 getOutputInventory(),
                 getOutputTank(),
-                getMaxVoltage(),
+                getMaxParallelVoltage(),
                 getParallelLimit());
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {
@@ -250,7 +251,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
@@ -360,6 +361,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
     }
 
+    @Nullable
     @Override
     public RecipeMap<?> getRecipeMap() {
         // if the multiblock has more than one RecipeMap, return the currently selected one

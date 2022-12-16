@@ -163,9 +163,13 @@ public class ConfigHolder {
         @Config.Comment({"Whether to make Redstone related recipes harder.", "Default: false"})
         public boolean hardRedstoneRecipes = false;
 
-        @Config.Comment({"Recipes for items like Iron Doors, Trapdoors, Buckets, Cauldrons, Hoppers, " +
-                "and Iron Bars require Iron Plates, Rods, and more.", "Default: true"})
+        @Config.Comment({"Recipes for Buckets, Cauldrons, Hoppers, and Iron Bars" +
+                " require Iron Plates, Rods, and more.", "Default: true"})
         public boolean hardIronRecipes = true;
+
+        @Config.Comment({"Recipes for items like Iron Doors, Trapdoors, Anvil" +
+                " require Iron Plates, Rods, and more.", "Default: false"})
+        public boolean hardAdvancedIronRecipes = false;
 
         @Config.Comment({"Whether to make miscellaneous recipes harder.", "Default: false"})
         public boolean hardMiscRecipes = false;

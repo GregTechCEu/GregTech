@@ -179,7 +179,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .where('X', states(getCasingState())
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setExactLimit(1).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1)))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(2).setPreviewCount(1)))
                 .where('C', states(getCasingState()))
                 .where('F', states(getFrameState()))
                 .where('#', any())
@@ -366,7 +366,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             else
                 this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH);
 
-            this.minerLogic.checkBlocksToMine();
+            this.minerLogic.resetArea();
 
             playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius()));
         } else {

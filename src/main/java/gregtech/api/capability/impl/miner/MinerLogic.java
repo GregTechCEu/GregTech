@@ -326,6 +326,15 @@ public class MinerLogic {
     }
 
     /**
+     * Recalculates the mining area and refills the block list
+     */
+    public void resetArea() {
+        initPos(metaTileEntity.getPos(), currentRadius);
+        blocksToMine.clear();
+        checkBlocksToMine();
+    }
+
+    /**
      * Gets the blocks to mine
      * @return a {@link LinkedList} of {@link BlockPos} for each ore to mine
      */
@@ -354,12 +363,12 @@ public class MinerLogic {
                         x.incrementAndGet();
                     } else {
                         // reset x and move to the next z layer
-                        x.set(x.get() - currentRadius * 2);
+                        x.set(startX.get());
                         z.incrementAndGet();
                     }
                 } else {
                     // reset z and move to the next y layer
-                    z.set(z.get() - currentRadius * 2);
+                    z.set(startZ.get());
                     y.decrementAndGet();
                 }
             } else
