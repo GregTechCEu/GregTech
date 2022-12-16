@@ -34,7 +34,6 @@ public class LongDistanceNetwork {
     private final List<MetaTileEntityLongDistanceEndpoint> endpoints = new ArrayList<>();
     // all endpoint positions, for nbt
     private final List<BlockPos> endpointPoss = new ArrayList<>();
-    private boolean calculating = false;
 
     protected LongDistanceNetwork(LongDistancePipeType pipeType, WorldData world) {
         this.pipeType = pipeType;
@@ -46,7 +45,6 @@ public class LongDistanceNetwork {
      * For this it will start a new thread to keep the main thread free.
      */
     protected void recalculateNetwork(Collection<BlockPos> starts) {
-        this.calculating = true;
         // remove the every pipe from the network
         for (BlockPos pos : this.longDistancePipeBlocks) {
             this.world.removeNetwork(pos);
@@ -66,7 +64,6 @@ public class LongDistanceNetwork {
      */
     protected void setData(Collection<BlockPos> pipes, List<MetaTileEntityLongDistanceEndpoint> endpoints) {
         boolean wasEmpty = this.longDistancePipeBlocks.isEmpty();
-        this.calculating = false;
         this.longDistancePipeBlocks.clear();
         this.longDistancePipeBlocks.addAll(pipes);
         this.endpoints.clear();
@@ -218,10 +215,6 @@ public class LongDistanceNetwork {
 
     public boolean isValid() {
         return getEndpointAmount() > 1;
-    }
-
-    public boolean isCalculating() {
-        return calculating;
     }
 
     public LongDistancePipeType getPipeType() {

@@ -137,15 +137,12 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         if (pipeType.getMinLength() > 0) {
             tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.min_length", pipeType.getMinLength()));
         }
-        if (pipeType.allowOnlyStraight()) {
-            tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.straight"));
-        }
     }
 
     public MetaTileEntityLongDistanceEndpoint getLink() {
         if (link == null) {
             LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
-            if (network != null && !network.isCalculating() && network.isValid()) {
+            if (network != null && network.isValid()) {
                 this.link = network.getOtherEndpoint(this);
             }
         }
