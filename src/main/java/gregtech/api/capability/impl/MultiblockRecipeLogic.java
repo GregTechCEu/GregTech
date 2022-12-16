@@ -239,7 +239,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 getInputTank(),
                 getOutputInventory(),
                 getOutputTank(),
-                getMaxVoltage(),
+                getMaxParallelVoltage(),
                 getParallelLimit());
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {

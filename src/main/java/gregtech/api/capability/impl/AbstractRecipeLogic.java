@@ -109,9 +109,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected abstract boolean drawEnergy(int recipeEUt, boolean simulate);
 
     /**
-     * @return the maximum voltage tier the machine can use/handle
+     * @return the maximum voltage the machine can use/handle for recipe searching
      */
     protected abstract long getMaxVoltage();
+
+    /**
+     *
+     * @return the maximum voltage the machine can use/handle for parallel recipe creation
+     */
+    protected long getMaxParallelVoltage() {
+        return getMaxVoltage();
+    }
 
     /**
      * @return the inventory to input items from
@@ -431,7 +439,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 getInputTank(),
                 getOutputInventory(),
                 getOutputTank(),
-                getMaxVoltage(),
+                getMaxParallelVoltage(),
                 getParallelLimit());
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
