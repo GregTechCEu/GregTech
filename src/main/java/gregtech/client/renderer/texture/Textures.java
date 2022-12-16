@@ -160,8 +160,8 @@ public class Textures {
     public static final OrientedOverlayRenderer STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("generators/steam_turbine");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te");
-    public static final OrientedOverlayRenderer ITEM_PIPELINE_OVERLAY = new OrientedOverlayRenderer("pipe/long_distance_item_pipeline");
-    public static final OrientedOverlayRenderer FLUID_PIPELINE_OVERLAY = new OrientedOverlayRenderer("pipe/long_distance_fluid_pipeline");
+    public static final OrientedOverlayRenderer LD_ITEM_PIPE = new OrientedOverlayRenderer("pipe/ld_item_pipe");
+    public static final OrientedOverlayRenderer LD_FLUID_PIPE = new OrientedOverlayRenderer("pipe/ld_fluid_pipe");
 
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");

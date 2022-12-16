@@ -45,7 +45,7 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         Textures.VOLTAGE_CASINGS[GTValues.LV].render(renderState, translation, colouredPipeline);
-        Textures.ITEM_PIPELINE_OVERLAY.renderOrientedState(renderState, translation, pipeline, frontFacing, false, false);
+        Textures.LD_ITEM_PIPE.renderOrientedState(renderState, translation, pipeline, frontFacing, false, false);
         Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.ITEM_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);

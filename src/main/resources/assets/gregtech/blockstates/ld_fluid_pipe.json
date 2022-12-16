@@ -1,23 +1,23 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "model": "minecraft:cube_all",
-    "textures": {
-      "all": "gregtech:blocks/pipe/long_distance_fluid_pipeline/long_distance_fluid_pipeline"
+  "forge_marker" : 1,
+  "defaults" : {
+    "model" : "minecraft:cube_all",
+    "textures" : {
+      "all" : "gregtech:blocks/pipe/ld_fluid_pipe/block"
     }
   },
-  "variants": {
-    "normal": [
+  "variants" : {
+    "normal" : [
       {
-        "textures": {
-          "all": "gregtech:blocks/pipe/long_distance_fluid_pipeline/long_distance_fluid_pipeline"
+        "textures" : {
+          "all" : "gregtech:blocks/pipe/ld_fluid_pipe/block"
         }
       }
     ],
-    "inventory": [
+    "inventory" : [
       {
-        "textures": {
-          "all": "gregtech:blocks/pipe/long_distance_fluid_pipeline/long_distance_fluid_pipeline"
+        "textures" : {
+          "all" : "gregtech:blocks/pipe/ld_fluid_pipe/block"
         }
       }
     ]
