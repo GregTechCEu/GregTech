@@ -2,6 +2,7 @@ package gregtech.common.pipelike.itempipe.longdistance;
 
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import gregtech.api.pipenet.longdist.MetaTileEntityLongDistanceEndpoint;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 
@@ -25,6 +26,6 @@ public class LDItemPipeType extends LongDistancePipeType {
 
     @Override
     public int getMinLength() {
-        return 50;
+        return ConfigHolder.machines.ldItemPipeMinDistance;
     }
 }
