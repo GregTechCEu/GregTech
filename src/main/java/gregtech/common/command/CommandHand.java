@@ -92,7 +92,7 @@ public class CommandHand extends CommandBase {
             // tool info
             if (stackInHand.getItem() instanceof IGTTool) {
                 IGTTool tool = (IGTTool) stackInHand.getItem();
-                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getOreDictName()));
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getToolClasses(stackInHand)));
             }
 
             // material info
