@@ -146,6 +146,9 @@ public class MinerLogic {
                 setActive(false);
         }
 
+        // always drain storages when working, even if blocksToMine ends up being empty
+        drainStorages(false);
+
         // drill a hole beneath the miner and extend the pipe downwards by one
         WorldServer world = (WorldServer) metaTileEntity.getWorld();
         if (mineY.get() < pipeY.get()) {
@@ -193,9 +196,6 @@ public class MinerLogic {
                 this.wasActiveAndNeedsUpdate = true;
                 this.setActive(false);
             }
-        } else {
-            // we drain the energy at the end here to ensure that we only drain if a block was found
-            drainStorages(false);
         }
     }
 
