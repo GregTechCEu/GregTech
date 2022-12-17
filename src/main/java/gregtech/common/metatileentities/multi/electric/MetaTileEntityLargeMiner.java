@@ -25,6 +25,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -181,7 +182,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setExactLimit(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(2).setPreviewCount(1)))
                 .where('C', states(getCasingState()))
-                .where('F', states(getFrameState()))
+                .where('F', getFramePredicate())
                 .where('#', any())
                 .build();
     }
@@ -255,12 +256,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Nonnull
-    private IBlockState getFrameState() {
+    private TraceabilityPredicate getFramePredicate() {
         if (this.material.equals(Materials.Titanium))
-            return MetaBlocks.FRAMES.get(Materials.Titanium).getBlock(Materials.Titanium);
+            return frames(Materials.Titanium);
         if (this.material.equals(Materials.TungstenSteel))
-            return MetaBlocks.FRAMES.get(Materials.TungstenSteel).getBlock(Materials.TungstenSteel);
-        return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
+            return frames(Materials.TungstenSteel);
+        return frames(Materials.Steel);
     }
 
     @Override
