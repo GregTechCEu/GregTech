@@ -32,8 +32,8 @@ public class GTHashMaps {
         for (int i = 0; i < inputs.getSlots(); i++) {
             ItemStack stack = inputs.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                map.computeIfPresent(KeySharedStack.getRegisteredStack(stack), (k, v) -> v + stack.getCount());
-                map.computeIfAbsent(KeySharedStack.getRegisteredStack(stack), (v) -> stack.getCount());
+                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
+                map.put(key, map.get(key) + stack.getCount());
             }
         }
 
@@ -53,8 +53,8 @@ public class GTHashMaps {
 
         for (ItemStack stack : inputs) {
             if (!stack.isEmpty()) {
-                map.computeIfPresent(KeySharedStack.getRegisteredStack(stack), (k, v) -> v + stack.getCount());
-                map.computeIfAbsent(KeySharedStack.getRegisteredStack(stack), (v) -> stack.getCount());
+                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
+                map.put(key, map.get(key) + stack.getCount());
             }
         }
 
@@ -75,8 +75,8 @@ public class GTHashMaps {
         for (int i = 0; i < fluidInputs.getTankProperties().length; i++) {
             FluidStack fluidStack = fluidInputs.getTankProperties()[i].getContents();
             if (fluidStack != null && fluidStack.amount > 0) {
-                map.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidStack.amount);
-                map.computeIfAbsent(new FluidKey(fluidStack), (v) -> fluidStack.amount);
+                FluidKey key = new FluidKey(fluidStack);
+                map.put(key, map.get(key) + fluidStack.amount);
             }
         }
 
@@ -96,8 +96,8 @@ public class GTHashMaps {
 
         for (FluidStack fluidStack : fluidInputs) {
             if (fluidStack != null && fluidStack.amount > 0) {
-                map.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidStack.amount);
-                map.computeIfAbsent(new FluidKey(fluidStack), (v) -> fluidStack.amount);
+                FluidKey key = new FluidKey(fluidStack);
+                map.put(key, map.get(key) + fluidStack.amount);
             }
         }
 

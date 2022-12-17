@@ -188,7 +188,7 @@ public class GTTransferUtils {
             }
         }
 
-        for (Integer slot : emptySlots) {
+        for (int slot : emptySlots) {
             stack = handler.insertItem(slot, stack, simulate);
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
