@@ -136,6 +136,8 @@ public class MinerLogic {
         // if the inventory is not full, drain energy etc. from the miner
         // the storages have already been checked earlier
         if (!miner.isInventoryFull()) {
+            // always drain storages when working, even if blocksToMine ends up being empty
+            drainStorages(false);
 
             // since energy is being consumed the miner is now active
             if (!this.isActive)
@@ -145,9 +147,6 @@ public class MinerLogic {
             if (this.isActive)
                 setActive(false);
         }
-
-        // always drain storages when working, even if blocksToMine ends up being empty
-        drainStorages(false);
 
         // drill a hole beneath the miner and extend the pipe downwards by one
         WorldServer world = (WorldServer) metaTileEntity.getWorld();
