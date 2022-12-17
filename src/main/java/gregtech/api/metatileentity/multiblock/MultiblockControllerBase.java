@@ -13,6 +13,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
@@ -166,6 +168,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             return ArrayUtils.contains(allowedStates, state);
         }, getCandidates(allowedStates));
+    }
+
+    /** Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks. */
+    public static TraceabilityPredicate frames(Material... frameMaterials) {
+        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m)).toArray(IBlockState[]::new))
+                .or(new TraceabilityPredicate(blockWorldState -> {
+                    TileEntity tileEntity = blockWorldState.getTileEntity();
+                    if (!(tileEntity instanceof IPipeTile)) {
+                        return false;
+                    }
+                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
+                    return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
+                }));
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
