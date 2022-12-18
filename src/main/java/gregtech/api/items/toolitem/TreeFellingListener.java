@@ -53,6 +53,7 @@ public final class TreeFellingListener {
 
         Queue<BlockPos> checking = new ArrayDeque<>();
         Set<BlockPos> visited = new ObjectOpenHashSet<>();
+        visited.add(start);
         checking.add(start);
 
         while (/*operations++ < MAX_SCANS &&*/ !checking.isEmpty()) {
@@ -67,9 +68,11 @@ public final class TreeFellingListener {
                             mutablePos.setPos(check.getX() + x, check.getY() + y, check.getZ() + z);
                             if (!visited.contains(mutablePos)) {
                                 BlockPos immutablePos = mutablePos.toImmutable();
-                                // isWood(?)
+                                // Check that the found block matches the original block state, which is wood.
                                 if (block == world.getBlockState(immutablePos).getBlock()) {
-                                    checking.add(immutablePos);
+                                    if(!checking.contains(immutablePos)) {
+                                        checking.add(immutablePos);
+                                    }
                                 }
                             }
                         }
