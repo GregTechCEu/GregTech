@@ -377,7 +377,7 @@ public final class ToolHelper {
         if (state.getBlock() instanceof BlockLiquid) return false;
 
         IBlockState hitBlockState = world.getBlockState(hitBlockPos);
-        if (state.getBlockHardness(world, pos) - hitBlockState.getBlockHardness(world, hitBlockPos) > 8) {
+        if (state.getBlockHardness(world, pos) < 0 || state.getBlockHardness(world, pos) - hitBlockState.getBlockHardness(world, hitBlockPos) > 8) {
             // If mining a block takes significantly longer than the center block, do not mine it.
             // Originally this was just a check for if it is at all harder of a block, however that
             // would cause some annoyances, like Grass Block not being broken if a Dirt Block was the
