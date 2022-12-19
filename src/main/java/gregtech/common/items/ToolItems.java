@@ -100,7 +100,8 @@ public class ToolItems {
                         .behaviors(new GrassPathBehavior()))
                 .toolClasses(ToolClasses.SHOVEL));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
-                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse())
+                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
+                        .behaviors(new BlockRotatingBehavior()))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDicts.craftingToolWrench)
                 .symbol('w')
