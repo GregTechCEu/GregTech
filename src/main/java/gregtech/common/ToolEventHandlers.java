@@ -207,6 +207,9 @@ public class ToolEventHandlers {
 
         EntityPlayer player = event.getPlayer();
         ItemStack stack = player.getHeldItemMainhand();
+        if(!(stack.getItem() instanceof IGTTool)) {
+            return;
+        }
         BlockPos pos = event.getTarget().getBlockPos();
         IBlockState state = player.world.getBlockState(pos);
         TileEntity tile = player.world.getTileEntity(event.getTarget().getBlockPos());
