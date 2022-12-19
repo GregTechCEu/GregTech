@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServerMulti;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -53,7 +52,6 @@ public final class TreeFellingListener {
 
         Queue<BlockPos> checking = new ArrayDeque<>();
         Set<BlockPos> visited = new ObjectOpenHashSet<>();
-        visited.add(start);
         checking.add(start);
 
         while (/*operations++ < MAX_SCANS &&*/ !checking.isEmpty()) {
@@ -67,10 +65,10 @@ public final class TreeFellingListener {
                         if (x != 0 || y != 0 || z != 0) {
                             mutablePos.setPos(check.getX() + x, check.getY() + y, check.getZ() + z);
                             if (!visited.contains(mutablePos)) {
-                                BlockPos immutablePos = mutablePos.toImmutable();
                                 // Check that the found block matches the original block state, which is wood.
-                                if (block == world.getBlockState(immutablePos).getBlock()) {
-                                    if(!checking.contains(immutablePos)) {
+                                if (block == world.getBlockState(mutablePos).getBlock()) {
+                                    if (!checking.contains(mutablePos)) {
+                                        BlockPos immutablePos = mutablePos.toImmutable();
                                         checking.add(immutablePos);
                                     }
                                 }
@@ -91,7 +89,7 @@ public final class TreeFellingListener {
 
     @SubscribeEvent
     public void onWorldTick(@Nonnull TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
+        if (event.phase == TickEvent.Phase.START && event.world == player.world) {
             if (purgeLeaves) {
                 if (targetLeaves == null) {
                     targetLeaves = Arrays.stream(EnumFacing.VALUES)
@@ -153,8 +151,7 @@ public final class TreeFellingListener {
                 MinecraftForge.EVENT_BUS.unregister(this);
                 return;
             }
-            // Don't ask me what a WorldServerMulti is
-            if ((event.world != this.player.world && (event.world instanceof WorldServerMulti && ((WorldServerMulti) event.world).delegate != this.player.world)) || tool.isEmpty()) {
+            if (tool.isEmpty()) {
                 MinecraftForge.EVENT_BUS.unregister(this);
                 return;
             }
