@@ -319,6 +319,7 @@ public class SecondDegreeMaterials {
                 .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
+                .workability(615)
                 .build();
 
         SulfuricNickelSolution = new Material.Builder(2043, "sulfuric_nickel_solution")

@@ -86,6 +86,7 @@ public class HigherDegreeMaterials {
                 .toolStats(10.0f, 5.5f, 4000, 21)
                 .cableProperties(GTValues.V[6], 4, 2)
                 .blastTemp(4200, GasTier.MID, VA[EV], 1300)
+                .workability(240)
                 .build();
 
         RedAlloy = new Material.Builder(2517, "red_alloy")
@@ -111,6 +112,7 @@ public class HigherDegreeMaterials {
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
                 .toolStats(10.0f, 8.0f, 5120, 21)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1400)
+                .workability(250)
                 .build();
 
         HSSS = new Material.Builder(2520, "hsss")
@@ -120,6 +122,7 @@ public class HigherDegreeMaterials {
                 .components(HSSG, 6, Iridium, 2, Osmium, 1)
                 .toolStats(15.0f, 7.0f, 3000, 21)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1500)
+                .workability(270)
                 .build();
 
         // FREE ID: 2521

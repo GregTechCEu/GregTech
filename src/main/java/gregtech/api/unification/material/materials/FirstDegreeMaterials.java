@@ -701,6 +701,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[8], 4, 4)
                 .blastTemp(4500, GasTier.HIGH) // todo redo this EBF process
                 .fluidTemp(1799)
+                .workability(390)
                 .build();
 
         NetherQuartz = new Material.Builder(339, "nether_quartz")
@@ -1256,6 +1257,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.LV], 2, 0, true, 78)
                 .blastTemp(1200, GasTier.LOW)
                 .fluidTemp(1368)
+                .workability(120)
                 .build();
 
         MagnesiumDiboride = new Material.Builder(425, "magnesium_diboride")
@@ -1266,6 +1268,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.MV], 4, 0, true, 78)
                 .blastTemp(2500, GasTier.LOW, VA[HV], 1000)
                 .fluidTemp(1103)
+                .workability(180)
                 .build();
 
         MercuryBariumCalciumCuprate = new Material.Builder(426, "mercury_barium_calcium_cuprate")
@@ -1276,6 +1279,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.HV], 4, 0, true, 78)
                 .blastTemp(3300, GasTier.LOW, VA[HV], 1500)
                 .fluidTemp(1075)
+                .workability(240)
                 .build();
 
         UraniumTriplatinum = new Material.Builder(427, "uranium_triplatinum")
@@ -1286,6 +1290,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
                 .blastTemp(4400, GasTier.MID, VA[EV], 1000)
                 .fluidTemp(1882)
+                .workability(320)
                 .build()
                 .setFormula("UPt3", true);
 
@@ -1297,6 +1302,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.IV], 6, 0, true, 30)
                 .blastTemp(5200, GasTier.MID, VA[EV], 1500)
                 .fluidTemp(1347)
+                .workability(400)
                 .build();
 
         IndiumTinBariumTitaniumCuprate = new Material.Builder(429, "indium_tin_barium_titanium_cuprate")
@@ -1307,6 +1313,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true, 5)
                 .blastTemp(6000, GasTier.HIGH, VA[IV], 1000)
                 .fluidTemp(1012)
+                .workability(500)
                 .build();
 
         UraniumRhodiumDinaquadide = new Material.Builder(430, "uranium_rhodium_dinaquadide")
@@ -1317,6 +1324,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
                 .blastTemp(9000, GasTier.HIGH, VA[IV], 1500)
                 .fluidTemp(3410)
+                .workability(600)
                 .build()
                 .setFormula("URhNq2", true);
 
@@ -1328,6 +1336,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
                 .blastTemp(9900, GasTier.HIGH, VA[LuV], 1000)
                 .fluidTemp(5930)
+                .workability(800)
                 .build();
 
         RutheniumTriniumAmericiumNeutronate = new Material.Builder(432, "ruthenium_trinium_americium_neutronate")
@@ -1338,6 +1347,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
                 .blastTemp(10800, GasTier.HIGHER)
                 .fluidTemp(23691)
+                .workability(1000)
                 .build();
 
         InertMetalMixture = new Material.Builder(433, "inert_metal_mixture")

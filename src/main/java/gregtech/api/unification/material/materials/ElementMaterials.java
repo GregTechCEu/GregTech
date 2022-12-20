@@ -881,6 +881,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[8], 1, 8)
                 .toolStats(20.0f, 6.0f, 10240, 21)
                 .fluidTemp(25000)
+                .workability(700)
                 .build();
 
         Duranium = new Material.Builder(129, "duranium")
@@ -900,6 +901,7 @@ public class ElementMaterials {
                 .element(Elements.Ke)
                 .cableProperties(GTValues.V[7], 6, 4)
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1500)
+                .workability(400)
                 .build();
 
     }

@@ -310,6 +310,7 @@ public class UnknownCompositionMaterials {
                 .gem(4)
                 .iconSet(NETHERSTAR)
                 .flags(NO_SMASHING, NO_SMELTING, GENERATE_LENS)
+                .workability(666)
                 .build();
 
         Endstone = new Material.Builder(1603, "endstone")
