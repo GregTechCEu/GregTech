@@ -209,6 +209,7 @@ public class FirstDegreeMaterials {
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
                 .toolStats(8.0f, 3.0f, 1280, 15)
+                .workability(120)
                 .build();
 
         Electrum = new Material.Builder(277, "electrum")
@@ -1061,6 +1062,7 @@ public class FirstDegreeMaterials {
                 .toolStats(12.0f, 4.0f, 1280, 21)
                 .fluidPipeProperties(3837, 200, true)
                 .blastTemp(3058, GasTier.MID, VA[HV], 1500)
+                .workability(140)
                 .build();
 
         CarbonDioxide = new Material.Builder(397, "carbon_dioxide")

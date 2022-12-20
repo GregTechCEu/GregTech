@@ -281,6 +281,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[3], 3, 2)
                 .fluidPipeProperties(1671, 25, true, true, false, false)
                 .fluidTemp(1337)
+                .workability(25)
                 .build();
 
         Hafnium = new Material.Builder(42, "hafnium")
@@ -744,6 +745,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[1], 1, 1)
                 .itemPipeProperties(4096, 0.5f)
                 .fluidTemp(505)
+                .workability(55)
                 .build();
 
         Titanium = new Material.Builder(113, "titanium") // todo Ore? Look at EBF recipe here if we do Ti ores
@@ -754,6 +756,7 @@ public class ElementMaterials {
                 .toolStats(7.0f, 3.0f, 1600, 21)
                 .fluidPipeProperties(2426, 150, true)
                 .blastTemp(1941, GasTier.MID, VA[HV], 1500)
+                .workability(90)
                 .build();
 
         Tritium = new Material.Builder(114, "tritium")
