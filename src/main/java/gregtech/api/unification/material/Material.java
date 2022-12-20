@@ -731,6 +731,11 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder workability(long workability) {
+            this.materialInfo.workability = workability;
+            return this;
+        }
+
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
             return toolStats(speed, damage, durability, enchantability, false);
         }
