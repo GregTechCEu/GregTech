@@ -62,6 +62,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL)
                 .components(Lead, 4, Antimony, 1)
                 .fluidTemp(660)
+                .workability(45)
                 .build();
 
         BlueTopaz = new Material.Builder(257, "blue_topaz")
@@ -220,6 +221,7 @@ public class FirstDegreeMaterials {
                 .itemPipeProperties(1024, 2)
                 .cableProperties(GTValues.V[3], 2, 2)
                 .fluidTemp(1285)
+                .workability(27)
                 .build();
 
         Emerald = new Material.Builder(278, "emerald")

@@ -159,6 +159,7 @@ public class ElementMaterials {
                 .fluidPipeProperties(2180, 35, true, true, false, false)
                 .blastTemp(1700, GasTier.LOW)
                 .fluidTemp(2180)
+                .workability(105)
                 .build();
 
         Cobalt = new Material.Builder(23, "cobalt")
@@ -374,6 +375,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[0], 2, 2)
                 .fluidPipeProperties(1200, 8, true)
                 .fluidTemp(600)
+                .workability(50)
                 .build();
 
         Lithium = new Material.Builder(56, "lithium")
