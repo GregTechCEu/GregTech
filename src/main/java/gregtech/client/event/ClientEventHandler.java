@@ -2,8 +2,10 @@ package gregtech.client.event;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import gregtech.api.GTValues;
-import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
@@ -13,13 +15,13 @@ import gregtech.client.renderer.handler.TerminalARRenderer;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import gregtech.common.items.armor.PowerlessJetpack;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -30,6 +32,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
 
@@ -114,19 +117,30 @@ public class ClientEventHandler {
     public static void onRenderArmorHUD(TickEvent.RenderTickEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.inGameHasFocus && mc.world != null && !mc.gameSettings.showDebugInfo && Minecraft.isGuiEnabled()) {
-            ItemStack stack = mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex());
-            if (stack.getItem() instanceof ArmorMetaItem) {
-                ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
-                if (valueItem.getArmorLogic() instanceof ArmorLogicSuite) {
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) valueItem.getArmorLogic();
-                    if (armorLogic.isNeedDrawHUD()) {
-                        armorLogic.drawHUD(stack);
-                    }
-                } else if (valueItem.getArmorLogic() instanceof PowerlessJetpack) {
-                    PowerlessJetpack armorLogic = (PowerlessJetpack) valueItem.getArmorLogic();
-                    if (armorLogic.isNeedDrawHUD()) {
-                        armorLogic.drawHUD(stack);
-                    }
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.HEAD.getIndex()));
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex()));
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.LEGS.getIndex()));
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.FEET.getIndex()));
+            renderHUDMetaItem(mc.player.getHeldItem(EnumHand.MAIN_HAND));
+            renderHUDMetaItem(mc.player.getHeldItem(EnumHand.OFF_HAND));
+        }
+    }
+
+    private static void renderHUDMetaArmor(@Nonnull ItemStack stack) {
+        if (stack.getItem() instanceof ArmorMetaItem) {
+            ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
+            if (valueItem.getArmorLogic() instanceof IItemHUDProvider) {
+                IItemHUDProvider.tryDrawHud((IItemHUDProvider) valueItem.getArmorLogic(), stack);
+            }
+        }
+    }
+
+    private static void renderHUDMetaItem(@Nonnull ItemStack stack) {
+        if (stack.getItem() instanceof MetaItem<?>) {
+            MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+            for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                if (behaviour instanceof IItemHUDProvider) {
+                    IItemHUDProvider.tryDrawHud((IItemHUDProvider) behaviour, stack);
                 }
             }
         }

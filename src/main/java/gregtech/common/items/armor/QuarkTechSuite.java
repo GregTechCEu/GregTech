@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
+import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
 import gregtech.common.items.MetaItems;
@@ -34,14 +35,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
+public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist, IItemHUDProvider {
+
     protected static final Map<Potion, Integer> potionRemovalCost = new IdentityHashMap<>();
     private float charge = 0.0F;
+
+    @SideOnly(Side.CLIENT)
+    protected ArmorUtils.ModularHUD HUD;
 
     public QuarkTechSuite(EntityEquipmentSlot slot, int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, slot);
         potionRemovalCost.put(MobEffects.POISON, 10000);
         potionRemovalCost.put(MobEffects.WITHER, 25000);
+        if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
+            //noinspection NewExpressionSideOnly
+            HUD = new ArmorUtils.ModularHUD();
+        }
     }
 
     @Override
@@ -277,13 +286,16 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public boolean isNeedDrawHUD() {
         return true;
     }
 
+
+    @SideOnly(Side.CLIENT)
     @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         this.HUD.draw();
         this.HUD.reset();
     }

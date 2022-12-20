@@ -182,13 +182,14 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public boolean isNeedDrawHUD() {
         return true;
     }
 
     @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) return;
         if (!cont.canUse(energyPerUse)) return;

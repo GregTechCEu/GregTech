@@ -3,11 +3,11 @@ package gregtech.common.items.armor;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.items.armor.IArmorLogic;
 import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpack {
+public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDProvider {
 
     public final int tankCapacity = 16000;
 
@@ -119,6 +119,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public void drawHUD(@Nonnull ItemStack item) {
         IFluidHandlerItem tank = item.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (tank != null) {
@@ -145,6 +146,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public boolean isNeedDrawHUD() {
         return true;
     }

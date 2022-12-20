@@ -3,7 +3,6 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
@@ -103,13 +102,9 @@ public class AdvancedJetpack extends Jetpack {
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return true;
-    }
-
     @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) return;
         if (!cont.canUse(energyPerUse)) return;

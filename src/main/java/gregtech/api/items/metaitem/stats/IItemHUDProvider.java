@@ -1,0 +1,38 @@
+package gregtech.api.items.metaitem.stats;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+
+/**
+ * Provides a drawable HUD for the item
+ */
+public interface IItemHUDProvider extends IItemComponent {
+
+    /**
+     * @return if the HUD needs to be drawn
+     */
+    @SideOnly(Side.CLIENT)
+    boolean isNeedDrawHUD();
+
+    /**
+     * Draws the HUD
+     *
+     * @param stack the ItemStack to retrieve information from
+     */
+    @SideOnly(Side.CLIENT)
+    void drawHUD(ItemStack stack);
+
+    /**
+     * Checks and draws the hud for a provider
+     *
+     * @param provider the provider whose hud to draw
+     * @param stack    the stack the provider should use
+     */
+    @SideOnly(Side.CLIENT)
+    static void tryDrawHud(@Nonnull IItemHUDProvider provider, @Nonnull ItemStack stack) {
+        if (provider.isNeedDrawHUD()) provider.drawHUD(stack);
+    }
+}

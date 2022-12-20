@@ -29,18 +29,12 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     protected final int tier;
     protected final long maxCapacity;
     protected final EntityEquipmentSlot SLOT;
-    @SideOnly(Side.CLIENT)
-    protected ArmorUtils.ModularHUD HUD;
 
     protected ArmorLogicSuite(int energyPerUse, long maxCapacity, int tier, EntityEquipmentSlot slot) {
         this.energyPerUse = energyPerUse;
         this.maxCapacity = maxCapacity;
         this.tier = tier;
         this.SLOT = slot;
-        if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
-            //noinspection NewExpressionSideOnly
-            HUD = new ArmorUtils.ModularHUD();
-        }
     }
 
     @Override
@@ -133,24 +127,12 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void drawHUD(ItemStack stack) {
-        this.addCapacityHUD(stack);
-        this.HUD.draw();
-        this.HUD.reset();
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected void addCapacityHUD(ItemStack stack) {
+    protected static void addCapacityHUD(ItemStack stack, ArmorUtils.ModularHUD hud) {
         IElectricItem cont = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) return;
         if (cont.getCharge() == 0) return;
         float energyMultiplier = cont.getCharge() * 100.0F / cont.getMaxCharge();
-        this.HUD.newString(I18n.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
+        hud.newString(I18n.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
     }
 
     public int getEnergyPerUse() {
