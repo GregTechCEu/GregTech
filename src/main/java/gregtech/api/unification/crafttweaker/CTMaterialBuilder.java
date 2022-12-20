@@ -252,6 +252,12 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
+    public CTMaterialBuilder workability(long workability) {
+        backingBuilder.workability(workability);
+        return this;
+    }
+
+    @ZenMethod
     public Material build() {
         return backingBuilder.build();
     }

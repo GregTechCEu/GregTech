@@ -50,6 +50,11 @@ public class MaterialExpansion {
         return m.getMaterialIconSet().getName();
     }
 
+    @ZenMethod
+    public static void setWorkability(Material m, long workability) {
+        m.setWorkability(workability);
+    }
+
     ////////////////////////////////////
     //         Fluid Property         //
     ////////////////////////////////////
