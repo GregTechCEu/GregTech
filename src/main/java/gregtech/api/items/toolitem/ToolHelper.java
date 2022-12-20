@@ -208,7 +208,7 @@ public final class ToolHelper {
         if (!(stack.getItem() instanceof IGTTool)) {
             stack.damageItem(damage, entity);
         } else {
-            if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean("Unbreakable")) {
+            if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
                 return;
             }
             IGTTool tool = (IGTTool) stack.getItem();

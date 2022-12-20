@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 
 public final class TreeFellingListener {
 
-    private static final int MAX_SCANS = 10;
-
     private final EntityPlayerMP player;
     private final ItemStack tool;
     private final Deque<BlockPos> orderedBlocks;
@@ -48,13 +46,11 @@ public final class TreeFellingListener {
         Block block = state.getBlock();
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
-        int operations = 0;
-
         Queue<BlockPos> checking = new ArrayDeque<>();
         Set<BlockPos> visited = new ObjectOpenHashSet<>();
         checking.add(start);
 
-        while (/*operations++ < MAX_SCANS &&*/ !checking.isEmpty()) {
+        while (!checking.isEmpty()) {
             BlockPos check = checking.remove();
             if (check != start) {
                 visited.add(check);
