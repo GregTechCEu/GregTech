@@ -147,14 +147,14 @@ public class PartsRecipeHandler {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                     .input(OrePrefix.wireGtSingle, material)
                     .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 4))
-                    .duration(200)
+                    .duration((int) material.getWorkability() * 3 / 2)
                     .EUt(VA[ULV])
                     .buildAndRegister();
         } else {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material)
                     .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 8))
-                    .duration(400)
+                    .duration((int) material.getWorkability() * 3)
                     .EUt(VA[ULV])
                     .buildAndRegister();
         }
