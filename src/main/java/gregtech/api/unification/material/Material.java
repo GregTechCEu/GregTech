@@ -266,6 +266,19 @@ public class Material implements Comparable<Material> {
         return totalMass / totalAmount;
     }
 
+    @ZenGetter("workability")
+    public long getWorkability() {
+        if (materialInfo.workability == -1) {
+            return this.getMass();
+        }
+        return materialInfo.workability;
+    }
+
+    @ZenMethod
+    public void setWorkability(long workability) {
+        materialInfo.workability = workability;
+    }
+
     @ZenGetter("blastTemperature")
     public int getBlastTemperature() {
         BlastProperty prop = properties.getProperty(PropertyKey.BLAST);
@@ -928,6 +941,13 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * The workability of this Material. Determines recipe length in auto-gen recipes, if specified.
+         * <p>
+         * Default: -1 (Same as mass).
+         */
+        private long workability = -1;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
