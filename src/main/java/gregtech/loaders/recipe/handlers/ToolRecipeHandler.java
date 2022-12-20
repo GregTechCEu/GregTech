@@ -248,7 +248,7 @@ public class ToolRecipeHandler {
             RecipeMaps.LATHE_RECIPES.recipeBuilder()
                     .input(OrePrefix.gear, material)
                     .output(OrePrefix.toolHeadBuzzSaw, material)
-                    .duration((int) material.getMass() * 4)
+                    .duration((int) material.getWorkability() * 4)
                     .EUt(8 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
@@ -309,7 +309,7 @@ public class ToolRecipeHandler {
                     .input(OrePrefix.ingot, material, 3)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_AXE)
                     .outputs(OreDictUnifier.get(toolPrefix, material))
-                    .duration((int) material.getMass() * 3)
+                    .duration((int) material.getWorkability() * 3)
                     .EUt(8 * voltageMultiplier)
                     .buildAndRegister();
 
@@ -325,7 +325,7 @@ public class ToolRecipeHandler {
                     .input(OrePrefix.ingot, material, 2)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_HOE)
                     .outputs(OreDictUnifier.get(toolPrefix, material))
-                    .duration((int) material.getMass() * 2)
+                    .duration((int) material.getWorkability() * 2)
                     .EUt(8 * voltageMultiplier)
                     .buildAndRegister();
     }
@@ -340,7 +340,7 @@ public class ToolRecipeHandler {
                     .input(OrePrefix.ingot, material, 3)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PICKAXE)
                     .outputs(OreDictUnifier.get(toolPrefix, material))
-                    .duration((int) material.getMass() * 3)
+                    .duration((int) material.getWorkability() * 3)
                     .EUt(8 * voltageMultiplier)
                     .buildAndRegister();
 
@@ -356,7 +356,7 @@ public class ToolRecipeHandler {
                 .input(OrePrefix.ingot, material, 2)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SAW)
                 .outputs(OreDictUnifier.get(OrePrefix.toolHeadSaw, material))
-                .duration((int) material.getMass() * 2)
+                .duration((int) material.getWorkability() * 2)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }
@@ -375,7 +375,7 @@ public class ToolRecipeHandler {
                 .input(OrePrefix.ingot, material)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SHOVEL)
                 .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getMass())
+                .duration((int) material.getWorkability())
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }
@@ -390,7 +390,7 @@ public class ToolRecipeHandler {
                     .input(OrePrefix.ingot, material, 2)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_SWORD)
                     .outputs(OreDictUnifier.get(toolPrefix, material))
-                    .duration((int) material.getMass() * 2)
+                    .duration((int) material.getWorkability() * 2)
                     .EUt(8 * voltageMultiplier)
                     .buildAndRegister();
     }
@@ -404,7 +404,7 @@ public class ToolRecipeHandler {
                         .input(OrePrefix.ingot, material, 6)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_HAMMER)
                         .outputs(OreDictUnifier.get(toolPrefix, material))
-                        .duration((int) material.getMass() * 6)
+                        .duration((int) material.getWorkability() * 6)
                         .EUt(8 * getVoltageMultiplier(material))
                         .buildAndRegister();
         }
@@ -423,7 +423,7 @@ public class ToolRecipeHandler {
                     .input(OrePrefix.ingot, material, 2)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_FILE)
                     .outputs(OreDictUnifier.get(toolPrefix, material))
-                    .duration((int) material.getMass() * 2)
+                    .duration((int) material.getWorkability() * 2)
                     .EUt(8 * getVoltageMultiplier(material))
                     .buildAndRegister();
 

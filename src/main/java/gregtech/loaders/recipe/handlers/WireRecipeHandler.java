@@ -70,14 +70,14 @@ public class WireRecipeHandler {
                 .input(prefix, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
                 .output(wireGtSingle, material, 2)
-                .duration((int) material.getMass() * 2)
+                .duration((int) material.getWorkability() * 2)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .output(wireGtSingle, material, 2)
-                .duration((int) material.getMass())
+                .duration((int) material.getWorkability())
                 .EUt(getVoltageMultiplier(material))
                 .buildAndRegister();
 

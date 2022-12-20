@@ -98,7 +98,7 @@ public class DecompositionRecipeHandler {
                     .EUt(material.getMaterialComponents().size() <= 2 ? VA[LV] : 2 * VA[LV]);
         } else {
             builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
-                    .duration((int) Math.ceil(material.getMass() * totalInputAmount * 1.5))
+                    .duration((int) Math.ceil(material.getWorkability() * totalInputAmount * 1.5))
                     .EUt(VA[LV]);
         }
         builder.outputs(outputs);

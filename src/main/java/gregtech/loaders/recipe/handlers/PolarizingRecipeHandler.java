@@ -34,7 +34,7 @@ public class PolarizingRecipeHandler {
             RecipeMaps.POLARIZER_RECIPES.recipeBuilder() //polarizing
                     .input(polarizingPrefix, material)
                     .outputs(magneticStack)
-                    .duration((int) ((int) material.getMass() * polarizingPrefix.getMaterialAmount(material) / GTValues.M))
+                    .duration((int) ((int) material.getWorkability() * polarizingPrefix.getMaterialAmount(material) / GTValues.M))
                     .EUt(8 * getVoltageMultiplier(material))
                     .buildAndRegister();
 

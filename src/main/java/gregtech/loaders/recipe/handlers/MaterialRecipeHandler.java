@@ -161,7 +161,7 @@ public class MaterialRecipeHandler {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
                         .output(ingot, material)
-                        .duration((int) material.getMass() * 3)
+                        .duration((int) material.getWorkability() * 3)
                         .buildAndRegister();
             } else {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
@@ -169,7 +169,7 @@ public class MaterialRecipeHandler {
                         .fluidInputs(Materials.LiquidHelium.getFluid(500))
                         .output(ingot, material)
                         .fluidOutputs(Materials.Helium.getFluid(250))
-                        .duration((int) material.getMass() * 3)
+                        .duration((int) material.getWorkability() * 3)
                         .buildAndRegister();
             }
         }
@@ -243,7 +243,7 @@ public class MaterialRecipeHandler {
                         .input(ingotPrefix, material)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD)
                         .outputs(OreDictUnifier.get(OrePrefix.stick, material, 2))
-                        .duration((int) material.getMass() * 2)
+                        .duration((int) material.getWorkability() * 2)
                         .EUt(6 * getVoltageMultiplier(material))
                         .buildAndRegister();
             }
@@ -268,14 +268,14 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
         }
 
-        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
+        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getWorkability())
                 .input(ingot, material)
                 .notConsumable(MetaItems.SHAPE_MOLD_NUGGET.getStackForm())
                 .output(nugget, material, 9)
                 .buildAndRegister();
 
         if (!OreDictUnifier.get(block, material).isEmpty()) {
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass() * 9)
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getWorkability() * 9)
                     .input(block, material)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material, 9)
@@ -296,13 +296,13 @@ public class MaterialRecipeHandler {
                             .circuitMeta(1)
                             .input(ingotPrefix, material)
                             .outputs(plateStack)
-                            .EUt(24).duration((int) (material.getMass()))
+                            .EUt(24).duration((int) (material.getWorkability()))
                             .buildAndRegister();
 
                     RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
                             .input(ingotPrefix, material, 3)
                             .outputs(GTUtility.copyAmount(2, plateStack))
-                            .EUt(16).duration((int) material.getMass())
+                            .EUt(16).duration((int) material.getWorkability())
                             .buildAndRegister();
 
                     ModHandler.addShapedRecipe(String.format("plate_%s", material),
@@ -316,7 +316,7 @@ public class MaterialRecipeHandler {
                         .input(ingotPrefix, material)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, material))
-                        .duration((int) material.getMass())
+                        .duration((int) material.getWorkability())
                         .EUt(8 * voltageMultiplier)
                         .buildAndRegister();
 
@@ -325,7 +325,7 @@ public class MaterialRecipeHandler {
                             .input(dust, material)
                             .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
                             .outputs(OreDictUnifier.get(OrePrefix.plate, material))
-                            .duration((int) material.getMass())
+                            .duration((int) material.getWorkability())
                             .EUt(8 * voltageMultiplier)
                             .buildAndRegister();
                 }
@@ -383,7 +383,7 @@ public class MaterialRecipeHandler {
                     .output(ingot, material)
                     .EUt(2).duration(300).buildAndRegister();
 
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getWorkability())
                     .input(nugget, material, 9)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material)
@@ -394,7 +394,7 @@ public class MaterialRecipeHandler {
                         .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
                         .fluidInputs(material.getFluid(L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
-                        .duration((int) material.getMass())
+                        .duration((int) material.getWorkability())
                         .EUt(VA[ULV])
                         .buildAndRegister();
             }
@@ -435,7 +435,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
                     .outputs(blockStack)
-                    .duration((int) material.getMass()).EUt(VA[ULV])
+                    .duration((int) material.getWorkability()).EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -445,7 +445,7 @@ public class MaterialRecipeHandler {
                 RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                         .input(blockPrefix, material)
                         .outputs(GTUtility.copyAmount((int) (materialAmount / M), plateStack))
-                        .duration((int) (material.getMass() * 8L)).EUt(VA[LV])
+                        .duration((int) (material.getWorkability() * 8L)).EUt(VA[LV])
                         .buildAndRegister();
             }
         }

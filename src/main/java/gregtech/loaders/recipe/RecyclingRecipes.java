@@ -131,7 +131,7 @@ public class RecyclingRecipes {
             RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
                     .inputs(input.copy())
                     .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
-                    .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
+                    .duration((int) Math.max(1, ms.amount * ms.material.getWorkability() / M))
                     .EUt(GTValues.VA[GTValues.LV] * multiplier)
                     .buildAndRegister();
 
@@ -151,8 +151,8 @@ public class RecyclingRecipes {
         // Calculate the duration based off of those two possible outputs.
         // - Sum the two Material amounts together (if both exist)
         // - Divide the sum by M
-        long duration = fluidMs.amount * fluidMs.material.getMass();
-        if (itemMs != null) duration += (itemMs.amount * itemMs.material.getMass());
+        long duration = fluidMs.amount * fluidMs.material.getWorkability();
+        if (itemMs != null) duration += (itemMs.amount * itemMs.material.getWorkability());
         duration = Math.max(1L, duration / M);
 
         // Build the final Recipe.
@@ -317,7 +317,7 @@ public class RecyclingRecipes {
         long duration = 0;
         for (ItemStack is : materials) {
             MaterialStack ms = OreDictUnifier.getMaterial(is);
-            if (ms != null) duration += ms.amount * ms.material.getMass();
+            if (ms != null) duration += ms.amount * ms.material.getWorkability();
         }
         return (int) Math.max(1L, duration / M);
     }
