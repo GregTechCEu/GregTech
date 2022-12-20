@@ -16,9 +16,11 @@ import net.minecraftforge.fml.relauncher.CoreModManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class Bootstrap {
+public final class Bootstrap {
 
     private static boolean bootstrapped = false;
+
+    private Bootstrap() {/**/}
 
     public static void perform() {
         if (bootstrapped) {
