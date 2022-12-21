@@ -45,6 +45,6 @@ public interface ILDEndpoint {
     }
 
     enum Type {
-        INPUT, OUTPUT, NONE
+        NONE, INPUT, OUTPUT
     }
 }

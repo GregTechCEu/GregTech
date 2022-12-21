@@ -141,7 +141,7 @@ public class LongDistanceNetwork {
      */
     protected void mergePipeNet(LongDistanceNetwork network) {
         if (getPipeType() != network.getPipeType()) {
-            throw new IllegalStateException("Can't merge unequal pipe types!");
+            throw new IllegalStateException("Can't merge unequal pipe types, " + getPipeType().getName() + " and " + network.getPipeType().getName() + " !");
         }
         for (BlockPos pos : network.longDistancePipeBlocks) {
             this.world.putNetwork(pos, this);

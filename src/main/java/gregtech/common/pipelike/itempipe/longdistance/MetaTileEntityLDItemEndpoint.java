@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
@@ -13,6 +14,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -35,6 +37,11 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLDItemEndpoint(this.metaTileEntityId);
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
     }
 
     @Override

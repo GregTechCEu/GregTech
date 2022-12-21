@@ -1,13 +1,11 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -31,11 +29,6 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     public MetaTileEntityLongDistanceEndpoint(ResourceLocation metaTileEntityId, LongDistancePipeType pipeType) {
         super(metaTileEntityId);
         this.pipeType = pipeType;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     public void updateNetwork() {

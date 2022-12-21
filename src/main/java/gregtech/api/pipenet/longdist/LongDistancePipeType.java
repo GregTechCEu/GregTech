@@ -85,20 +85,6 @@ public abstract class LongDistancePipeType {
         return createNetwork(LongDistanceNetwork.WorldData.get(world));
     }
 
-    public final LongDistanceNetwork getOrCreate(World world, BlockPos pos, boolean calculate) {
-        LongDistanceNetwork.WorldData worldData = LongDistanceNetwork.WorldData.get(world);
-        LongDistanceNetwork network = worldData.getNetwork(pos);
-        if (network == null) {
-            network = createNetwork(worldData);
-            if (calculate) {
-                network.recalculateNetwork(Collections.singleton(pos));
-            }
-        } else if (network.getPipeType() != this) {
-            throw new IllegalStateException();
-        }
-        return network;
-    }
-
     public final String getName() {
         return name;
     }
