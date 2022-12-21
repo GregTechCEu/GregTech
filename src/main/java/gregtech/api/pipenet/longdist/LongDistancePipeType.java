@@ -16,8 +16,25 @@ import java.util.Objects;
  */
 public abstract class LongDistancePipeType {
 
+    private static final Object2ObjectOpenHashMap<String, LongDistancePipeType> PIPE_TYPES = new Object2ObjectOpenHashMap<>();
+
     private static LDFluidPipeType FLUID;
     private static LDItemPipeType ITEM;
+
+    private final String name;
+
+    protected LongDistancePipeType(String name) {
+        this.name = Objects.requireNonNull(name);
+        if (PIPE_TYPES.containsKey(name)) {
+            throw new IllegalArgumentException("Pipe Type with name " + name + " already exists!");
+        }
+        for (LongDistancePipeType pipeType : PIPE_TYPES.values()) {
+            if (this.getClass() == pipeType.getClass()) {
+                throw new IllegalStateException("Duplicate Pipe Type " + name + " and " + pipeType.name);
+            }
+        }
+        PIPE_TYPES.put(name, this);
+    }
 
     public static void init() {
         FLUID = LDFluidPipeType.INSTANCE;
@@ -32,31 +49,29 @@ public abstract class LongDistancePipeType {
         return ITEM;
     }
 
-    private static final Object2ObjectOpenHashMap<String, LongDistancePipeType> PIPE_TYPES = new Object2ObjectOpenHashMap<>();
-
     public static LongDistancePipeType getPipeType(String name) {
         return PIPE_TYPES.get(name);
     }
 
-    private final String name;
-
-    protected LongDistancePipeType(String name) {
-        this.name = Objects.requireNonNull(name);
-        if (PIPE_TYPES.containsKey(name)) {
-            throw new IllegalStateException("Pipe Type with name " + name + " already exists!");
-        }
-        for (LongDistancePipeType pipeType : PIPE_TYPES.values()) {
-            if (this.getClass() == pipeType.getClass()) {
-                throw new IllegalStateException("Duplicate Pipe Type " + name + " and " + pipeType.name);
-            }
-        }
-        PIPE_TYPES.put(name, this);
-    }
-
+    /**
+     * Checks if the given block state is a valid ld pipe block for this type
+     *
+     * @param blockState potential ld pipe block
+     * @return if the given block state is a valid ld pipe block for this type
+     */
     public abstract boolean isValidBlock(IBlockState blockState);
 
-    public abstract boolean isValidEndpoint(MetaTileEntityLongDistanceEndpoint endpoint);
+    /**
+     * Checks if the given endpoint is a valid endpoint for this type
+     *
+     * @param endpoint potential endpoint
+     * @return if the given endpoint is a valid endpoint for this type
+     */
+    public abstract boolean isValidEndpoint(ILDEndpoint endpoint);
 
+    /**
+     * @return The minimum required distance (not pipe count between endpoints) between to endpoints to work.
+     */
     public int getMinLength() {
         return 0;
     }

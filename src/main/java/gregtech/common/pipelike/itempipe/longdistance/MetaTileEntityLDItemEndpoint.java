@@ -7,7 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.longdist.MetaTileEntityLongDistanceEndpoint;
+import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.tileentity.TileEntity;

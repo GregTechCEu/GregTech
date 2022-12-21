@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.longdist;
 
+import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;

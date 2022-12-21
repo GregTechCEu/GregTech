@@ -1,6 +1,7 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.nbt.NBTBase;
@@ -18,7 +19,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class LongDistanceNetwork {
 
@@ -31,10 +31,10 @@ public class LongDistanceNetwork {
     // all pipes and endpoints in this net
     public final ObjectOpenHashSet<BlockPos> longDistancePipeBlocks = new ObjectOpenHashSet<>();
     // stores all connected endpoints, but only the first two are being used
-    private final List<MetaTileEntityLongDistanceEndpoint> endpoints = new ArrayList<>();
+    private final List<ILDEndpoint> endpoints = new ArrayList<>();
     // all endpoint positions, for nbt
     private final List<BlockPos> endpointPoss = new ArrayList<>();
-    private int activeInput = -1, activeOutput = -1;
+    private int activeInputIndex = -1, activeOutputIndex = -1;
 
     protected LongDistanceNetwork(LongDistancePipeType pipeType, WorldData world) {
         this.pipeType = pipeType;
@@ -61,7 +61,7 @@ public class LongDistanceNetwork {
     /**
      * Called from the {@link NetworkBuildThread} to set the gathered data
      */
-    protected void setData(Collection<BlockPos> pipes, List<MetaTileEntityLongDistanceEndpoint> endpoints) {
+    protected void setData(Collection<BlockPos> pipes, List<ILDEndpoint> endpoints) {
         boolean wasEmpty = this.longDistancePipeBlocks.isEmpty();
         this.longDistancePipeBlocks.clear();
         this.longDistancePipeBlocks.addAll(pipes);
@@ -104,13 +104,13 @@ public class LongDistanceNetwork {
         }
     }
 
-    protected void addEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
+    protected void addEndpoint(ILDEndpoint endpoint) {
         if (!this.endpoints.contains(endpoint)) {
             this.endpoints.add(endpoint);
         }
     }
 
-    public void onRemoveEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
+    public void onRemoveEndpoint(ILDEndpoint endpoint) {
         // invalidate all linked endpoints
         endpoint.invalidateLink();
         if (this.endpoints.remove(endpoint)) {
@@ -130,7 +130,7 @@ public class LongDistanceNetwork {
     /**
      * Adds a new endpoint to the network
      */
-    public void onPlaceEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
+    public void onPlaceEndpoint(ILDEndpoint endpoint) {
         addEndpoint(endpoint);
         this.longDistancePipeBlocks.add(endpoint.getPos());
         this.world.putNetwork(endpoint.getPos(), this);
@@ -148,7 +148,7 @@ public class LongDistanceNetwork {
             this.longDistancePipeBlocks.add(pos);
         }
         this.endpoints.addAll(network.endpoints);
-        for (MetaTileEntityLongDistanceEndpoint endpoint1 : this.endpoints) {
+        for (ILDEndpoint endpoint1 : this.endpoints) {
             endpoint1.invalidateLink();
         }
         network.onDestroy();
@@ -165,19 +165,19 @@ public class LongDistanceNetwork {
     }
 
     protected void invalidateEndpoints() {
-        this.activeInput = -1;
-        this.activeOutput = -1;
-        for (MetaTileEntityLongDistanceEndpoint endpoint : this.endpoints) {
+        this.activeInputIndex = -1;
+        this.activeOutputIndex = -1;
+        for (ILDEndpoint endpoint : this.endpoints) {
             endpoint.invalidateLink();
         }
     }
 
-    public MetaTileEntityLongDistanceEndpoint getOtherEndpoint(MetaTileEntityLongDistanceEndpoint endpoint) {
+    public ILDEndpoint getOtherEndpoint(ILDEndpoint endpoint) {
         if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
 
-        if (this.activeInput >= 0 && this.activeOutput >= 0) {
-            MetaTileEntityLongDistanceEndpoint in = this.endpoints.get(this.activeInput);
-            MetaTileEntityLongDistanceEndpoint out = this.endpoints.get(this.activeOutput);
+        if (this.activeInputIndex >= 0 && this.activeOutputIndex >= 0) {
+            ILDEndpoint in = this.endpoints.get(this.activeInputIndex);
+            ILDEndpoint out = this.endpoints.get(this.activeOutputIndex);
             if (in == endpoint) {
                 if (!endpoint.isInput()) throw new IllegalStateException();
                 return out;
@@ -187,29 +187,30 @@ public class LongDistanceNetwork {
                 return in;
             }
             return null;
-        } else if (this.activeInput < 0 != this.activeOutput < 0) {
+        } else if (this.activeInputIndex < 0 != this.activeOutputIndex < 0) {
+            GTLog.logger.warn("Long Distance Network has an {}. This should not happen!", this.activeInputIndex < 0 ? "active input, but not an active output" : "active output, but not an active input");
             invalidateEndpoints(); // shouldn't happen
         }
 
         int otherIndex = find(endpoint);
         if (otherIndex >= 0) {
             int thisIndex = this.endpoints.indexOf(endpoint);
-            if (thisIndex < 0) throw new IllegalStateException();
-            MetaTileEntityLongDistanceEndpoint other = this.endpoints.get(otherIndex);
-            this.activeOutput = endpoint.isOutput() ? thisIndex : otherIndex;
-            this.activeInput = endpoint.isInput() ? thisIndex : otherIndex;
+            if (thisIndex < 0) throw new IllegalStateException("Tried to get endpoint that is not part of this network. Something is seriously wrong!");
+            ILDEndpoint other = this.endpoints.get(otherIndex);
+            this.activeOutputIndex = endpoint.isOutput() ? thisIndex : otherIndex;
+            this.activeInputIndex = endpoint.isInput() ? thisIndex : otherIndex;
             return other;
         }
         return null;
     }
 
-    private int find(MetaTileEntityLongDistanceEndpoint endpoint) {
+    private int find(ILDEndpoint endpoint) {
         for (int i = 0; i < this.endpoints.size(); i++) {
-            MetaTileEntityLongDistanceEndpoint other = this.endpoints.get(i);
+            ILDEndpoint other = this.endpoints.get(i);
             if (endpoint != other &&
                     (other.isOutput() || other.isInput()) &&
                     other.isInput() != endpoint.isInput() &&
-                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) >= this.pipeType.getMinLength() + 1) {
+                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) > this.pipeType.getMinLength()) {
                 if (i > 1) {
                     this.endpoints.remove(i);
                     this.endpoints.add(i, other);
@@ -220,26 +221,38 @@ public class LongDistanceNetwork {
         return -1;
     }
 
-    public MetaTileEntityLongDistanceEndpoint getActiveInput() {
-        return this.activeInput >= 0 ? this.endpoints.get(this.activeInput) : null;
+    public ILDEndpoint getActiveInputIndex() {
+        return this.activeInputIndex >= 0 ? this.endpoints.get(this.activeInputIndex) : null;
     }
 
-    public MetaTileEntityLongDistanceEndpoint getActiveOutput() {
-        return this.activeOutput >= 0 ? this.endpoints.get(this.activeOutput) : null;
+    public ILDEndpoint getActiveOutputIndex() {
+        return this.activeOutputIndex >= 0 ? this.endpoints.get(this.activeOutputIndex) : null;
     }
 
+    /**
+     * @return the total amount of connected and valid ld pipe blocks and endpoints
+     */
     public int getTotalSize() {
         return this.longDistancePipeBlocks.size();
     }
 
+    /**
+     * @return the total amount of connected and valid endpoints
+     */
     public int getEndpointAmount() {
         return this.endpoints.size();
     }
 
+    /**
+     * @return the total amount of connected and valid ld pipe blocks
+     */
     public int getPipeAmount() {
         return getTotalSize() - getEndpointAmount();
     }
 
+    /**
+     * @return if this network has more than one valid endpoint
+     */
     public boolean isValid() {
         return getEndpointAmount() > 1;
     }
@@ -275,7 +288,7 @@ public class LongDistanceNetwork {
         // might change to Map<Chunk, Map<BlockPos, LongDistanceNetwork>>
         private final Object2ObjectOpenHashMap<BlockPos, LongDistanceNetwork> networks = new Object2ObjectOpenHashMap<>();
         private final ObjectOpenHashSet<LongDistanceNetwork> networkList = new ObjectOpenHashSet<>();
-        private WeakReference<World> world_ref = new WeakReference<>(null);
+        private WeakReference<World> worldRef = new WeakReference<>(null);
 
         public WorldData(String name) {
             super(name);
@@ -285,12 +298,12 @@ public class LongDistanceNetwork {
          * set world and load all endpoints
          */
         protected void setWorldAndInit(World world) {
-            if (this.world_ref.get() != world) {
+            if (this.worldRef.get() != world) {
                 for (LongDistanceNetwork ld : this.networkList) {
                     if (!ld.endpointPoss.isEmpty()) {
                         ld.endpoints.clear();
                         for (BlockPos pos : ld.endpointPoss) {
-                            MetaTileEntityLongDistanceEndpoint endpoint = MetaTileEntityLongDistanceEndpoint.tryGet(world, pos);
+                            ILDEndpoint endpoint = ILDEndpoint.tryGet(world, pos);
                             if (endpoint != null) {
                                 ld.endpoints.add(endpoint);
                             }
@@ -298,7 +311,7 @@ public class LongDistanceNetwork {
                     }
                 }
             }
-            this.world_ref = new WeakReference<>(world);
+            this.worldRef = new WeakReference<>(world);
         }
 
         public LongDistanceNetwork getNetwork(BlockPos pos) {
@@ -323,8 +336,8 @@ public class LongDistanceNetwork {
                 NBTTagCompound tag = (NBTTagCompound) nbt;
                 LongDistancePipeType pipeType = LongDistancePipeType.getPipeType(tag.getString("class"));
                 LongDistanceNetwork ld = pipeType.createNetwork(this);
-                ld.activeInput = tag.getInteger("in");
-                ld.activeOutput = tag.getInteger("out");
+                ld.activeInputIndex = tag.getInteger("in");
+                ld.activeOutputIndex = tag.getInteger("out");
                 this.networkList.add(ld);
                 NBTTagList posList = tag.getTagList("pipes", Constants.NBT.TAG_LONG);
                 for (NBTBase nbtPos : posList) {
@@ -349,10 +362,9 @@ public class LongDistanceNetwork {
                 list.appendTag(tag);
 
                 String name = network.getPipeType().getName();
-                Objects.requireNonNull(name);
                 tag.setString("class", name);
-                tag.setInteger("in", network.activeInput);
-                tag.setInteger("out", network.activeOutput);
+                tag.setInteger("in", network.activeInputIndex);
+                tag.setInteger("out", network.activeOutputIndex);
 
                 NBTTagList posList = new NBTTagList();
                 tag.setTag("pipes", posList);
@@ -362,7 +374,7 @@ public class LongDistanceNetwork {
 
                 NBTTagList endpoints = new NBTTagList();
                 tag.setTag("endpoints", endpoints);
-                for (MetaTileEntityLongDistanceEndpoint endpoint : network.endpoints) {
+                for (ILDEndpoint endpoint : network.endpoints) {
                     endpoints.appendTag(new NBTTagLong(endpoint.getPos().toLong()));
                 }
             }
@@ -371,7 +383,7 @@ public class LongDistanceNetwork {
         }
 
         public World getWorld() {
-            return this.world_ref.get();
+            return this.worldRef.get();
         }
     }
 }

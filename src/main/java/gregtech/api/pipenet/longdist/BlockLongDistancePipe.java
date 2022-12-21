@@ -1,6 +1,7 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.GregTechAPI;
+import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
