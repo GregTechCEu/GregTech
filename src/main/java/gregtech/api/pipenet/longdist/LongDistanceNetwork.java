@@ -2,6 +2,10 @@ package gregtech.api.pipenet.longdist;
 
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.util.GTLog;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.nbt.NBTBase;
@@ -10,6 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -22,14 +27,10 @@ import java.util.List;
 
 public class LongDistanceNetwork {
 
-    public static LongDistanceNetwork get(World world, BlockPos pos) {
-        return WorldData.get(world).getNetwork(pos);
-    }
-
+    // all pipes and endpoints in this net
+    private final ObjectOpenHashSet<BlockPos> longDistancePipeBlocks = new ObjectOpenHashSet<>();
     private final LongDistancePipeType pipeType;
     private final WorldData world;
-    // all pipes and endpoints in this net
-    public final ObjectOpenHashSet<BlockPos> longDistancePipeBlocks = new ObjectOpenHashSet<>();
     // stores all connected endpoints, but only the first two are being used
     private final List<ILDEndpoint> endpoints = new ArrayList<>();
     // all endpoint positions, for nbt
@@ -39,6 +40,10 @@ public class LongDistanceNetwork {
     protected LongDistanceNetwork(LongDistancePipeType pipeType, WorldData world) {
         this.pipeType = pipeType;
         this.world = world;
+    }
+
+    public static LongDistanceNetwork get(World world, BlockPos pos) {
+        return WorldData.get(world).getNetwork(pos);
     }
 
     /**
@@ -195,7 +200,8 @@ public class LongDistanceNetwork {
         int otherIndex = find(endpoint);
         if (otherIndex >= 0) {
             int thisIndex = this.endpoints.indexOf(endpoint);
-            if (thisIndex < 0) throw new IllegalStateException("Tried to get endpoint that is not part of this network. Something is seriously wrong!");
+            if (thisIndex < 0)
+                throw new IllegalStateException("Tried to get endpoint that is not part of this network. Something is seriously wrong!");
             ILDEndpoint other = this.endpoints.get(otherIndex);
             this.activeOutputIndex = endpoint.isOutput() ? thisIndex : otherIndex;
             this.activeInputIndex = endpoint.isInput() ? thisIndex : otherIndex;
@@ -268,6 +274,14 @@ public class LongDistanceNetwork {
 
         private static final Object2ObjectOpenHashMap<World, WorldData> WORLD_DATA_MAP = new Object2ObjectOpenHashMap<>();
 
+        private final Long2ObjectMap<Object2ObjectMap<BlockPos, LongDistanceNetwork>> networks = new Long2ObjectOpenHashMap<>();
+        private final ObjectOpenHashSet<LongDistanceNetwork> networkList = new ObjectOpenHashSet<>();
+        private WeakReference<World> worldRef = new WeakReference<>(null);
+
+        public WorldData(String name) {
+            super(name);
+        }
+
         public static WorldData get(World world) {
             WorldData worldData = WORLD_DATA_MAP.get(world);
             if (worldData != null) {
@@ -284,14 +298,8 @@ public class LongDistanceNetwork {
             return netWorldData;
         }
 
-        // all ld pipes in this world to their respective network
-        // might change to Map<Chunk, Map<BlockPos, LongDistanceNetwork>>
-        private final Object2ObjectOpenHashMap<BlockPos, LongDistanceNetwork> networks = new Object2ObjectOpenHashMap<>();
-        private final ObjectOpenHashSet<LongDistanceNetwork> networkList = new ObjectOpenHashSet<>();
-        private WeakReference<World> worldRef = new WeakReference<>(null);
-
-        public WorldData(String name) {
-            super(name);
+        private static long getChunkPos(BlockPos pos) {
+            return ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
         }
 
         /**
@@ -315,16 +323,29 @@ public class LongDistanceNetwork {
         }
 
         public LongDistanceNetwork getNetwork(BlockPos pos) {
-            return this.networks.get(pos);
+            return this.networks.getOrDefault(getChunkPos(pos), Object2ObjectMaps.emptyMap()).get(pos);
         }
 
         private void putNetwork(BlockPos pos, LongDistanceNetwork network) {
-            this.networks.put(pos, network);
+            long chunkPos = getChunkPos(pos);
+            Object2ObjectMap<BlockPos, LongDistanceNetwork> chunkNetworks = this.networks.get(chunkPos);
+            if (chunkNetworks == null) {
+                chunkNetworks = new Object2ObjectOpenHashMap<>();
+                this.networks.put(chunkPos, chunkNetworks);
+            }
+            chunkNetworks.put(pos, network);
             this.networkList.add(network);
         }
 
         private void removeNetwork(BlockPos pos) {
-            this.networks.remove(pos);
+            long chunkPos = getChunkPos(pos);
+            Object2ObjectMap<BlockPos, LongDistanceNetwork> chunkNetworks = this.networks.get(chunkPos);
+            if (chunkNetworks != null) {
+                chunkNetworks.remove(pos);
+                if (chunkNetworks.isEmpty()) {
+                    this.networks.remove(chunkPos);
+                }
+            }
         }
 
         @Override
@@ -342,7 +363,7 @@ public class LongDistanceNetwork {
                 NBTTagList posList = tag.getTagList("pipes", Constants.NBT.TAG_LONG);
                 for (NBTBase nbtPos : posList) {
                     BlockPos pos = BlockPos.fromLong(((NBTTagLong) nbtPos).getLong());
-                    networks.put(pos, ld);
+                    putNetwork(pos, ld);
                     ld.longDistancePipeBlocks.add(pos);
                 }
                 NBTTagList endpoints = tag.getTagList("endpoints", Constants.NBT.TAG_LONG);

@@ -176,7 +176,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             textComponents.add(new TextComponentString("No network found"));
         } else {
             textComponents.add(new TextComponentString("Network:"));
-            textComponents.add(new TextComponentString(" - " + network.longDistancePipeBlocks.size() + " pipes"));
+            textComponents.add(new TextComponentString(" - " + network.getTotalSize() + " pipes"));
             ILDEndpoint in = network.getActiveInputIndex(), out = network.getActiveOutputIndex();
             textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.getPos())));
             textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.getPos())));
