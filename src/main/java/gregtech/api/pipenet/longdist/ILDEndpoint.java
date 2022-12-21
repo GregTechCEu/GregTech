@@ -3,24 +3,31 @@ package gregtech.api.pipenet.longdist;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface ILDEndpoint {
 
-    void setInput();
+    Type getType();
 
-    void setOutput();
+    void setType(Type type);
 
-    void setUnknown();
+    default boolean isInput() {
+        return getType() == Type.INPUT;
+    }
 
-    boolean isInput();
-
-    boolean isOutput();
+    default boolean isOutput() {
+        return getType() == Type.OUTPUT;
+    }
 
     ILDEndpoint getLink();
 
     void invalidateLink();
+
+    EnumFacing getFrontFacing();
+
+    EnumFacing getOutputFacing();
 
     LongDistancePipeType getPipeType();
 
@@ -35,5 +42,9 @@ public interface ILDEndpoint {
             }
         }
         return null;
+    }
+
+    enum Type {
+        INPUT, OUTPUT, NONE
     }
 }

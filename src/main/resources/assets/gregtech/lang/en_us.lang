@@ -4229,7 +4229,7 @@ gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
 gregtech.machine.ld_item_endpoint.name=Long Distance Item Pipeline Endpoint
 gregtech.machine.ld_fluid_endpoint.name=Long Distance Fluid Pipeline Endpoint
-gregtech.machine.endpoint.tooltip.min_length=Minimum Distance: §b%d§rm
+gregtech.machine.endpoint.tooltip.min_length=Minimum Distance: §b%d§r blocks
 gregtech.machine.endpoint.tooltip.straight=Pipeline must be straight
 
 # Advancements

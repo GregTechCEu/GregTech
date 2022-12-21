@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * This bad boy is responsible for building the network
  */
-public class NetworkBuildThread implements Runnable {
+public class NetworkBuilder implements Runnable {
 
     private final LinkedList<BlockPos> starts = new LinkedList<>();
     private final LongDistanceNetwork.WorldData worldData;
@@ -24,16 +24,16 @@ public class NetworkBuildThread implements Runnable {
     private final LinkedList<BlockPos> currentPoints = new LinkedList<>();
     private final ObjectOpenHashSet<BlockPos> walked = new ObjectOpenHashSet<>();
     private final List<BlockPos> pipes = new ArrayList<>();
-    private final List<MetaTileEntityLongDistanceEndpoint> endpoints = new ArrayList<>();
+    private final List<ILDEndpoint> endpoints = new ArrayList<>();
 
-    public NetworkBuildThread(LongDistanceNetwork.WorldData worldData, LongDistanceNetwork network, BlockPos start) {
+    public NetworkBuilder(LongDistanceNetwork.WorldData worldData, LongDistanceNetwork network, BlockPos start) {
         this.worldData = worldData;
         this.network = network;
         this.world = worldData.getWorld();
         this.starts.add(start);
     }
 
-    public NetworkBuildThread(LongDistanceNetwork.WorldData worldData, LongDistanceNetwork network, Collection<BlockPos> starts) {
+    public NetworkBuilder(LongDistanceNetwork.WorldData worldData, LongDistanceNetwork network, Collection<BlockPos> starts) {
         this.worldData = worldData;
         this.network = network;
         this.world = worldData.getWorld();
@@ -47,6 +47,7 @@ public class NetworkBuildThread implements Runnable {
         while (!starts.isEmpty()) {
             BlockPos start = starts.pollFirst();
             if (first) {
+                first = false;
                 checkNetwork(start);
             } else {
                 LongDistanceNetwork ldn = worldData.getNetwork(start);
@@ -62,7 +63,6 @@ public class NetworkBuildThread implements Runnable {
                 this.endpoints.clear();
                 checkNetwork(start);
             }
-            first = false;
         }
     }
 
@@ -102,7 +102,7 @@ public class NetworkBuildThread implements Runnable {
             // add another branch/block for processing
             currentPoints.addLast(bp);
         } else {
-            MetaTileEntityLongDistanceEndpoint endpoint = MetaTileEntityLongDistanceEndpoint.tryGet(world, pos);
+            ILDEndpoint endpoint = ILDEndpoint.tryGet(world, pos);
             if (endpoint != null && network.getPipeType().isValidEndpoint(endpoint)) {
                 pipes.add(bp);
                 endpoints.add(endpoint);

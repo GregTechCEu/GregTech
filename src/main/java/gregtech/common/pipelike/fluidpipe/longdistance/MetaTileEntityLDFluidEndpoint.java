@@ -7,15 +7,24 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
+import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEndpoint {
 
@@ -31,7 +40,7 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == getFrontFacing()) {
-            MetaTileEntityLongDistanceEndpoint endpoint = getLink();
+            ILDEndpoint endpoint = getLink();
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
                 TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
@@ -39,6 +48,11 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
             }
         }
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public boolean getIsWeatherOrTerrainResistant() {
+        return true;
     }
 
     @Override
@@ -50,5 +64,17 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
         Textures.FLUID_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(getOutputFacing(), renderState, translation, pipeline);
         Textures.FLUID_HATCH_OUTPUT_OVERLAY.renderSided(getOutputFacing(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.LV].getParticleSprite(), 0xFFFFFF);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        if (ConfigHolder.machines.doTerrainExplosion)
+            tooltip.add("gregtech.universal.tooltip.terrain_resist");
+        super.addInformation(stack, player, tooltip, advanced);
     }
 }

@@ -54,12 +54,12 @@ public class LongDistanceNetwork {
         this.endpoints.clear();
         this.longDistancePipeBlocks.clear();
         // start a new thread where all given starting points are being walked
-        Thread thread = new Thread(new NetworkBuildThread(world, this, starts));
+        Thread thread = new Thread(new NetworkBuilder(world, this, starts));
         thread.start();
     }
 
     /**
-     * Called from the {@link NetworkBuildThread} to set the gathered data
+     * Called from the {@link NetworkBuilder} to set the gathered data
      */
     protected void setData(Collection<BlockPos> pipes, List<ILDEndpoint> endpoints) {
         boolean wasEmpty = this.longDistancePipeBlocks.isEmpty();
@@ -68,7 +68,7 @@ public class LongDistanceNetwork {
         this.endpoints.clear();
         this.endpoints.addAll(endpoints);
         if (this.longDistancePipeBlocks.isEmpty()) {
-            onDestroy();
+            invalidateNetwork();
             return;
         }
         if (wasEmpty) {
@@ -86,7 +86,7 @@ public class LongDistanceNetwork {
         this.longDistancePipeBlocks.remove(pos);
         this.world.removeNetwork(pos);
         if (this.longDistancePipeBlocks.isEmpty()) {
-            onDestroy();
+            invalidateNetwork();
             return;
         }
         List<BlockPos> neighbours = new ArrayList<>();
@@ -151,13 +151,13 @@ public class LongDistanceNetwork {
         for (ILDEndpoint endpoint1 : this.endpoints) {
             endpoint1.invalidateLink();
         }
-        network.onDestroy();
+        network.invalidateNetwork();
     }
 
     /**
      * invalidate this network
      */
-    protected void onDestroy() {
+    protected void invalidateNetwork() {
         this.longDistancePipeBlocks.clear();
         this.world.networkList.remove(this);
         invalidateEndpoints();

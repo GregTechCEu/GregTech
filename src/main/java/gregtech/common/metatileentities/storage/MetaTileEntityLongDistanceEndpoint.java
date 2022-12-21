@@ -1,27 +1,20 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.GTValues;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
-import gregtech.client.renderer.texture.Textures;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,9 +24,9 @@ import java.util.List;
 public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity implements ILDEndpoint, IDataInfoProvider {
 
     private final LongDistancePipeType pipeType;
+    private Type type = Type.NONE;
     private ILDEndpoint link;
     private boolean placed = false;
-    private byte type = 0;
 
     public MetaTileEntityLongDistanceEndpoint(ResourceLocation metaTileEntityId, LongDistancePipeType pipeType) {
         super(metaTileEntityId);
@@ -54,27 +47,15 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             network.onRemoveEndpoint(this);
         }
 
-        // only check input and output side
-        List<LongDistanceNetwork> networks = new ArrayList<>();
-        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getFrontFacing()));
-        if (network != null && pipeType == network.getPipeType()) {
-            networks.add(network);
-            setOutput();
-        }
-        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
-        if (network != null && pipeType == network.getPipeType()) {
-            networks.add(network);
-            setInput();
-        }
-
+        List<LongDistanceNetwork> networks = findNetworks();
         if (networks.isEmpty()) {
             network = this.pipeType.createNetwork(getWorld());
             network.onPlaceEndpoint(this);
-            setUnknown();
+            setType(Type.NONE);
         } else if (networks.size() == 1) {
             networks.get(0).onPlaceEndpoint(this);
         } else {
-            setUnknown();
+            setType(Type.NONE);
         }
     }
 
@@ -93,28 +74,16 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             link.invalidateLink();
             invalidateLink();
         }
-        setUnknown();
+        setType(Type.NONE);
         LongDistanceNetwork.get(getWorld(), getPos()).onRemoveEndpoint(this);
     }
 
     @Override
     public void onNeighborChanged() {
         if (!placed || getWorld() == null || getWorld().isRemote) return;
-        List<LongDistanceNetwork> networks = new ArrayList<>();
-        LongDistanceNetwork network;
-        // only check input and output side
-        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getFrontFacing()));
-        if (network != null && pipeType == network.getPipeType()) {
-            networks.add(network);
-            setOutput();
-        }
-        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
-        if (network != null && pipeType == network.getPipeType()) {
-            networks.add(network);
-            setInput();
-        }
 
-        network = LongDistanceNetwork.get(getWorld(), getPos());
+        List<LongDistanceNetwork> networks = findNetworks();
+        LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network == null) {
             if (networks.isEmpty()) {
                 network = this.pipeType.createNetwork(getWorld());
@@ -128,13 +97,25 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             }
         }
         if (networks.size() != 1) {
-            setUnknown();
+            setType(Type.NONE);
         }
     }
 
-    @Override
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.LV].getParticleSprite(), 0xFFFFFF);
+    private List<LongDistanceNetwork> findNetworks() {
+        List<LongDistanceNetwork> networks = new ArrayList<>();
+        LongDistanceNetwork network;
+        // only check input and output side
+        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getFrontFacing()));
+        if (network != null && pipeType == network.getPipeType()) {
+            networks.add(network);
+            setType(Type.OUTPUT);
+        }
+        network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
+        if (network != null && pipeType == network.getPipeType()) {
+            networks.add(network);
+            setType(Type.INPUT);
+        }
+        return networks;
     }
 
     @Override
@@ -147,39 +128,24 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         NBTTagCompound nbt = super.writeToNBT(data);
-        data.setByte("Type", type);
+        data.setByte("Type", (byte) type.ordinal());
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.type = data.getByte("Type");
+        this.type = Type.values()[data.getByte("Type")];
     }
 
     @Override
-    public void setInput() {
-        this.type = 1;
+    public Type getType() {
+        return type;
     }
 
     @Override
-    public void setOutput() {
-        this.type = 2;
-    }
-
-    @Override
-    public void setUnknown() {
-        this.type = 0;
-    }
-
-    @Override
-    public boolean isInput() {
-        return this.type == 1;
-    }
-
-    @Override
-    public boolean isOutput() {
-        return this.type == 2;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     @Override
@@ -198,6 +164,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         this.link = null;
     }
 
+    @Override
     public EnumFacing getOutputFacing() {
         return getFrontFacing().getOpposite();
     }

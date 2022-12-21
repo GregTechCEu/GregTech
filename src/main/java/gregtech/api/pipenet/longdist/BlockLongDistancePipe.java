@@ -38,7 +38,7 @@ public class BlockLongDistancePipe extends Block {
             offsetPos.setPos(pos).move(facing);
             LongDistanceNetwork network = LongDistanceNetwork.get(worldIn, offsetPos);
             if (network != null && pipeType == network.getPipeType()) {
-                MetaTileEntityLongDistanceEndpoint endpoint = MetaTileEntityLongDistanceEndpoint.tryGet(worldIn, offsetPos);
+                ILDEndpoint endpoint = ILDEndpoint.tryGet(worldIn, offsetPos);
                 // only count the network as connected if it's not an endpoint or the endpoints input or output face is connected
                 if (endpoint == null || endpoint.getFrontFacing().getAxis() == facing.getAxis()) {
                     networks.add(network);
