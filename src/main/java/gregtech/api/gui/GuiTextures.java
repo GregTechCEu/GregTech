@@ -9,6 +9,7 @@ public class GuiTextures {
 
     //GREGTECH
     public static final TextureArea GREGTECH_LOGO = TextureArea.fullImage("textures/gui/icon/gregtech_logo.png");
+    public static final TextureArea GREGTECH_LOGO_XMAS = TextureArea.fullImage("textures/gui/icon/gregtech_logo_xmas.png");
 
     //BASE TEXTURES
     public static final TextureArea BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/background.png", 176, 166, 3, 3);

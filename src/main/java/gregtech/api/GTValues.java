@@ -141,4 +141,9 @@ public class GTValues {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
         return yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
     };
+
+    public static Supplier<Boolean> XMAS = () -> {
+        String[] yearMonthDay = LocalDate.now().toString().split("-");
+        return yearMonthDay[1].equals("12") && (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
+    };
 }
