@@ -646,7 +646,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
                 GTUtility.getTierByVoltage(recipe.getEUt()),
-                getOverclockTier(),
+                getOverclockForTier(getMaximumOverclockVoltage()),
                 getRecipeMap())
         );
 
