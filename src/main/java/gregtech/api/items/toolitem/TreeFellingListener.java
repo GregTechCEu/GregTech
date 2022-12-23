@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gregtech.api.items.toolitem.ToolHelper.RELOCATE_MINED_BLOCKS_KEY;
+
 public final class TreeFellingListener {
 
     private final EntityPlayerMP player;
@@ -140,7 +142,17 @@ public final class TreeFellingListener {
                     BlockPos.MutableBlockPos check = leavesToPurge.next();
                     IBlockState state = player.world.getBlockState(check);
                     if (targetLeaves == Blocks.AIR ? state.getBlock().isLeaves(state, player.world, check) : state.getBlock() == targetLeaves) {
-                        state.getBlock().dropBlockAsItem(player.world, check, state, 0);
+                        if(ToolHelper.getBehavioursTag(tool).getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
+                            List<ItemStack> drops = state.getBlock().getDrops(player.world, check, state, ToolHelper.getFortuneOrLootingLevel(tool));
+                            for (ItemStack dropStack : drops) {
+                                if(!player.addItemStackToInventory(dropStack)) {
+                                    player.dropItem(dropStack, false, false);
+                                }
+                            }
+                        }
+                        else {
+                            state.getBlock().dropBlockAsItem(player.world, check, state, 0);
+                        }
                         player.world.setBlockToAir(check);
                     }
                 }

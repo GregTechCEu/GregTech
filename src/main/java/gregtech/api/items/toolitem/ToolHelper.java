@@ -280,6 +280,23 @@ public final class ToolHelper {
         return tool.getItem().getToolClasses(tool).containsAll(new ObjectArraySet<String>(toolClasses));
     }
 
+    /**
+     * Retrieves the Fortune or Looting level for the passed in GregTech Tool
+     * @param tool The GregTech tool to retrieve the enchantment level from
+     *
+     * @return The level of Fortune or Looting that the tool is enchanted with, or zero
+     */
+    public static int getFortuneOrLootingLevel(ItemStack tool) {
+        if(tool.getItem() instanceof ItemGTSword) {
+            return EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, tool);
+        }
+        else if (tool.getItem() instanceof IGTTool) {
+            return EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool);
+        }
+
+        return 0;
+    }
+
     public static AoESymmetrical getMaxAoEDefinition(ItemStack stack) {
         return AoESymmetrical.readMax(getBehavioursTag(stack));
     }
