@@ -299,8 +299,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         ItemStack itemStack = entityPlayer.getHeldItem(hand);
 
         if (pipeTile.getFrameMaterial() == null && pipeTile instanceof TileEntityPipeBase && itemStack.getItem() instanceof FrameItemBlock && pipeTile.getPipeType().getThickness() < 1) {
-            Material material = ((BlockFrame) ((FrameItemBlock) itemStack.getItem()).getBlock()).getGtMaterial(itemStack.getMetadata());
+            BlockFrame frameBlock = (BlockFrame) ((FrameItemBlock) itemStack.getItem()).getBlock();
+            Material material = frameBlock.getGtMaterial(itemStack.getMetadata());
             ((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile).setFrameMaterial(material);
+            SoundType type = frameBlock.getSoundType(itemStack);
+            world.playSound(entityPlayer, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
             if (!entityPlayer.capabilities.isCreativeMode) {
                 itemStack.shrink(1);
             }

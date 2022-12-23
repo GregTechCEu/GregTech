@@ -100,6 +100,14 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return SoundType.METAL;
     }
 
+    public SoundType getSoundType(ItemStack stack) {
+        Material material = getGtMaterial(stack.getMetadata());
+        if (ModHandler.isMaterialWood(material)) {
+            return SoundType.WOOD;
+        }
+        return SoundType.METAL;
+    }
+
     @Override
     public int getHarvestLevel(@Nonnull IBlockState state) {
         return 1;
@@ -169,6 +177,8 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                     GTLog.logger.error("Pipe was not placed!");
                     return false;
                 }
+                SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
+                worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!playerIn.capabilities.isCreativeMode) {
                     stackInHand.shrink(1);
                 }
@@ -194,6 +204,8 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
             }
             if (canPlaceBlockAt(worldIn, blockPos)) {
                 worldIn.setBlockState(blockPos, ((FrameItemBlock) stackInHand.getItem()).getBlockState(stackInHand));
+                SoundType type = getSoundType(stackInHand);
+                worldIn.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!playerIn.capabilities.isCreativeMode) {
                     stackInHand.shrink(1);
                 }
@@ -202,6 +214,11 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
             } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
                 Material material = ((BlockFrame) ((FrameItemBlock) stackInHand.getItem()).getBlock()).getGtMaterial(stackInHand.getMetadata());
                 ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(material);
+                SoundType type = getSoundType(stackInHand);
+                worldIn.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                if (!playerIn.capabilities.isCreativeMode) {
+                    stackInHand.shrink(1);
+                }
                 blockPos.release();
                 return true;
             } else {

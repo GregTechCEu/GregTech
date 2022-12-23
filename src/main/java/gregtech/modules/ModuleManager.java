@@ -81,7 +81,6 @@ public class ModuleManager implements IModuleManager {
         Map<String, List<IGregTechModule>> modules = getModules(event.getAsmData());
         configureModules(modules);
 
-        // Separate loops for strict ordering
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
             module.getLogger().debug("Registering event handlers");
@@ -89,15 +88,16 @@ public class ModuleManager implements IModuleManager {
                 MinecraftForge.EVENT_BUS.register(clazz);
             }
         }
+    }
+
+    public void onPreInit(FMLPreInitializationEvent event) {
+        currentStage = ModuleStage.PRE_INIT;
+        // Separate loops for strict ordering
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
             module.getLogger().debug("Registering packets");
             module.registerPackets();
         }
-    }
-
-    public void onPreInit(FMLPreInitializationEvent event) {
-        currentStage = ModuleStage.PRE_INIT;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
             module.getLogger().debug("Pre-init start");

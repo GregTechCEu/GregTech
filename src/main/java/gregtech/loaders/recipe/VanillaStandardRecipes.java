@@ -927,7 +927,7 @@ public class VanillaStandardRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Iron, 6)
                 .circuitMeta(6)
-                .outputs(new ItemStack(Blocks.IRON_DOOR))
+                .outputs(new ItemStack(Items.IRON_DOOR))
                 .duration(100).EUt(16).buildAndRegister();
     }
 
