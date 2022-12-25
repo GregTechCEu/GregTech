@@ -147,7 +147,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
         MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
-                .aisle("XEM", "CCC", "CCC", "XXX")
+                .aisle("EEM", "CCC", "CCC", "XXX")
                 .aisle("FXD", "C#C", "C#C", "XHX")
                 .aisle("ISO", "CCC", "CCC", "XXX")
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
