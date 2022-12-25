@@ -20,10 +20,18 @@ public class SoundManager implements ISoundManager {
 
     private static final SoundManager INSTANCE = new SoundManager();
 
-    @SideOnly(Side.CLIENT)
+    // This cannot be marked `@SideOnly(Side.CLIENT)`, because the server will report it as a missing field
+    // when `INSTANCE` is instantiated on the server side
     private final Object2ObjectMap<BlockPos, ISound> soundMap = new Object2ObjectOpenHashMap<>();
 
     private SoundManager() {
+//        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+//            // the soundMap is always client side, so initialize it properly here
+//            soundMap = new Object2ObjectOpenHashMap<>();
+//        } else {
+//            // the soundMap is never accessed on the server side, so instantiating as null is fine
+//            soundMap = null;
+//        }
     }
 
     public static SoundManager getInstance() {
@@ -46,6 +54,7 @@ public class SoundManager implements ISoundManager {
         return registerSound(containerId, soundName);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ISound startTileSound(ResourceLocation soundName, float volume, BlockPos pos) {
         ISound sound = soundMap.get(pos);
@@ -59,6 +68,7 @@ public class SoundManager implements ISoundManager {
         return sound;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void stopTileSound(BlockPos pos) {
         ISound sound = soundMap.get(pos);
