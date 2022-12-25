@@ -14,9 +14,14 @@ import gregtech.common.items.MetaItems;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-public class GTStringUtils {
+import javax.annotation.Nonnull;
 
-    public static String prettyPrintItemStack(ItemStack stack) {
+public final class GTStringUtils {
+
+    private GTStringUtils() {/**/}
+
+    @Nonnull
+    public static String prettyPrintItemStack(@Nonnull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaItem.MetaValueItem metaValueItem = metaItem.getItem(stack);
@@ -57,5 +62,21 @@ public class GTStringUtils {
         }
         //noinspection ConstantConditions
         return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
+    }
+
+    /**
+     * Copied and pasted from {@link net.minecraft.util.StringUtils#ticksToElapsedTime(int)} in order to be accessible
+     * Server-Side
+     *
+     * @param ticks the amount of ticks to convert
+     * @return the time elapsed for the given number of ticks, in "mm:ss" format.
+     */
+    @Nonnull
+    public static String ticksToElapsedTime(int ticks) {
+        int seconds = ticks / 20;
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        //noinspection StringConcatenationMissingWhitespace
+        return seconds < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
     }
 }
