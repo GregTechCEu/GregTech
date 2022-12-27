@@ -219,8 +219,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get()));
             textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get()));
             textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get()));
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.chunkradius", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
+            if (this.minerLogic.isChunkMode())
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.chunkradius", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
+            else
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
             if (this.minerLogic.isDone())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
             else if (this.minerLogic.isWorking())
@@ -363,14 +365,24 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
         if (!this.isActive()) {
             int currentRadius = this.minerLogic.getCurrentRadius();
-            if (currentRadius - CHUNK_LENGTH / 2 == 0)
-                this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
-            else
-                this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH / 2);
+            
+            if (this.minerLogic.isChunkMode()){
+                if (currentRadius - CHUNK_LENGTH <= 0)
+                    this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
+                else
+                    this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.chunkradius", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
+            } else {
+                if (currentRadius - CHUNK_LENGTH / 2 <= 0)
+                    this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
+                else
+                    this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH / 2);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius()));
+            }
 
             this.minerLogic.resetArea();
 
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius()));
+																																			 
         } else {
             playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"));
         }

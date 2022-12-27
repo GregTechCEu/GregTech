@@ -5366,6 +5366,7 @@ gregtech.multiblock.large_miner.vent=Вентиляция перекрыта!
 gregtech.multiblock.large_miner.steam=Нужен пар!
 gregtech.multiblock.large_combustion_engine.obstructed=Что-то мешает воздухозаборнику двигателя.
 gregtech.multiblock.large_miner.radius=Радиус: §a%d§r блоков
+gregtech.multiblock.large_miner.chunkradius=Радиус: §a%d§r чанков
 gregtech.multiblock.large_miner.errorradius=§cНевозможно изменить радиус во время работы!
 gregtech.multiblock.large_miner.needsfluid=Требуется буровой раствор
 gregtech.multiblock.pyrolyse_oven.speed=Скорость обработки: %s%%
