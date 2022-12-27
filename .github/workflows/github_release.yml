@@ -44,12 +44,12 @@ jobs:
         run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
 
       # exit CI early as a failure if creating this release clashes with the previous version
-      #- name: Check Build Versions
-      #  if: ${{ (steps.get_latest_tag.outputs.version) == format('v{0}', steps.get_current_version.outputs.version) }}
-      #  uses: actions/github-script@v6
-      #  with:
-      #    script: |
-      #      core.setFailed('A version bump from ${{ steps.get_latest_tag.outputs.latest }} is required!')
+      - name: Check Build Versions
+        if: ${{ (steps.get_latest_tag.outputs.version) == format('v{0}', steps.get_current_version.outputs.version) }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('A version bump from ${{ steps.get_latest_tag.outputs.latest }} is required!')
 
       - name: Execute Gradle build
         run: ./gradlew build
