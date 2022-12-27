@@ -55,7 +55,7 @@ jobs:
         run: ./gradlew build
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@master
+        uses: softprops/action-gh-release@v0.1.15
         with:
           tag_name: v${{ steps.get_current_version.outputs.version }}
           files: build/libs/*.jar
