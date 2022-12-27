@@ -53,11 +53,14 @@ jobs:
 
       - name: Execute Gradle build
         run: ./gradlew build
+        
+      - name: Test
+        run: echo v${{ steps.get_current_version.outputs.version }}
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v0.1.15
-        with:
-          tag_name: v${{ steps.get_current_version.outputs.version }}
-          files: build/libs/*.jar
-          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
-          generate_release_notes: true
+#      - name: Create GitHub Release
+#        uses: softprops/action-gh-release@v0.1.15
+#        with:
+#          tag_name: v${{ steps.get_current_version.outputs.version }}
+#          files: build/libs/*.jar
+#          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
+#          generate_release_notes: true
