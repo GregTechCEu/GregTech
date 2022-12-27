@@ -82,18 +82,18 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     private final MultiblockMinerLogic minerLogic;
 
-    public MetaTileEntityLargeMiner(ResourceLocation metaTileEntityId, int tier, int speed, int maximumChunkRadius, int fortune, Material material, int drillingFluidConsumePerTick) {
+    public MetaTileEntityLargeMiner(ResourceLocation metaTileEntityId, int tier, int speed, int maximumChunkDiameter, int fortune, Material material, int drillingFluidConsumePerTick) {
         super(metaTileEntityId);
         this.material = material;
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
         this.romanNumeralString = GTUtility.romanNumeralString(fortune);
-        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkRadius * CHUNK_LENGTH, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
+        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius() / CHUNK_LENGTH, this.minerLogic.getFortune(), getMaterial(), getDrillingFluidConsumePerTick());
+        return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius() * 2 / CHUNK_LENGTH, this.minerLogic.getFortune(), getMaterial(), getDrillingFluidConsumePerTick());
     }
 
     @Override
@@ -219,6 +219,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get()));
             textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get()));
             textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get()));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
             textList.add(new TextComponentTranslation("gregtech.machine.miner.chunkradius", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
             if (this.minerLogic.isDone())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
@@ -360,12 +361,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         if (getWorld().isRemote || !this.isStructureFormed())
             return true;
 
-        if (!this.minerLogic.isActive()) {
+        if (!this.isActive()) {
             int currentRadius = this.minerLogic.getCurrentRadius();
-            if (currentRadius - CHUNK_LENGTH == 0)
+            if (currentRadius - CHUNK_LENGTH / 2 == 0)
                 this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
             else
-                this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH);
+                this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH / 2);
 
             this.minerLogic.resetArea();
 

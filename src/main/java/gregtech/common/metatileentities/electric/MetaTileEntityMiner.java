@@ -193,7 +193,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         if (getWorld().isRemote)
             return true;
 
-        if (!this.minerLogic.isActive()) {
+        if (!this.isActive()) {
             int currentRadius = this.minerLogic.getCurrentRadius();
             if (currentRadius == 1)
                 this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
