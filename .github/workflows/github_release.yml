@@ -37,30 +37,27 @@ jobs:
 
       - name: Get Current Mod Version
         id: get_current_version
-        run: echo ::set-output name=version::$(echo "$(./gradlew getVersionFromJava --q | sed -E 's/1.12.2-|-.+//g')")
+        run: echo ::set-output name=version::$(echo "$(./gradlew getVersionFromJava --q | sed -E 's/1.12.2-|-.+//g')" > ver.txt && cat ver.txt)
 
       - name: Get Latest Tag
         id: get_latest_tag
         run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
 
       # exit CI early as a failure if creating this release clashes with the previous version
-      - name: Check Build Versions
-        if: ${{ (steps.get_latest_tag.outputs.version) == format('v{0}', steps.get_current_version.outputs.version) }}
-        uses: actions/github-script@v6
-        with:
-          script: |
-            core.setFailed('A version bump from ${{ steps.get_latest_tag.outputs.latest }} is required!')
+      #- name: Check Build Versions
+      #  if: ${{ (steps.get_latest_tag.outputs.version) == format('v{0}', steps.get_current_version.outputs.version) }}
+      #  uses: actions/github-script@v6
+      #  with:
+      #    script: |
+      #      core.setFailed('A version bump from ${{ steps.get_latest_tag.outputs.latest }} is required!')
 
       - name: Execute Gradle build
         run: ./gradlew build
-        
-      - name: Test
-        run: echo v${{ steps.get_current_version.outputs.version }}
 
-#      - name: Create GitHub Release
-#        uses: softprops/action-gh-release@v0.1.15
-#        with:
-#          tag_name: v${{ steps.get_current_version.outputs.version }}
-#          files: build/libs/*.jar
-#          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
-#          generate_release_notes: true
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: v${{ steps.get_current_version.outputs.version }}
+          files: build/libs/*.jar
+          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
+          generate_release_notes: true
