@@ -132,7 +132,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = GTValues.VA[GTUtility.getTierByVoltage(getEnergyTier())];
+        long energyToDrain = GTValues.VA[GTUtility.getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
