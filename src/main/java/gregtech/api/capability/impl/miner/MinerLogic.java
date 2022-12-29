@@ -191,6 +191,7 @@ public class MinerLogic {
                 this.isDone = true;
                 this.wasActiveAndNeedsUpdate = true;
                 this.setActive(false);
+                this.setWorkingEnabled(false);
             }
         }
     }
@@ -326,10 +327,11 @@ public class MinerLogic {
     }
 
     /**
-     * Recalculates the mining area and refills the block list
+     * Recalculates the mining area, refills the block list and restarts the miner, if it was done
      */
     public void resetArea() {
         initPos(metaTileEntity.getPos(), currentRadius);
+        this.isDone = false;
         blocksToMine.clear();
         checkBlocksToMine();
     }
