@@ -6,9 +6,7 @@ import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.util.EntityDamageUtil;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.common.covers.CoverShutter;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -125,14 +123,11 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
             if (cover != null) {
                 IFluidHandler capability = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
-                // Shutter covers return null capability when active, special check to prevent NPE
-                if (cover instanceof CoverShutter && capability == null) {
+                // Shutter covers return null capability when active, so check here to prevent NPE
+                if (capability == null) {
                     continue;
                 }
-                else if (capability == null) {
-                    GTLog.logger.error("Null capability when attempting to transfer fluids at location  {}", this.getPipePos());
-                }
-                pipeTank = capability == null ? pipeTank : capability;
+                pipeTank = capability;
 
             }
 
