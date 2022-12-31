@@ -85,6 +85,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Zinc, 1, Copper, 3)
                 .toolStats(8.0f, 3.0f, 152, 21)
+                .rotorStats(8.0f, 3.0f, 152)
                 .itemPipeProperties(2048, 1)
                 .fluidTemp(1160)
                 .build();
@@ -95,6 +96,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME, GENERATE_SMALL_GEAR, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Tin, 1, Copper, 3)
                 .toolStats(6.0f, 2.5f, 192, 21)
+                .rotorStats(6.0f, 2.5f, 192)
                 .fluidPipeProperties(1696, 20, true)
                 .fluidTemp(1357)
                 .build();
@@ -291,6 +293,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FRAME, GENERATE_GEAR)
                 .components(Iron, 2, Nickel, 1)
                 .toolStats(7.0f, 3.0f, 512, 21)
+                .rotorStats(7.0f, 3.0f, 512)
                 .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 3)
                 .fluidTemp(1916)
                 .build();
@@ -318,6 +321,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Magnesium, 1, Aluminium, 2)
                 .toolStats(6.0f, 2.0f, 256, 21)
+                .rotorStats(6.0f, 2.0f, 256)
                 .itemPipeProperties(1024, 2)
                 .fluidTemp(929)
                 .build();
@@ -397,6 +401,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Copper, 1, Silver, 4)
                 .toolStats(13.0f, 2.0f, 196, 33)
+                .rotorStats(13.0f, 2.0f, 196)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1700, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1258)
@@ -408,6 +413,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_RING)
                 .components(Copper, 1, Gold, 4)
                 .toolStats(14.0f, 2.0f, 152, 33)
+                .rotorStats(14.0f, 2.0f, 152)
                 .addDefaultEnchant(Enchantments.SMITE, 4)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1600, GasTier.LOW, VA[MV], 1000)
@@ -420,6 +426,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Gold, 1, Silver, 1, Copper, 3)
                 .toolStats(12.0f, 2.0f, 256, 21)
+                .rotorStats(12.0f, 2.0f, 256)
                 .addDefaultEnchant(Enchantments.SMITE, 2)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(2000, GasTier.LOW, VA[MV], 1000)
@@ -432,6 +439,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Bismuth, 1, Zinc, 1, Copper, 3)
                 .toolStats(8.0f, 3.0f, 256, 21)
+                .rotorStats(8.0f, 3.0f, 256)
                 .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 5)
                 .blastTemp(1100, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1036)
@@ -573,6 +581,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
                 .toolStats(7.0f, 4.0f, 480, 33)
+                .rotorStats(7.0f, 4.0f, 480)
                 .fluidPipeProperties(2428, 75, true, true, true, false)
                 .blastTemp(1700, GasTier.LOW, VA[HV], 1100)
                 .fluidTemp(2011)
@@ -585,6 +594,7 @@ public class FirstDegreeMaterials {
                         GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.0f, 512, 21)
+                .rotorStats(6.0f, 3.0f, 512)
                 .fluidPipeProperties(1855, 75, true)
                 .cableProperties(GTValues.V[4], 2, 2)
                 .blastTemp(1000, null, VA[MV], 800) // no gas tier for steel
@@ -637,6 +647,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1)
                 .toolStats(9.0f, 4.0f, 2048, 33)
+                .rotorStats(9.0f, 4.0f, 2048)
                 .itemPipeProperties(128, 16)
                 .blastTemp(2700, GasTier.MID, VA[HV], 1300)
                 .fluidTemp(1980)
@@ -672,6 +683,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.5f, 384, 21)
+                .rotorStats(6.0f, 3.5f, 384)
                 .fluidTemp(2011)
                 .build();
         Iron.getProperty(PropertyKey.INGOT).setSmeltingInto(WroughtIron);
@@ -749,6 +761,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_ROTOR, GENERATE_ROUND, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Iridium, 3, Osmium, 1)
                 .toolStats(9.0f, 3.0f, 3152, 21)
+                .rotorStats(9.0f, 3.0f, 3152)
                 .itemPipeProperties(64, 32)
                 .blastTemp(4500, GasTier.HIGH, VA[LuV], 900)
                 .fluidTemp(3012)
@@ -1059,6 +1072,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Tungsten, 1, Carbon, 1)
                 .toolStats(12.0f, 4.0f, 1280, 21)
+                .rotorStats(12.0f, 4.0f, 1280)
                 .fluidPipeProperties(3837, 200, true)
                 .blastTemp(3058, GasTier.MID, VA[HV], 1500)
                 .build();

@@ -117,6 +117,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(8.0f, 4.0f, 2560, 21)
+                .rotorStats(8.0f, 4.0f, 2560)
                 .fluidPipeProperties(3587, 225, true)
                 .cableProperties(GTValues.V[5], 3, 2)
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
@@ -128,6 +129,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
                 .toolStats(8.0f, 2.0f, 256, 21)
+                .rotorStats(8.0f, 2.0f, 256)
                 .itemPipeProperties(2048, 1)
                 .fluidTemp(1202)
                 .build();
@@ -279,6 +281,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
+                .rotorStats(7.0f, 3.0f, 1920)
                 .fluidPipeProperties(2073, 50, true, true, false, false)
                 .blastTemp(1453, GasTier.LOW)
                 .fluidTemp(2073)
@@ -318,6 +321,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_DENSE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
+                .rotorStats(8.0f, 5.0f, 5120)
                 .cableProperties(GTValues.V[8], 2, 4)
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
                 .build();
@@ -366,7 +370,7 @@ public class SecondDegreeMaterials {
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .toolStats(6, 4, 80, 10, true)
+                .toolStats(6.0f, 4.0f, 80, 10, true)
                 .addDefaultEnchant(Enchantments.FIRE_ASPECT, 2)
                 .build();
 
@@ -463,6 +467,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
+                .rotorStats(12.0f, 3.0f, 1024)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
                 .build();
 

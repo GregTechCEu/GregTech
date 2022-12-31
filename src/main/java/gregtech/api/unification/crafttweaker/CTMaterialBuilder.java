@@ -152,6 +152,11 @@ public class CTMaterialBuilder {
         backingBuilder.toolStats(speed, damage, durability, enchantability);
         return this;
     }
+    @ZenMethod
+    public CTMaterialBuilder rotorStats(float speed, float damage, int durability) {
+        backingBuilder.rotorStats(speed, damage, durability);
+        return this;
+    }
 
     @ZenMethod
     public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride, @Optional int durationOverride) {
