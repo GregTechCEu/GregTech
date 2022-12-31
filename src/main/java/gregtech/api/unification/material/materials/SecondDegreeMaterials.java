@@ -5,6 +5,7 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
+import net.minecraft.init.Enchantments;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -366,6 +367,7 @@ public class SecondDegreeMaterials {
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(6, 4, 80, 10, true)
+                .addDefaultEnchant(Enchantments.FIRE_ASPECT, 2)
                 .build();
 
         Air = new Material.Builder(2050, "air")

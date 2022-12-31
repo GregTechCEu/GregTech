@@ -1,5 +1,6 @@
 package gregtech.asm;
 
+import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
@@ -11,6 +12,9 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
 
@@ -122,6 +126,19 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 } else {
                     classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
                 }
+                return classWriter.toByteArray();
+            }
+            case RenderItemVisitor.TARGET_CLASS_NAME: {
+                if (Loader.isModLoaded(GTValues.MODID_ECORE)) {
+                    return basicClass;
+                }
+                ClassNode classNode = new ClassNode();
+                ClassReader classReader = new ClassReader(basicClass);
+                classReader.accept(classNode, 0);
+                Iterator<MethodNode> methods = classNode.methods.iterator();
+                RenderItemVisitor.transform(methods);
+                ClassWriter classWriter = new ClassWriter(0);
+                classNode.accept(classWriter);
                 return classWriter.toByteArray();
             }
         }

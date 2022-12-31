@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -21,6 +22,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.ItemBlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
@@ -198,6 +200,11 @@ public class CommonProxy {
             registry.register(item);
             item.registerSubItems();
         }
+
+        for (IGTTool tool : ToolItems.getAllTools()) {
+            registry.register(tool.get());
+        }
+
         GTRecipeManager.preLoad();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
@@ -271,6 +278,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering ore dictionary...");
 
         MetaItems.registerOreDict();
+        ToolItems.registerOreDict();
         MetaBlocks.registerOreDict();
         OreDictionaryLoader.init();
         MaterialInfoLoader.init();

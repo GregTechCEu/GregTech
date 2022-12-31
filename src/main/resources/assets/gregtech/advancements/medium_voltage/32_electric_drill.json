@@ -7,8 +7,7 @@
       "translate": "gregtech.advancement.medium_voltage.32_electric_drill.name"
     },
     "icon": {
-      "item": "gregtech:meta_tool",
-      "data": 23
+      "item": "gregtech:drill_mv"
     }
   },
   "criteria": {
@@ -18,7 +17,7 @@
         "items": [
           {
             "type": "forge:ore_dict",
-            "ore": "craftingToolMiningDrill"
+            "ore": "craftingToolDrill"
           }
         ]
       }

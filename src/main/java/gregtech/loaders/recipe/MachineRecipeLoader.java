@@ -110,6 +110,7 @@ public class MachineRecipeLoader {
         }
 
         for (MetaItem<?>.MetaValueItem shapeExtruder : SHAPE_EXTRUDERS) {
+            if (shapeExtruder == null) continue;
             FORMING_PRESS_RECIPES.recipeBuilder()
                     .duration(120).EUt(22)
                     .notConsumable(shapeExtruder.getStackForm())

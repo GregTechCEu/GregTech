@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.DelayedStateBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -18,7 +19,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -46,7 +50,7 @@ public class BlockSurfaceRock extends DelayedStateBlock {
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        return "shovel";
+        return ToolClasses.SHOVEL;
     }
 
     @Nonnull

@@ -112,6 +112,7 @@ public class GTValues {
             MODID_CTM = "ctm",
             MODID_CC = "cubicchunks",
             MODID_AR = "advancedrocketry",
+            MODID_ECORE = "endercore",
             MODID_EIO = "enderio",
             MODID_BC = "buildcraftcore",
             MODID_COFH = "cofhcore",
