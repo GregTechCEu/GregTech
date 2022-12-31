@@ -145,7 +145,7 @@ public class OrePrefix {
     // made of 4 Ingots.
     public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 5 Ingots.
-    public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
+    public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasRotorProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
 
     public static final OrePrefix paneGlass = new OrePrefix("paneGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
     public static final OrePrefix blockGlass = new OrePrefix("blockGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
@@ -223,6 +223,7 @@ public class OrePrefix {
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
         public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
         public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
+        public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
     }
 
     static {

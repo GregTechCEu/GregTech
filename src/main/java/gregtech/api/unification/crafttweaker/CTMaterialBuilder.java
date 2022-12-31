@@ -144,7 +144,6 @@ public class CTMaterialBuilder {
         return this;
     }
 
-
     @ZenMethod
     public CTMaterialBuilder toolStats(float speed, float damage, int durability, @Optional int enchantability) {
         if (enchantability == 0) {

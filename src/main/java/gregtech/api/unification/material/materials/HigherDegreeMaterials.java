@@ -38,7 +38,6 @@ public class HigherDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_GEAR)
                 .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(7.0f, 4.5f, 896, 21)
-                .rotorStats(7.0f, 4.5f, 896)
                 .blastTemp(1300, GasTier.LOW, VA[HV], 1000)
                 .build();
 
@@ -48,7 +47,6 @@ public class HigherDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
                 .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(7.5f, 5.0f, 1024, 21)
-                .rotorStats(7.5f, 5.0f, 1024)
                 .blastTemp(1400, GasTier.LOW, VA[HV], 1000)
                 .build();
 

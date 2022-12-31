@@ -169,7 +169,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL)
                 .element(Elements.Co)
                 .toolStats(10.0f, 3.0f, 256, 21)
-                .rotorStats(10.0f, 3.0f, 256)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
                 .fluidTemp(1768)
@@ -531,7 +530,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
                 .toolStats(8.0f, 2.0f, 512, 33)
-                .rotorStats(8.0f, 2.0f, 512)
                 .blastTemp(1828, GasTier.LOW, VA[HV], 900)
                 .build();
 
@@ -733,7 +731,6 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Th)
                 .toolStats(6.0f, 2.0f, 512, 33)
-                .rotorStats(6.0f, 2.0f, 512)
                 .fluidTemp(2023)
                 .build();
 
@@ -793,7 +790,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL)
                 .element(Elements.U238)
                 .toolStats(6.0f, 3.0f, 512, 21)
-                .rotorStats(6.0f, 3.0f, 512)
                 .fluidTemp(1405)
                 .build();
 
@@ -803,7 +799,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL)
                 .element(Elements.U235)
                 .toolStats(6.0f, 3.0f, 512, 33)
-                .rotorStats(6.0f, 3.0f, 512)
                 .fluidTemp(1405)
                 .build();
 
@@ -863,7 +858,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
                 .toolStats(6.0f, 4.0f, 1280, 21)
-                .rotorStats(6.0f, 4.0f, 1280)
                 .blastTemp(7000, GasTier.HIGH, VA[IV], 1000)
                 .build();
 
@@ -903,7 +897,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Dr)
                 .toolStats(16.0f, 5.0f, 5120, 21)
-                .rotorStats(16.0f, 5.0f, 5120)
                 .fluidPipeProperties(9625, 500, true, true, true, true)
                 .fluidTemp(7500)
                 .build();

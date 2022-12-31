@@ -98,7 +98,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .toolStats(6.5f, 6.5f, 768, 21)
-                .rotorStats(6.5f, 6.5f, 768)
                 .cableProperties(GTValues.V[4], 3, 2)
                 .blastTemp(1200, GasTier.LOW)
                 .build();
@@ -109,7 +108,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL)
                 .components(Steel, 1)
                 .toolStats(8.0f, 5.0f, 1280, 21)
-                .rotorStats(8.0f, 5.0f, 1280)
                 .blastTemp(1500, GasTier.LOW)
                 .build();
 
