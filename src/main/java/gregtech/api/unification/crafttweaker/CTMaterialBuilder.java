@@ -144,12 +144,18 @@ public class CTMaterialBuilder {
         return this;
     }
 
+
     @ZenMethod
     public CTMaterialBuilder toolStats(float speed, float damage, int durability, @Optional int enchantability) {
         if (enchantability == 0) {
             enchantability = 21; // Lowest enchantability by default
         }
         backingBuilder.toolStats(speed, damage, durability, enchantability);
+        return this;
+    }
+    @ZenMethod
+    public CTMaterialBuilder rotorStats(float speed, float damage, int durability) {
+        backingBuilder.rotorStats(speed, damage, durability);
         return this;
     }
 

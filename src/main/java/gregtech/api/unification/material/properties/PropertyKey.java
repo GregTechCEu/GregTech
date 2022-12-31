@@ -13,6 +13,7 @@ public class PropertyKey<T extends IMaterialProperty<T>> {
     public static final PropertyKey<OreProperty> ORE = new PropertyKey<>("ore", OreProperty.class);
     public static final PropertyKey<PlasmaProperty> PLASMA = new PropertyKey<>("plasma", PlasmaProperty.class);
     public static final PropertyKey<ToolProperty> TOOL = new PropertyKey<>("tool", ToolProperty.class);
+    public static final PropertyKey<RotorProperty> ROTOR = new PropertyKey<>("rotor", RotorProperty.class);
     public static final PropertyKey<WireProperties> WIRE = new PropertyKey<>("wire", WireProperties.class);
 
     private final String key;

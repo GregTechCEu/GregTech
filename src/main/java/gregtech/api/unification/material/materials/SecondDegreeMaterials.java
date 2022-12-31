@@ -49,6 +49,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
                 .toolStats(7.5f, 3.0f, 312, 33)
+                .rotorStats(7.5f, 3.0f, 312)
                 .build();
 
         Opal = new Material.Builder(2005, "opal")
@@ -57,6 +58,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(7.5f, 3.0f, 312, 15)
+                .rotorStats(7.5f, 3.0f, 312)
                 .build();
 
         Amethyst = new Material.Builder(2006, "amethyst")
@@ -65,6 +67,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .toolStats(7.5f, 3.0f, 312, 33)
+                .rotorStats(7.5f, 3.0f, 312)
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
@@ -98,6 +101,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .toolStats(6.5f, 6.5f, 768, 21)
+                .rotorStats(6.5f, 6.5f, 768)
                 .cableProperties(GTValues.V[4], 3, 2)
                 .blastTemp(1200, GasTier.LOW)
                 .build();
@@ -108,6 +112,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL)
                 .components(Steel, 1)
                 .toolStats(8.0f, 5.0f, 1280, 21)
+                .rotorStats(8.0f, 5.0f, 1280)
                 .blastTemp(1500, GasTier.LOW)
                 .build();
 
@@ -117,6 +122,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(8.0f, 4.0f, 2560, 21)
+                .rotorStats(8.0f, 4.0f, 2560)
                 .fluidPipeProperties(3587, 225, true)
                 .cableProperties(GTValues.V[5], 3, 2)
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
@@ -128,6 +134,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
                 .toolStats(8.0f, 2.0f, 256, 21)
+                .rotorStats(8.0f, 2.0f, 256)
                 .itemPipeProperties(2048, 1)
                 .fluidTemp(1202)
                 .build();
@@ -145,6 +152,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .toolStats(7.5f, 3.0f, 156, 33)
+                .rotorStats(7.5f, 3.0f, 156)
                 .build();
 
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
@@ -153,6 +161,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .toolStats(7.5f, 3.0f, 156, 33)
+                .rotorStats(7.5f, 3.0f, 156)
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
@@ -279,6 +288,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
+                .rotorStats(7.0f, 3.0f, 1920)
                 .fluidPipeProperties(2073, 50, true, true, false, false)
                 .blastTemp(1453, GasTier.LOW)
                 .fluidTemp(2073)
@@ -318,6 +328,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_DENSE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
+                .rotorStats(8.0f, 5.0f, 5120)
                 .cableProperties(GTValues.V[8], 2, 4)
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
                 .build();
@@ -366,7 +377,8 @@ public class SecondDegreeMaterials {
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .toolStats(6, 4, 80, 10, true)
+                .toolStats(6.0f, 4.0f, 80, 10, true)
+                .rotorStats(6.0f, 4.0f, 80)
                 .addDefaultEnchant(Enchantments.FIRE_ASPECT, 2)
                 .build();
 
@@ -463,6 +475,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
+                .rotorStats(12.0f, 3.0f, 1024)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
                 .build();
 
