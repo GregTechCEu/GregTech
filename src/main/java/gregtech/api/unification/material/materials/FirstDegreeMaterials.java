@@ -70,7 +70,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
                 .toolStats(7.0f, 3.0f, 256, 15)
-                .rotorStats(7.0f, 3.0f, 256)
                 .build();
 
         Bone = new Material.Builder(258, "bone")
@@ -212,7 +211,6 @@ public class FirstDegreeMaterials {
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
                 .toolStats(8.0f, 3.0f, 1280, 15)
-                .rotorStats(8.0f, 3.0f, 1280)
                 .build();
 
         Electrum = new Material.Builder(277, "electrum")
@@ -231,7 +229,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .toolStats(10.0f, 2.0f, 368, 15)
-                .rotorStats(10.0f, 2.0f, 368)
                 .build();
 
         Galena = new Material.Builder(279, "galena")
@@ -253,7 +250,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(8.0f, 3.0f, 368, 15)
-                .rotorStats(8.0f, 3.0f, 368)
                 .build();
 
         Grossular = new Material.Builder(282, "grossular")
@@ -501,7 +497,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
                 .toolStats(8.5f, 3.0f, 256, 33)
-                .rotorStats(8.5f, 3.0f, 256)
                 .build();
 
         Salt = new Material.Builder(312, "salt")
@@ -524,7 +519,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256, 15)
-                .rotorStats(7.5f, 4.0f, 256)
                 .build();
 
         Scheelite = new Material.Builder(315, "scheelite")
@@ -637,7 +631,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
                 .toolStats(7.0f, 2.0f, 256, 15)
-                .rotorStats(7.0f, 2.0f, 256)
                 .build();
 
         Tungstate = new Material.Builder(330, "tungstate")

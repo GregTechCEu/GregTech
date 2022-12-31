@@ -60,6 +60,6 @@ public class RotorProperty implements IMaterialProperty<RotorProperty> {
 
     @Override
     public void verifyProperty(@Nonnull MaterialProperties properties) {
-        if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
+        properties.ensureSet(PropertyKey.INGOT, true);
     }
 }

@@ -49,7 +49,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
                 .toolStats(7.5f, 3.0f, 312, 33)
-                .rotorStats(7.5f, 3.0f, 312)
                 .build();
 
         Opal = new Material.Builder(2005, "opal")
@@ -58,7 +57,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(7.5f, 3.0f, 312, 15)
-                .rotorStats(7.5f, 3.0f, 312)
                 .build();
 
         Amethyst = new Material.Builder(2006, "amethyst")
@@ -67,7 +65,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .toolStats(7.5f, 3.0f, 312, 33)
-                .rotorStats(7.5f, 3.0f, 312)
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
@@ -152,7 +149,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .toolStats(7.5f, 3.0f, 156, 33)
-                .rotorStats(7.5f, 3.0f, 156)
                 .build();
 
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
@@ -161,7 +157,6 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .toolStats(7.5f, 3.0f, 156, 33)
-                .rotorStats(7.5f, 3.0f, 156)
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
@@ -378,7 +373,6 @@ public class SecondDegreeMaterials {
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(6.0f, 4.0f, 80, 10, true)
-                .rotorStats(6.0f, 4.0f, 80)
                 .addDefaultEnchant(Enchantments.FIRE_ASPECT, 2)
                 .build();
 
