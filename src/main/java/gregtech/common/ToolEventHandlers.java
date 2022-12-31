@@ -86,40 +86,6 @@ public class ToolEventHandlers {
     }
 
     /**
-     * Handles dynamic AoE break speed
-     */
-    // Fixme: Under Construction
-    /*
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
-        ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
-        Item item = stack.getItem();
-        if (item instanceof IGTTool) {
-            EntityPlayer player = event.getEntityPlayer();
-            if (!player.isSneaking()) {
-                World world = player.world;
-                if (!ThreadContext.containsKey("GT_AoE_BreakSpeed")) {
-                    Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, world, player);
-                    if (!validPositions.isEmpty()) {
-                        float newSpeed = event.getNewSpeed(); // Take in consideration of higher prioritized event listeners
-                        ThreadContext.put("GT_AoE_BreakSpeed", "");
-                        for (BlockPos pos : validPositions) {
-                            float speed = player.getDigSpeed(world.getBlockState(pos), pos);
-                            if (speed < newSpeed) {
-                                newSpeed = speed;
-                            }
-                        }
-                        ThreadContext.remove("GT_AoE_BreakSpeed");
-                        event.setNewSpeed(newSpeed);
-                    }
-                }
-            }
-        }
-    }
-     */
-
-
-    /**
      * Handles saws harvesting ice without leaving water behind
      * Handles mined blocks teleporting straight into inventory
      * Handles drop conversion when a hammer tool (or tool with hard hammer enchantment) is used

@@ -34,7 +34,7 @@ public interface IToolBehavior {
     }
 
     /**
-     * Called before a block is broken. Return true to prevent default block harvesting.
+     * Called before a block is broken.
      * <p>
      * This is called on only the server side!
      *
