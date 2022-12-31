@@ -142,7 +142,7 @@ public class ToolItems {
                         .aoe(2, 2, 2)
                         .behaviors(new HoeGroundBehavior(), new HarvestCropsBehavior()).canApplyEnchantment(EnumEnchantmentType.DIGGER))
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
-        KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
+        KNIFE = register(ItemGTSword.Builder.of(GTValues.MODID, "knife")
                 .toolStats(b -> b.crafting().attacking())
                 .oreDict(ToolOreDicts.craftingToolKnife)
                 .symbol('k')
