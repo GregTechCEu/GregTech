@@ -23,7 +23,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     /**
      * Attack speed of tools made from this Material
      * <p>
-     * Default: 1.0F
+     * Default: 0.0F
      */
     private float toolAttackSpeed;
 
@@ -53,13 +53,10 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      */
     private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
 
-    public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
-        this(toolSpeed, toolAttackDamage, 1.0f, toolDurability, toolEnchantability, ignoreCraftingTools);
-    }
-
     public ToolProperty(float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
+        this.toolAttackSpeed = toolAttackSpeed;
         this.toolDurability = toolDurability;
         this.toolEnchantability = toolEnchantability;
         this.ignoreCraftingTools = ignoreCraftingTools;
@@ -69,7 +66,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      * Default values constructor.
      */
     public ToolProperty() {
-        this(1.0f, 1.0f, 1.0f, 100, 10, false);
+        this(1.0f, 1.0f, 0.0f, 100, 10, false);
     }
 
     public float getToolSpeed() {

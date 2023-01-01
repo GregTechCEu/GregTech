@@ -91,6 +91,16 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
+    /**
+     * Sets the attack to the lowest possible value.
+     * Attack in-game will always result in 0 no matter the
+     * material stats, which MC will not see as a valid weapon.
+     */
+    public ToolDefinitionBuilder cannotAttack() {
+        this.attackDamage = Integer.MIN_VALUE;
+        return this;
+    }
+
     public ToolDefinitionBuilder baseEfficiency(float baseEfficiency) {
         this.baseEfficiency = baseEfficiency;
         return this;

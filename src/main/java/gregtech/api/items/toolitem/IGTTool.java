@@ -36,6 +36,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -122,6 +123,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         NBTTagCompound toolTag = getToolTag(stack);
 
         stack.getTagCompound().setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
+
+        // don't show the normal vanilla damage and attack speed tooltips,
+        // we handle those ourselves
+        // stack.getTagCompound().setInteger(HIDE_FLAGS, 2);
 
         // Set Material
         toolTag.setString(MATERIAL_KEY, material.toString());
@@ -403,7 +408,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Multimap<String, AttributeModifier> multimap = HashMultimap.create();
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
             multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getTotalAttackDamage(stack), 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", getTotalAttackSpeed(stack), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", Math.max(-3.9D, getTotalAttackSpeed(stack)), 0));
         }
         return multimap;
     }
@@ -589,7 +594,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
             case BREAKABLE:
             case ALL: {
-                return true;
+                // don't allow mending on electric tools
+                return !(isElectric() && enchantment instanceof EnchantmentMending);
             }
         }
 

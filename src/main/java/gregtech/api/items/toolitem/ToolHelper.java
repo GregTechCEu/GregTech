@@ -67,6 +67,7 @@ public final class ToolHelper {
 
     // Vanilla keys
     public static final String UNBREAKABLE_KEY = "Unbreakable";
+    public static final String HIDE_FLAGS = "HideFlags";
 
     // Misc keys
     public static final String DISALLOW_CONTAINER_ITEM_KEY = "DisallowContainerItem";

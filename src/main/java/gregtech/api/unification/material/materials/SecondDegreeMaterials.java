@@ -366,7 +366,7 @@ public class SecondDegreeMaterials {
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .toolStats(0.0f, 5.0f, 64, 5, true)
+                .toolStats(0.0f, 5.0f, 0.0f, 64, 5, true)
                 .addDefaultEnchant(Enchantments.FIRE_ASPECT, 2)
                 .build();
 
