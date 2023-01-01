@@ -48,7 +48,6 @@ public class SecondDegreeMaterials {
                 .color(0x96FF96).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
-                .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
 
         Opal = new Material.Builder(2005, "opal")
@@ -56,7 +55,6 @@ public class SecondDegreeMaterials {
                 .color(0x0000FF).iconSet(OPAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .toolStats(7.5f, 3.0f, 312, 15)
                 .build();
 
         Amethyst = new Material.Builder(2006, "amethyst")
@@ -64,7 +62,6 @@ public class SecondDegreeMaterials {
                 .color(0xD232D2).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(SiliconDioxide, 4, Iron, 1)
-                .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
@@ -97,7 +94,6 @@ public class SecondDegreeMaterials {
                 .color(0x646464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
-                .toolStats(6.5f, 6.5f, 768, 21)
                 .cableProperties(GTValues.V[4], 3, 2)
                 .blastTemp(1200, GasTier.LOW)
                 .build();
@@ -146,7 +142,6 @@ public class SecondDegreeMaterials {
                 .color(0xC85050).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
-                .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
 
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
@@ -154,7 +149,6 @@ public class SecondDegreeMaterials {
                 .color(0xC8C850).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
-                .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
@@ -466,7 +460,6 @@ public class SecondDegreeMaterials {
                 .color(0xDAC5C5).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .components(Palladium, 3, Rhodium, 1)
-                .toolStats(12.0f, 3.0f, 1024, 33)
                 .rotorStats(12.0f, 3.0f, 1024)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
                 .build();

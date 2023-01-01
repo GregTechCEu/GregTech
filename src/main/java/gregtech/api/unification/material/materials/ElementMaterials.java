@@ -156,7 +156,6 @@ public class ElementMaterials {
                 .color(0xEAC4D8).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_ROTOR)
                 .element(Elements.Cr)
-                .toolStats(12.0f, 3.0f, 512, 33)
                 .rotorStats(12.0f, 3.0f, 512)
                 .fluidPipeProperties(2180, 35, true, true, false, false)
                 .blastTemp(1700, GasTier.LOW)
@@ -168,7 +167,6 @@ public class ElementMaterials {
                 .color(0x5050FA).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.Co)
-                .toolStats(10.0f, 3.0f, 256, 21)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
                 .fluidTemp(1768)
@@ -333,7 +331,6 @@ public class ElementMaterials {
                 .color(0xA1E4E4).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Ir)
-                .toolStats(7.0f, 3.0f, 2560, 21)
                 .rotorStats(7.0f, 3.0f, 2560)
                 .fluidPipeProperties(3398, 250, true, false, true, false)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1100)
@@ -415,7 +412,6 @@ public class ElementMaterials {
                 .color(0xCDE1B9)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .element(Elements.Mn)
-                .toolStats(7.0f, 2.0f, 512, 21)
                 .rotorStats(7.0f, 2.0f, 512)
                 .fluidTemp(1519)
                 .build();
@@ -436,7 +432,6 @@ public class ElementMaterials {
                 .color(0xB4B4DC).iconSet(SHINY)
                 .element(Elements.Mo)
                 .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW)
-                .toolStats(7.0f, 2.0f, 512, 33)
                 .rotorStats(7.0f, 2.0f, 512)
                 .fluidTemp(2896)
                 .build();
@@ -451,7 +446,6 @@ public class ElementMaterials {
                 .color(0x646464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
-                .toolStats(7.0f, 2.0f, 512, 21)
                 .rotorStats(7.0f, 2.0f, 512)
                 .blastTemp(1297, GasTier.MID)
                 .build();
@@ -510,7 +504,6 @@ public class ElementMaterials {
                 .color(0x3232FF).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL)
                 .element(Elements.Os)
-                .toolStats(16.0f, 4.0f, 1280, 21)
                 .rotorStats(16.0f, 4.0f, 1280)
                 .cableProperties(GTValues.V[6], 4, 2)
                 .itemPipeProperties(256, 8.0f)
@@ -529,7 +522,6 @@ public class ElementMaterials {
                 .color(0x808080).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
-                .toolStats(8.0f, 2.0f, 512, 33)
                 .blastTemp(1828, GasTier.LOW, VA[HV], 900)
                 .build();
 
@@ -730,7 +722,6 @@ public class ElementMaterials {
                 .color(0x001E00).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Th)
-                .toolStats(6.0f, 2.0f, 512, 33)
                 .fluidTemp(2023)
                 .build();
 
@@ -776,7 +767,6 @@ public class ElementMaterials {
                 .color(0x323232).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.W)
-                .toolStats(7.0f, 3.0f, 2560, 21)
                 .rotorStats(7.0f, 3.0f, 2560)
                 .cableProperties(GTValues.V[5], 2, 2)
                 .fluidPipeProperties(4618, 50, true, true, false, true)
@@ -789,7 +779,6 @@ public class ElementMaterials {
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.U238)
-                .toolStats(6.0f, 3.0f, 512, 21)
                 .fluidTemp(1405)
                 .build();
 
@@ -798,7 +787,6 @@ public class ElementMaterials {
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(EXT_METAL)
                 .element(Elements.U235)
-                .toolStats(6.0f, 3.0f, 512, 33)
                 .fluidTemp(1405)
                 .build();
 
@@ -845,7 +833,6 @@ public class ElementMaterials {
                 .color(0x323232, false).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .element(Elements.Nq)
-                .toolStats(6.0f, 4.0f, 1280, 21)
                 .rotorStats(6.0f, 4.0f, 1280)
                 .cableProperties(GTValues.V[7], 2, 2)
                 .fluidPipeProperties(3776, 200, true, false, true, true)
@@ -857,7 +844,6 @@ public class ElementMaterials {
                 .color(0x3C3C3C, false).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
-                .toolStats(6.0f, 4.0f, 1280, 21)
                 .blastTemp(7000, GasTier.HIGH, VA[IV], 1000)
                 .build();
 
@@ -886,7 +872,6 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SMALL_GEAR, GENERATE_ROUND, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Tr)
                 .cableProperties(GTValues.V[8], 1, 8)
-                .toolStats(20.0f, 6.0f, 10240, 21)
                 .rotorStats(20.0f, 6.0f, 10240)
                 .fluidTemp(25000)
                 .build();
