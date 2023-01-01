@@ -1,6 +1,10 @@
 package gregtech.api.damagesources;
 
+import gregtech.api.items.toolitem.IGTTool;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 
 public class DamageSources {
 
@@ -38,5 +42,14 @@ public class DamageSources {
 
     public static DamageSource getTurbineDamage() {
         return TURBINE;
+    }
+
+    public static DamageSource getPlayerDamage(EntityPlayer source) {
+        ItemStack stack = source.getHeldItemMainhand();
+        if (stack != ItemStack.EMPTY && stack.getItem() instanceof IGTTool) {
+            IGTTool tool = (IGTTool) stack.getItem();
+            return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getId()));
+        }
+        return new EntityDamageSource("player", source);
     }
 }

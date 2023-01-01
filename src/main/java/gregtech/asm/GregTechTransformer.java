@@ -148,6 +148,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 RecipeRepairItemVisitor.handleClassNode(classNode).accept(classWriter);
                 return classWriter.toByteArray();
             }
+            case DamageSourceVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, DamageSourceVisitor.TARGET_METHOD, DamageSourceVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
         }
         return basicClass;
     }
