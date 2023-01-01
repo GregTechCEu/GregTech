@@ -269,7 +269,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
     @Override
     public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
-        return definition$canApplyAtEnchantingTable(stack, enchantment) || super.canApplyAtEnchantingTable(stack, enchantment);
+        return definition$canApplyAtEnchantingTable(stack, enchantment);
     }
 
     @Override

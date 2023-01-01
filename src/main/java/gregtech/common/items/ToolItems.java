@@ -60,7 +60,7 @@ public class ToolItems {
                         .toolStats(b -> b.blockBreaking().attacking())
                         .toolClasses(ToolClasses.SWORD));
         PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
-                .toolStats(b -> b.blockBreaking().attacking().behaviors(new TorchPlaceBehavior()))
+                .toolStats(b -> b.blockBreaking().behaviors(new TorchPlaceBehavior()))
                 .toolClasses(ToolClasses.PICKAXE));
         SHOVEL = register(ItemGTTool.Builder.of(GTValues.MODID, "shovel")
                 .toolStats(b -> b.blockBreaking().behaviors(new GrassPathBehavior()))
@@ -74,7 +74,7 @@ public class ToolItems {
                 .toolStats(b -> b.behaviors(new HoeGroundBehavior()))
                 .toolClasses(ToolClasses.HOE));
         SAW = register(ItemGTTool.Builder.of(GTValues.MODID, "saw")
-                .toolStats(b -> b.attacking().crafting().behaviors(new HarvestIceBehavior()))
+                .toolStats(b -> b.crafting().behaviors(new HarvestIceBehavior()))
                 .oreDict(ToolOreDicts.craftingToolSaw)
                 .symbol('s')
                 .toolClasses(ToolClasses.SAW));
