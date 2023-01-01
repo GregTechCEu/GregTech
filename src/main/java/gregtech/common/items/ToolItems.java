@@ -244,13 +244,13 @@ public class ToolItems {
                 .electric(GTValues.LV));
     }
 
-    private static IGTTool register(@Nonnull ToolBuilder<?> builder) {
+    public static IGTTool register(@Nonnull ToolBuilder<?> builder) {
         IGTTool tool = builder.build();
         TOOLS.add(tool);
         return tool;
     }
 
-    private static IGTTool register(@Nonnull IGTTool tool) {
+    public static IGTTool register(@Nonnull IGTTool tool) {
         TOOLS.add(tool);
         return tool;
     }
