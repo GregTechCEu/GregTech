@@ -206,6 +206,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return toolProperty == null ? 0F : toolProperty.getToolAttackDamage();
     }
 
+    default float getMaterialAttackSpeed(ItemStack stack) {
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0F : toolProperty.getToolAttackSpeed();
+    }
+
     default int getMaterialDurability(ItemStack stack) {
         ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolDurability();
@@ -259,6 +264,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         float attackDamage = getMaterialAttackDamage(stack) + getToolStats().getBaseDamage(stack);
         toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
         return attackDamage;
+    }
+
+    default float getTotalAttackSpeed(ItemStack stack) {
+        NBTTagCompound toolTag = getToolTag(stack);
+        if (toolTag.hasKey(ATTACK_SPEED_KEY, Constants.NBT.TAG_FLOAT)) {
+            return toolTag.getFloat(ATTACK_SPEED_KEY);
+        }
+        float attackSpeed = getMaterialAttackSpeed(stack) + getToolStats().getAttackSpeed(stack);
+        toolTag.setFloat(ATTACK_SPEED_KEY, attackSpeed);
+        return attackSpeed;
     }
 
     default int getTotalMaxDurability(ItemStack stack) {
@@ -388,7 +403,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Multimap<String, AttributeModifier> multimap = HashMultimap.create();
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
             multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getTotalAttackDamage(stack), 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", getToolStats().getAttackSpeed(stack), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", getTotalAttackSpeed(stack), 0));
         }
         return multimap;
     }

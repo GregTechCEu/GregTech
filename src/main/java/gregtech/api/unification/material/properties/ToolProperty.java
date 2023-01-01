@@ -9,28 +9,35 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     /**
      * Speed of tools made from this Material.
      * <p>
-     * Default:
+     * Default: 1.0F
      */
     private float toolSpeed;
 
     /**
      * Attack damage of tools made from this Material
      * <p>
-     * Default:
+     * Default: 1.0F
      */
     private float toolAttackDamage;
 
     /**
+     * Attack speed of tools made from this Material
+     * <p>
+     * Default: 1.0F
+     */
+    private float toolAttackSpeed;
+
+    /**
      * Durability of tools made from this Material.
      * <p>
-     * Default:
+     * Default: 100
      */
     private int toolDurability;
 
     /**
      * Enchantability of tools made from this Material.
      * <p>
-     * Default:
+     * Default: 10
      */
     private int toolEnchantability;
 
@@ -47,6 +54,10 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
 
     public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
+        this(toolSpeed, toolAttackDamage, 1.0f, toolDurability, toolEnchantability, ignoreCraftingTools);
+    }
+
+    public ToolProperty(float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
         this.toolDurability = toolDurability;
@@ -58,7 +69,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      * Default values constructor.
      */
     public ToolProperty() {
-        this(1.0f, 1.0f, 100, 10, false);
+        this(1.0f, 1.0f, 1.0f, 100, 10, false);
     }
 
     public float getToolSpeed() {
@@ -77,6 +88,15 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     public void setToolAttackDamage(float toolAttackDamage) {
         if (toolAttackDamage <= 0) throw new IllegalArgumentException("Tool Attack Damage must be greater than zero!");
         this.toolAttackDamage = toolAttackDamage;
+    }
+
+    public float getToolAttackSpeed() {
+        return toolAttackSpeed;
+    }
+
+    public void setToolAttackSpeed(float toolAttackSpeed) {
+        if (toolAttackSpeed <= 0) throw new IllegalArgumentException("Tool Attack Speed must be greater than zero!");
+        this.toolAttackSpeed = toolAttackSpeed;
     }
 
     public int getToolDurability() {

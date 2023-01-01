@@ -150,6 +150,7 @@ public class ToolEventHandlers {
 
                     if (toolStats.isSuitableForAttacking(stack)) {
                         tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_speed", tool.getTotalAttackSpeed(stack)));
                     }
                     if (toolStats.isSuitableForBlockBreak(stack)) {
                         tooltipIterator.add(I18n.format("item.gt.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));

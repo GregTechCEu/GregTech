@@ -77,6 +77,7 @@ public final class ToolHelper {
     public static final String MAX_DURABILITY_KEY = "MaxDurability";
     public static final String TOOL_SPEED_KEY = "ToolSpeed";
     public static final String ATTACK_DAMAGE_KEY = "AttackDamage";
+    public static final String ATTACK_SPEED_KEY = "AttackSpeed";
     public static final String ENCHANTABILITY_KEY = "Enchantability";
     public static final String HARVEST_LEVEL_KEY = "HarvestLevel";
     public static final String LAST_CRAFTING_USE_KEY = "LastCraftingUse";
