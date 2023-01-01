@@ -21,7 +21,6 @@ public class DamageSourceTool extends EntityDamageSource {
     @Override
     @SuppressWarnings("deprecation")
     public ITextComponent getDeathMessage(@Nonnull EntityLivingBase target) {
-        System.out.println("test!");
         if (deathMessage == null || damageSourceEntity == null || !I18n.canTranslate(deathMessage)) return super.getDeathMessage(target);
         return new TextComponentTranslation(deathMessage, target.getDisplayName(), damageSourceEntity.getDisplayName());
     }
