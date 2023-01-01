@@ -358,9 +358,8 @@ public class ToolRecipeHandler {
 
     private static void registerMortarRecipes() {
         for (Material material : new Material[]{
-                Materials.Bronze, Materials.Iron, Materials.WroughtIron,
-                Materials.Steel, Materials.Diamond, Materials.DamascusSteel,
-                Materials.BlackSteel, Materials.RedSteel, Materials.BlueSteel}) {
+                Materials.Bronze, Materials.Iron, Materials.Invar, Materials.Steel,
+                Materials.DamascusSteel, Materials.CobaltBrass, Materials.WroughtIron }) {
 
             addToolRecipe(material, ToolItems.MORTAR, false,
                     " I ", "SIS", "SSS",

@@ -104,6 +104,8 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL)
                 .components(Steel, 1)
                 .toolStats(8.0f, 5.0f, 1280, 21)
+                .addDefaultEnchant(Enchantments.LOOTING, 3)
+                .addDefaultEnchant(Enchantments.FORTUNE, 3)
                 .blastTemp(1500, GasTier.LOW)
                 .build();
 

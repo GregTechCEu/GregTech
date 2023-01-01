@@ -291,6 +291,7 @@ public class FirstDegreeMaterials {
                 .toolStats(7.0f, 3.0f, 512, 21)
                 .rotorStats(7.0f, 3.0f, 512)
                 .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 3)
+                .addDefaultEnchant(Enchantments.EFFICIENCY, 1)
                 .fluidTemp(1916)
                 .build();
 
@@ -396,6 +397,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Copper, 1, Silver, 4)
                 .toolStats(13.0f, 2.0f, 196, 33)
+                .addDefaultEnchant(Enchantments.SMITE, 3)
                 .rotorStats(13.0f, 2.0f, 196)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1700, GasTier.LOW, VA[MV], 1000)
@@ -409,7 +411,7 @@ public class FirstDegreeMaterials {
                 .components(Copper, 1, Gold, 4)
                 .toolStats(14.0f, 2.0f, 152, 33)
                 .rotorStats(14.0f, 2.0f, 152)
-                .addDefaultEnchant(Enchantments.SMITE, 4)
+                .addDefaultEnchant(Enchantments.FORTUNE, 2)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1600, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1341)
@@ -421,7 +423,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Gold, 1, Silver, 1, Copper, 3)
                 .rotorStats(12.0f, 2.0f, 256)
-                .addDefaultEnchant(Enchantments.SMITE, 2)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(2000, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1328)
@@ -433,7 +434,6 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Bismuth, 1, Zinc, 1, Copper, 3)
                 .rotorStats(8.0f, 3.0f, 256)
-                .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 5)
                 .blastTemp(1100, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1036)
                 .build();
