@@ -242,6 +242,7 @@ public class ToolEventHandlers {
     /**
      * Finishes rendering for blocks with break progress
      */
+    @SideOnly(Side.CLIENT)
     private static void postRenderDamagedBlocks() {
         GlStateManager.disableAlpha();
         GlStateManager.doPolygonOffset(0.0F, 0.0F);
@@ -251,6 +252,7 @@ public class ToolEventHandlers {
         GlStateManager.popMatrix();
     }
 
+    @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe) {
             BlockPipe<?, ?, ?> pipe = (BlockPipe<?, ?, ?>) state.getBlock();
@@ -288,6 +290,7 @@ public class ToolEventHandlers {
     private static float gColour;
     private static float bColour;
 
+    @SideOnly(Side.CLIENT)
     private static boolean renderGridOverlays(@Nonnull EntityPlayer player, BlockPos pos, IBlockState state, EnumFacing facing, TileEntity tile, float partialTicks) {
         if (player.world.getWorldBorder().contains(pos)) {
             GlStateManager.enableBlend();
@@ -320,6 +323,7 @@ public class ToolEventHandlers {
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     private static void drawGridOverlays(@Nonnull AxisAlignedBB box) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -361,6 +365,7 @@ public class ToolEventHandlers {
         tessellator.draw();
     }
 
+    @SideOnly(Side.CLIENT)
     private static void drawGridOverlays(EnumFacing facing, AxisAlignedBB box, Predicate<EnumFacing> test) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -542,10 +547,12 @@ public class ToolEventHandlers {
         tessellator.draw();
     }
 
+    @SideOnly(Side.CLIENT)
     private static void startLine(BufferBuilder buffer, Vector3 vec) {
         buffer.pos(vec.x, vec.y, vec.z).color(rColour, gColour, bColour, 0.0F).endVertex();
     }
 
+    @SideOnly(Side.CLIENT)
     private static void endLine(BufferBuilder buffer, Vector3 vec) {
         buffer.pos(vec.x, vec.y, vec.z).color(rColour, gColour, bColour, 1F).endVertex();
     }
