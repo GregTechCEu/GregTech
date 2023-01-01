@@ -23,6 +23,7 @@ public class ToolDefinitionBuilder {
 
     private final List<IToolBehavior> behaviours = new ArrayList<>();
     private int damagePerAction = 1;
+    private int damagePerCraftingAction = 1;
     private boolean suitableForBlockBreaking = false;
     private boolean suitableForAttacking = false;
     private boolean suitableForCrafting = false;
@@ -48,6 +49,11 @@ public class ToolDefinitionBuilder {
 
     public ToolDefinitionBuilder damagePerAction(int damagePerAction) {
         this.damagePerAction = damagePerAction;
+        return this;
+    }
+
+    public ToolDefinitionBuilder damagePerCraftingAction(int damagePerCraftingAction) {
+        this.damagePerCraftingAction = damagePerCraftingAction;
         return this;
     }
 
@@ -163,6 +169,7 @@ public class ToolDefinitionBuilder {
 
             private final List<IToolBehavior> behaviors = ImmutableList.copyOf(ToolDefinitionBuilder.this.behaviours);
             private final int damagePerAction = ToolDefinitionBuilder.this.damagePerAction;
+            private final int damagePerCraftingAction = ToolDefinitionBuilder.this.damagePerCraftingAction;
             private final boolean suitableForBlockBreaking = ToolDefinitionBuilder.this.suitableForBlockBreaking;
             private final boolean suitableForAttacking = ToolDefinitionBuilder.this.suitableForAttacking;
             private final boolean suitableForCrafting = ToolDefinitionBuilder.this.suitableForCrafting;
@@ -206,6 +213,11 @@ public class ToolDefinitionBuilder {
             @Override
             public boolean isToolEffective(IBlockState state) {
                 return effectiveStatePredicate.test(state);
+            }
+
+            @Override
+            public int getDamagePerCraftingAction(ItemStack stack) {
+                return damagePerCraftingAction;
             }
 
             @Override
