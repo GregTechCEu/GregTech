@@ -559,20 +559,35 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
-    default boolean definition$canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (stack.isEmpty()) {
-            return false;
+    default boolean definition$canApplyAtEnchantingTable(@Nonnull ItemStack stack, Enchantment enchantment) {
+        if (stack.isEmpty()) return false;
+        if (enchantment.type == null) return true;
+
+        // bypass EnumEnchantmentType#canEnchantItem and define custom stack-aware logic.
+        // the Minecraft method takes an Item, and does not respect NBT nor meta.
+        switch (enchantment.type) {
+            case DIGGER: {
+                return getToolStats().isSuitableForBlockBreak(stack);
+            }
+            case WEAPON: {
+                return getToolStats().isSuitableForAttacking(stack);
+            }
+            case BREAKABLE:
+            case ALL: {
+                return true;
+            }
         }
 
         ToolProperty property = getToolProperty(stack);
+        if (property == null) return false;
 
-        if (property == null) {
-            return false;
+        // Check for any special enchantments specified by the material of this Tool
+        if (!property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment)) {
+            return true;
         }
 
-        // Check for any special enchantments specified by the material of this Tool, or any additional Enchantment Types added in the builder
-        return (!property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment)) ||
-                (getToolStats().isEnchantable(stack) && getToolStats().canApplyEnchantment(stack, enchantment));
+        // Check for any additional Enchantment Types added in the builder
+        return getToolStats().isEnchantable(stack) && getToolStats().canApplyEnchantment(stack, enchantment);
     }
 
     @SideOnly(Side.CLIENT)
