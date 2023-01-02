@@ -236,7 +236,7 @@ public class ToolItems {
                 .electric(GTValues.LV));
         WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
-                        .efficiencyMultiplier(8.0F)
+                        .efficiencyMultiplier(3.0F)
                         .attackDamage(1.0F).attackSpeed(-2.8F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
@@ -245,7 +245,7 @@ public class ToolItems {
                 .electric(GTValues.HV));
         WRENCH_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_iv")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
-                        .efficiencyMultiplier(16.0F)
+                        .efficiencyMultiplier(4.0F)
                         .attackDamage(1.0F).attackSpeed(-2.8F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
