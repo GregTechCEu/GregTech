@@ -118,6 +118,14 @@ public class MaterialFlags {
             .build();
 
     /**
+     * Add to material if lower yield recipes (2 ingots to plate with hammer, 8 ingots to gear with alloy smelter, etc.) should be generated.
+     * Use for lower-tier materials when not all processing machines have been unlocked.
+     */
+    public static final MaterialFlag GENERATE_LOW_YIELD_RECIPES = new MaterialFlag.Builder("generate_low_yield_recipes")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
+    /**
      * This will prevent material from creating Shapeless recipes for dust to block and vice versa
      * Also preventing extruding and alloy smelting recipes via SHAPE_EXTRUDING/MOLD_BLOCK
      */

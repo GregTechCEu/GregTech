@@ -17,8 +17,7 @@ import java.util.Map;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_PLATE;
-import static gregtech.api.unification.material.info.MaterialFlags.NO_WORKING;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.SHAPE_EXTRUDER_WIRE;
 
@@ -82,9 +81,11 @@ public class WireRecipeHandler {
                 .buildAndRegister();
 
         if (!material.hasFlag(NO_WORKING) && material.hasFlag(GENERATE_PLATE)) {
-            ModHandler.addShapedRecipe(String.format("%s_wire_single", material),
-                    OreDictUnifier.get(wireGtSingle, material), "Xx",
-                    'X', new UnificationEntry(plate, material));
+            if (material.hasFlag(GENERATE_LOW_YIELD_RECIPES)) {
+                ModHandler.addShapedRecipe(String.format("%s_wire_single", material),
+                        OreDictUnifier.get(wireGtSingle, material), "Xx",
+                        'X', new UnificationEntry(plate, material));
+            }
         }
     }
 

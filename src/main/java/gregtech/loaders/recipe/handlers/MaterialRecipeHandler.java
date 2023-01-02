@@ -222,10 +222,12 @@ public class MaterialRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("stick_%s", material),
-                    OreDictUnifier.get(OrePrefix.stick, material, 1),
-                    "f ", " X",
-                    'X', new UnificationEntry(ingotPrefix, material));
+            if (material.hasFlag(GENERATE_LOW_YIELD_RECIPES)) {
+                ModHandler.addShapedRecipe(String.format("stick_%s", material),
+                        OreDictUnifier.get(OrePrefix.stick, material, 1),
+                        "f ", " X",
+                        'X', new UnificationEntry(ingotPrefix, material));
+            }
             if (!material.hasFlag(NO_WORKING)) {
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(ingotPrefix, material)
@@ -287,14 +289,16 @@ public class MaterialRecipeHandler {
                             .EUt(24).duration((int) (material.getMass()))
                             .buildAndRegister();
 
-                    RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
-                            .input(ingotPrefix, material, 3)
-                            .outputs(GTUtility.copyAmount(2, plateStack))
-                            .EUt(16).duration((int) material.getMass())
-                            .buildAndRegister();
+                    if (material.hasFlag(GENERATE_LOW_YIELD_RECIPES)) {
+                        RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
+                                .input(ingotPrefix, material, 3)
+                                .outputs(GTUtility.copyAmount(2, plateStack))
+                                .EUt(16).duration((int) material.getMass())
+                                .buildAndRegister();
 
-                    ModHandler.addShapedRecipe(String.format("plate_%s", material),
-                            plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+                        ModHandler.addShapedRecipe(String.format("plate_%s", material),
+                                plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+                    }
                 }
             }
 
