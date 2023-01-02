@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.*;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.Minecraft;
@@ -196,26 +195,25 @@ public class ToolItems {
                 .sound(GTSoundEvents.DRILL_TOOL, true)
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.HV));
-        if (ConfigHolder.tools.enableHighTierDrills) {
-            DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                    .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
-                            .attackDamage(1.0F).attackSpeed(-3.0F)
-                            .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
-                            .behaviors(new TorchPlaceBehavior()))
-                    .oreDict(ToolOreDicts.craftingToolDrill)
-                    .sound(GTSoundEvents.DRILL_TOOL, true)
-                    .toolClasses(ToolClasses.DRILL)
-                    .electric(GTValues.EV));
-            DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                    .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
-                            .attackDamage(1.0F).attackSpeed(-3.0F)
-                            .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
-                            .behaviors(new TorchPlaceBehavior()))
-                    .oreDict(ToolOreDicts.craftingToolDrill)
-                    .sound(GTSoundEvents.DRILL_TOOL, true)
-                    .toolClasses(ToolClasses.DRILL)
-                    .electric(GTValues.IV));
-        }
+        DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
+                .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
+                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
+                        .behaviors(new TorchPlaceBehavior()))
+                .oreDict(ToolOreDicts.craftingToolDrill)
+                .sound(GTSoundEvents.DRILL_TOOL, true)
+                .toolClasses(ToolClasses.DRILL)
+                .electric(GTValues.EV));
+        DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
+                .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
+                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
+                        .behaviors(new TorchPlaceBehavior()))
+                .oreDict(ToolOreDicts.craftingToolDrill)
+                .sound(GTSoundEvents.DRILL_TOOL, true)
+                .toolClasses(ToolClasses.DRILL)
+                .electric(GTValues.IV));
+
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
                 .toolStats(b -> b.blockBreaking()
                         .efficiencyMultiplier(2.0F)

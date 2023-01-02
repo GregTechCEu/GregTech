@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import net.minecraft.item.ItemStack;
@@ -219,11 +218,7 @@ public class ToolRecipeHandler {
                     'X', plate,
                     'S', steelPlate);
 
-            if (ConfigHolder.tools.enableHighTierDrills) {
-                addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV});
-            } else {
-                addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV});
-            }
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV});
 
             // chainsaw
             toolPrefix = OrePrefix.toolHeadChainsaw;

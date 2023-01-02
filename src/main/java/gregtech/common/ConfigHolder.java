@@ -456,9 +456,6 @@ public class ConfigHolder {
         @Config.Name("NanoSaber Options")
         public NanoSaber nanoSaber = new NanoSaber();
 
-        @Config.Comment({"Should EV and IV Drills be enabled, which may cause lag when used on low-end devices?", "Default: true"})
-        public boolean enableHighTierDrills = true;
-
         @Config.Comment("NightVision Goggles Voltage Tier. Default: 1 (LV)")
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierNightVision = 1;
