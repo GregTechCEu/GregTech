@@ -180,7 +180,6 @@ public class ToolItems {
                 .electric(GTValues.LV));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 2)
-                        .efficiencyMultiplier(2.0F)
                         .attackDamage(1.0F).attackSpeed(-3.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
                         .behaviors(new TorchPlaceBehavior()))
@@ -190,7 +189,6 @@ public class ToolItems {
                 .electric(GTValues.MV));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
                 .toolStats(b -> b.blockBreaking().aoe(2, 2, 4)
-                        .efficiencyMultiplier(3.0F)
                         .attackDamage(1.0F).attackSpeed(-3.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
                         .behaviors(new TorchPlaceBehavior()))
@@ -201,7 +199,6 @@ public class ToolItems {
         if (ConfigHolder.tools.enableHighTierDrills) {
             DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
                     .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
-                            .efficiencyMultiplier(4.0F)
                             .attackDamage(1.0F).attackSpeed(-3.0F)
                             .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
                             .behaviors(new TorchPlaceBehavior()))
@@ -211,7 +208,6 @@ public class ToolItems {
                     .electric(GTValues.EV));
             DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
                     .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
-                            .efficiencyMultiplier(5.0F)
                             .attackDamage(1.0F).attackSpeed(-3.0F)
                             .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
                             .behaviors(new TorchPlaceBehavior()))
