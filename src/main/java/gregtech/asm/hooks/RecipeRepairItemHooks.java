@@ -34,6 +34,10 @@ public class RecipeRepairItemHooks {
                         // require the same materials
                         IGTTool first = (IGTTool) itemstack.getItem();
                         IGTTool second = (IGTTool) stack.getItem();
+
+                        // electric tools are invalid
+                        if (first.isElectric() || second.isElectric()) return false;
+
                         return first.getToolMaterial(itemstack) == second.getToolMaterial(stack);
                     }
                 }
@@ -57,7 +61,14 @@ public class RecipeRepairItemHooks {
                     if (itemstack.getItem() != stack.getItem()) return ItemStack.EMPTY;
                     if (stack.getCount() != 1 || itemstack.getCount() != 1) return ItemStack.EMPTY;
                     if (!stack.getItem().isRepairable()) return ItemStack.EMPTY;
-                    if (!(itemstack.getItem() instanceof IGTTool) || !(stack.getItem() instanceof IGTTool)) return ItemStack.EMPTY;
+
+                    // electric tools are invalid
+                    if (itemstack.getItem() instanceof IGTTool && ((IGTTool) itemstack.getItem()).isElectric()) {
+                        return ItemStack.EMPTY;
+                    }
+                    if (stack.getItem() instanceof IGTTool && ((IGTTool) stack.getItem()).isElectric()) {
+                        return ItemStack.EMPTY;
+                    }
                 }
             }
         }
