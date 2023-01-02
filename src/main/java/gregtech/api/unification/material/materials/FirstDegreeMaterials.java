@@ -208,7 +208,7 @@ public class FirstDegreeMaterials {
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
-                .toolStats(6.0f, 7.0f, 768, 18)
+                .toolStats(6.0f, 7.0f, 0.1f, 768, 18)
                 .build();
 
         Electrum = new Material.Builder(277, "electrum")
@@ -396,7 +396,7 @@ public class FirstDegreeMaterials {
                 .color(0xFADCE1).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .components(Copper, 1, Silver, 4)
-                .toolStats(3.0f, 8.0f, 768, 33)
+                .toolStats(3.0f, 8.0f, 0.3f, 768, 33)
                 .addDefaultEnchant(Enchantments.SMITE, 3)
                 .rotorStats(13.0f, 2.0f, 196)
                 .itemPipeProperties(1024, 2)
@@ -636,7 +636,7 @@ public class FirstDegreeMaterials {
                 .color(0xB4B4E6).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1)
-                .toolStats(10.0f, 7.0f, 2048, 21)
+                .toolStats(10.0f, 7.0f, 0.1f, 2048, 21)
                 .rotorStats(9.0f, 4.0f, 2048)
                 .itemPipeProperties(128, 16)
                 .blastTemp(2700, GasTier.MID, VA[HV], 1300)
@@ -672,7 +672,7 @@ public class FirstDegreeMaterials {
                 .color(0xC8B4B4).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
-                .toolStats(2.0f, 2.0f, 384, 5)
+                .toolStats(2.0f, 2.0f, -0.2f, 384, 5)
                 .rotorStats(6.0f, 3.5f, 384)
                 .fluidTemp(2011)
                 .build();

@@ -860,7 +860,7 @@ public class ElementMaterials {
                 .color(0xFAFAFA)
                 .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .element(Elements.Nt)
-                .toolStats(180.0f, 100.0f, 65535, 33)
+                .toolStats(180.0f, 100.0f, 0.5f, 65535, 33)
                 .rotorStats(24.0f, 12.0f, 655360)
                 .fluidPipeProperties(100_000, 5000, true, true, true, true)
                 .fluidTemp(100_000)
@@ -881,7 +881,7 @@ public class ElementMaterials {
                 .color(0x4BAFAF).iconSet(BRIGHT)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Dr)
-                .toolStats(14.0f, 12.0f, 8192, 33)
+                .toolStats(14.0f, 12.0f, 0.3f, 8192, 33)
                 .fluidPipeProperties(9625, 500, true, true, true, true)
                 .fluidTemp(7500)
                 .build();

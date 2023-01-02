@@ -37,7 +37,7 @@ public class HigherDegreeMaterials {
                 .color(0x8C6464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
                 .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(7.0f, 6.0f, 2560, 21)
+                .toolStats(7.0f, 6.0f, 0.1f, 2560, 21)
                 .blastTemp(1300, GasTier.LOW, VA[HV], 1000)
                 .build();
 
@@ -46,7 +46,7 @@ public class HigherDegreeMaterials {
                 .color(0x64648C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
                 .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(15.0f, 6.0f, 1024, 33)
+                .toolStats(15.0f, 6.0f, 0.1f, 1024, 33)
                 .blastTemp(1400, GasTier.LOW, VA[HV], 1000)
                 .build();
 
@@ -109,7 +109,7 @@ public class HigherDegreeMaterials {
                 .color(0x336600).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
-                .toolStats(5.0f, 10.0f, 3072, 33)
+                .toolStats(5.0f, 10.0f, 0.3f, 3072, 33)
                 .rotorStats(10.0f, 8.0f, 5120)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1400)
                 .build();
