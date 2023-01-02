@@ -11,13 +11,13 @@ public class RecipeRepairItemVisitor implements Opcodes {
 
     private static final ObfMapping MATCHES_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_77569_a",
             "(Lnet/minecraft/inventory/InventoryCrafting;Lnet/minecraft/world/World;)Z").toRuntime();
-    private static final String MATCHES_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;Lnet/minecraft/world/World;)Z";
-    private static final String MATCHES_HOOK_METHOD_NAME = "matchesGTTool";
+    private static final String MATCHES_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;)Z";
+    private static final String MATCHES_HOOK_METHOD_NAME = "matches";
 
     private static final ObfMapping RESULT_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_77572_b",
             "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;").toRuntime();
     private static final String RESULT_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;";
-    private static final String RESULT_HOOK_METHOD_NAME = "resultGTTool";
+    private static final String RESULT_HOOK_METHOD_NAME = "getCraftingResult";
 
     public static ClassNode handleClassNode(ClassNode classNode) {
         int done = 0;
@@ -28,7 +28,6 @@ public class RecipeRepairItemVisitor implements Opcodes {
             if (m.name.equals(MATCHES_METHOD.s_name) && m.desc.equals(MATCHES_METHOD.s_desc)) {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 1));
-                insns.add(new VarInsnNode(ALOAD, 2));
                 insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, MATCHES_HOOK_METHOD_NAME, MATCHES_HOOK_SIGNATURE, false));
                 insns.add(new InsnNode(IRETURN));
                 AbstractInsnNode first = m.instructions.getFirst();

@@ -10,9 +10,10 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class RecipeRepairItemHooks {
 
-    public static boolean matchesGTTool(InventoryCrafting inv, World worldIn) {
+    public static boolean matches(InventoryCrafting inv) {
         // from MC
         List<ItemStack> list = Lists.newArrayList();
 
@@ -40,7 +41,7 @@ public class RecipeRepairItemHooks {
         return list.size() == 2;
     }
 
-    public static ItemStack resultGTTool(InventoryCrafting inv) {
+    public static ItemStack getCraftingResult(InventoryCrafting inv) {
         List<ItemStack> list = Lists.newArrayList();
 
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
