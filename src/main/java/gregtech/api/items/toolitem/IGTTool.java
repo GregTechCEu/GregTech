@@ -65,6 +65,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static gregtech.api.items.armor.IArmorLogic.ATTACK_DAMAGE_MODIFIER;
@@ -107,6 +108,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     String getOreDictName();
 
+    @Nullable
+    Supplier<ItemStack> getMarkerItem();
+
     default Item get() {
         return (Item) this;
     }
@@ -135,6 +139,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
         toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability());
         toolTag.setInteger(DURABILITY_KEY, 0);
+        if (toolProperty.getUnbreakable()) {
+            stack.getTagCompound().setBoolean(UNBREAKABLE_KEY, true);
+        }
 
         // Set material enchantments
         toolProperty.getEnchantments().forEach((enchantment, level) -> {

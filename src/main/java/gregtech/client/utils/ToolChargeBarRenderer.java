@@ -5,11 +5,14 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -92,9 +95,13 @@ public final class ToolChargeBarRenderer {
     }
 
     public static void renderBarsTool(IGTTool tool, ItemStack stack, int xPosition, int yPosition) {
-        renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+        boolean renderedDurability = false;
+        NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
+        if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
+            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+        }
         if (tool.isElectric()) {
-            renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition, true);
+            renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition, renderedDurability);
         }
     }
 
@@ -130,8 +137,9 @@ public final class ToolChargeBarRenderer {
         return true;
     }
 
-    private static void renderDurabilityBar(double level, int xPosition, int yPosition) {
+    private static boolean renderDurabilityBar(double level, int xPosition, int yPosition) {
         render(level, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
+        return true;
     }
 
     private ToolChargeBarRenderer() {

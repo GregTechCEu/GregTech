@@ -1,6 +1,7 @@
 package gregtech.api.items.toolitem;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 
 import java.util.Collections;
@@ -20,6 +21,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected SoundEvent sound;
     protected boolean playSoundOnBlockDestroy;
     protected Character symbol = null;
+    protected Supplier<ItemStack> markerItem;
 
     public ToolBuilder(String domain, String id) {
         this.domain = domain;
@@ -73,6 +75,11 @@ public abstract class ToolBuilder<T extends IGTTool> {
 
     public ToolBuilder<T> symbol(char symbol) {
         this.symbol = symbol;
+        return this;
+    }
+
+    public ToolBuilder<T> markerItem(Supplier<ItemStack> markerItem) {
+        this.markerItem = markerItem;
         return this;
     }
 

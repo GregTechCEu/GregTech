@@ -5,7 +5,6 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
-import net.minecraft.init.Enchantments;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -862,7 +861,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .element(Elements.Nt)
                 .toolStats(180.0f, 100.0f, 65535, 33)
-                .addDefaultEnchant(Enchantments.UNBREAKING, 10)
                 .rotorStats(24.0f, 12.0f, 655360)
                 .fluidPipeProperties(100_000, 5000, true, true, true, true)
                 .fluidTemp(100_000)

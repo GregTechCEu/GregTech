@@ -47,6 +47,11 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     private boolean ignoreCraftingTools;
 
     /**
+     * If tools of made this material should be unbreakable and ignore durability checks.
+     */
+    private boolean isUnbreakable;
+
+    /**
      * Enchantment to be applied to tools made from this Material.
      * <p>
      * Default: none.
@@ -120,6 +125,14 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     public void setShouldIgnoreCraftingTools(boolean ignore) {
         this.ignoreCraftingTools = ignore;
+    }
+
+    public boolean getUnbreakable() {
+        return isUnbreakable;
+    }
+
+    public void setUnbreakable(boolean isUnbreakable) {
+        this.isUnbreakable = isUnbreakable;
     }
 
     public Object2IntMap<Enchantment> getEnchantments() {

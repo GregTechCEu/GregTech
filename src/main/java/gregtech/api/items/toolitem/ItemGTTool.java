@@ -44,8 +44,9 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final String oreDict;
     protected final SoundEvent sound;
     protected final boolean playSoundOnBlockDestroy;
+    protected final Supplier<ItemStack> markerItem;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict) {
+    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
         super(0F, 0F, ToolMaterial.STONE, Collections.emptySet());
         this.domain = domain;
         this.id = id;
@@ -55,6 +56,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oreDict = oreDict;
+        this.markerItem = markerItem;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -102,17 +104,22 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         return oreDict;
     }
 
+    @Nullable
+    @Override
+    public Supplier<ItemStack> getMarkerItem() {
+        return markerItem;
+    }
+
     @Override
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            ItemStack stack;
-            if (isElectric()) {
-                stack = get(Materials.Neutronium, Integer.MAX_VALUE);
+            if (getMarkerItem() != null) {
+                items.add(getMarkerItem().get());
+            } else if (isElectric()) {
+                items.add(get(Materials.Iron, Integer.MAX_VALUE));
             } else {
-                stack = get(Materials.Neutronium);
+                items.add(get(Materials.Iron));
             }
-            stack.getTagCompound().removeTag("ench");
-            items.add(stack);
         }
     }
 
@@ -293,7 +300,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
         @Override
         public Supplier<ItemGTTool> supply() {
-            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict);
+            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
         }
     }
 }
