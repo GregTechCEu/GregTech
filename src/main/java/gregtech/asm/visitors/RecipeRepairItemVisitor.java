@@ -1,46 +1,52 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
-public class RecipeRepairItemVisitor extends MethodVisitor implements Opcodes {
+public class RecipeRepairItemVisitor implements Opcodes {
 
     public static final String TARGET_CLASS_NAME = "net/minecraft/item/crafting/RecipeRepairItem";
-    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "matches", targetSignature()).toRuntime();
+    private static final String HOOK_CLASS_NAME = "gregtech/asm/hooks/RecipeRepairItemHooks";
 
-    private static final String MATCHES_HOOK_OWNER = "gregtech/asm/hooks/RecipeRepairItemHooks";
-    private static final String MATCHES_HOOK_SIGNATURE = tooltipSignature();
+    private static final ObfMapping MATCHES_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_77569_a",
+            "(Lnet/minecraft/inventory/InventoryCrafting;Lnet/minecraft/world/World;)Z").toRuntime();
+    private static final String MATCHES_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;Lnet/minecraft/world/World;)Z";
     private static final String MATCHES_HOOK_METHOD_NAME = "matchesGTTool";
 
-    public RecipeRepairItemVisitor(MethodVisitor mv) {
-        super(org.objectweb.asm.Opcodes.ASM5, mv);
-    }
+    private static final ObfMapping RESULT_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_77572_b",
+            "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;").toRuntime();
+    private static final String RESULT_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;";
+    private static final String RESULT_HOOK_METHOD_NAME = "resultGTTool";
 
-    // Need to call RecipeRepairItemHooks#matchesGTTool(InventoryCrafting)
-    @Override
-    public void visitCode() {
-        mv.visitVarInsn(ALOAD, 1); // InventoryCrafting inv
-        mv.visitVarInsn(ALOAD, 2); //  World worldIn
+    public static ClassNode handleClassNode(ClassNode classNode) {
+        int done = 0;
+        for (MethodNode m : classNode.methods) {
+            if (done == 2) break;
 
-        // statically call matchesGTTool(InventoryCrafting)
-        mv.visitMethodInsn(INVOKESTATIC, MATCHES_HOOK_OWNER, MATCHES_HOOK_METHOD_NAME, MATCHES_HOOK_SIGNATURE, false);
+            // matches() method
+            if (m.name.equals(MATCHES_METHOD.s_name) && m.desc.equals(MATCHES_METHOD.s_desc)) {
+                InsnList insns = new InsnList();
+                insns.add(new VarInsnNode(ALOAD, 1));
+                insns.add(new VarInsnNode(ALOAD, 2));
+                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, MATCHES_HOOK_METHOD_NAME, MATCHES_HOOK_SIGNATURE, false));
+                insns.add(new InsnNode(IRETURN));
+                AbstractInsnNode first = m.instructions.getFirst();
+                m.instructions.insertBefore(first, insns);
+                done++;
+            }
 
-        mv.visitInsn(IRETURN);
-    }
-
-    // public boolean matches(InventoryCrafting inv, World worldIn)
-    private static String targetSignature() {
-        return "(" +
-                "Lnet/minecraft/inventory/InventoryCrafting;" + // InventoryCrafting inv
-                "Lnet/minecraft/world/World;" + //  World worldIn
-                ")Z"; // return boolean
-    }
-
-    // public boolean matchesGTTool(InventoryCrafting inv)
-    private static String tooltipSignature() {
-        return "(" +
-                "Lnet/minecraft/inventory/InventoryCrafting;" + // InventoryCrafting inv
-                ")Z"; // return void
+            // getCraftingResult() method
+            if (m.name.equals(RESULT_METHOD.s_name) && m.desc.equals(RESULT_METHOD.s_desc)) {
+                InsnList insns = new InsnList();
+                insns.add(new VarInsnNode(ALOAD, 1));
+                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, RESULT_HOOK_METHOD_NAME, RESULT_HOOK_SIGNATURE, false));
+                insns.add(new InsnNode(ARETURN));
+                AbstractInsnNode first = m.instructions.getFirst();
+                m.instructions.insertBefore(first, insns);
+                done++;
+            }
+        }
+        return classNode;
     }
 }
