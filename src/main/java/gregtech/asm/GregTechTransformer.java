@@ -1,9 +1,9 @@
 package gregtech.asm;
 
 import gregtech.api.GTValues;
-import gregtech.common.ConfigHolder;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
+import gregtech.common.ConfigHolder;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Loader;
@@ -27,7 +27,6 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassWriter classWriter = new ClassWriter(0);
                 classReader.accept(new TargetClassVisitor(classWriter, JEIVisitor.TARGET_METHOD, JEIVisitor::new), 0);
                 return classWriter.toByteArray();
-
             }
             case ConcretePowderVisitor.TARGET_CLASS_NAME:
                 if (ConfigHolder.recipes.disableConcreteInWorld) {
@@ -139,6 +138,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 RenderItemVisitor.transform(methods);
                 ClassWriter classWriter = new ClassWriter(0);
                 classNode.accept(classWriter);
+                return classWriter.toByteArray();
+            }
+            case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(0);
+                classReader.accept(new TargetClassVisitor(classWriter, RecipeRepairItemVisitor.TARGET_METHOD, RecipeRepairItemVisitor::new), 0);
                 return classWriter.toByteArray();
             }
         }
