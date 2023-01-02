@@ -69,19 +69,24 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
                 output = new ItemStack(ForgeModContainer.getInstance().universalBucket);
                 isBucket = true;
             } else {
-                output = new ItemStack(input.getItem(), 1, input.getMetadata());
+                output = input.copy(); // copy the input to preserve its NBT
                 isBucket = false;
             }
 
             IFluidHandlerItem outputCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (outputCap == null) return ItemStack.EMPTY;
+            outputCap.drain(Integer.MAX_VALUE, true); // ensure the output is empty
 
             FluidStack drained = inputCap.drain(1000, false);
             if (drained != null && drained.amount == 1000) {
                 if (isBucket) {
+                    // if there is a bucket for the fluid, use the bucket
                     if (FluidRegistry.hasBucket(outputFluid.getFluid())) {
                         return FluidUtil.getFilledBucket(outputFluid.copy());
                     }
+
+                    // otherwise return nothing, as the input container is invalid
+                    return ItemStack.EMPTY;
                 } else if (outputCap.fill(outputFluid.copy(), true) == 1000) {
                     return output;
                 }
