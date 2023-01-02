@@ -107,7 +107,7 @@ public class OrganicChemistryMaterials {
         Polyethylene = new Material.Builder(1012, "plastic") //todo add polyethylene oredicts
                 .polymer(1)
                 .color(0xC8C8C8)
-                .flags(GENERATE_FOIL)
+                .flags(GENERATE_FOIL, GENERATE_LOW_YIELD_RECIPES)
                 .components(Carbon, 2, Hydrogen, 4)
                 .fluidPipeProperties(370, 50, true)
                 .fluidTemp(408)
@@ -479,7 +479,7 @@ public class OrganicChemistryMaterials {
         Rubber = new Material.Builder(1068, "rubber")
                 .polymer(0)
                 .color(0x000000).iconSet(SHINY)
-                .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL, GENERATE_BOLT_SCREW)
+                .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL, GENERATE_BOLT_SCREW, GENERATE_LOW_YIELD_RECIPES)
                 .components(Carbon, 5, Hydrogen, 8)
                 .fluidTemp(400)
                 .build();

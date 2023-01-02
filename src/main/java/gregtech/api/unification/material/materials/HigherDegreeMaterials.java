@@ -23,7 +23,7 @@ public class HigherDegreeMaterials {
         EnderEye = new Material.Builder(2508, "ender_eye")
                 .gem(1)
                 .color(0x66FF66)
-                .flags(NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_LOW_YIELD_RECIPES)
                 .build();
 
         Diatomite = new Material.Builder(2509, "diatomite")
@@ -92,7 +92,7 @@ public class HigherDegreeMaterials {
         RedAlloy = new Material.Builder(2517, "red_alloy")
                 .ingot(0).fluid()
                 .color(0xC80000)
-                .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
+                .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, GENERATE_LOW_YIELD_RECIPES)
                 .components(Copper, 1, Redstone, 4)
                 .cableProperties(GTValues.V[0], 1, 0)
                 .fluidTemp(1400)
@@ -165,7 +165,7 @@ public class HigherDegreeMaterials {
         BlueAlloy = new Material.Builder(2527, "blue_alloy")
                 .ingot().fluid()
                 .color(0x64B4FF).iconSet(DULL)
-                .flags(GENERATE_PLATE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_PLATE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, GENERATE_LOW_YIELD_RECIPES)
                 .components(Electrotine, 4, Silver, 1)
                 .cableProperties(GTValues.V[GTValues.HV], 2, 1)
                 .fluidTemp(1400)

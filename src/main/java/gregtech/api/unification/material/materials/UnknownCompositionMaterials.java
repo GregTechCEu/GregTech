@@ -377,14 +377,14 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, "wood")
                 .dust(0, 300)
                 .color(0x643200).iconSet(WOOD)
-                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME, GENERATE_LOW_YIELD_RECIPES)
                 .build();
 
         Paper = new Material.Builder(1618, "paper")
                 .dust(0)
                 .color(0xFAFAFA).iconSet(FINE)
                 .flags(GENERATE_PLATE, FLAMMABLE, NO_SMELTING, NO_SMASHING,
-                        MORTAR_GRINDABLE, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
+                        MORTAR_GRINDABLE, EXCLUDE_PLATE_COMPRESSOR_RECIPE, GENERATE_LOW_YIELD_RECIPES)
                 .build();
 
         FishOil = new Material.Builder(1619, "fish_oil")
