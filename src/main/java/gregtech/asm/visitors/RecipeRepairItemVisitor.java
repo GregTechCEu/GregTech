@@ -19,10 +19,15 @@ public class RecipeRepairItemVisitor implements Opcodes {
     private static final String RESULT_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;";
     private static final String RESULT_HOOK_METHOD_NAME = "getCraftingResult";
 
+    private static final ObfMapping REMAINING_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_179532_b",
+            "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/util/NonNullList;").toRuntime();
+    private static final String REMAINING_HOOK_SIGNATURE = "(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/util/NonNullList;";
+    private static final String REMAINING_HOOK_METHOD_NAME = "getRemainingItems";
+
     public static ClassNode handleClassNode(ClassNode classNode) {
         int done = 0;
         for (MethodNode m : classNode.methods) {
-            if (done == 2) break;
+            if (done == 3) break;
 
             // matches() method
             if (m.name.equals(MATCHES_METHOD.s_name) && m.desc.equals(MATCHES_METHOD.s_desc)) {
@@ -40,6 +45,17 @@ public class RecipeRepairItemVisitor implements Opcodes {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 1));
                 insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, RESULT_HOOK_METHOD_NAME, RESULT_HOOK_SIGNATURE, false));
+                insns.add(new InsnNode(ARETURN));
+                AbstractInsnNode first = m.instructions.getFirst();
+                m.instructions.insertBefore(first, insns);
+                done++;
+            }
+
+            // getRemainingItems() method
+            if (m.name.equals(REMAINING_METHOD.s_name) && m.desc.equals(REMAINING_METHOD.s_desc)) {
+                InsnList insns = new InsnList();
+                insns.add(new VarInsnNode(ALOAD, 1));
+                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, REMAINING_HOOK_METHOD_NAME, REMAINING_HOOK_SIGNATURE, false));
                 insns.add(new InsnNode(ARETURN));
                 AbstractInsnNode first = m.instructions.getFirst();
                 m.instructions.insertBefore(first, insns);

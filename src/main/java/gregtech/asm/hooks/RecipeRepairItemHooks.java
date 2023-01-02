@@ -6,6 +6,9 @@ import gregtech.api.items.toolitem.ToolHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.List;
 
@@ -101,5 +104,19 @@ public class RecipeRepairItemHooks {
         }
 
         return ItemStack.EMPTY;
+    }
+
+    public static NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> list = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        for (int i = 0; i < list.size(); i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack.getItem() instanceof IGTTool) {
+                // bypass GT tools not disappearing in crafting recipes
+                ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), stack, null);
+            } else {
+                list.set(i, ForgeHooks.getContainerItem(stack));
+            }
+        }
+        return list;
     }
 }
