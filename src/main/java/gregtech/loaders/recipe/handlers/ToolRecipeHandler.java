@@ -167,15 +167,9 @@ public class ToolRecipeHandler {
                     'P', plate,
                     'S', stick);
 
-            if (ConfigHolder.recipes.plateWrenches) {
-                addToolRecipe(material, ToolItems.WRENCH, false,
-                        "PhP", " P ", " P ",
-                        'P', plate);
-            } else {
-                addToolRecipe(material, ToolItems.WRENCH, false,
-                        "IhI", "III", " I ",
-                        'I', ingot);
-            }
+            addToolRecipe(material, ToolItems.WRENCH, false,
+                    "PhP", " P ", " P ",
+                    'P', plate);
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
