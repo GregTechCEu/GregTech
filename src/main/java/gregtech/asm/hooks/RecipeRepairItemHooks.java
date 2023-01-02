@@ -67,39 +67,27 @@ public class RecipeRepairItemHooks {
             ItemStack second = list.get(1);
 
             if (first.getItem() == second.getItem() && first.getCount() == 1 && second.getCount() == 1 && first.getItem().isRepairable()) {
+                int j = first.getMaxDamage() - first.getItemDamage();
+                int k = first.getMaxDamage() - second.getItemDamage();
+                int l = j + k + first.getMaxDamage() * 5 / 100;
+                int i1 = first.getMaxDamage() - l;
+
+                if (i1 < 0) {
+                    i1 = 0;
+                }
+
                 if (first.getItem() instanceof IGTTool && second.getItem() instanceof IGTTool) {
-                    NBTTagCompound firstTag = ToolHelper.getToolTag(first);
-                    NBTTagCompound secondTag = ToolHelper.getToolTag(second);
-
-                    int firstMaxDurability = firstTag.getInteger(ToolHelper.MAX_DURABILITY_KEY);
-                    int firstDurability = firstTag.getInteger(ToolHelper.DURABILITY_KEY);
-
-                    int secondDurability = secondTag.getInteger(ToolHelper.DURABILITY_KEY);
-
-                    int j = firstTag.getInteger(ToolHelper.MAX_DURABILITY_KEY) - firstDurability;
-                    int k = firstMaxDurability - secondDurability;
-                    int l = j + k + firstMaxDurability * 5 / 100;
-                    int i1 = firstMaxDurability - l;
-
-                    if (i1 < 0) i1 = 0;
-
+                    // two GT tools, so use own logic to produce the correct output
                     IGTTool tool = (IGTTool) first.getItem();
                     ItemStack output = tool.get(tool.getToolMaterial(first));
 
                     NBTTagCompound outputTag = ToolHelper.getToolTag(output);
                     outputTag.setInteger(ToolHelper.DURABILITY_KEY, i1);
-                    return output;
-                } else {
-                    int j = first.getMaxDamage() - first.getItemDamage();
-                    int k = first.getMaxDamage() - second.getItemDamage();
-                    int l = j + k + first.getMaxDamage() * 5 / 100;
-                    int i1 = first.getMaxDamage() - l;
 
-                    if (i1 < 0) {
-                        i1 = 0;
-                    }
-                    return new ItemStack(first.getItem(), 1, i1);
+                    return output;
                 }
+
+                return new ItemStack(first.getItem(), 1, i1);
             }
         }
 
