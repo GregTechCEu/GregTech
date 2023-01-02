@@ -151,7 +151,9 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             case DamageSourceVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, DamageSourceVisitor.TARGET_METHOD, DamageSourceVisitor::new), 0);
+                ClassNode classNode = new ClassNode();
+                classReader.accept(classNode, 0);
+                DamageSourceVisitor.handleClassNode(classNode).accept(classWriter);
                 return classWriter.toByteArray();
             }
         }
