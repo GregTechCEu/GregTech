@@ -54,6 +54,7 @@ public class ToolItems {
     public static IGTTool WRENCH_IV;
     public static IGTTool BUZZSAW;
     public static IGTTool SCREWDRIVER_LV;
+    public static IGTTool PLUNGER;
 
     public static void init() {
         SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
@@ -265,6 +266,12 @@ public class ToolItems {
                 .oreDict(ToolOreDicts.craftingToolScrewdriver)
                 .toolClasses(ToolClasses.SCREWDRIVER)
                 .electric(GTValues.LV));
+        PLUNGER = register(ItemGTTool.Builder.of(GTValues.MODID, "plunger")
+                .toolStats(b -> b.cannotAttack().attackSpeed(-2.4F).sneakBypassUse()
+                        .behaviors(new PlungerBehavior()))
+                .sound(GTSoundEvents.PLUNGER_TOOL)
+                .toolClasses(ToolClasses.PLUNGER)
+                .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 256, 1, 4F, 0F)));
     }
 
     public static IGTTool register(@Nonnull ToolBuilder<?> builder) {

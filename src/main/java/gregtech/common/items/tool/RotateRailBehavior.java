@@ -7,7 +7,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -22,22 +21,13 @@ public class RotateRailBehavior implements IToolBehavior {
     @Nonnull
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
-        if (!world.isRemote) {
-            IBlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof BlockRailBase) {
-
-                boolean rotated = world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90));
-
-                if (rotated) {
-                    ToolHelper.damageItem(player.getHeldItem(hand), player);
-
-                    world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                    player.swingArm(hand);
-                    return EnumActionResult.SUCCESS;
-                }
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() instanceof BlockRailBase) {
+            if (world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90))) {
+                ToolHelper.onActionDone(player, world, hand);
+                return EnumActionResult.SUCCESS;
             }
         }
-
         return EnumActionResult.PASS;
     }
 

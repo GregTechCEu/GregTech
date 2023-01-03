@@ -301,7 +301,7 @@ public class ToolRecipeHandler {
     public static void registerCustomToolRecipes() {
         registerFlintToolRecipes();
         registerMortarRecipes();
-        registerSoftHammerRecipes();
+        registerSoftToolRecipes();
         registerElectricRecipes();
     }
 
@@ -357,16 +357,16 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void registerSoftHammerRecipes() {
-        final Material[] softHammerMaterials = new Material[]{
+    private static void registerSoftToolRecipes() {
+        final Material[] softMaterials = new Material[]{
                 Materials.Wood, Materials.Rubber, Materials.Polyethylene,
                 Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
         };
 
         final UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
 
-        for (int i = 0; i < softHammerMaterials.length; i++) {
-            Material material = softHammerMaterials[i];
+        for (int i = 0; i < softMaterials.length; i++) {
+            Material material = softMaterials[i];
 
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
@@ -379,6 +379,12 @@ public class ToolRecipeHandler {
                         ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i), 1, 4F, 1F),
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.ingot, material),
+                        'S', stick);
+
+                ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
+                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1), 1, 4F, 0F),
+                        "xPP", " SP", "S f",
+                        'P', new UnificationEntry(OrePrefix.plate, material),
                         'S', stick);
             }
         }

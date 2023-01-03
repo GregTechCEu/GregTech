@@ -11,6 +11,7 @@ import forestry.api.arboriculture.IToolGrafter;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -514,7 +515,19 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @Nullable
     default ICapabilityProvider definition$initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
+        List<ICapabilityProvider> providers = new ArrayList<>();
+        if (isElectric()) {
+            providers.add(ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack));
+        }
+        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+            ICapabilityProvider behaviorProvider = behavior.createProvider(stack, nbt);
+            if (behaviorProvider != null) {
+                providers.add(behaviorProvider);
+            }
+        }
+        if (providers.isEmpty()) return null;
+        if (providers.size() == 1) return providers.get(0);
+        return new CombinedCapabilityProvider(providers);
     }
 
     default EnumActionResult definition$onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
