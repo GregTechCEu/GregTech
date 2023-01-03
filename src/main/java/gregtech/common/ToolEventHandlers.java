@@ -39,6 +39,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -120,6 +121,20 @@ public class ToolEventHandlers {
             }
             if (behaviorTag.getBoolean(ToolHelper.RELOCATE_MINED_BLOCKS_KEY)) {
                 event.getDrops().removeIf(player::addItemStackToInventory);
+            }
+        }
+    }
+
+    /**
+     * Prevents anvil repairing if tools do not have the same material
+     */
+    @SubscribeEvent
+    public static void onAnvilUpdateEvent(AnvilUpdateEvent event) {
+        ItemStack left = event.getLeft(), right = event.getRight();
+        if (left.getItem() instanceof IGTTool && right.getItem() instanceof IGTTool) {
+            IGTTool leftTool = (IGTTool) left.getItem(), rightTool = (IGTTool) right.getItem();
+            if (leftTool.getToolMaterial(left) != rightTool.getToolMaterial(right)) {
+                event.setCanceled(true);
             }
         }
     }
