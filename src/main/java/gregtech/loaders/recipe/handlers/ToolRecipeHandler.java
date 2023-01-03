@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import net.minecraft.item.ItemStack;
@@ -167,15 +166,9 @@ public class ToolRecipeHandler {
                     'P', plate,
                     'S', stick);
 
-            if (ConfigHolder.recipes.plateWrenches) {
-                addToolRecipe(material, ToolItems.WRENCH, false,
-                        "PhP", " P ", " P ",
-                        'P', plate);
-            } else {
-                addToolRecipe(material, ToolItems.WRENCH, false,
-                        "IhI", "III", " I ",
-                        'I', ingot);
-            }
+            addToolRecipe(material, ToolItems.WRENCH, false,
+                    "PhP", " P ", " P ",
+                    'P', plate);
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
@@ -225,11 +218,7 @@ public class ToolRecipeHandler {
                     'X', plate,
                     'S', steelPlate);
 
-            if (ConfigHolder.tools.enableHighTierDrills) {
-                addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV});
-            } else {
-                addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV});
-            }
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV});
 
             // chainsaw
             toolPrefix = OrePrefix.toolHeadChainsaw;
@@ -358,9 +347,8 @@ public class ToolRecipeHandler {
 
     private static void registerMortarRecipes() {
         for (Material material : new Material[]{
-                Materials.Bronze, Materials.Iron, Materials.WroughtIron,
-                Materials.Steel, Materials.Diamond, Materials.DamascusSteel,
-                Materials.BlackSteel, Materials.RedSteel, Materials.BlueSteel}) {
+                Materials.Bronze, Materials.Iron, Materials.Invar, Materials.Steel,
+                Materials.DamascusSteel, Materials.CobaltBrass, Materials.WroughtIron }) {
 
             addToolRecipe(material, ToolItems.MORTAR, false,
                     " I ", "SIS", "SSS",

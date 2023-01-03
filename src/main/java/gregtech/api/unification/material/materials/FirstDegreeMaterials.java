@@ -69,7 +69,6 @@ public class FirstDegreeMaterials {
                 .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
-                .toolStats(7.0f, 3.0f, 256, 15)
                 .build();
 
         Bone = new Material.Builder(258, "bone")
@@ -84,7 +83,6 @@ public class FirstDegreeMaterials {
                 .color(0xFFB400).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Zinc, 1, Copper, 3)
-                .toolStats(8.0f, 3.0f, 152, 21)
                 .rotorStats(8.0f, 3.0f, 152)
                 .itemPipeProperties(2048, 1)
                 .fluidTemp(1160)
@@ -95,7 +93,7 @@ public class FirstDegreeMaterials {
                 .color(0xFF8000).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME, GENERATE_SMALL_GEAR, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Tin, 1, Copper, 3)
-                .toolStats(6.0f, 2.5f, 192, 21)
+                .toolStats(3.0f, 2.0f, 192, 18)
                 .rotorStats(6.0f, 2.5f, 192)
                 .fluidPipeProperties(1696, 20, true)
                 .fluidTemp(1357)
@@ -210,7 +208,7 @@ public class FirstDegreeMaterials {
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
-                .toolStats(8.0f, 3.0f, 1280, 15)
+                .toolStats(6.0f, 7.0f, 0.1f, 768, 18)
                 .build();
 
         Electrum = new Material.Builder(277, "electrum")
@@ -228,7 +226,6 @@ public class FirstDegreeMaterials {
                 .color(0x50FF50).iconSet(EMERALD)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
-                .toolStats(10.0f, 2.0f, 368, 15)
                 .build();
 
         Galena = new Material.Builder(279, "galena")
@@ -249,7 +246,6 @@ public class FirstDegreeMaterials {
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
-                .toolStats(8.0f, 3.0f, 368, 15)
                 .build();
 
         Grossular = new Material.Builder(282, "grossular")
@@ -292,9 +288,10 @@ public class FirstDegreeMaterials {
                 .color(0xB4B478).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FRAME, GENERATE_GEAR)
                 .components(Iron, 2, Nickel, 1)
-                .toolStats(7.0f, 3.0f, 512, 21)
+                .toolStats(4.0f, 3.0f, 384, 18)
                 .rotorStats(7.0f, 3.0f, 512)
                 .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 3)
+                .addDefaultEnchant(Enchantments.EFFICIENCY, 1)
                 .fluidTemp(1916)
                 .build();
 
@@ -320,7 +317,6 @@ public class FirstDegreeMaterials {
                 .color(0xC8BEFF)
                 .flags(EXT2_METAL)
                 .components(Magnesium, 1, Aluminium, 2)
-                .toolStats(6.0f, 2.0f, 256, 21)
                 .rotorStats(6.0f, 2.0f, 256)
                 .itemPipeProperties(1024, 2)
                 .fluidTemp(929)
@@ -400,7 +396,8 @@ public class FirstDegreeMaterials {
                 .color(0xFADCE1).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .components(Copper, 1, Silver, 4)
-                .toolStats(13.0f, 2.0f, 196, 33)
+                .toolStats(3.0f, 8.0f, 0.3f, 768, 33)
+                .addDefaultEnchant(Enchantments.SMITE, 3)
                 .rotorStats(13.0f, 2.0f, 196)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1700, GasTier.LOW, VA[MV], 1000)
@@ -412,9 +409,9 @@ public class FirstDegreeMaterials {
                 .color(0xFFE61E).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING)
                 .components(Copper, 1, Gold, 4)
-                .toolStats(14.0f, 2.0f, 152, 33)
+                .toolStats(12.0f, 2.0f, 768, 33)
                 .rotorStats(14.0f, 2.0f, 152)
-                .addDefaultEnchant(Enchantments.SMITE, 4)
+                .addDefaultEnchant(Enchantments.FORTUNE, 2)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1600, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1341)
@@ -425,9 +422,7 @@ public class FirstDegreeMaterials {
                 .color(0x64327D)
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Gold, 1, Silver, 1, Copper, 3)
-                .toolStats(12.0f, 2.0f, 256, 21)
                 .rotorStats(12.0f, 2.0f, 256)
-                .addDefaultEnchant(Enchantments.SMITE, 2)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(2000, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1328)
@@ -438,9 +433,7 @@ public class FirstDegreeMaterials {
                 .color(0x647D7D)
                 .flags(EXT2_METAL)
                 .components(Bismuth, 1, Zinc, 1, Copper, 3)
-                .toolStats(8.0f, 3.0f, 256, 21)
                 .rotorStats(8.0f, 3.0f, 256)
-                .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 5)
                 .blastTemp(1100, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1036)
                 .build();
@@ -496,7 +489,6 @@ public class FirstDegreeMaterials {
                 .color(0xFF6464).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
-                .toolStats(8.5f, 3.0f, 256, 33)
                 .build();
 
         Salt = new Material.Builder(312, "salt")
@@ -518,7 +510,6 @@ public class FirstDegreeMaterials {
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
-                .toolStats(7.5f, 4.0f, 256, 15)
                 .build();
 
         Scheelite = new Material.Builder(315, "scheelite")
@@ -580,7 +571,7 @@ public class FirstDegreeMaterials {
                 .color(0xC8C8DC).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
-                .toolStats(7.0f, 4.0f, 480, 33)
+                .toolStats(7.0f, 5.0f, 1024, 14)
                 .rotorStats(7.0f, 4.0f, 480)
                 .fluidPipeProperties(2428, 75, true, true, true, false)
                 .blastTemp(1700, GasTier.LOW, VA[HV], 1100)
@@ -593,7 +584,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING,
                         GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Iron, 1)
-                .toolStats(6.0f, 3.0f, 512, 21)
+                .toolStats(5.0f, 3.0f, 512, 14)
                 .rotorStats(6.0f, 3.0f, 512)
                 .fluidPipeProperties(1855, 75, true)
                 .cableProperties(GTValues.V[4], 2, 2)
@@ -630,7 +621,6 @@ public class FirstDegreeMaterials {
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
-                .toolStats(7.0f, 2.0f, 256, 15)
                 .build();
 
         Tungstate = new Material.Builder(330, "tungstate")
@@ -646,7 +636,7 @@ public class FirstDegreeMaterials {
                 .color(0xB4B4E6).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1)
-                .toolStats(9.0f, 4.0f, 2048, 33)
+                .toolStats(10.0f, 7.0f, 0.1f, 2048, 21)
                 .rotorStats(9.0f, 4.0f, 2048)
                 .itemPipeProperties(128, 16)
                 .blastTemp(2700, GasTier.MID, VA[HV], 1300)
@@ -682,7 +672,7 @@ public class FirstDegreeMaterials {
                 .color(0xC8B4B4).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
-                .toolStats(6.0f, 3.5f, 384, 21)
+                .toolStats(2.0f, 2.0f, -0.2f, 384, 5)
                 .rotorStats(6.0f, 3.5f, 384)
                 .fluidTemp(2011)
                 .build();
@@ -760,7 +750,6 @@ public class FirstDegreeMaterials {
                 .color(0x6464FF).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_ROTOR, GENERATE_ROUND, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Iridium, 3, Osmium, 1)
-                .toolStats(9.0f, 3.0f, 3152, 21)
                 .rotorStats(9.0f, 3.0f, 3152)
                 .itemPipeProperties(64, 32)
                 .blastTemp(4500, GasTier.HIGH, VA[LuV], 900)
@@ -1071,7 +1060,7 @@ public class FirstDegreeMaterials {
                 .color(0x330066).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Tungsten, 1, Carbon, 1)
-                .toolStats(12.0f, 4.0f, 1280, 21)
+                .toolStats(60.0f, 2.0f, 1024, 21)
                 .rotorStats(12.0f, 4.0f, 1280)
                 .fluidPipeProperties(3837, 200, true)
                 .blastTemp(3058, GasTier.MID, VA[HV], 1500)

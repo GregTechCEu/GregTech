@@ -124,17 +124,6 @@ public class MixerRecipes {
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Tin));
 
-        ModHandler.addShapelessRecipe("dust_cobalt_brass", OreDictUnifier.get(dust, CobaltBrass, 8),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Brass),
-                new UnificationEntry(dust, Aluminium),
-                new UnificationEntry(dust, Cobalt));
-
         MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
                 .input(dust, Copper)
                 .input(dust, Redstone, 4)

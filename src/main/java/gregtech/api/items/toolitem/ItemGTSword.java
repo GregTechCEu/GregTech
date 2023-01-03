@@ -41,8 +41,9 @@ public class ItemGTSword extends ItemSword implements IGTTool {
 
     private final boolean playSoundOnBlockDestroy;
     private final String oredict;
+    private final Supplier<ItemStack> markerItem;
 
-    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict) {
+    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
         super(ToolMaterial.STONE);
         this.domain = domain;
         this.id = id;
@@ -52,6 +53,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
         this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oredict = oreDict;
+        this.markerItem = markerItem;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -106,13 +108,21 @@ public class ItemGTSword extends ItemSword implements IGTTool {
         return oredict;
     }
 
+    @Nullable
+    @Override
+    public Supplier<ItemStack> getMarkerItem() {
+        return markerItem;
+    }
+
     @Override
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            if (isElectric()) {
-                items.add(get(Materials.Neutronium, Integer.MAX_VALUE));
+            if (getMarkerItem() != null) {
+                items.add(getMarkerItem().get());
+            } else if (isElectric()) {
+                items.add(get(Materials.Iron, Integer.MAX_VALUE));
             } else {
-                items.add(get(Materials.Neutronium));
+                items.add(get(Materials.Iron));
             }
         }
     }
@@ -288,7 +298,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
 
         @Override
         public Supplier<ItemGTSword> supply() {
-            return () -> new ItemGTSword(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict);
+            return () -> new ItemGTSword(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
         }
     }
 }

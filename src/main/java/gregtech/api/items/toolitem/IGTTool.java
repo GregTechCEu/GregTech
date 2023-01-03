@@ -36,6 +36,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -64,6 +65,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static gregtech.api.items.armor.IArmorLogic.ATTACK_DAMAGE_MODIFIER;
@@ -106,6 +108,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     String getOreDictName();
 
+    @Nullable
+    Supplier<ItemStack> getMarkerItem();
+
     default Item get() {
         return (Item) this;
     }
@@ -123,6 +128,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         stack.getTagCompound().setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
 
+        // don't show the normal vanilla damage and attack speed tooltips,
+        // we handle those ourselves
+        // stack.getTagCompound().setInteger(HIDE_FLAGS, 2);
+
         // Set Material
         toolTag.setString(MATERIAL_KEY, material.toString());
 
@@ -130,6 +139,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
         toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability());
         toolTag.setInteger(DURABILITY_KEY, 0);
+        if (toolProperty.getUnbreakable()) {
+            stack.getTagCompound().setBoolean(UNBREAKABLE_KEY, true);
+        }
 
         // Set material enchantments
         toolProperty.getEnchantments().forEach((enchantment, level) -> {
@@ -206,6 +218,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return toolProperty == null ? 0F : toolProperty.getToolAttackDamage();
     }
 
+    default float getMaterialAttackSpeed(ItemStack stack) {
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0F : toolProperty.getToolAttackSpeed();
+    }
+
     default int getMaterialDurability(ItemStack stack) {
         ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolDurability();
@@ -259,6 +276,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         float attackDamage = getMaterialAttackDamage(stack) + getToolStats().getBaseDamage(stack);
         toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
         return attackDamage;
+    }
+
+    default float getTotalAttackSpeed(ItemStack stack) {
+        NBTTagCompound toolTag = getToolTag(stack);
+        if (toolTag.hasKey(ATTACK_SPEED_KEY, Constants.NBT.TAG_FLOAT)) {
+            return toolTag.getFloat(ATTACK_SPEED_KEY);
+        }
+        float attackSpeed = getMaterialAttackSpeed(stack) + getToolStats().getAttackSpeed(stack);
+        toolTag.setFloat(ATTACK_SPEED_KEY, attackSpeed);
+        return attackSpeed;
     }
 
     default int getTotalMaxDurability(ItemStack stack) {
@@ -388,7 +415,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Multimap<String, AttributeModifier> multimap = HashMultimap.create();
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
             multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getTotalAttackDamage(stack), 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", getToolStats().getAttackSpeed(stack), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", Math.max(-3.9D, getTotalAttackSpeed(stack)), 0));
         }
         return multimap;
     }
@@ -574,7 +601,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
             case BREAKABLE:
             case ALL: {
-                return true;
+                // don't allow mending on electric tools
+                return !(isElectric() && enchantment instanceof EnchantmentMending);
             }
         }
 

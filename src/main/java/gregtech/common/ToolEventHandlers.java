@@ -148,6 +148,7 @@ public class ToolEventHandlers {
         ItemStack stack = event.getItemStack();
         if (stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
+            NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
             String mainHandTooltip = I18n.format("item.modifiers.mainhand");
             ListIterator<String> tooltipIterator = event.getToolTip().listIterator(event.getToolTip().size());
             // Check where in the tooltip list we are
@@ -156,15 +157,18 @@ public class ToolEventHandlers {
                     tooltipIterator.next(); // Turnover
                     // Push
                     IGTToolDefinition toolStats = tool.getToolStats();
-                    if (toolStats.isSuitableForCrafting(stack)) {
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
+                    if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
+                        if (toolStats.isSuitableForCrafting(stack)) {
+                            tooltipIterator.add(I18n.format("item.gt.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
+                        }
+
+                        // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.general_uses", tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1));
                     }
 
-                    // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
-                    tooltipIterator.add(I18n.format("item.gt.tool.tooltip.general_uses", tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1));
-
                     if (toolStats.isSuitableForAttacking(stack)) {
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_damage", tool.getTotalAttackDamage(stack)));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_damage", 2 + tool.getTotalAttackDamage(stack)));
+                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_speed", 4 + tool.getTotalAttackSpeed(stack)));
                     }
                     if (toolStats.isSuitableForBlockBreak(stack)) {
                         tooltipIterator.add(I18n.format("item.gt.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));

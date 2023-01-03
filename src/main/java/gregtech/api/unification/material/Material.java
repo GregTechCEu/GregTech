@@ -719,11 +719,15 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
-            return toolStats(speed, damage, durability, enchantability, false);
+            return toolStats(speed, damage, 0.0F, durability, enchantability, false);
         }
 
-        public Builder toolStats(float speed, float damage, int durability, int enchantability, boolean ignoreCraftingTools) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability, ignoreCraftingTools));
+        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int enchantability) {
+            return toolStats(speed, damage, attackSpeed, durability, enchantability, false);
+        }
+
+        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int enchantability, boolean ignoreCraftingTools) {
+            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, attackSpeed, durability, enchantability, ignoreCraftingTools));
             return this;
         }
 
