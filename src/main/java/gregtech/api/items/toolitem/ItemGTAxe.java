@@ -10,8 +10,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-/**
- * GT-styled ItemTool (generic tool item).
- * <p>
- * Use this class if your tool isn't specialized (e.g. {@link ItemGTSword}, {@link ItemGTAxe})
- */
-public class ItemGTTool extends ItemTool implements IGTTool {
+public class ItemGTAxe extends ItemAxe implements IGTTool {
 
     protected final String domain, id;
 
@@ -45,8 +40,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final boolean playSoundOnBlockDestroy;
     protected final Supplier<ItemStack> markerItem;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
-        super(0F, 0F, ToolMaterial.STONE, Collections.emptySet());
+    protected ItemGTAxe(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
+        super(ToolMaterial.STONE, 0F, 0F);
         this.domain = domain;
         this.id = id;
         this.tier = tier;
@@ -278,11 +273,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         return ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
     }
 
-    public static class Builder extends ToolBuilder<ItemGTTool> {
+    public static class Builder extends ToolBuilder<ItemGTAxe> {
 
         @Nonnull
-        public static Builder of(@Nonnull String domain, @Nonnull String id) {
-            return new Builder(domain, id);
+        public static ItemGTAxe.Builder of(@Nonnull String domain, @Nonnull String id) {
+            return new ItemGTAxe.Builder(domain, id);
         }
 
         public Builder(@Nonnull String domain, @Nonnull String id) {
@@ -290,8 +285,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         }
 
         @Override
-        public Supplier<ItemGTTool> supply() {
-            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
+        public Supplier<ItemGTAxe> supply() {
+            return () -> new ItemGTAxe(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
         }
     }
 }

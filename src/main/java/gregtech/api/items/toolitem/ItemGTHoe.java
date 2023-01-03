@@ -10,8 +10,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-/**
- * GT-styled ItemTool (generic tool item).
- * <p>
- * Use this class if your tool isn't specialized (e.g. {@link ItemGTSword}, {@link ItemGTAxe})
- */
-public class ItemGTTool extends ItemTool implements IGTTool {
+public class ItemGTHoe extends ItemHoe implements IGTTool {
 
     protected final String domain, id;
 
@@ -45,8 +40,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final boolean playSoundOnBlockDestroy;
     protected final Supplier<ItemStack> markerItem;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
-        super(0F, 0F, ToolMaterial.STONE, Collections.emptySet());
+    protected ItemGTHoe(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
+        super(ToolMaterial.STONE);
         this.domain = domain;
         this.id = id;
         this.tier = tier;
@@ -123,11 +118,6 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @Override
     public float getDestroySpeed(@Nonnull ItemStack stack, @Nonnull IBlockState state) {
         return definition$getDestroySpeed(stack, state);
-    }
-
-    @Override
-    public boolean hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
-        return definition$hitEntity(stack, target, attacker);
     }
 
     @Override
@@ -252,12 +242,6 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
     @Nonnull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
-        return definition$onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-    }
-
-    @Nonnull
-    @Override
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
         return definition$onItemRightClick(world, player, hand);
     }
@@ -278,7 +262,32 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         return ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
     }
 
-    public static class Builder extends ToolBuilder<ItemGTTool> {
+    // Hoe specific overrides
+
+    @Nonnull
+    @Override
+    public String getMaterialName() {
+        return "";
+    }
+
+    @Nonnull
+    @Override
+    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+        // try to do the vanilla hoe behavior first
+        EnumActionResult result = super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+        if (result == EnumActionResult.SUCCESS) return EnumActionResult.SUCCESS;
+        return definition$onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public boolean hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
+        getToolStats().getBehaviors().forEach(behavior -> behavior.hitEntity(stack, target, attacker));
+        // damage by 1, as this is what vanilla does
+        ToolHelper.damageItem(stack, attacker, 1);
+        return true;
+    }
+
+    public static class Builder extends ToolBuilder<ItemGTHoe> {
 
         @Nonnull
         public static Builder of(@Nonnull String domain, @Nonnull String id) {
@@ -290,8 +299,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         }
 
         @Override
-        public Supplier<ItemGTTool> supply() {
-            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
+        public Supplier<ItemGTHoe> supply() {
+            return () -> new ItemGTHoe(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
         }
     }
 }

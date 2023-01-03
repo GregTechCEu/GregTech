@@ -35,6 +35,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.entity.Entity;
@@ -273,7 +274,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (toolTag.hasKey(ATTACK_DAMAGE_KEY, Constants.NBT.TAG_FLOAT)) {
             return toolTag.getFloat(ATTACK_DAMAGE_KEY);
         }
-        float attackDamage = getMaterialAttackDamage(stack) + getToolStats().getBaseDamage(stack);
+        float baseDamage = getToolStats().getBaseDamage(stack);
+        float attackDamage = 0;
+        // represents a tool that should always have an attack damage value of 0
+        if (baseDamage != Float.MIN_VALUE) {
+            attackDamage = getMaterialAttackDamage(stack) + baseDamage;
+        }
         toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
         return attackDamage;
     }
@@ -553,6 +559,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
         return ActionResult.newResult(EnumActionResult.PASS, stack);
+    }
+
+    default void definition$getSubItems(@Nonnull NonNullList<ItemStack> items) {
+        if (getMarkerItem() != null) {
+            items.add(getMarkerItem().get());
+        } else if (isElectric()) {
+            items.add(get(Materials.Iron, Integer.MAX_VALUE));
+        } else {
+            items.add(get(Materials.Iron));
+        }
     }
 
     // Client-side methods
