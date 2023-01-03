@@ -97,7 +97,7 @@ public class ToolDefinitionBuilder {
      * material stats, which MC will not see as a valid weapon.
      */
     public ToolDefinitionBuilder cannotAttack() {
-        this.attackDamage = Integer.MIN_VALUE;
+        this.attackDamage = Float.MIN_VALUE;
         return this;
     }
 

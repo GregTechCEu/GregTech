@@ -1,8 +1,6 @@
 package gregtech.api.items.toolitem;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import gregtech.api.items.armor.IArmorLogic;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.state.IBlockState;
@@ -10,7 +8,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -152,6 +149,12 @@ public class ItemGTHoe extends ItemHoe implements IGTTool {
         return definition$getIsRepairable(toRepair, repair);
     }
 
+    @Nonnull
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
+        return definition$getAttributeModifiers(slot, stack);
+    }
+
     @Override
     public int getHarvestLevel(@Nonnull ItemStack stack, @Nonnull String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
         return definition$getHarvestLevel(stack, toolClass, player, blockState);
@@ -291,17 +294,6 @@ public class ItemGTHoe extends ItemHoe implements IGTTool {
         // damage by 1, as this is what vanilla does
         ToolHelper.damageItem(stack, attacker, 1);
         return true;
-    }
-
-    @Nonnull
-    @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot equipmentSlot, @Nonnull ItemStack stack) {
-        Multimap<String, AttributeModifier> multimap = HashMultimap.create();
-        if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
-            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(IArmorLogic.ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 0.0, 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(IArmorLogic.ATTACK_SPEED_MODIFIER, "Weapon modifier", Math.max(-3.9D, getTotalAttackSpeed(stack)), 0));
-        }
-        return multimap;
     }
 
     public static class Builder extends ToolBuilder<ItemGTHoe> {

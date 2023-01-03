@@ -273,7 +273,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (toolTag.hasKey(ATTACK_DAMAGE_KEY, Constants.NBT.TAG_FLOAT)) {
             return toolTag.getFloat(ATTACK_DAMAGE_KEY);
         }
-        float attackDamage = getMaterialAttackDamage(stack) + getToolStats().getBaseDamage(stack);
+        float baseDamage = getToolStats().getBaseDamage(stack);
+        float attackDamage = 0;
+        // represents a tool that should always have an attack damage value of 0
+        if (baseDamage != Float.MIN_VALUE) {
+            attackDamage = getMaterialAttackDamage(stack) + baseDamage;
+        }
         toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
         return attackDamage;
     }

@@ -74,7 +74,7 @@ public class ToolItems {
                         .behaviors(new DisableShieldBehavior(), new TreeFellingBehavior()))
                 .toolClasses(ToolClasses.AXE));
         HOE = register(ItemGTHoe.Builder.of(GTValues.MODID, "hoe")
-                .toolStats(b -> b.attackSpeed(-1.0F))
+                .toolStats(b -> b.cannotAttack().attackSpeed(-1.0F))
                 .toolClasses(ToolClasses.HOE));
         SAW = register(ItemGTTool.Builder.of(GTValues.MODID, "saw")
                 .toolStats(b -> b.crafting().damagePerCraftingAction(2)
