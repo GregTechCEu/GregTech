@@ -57,7 +57,7 @@ public class ToolItems {
 
     public static void init() {
         SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
-                        .toolStats(b -> b.blockBreaking().attacking()
+                        .toolStats(b -> b.attacking()
                                 .attackDamage(3.0F).attackSpeed(-2.4F))
                         .toolClasses(ToolClasses.SWORD));
         PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
@@ -69,7 +69,7 @@ public class ToolItems {
                         .behaviors(new GrassPathBehavior()))
                 .toolClasses(ToolClasses.SHOVEL));
         AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
-                .toolStats(b -> b.blockBreaking().attacking()
+                .toolStats(b -> b.blockBreaking()
                         .attackDamage(5.0F).attackSpeed(-3.2F).baseEfficiency(2.0F)
                         .behaviors(new DisableShieldBehavior(), new TreeFellingBehavior()))
                 .toolClasses(ToolClasses.AXE));
@@ -85,7 +85,7 @@ public class ToolItems {
                 .symbol('s')
                 .toolClasses(ToolClasses.SAW));
         HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
-                .toolStats(b -> b.blockBreaking().attacking().crafting().damagePerCraftingAction(2)
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
                         .attackDamage(1.0F).attackSpeed(-2.8F))
                 .oreDict(ToolOreDicts.craftingToolHammer)
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
@@ -124,7 +124,7 @@ public class ToolItems {
                 .symbol('f')
                 .toolClasses(ToolClasses.FILE));
         CROWBAR = register(ItemGTTool.Builder.of(GTValues.MODID, "crowbar")
-                .toolStats(b -> b.blockBreaking().crafting().attacking()
+                .toolStats(b -> b.blockBreaking().crafting()
                         .attackDamage(2.0F).attackSpeed(-2.4F)
                         .sneakBypassUse().behaviors(new RotateRailBehavior()))
                 .sound(SoundEvents.ENTITY_ITEM_BREAK)
