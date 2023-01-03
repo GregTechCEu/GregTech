@@ -949,6 +949,7 @@ item.gt.tool.behavior.ground_tilling=§eTills Ground
 item.gt.tool.behavior.grass_path=§eCreates Grass Paths
 item.gt.tool.behavior.rail_rotation=§eRotates Rails
 item.gt.tool.behavior.crop_harvesting=§aHarvests Crops
+item.gt.tool.behavior.plunger=§9Drains Fluids
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
@@ -1001,6 +1002,7 @@ item.gt.tool.buzzsaw.name=%s Buzzsaw (LV)
 item.gt.tool.buzzsaw.tooltip=Not suitable for harvesting Blocks
 item.gt.tool.screwdriver_lv.name=%s Screwdriver (LV)
 item.gt.tool.screwdriver_lv.tooltip=Adjusts Covers and Machines
+item.gt.tool.plunger.name=%s Plunger
 
 
 item.gt.tool.tooltip.crafting_uses=§a %s Crafting Uses

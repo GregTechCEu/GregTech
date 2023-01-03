@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/tools/handle_plunger",
+    "layer1": "gregtech:items/tools/plunger"
+  }
+}

@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,7 +31,6 @@ public interface IToolBehavior {
      * @param attacker the entity hitting the other
      */
     default void hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
-
     }
 
     /**
@@ -43,7 +43,6 @@ public interface IToolBehavior {
      * @param player The Player that is wielding the item
      */
     default void onBlockStartBreak(@Nonnull ItemStack stack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-
     }
 
     /**
@@ -56,7 +55,6 @@ public interface IToolBehavior {
      * @param entityLiving the entity destroying the block
      */
     default void onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {
-
     }
 
     /**
@@ -66,7 +64,6 @@ public interface IToolBehavior {
      * @param stack        The Item stack
      */
     default void onEntitySwing(@Nonnull EntityLivingBase entityLiving, @Nonnull ItemStack stack) {
-
     }
 
     /**
@@ -123,13 +120,11 @@ public interface IToolBehavior {
      */
     @Nonnull
     default ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
     @SideOnly(Side.CLIENT)
     default void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-
     }
 
     /**
@@ -138,6 +133,15 @@ public interface IToolBehavior {
      * @param tag   the nbt tag to add to
      */
     default void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {
+    }
 
+    /**
+     * Add a capability to a tool.
+     * Recommended to only use this if no other options exist.
+     * @param stack the tool
+     * @param tag   the capability nbt of the item
+     */
+    default ICapabilityProvider createProvider(ItemStack stack, @Nullable NBTTagCompound tag) {
+        return null;
     }
 }

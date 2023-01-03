@@ -38,6 +38,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -253,6 +254,24 @@ public final class ToolHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Can be called to do a default set of "successful use" actions.
+     * Damages the item, plays the tool sound (if available), and swings the player's arm.
+     *
+     * @param player the player clicking the item
+     * @param world  the world in which the click happened
+     * @param hand   the hand holding the item
+     */
+    public static void onActionDone(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        IGTTool tool = (IGTTool) stack.getItem();
+        ToolHelper.damageItem(stack, player);
+        if (tool.getSound() != null) {
+            world.playSound(null, player.posX, player.posY, player.posZ, tool.getSound(), SoundCategory.PLAYERS, 1.0F, 1.0F);
+        }
+        player.swingArm(hand);
     }
 
     /**
