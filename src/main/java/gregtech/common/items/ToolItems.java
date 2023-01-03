@@ -68,7 +68,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().attackDamage(1.5F).attackSpeed(-3.0F)
                         .behaviors(new GrassPathBehavior()))
                 .toolClasses(ToolClasses.SHOVEL));
-        AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
+        AXE = register(ItemGTAxe.Builder.of(GTValues.MODID, "axe")
                 .toolStats(b -> b.blockBreaking()
                         .attackDamage(5.0F).attackSpeed(-3.2F).baseEfficiency(2.0F)
                         .behaviors(new DisableShieldBehavior(), new TreeFellingBehavior()))
@@ -214,7 +214,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.DRILL)
                 .electric(GTValues.IV));
 
-        CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
+        CHAINSAW_LV = register(ItemGTAxe.Builder.of(GTValues.MODID, "chainsaw_lv")
                 .toolStats(b -> b.blockBreaking()
                         .efficiencyMultiplier(2.0F)
                         .attackDamage(5.0F).attackSpeed(-3.2F)
