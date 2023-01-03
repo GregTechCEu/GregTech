@@ -8,6 +8,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
+import gregtech.integration.GroovyScriptCompat;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -115,6 +116,10 @@ public class CommandHand extends CommandBase {
                     player.sendMessage(new TextComponentString("    \u00A7e- \u00A7b" + oreName)
                             .setStyle(getCopyStyle("<ore:" + oreName + ">", false)));
                 }
+            }
+
+            if (GroovyScriptCompat.isLoaded()) {
+                sender.sendMessage(new TextComponentTranslation("gregtech.command.hand.groovy"));
             }
         } else {
             throw new CommandException("gregtech.command.hand.not_a_player");

@@ -4878,6 +4878,7 @@ gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
+gregtech.command.hand.groovy=Consider using §6/gs hand
 gregtech.command.hand.usage=Usage: /gregtech hand
 gregtech.command.hand.item_id=Item: %s (Metadata: %d)
 gregtech.command.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
