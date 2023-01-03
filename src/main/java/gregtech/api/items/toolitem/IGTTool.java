@@ -634,6 +634,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             if (enchantment.getName().equals("enchantment.cofhcore.smelting")) {
                 return false;
             }
+            // Block Astral Sorcery Scorching Heat (autosmelt) on AoE and Tree-Felling tools
+            if (enchantment.getName().equals("enchantment.as.smelting")) {
+                return false;
+            }
         }
 
         // Block Mending and Unbreaking on Electric tools
