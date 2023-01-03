@@ -70,7 +70,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.SHOVEL));
         AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
                 .toolStats(b -> b.blockBreaking().attacking()
-                        .attackDamage(5.0F).attackSpeed(-3.0F).baseEfficiency(2.0F)
+                        .attackDamage(5.0F).attackSpeed(-3.2F).baseEfficiency(2.0F)
                         .behaviors(new DisableShieldBehavior(), new TreeFellingBehavior()))
                 .toolClasses(ToolClasses.AXE));
         HOE = register(ItemGTTool.Builder.of(GTValues.MODID, "hoe")
@@ -100,12 +100,12 @@ public class ToolItems {
                 .markerItem(() -> ToolHelper.getAndSetToolData(SOFT_MALLET, Materials.Wood, 48, 1, 4F, 1F)));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
-                        .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.0F)
+                        .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
                         .behaviors(new TorchPlaceBehavior()))
                 .toolClasses(ToolClasses.PICKAXE));
         SPADE = register(ItemGTTool.Builder.of(GTValues.MODID, "spade")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
-                        .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.0F)
+                        .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
                         .behaviors(new GrassPathBehavior()))
                 .toolClasses(ToolClasses.SHOVEL));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
@@ -170,7 +170,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.BUTCHERY_KNIFE));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
-                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .attackDamage(1.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(new TorchPlaceBehavior()))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -179,7 +179,7 @@ public class ToolItems {
                 .electric(GTValues.LV));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 2)
-                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .attackDamage(1.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
                         .behaviors(new TorchPlaceBehavior()))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -188,7 +188,7 @@ public class ToolItems {
                 .electric(GTValues.MV));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
                 .toolStats(b -> b.blockBreaking().aoe(2, 2, 4)
-                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .attackDamage(1.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
                         .behaviors(new TorchPlaceBehavior()))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -197,7 +197,7 @@ public class ToolItems {
                 .electric(GTValues.HV));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
                 .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
-                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .attackDamage(1.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
                         .behaviors(new TorchPlaceBehavior()))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -206,7 +206,7 @@ public class ToolItems {
                 .electric(GTValues.EV));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
                 .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
-                        .attackDamage(1.0F).attackSpeed(-3.0F)
+                        .attackDamage(1.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
                         .behaviors(new TorchPlaceBehavior()))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -217,7 +217,7 @@ public class ToolItems {
         CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
                 .toolStats(b -> b.blockBreaking()
                         .efficiencyMultiplier(2.0F)
-                        .attackDamage(5.0F).attackSpeed(-3.0F)
+                        .attackDamage(5.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(new HarvestIceBehavior(), new DisableShieldBehavior(), new TreeFellingBehavior()))
                 .sound(GTSoundEvents.CHAINSAW_TOOL, true)
@@ -251,7 +251,7 @@ public class ToolItems {
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.IV));
         BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")
-                .toolStats(b -> b.crafting().attackDamage(1.5F).attackSpeed(-3.0F)
+                .toolStats(b -> b.crafting().attackDamage(1.5F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.CHAINSAW_TOOL, true)
                 .oreDict(ToolOreDicts.craftingToolSaw)
