@@ -404,6 +404,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        // full durability tools in the left slot are not repairable
+        // this is needed so enchantment merging works when both tools are full durability
+        if (toRepair.getItemDamage() == 0) return false;
         if (repair.getItem() instanceof IGTTool) {
             return getToolMaterial(toRepair) == ((IGTTool) repair.getItem()).getToolMaterial(repair);
         }
