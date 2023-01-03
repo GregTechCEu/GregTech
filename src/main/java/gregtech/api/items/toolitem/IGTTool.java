@@ -35,6 +35,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.entity.Entity;
@@ -555,6 +556,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
         return ActionResult.newResult(EnumActionResult.PASS, stack);
+    }
+
+    default void definition$getSubItems(@Nonnull NonNullList<ItemStack> items) {
+        if (getMarkerItem() != null) {
+            items.add(getMarkerItem().get());
+        } else if (isElectric()) {
+            items.add(get(Materials.Iron, Integer.MAX_VALUE));
+        } else {
+            items.add(get(Materials.Iron));
+        }
     }
 
     // Client-side methods
