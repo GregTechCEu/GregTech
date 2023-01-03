@@ -36,8 +36,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -620,8 +620,28 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default boolean definition$canApplyAtEnchantingTable(@Nonnull ItemStack stack, Enchantment enchantment) {
         if (stack.isEmpty()) return false;
-        if (enchantment.type == null) return true;
 
+        // Block CoFH Smashing enchantment from all GT tools
+        if (enchantment.getName().equals("enchantment.cofhcore.smashing")) {
+            return false;
+        }
+        if (getToolStats().getAoEDefinition(stack) != AoESymmetrical.none() || getBehavioursTag(stack).hasKey(TREE_FELLING_KEY)) {
+            // Block EnderCore Auto-Smelt enchantment on AoE and Tree-Felling tools
+            if (enchantment.getName().equals("enchantment.autosmelt")) {
+                return false;
+            }
+            // Block CoFH Smelting enchantment on AoE and Tree-Felling tools
+            if (enchantment.getName().equals("enchantment.cofhcore.smelting")) {
+                return false;
+            }
+        }
+
+        // Block Mending and Unbreaking on Electric tools
+        if (isElectric() && (enchantment instanceof EnchantmentMending || enchantment instanceof EnchantmentDurability)) {
+            return false;
+        }
+
+        if (enchantment.type == null) return true;
         // bypass EnumEnchantmentType#canEnchantItem and define custom stack-aware logic.
         // the Minecraft method takes an Item, and does not respect NBT nor meta.
         switch (enchantment.type) {
@@ -632,9 +652,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 return getToolStats().isSuitableForAttacking(stack);
             }
             case BREAKABLE:
+                return stack.getTagCompound() != null && !stack.getTagCompound().getBoolean(UNBREAKABLE_KEY);
             case ALL: {
-                // don't allow mending on electric tools
-                return !(isElectric() && enchantment instanceof EnchantmentMending);
+                return true;
             }
         }
 

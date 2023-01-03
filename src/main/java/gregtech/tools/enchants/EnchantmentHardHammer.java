@@ -36,13 +36,13 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     @Override
-    public boolean canApply(ItemStack stack) {
+    public boolean canApply(@Nonnull ItemStack stack) {
         return super.canApply(stack) && stack.getItem().getToolClasses(stack).contains(ToolClasses.PICKAXE);
     }
 
     @Override
     protected boolean canApplyTogether(@Nonnull Enchantment ench) {
-        return super.canApplyTogether(ench) && ench != Enchantments.SILK_TOUCH;
+        return super.canApplyTogether(ench) && ench != Enchantments.SILK_TOUCH && ench != Enchantments.FORTUNE;
     }
 }
 
