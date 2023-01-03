@@ -8,6 +8,35 @@ death.attack.explosion=%s exploded
 death.attack.explosion.player=%s exploded with help of %s
 death.attack.heat.player=%s was boiled alive by %s
 
+death.attack.pickaxe=%s got mined by %s
+death.attack.shovel=%s got dug up by %s
+death.attack.axe=%s has been chopped by %s
+death.attack.hoe=%s had their head tilled by %s
+death.attack.hammer=%s was squashed by %s
+death.attack.mallet=%s got hammered to death by %s
+death.attack.mining_hammer=%s was mistaken for Ore by %s
+death.attack.spade=%s got excavated by %s
+death.attack.wrench=%s gave %s a whack with the Wrench!
+death.attack.file=%s has been filed D for 'Dead' by %s
+death.attack.crowbar=%s lost half a life to %s
+death.attack.screwdriver=%s has screwed with %s for the last time!
+death.attack.mortar=%s was ground to dust by %s
+death.attack.wire_cutter=%s has cut the cable for the Life Support Machine of %s
+death.attack.scythe=%s had their soul taken by %s
+death.attack.knife=%s was gently poked by %s
+death.attack.butchery_knife=%s was butchered by %s
+death.attack.drill_lv=%s was drilled with 32V by %s
+death.attack.drill_mv=%s was drilled with 128V by %s
+death.attack.drill_hv=%s was drilled with 512V by %s
+death.attack.drill_ev=%s was drilled with 2048V by %s
+death.attack.drill_iv=%s was drilled with 8192V by %s
+death.attack.chainsaw_lv=%s was massacred by %s
+death.attack.wrench_lv=%s's pipes were loosened by %s
+death.attack.wrench_hv=%s's pipes were loosened by %s
+death.attack.wrench_iv=%s had a Monkey Wrench thrown into their plans by %s
+death.attack.buzzsaw=%s got buzzed by %s
+death.attack.screwdriver_lv=%s had their screws removed by %s
+
 enchantment.disjunction=Disjunction
 
 gregtech.machine.steam_grinder.name=Steam Grinder
