@@ -13,12 +13,10 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -64,15 +62,13 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:sugar"));
             ModHandler.addShapedRecipe("paper_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Paper, 2), "SSS", " m ", 'S', new ItemStack(Items.REEDS));
             ModHandler.addShapedRecipe("sugar", OreDictUnifier.get(OrePrefix.dust, Materials.Sugar, 1), "Sm ", 'S', new ItemStack(Items.REEDS));
-            ItemStack paperStack = OreDictUnifier.get(OrePrefix.plate, Materials.Paper, 2);
-            Object[] paperRecipeIngredients = ModHandler.finalizeShapedRecipeInput(" C ", "SSS", " C ", 'S', OreDictUnifier.get(OrePrefix.dust, Materials.Paper, 1), 'C', new ItemStack(Blocks.STONE_SLAB));
-            ForgeRegistries.RECIPES.register(new CustomItemReturnShapedOreRecipeRecipe(null, paperStack,
-                    stack -> Block.getBlockFromItem(stack.getItem()) == Blocks.STONE_SLAB, paperRecipeIngredients)
-                    .setMirrored(false).setRegistryName("paper"));
+            ModHandler.addShapedRecipe("paper", new ItemStack(Items.PAPER, 2),
+                    " r ", "SSS", " B ",
+                    'S', OreDictUnifier.get(OrePrefix.dust, Materials.Paper),
+                    'B', new ItemStack(Items.WATER_BUCKET));
         }
 
-        if (!ConfigHolder.recipes.hardWoodRecipes)
-            return;
+        if (!ConfigHolder.recipes.hardWoodRecipes) return;
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ladder"));
         ModHandler.addShapedRecipe("ladder", new ItemStack(Blocks.LADDER, 2), "SrS", "SRS", "ShS", 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood), 'R', new UnificationEntry(OrePrefix.bolt, Materials.Wood));

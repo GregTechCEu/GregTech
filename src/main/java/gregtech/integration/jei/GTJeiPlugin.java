@@ -29,8 +29,10 @@ import gregtech.integration.jei.recipe.primitive.MaterialTree;
 import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import gregtech.integration.jei.recipe.primitive.OreByProductCategory;
-import gregtech.integration.jei.utils.*;
-import gregtech.loaders.recipe.CustomItemReturnShapedOreRecipeRecipe;
+import gregtech.integration.jei.utils.MachineSubtypeHandler;
+import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
+import gregtech.integration.jei.utils.ModularUIGuiHandler;
+import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
 import mezz.jei.Internal;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
@@ -94,7 +96,6 @@ public class GTJeiPlugin implements IModPlugin {
 
         registry.addRecipes(IntCircuitRecipeWrapper.create(), IntCircuitCategory.UID);
         MultiblockInfoCategory.registerRecipes(registry);
-        registry.handleRecipes(CustomItemReturnShapedOreRecipeRecipe.class, recipe -> new CustomItemReturnRecipeWrapper(jeiHelpers, recipe), VanillaRecipeCategoryUid.CRAFTING);
         registry.addRecipeRegistryPlugin(new FacadeRegistryPlugin());
 
         // register transfer handler for all categories, but not for the crafting station
