@@ -937,6 +937,7 @@ metaitem.brick.coke.name=Coke Oven Brick
 metaitem.wooden_form.empty.name=Empty Wooden Form
 metaitem.wooden_form.brick.name=Brick Wooden Form
 
+item.gt.tool.replace_tool_head=Craft with a new Tool Head to replace it
 item.gt.tool.behaves_like=§fBehaves like: %s
 item.gt.tool.behavior.behaviors=§eBehaviors
 item.gt.tool.behavior.silk_ice=§bSilk Harvests Ice

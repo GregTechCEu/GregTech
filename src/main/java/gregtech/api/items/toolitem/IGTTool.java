@@ -593,6 +593,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     getMaxCharge(stack),
                     GTValues.VNF[getElectricTier()]));
             tooltip.add("");
+            tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
         }
 
         tooltip.add(I18n.format("item.gt.tool.behaves_like", stack.getItem().getToolClasses(stack).stream()
