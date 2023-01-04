@@ -7,6 +7,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.metaitem.ElectricStats;
+import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
+public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDProvider {
 
     protected final int energyPerUse;
     protected final int tier;

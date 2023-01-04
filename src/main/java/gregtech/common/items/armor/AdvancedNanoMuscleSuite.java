@@ -15,8 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -179,12 +177,6 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         }
 
         return super.onRightClick(world, player, hand);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean isNeedDrawHUD() {
-        return true;
     }
 
     @Override

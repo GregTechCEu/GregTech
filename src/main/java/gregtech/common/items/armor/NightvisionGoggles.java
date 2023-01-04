@@ -101,4 +101,9 @@ public class NightvisionGoggles extends ArmorLogicSuite {
             }
         }
     }
+
+    @Override
+    public boolean shouldDrawHUD() {
+        return false;
+    }
 }

@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
 import gregtech.common.items.MetaItems;
@@ -28,14 +27,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist, IItemHUDProvider {
+public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
 
     @SideOnly(Side.CLIENT)
     protected ArmorUtils.ModularHUD HUD;
 
     public NanoMuscleSuite(EntityEquipmentSlot slot, int energyPerUse, long maxCapacity, int tier) {
         super(energyPerUse, maxCapacity, tier, slot);
-        if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
+        if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
             //noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
         }
@@ -147,7 +146,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist, IIt
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean isNeedDrawHUD() {
+    public boolean shouldDrawHUD() {
         return true;
     }
 

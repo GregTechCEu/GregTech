@@ -15,7 +15,7 @@ public interface IItemHUDProvider extends IItemComponent {
      * @return if the HUD needs to be drawn
      */
     @SideOnly(Side.CLIENT)
-    boolean isNeedDrawHUD();
+    boolean shouldDrawHUD();
 
     /**
      * Draws the HUD
@@ -23,7 +23,7 @@ public interface IItemHUDProvider extends IItemComponent {
      * @param stack the ItemStack to retrieve information from
      */
     @SideOnly(Side.CLIENT)
-    void drawHUD(ItemStack stack);
+    default void drawHUD(ItemStack stack) {/**/}
 
     /**
      * Checks and draws the hud for a provider
@@ -33,6 +33,6 @@ public interface IItemHUDProvider extends IItemComponent {
      */
     @SideOnly(Side.CLIENT)
     static void tryDrawHud(@Nonnull IItemHUDProvider provider, @Nonnull ItemStack stack) {
-        if (provider.isNeedDrawHUD()) provider.drawHUD(stack);
+        if (provider.shouldDrawHUD()) provider.drawHUD(stack);
     }
 }

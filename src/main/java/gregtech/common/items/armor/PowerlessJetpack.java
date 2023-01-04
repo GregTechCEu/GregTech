@@ -147,7 +147,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean isNeedDrawHUD() {
+    public boolean shouldDrawHUD() {
         return true;
     }
 

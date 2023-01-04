@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
@@ -25,14 +24,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class Jetpack extends ArmorLogicSuite implements IJetpack, IItemHUDProvider {
+public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     @SideOnly(Side.CLIENT)
     protected ArmorUtils.ModularHUD HUD;
 
     public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
-        if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
+        if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
             //noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
         }
@@ -107,7 +106,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack, IItemHUDProvid
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean isNeedDrawHUD() {
+    public boolean shouldDrawHUD() {
         return true;
     }
 
