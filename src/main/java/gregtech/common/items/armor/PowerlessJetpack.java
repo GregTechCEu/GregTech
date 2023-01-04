@@ -4,11 +4,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.items.armor.ISpecialArmorLogic;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
-import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
-import gregtech.api.items.metaitem.stats.IItemHUDProvider;
-import gregtech.api.items.metaitem.stats.ISubItemHandler;
+import gregtech.api.items.metaitem.stats.*;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
@@ -143,12 +139,6 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         }
         this.HUD.draw();
         this.HUD.reset();
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean shouldDrawHUD() {
-        return true;
     }
 
     @Override

@@ -15,7 +15,9 @@ public interface IItemHUDProvider extends IItemComponent {
      * @return if the HUD needs to be drawn
      */
     @SideOnly(Side.CLIENT)
-    boolean shouldDrawHUD();
+    default boolean shouldDrawHUD() {
+        return true;
+    }
 
     /**
      * Draws the HUD

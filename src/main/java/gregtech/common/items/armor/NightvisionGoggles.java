@@ -15,6 +15,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -102,6 +104,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public boolean shouldDrawHUD() {
         return false;

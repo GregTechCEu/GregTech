@@ -286,13 +286,6 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldDrawHUD() {
-        return true;
-    }
-
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public void drawHUD(ItemStack item) {
         addCapacityHUD(item, this.HUD);
         this.HUD.draw();

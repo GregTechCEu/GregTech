@@ -106,12 +106,6 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldDrawHUD() {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public void drawHUD(ItemStack item) {
         addCapacityHUD(item, this.HUD);
         NBTTagCompound data = item.getTagCompound();
