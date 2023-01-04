@@ -597,9 +597,7 @@ public class Material implements Comparable<Material> {
         public Builder polymer(int harvestLevel) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) dust(harvestLevel, 0);
-            else {
-                if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
-            }
+            else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
             properties.ensureSet(PropertyKey.FLUID);
             return this;
