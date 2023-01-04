@@ -8,6 +8,7 @@ import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.function.TriConsumer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.ResourceLocation;
@@ -15,20 +16,36 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class ProcessingHandlerRegistry {
 
     private static final Map<ResourceLocation, Consumer<Material>> registry = new Object2ObjectOpenHashMap<>();
     private static final Map<ResourceLocation, Set<Material>> blacklist = new Object2ObjectOpenHashMap<>();
+
+    // must include private lookup for LambdaMetaFactory
+    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    private static final MethodType CONSUMER_TYPE = MethodType.methodType(Consumer.class);
+    private static final MethodType CONSUMER = MethodType.methodType(void.class, Material.class);
+    private static final MethodType GENERIC_CONSUMER = MethodType.methodType(void.class, CONSUMER.generic().parameterList());
+
+    private static final MethodType BI_CONSUMER_TYPE = MethodType.methodType(BiConsumer.class);
+    private static final Function<Class<?>, MethodType> BI_CONSUMER = clazz -> MethodType.methodType(void.class, clazz, Material.class);
+    private static final Function<Class<?>, MethodType> GENERIC_BI_CONSUMER = clazz -> MethodType.methodType(void.class, BI_CONSUMER.apply(clazz).generic().parameterList());
+
+    private static final MethodType TRI_CONSUMER_TYPE = MethodType.methodType(TriConsumer.class);
+    private static final BiFunction<Class<?>, Class<?>, MethodType> TRI_CONSUMER = (clazz1, clazz2) -> MethodType.methodType(void.class, clazz1, clazz2, Material.class);
+    private static final BiFunction<Class<?>, Class<?>, MethodType> GENERIC_TRI_CONSUMER = (clazz1, clazz2) -> MethodType.methodType(void.class, TRI_CONSUMER.apply(clazz1, clazz2).generic().parameterList());
 
     private ProcessingHandlerRegistry() {/**/}
 
@@ -74,130 +91,152 @@ public final class ProcessingHandlerRegistry {
 
         switch (annotation.type()) {
             case MATERIAL: {
-                register(location, invokeMaterial(clazz, method));
+                validateParameterLength(clazz, method, 1);
+                validateParameter(Material.class, clazz, method, method.getParameterTypes(), 0);
+                try {
+                    register(location, toConsumer(clazz, method));
+                } catch (Throwable e) {
+                    invokeError(clazz, method, e);
+                }
                 return;
             }
             case PROPERTY: {
-                register(location, invokeProperty(clazz, method));
+                validateParameterLength(clazz, method, 2);
+                validateParameter(Material.class, clazz, method, method.getParameterTypes(), 1);
+
+                //noinspection rawtypes
+                final Class<IMaterialProperty> propertyClass = validateParameter(IMaterialProperty.class, clazz, method, method.getParameterTypes(), 0);
+                final PropertyKey<?> propertyKey = getPropertyKey(propertyClass);
+
+                try {
+                    //noinspection rawtypes
+                    final BiConsumer<IMaterialProperty, Material> biConsumer = toBiConsumer(clazz, method, propertyClass);
+
+                    register(location, material -> {
+                        if (material.hasProperty(propertyKey)) {
+                            biConsumer.accept(material.getProperty(propertyKey), material);
+                        }
+                    });
+                } catch (Throwable e) {
+                    invokeError(clazz, method, e);
+                }
                 return;
             }
             case ORE_PREFIX: {
+                validateParameterLength(clazz, method, 2);
+                validateParameter(Material.class, clazz, method, method.getParameterTypes(), 1);
+
+                Class<OrePrefix> prefixClass = validateParameter(OrePrefix.class, clazz, method, method.getParameterTypes(), 0);
+
                 String[] prefixNames = annotation.prefixes();
-                if (prefixNames.length == 0) prefixError(clazz, method);
-                register(location, invokePrefix(clazz, method, prefixNames));
+                Collection<OrePrefix> prefixes = getPrefixes(clazz, method, prefixNames);
+
+                try {
+                    final BiConsumer<OrePrefix, Material> biConsumer = toBiConsumer(clazz, method, prefixClass);
+
+                    register(location, material -> {
+                        for (OrePrefix prefix : prefixes) {
+                            biConsumer.accept(prefix, material);
+                        }
+                    });
+                } catch (Throwable e) {
+                    invokeError(clazz, method, e);
+                }
                 return;
             }
             case PROPERTY_PREFIX: {
+                validateParameterLength(clazz, method, 3);
+                validateParameter(Material.class, clazz, method, method.getParameterTypes(), 2);
+
+                Class<OrePrefix> prefixClass = validateParameter(OrePrefix.class, clazz, method, method.getParameterTypes(), 1);
+
                 String[] prefixNames = annotation.prefixes();
-                if (prefixNames.length == 0) prefixError(clazz, method);
-                register(location, invokePropertyPrefix(clazz, method, prefixNames));
+                Collection<OrePrefix> prefixes = getPrefixes(clazz, method, prefixNames);
+
+                //noinspection rawtypes
+                final Class<IMaterialProperty> propertyClass = validateParameter(IMaterialProperty.class, clazz, method, method.getParameterTypes(), 0);
+                final PropertyKey<?> propertyKey = getPropertyKey(propertyClass);
+
+                try {
+                    //noinspection rawtypes
+                    final TriConsumer<IMaterialProperty, OrePrefix, Material> triConsumer = toTriConsumer(clazz, method, propertyClass, prefixClass);
+
+                    register(location, material -> {
+                        if (material.hasProperty(propertyKey)) {
+                            for (OrePrefix prefix : prefixes) {
+                                triConsumer.accept(material.getProperty(propertyKey), prefix, material);
+                            }
+                        }
+                    });
+                } catch (Throwable e) {
+                    invokeError(clazz, method, e);
+                }
             }
         }
     }
 
     /**
-     * Create a Processing Handler for {@link ProcessingHandler.Type#MATERIAL}
+     * Converts a method to a Consumer
      *
-     * @param clazz  the clazz of the method
-     * @param method the method to invoke
-     * @return the processing handler
+     * @param clazz  the class containing the method
+     * @param method the method to convert
+     * @return a Consumer equivalent to the method
+     * @throws Throwable if there was any error calling the method during conversion
      */
-    @Nonnull
-    private static Consumer<Material> invokeMaterial(@Nonnull Class<?> clazz, @Nonnull Method method) {
-        validateParameterLength(clazz, method, 1);
-        validateParameter(Material.class, clazz, method, method.getParameterTypes(), 0);
+    private static Consumer<Material> toConsumer(@Nonnull Class<?> clazz, @Nonnull Method method) throws Throwable {
+        MethodHandle handle = LOOKUP.findStatic(clazz, method.getName(), CONSUMER);
+        CallSite site = LambdaMetafactory.metafactory(LOOKUP,
+                "accept",
+                CONSUMER_TYPE,
+                GENERIC_CONSUMER,
+                handle,
+                CONSUMER);
 
-        return material -> {
-            try {
-                method.invoke(null, material);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                invokeError(clazz, method, e);
-            }
-        };
+        //noinspection unchecked
+        return (Consumer<Material>) site.getTarget().invokeExact();
     }
 
     /**
-     * Create a Processing Handler for {@link ProcessingHandler.Type#PROPERTY}
+     * Converts a method to a BiConsumer
      *
-     * @param clazz  the clazz of the method
-     * @param method the method to invoke
-     * @return the processing handler
+     * @param clazz  the class containing the method
+     * @param method the method to convert
+     * @return a BiConsumer equivalent to the method
+     * @throws Throwable if there was any error calling the method during conversion
      */
-    @Nonnull
-    private static Consumer<Material> invokeProperty(@Nonnull Class<?> clazz, @Nonnull Method method) {
-        validateParameterLength(clazz, method, 2);
+    private static <T> BiConsumer<T, Material> toBiConsumer(@Nonnull Class<?> clazz, @Nonnull Method method, Class<T> parameter1Class) throws Throwable {
+        MethodHandle handle = LOOKUP.findStatic(clazz, method.getName(), BI_CONSUMER.apply(parameter1Class));
+        CallSite site = LambdaMetafactory.metafactory(LOOKUP,
+                "accept",
+                BI_CONSUMER_TYPE,
+                GENERIC_BI_CONSUMER.apply(parameter1Class),
+                handle,
+                BI_CONSUMER.apply(parameter1Class));
 
-        Class<?>[] parameters = method.getParameterTypes();
-        validateParameter(IMaterialProperty.class, clazz, method, parameters, 0);
-        validateParameter(Material.class, clazz, method, parameters, 1);
-
-        return material -> {
-            IMaterialProperty<?> property = getProperty(parameters[0], material);
-            if (property != null) try {
-                method.invoke(null, property, material);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                invokeError(clazz, method, e);
-            }
-        };
+        //noinspection unchecked
+        return (BiConsumer<T, Material>) site.getTarget().invokeExact();
     }
 
     /**
-     * Create an Processing Handler for {@link ProcessingHandler.Type#ORE_PREFIX}
+     * Converts a method to a TriConsumer
      *
-     * @param clazz  the clazz of the method
-     * @param method the method to invoke
-     * @return the processing handler
+     * @param clazz  the class containing the method
+     * @param method the method to convert
+     * @return a BiConsumer equivalent to the method
+     * @throws Throwable if there was any error calling the method during conversion
      */
-    @Nonnull
-    private static Consumer<Material> invokePrefix(@Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull String[] prefixNames) {
-        validateParameterLength(clazz, method, 2);
+    private static <T, U> TriConsumer<T, U, Material> toTriConsumer(@Nonnull Class<?> clazz, @Nonnull Method method,
+                                                                    Class<T> parameter1Class, Class<U> parameter2Class) throws Throwable {
+        MethodHandle handle = LOOKUP.findStatic(clazz, method.getName(), TRI_CONSUMER.apply(parameter1Class, parameter2Class));
+        CallSite site = LambdaMetafactory.metafactory(LOOKUP,
+                "accept",
+                TRI_CONSUMER_TYPE,
+                GENERIC_TRI_CONSUMER.apply(parameter1Class, parameter2Class),
+                handle,
+                TRI_CONSUMER.apply(parameter1Class, parameter2Class));
 
-        Class<?>[] parameters = method.getParameterTypes();
-        validateParameter(OrePrefix.class, clazz, method, parameters, 0);
-        validateParameter(Material.class, clazz, method, parameters, 1);
-
-        // Do not get the prefixes in the lambda, so potential errors happen only once
-        Collection<OrePrefix> prefixes = getPrefixes(clazz, method, prefixNames);
-        return material -> {
-            for (OrePrefix prefix : prefixes) {
-                try {
-                    method.invoke(null, prefix, material);
-                } catch (InvocationTargetException | IllegalAccessException e) {
-                    invokeError(clazz, method, e);
-                }
-            }
-        };
-    }
-
-    /**
-     * Create an Processing Handler for {@link ProcessingHandler.Type#PROPERTY_PREFIX}
-     *
-     * @param clazz  the clazz of the method
-     * @param method the method to invoke
-     * @return the processing handler
-     */
-    @Nonnull
-    private static Consumer<Material> invokePropertyPrefix(@Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull String[] prefixNames) {
-        validateParameterLength(clazz, method, 3);
-
-        Class<?>[] parameters = method.getParameterTypes();
-        validateParameter(IMaterialProperty.class, clazz, method, parameters, 0);
-        validateParameter(OrePrefix.class, clazz, method, parameters, 1);
-        validateParameter(Material.class, clazz, method, parameters, 2);
-
-        // Do not get the prefixes in the lambda, so potential errors happen only once
-        Collection<OrePrefix> prefixes = getPrefixes(clazz, method, prefixNames);
-        return material -> {
-            IMaterialProperty<?> property = getProperty(parameters[0], material);
-            if (property == null) return;
-            for (OrePrefix prefix : prefixes) {
-                try {
-                    method.invoke(null, property, prefix, material);
-                } catch (InvocationTargetException | IllegalAccessException e) {
-                    invokeError(clazz, method, e);
-                }
-            }
-        };
+        //noinspection unchecked
+        return (TriConsumer<T, U, Material>) site.getTarget().invokeExact();
     }
 
     /**
@@ -223,11 +262,13 @@ public final class ProcessingHandlerRegistry {
      * @param classes    the parameter classes to check
      * @param index      the index of the specific class
      */
-    private static void validateParameter(@Nonnull Class<?> validation, @Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull Class<?>[] classes, int index) {
+    private static <T> Class<T> validateParameter(@Nonnull Class<T> validation, @Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull Class<?>[] classes, int index) {
         if (index >= classes.length || !validation.isAssignableFrom(classes[index])) {
             throw new IllegalArgumentException("Method " + method.getName() + " of class " + clazz.getName() +
                     " must take an " + validation.getName() + " for parameter " + index);
         }
+        //noinspection unchecked
+        return (Class<T>) classes[index];
     }
 
     /**
@@ -235,6 +276,7 @@ public final class ProcessingHandlerRegistry {
      * @param method      the method to invoke, for logging
      * @param prefixNames the ore prefix names to turn into OrePrefixes
      * @return the ore prefixes corresponding to the names
+     * @throws IllegalArgumentException if no prefixes are found
      */
     @Nonnull
     private static Collection<OrePrefix> getPrefixes(@Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull String[] prefixNames) {
@@ -250,23 +292,24 @@ public final class ProcessingHandlerRegistry {
 
     /**
      * @param propertyClass the class for the IMaterialProperty to retrieve
-     * @param material      the material to retrieve the property from
      * @return the material's property
+     * @throws IllegalArgumentException if no PropertyKey is found
      */
-    @Nullable
-    private static IMaterialProperty<?> getProperty(@Nonnull Class<?> propertyClass, @Nonnull Material material) {
+    @Nonnull
+    private static PropertyKey<?> getPropertyKey(@Nonnull Class<?> propertyClass) {
         PropertyKey<?> key = PropertyKey.getPropertyKey(propertyClass);
         if (key == null) {
             throw new IllegalArgumentException("No PropertyKey exists for type " + propertyClass.getName());
         }
-        return material.getProperty(key);
+        return key;
     }
 
     /**
-     * Throw an error for when an Processing Handler requires OrePrefixes but has none.
+     * Throw an error for when a Processing Handler requires OrePrefixes but has none.
      *
      * @param clazz  the class containing the method
      * @param method the method called
+     * @throws IllegalArgumentException if no ore prefixes are found
      */
     private static void prefixError(@Nonnull Class<?> clazz, @Nonnull Method method) {
         throw new IllegalArgumentException("Method " + method.getName() + " of class " + clazz.getName() + " must supply OrePrefixes.");
@@ -278,8 +321,9 @@ public final class ProcessingHandlerRegistry {
      * @param clazz  the class containing the method
      * @param method the method called
      * @param e      the error
+     * @throws IllegalStateException if a ProcessingHandler had errors while running
      */
-    private static void invokeError(@Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull Exception e) {
+    private static void invokeError(@Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull Throwable e) {
         throw new IllegalStateException("Error invoking Processing Handler " + method.getName() + " of class " + clazz.getName(), e);
     }
 
@@ -288,6 +332,7 @@ public final class ProcessingHandlerRegistry {
      *
      * @param location the unique name of the ProcessingHandler, in format {@code "modid:class_name.method_name}
      * @param handler  the handler to register
+     * @throws IllegalArgumentException if the processing handler is already registered
      */
     private static void register(@Nonnull ResourceLocation location, @Nonnull Consumer<Material> handler) {
         if (registry.containsKey(location)) {
@@ -326,7 +371,7 @@ public final class ProcessingHandlerRegistry {
     }
 
     /**
-     * BlackList an Processing Handler from running for a material
+     * BlackList a Processing Handler from running for a material
      *
      * @param location the name of the handler
      * @param material the material to blacklist
@@ -375,6 +420,8 @@ public final class ProcessingHandlerRegistry {
      * Run all registered processing handlers.
      * <p>
      * <strong>Only GregTech should call this.</strong>
+     *
+     * @throws IllegalStateException If a mod other than GregTech calls this
      */
     public static void runHandlers() {
         ModContainer container = Loader.instance().activeModContainer();
