@@ -32,6 +32,9 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
+    private static final ResourceLocation laserLocation = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png");
+    private static final ResourceLocation laserHeadLocation = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png");
+
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
     }
@@ -79,7 +82,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public void update() {
         super.update();
         if(ConfigHolder.client.shader.assemblyLineParticles) {
-            if (getRecipeMapWorkable().isWorking() || getRecipeMapWorkable().isActive()) {
+            if (getRecipeMapWorkable().isWorking()) {
                 int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
                 int maxProgress = getRecipeMapWorkable().getMaxProgress();
 
@@ -93,9 +96,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                     beamCount = currentBeamCount;
                     writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
                 }
-                return;
+                //return;
             }
-            if (beamCount != 0) {
+            else if (beamCount != 0) {
                 beamCount = 0;
                 writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
             }
@@ -155,11 +158,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 Vector3 endPos = startPos.copy().subtract(0, 1, 0);
 
                 beamParticles[i][0] = new GTLaserBeamParticle(getWorld(), startPos, endPos)
-                        .setBody(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png"))
+                        .setBody(laserLocation)
                         .setBeamHeight(0.125f)
                         // Try commenting or adjusting on the next four lines to see what happens
                         .setDoubleVertical(true)
-                        .setHead(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png"))
+                        .setHead(laserHeadLocation)
                         .setHeadWidth(0.1f)
                         .setEmit(0.2f);
                 beamParticles[i][0].setOnUpdate(p -> { // remove it if machine is inValid
@@ -171,11 +174,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .add(0.5, 0, 0.5);
                 endPos = startPos.copy().subtract(0, 1, 0);
                 beamParticles[i][1] = new GTLaserBeamParticle(getWorld(), startPos, endPos)
-                        .setBody(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png"))
+                        .setBody(laserLocation)
                         .setBeamHeight(0.125f)
                         // Try commenting or adjusting on the next four lines to see what happens
                         .setDoubleVertical(true)
-                        .setHead(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png"))
+                        .setHead(laserHeadLocation)
                         .setHeadWidth(0.1f)
                         .setEmit(0.15f);
                 beamParticles[i][1].setOnUpdate(p -> { // remove it if machine is inValid
