@@ -293,7 +293,7 @@ public class UnknownCompositionMaterials {
         Stone = new Material.Builder(1599, "stone")
                 .dust(2)
                 .color(0xCDCDCD).iconSet(ROUGH)
-                .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING, NO_SMELTING)
+                .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, GENERATE_LOW_YIELD_RECIPES)
                 .build();
 
         Lava = new Material.Builder(1600, "lava")
@@ -484,7 +484,7 @@ public class UnknownCompositionMaterials {
         TreatedWood = new Material.Builder(1648, "treated_wood")
                 .dust(0, 300)
                 .color(0x502800).iconSet(WOOD)
-                .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME, GENERATE_LOW_YIELD_RECIPES)
                 .build();
 
         UUMatter = new Material.Builder(1649, "uu_matter").fluid().fluidTemp(300).build();
