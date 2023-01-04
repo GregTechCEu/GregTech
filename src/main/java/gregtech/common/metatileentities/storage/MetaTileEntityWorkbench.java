@@ -28,6 +28,7 @@ import gregtech.common.inventory.handlers.ToolItemStackHandler;
 import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -35,11 +36,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -199,6 +203,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         builder.bindCloseListener(() -> discardRecipeResolver(entityPlayer));
 
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.workbench.tooltip1"));
+        tooltip.add(I18n.format("gregtech.machine.workbench.tooltip2"));
     }
 
     public void discardRecipeResolver(EntityPlayer entityPlayer) {

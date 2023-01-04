@@ -176,7 +176,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
     }
 
     /**

@@ -2424,8 +2424,10 @@ gregtech.machine.locked_safe.name=Locked Safe
 gregtech.machine.locked_safe.malfunctioning=§cMalfunctioning!
 gregtech.machine.locked_safe.requirements=§7Replacements required:
 
-#Workbench
+# Workbench
 gregtech.machine.workbench.name=Crafting Station
+gregtech.machine.workbench.tooltip1=Better than Forestry
+gregtech.machine.workbench.tooltip2=Has Item Storage, Tool Storage, pulls from adjacent Inventories, and saves Recipes.
 gregtech.machine.workbench.tab.workbench=Crafting
 gregtech.machine.workbench.tab.item_list=Storage
 gregtech.machine.workbench.storage_note_1=(Available items from connected
@@ -2570,8 +2572,6 @@ tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
 
 
 # Steam machines
-gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per tick
-
 gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_coal_bronze.tooltip=An early way to get Steam Power
 gregtech.machine.steam_boiler_coal_steel.name=High Pressure Steam Solid Fuel Boiler
@@ -3957,6 +3957,7 @@ gregtech.machine.quantum_chest.luv.name=Quantum Chest II
 gregtech.machine.quantum_chest.zpm.name=Quantum Chest III
 gregtech.machine.quantum_chest.uv.name=Quantum Chest IV
 gregtech.machine.quantum_chest.uhv.name=Quantum Chest V
+gregtech.machine.quantum_chest.items_stored=Item Amount:
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
@@ -4356,12 +4357,9 @@ gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
 gregtech.machine.large_miner.iv.name=Advanced Ore Drilling Plant
 gregtech.machine.large_miner.luv.name=Advanced Ore Drilling Plant II
 gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
-gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
-gregtech.machine.miner.multi.production=Produces §b3x§7 more crushed ore than a macerator.
+gregtech.machine.miner.multi.production=Produces §f3x§7 more crushed ore than a §fMacerator§7.
+gregtech.machine.miner.fluid_usage=Uses §f%,d L/t §7of §f%s§7, doubled per overclock.
 gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
-#Small ores lang:gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
-gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
-gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
 gregtech.machine.miner.startx=sX: %d
 gregtech.machine.miner.starty=sY: %d
@@ -4376,10 +4374,8 @@ gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.ev.name=Advanced Fluid Drilling Rig II
 gregtech.machine.fluid_drilling_rig.description=Drills fluids from veins under bedrock.
-gregtech.machine.fluid_drilling_rig.production=Production Multiplier: §e%sx§7
-gregtech.machine.fluid_drilling_rig.depletion=Depletion Rate: §b%s%%§7
-gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7.
-gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
+gregtech.machine.fluid_drilling_rig.production=§eProduction Multiplier: §f%dx, %fx overclocked
+gregtech.machine.fluid_drilling_rig.depletion=§bDepletion Rate: §f%s%%
 
 gregtech.machine.cleanroom.name=Cleanroom
 gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
@@ -4675,6 +4671,7 @@ gregtech.universal.tooltip.amperage_out_till=§eAmperage OUT up to: §f%,dA
 gregtech.universal.tooltip.amperage_in_out=§eAmperage IN/OUT: §f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§eAmperage IN/OUT up to: §f%,dA
 gregtech.universal.tooltip.energy_storage_capacity=§cEnergy Capacity: §r%,d EU
+gregtech.universal.tooltip.energy_tier_range=§aAllowed Voltage Tiers: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6Item Slots: §f%,d
 gregtech.universal.tooltip.item_storage_total=§6Item Capacity: §f%,d items
 gregtech.universal.tooltip.item_stored=§dItem Stored: §f%s, %,d items
@@ -4687,6 +4684,7 @@ gregtech.universal.tooltip.fluid_transfer_rate=§bTransfer Rate: §f%,d L/t
 gregtech.universal.tooltip.parallel=§dMax Parallel: §f%d
 gregtech.universal.tooltip.working_area=§bWorking Area: §f%,dx%,d
 gregtech.universal.tooltip.working_area_max=§bMax Working Area: §f%,dx%,d
+gregtech.universal.tooltip.working_area_chunks_max=§bMax Working Area: §f%,dx%,d Chunks
 gregtech.universal.tooltip.uses_per_tick=Uses §f%,d EU/t §7while working
 gregtech.universal.tooltip.uses_per_tick_steam=Uses §f%,d L/t §7of Steam while working
 gregtech.universal.tooltip.uses_per_hour_lubricant=Uses §f%,d L/hr §7of Lubricant while working

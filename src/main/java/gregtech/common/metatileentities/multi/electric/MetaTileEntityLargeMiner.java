@@ -192,13 +192,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        int workingRadius = this.minerLogic.getCurrentRadius() / CHUNK_LENGTH;
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
         tooltip.add(I18n.format("gregtech.machine.miner.multi.production"));
-        //small ore: tooltip.add(I18n.format("gregtech.machine.miner.multi.production", getRomanNumeralString()));
-        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid().getUnlocalizedName())));
-        tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
+        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), DrillingFluid.getLocalizedName()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area_chunks_max", workingRadius, workingRadius));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
     }
 
     @Override
