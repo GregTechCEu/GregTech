@@ -621,23 +621,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean definition$canApplyAtEnchantingTable(@Nonnull ItemStack stack, Enchantment enchantment) {
         if (stack.isEmpty()) return false;
 
-        // Block CoFH Smashing enchantment from all GT tools
-        if (enchantment.getName().equals("enchantment.cofhcore.smashing")) {
-            return false;
-        }
-        if (getToolStats().getAoEDefinition(stack) != AoESymmetrical.none() || getBehavioursTag(stack).hasKey(TREE_FELLING_KEY)) {
-            // Block EnderCore Auto-Smelt enchantment on AoE and Tree-Felling tools
-            if (enchantment.getName().equals("enchantment.autosmelt")) {
+        // special case enchants from other mods
+        switch (enchantment.getName()) {
+            case "enchantment.cofhcore.smashing":
+                // block cofhcore smashing enchant from all tools
                 return false;
-            }
-            // Block CoFH Smelting enchantment on AoE and Tree-Felling tools
-            if (enchantment.getName().equals("enchantment.cofhcore.smelting")) {
-                return false;
-            }
-            // Block Astral Sorcery Scorching Heat (autosmelt) on AoE and Tree-Felling tools
-            if (enchantment.getName().equals("enchantment.as.smelting")) {
-                return false;
-            }
+            case "enchantment.autosmelt": // endercore
+            case "enchantment.cofhcore.smelting": // cofhcore
+            case "enchantment.as.smelting": // astral sorcery
+                // block autosmelt enchants from AoE and Tree-Felling tools
+                return getToolStats().getAoEDefinition(stack) == AoESymmetrical.none() && !getBehavioursTag(stack).hasKey(TREE_FELLING_KEY);
         }
 
         // Block Mending and Unbreaking on Electric tools
