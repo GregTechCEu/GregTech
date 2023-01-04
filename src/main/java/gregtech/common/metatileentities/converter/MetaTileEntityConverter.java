@@ -188,8 +188,8 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.description"));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, FeCompat.ratio(true)), amps, voltage, GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps, FeCompat.ratio(false))));
     }
@@ -198,7 +198,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
-        tooltip.add(I18n.format("gregtech.tool_action.soft_hammer.toggle_mode"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.toggle_mode"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 

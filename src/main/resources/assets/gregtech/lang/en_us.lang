@@ -3780,13 +3780,15 @@ gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
 
 # Transformers
-gregtech.machine.transformer.tooltip_tool_usage=Use Soft Mallet to invert (Starts as Transform Down)
-gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
-gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
-gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer_adjustable.tooltip_tool_usage=Use Screwdriver to cycle amperage (Starts as 4 Amps)
-gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dEU %dA, Lo-Amp to %dEU %dA
+gregtech.machine.transformer.description=Transforms Energy between voltage tiers
+gregtech.machine.transformer.tooltip_tool_usage=Starts as §fTransform Down§7, use Soft Mallet to change
+gregtech.machine.transformer.tooltip_transform_down=§aTransform Down: §f%dA %d EU (%s§f) -> %dA %d EU (%s§f)
+gregtech.machine.transformer.message_transform_down=Transforming Down, In: %d EU %dA, Out: %d EU %dA
+gregtech.machine.transformer.tooltip_transform_up=§cTransform Up: §f%dA %d EU (%s§f) -> %dA %d EU (%s§f)
+gregtech.machine.transformer.message_transform_up=Transforming Up, In: %d EU %dA, Out: %d EU %dA
+gregtech.machine.transformer_adjustable.description=Transforms Energy between voltage tiers, now with more Amps!
+gregtech.machine.transformer_adjustable.tooltip_tool_usage=Starts as §f4A§7, use Screwdriver to change
+gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %d EU %dA, Lo-Amp to %d EU %dA
 
 gregtech.machine.transformer.ulv.name=Ultra Low Voltage Transformer
 gregtech.machine.transformer.lv.name=Low Voltage Transformer
@@ -3822,7 +3824,7 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Adjustable 
 gregtech.machine.diode.message=Max Amperage throughput: %s
 gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
 gregtech.machine.diode.tooltip_general=Allows Energy Flow in one direction and limits Amperage
-gregtech.machine.diode.tooltip_starts_at=Starts at 1A IN/OUT
+gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Soft Mallet to change
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -3918,11 +3920,12 @@ gregtech.machine.energy_converter.max.4.name=MAX Energy Converter (4A)
 gregtech.machine.energy_converter.max.8.name=MAX Energy Converter (8A)
 gregtech.machine.energy_converter.max.16.name=MAX Energy Converter (16A)
 
-gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Mallet to invert (Starts as FE Converter)
-gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §c%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
-gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %dFE, Out: %dA %dEU
-gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%,dA %,dEU (§r%s§a)§7 -> §c%,dFE
-gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %dEU, Out: %dFE
+gregtech.machine.energy_converter.description=Converts Energy between EU and FE
+gregtech.machine.energy_converter.tooltip_tool_usage=Starts as §fFE Converter§7, use Soft Mallet to change
+gregtech.machine.energy_converter.tooltip_conversion_fe=§cForge Conversion: §f%,d FE -> %,dA %,d EU (%s§f)
+gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %d FE, Out: %dA %d EU
+gregtech.machine.energy_converter.tooltip_conversion_eu=§aEU Conversion: §f%,dA %,d EU (%s§f) -> %,d FE
+gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %d EU, Out: %d FE
 
 # Pumps
 gregtech.machine.pump.tooltip=The best way to empty Oceans!
@@ -4724,8 +4727,8 @@ gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
 gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections, sneak to block Connections
 gregtech.tool_action.wire_cutter.connect=§8Use Wire Cutters to set Connections
-gregtech.tool_action.soft_hammer.reset=§8Use Soft Hammer to toggle Working
-gregtech.tool_action.soft_hammer.toggle_mode=§8Use Soft Hammer to toggle Modes
+gregtech.tool_action.soft_mallet.reset=§8Use Soft Mallet to toggle Working
+gregtech.tool_action.soft_mallet.toggle_mode=§8Use Soft Mallet to toggle Modes
 gregtech.tool_action.hammer=§8Use Hard Hammer to muffle Sounds
 gregtech.tool_action.crowbar=§8Use Crowbar to remove Covers
 gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems

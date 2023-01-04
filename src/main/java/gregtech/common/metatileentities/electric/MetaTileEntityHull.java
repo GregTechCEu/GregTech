@@ -90,7 +90,6 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
         tooltip.add(I18n.format("gregtech.machine.hull.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in_out", energyContainer.getInputVoltage(), tierName));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_out", 1));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
     }
 
     @Override
