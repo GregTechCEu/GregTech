@@ -1,6 +1,14 @@
 package gregtech.api.unification.material.properties;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Map;
+
 public class PropertyKey<T extends IMaterialProperty<T>> {
+
+    private static final Map<Class<?>, PropertyKey<?>> propertyKeys = new Object2ObjectOpenHashMap<>();
 
     public static final PropertyKey<BlastProperty> BLAST = new PropertyKey<>("blast", BlastProperty.class);
     public static final PropertyKey<DustProperty> DUST = new PropertyKey<>("dust", DustProperty.class);
@@ -22,6 +30,10 @@ public class PropertyKey<T extends IMaterialProperty<T>> {
     public PropertyKey(String key, Class<T> type) {
         this.key = key;
         this.type = type;
+        if (propertyKeys.containsKey(type)) {
+            throw new IllegalArgumentException("A MaterialPropertyKey for " + type.getName() + "already exists as " + propertyKeys.get(type));
+        }
+        propertyKeys.put(type, this);
     }
 
     protected String getKey() {
@@ -38,6 +50,11 @@ public class PropertyKey<T extends IMaterialProperty<T>> {
 
     public T cast(IMaterialProperty<?> property) {
         return this.type.cast(property);
+    }
+
+    @Nullable
+    public static PropertyKey<?> getPropertyKey(@Nonnull Class<?> type) {
+        return propertyKeys.get(type);
     }
 
     @Override
