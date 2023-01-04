@@ -33,6 +33,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1189,6 +1190,12 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public void onAttached(Object... data) {
     }
 
+    /**
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
+     * <p>
+     * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
+     * this should be manually called immediately afterwards
+     */
     public void onPlacement() {
 
     }

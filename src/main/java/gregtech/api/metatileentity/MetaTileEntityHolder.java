@@ -80,6 +80,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
         this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
@@ -127,6 +128,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                 /* Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
                 * about the composition of the BlockPattern that onAttached may generate. */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
+                // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
                 this.metaTileEntity.onAttached();
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
@@ -275,27 +277,31 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public void receiveInitialSyncData(PacketBuffer buf) {
         setCustomName(buf.readString(Short.MAX_VALUE));
         if (buf.readBoolean()) {
-            int metaTileEntityId = buf.readVarInt();
-            setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
-            this.metaTileEntity.onPlacement();
-            this.metaTileEntity.receiveInitialSyncData(buf);
-            scheduleRenderUpdate();
-            this.needToUpdateLightning = true;
+            receiveMTEInitializationData(buf);
         }
     }
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buffer) {
         if (discriminator == INITIALIZE_MTE) {
-            int metaTileEntityId = buffer.readVarInt();
-            setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
-            this.metaTileEntity.onPlacement();
-            this.metaTileEntity.receiveInitialSyncData(buffer);
-            scheduleRenderUpdate();
-            this.needToUpdateLightning = true;
+            receiveMTEInitializationData(buffer);
         } else if (metaTileEntity != null) {
             metaTileEntity.receiveCustomData(discriminator, buffer);
         }
+    }
+
+    /**
+     * Sets and initializes the MTE
+     *
+     * @param buf the buffer to read data from
+     */
+    private void receiveMTEInitializationData(@Nonnull PacketBuffer buf) {
+        int metaTileEntityId = buf.readVarInt();
+        setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
+        this.metaTileEntity.onPlacement();
+        this.metaTileEntity.receiveInitialSyncData(buf);
+        scheduleRenderUpdate();
+        this.needToUpdateLightning = true;
     }
 
     @Override
