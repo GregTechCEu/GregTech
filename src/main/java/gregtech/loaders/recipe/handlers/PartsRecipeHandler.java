@@ -246,6 +246,16 @@ public class PartsRecipeHandler {
                             'P', new UnificationEntry(OrePrefix.plate, material),
                             'R', new UnificationEntry(OrePrefix.stick, material));
                 }
+                if (!material.hasProperty(PropertyKey.INGOT) && !material.hasFluid()) {
+                    RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                            .input(OrePrefix.plate, material, 4)
+                            .input(OrePrefix.stick, material, 4)
+                            .circuitMeta(5)
+                            .outputs(stack)
+                            .duration((int) material.getMass() * 4)
+                            .EUt(getVoltageMultiplier(material))
+                            .buildAndRegister();
+                }
             }
         }
     }
