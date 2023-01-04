@@ -3,6 +3,7 @@ package gregtech.api;
 import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
@@ -112,6 +113,7 @@ public class GTValues {
             MODID_CTM = "ctm",
             MODID_CC = "cubicchunks",
             MODID_AR = "advancedrocketry",
+            MODID_ECORE = "endercore",
             MODID_EIO = "enderio",
             MODID_BC = "buildcraftcore",
             MODID_COFH = "cofhcore",
@@ -124,6 +126,13 @@ public class GTValues {
     public static boolean isClientSide() {
         if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
         return isClient;
+    }
+
+    private static Boolean isDeobf;
+
+    public static boolean isDeobfEnvironment() {
+        if (isDeobf == null) isDeobf = FMLLaunchHandler.isDeobfuscatedEnvironment();
+        return isDeobf;
     }
 
     /**

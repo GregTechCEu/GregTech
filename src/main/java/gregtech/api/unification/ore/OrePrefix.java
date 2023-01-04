@@ -134,28 +134,10 @@ public class OrePrefix {
     // 3/4 of a Plate or Gem used to shape a Lens. Normally only used on Transparent Materials.
     public static final OrePrefix lens = new OrePrefix("lens", (M * 3) / 4, null, MaterialIconType.lens, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_LENS));
 
-    // made of 2 Ingots.
-    public static final OrePrefix toolHeadSword = new OrePrefix("toolHeadSword", M * 2, null, MaterialIconType.toolHeadSword, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 3 Ingots.
-    public static final OrePrefix toolHeadPickaxe = new OrePrefix("toolHeadPickaxe", M * 3, null, MaterialIconType.toolHeadPickaxe, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 1 Ingots.
-    public static final OrePrefix toolHeadShovel = new OrePrefix("toolHeadShovel", M, null, MaterialIconType.toolHeadShovel, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 3 Ingots.
-    public static final OrePrefix toolHeadAxe = new OrePrefix("toolHeadAxe", M * 3, null, MaterialIconType.toolHeadAxe, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 2 Ingots.
-    public static final OrePrefix toolHeadHoe = new OrePrefix("toolHeadHoe", M * 2, null, MaterialIconType.toolHeadHoe, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 3 Ingots.
-    public static final OrePrefix toolHeadSense = new OrePrefix("toolHeadSense", M * 3, null, MaterialIconType.toolHeadSense, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 2 Ingots.
-    public static final OrePrefix toolHeadFile = new OrePrefix("toolHeadFile", M * 2, null, MaterialIconType.toolHeadFile, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
-    // made of 6 Ingots.
-    public static final OrePrefix toolHeadHammer = new OrePrefix("toolHeadHammer", M * 6, null, MaterialIconType.toolHeadHammer, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
-    // made of 2 Ingots.
-    public static final OrePrefix toolHeadSaw = new OrePrefix("toolHeadSaw", M * 2, null, MaterialIconType.toolHeadSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 4 Ingots.
     public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 1 Ingots.
-    public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_ROD)));
+    public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_LONG_ROD)));
     // made of 4 Ingots.
     public static final OrePrefix toolHeadDrill = new OrePrefix("toolHeadDrill", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, hasToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 2 Ingots.
@@ -163,7 +145,7 @@ public class OrePrefix {
     // made of 4 Ingots.
     public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 5 Ingots.
-    public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
+    public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasRotorProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
 
     public static final OrePrefix paneGlass = new OrePrefix("paneGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
     public static final OrePrefix blockGlass = new OrePrefix("blockGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
@@ -235,12 +217,13 @@ public class OrePrefix {
 
     public static class Conditions {
         public static final Predicate<Material> hasToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL);
-        public static final Predicate<Material> hasNoCraftingToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL) && !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools();
+        public static final Predicate<Material> hasNoCraftingToolProperty = hasToolProperty.and(mat -> !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools());
         public static final Predicate<Material> hasOreProperty = mat -> mat.hasProperty(PropertyKey.ORE);
         public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
         public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
         public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
+        public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
     }
 
     static {
@@ -253,15 +236,6 @@ public class OrePrefix {
         rotor.maxStackSize = 16;
         gear.maxStackSize = 16;
 
-        toolHeadSword.maxStackSize = 16;
-        toolHeadPickaxe.maxStackSize = 16;
-        toolHeadShovel.maxStackSize = 16;
-        toolHeadAxe.maxStackSize = 16;
-        toolHeadHoe.maxStackSize = 16;
-        toolHeadSense.maxStackSize = 16;
-        toolHeadFile.maxStackSize = 16;
-        toolHeadHammer.maxStackSize = 16;
-        toolHeadSaw.maxStackSize = 16;
         toolHeadBuzzSaw.maxStackSize = 16;
         toolHeadScrewdriver.maxStackSize = 16;
         toolHeadDrill.maxStackSize = 16;

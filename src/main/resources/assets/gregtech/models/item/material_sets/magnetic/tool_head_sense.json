@@ -1,6 +1,0 @@
-{
-  "parent": "gregtech:item/material_sets/dull/tool_head_sense",
-  "textures": {
-    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
-  }
-}

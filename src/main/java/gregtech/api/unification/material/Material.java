@@ -597,9 +597,7 @@ public class Material implements Comparable<Material> {
         public Builder polymer(int harvestLevel) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) dust(harvestLevel, 0);
-            else {
-                if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
-            }
+            else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
             properties.ensureSet(PropertyKey.FLUID);
             return this;
@@ -719,11 +717,20 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
-            return toolStats(speed, damage, durability, enchantability, false);
+            return toolStats(speed, damage, 0.0F, durability, enchantability, false);
         }
 
-        public Builder toolStats(float speed, float damage, int durability, int enchantability, boolean ignoreCraftingTools) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability, ignoreCraftingTools));
+        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int enchantability) {
+            return toolStats(speed, damage, attackSpeed, durability, enchantability, false);
+        }
+
+        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int enchantability, boolean ignoreCraftingTools) {
+            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, attackSpeed, durability, enchantability, ignoreCraftingTools));
+            return this;
+        }
+
+        public Builder rotorStats(float speed, float damage, int durability) {
+            properties.setProperty(PropertyKey.ROTOR, new RotorProperty(speed, damage, durability));
             return this;
         }
 

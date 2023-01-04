@@ -1,7 +1,14 @@
 {
   "section": "Generator",
   "title": "Large Gas Turbine",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Large Gas Turbine§r may not be so impressive in the §5EV§r Age, but it has the ability to scale really well, to §9better production§r than the base 4096 EU/t, and §9greater efficiency§r.\n\nEach Large Turbine will require a §aTurbine Rotor§r and a §3Rotor Holder§r. More on the Turbine mechanics in the §lnext§r Quest.\n\n§9Note:§r To harness the Power output when using a Rotor having more than 100% Power stats, you will need a §34A EV Dynamo Hatch§r or an §3IV Dynamo Hatch§r.\nTurbines §cvoid§r energy that they can not output."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "large_turbine.gas"
 }

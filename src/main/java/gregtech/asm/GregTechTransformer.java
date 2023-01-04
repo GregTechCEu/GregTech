@@ -1,8 +1,9 @@
 package gregtech.asm;
 
-import gregtech.common.ConfigHolder;
+import gregtech.api.GTValues;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
+import gregtech.common.ConfigHolder;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Loader;
@@ -11,6 +12,9 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
 
@@ -23,7 +27,6 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassWriter classWriter = new ClassWriter(0);
                 classReader.accept(new TargetClassVisitor(classWriter, JEIVisitor.TARGET_METHOD, JEIVisitor::new), 0);
                 return classWriter.toByteArray();
-
             }
             case ConcretePowderVisitor.TARGET_CLASS_NAME:
                 if (ConfigHolder.recipes.disableConcreteInWorld) {
@@ -122,6 +125,35 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 } else {
                     classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
                 }
+                return classWriter.toByteArray();
+            }
+            case RenderItemVisitor.TARGET_CLASS_NAME: {
+                if (Loader.isModLoaded(GTValues.MODID_ECORE)) {
+                    return basicClass;
+                }
+                ClassNode classNode = new ClassNode();
+                ClassReader classReader = new ClassReader(basicClass);
+                classReader.accept(classNode, 0);
+                Iterator<MethodNode> methods = classNode.methods.iterator();
+                RenderItemVisitor.transform(methods);
+                ClassWriter classWriter = new ClassWriter(0);
+                classNode.accept(classWriter);
+                return classWriter.toByteArray();
+            }
+            case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                ClassNode classNode = new ClassNode();
+                classReader.accept(classNode, 0);
+                RecipeRepairItemVisitor.handleClassNode(classNode).accept(classWriter);
+                return classWriter.toByteArray();
+            }
+            case DamageSourceVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                ClassNode classNode = new ClassNode();
+                classReader.accept(classNode, 0);
+                DamageSourceVisitor.handleClassNode(classNode).accept(classWriter);
                 return classWriter.toByteArray();
             }
         }

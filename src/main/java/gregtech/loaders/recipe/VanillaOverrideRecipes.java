@@ -965,7 +965,7 @@ public class VanillaOverrideRecipes {
 
     private static void createShovelRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "fPh", " S ", " S ",
+        ModHandler.addShapedRecipe(regName, output, "hPf", " S ", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'S', new ItemStack(Items.STICK)
         );
@@ -973,7 +973,7 @@ public class VanillaOverrideRecipes {
 
     private static void createPickaxeRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "PII", "fSh", " S ",
+        ModHandler.addShapedRecipe(regName, output, "PII", "hSf", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'I', new UnificationEntry(material.equals(Materials.Diamond) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new ItemStack(Items.STICK)
@@ -982,7 +982,7 @@ public class VanillaOverrideRecipes {
 
     private static void createAxeRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "PIh", "PS ", "fS ",
+        ModHandler.addShapedRecipe(regName, output, "PIf", "PS ", "hS ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'I', new UnificationEntry(material.equals(Materials.Diamond) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new ItemStack(Items.STICK)
@@ -991,7 +991,7 @@ public class VanillaOverrideRecipes {
 
     private static void createSwordRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, " P ", "fPh", " S ",
+        ModHandler.addShapedRecipe(regName, output, " P ", "hPf", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'S', new ItemStack(Items.STICK)
         );
@@ -999,7 +999,7 @@ public class VanillaOverrideRecipes {
 
     private static void createHoerecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "PIh", "fS ", " S ",
+        ModHandler.addShapedRecipe(regName, output, "PIf", "hS ", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'I', new UnificationEntry(material.equals(Materials.Diamond) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new ItemStack(Items.STICK)

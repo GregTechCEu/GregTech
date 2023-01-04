@@ -1,7 +1,14 @@
 {
   "section": "Electric",
   "title": "Multi Smelter",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe §3§oMulti Smelter§r§o might be the §6§omost powerful Furnace§r§o in modded Minecraft.§r\n\nAt its lowest power (Cupronickel coils and LV Voltage), it smelts 32 items in just 12 seconds - equivalent to §926.7 Furnaces§r, or 3.3 Steam Ovens!\n\nNot to mention, standard §aoverclocks§r are in effect.\nAnd more importantly higher tier §3Coils§r increase the amount of items it can smelt in §dparallel§r! Higher tier §3Coils§r also provide better energy and duration discounts for recipes."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "multi_furnace"
 }

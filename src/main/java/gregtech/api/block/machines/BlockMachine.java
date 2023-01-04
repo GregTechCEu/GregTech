@@ -7,29 +7,23 @@ import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
-import gregtech.api.block.UnlistedIntegerProperty;
-import gregtech.api.block.UnlistedStringProperty;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.tool.IScrewdriverItem;
-import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -54,9 +48,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -72,8 +63,6 @@ import static gregtech.api.util.GTUtility.getMetaTileEntity;
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
     private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Collections.emptyList();
-    private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
-    private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
     //used for rendering purposes of non-opaque machines like chests and tanks
     public static final PropertyBool OPAQUE = PropertyBool.create("opaque");
 
@@ -87,25 +76,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         setDefaultState(getDefaultState().withProperty(OPAQUE, true));
     }
 
-    @Override
-    public boolean canHarvestBlock(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-        if (ConfigHolder.machines.requireWrenchForMachines) {
-            return player.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
-        }
-        return super.canHarvestBlock(world, pos, player);
-    }
-
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        String value = ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
-        return value == null ? "wrench" : value; //safety check for mods who don't handle state properly
+        return ToolClasses.WRENCH;
     }
 
     @Override
     public int getHarvestLevel(@Nonnull IBlockState state) {
-        Integer value = ((IExtendedBlockState) state).getValue(HARVEST_LEVEL);
-        return value == null ? 0 : value; //safety check for mods who don't handle state properly
+        return 1;
     }
 
     @Override
@@ -115,20 +94,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nonnull
     @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
-        if (metaTileEntity == null)
-            return state;
-
-        return ((IExtendedBlockState) state)
-                .withProperty(HARVEST_TOOL, metaTileEntity.getHarvestTool() == null ? "wrench" : metaTileEntity.getHarvestTool())
-                .withProperty(HARVEST_LEVEL, metaTileEntity.getHarvestLevel());
-    }
-
-    @Nonnull
-    @Override
     protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[]{OPAQUE}, new IUnlistedProperty[]{HARVEST_TOOL, HARVEST_LEVEL});
+        return new BlockStateContainer(this, OPAQUE);
     }
 
     @Nonnull
@@ -257,10 +224,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
 
             // Color machines on place if holding spray can in off-hand
-            if(placer instanceof EntityPlayer) {
+            if (placer instanceof EntityPlayer) {
                 ItemStack offhand = placer.getHeldItemOffhand();
-                for(int i  = 0; i < EnumDyeColor.values().length; i++) {
-                    if(offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
                         MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
                         break;
                     }
@@ -319,34 +286,28 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (metaTileEntity == null || rayTraceResult == null) {
             return false;
         }
+        boolean toolClickResult = metaTileEntity.onToolClick(playerIn, itemStack.getItem().getToolClasses(itemStack),
+                hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
+        // damage the tool and play sounds
+        if (toolClickResult) postToolClick(itemStack, playerIn);
+        // if the tool did something, we don't bother with covers
+        // otherwise we handle cover clicking
+        return toolClickResult || metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
+    }
 
-        if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)) {
-            IScrewdriverItem screwdriver = itemStack.getCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null);
-
-            if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
-                    metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult)) {
-                screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
-                IToolStats.onOtherUse(itemStack, worldIn, pos);
-                return true;
-            }
-            return false;
+    /**
+     * Handles the result of clicking the block with a tool: damage and sounds
+     *
+     * @param stack the tool used to click the block
+     * @param player the player clicking the block
+     */
+    public void postToolClick(ItemStack stack, EntityPlayer player) {
+        // damage the tool
+        ToolHelper.damageItem(stack, player);
+        // if the tool is a GT tool, play its sound
+        if (stack.getItem() instanceof IGTTool) {
+            ((IGTTool) stack.getItem()).playSound(player);
         }
-
-        if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null)) {
-            IWrenchItem wrenchItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
-            EnumFacing wrenchDirection = ICoverable.determineGridSideHit(rayTraceResult);
-
-            if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
-                    metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
-
-                wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
-                IToolStats.onOtherUse(itemStack, worldIn, pos);
-                return true;
-            }
-            return false;
-        }
-
-        return metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
     }
 
     @Override

@@ -8,7 +8,6 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -17,7 +16,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.tools.DamageValues;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -64,34 +62,23 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
-            ISoftHammerItem softHammerItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
-
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-
-            if (!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false))
-                return false;
-
-            if (converterTrait.isFeToEu()) {
-                setFeToEu(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage(),
-                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(false))));
-            } else {
-                setFeToEu(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
-                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage()));
-            }
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
+            scheduleRenderUpdate();
             return true;
         }
-
-        return super.onRightClick(playerIn, hand, facing, hitResult);
+        if (converterTrait.isFeToEu()) {
+            setFeToEu(false);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
+                    converterTrait.getBaseAmps(), converterTrait.getVoltage(),
+                    FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(false))));
+        } else {
+            setFeToEu(true);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
+                    FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
+                    converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+        }
+        return true;
     }
 
     public void setFeToEu(boolean feToEu) {

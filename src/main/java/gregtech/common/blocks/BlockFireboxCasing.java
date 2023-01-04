@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -57,7 +58,7 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
 
         @Override
         public String getHarvestTool(IBlockState state) {
-            return "wrench";
+            return ToolClasses.WRENCH;
         }
     }
 

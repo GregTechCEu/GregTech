@@ -5,7 +5,7 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.unification.material.properties.RotorProperty;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
@@ -19,14 +19,14 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
     @Override
     public int getPartMaxDurability(ItemStack itemStack) {
         Material material = getPartMaterial(itemStack);
-        ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : 800 * (int) Math.pow(property.getToolDurability(), 0.65);
+        RotorProperty property = material.getProperty(PropertyKey.ROTOR);
+        return property == null ? -1 : 800 * (int) Math.pow(property.getDurability(), 0.65);
     }
 
     public int getRotorEfficiency(ItemStack stack) {
         Material material = getPartMaterial(stack);
-        ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : ((int) ((60 + property.getToolSpeed() * 8)) / 5 * 5);
+        RotorProperty property = material.getProperty(PropertyKey.ROTOR);
+        return property == null ? -1 : ((int) ((60 + property.getSpeed() * 8)) / 5 * 5);
     }
 
     public int getRotorDurabilityPercent(ItemStack itemStack) {
@@ -45,8 +45,8 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
 
     public int getRotorPower(ItemStack stack) {
         Material material = getPartMaterial(stack);
-        ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : (int) (40 + property.getToolAttackDamage() * 30);
+        RotorProperty property = material.getProperty(PropertyKey.ROTOR);
+        return property == null ? -1 : (int) (40 + property.getDamage() * 30);
     }
 
     @Override
@@ -63,16 +63,13 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
 
     @Nullable
     public static TurbineRotorBehavior getInstanceFor(@Nonnull ItemStack itemStack) {
-        if (!(itemStack.getItem() instanceof MetaItem))
-            return null;
+        if (!(itemStack.getItem() instanceof MetaItem)) return null;
 
         MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) itemStack.getItem()).getItem(itemStack);
-        if (valueItem == null)
-            return null;
+        if (valueItem == null) return null;
 
         IItemDurabilityManager durabilityManager = valueItem.getDurabilityManager();
-        if (!(durabilityManager instanceof TurbineRotorBehavior))
-            return null;
+        if (!(durabilityManager instanceof TurbineRotorBehavior)) return null;
 
         return (TurbineRotorBehavior) durabilityManager;
     }

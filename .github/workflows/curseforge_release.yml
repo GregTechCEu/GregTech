@@ -38,7 +38,7 @@ jobs:
         run: echo ::set-output name=version::$(echo "$(./gradlew getVersionFromJava --q | sed -E 's/1.12.2-|-.+//g')")
 
       - name: Retrieve Jar from Latest Release
-        run: wget "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get_version_no_extra.outputs.version }}/gregtech-${{ steps.get_current_version.outputs.version }}.jar"
+        run: wget "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get_version_no_extra.outputs.version }}/gregtech-1.12.2-${{ steps.get_current_version.outputs.version }}.jar"
 
       - name: Create CurseForge Release
         uses: itsmeow/curseforge-upload@v3

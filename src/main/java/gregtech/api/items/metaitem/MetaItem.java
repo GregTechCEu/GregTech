@@ -1,5 +1,6 @@
 package gregtech.api.items.metaitem;
 
+import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
@@ -21,6 +22,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.ToolChargeBarRenderer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
@@ -44,7 +46,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -52,6 +53,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -65,6 +67,7 @@ import javax.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 
 /**
  * MetaItem is item that can have up to Short.MAX_VALUE items inside one id.
@@ -78,7 +81,8 @@ import java.util.*;
  * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) }
  * This will add single-use (not rechargeable) LV battery with initial capacity 10000 EU
  */
-public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory {
+@Optional.Interface(modid = GTValues.MODID_ECORE, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory, IOverlayRenderAware {
 
     private static final List<MetaItem<?>> META_ITEMS = new ArrayList<>();
 
@@ -178,12 +182,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Override
     public boolean showDurabilityBar(@Nonnull ItemStack stack) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().showsDurabilityBar(stack);
-        }
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return electricItem != null && (stack.getMaxStackSize() == 1 || electricItem.getCharge() > 0L);
+        // meta items now handle durability bars via custom rendering
+        return false;
     }
 
     @Override
@@ -192,20 +192,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
             return metaValueItem.getDurabilityManager().getDurabilityForDisplay(stack);
         }
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return 1.0 - electricItem.getCharge() / (1.0 * electricItem.getMaxCharge());
-        }
-        return 0.0;
-    }
-
-    @Override
-    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().getRGBDurabilityForDisplay(stack);
-        }
-        return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
+        return -1.0;
     }
 
     @Nonnull
@@ -671,6 +658,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return uiFactory == null ? null : uiFactory.createUI(holder, entityPlayer);
     }
 
+    // IOverlayRenderAware
+    @Override
+    public void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+        ToolChargeBarRenderer.renderBarsItem(this, stack, xPosition, yPosition);
+    }
+
     public class MetaValueItem {
 
         public MetaItem<T> getMetaItem() {
@@ -816,7 +809,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 }
                 if (itemComponent instanceof IItemBehaviour) {
                     this.behaviours.add((IItemBehaviour) itemComponent);
-                    ((IItemBehaviour) itemComponent).onAddedToItem(this);
+                    ((IItemBehaviour) itemComponent).addPropertyOverride(getMetaItem());
                 }
                 if (itemComponent instanceof IEnchantabilityHelper) {
                     this.enchantabilityHelper = (IEnchantabilityHelper) itemComponent;

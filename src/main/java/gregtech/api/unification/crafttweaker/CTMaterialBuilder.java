@@ -152,6 +152,11 @@ public class CTMaterialBuilder {
         backingBuilder.toolStats(speed, damage, durability, enchantability);
         return this;
     }
+    @ZenMethod
+    public CTMaterialBuilder rotorStats(float speed, float damage, int durability) {
+        backingBuilder.rotorStats(speed, damage, durability);
+        return this;
+    }
 
     @ZenMethod
     public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride, @Optional int durationOverride) {
@@ -234,6 +239,12 @@ public class CTMaterialBuilder {
     @ZenMethod
     public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
         backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof);
+        return this;
+    }
+
+    @ZenMethod
+    public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+        backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof);
         return this;
     }
 

@@ -16,12 +16,14 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
@@ -45,6 +47,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -68,6 +71,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -413,9 +417,36 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * Called when player clicks wrench on specific side of this meta tile entity
+     * Called when a player clicks this meta tile entity with a tool
      *
-     * @return true if something happened, so wrench will get damaged and animation will be played
+     * @return true if something happened, so tools will get damaged and animations will be played
+     */
+    public boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, EnumFacing side, CuboidRayTraceResult hitResult)  {
+        if (toolClasses.isEmpty()) return false;
+
+        boolean result = false;
+        if (toolClasses.contains(ToolClasses.WRENCH)) {
+            result = onWrenchClick(playerIn, hand, side, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.SCREWDRIVER)) {
+            result |= onScrewdriverClick(playerIn, hand, side, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.CROWBAR)) {
+            result |= onCrowbarClick(playerIn, hand, side, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
+            result |= onSoftMalletClick(playerIn, hand, side, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
+            result |= onHardHammerClick(playerIn, hand, side, hitResult);
+        }
+        return result;
+    }
+
+    /**
+     * Called when player clicks a wrench on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
         if (!needsSneakToRotate() || playerIn.isSneaking()) {
@@ -431,22 +462,67 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * @return true if the player must sneak to rotate this metatileentity, otherwise false
-     */
-    public boolean needsSneakToRotate() {
-        return false;
-    }
-
-    /**
-     * Called when player clicks screwdriver on specific side of this meta tile entity
+     * Called when player clicks a screwdriver on specific side of this meta tile entity
      *
-     * @return true if something happened, so screwdriver will get damaged and animation will be played
+     * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return false;
     }
 
+    /**
+     * Called when player clicks a crowbar on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getCoverAtSide(facing) != null) {
+            return removeCover(facing);
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when player clicks a soft mallet on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        if (controllable != null) {
+            controllable.setWorkingEnabled(!controllable.isWorkingEnabled());
+            if (!getWorld().isRemote) {
+                playerIn.sendMessage(new TextComponentTranslation(controllable.isWorkingEnabled() ?
+                        "behaviour.soft_hammer.enabled" : "behaviour.soft_hammer.disabled"));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called when player clicks a hard hammer on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onHardHammerClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        toggleMuffled();
+        if (!getWorld().isRemote) {
+            playerIn.sendMessage(new TextComponentTranslation(isMuffled() ?
+                    "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"));
+        }
+        return true;
+    }
+
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    }
+
+    /**
+     * @return true if the player must sneak to rotate this metatileentity, otherwise false
+     */
+    public boolean needsSneakToRotate() {
+        return false;
     }
 
     @Nullable
@@ -757,7 +833,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return tool required to dismantle this meta tile entity properly
      */
     public String getHarvestTool() {
-        return "wrench";
+        return ToolClasses.WRENCH;
     }
 
     /**

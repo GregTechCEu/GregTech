@@ -1,0 +1,13 @@
+{
+  "section": "Multiblocks",
+  "title": "Forming Multiblocks",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThis is a Guide to help you form Multiblocks and troubleshoot issues.§r\n\nThere are two really important factors to know when building Multiblocks.\n\n§lCheck the JEI preview:§r This one was probably obvious, but there\u0027s more than just a picture of how the Multiblock looks like! Use your mouse to §drotate§r the preview, §9hover over the parts§r to gain additional informations. The JEI page also contains the amount of blocks to build it. You can also §dright-click§r a block in the preview to get a display of all available blocks in that placement.\n\n\n§lThe JEI preview is a suggestion:§r There is no unique way to form the Multiblock. Most of the time, you have complete freedom for the §9tier of Buses/Hatches§r. And you also have the §dfreedom of placement§r.\n\nTaking the EBF as example, any tier of Energy/Bus/Hatch can be used, and they can be placed anywhere replacing a casing. Fluid Hatches are also optional, though you probably want them to handle recipes with fluid.\n\nAdditionally, you can §dsneak right-click§r the multiblock controller for an §6in-world preview§r, or use the §4Terminal§r\u0027s Multiblock Helper."
+      ]
+    }
+  ],
+  "fixed": []
+}

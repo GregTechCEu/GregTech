@@ -36,6 +36,7 @@ import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -45,6 +46,7 @@ import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
+import gregtech.integration.GroovyHandCommand;
 import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
@@ -98,7 +100,7 @@ public class CoreModule implements IGregTechModule {
 
         /* init GroovyScript compat */
         GroovyScriptCompat.init();
-
+        MinecraftForge.EVENT_BUS.register(GroovyHandCommand.class);
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
@@ -145,6 +147,7 @@ public class CoreModule implements IGregTechModule {
 
         MetaBlocks.init();
         MetaItems.init();
+        ToolItems.init();
         MetaFluids.init();
 
         /* Start MetaTileEntity Registration */

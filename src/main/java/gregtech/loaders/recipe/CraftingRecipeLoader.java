@@ -40,7 +40,7 @@ public class CraftingRecipeLoader {
         registerFacadeRecipe(Materials.Iron, 4);
 
         ToolRecipeHandler.registerPowerUnitRecipes();
-        ToolRecipeHandler.registerManualToolRecipes();
+        ToolRecipeHandler.registerCustomToolRecipes();
 
         ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Wood, 6), "WsW", "W W", "WrW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("normal_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Wood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
@@ -118,14 +118,6 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("shape_extruder_bottle", SHAPE_EXTRUDER_BOTTLE.getStackForm(), "  x", " S ", "   ", 'S', SHAPE_EXTRUDER_RING.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_gear", SHAPE_EXTRUDER_GEAR.getStackForm(), "x  ", " S ", "   ", 'S', SHAPE_EXTRUDER_RING.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_saw", SHAPE_EXTRUDER_SAW.getStackForm(), "   ", " S ", "  x", 'S', SHAPE_EXTRUDER_PLATE.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_file", SHAPE_EXTRUDER_FILE.getStackForm(), "  x", " S ", "   ", 'S', SHAPE_EXTRUDER_PLATE.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_hammer", SHAPE_EXTRUDER_HAMMER.getStackForm(), "  x", " S ", "   ", 'S', SHAPE_EXTRUDER_INGOT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_hoe", SHAPE_EXTRUDER_HOE.getStackForm(), "   ", " Sx", "   ", 'S', SHAPE_EXTRUDER_INGOT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_axe", SHAPE_EXTRUDER_AXE.getStackForm(), "x  ", " S ", "   ", 'S', SHAPE_EXTRUDER_PLATE.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_shovel", SHAPE_EXTRUDER_SHOVEL.getStackForm(), " x ", " S ", "   ", 'S', SHAPE_EXTRUDER_PLATE.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_pickaxe", SHAPE_EXTRUDER_PICKAXE.getStackForm(), " x ", " S ", "   ", 'S', SHAPE_EXTRUDER_INGOT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_sword", SHAPE_EXTRUDER_SWORD.getStackForm(), "   ", " Sx", "   ", 'S', SHAPE_EXTRUDER_PLATE.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_block", SHAPE_EXTRUDER_BLOCK.getStackForm(), "x  ", " S ", "   ", 'S', SHAPE_EXTRUDER_INGOT.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_pipe_huge", SHAPE_EXTRUDER_PIPE_HUGE.getStackForm(), "   ", " S ", "  x", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_pipe_large", SHAPE_EXTRUDER_PIPE_LARGE.getStackForm(), "   ", " Sx", "   ", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());

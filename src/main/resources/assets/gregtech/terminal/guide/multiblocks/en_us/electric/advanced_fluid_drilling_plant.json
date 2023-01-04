@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Advanced Fluid Drilling Plant",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oExtreme is very apprioriate this time around, and you will see why.§r\n\nAt the cost of 4x the drilling Power, the §3Advanced Fluid Drilling Rig§r will be gaining §616x the output§r in Fluid.\nThe depletion of veins is also halved. This means you will get a total of §632x§r as much Oil (or whatever fluid) from a bedrock fluid vein until depletion!\n\nEven when depleted, you can still use this and be very power positive.\n\nOne single §3Advanced Fluid Drilling Rig§r should be enough to supply Power for a base up to §dLuV§r Age and possibly beyond!\n\nAs a brief §9reminder§r:\n§9-§r §aLight Oil§r can be used for §dLPG§r and §dMethane§r, to run in §3Large Gas Turbines§r.\n§9-§r §aOil§r can be used for §dDiesel§r and §dCetane-Boosted Diesel§r, to run in §3Large Combustion Engines§r.\n§9-§r §aHeavy Oil§r can be used for §dNitrobenzene§r, to run in §3Large Gas Turbines§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "fluid_drilling_rig.hv"
+}

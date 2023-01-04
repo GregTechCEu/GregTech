@@ -1,0 +1,14 @@
+{
+  "section": "Hatches",
+  "title": "Advanced Maintenance",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "You now have access to two §3new Maintenance Hatches§r. Both start with §6no Maintenance required§r.\n\nThe §3Automatic Maintenance Hatch§r is pretty simple, it eliminates the need for Maintenance, §6forever§r.\n\nThe §3Configurable Maintenance Hatch§r is more interesting. You can configure it to cut off §a10% duration§r on recipes, at the cost of making Maintenance happen three times as fast. That is §d16 real hours§r of activity.\n§9Reminder:§r You can put Tape in the maintenance Hatch to automatically fix problems.\n\n\n§bLore:§r The Automatic Maintenance Hatch texture and mechanic comes from TecTech, an addon mod originally made for GregTech: New Horizons. I will be honest with you: that mod is excessively cool!\nMore TecTech references coming up, if you stick with us with the late game!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "maintenance_hatch_full_auto"
+}
