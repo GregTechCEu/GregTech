@@ -17,6 +17,8 @@ import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -181,6 +183,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void drawHUD(ItemStack item) {
         addCapacityHUD(item, this.HUD);
