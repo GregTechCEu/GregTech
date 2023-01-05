@@ -5,6 +5,7 @@ import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,7 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
             tooltip.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
         }
 
-        if (flagIn.isAdvanced()) {
+        if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getItemMaterial(stack).toCamelCaseString());
         }
     }

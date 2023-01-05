@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
@@ -41,7 +42,7 @@ public class CompressedItemBlock extends ItemBlock {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        if(flagIn.isAdvanced()) {
+        if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: block" + compressedBlock.getGtMaterial(stack.getMetadata()).toCamelCaseString());
         }
     }
