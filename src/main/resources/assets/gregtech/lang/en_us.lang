@@ -5230,3 +5230,6 @@ gregtech.key.armor_mode_switch=Armor Mode Switch
 gregtech.key.armor_hover=Armor Hover Toggle
 gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
+
+# Debug messaging
+gregtech.debug.f3_h.enabled=GregTech debug info has moved! Enable the misc:debug config option in the GregTech config file to see it
