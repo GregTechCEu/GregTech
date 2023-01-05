@@ -667,7 +667,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS))
                 .where('S', MetaTileEntities.CLEANROOM, EnumFacing.SOUTH)
                 .where(' ', Blocks.AIR.getDefaultState())
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LV], EnumFacing.SOUTH)
                 .where('I', MetaTileEntities.PASSTHROUGH_HATCH_ITEM, EnumFacing.NORTH)
                 .where('L', MetaTileEntities.PASSTHROUGH_HATCH_FLUID, EnumFacing.NORTH)
                 .where('H', MetaTileEntities.HULL[GTValues.HV], EnumFacing.NORTH)
