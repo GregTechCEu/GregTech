@@ -5689,8 +5689,8 @@ item.gt.tool.buzzsaw.tooltip=Не подходит для уборки блок�
 item.gt.tool.screwdriver_lv.name=Электроотвертка (%s §7LV§r)
 item.gt.tool.screwdriver_lv.tooltip=Регулирует улучшения и машины
 item.gt.tool.tooltip.general_uses=§bОсталось использований: %s
-item.gt.tool.tooltip.attack_damage=§c Наносимый урон: %s
-item.gt.tool.tooltip.attack_speed=§9 Скорость атаки: %s
+item.gt.tool.tooltip.attack_damage=§cНаносимый урон: %s
+item.gt.tool.tooltip.attack_speed=§9Скорость атаки: %s
 item.gt.tool.tooltip.harvest_level=§eУровень добычи: %s
 item.gt.tool.sword.name=Меч (%s)
 item.gt.tool.pickaxe.name=Кирка (%s)
@@ -5719,7 +5719,8 @@ item.gt.tool.behavior.grass_path=§eСоздаёт тропу
 item.gt.tool.behavior.rail_rotation=§eВращает рельсы
 
 
-item.gt.tool.tooltip.crafting_uses=§a %s Осталось
+item.gt.tool.tooltip.crafting_uses=§aОсталось применений: %s
 item.gt.tool.behavior.silk_ice=Щёлковое касание Льда
 item.gt.tool.replace_tool_head=Создайте с новой насадкой инструмента для её замены
 item.material.oreprefix.toolHeadScythe=%s (Лезвие косы)
+item.gt.tool.behavior.shield_disable=§7Игнорирует щиты
