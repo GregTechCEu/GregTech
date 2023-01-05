@@ -13,6 +13,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CTRecipeHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.GregTechAPI.MATERIAL_REGISTRY;
@@ -32,6 +33,8 @@ public class GroovyScriptCompat {
     public static void init() {
         loaded = Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT);
         if (!loaded) return;
+
+        MinecraftForge.EVENT_BUS.register(GroovyHandCommand.class);
 
         BracketHandlerManager.registerBracketHandler("recipemap", RecipeMap::getByName);
         BracketHandlerManager.registerBracketHandler("material", MATERIAL_REGISTRY::getObject);
