@@ -34,6 +34,10 @@ public interface IArmorLogic {
 
     EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack);
 
+    default boolean canBreakWithDamage(ItemStack stack) {
+        return false;
+    }
+
     default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
 
     }

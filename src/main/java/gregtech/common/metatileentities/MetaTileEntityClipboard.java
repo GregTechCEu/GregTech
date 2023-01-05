@@ -435,13 +435,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (data.length != 0 && data[0] instanceof ItemStack)
-            this.setClipboard((ItemStack) data[0]);
-    }
-
-    @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) { // JEI shouldn't show this
     }
 

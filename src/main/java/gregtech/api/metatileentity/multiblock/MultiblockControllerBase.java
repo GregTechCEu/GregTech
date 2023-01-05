@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -63,8 +64,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
+    public void onPlacement() {
+        super.onPlacement();
         reinitializeStructurePattern();
     }
 
@@ -145,6 +146,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
+            holder.getMetaTileEntity().onPlacement();
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
             return new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
         }).toArray(BlockInfo[]::new);
@@ -288,6 +290,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public List<IMultiblockPart> getMultiblockParts() {
         return Collections.unmodifiableList(multiblockParts);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.reinitializeStructurePattern();
     }
 
     @Override

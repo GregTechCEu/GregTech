@@ -1,6 +1,7 @@
 package gregtech.asm;
 
 import gregtech.api.GTValues;
+import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
 import gregtech.common.ConfigHolder;
@@ -156,6 +157,13 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 DamageSourceVisitor.handleClassNode(classNode).accept(classWriter);
                 return classWriter.toByteArray();
             }
+        }
+        if (EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.containsKey(internalName)) {
+            ObfMapping methodMapping = EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.get(internalName);
+            ClassReader classReader = new ClassReader(basicClass);
+            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            classReader.accept(new TargetClassVisitor(classWriter, methodMapping, mv -> new EnchantmentCanApplyVisitor(mv, methodMapping)), ClassReader.EXPAND_FRAMES);
+            return classWriter.toByteArray();
         }
         return basicClass;
     }
