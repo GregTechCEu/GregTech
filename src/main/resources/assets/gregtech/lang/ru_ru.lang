@@ -5720,7 +5720,7 @@ item.gt.tool.behavior.rail_rotation=§eВращает рельсы
 
 
 item.gt.tool.tooltip.crafting_uses=§aОсталось применений: %s
-item.gt.tool.behavior.silk_ice=Щёлковое касание Льда
+item.gt.tool.behavior.silk_ice=§bЩёлковое касание Льда
 item.gt.tool.replace_tool_head=Создайте с новой насадкой инструмента для её замены
 item.material.oreprefix.toolHeadScythe=%s (Лезвие косы)
 item.gt.tool.behavior.shield_disable=§7Игнорирует щиты
