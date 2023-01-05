@@ -121,9 +121,16 @@ public abstract class ParallelLogic {
             overlayedItemHandler.reset();
 
             int returnedAmount = 0;
+            int amountToInsert = 0;
 
             for (Map.Entry<ItemStackKey, Integer> entry : recipeOutputs.entrySet()) {
-                int amountToInsert = entry.getValue() * multiplier;
+                // Since multiplier starts at Int.MAX, check here for integer overflow
+                if(entry.getValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getValue()) {
+                    amountToInsert = Integer.MAX_VALUE;
+                }
+                else {
+                    amountToInsert = entry.getValue() * multiplier;
+                }
                 returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
@@ -242,7 +249,13 @@ public abstract class ParallelLogic {
             int amountLeft = 0;
 
             for (Map.Entry<FluidKey, Integer> entry : recipeFluidOutputs.entrySet()) {
-                amountLeft = entry.getValue() * multiplier;
+                // Since multiplier starts at Int.MAX, check here for integer overflow
+                if(entry.getValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getValue()) {
+                    amountLeft = Integer.MAX_VALUE;
+                }
+                else {
+                    amountLeft = entry.getValue() * multiplier;
+                }
                 int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountLeft);
                 if (inserted > 0) {
                     amountLeft -= inserted;
@@ -447,7 +460,8 @@ public abstract class ParallelLogic {
             int limitByVoltage = Math.abs((int) (maxVoltage / recipeEUt));
             int parallelizable = Math.min(limitByVoltage, limitByOutput);
             if (parallelizable != 0)
-                recipeBuilder.append(currentRecipe, parallelizable, false);
+                // Use the minimum between the amount of recipes we can run with available inputs and amount of recipe outputs that can fit
+                recipeBuilder.append(currentRecipe, Math.min(parallelizable, multiplierByInputs), false);
         } else if (limitByOutput > 0) {
             recipeBuilder.append(currentRecipe, limitByOutput, false);
         }
