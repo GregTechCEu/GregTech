@@ -32,7 +32,10 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import gregtech.client.utils.ToolChargeBarRenderer;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -122,19 +125,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default ItemStack getRaw() {
         ItemStack stack = new ItemStack(get());
         getToolTag(stack);
-        getBehavioursTag(stack);
+        getBehaviorsTag(stack);
         return stack;
     }
 
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
-        NBTTagCompound toolTag = getToolTag(stack);
 
-        stack.getTagCompound().setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
+        NBTTagCompound stackCompound = GTUtility.getOrCreateNbtCompound(stack);
+        stackCompound.setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
+
+        NBTTagCompound toolTag = getToolTag(stack);
 
         // don't show the normal vanilla damage and attack speed tooltips,
         // we handle those ourselves
-        // stack.getTagCompound().setInteger(HIDE_FLAGS, 2);
+        stackCompound.setInteger(HIDE_FLAGS, 2);
 
         // Set Material
         toolTag.setString(MATERIAL_KEY, material.toString());
@@ -144,7 +149,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability());
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
-            stack.getTagCompound().setBoolean(UNBREAKABLE_KEY, true);
+            stackCompound.setBoolean(UNBREAKABLE_KEY, true);
         }
 
         // Set material enchantments
@@ -155,7 +160,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         });
 
         // Set behaviours
-        NBTTagCompound behaviourTag = getBehavioursTag(stack);
+        NBTTagCompound behaviourTag = getBehaviorsTag(stack);
         getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
 
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
@@ -328,7 +333,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default AoESymmetrical getMaxAoEDefinition(ItemStack stack) {
-        return AoESymmetrical.readMax(getBehavioursTag(stack));
+        return AoESymmetrical.readMax(getBehaviorsTag(stack));
     }
 
     default AoESymmetrical getAoEDefinition(ItemStack stack) {
@@ -338,10 +343,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
         // special case check (mostly for the sword)
-        float specialValue = ToolHelper.getDestroySpeed(state, getToolClasses(stack));
+        float specialValue = getDestroySpeed(state, getToolClasses(stack));
         if (specialValue != -1) return specialValue;
 
-        if (ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
+        if (isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack))) {
             return getTotalToolSpeed(stack);
         }
 
@@ -362,7 +367,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             int result = -1;
             if (isTool(stack, ToolClasses.SHEARS)) {
-                result = ToolHelper.shearBlockRoutine(playerMP, stack, pos);
+                result = shearBlockRoutine(playerMP, stack, pos);
             }
             if (result != 0) {
                 // prevent exploits with instantly breakable blocks
@@ -376,7 +381,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     }
                 }
 
-                effective |= ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
+                effective |= isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
 
                 if (effective) {
                     if (areaOfEffectBlockBreakRoutine(stack, playerMP)) {
@@ -450,7 +455,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return multimap;
     }
 
-    default int definition$getHarvestLevel(ItemStack stack, String toolClass, @javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, @javax.annotation.Nullable IBlockState blockState) {
+    default int definition$getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
         return get().getToolClasses(stack).contains(toolClass) ? getTotalHarvestLevel(stack) : -1;
     }
 
@@ -603,37 +608,97 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     // Client-side methods
+
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, ITooltipFlag flag) {
+        if (!(stack.getItem() instanceof IGTTool)) return;
+        IGTTool tool = (IGTTool) stack.getItem();
+
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) return;
+
+        IGTToolDefinition toolStats = tool.getToolStats();
+
+        // electric info
         if (this.isElectric()) {
             tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip",
                     getCharge(stack),
                     getMaxCharge(stack),
                     GTValues.VNF[getElectricTier()]));
-            tooltip.add("");
-            tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
         }
 
-        tooltip.add(I18n.format("item.gt.tool.behaves_like", stack.getItem().getToolClasses(stack).stream()
-                .map(s -> s.replaceAll("_", " "))
-                .map(WordUtils::capitalize)
-                .collect(Collectors.joining(", "))));
+        // durability info
+        if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
+            int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage();
+            if (toolStats.isSuitableForCrafting(stack)) {
+                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", GTUtility.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
+            }
 
-        NBTTagCompound behavioursTag = getBehavioursTag(stack);
-        List<String> behaviors = new ArrayList<>();
-        if (behavioursTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
-            behaviors.add(" " + I18n.format("item.gt.tool.behavior.relocate_mining"));
+            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
+            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", GTUtility.formatNumbers(damageRemaining)));
         }
+
+        // attack and mining info
+        if (toolStats.isSuitableForAttacking(stack)) {
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", 2 + tool.getTotalAttackDamage(stack)));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", 4 + tool.getTotalAttackSpeed(stack)));
+        }
+        if (toolStats.isSuitableForBlockBreak(stack)) { //GTUtility.formatNumber2Places(
+            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level", tool.getTotalHarvestLevel(stack)));
+        }
+
+        // behaviors
+        boolean addedBehaviorNewLine = false;
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
+
         if (aoeDefinition != AoESymmetrical.none()) {
-            behaviors.add(" " + I18n.format("item.gt.tool.behavior.aoe_mining", aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer + 1));
+            addedBehaviorNewLine = tooltip.add("");
+            tooltip.add(I18n.format("item.gt.tool.behavior.aoe_mining",
+                    aoeDefinition.column * 2 + 1, aoeDefinition.row * 2 + 1, aoeDefinition.layer + 1));
         }
 
-        getToolStats().getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, behaviors, flag));
+        NBTTagCompound behaviorsTag = getBehaviorsTag(stack);
+        if (behaviorsTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
+            if (!addedBehaviorNewLine) {
+                addedBehaviorNewLine = true;
+                tooltip.add("");
+            }
+            tooltip.add(I18n.format("item.gt.tool.behavior.relocate_mining"));
+        }
 
-        if (!behaviors.isEmpty()) {
-            tooltip.add(I18n.format("item.gt.tool.behavior.behaviors"));
-            tooltip.addAll(behaviors);
+        if (!addedBehaviorNewLine && !toolStats.getBehaviors().isEmpty()) {
+            tooltip.add("");
+        }
+        toolStats.getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
+
+        // unique tooltip
+        String uniqueTooltip = "item.gt.tool." + getId() + ".tooltip";
+        if (I18n.hasKey(uniqueTooltip)) {
+            tooltip.add("");
+            tooltip.add(I18n.format(uniqueTooltip));
+        }
+
+        tooltip.add("");
+
+        // valid tools
+        if (TooltipHelper.isShiftDown()) {
+            tooltip.add(I18n.format("item.gt.tool.usable_as", stack.getItem().getToolClasses(stack).stream()
+                    .map(GTUtility::convertUnderscoreToSpace)
+                    .map(WordUtils::capitalize)
+                    .collect(Collectors.joining(", "))));
+        } else {
+            tooltip.add(I18n.format("gregtech.tool_action.show_tooltips"));
+        }
+
+        // repair info
+        if (TooltipHelper.isCtrlDown()) {
+            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", WordUtils.capitalize(getToolMaterial(stack).toString())));
+            if (this.isElectric()) {
+                tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
+            }
+        } else {
+            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
         }
     }
 
@@ -649,7 +714,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             case "enchantment.cofhcore.smelting": // cofhcore
             case "enchantment.as.smelting": // astral sorcery
                 // block autosmelt enchants from AoE and Tree-Felling tools
-                return getToolStats().getAoEDefinition(stack) == AoESymmetrical.none() && !getBehavioursTag(stack).hasKey(TREE_FELLING_KEY);
+                return getToolStats().getAoEDefinition(stack) == AoESymmetrical.none() && !getBehaviorsTag(stack).hasKey(TREE_FELLING_KEY);
         }
 
         // Block Mending and Unbreaking on Electric tools
@@ -727,7 +792,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        NBTTagCompound tag = getBehavioursTag(holder.getCurrentItem());
+        NBTTagCompound tag = getBehaviorsTag(holder.getCurrentItem());
         AoESymmetrical defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
         return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
                 .label(6, 10, "item.gt.tool.aoe.columns")
@@ -758,11 +823,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     holder.markAsDirty();
                 }))
                 .widget(new DynamicLabelWidget(23, 65, () ->
-                        Integer.toString(1 + 2 * AoESymmetrical.getColumn(getBehavioursTag(holder.getCurrentItem()), defaultDefinition))))
+                        Integer.toString(1 + 2 * AoESymmetrical.getColumn(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
                 .widget(new DynamicLabelWidget(58, 65, () ->
-                        Integer.toString(1 + 2 * AoESymmetrical.getRow(getBehavioursTag(holder.getCurrentItem()), defaultDefinition))))
+                        Integer.toString(1 + 2 * AoESymmetrical.getRow(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
                 .widget(new DynamicLabelWidget(93, 65, () ->
-                        Integer.toString(1 + AoESymmetrical.getLayer(getBehavioursTag(holder.getCurrentItem()), defaultDefinition))))
+                        Integer.toString(1 + AoESymmetrical.getLayer(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
                 .build(holder, entityPlayer);
     }
 

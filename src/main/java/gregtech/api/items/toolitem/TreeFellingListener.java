@@ -142,7 +142,7 @@ public final class TreeFellingListener {
                     BlockPos.MutableBlockPos check = leavesToPurge.next();
                     IBlockState state = player.world.getBlockState(check);
                     if (targetLeaves == Blocks.AIR ? state.getBlock().isLeaves(state, player.world, check) : state.getBlock() == targetLeaves) {
-                        if(ToolHelper.getBehavioursTag(tool).getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
+                        if(ToolHelper.getBehaviorsTag(tool).getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
                             List<ItemStack> drops = state.getBlock().getDrops(player.world, check, state, ToolHelper.getFortuneOrLootingLevel(tool));
                             for (ItemStack dropStack : drops) {
                                 if(!player.addItemStackToInventory(dropStack)) {
