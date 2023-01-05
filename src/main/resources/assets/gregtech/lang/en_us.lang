@@ -891,18 +891,18 @@ metaitem.wooden_form.brick.name=Brick Wooden Form
 
 item.gt.tool.replace_tool_head=Craft with a new Tool Head to replace it
 item.gt.tool.usable_as=Usable as: §f%s
-item.gt.tool.behavior.silk_ice=Ice Cutter: §bSilk Harvests Ice
-item.gt.tool.behavior.torch_place=Spelunker: §ePlaces Torches on Right-Click
-item.gt.tool.behavior.tree_felling=Lumberjack: §4Tree Felling
-item.gt.tool.behavior.shield_disable=Brute: §cDisables Shields
-item.gt.tool.behavior.relocate_mining=Magnetic: §2Relocates Mined Blocks
-item.gt.tool.behavior.aoe_mining=Area-of-Effect: §5%sx%sx%s
-item.gt.tool.behavior.ground_tilling=Farmer: §eTills Ground
-item.gt.tool.behavior.grass_path=Landscaper: §eCreates Grass Paths
-item.gt.tool.behavior.rail_rotation=Railroad Engineer: §eRotates Rails
-item.gt.tool.behavior.crop_harvesting=Harvester: §aHarvests Crops
-item.gt.tool.behavior.plunger=Plumber: §9Drains Fluids
-item.gt.tool.behavior.block_rotation=Mechanic: §2Rotates Blocks
+item.gt.tool.behavior.silk_ice=§bIce Cutter: §fSilk Harvests Ice
+item.gt.tool.behavior.torch_place=§eSpelunker: §fPlaces Torches on Right-Click
+item.gt.tool.behavior.tree_felling=§4Lumberjack: §fTree Felling
+item.gt.tool.behavior.shield_disable=§cBrute: §fDisables Shields
+item.gt.tool.behavior.relocate_mining=§2Magnetic: §fRelocates Mined Blocks
+item.gt.tool.behavior.aoe_mining=§5Area-of-Effect: §f%sx%sx%s
+item.gt.tool.behavior.ground_tilling=§eFarmer: §fTills Ground
+item.gt.tool.behavior.grass_path=§eLandscaper: §fCreates Grass Paths
+item.gt.tool.behavior.rail_rotation=§eRailroad Engineer: §fRotates Rails
+item.gt.tool.behavior.crop_harvesting=§aHarvester: §fHarvests Crops
+item.gt.tool.behavior.plunger=§9Plumber: §fDrains Fluids
+item.gt.tool.behavior.block_rotation=§2Mechanic: §fRotates Blocks
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
@@ -961,8 +961,17 @@ item.gt.tool.tooltip.attack_damage=§c%s Attack Damage
 item.gt.tool.tooltip.attack_speed=§9%s Attack Speed
 item.gt.tool.tooltip.mining_speed=§d%s Mining Speed
 item.gt.tool.tooltip.harvest_level=§eHarvest Level %s
+item.gt.tool.tooltip.harvest_level_extra=§eHarvest Level %s §f(%s§f)
 
-item.gt.tool.tooltip.repair_info=Hold CTRL to show Repair Info
+item.gt.tool.harvest_level.0=§8Wood
+item.gt.tool.harvest_level.1=§7Stone
+item.gt.tool.harvest_level.2=§aIron
+item.gt.tool.harvest_level.3=§bDiamond
+item.gt.tool.harvest_level.4=§dUltimet
+item.gt.tool.harvest_level.5=§9Duranium
+item.gt.tool.harvest_level.6=§cNeutronium
+
+item.gt.tool.tooltip.repair_info=Hold SHIFT to show Repair Info
 item.gt.tool.tooltip.repair_material=Repair with: §a%s
 
 item.gt.tool.aoe.rows=Rows
@@ -1237,6 +1246,7 @@ item.material.oreprefix.nugget=%s Nugget
 item.material.oreprefix.plateDense=Dense %s Plate
 item.material.oreprefix.plateDouble=Double %s Plate
 item.material.oreprefix.plate=%s Plate
+item.material.oreprefix.plank=%s Planks
 item.material.oreprefix.foil=%s Foil
 item.material.oreprefix.stickLong=Long %s Rod
 item.material.oreprefix.stick=%s Rod

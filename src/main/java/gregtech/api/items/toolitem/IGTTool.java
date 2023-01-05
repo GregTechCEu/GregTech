@@ -70,6 +70,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -638,14 +639,23 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", GTUtility.formatNumbers(damageRemaining)));
         }
 
-        // attack and mining info
+        // attack info
         if (toolStats.isSuitableForAttacking(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", 2 + tool.getTotalAttackDamage(stack)));
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", 4 + tool.getTotalAttackSpeed(stack)));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", GTUtility.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", GTUtility.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
         }
-        if (toolStats.isSuitableForBlockBreak(stack)) { //GTUtility.formatNumber2Places(
-            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));
-            tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level", tool.getTotalHarvestLevel(stack)));
+
+        // mining info
+        if (toolStats.isSuitableForBlockBreak(stack)) {
+            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", GTUtility.formatNumbers(tool.getTotalToolSpeed(stack))));
+
+            int harvestLevel = tool.getTotalHarvestLevel(stack);
+            String harvestName = "item.gt.tool.harvest_level." + harvestLevel;
+            if (I18n.hasKey(harvestName)) { // if there's a defined name for the harvest level, use it
+                tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level_extra", harvestLevel, I18n.format(harvestName)));
+            } else {
+                tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level", harvestLevel));
+            }
         }
 
         // behaviors
@@ -682,18 +692,29 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         tooltip.add("");
 
         // valid tools
-        if (TooltipHelper.isShiftDown()) {
-            tooltip.add(I18n.format("item.gt.tool.usable_as", stack.getItem().getToolClasses(stack).stream()
-                    .map(GTUtility::convertUnderscoreToSpace)
-                    .map(WordUtils::capitalize)
-                    .collect(Collectors.joining(", "))));
-        } else {
-            tooltip.add(I18n.format("gregtech.tool_action.show_tooltips"));
-        }
+        tooltip.add(I18n.format("item.gt.tool.usable_as", stack.getItem().getToolClasses(stack).stream()
+                .map(GTUtility::convertUnderscoreToSpace)
+                .map(WordUtils::capitalize)
+                .collect(Collectors.joining(", "))));
 
         // repair info
-        if (TooltipHelper.isCtrlDown()) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", WordUtils.capitalize(getToolMaterial(stack).toString())));
+        if (TooltipHelper.isShiftDown()) {
+            Material material = getToolMaterial(stack);
+            String materialName = I18n.format(getToolMaterial(stack).getUnlocalizedName());
+
+            Collection<String> repairItems = new ArrayList<>();
+            if (ModHandler.isMaterialWood(material)) {
+                repairItems.add(I18n.format("item.material.oreprefix.plank", materialName));
+            } else {
+                if (material.hasProperty(PropertyKey.INGOT)) {
+                    repairItems.add(I18n.format("item.material.oreprefix.ingot", materialName));
+                } else if (material.hasProperty(PropertyKey.GEM)) {
+                    repairItems.add(I18n.format("item.material.oreprefix.gem", materialName));
+                }
+                repairItems.add(I18n.format("item.material.oreprefix.plate", materialName));
+            }
+            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+
             if (this.isElectric()) {
                 tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
             }
