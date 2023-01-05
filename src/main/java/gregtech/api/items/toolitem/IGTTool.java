@@ -455,23 +455,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!definition$hasContainerItem(stack)) {
             return ItemStack.EMPTY;
         }
-        int damage = getToolStats().getToolDamagePerCraft(stack);
-        if (damage > 0) {
-            EntityPlayer player = ForgeHooks.getCraftingPlayer();
-            damageItem(stack, player, damage);
-            playCraftingSound(player, stack);
-            // We cannot simply return the copied stack here because Forge's bug
-            // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
-            // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
-            // While preliminarily fixing ItemStack being null in ForgeHooks#getContainerItem in the PR
-            // The semantics was misunderstood, any stack that are "broken" (damaged beyond maxDamage)
-            // Will be "empty" ItemStacks (while not == ItemStack.EMPTY, but isEmpty() == true)
-            // PlayerDestroyItemEvent will not be fired correctly because of this oversight.
-            if (stack.isEmpty()) { // Equal to listening to PlayerDestroyItemEvent
-                return getToolStats().getBrokenStack();
-            }
+        stack = stack.copy();
+        EntityPlayer player = ForgeHooks.getCraftingPlayer();
+        damageItemWhenCrafting(stack, player);
+        playCraftingSound(player, stack);
+        // We cannot simply return the copied stack here because Forge's bug
+        // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
+        // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
+        // While preliminarily fixing ItemStack being null in ForgeHooks#getContainerItem in the PR
+        // The semantics was misunderstood, any stack that are "broken" (damaged beyond maxDamage)
+        // Will be "empty" ItemStacks (while not == ItemStack.EMPTY, but isEmpty() == true)
+        // PlayerDestroyItemEvent will not be fired correctly because of this oversight.
+        if (stack.isEmpty()) { // Equal to listening to PlayerDestroyItemEvent
+            return getToolStats().getBrokenStack();
         }
-        return stack.copy();
+        return stack;
     }
 
     default boolean definition$shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
