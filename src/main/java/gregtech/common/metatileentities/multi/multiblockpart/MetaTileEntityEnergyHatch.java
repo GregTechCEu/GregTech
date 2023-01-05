@@ -165,7 +165,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     @Override
     public void doExplosion(float explosionPower) {
         if (getController() != null)
-            getController().explodeMultiblock();
+            getController().explodeMultiblock(explosionPower);
         else {
             super.doExplosion(explosionPower);
         }

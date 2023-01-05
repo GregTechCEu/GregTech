@@ -406,12 +406,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return 0xFFFFFF;
     }
 
-    public void explodeMultiblock() {
+    public void explodeMultiblock(float explosionPower) {
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
         for (IMultiblockPart part : parts) {
             part.removeFromMultiBlock(this);
-            ((MetaTileEntity) part).doExplosion(8);
+            ((MetaTileEntity) part).doExplosion(explosionPower);
         }
-        doExplosion(8);
+        doExplosion(explosionPower);
     }
 }

@@ -138,7 +138,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
                 FluidStack drainedWater = ModHandler.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
                 if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
-                    getMetaTileEntity().explodeMultiblock();
+                    getMetaTileEntity().explodeMultiblock(8);
                 } else {
                     setLastTickSteam(generatedSteam);
                     getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
