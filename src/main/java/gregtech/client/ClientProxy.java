@@ -4,6 +4,7 @@ import codechicken.lib.texture.TextureUtils;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -56,15 +57,14 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -279,6 +279,37 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void cleanMetaItemTooltips(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty()) return;
+        boolean isAdvanced = event.getFlags().isAdvanced();
+        Set<String> tooltipsToRemove = new HashSet<>();
+
+        // Gather the keys to try and remove given the current context
+        if (isAdvanced && stack.getItem() instanceof IGTTool) {
+            // vanilla durability key (we handle this ourselves)
+            tooltipsToRemove.add(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
+            // EnderCore durability key
+            tooltipsToRemove.add(I18n.format("tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
+        }
+
+        // clean up the MC debug tooltips, which always insert themselves far too early in the list
+        if (isAdvanced && !ConfigHolder.misc.debug) {
+            if (stack.getTagCompound() != null) {
+                tooltipsToRemove.add(TextFormatting.DARK_GRAY + I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size()));
+            }
+            if (stack.getItem().getRegistryName() != null) {
+                tooltipsToRemove.add(TextFormatting.DARK_GRAY + stack.getItem().getRegistryName().toString());
+            }
+        }
+
+        // Check for these keys on the tooltip and remove them
+        if (!tooltipsToRemove.isEmpty()) {
+            event.getToolTip().removeIf(tooltipsToRemove::contains);
         }
     }
 
