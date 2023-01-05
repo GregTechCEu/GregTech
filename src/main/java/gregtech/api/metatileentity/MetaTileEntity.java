@@ -380,7 +380,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public final boolean onCoverScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
         EnumFacing hitFacing = ICoverable.determineGridSideHit(result);
         boolean accessingActiveOutputSide = false;
-        if (this.getCapability(GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE, hitFacing) != null) {
+        if ( this.getCapability(GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE, hitFacing) != null) {
             accessingActiveOutputSide = playerIn.isSneaking();
         }
         EnumFacing coverSide = ICoverable.traceCoverSide(result);
@@ -391,6 +391,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             return coverResult == EnumActionResult.SUCCESS;
         }
         return onScrewdriverClick(playerIn, hand, result.sideHit, result);
+    }
+    public final boolean onCoverSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
+        EnumFacing hitFacing = ICoverable.determineGridSideHit(result);
+        boolean accessingActiveOutputSide = false;
+        if ( this.getCapability(GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE, hitFacing) != null) {
+            accessingActiveOutputSide = playerIn.isSneaking();
+        }
+        EnumFacing coverSide = ICoverable.traceCoverSide(result);
+        CoverBehavior coverBehavior = coverSide == null ? null : getCoverAtSide(coverSide);
+        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
+                accessingActiveOutputSide ? EnumActionResult.PASS : coverBehavior.onSoftMalletClick(playerIn, hand, result);
+        if (coverResult != EnumActionResult.PASS) {
+            return coverResult == EnumActionResult.SUCCESS;
+        }
+        return false;
     }
 
     /**
