@@ -192,21 +192,20 @@ public class ToolEventHandlers {
 
         EntityPlayer player = event.getPlayer();
         ItemStack stack = player.getHeldItemMainhand();
-        if(!(stack.getItem() instanceof IGTTool)) {
-            return;
-        }
         BlockPos pos = event.getTarget().getBlockPos();
         IBlockState state = player.world.getBlockState(pos);
         TileEntity tile = player.world.getTileEntity(event.getTarget().getBlockPos());
         boolean sneaking = player.isSneaking();
 
+        // Grid overlays
         if (tile != null && shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
                 renderGridOverlays(player, pos, state, event.getTarget().sideHit, tile, event.getPartialTicks())) {
             event.setCanceled(true);
             return;
         }
 
-        if (!sneaking) {
+        // AoE selection box and block damage overlay
+        if (!sneaking && stack.getItem() instanceof IGTTool) {
             Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player, event.getTarget());
             if (validPositions.isEmpty()) return;
 
