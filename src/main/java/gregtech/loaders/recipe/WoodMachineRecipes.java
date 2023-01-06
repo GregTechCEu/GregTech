@@ -33,7 +33,7 @@ public class WoodMachineRecipes {
 
     private static void processLogOreDictionary() {
         List<ItemStack> allWoodLogs = OreDictUnifier.getAllWithOreDictionaryName("logWood").stream()
-                .flatMap(stack -> ModHandler.getAllSubItems(stack).stream())
+                .flatMap(stack -> GTUtility.getAllSubItems(stack).stream())
                 .collect(Collectors.toList());
 
         for (ItemStack stack : allWoodLogs) {
@@ -71,9 +71,9 @@ public class WoodMachineRecipes {
                     .buildAndRegister();
 
             ItemStack doorStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE,
-                    plankStack, plankStack, null,
-                    plankStack, plankStack, null,
-                    plankStack, plankStack, null).getRight();
+                    plankStack, plankStack, ItemStack.EMPTY,
+                    plankStack, plankStack, ItemStack.EMPTY,
+                    plankStack, plankStack, ItemStack.EMPTY).getRight();
 
             if (!doorStack.isEmpty()) {
                 ASSEMBLER_RECIPES.recipeBuilder()

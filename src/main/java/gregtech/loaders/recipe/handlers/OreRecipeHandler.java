@@ -49,7 +49,6 @@ public class OreRecipeHandler {
         OrePrefix.crushedCentrifuged.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processCrushedCentrifuged);
         OrePrefix.dustImpure.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processDirtyDust);
         OrePrefix.dustPure.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processPureDust);
-        OrePrefix.dust.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processCleanDust);
     }
 
 
@@ -371,10 +370,6 @@ public class OreRecipeHandler {
                 .duration(8).EUt(4).buildAndRegister();
 
         processMetalSmelting(purePrefix, material, property);
-    }
-
-    public static void processCleanDust(OrePrefix dustPrefix, Material material, OreProperty property) {
-        processMetalSmelting(dustPrefix, material, property);
     }
 
     private static boolean doesMaterialUseNormalFurnace(Material material) {

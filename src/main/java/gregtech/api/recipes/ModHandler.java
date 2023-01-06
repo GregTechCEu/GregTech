@@ -25,8 +25,11 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.crafting.FluidReplaceRecipe;
 import gregtech.common.crafting.GTShapedOreRecipe;
 import gregtech.common.crafting.GTShapelessOreRecipe;
+import it.unimi.dsi.fastutil.chars.Char2IntFunction;
+import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,13 +38,11 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -54,90 +55,110 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 public final class ModHandler {
+
+    public static final boolean ERROR_ON_INVALID_RECIPE = GTValues.isDeobfEnvironment() || !ConfigHolder.misc.ignoreErrorOrInvalidRecipes;
+    public static boolean hasInvalidRecipe = false;
+    private static FluidStack WATER;
+    private static FluidStack DISTILLED_WATER;
+    private static FluidStack LAVA;
+    private static FluidStack STEAM;
 
     private ModHandler() {/**/}
 
+    public static void init() {
+        WATER = new FluidStack(FluidRegistry.WATER, 1);
+        DISTILLED_WATER = Materials.DistilledWater.getFluid(1);
+        LAVA = new FluidStack(FluidRegistry.LAVA, 0);
+        STEAM = Materials.Steam.getFluid(1);
+    }
+
+    public static void postInit() {
+        if (ERROR_ON_INVALID_RECIPE && hasInvalidRecipe) {
+            throw new IllegalStateException("Invalid Recipes Found. See earlier log entries for details.");
+        }
+    }
+
+    // Fluids
+
     /**
-     * Returns if that Liquid is Water or Distilled Water, or a valid Boiler Fluid.
+     * @param stack the fluid to check
+     * @return if the fluid is a valid water fluid
      */
-    public static boolean isWater(@Nullable FluidStack fluid) {
-        if (fluid == null) return false;
-        if (fluid.isFluidEqual(new FluidStack(FluidRegistry.WATER, 1))) return true;
-        if (fluid.isFluidEqual(Materials.DistilledWater.getFluid(1))) return true;
+    public static boolean isWater(@Nullable FluidStack stack) {
+        if (stack == null) return false;
+        if (WATER.isFluidEqual(stack)) return true;
+        if (DISTILLED_WATER.isFluidEqual(stack)) return true;
 
         for (String fluidName : ConfigHolder.machines.boilerFluids) {
-            Fluid f = FluidRegistry.getFluid(fluidName);
-            if (f != null && fluid.isFluidEqual(new FluidStack(f, 1))) return true;
+            Fluid fluid = FluidRegistry.getFluid(fluidName);
+            if (fluid == null) continue;
+            if (stack.isFluidEqual(new FluidStack(fluid, 1))) {
+                return true;
+            }
         }
         return false;
     }
 
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
-        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
-    }
-
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
-        if (amount == 0) return null;
-        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
-        if (drainedWater == null || drainedWater.amount == 0) {
-            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
-        }
-        if (drainedWater == null || drainedWater.amount == 0) {
-            for (String fluidName : ConfigHolder.machines.boilerFluids) {
-                Fluid f = FluidRegistry.getFluid(fluidName);
-                if (f != null) {
-                    drainedWater = fluidHandler.drain(new FluidStack(f, amount), doDrain);
-                    if (drainedWater != null && drainedWater.amount > 0) {
-                        break;
-                    }
-                }
-            }
-        }
-        return drainedWater;
+    /**
+     * @param stack the fluid to check
+     * @return if the fluid is a valid lava fluid
+     */
+    @SuppressWarnings("unused")
+    public static boolean isLava(FluidStack stack) {
+        return LAVA.isFluidEqual(stack);
     }
 
     /**
-     * Returns if that Liquid is Lava
+     * @param amount the amount of fluid
+     * @return a FluidStack of lava
      */
-    public static boolean isLava(FluidStack fluid) {
-        return new FluidStack(FluidRegistry.LAVA, 0).isFluidEqual(fluid);
-    }
-
-    /**
-     * Returns a Liquid Stack with given amount of Lava.
-     */
+    @SuppressWarnings("unused")
+    @Nonnull
     public static FluidStack getLava(int amount) {
         return new FluidStack(FluidRegistry.LAVA, amount);
     }
 
     /**
-     * Returns if that Liquid is Steam
+     * @param stack the fluid to check
+     * @return if the fluid is a valid steam fluid
      */
-    public static boolean isSteam(FluidStack fluid) {
-        return getSteam(1).isFluidEqual(fluid);
+    public static boolean isSteam(FluidStack stack) {
+        return STEAM.isFluidEqual(stack);
     }
 
     /**
      * Returns a Liquid Stack with given amount of Steam.
      */
     public static FluidStack getSteam(int amount) {
-        return Objects.requireNonNull(Materials.Steam.getFluid(amount));
+        return Materials.Steam.getFluid(amount);
     }
 
-    public static boolean isMaterialWood(Material material) {
+    /**
+     * @param material the material to check
+     * @return if the material is a wood
+     */
+    public static boolean isMaterialWood(@Nullable Material material) {
         return material == Materials.Wood || material == Materials.TreatedWood;
     }
 
-    public static int getFuelValue(ItemStack stack) {
+    // Furnace Smelting
+
+    /**
+     * @param stack the stack to check
+     * @return the furnace fuel value for the stack
+     */
+    public static int getFuelValue(@Nonnull ItemStack stack) {
         return TileEntityFurnace.getItemBurnTime(stack);
     }
 
+    /**
+     * @param fuelStack the stack to check
+     * @return the remainder item for a burnt fuel in a boiler
+     */
     public static ItemStack getBurningFuelRemainder(ItemStack fuelStack) {
         float remainderChance;
         ItemStack remainder;
@@ -162,205 +183,221 @@ public final class ModHandler {
         return GTValues.RNG.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
     }
 
-    ///////////////////////////////////////////////////
-    //        Furnace Smelting Recipe Helpers        //
-    ///////////////////////////////////////////////////
-
-    public static void addSmeltingRecipe(UnificationEntry input, ItemStack output) {
-        List<ItemStack> allStacks = OreDictUnifier.getAll(input);
-        for (ItemStack inputStack : allStacks) {
-            addSmeltingRecipe(inputStack, output, 0.0f);
-        }
+    /**
+     * Add a smelting recipe for all valid items in a unification entry
+     *
+     * @param input  the unification entry to input
+     * @param output the output of the recipe
+     */
+    public static void addSmeltingRecipe(@Nonnull UnificationEntry input, @Nonnull ItemStack output) {
+        addSmeltingRecipe(input, output, 0.0F);
     }
 
-    public static void addSmeltingRecipe(UnificationEntry input, ItemStack output, float experience) {
-        List<ItemStack> allStacks = OreDictUnifier.getAll(input);
-        for (ItemStack inputStack : allStacks) {
+    /**
+     * @param input  the input of the recipe
+     * @param output the output of the recipe
+     */
+    public static void addSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output) {
+        addSmeltingRecipe(input, output, 0.0F);
+    }
+
+    /**
+     * Add a smelting recipe for all valid items in a unification entry
+     *
+     * @param input      the unification entry to input
+     * @param output     the output of the recipe
+     * @param experience the experience of the recipe
+     */
+    public static void addSmeltingRecipe(@Nonnull UnificationEntry input, @Nonnull ItemStack output, float experience) {
+        for (ItemStack inputStack : OreDictUnifier.getAll(input)) {
             addSmeltingRecipe(inputStack, output, experience);
         }
     }
 
     /**
-     * Just simple Furnace smelting
+     * Add a furnace smelting recipe
+     *
+     * @param input      the input of the recipe
+     * @param output     the output of the recipe
+     * @param experience the experience of the recipe
      */
-    public static void addSmeltingRecipe(ItemStack input, ItemStack output, float experience) {
-        boolean skip = false;
+    public static void addSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, float experience) {
         if (input.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Input cannot be an empty ItemStack"));
-            skip = true;
-            RecipeMap.setFoundInvalidRecipe(true);
+            if (setErroredInvalidRecipe("Furnace Recipe Input cannot be an empty ItemStack")) return;
         }
         if (output.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Output cannot be an empty ItemStack"));
-            skip = true;
-            RecipeMap.setFoundInvalidRecipe(true);
+            if (setErroredInvalidRecipe("Furnace Recipe Output cannot be an empty ItemStack")) return;
         }
-        if (skip) return;
-        FurnaceRecipes recipes = FurnaceRecipes.instance();
 
+        FurnaceRecipes recipes = FurnaceRecipes.instance();
         if (recipes.getSmeltingResult(input).isEmpty()) {
             //register only if there is no recipe with duplicate input
             recipes.addSmeltingRecipe(input, output, experience);
+        } else {
+            logInvalidRecipe(String.format("Tried to register duplicate Furnace Recipe: %sx %s:%s -> %sx %s:%s, %sexp",
+                    input.getCount(), Objects.requireNonNull(input.getItem().getRegistryName()).getNamespace(), input.getDisplayName(),
+                    output.getCount(), Objects.requireNonNull(output.getItem().getRegistryName()).getNamespace(), output.getDisplayName(), experience));
         }
     }
 
-    ///////////////////////////////////////////////////
-    //              Crafting Recipe Helpers          //
-    ///////////////////////////////////////////////////
+    /**
+     * @param input the input for the recipe
+     * @return the output of the recipe
+     */
+    @Nonnull
+    public static ItemStack getSmeltingOutput(@Nonnull ItemStack input) {
+        if (input.isEmpty()) return ItemStack.EMPTY;
+        return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
+    }
+
+    // Crafting Recipes
 
     /**
      * Adds Shaped Crafting Recipes.
      * <p/>
-     * MetaValueItem's are converted to ItemStack via {@link MetaItem.MetaValueItem#getStackForm()} method.
+     * {@link MetaItem.MetaValueItem}'s are converted to ItemStack via {@link MetaItem.MetaValueItem#getStackForm()} method.
      * <p/>
      * For Enums - {@link Enum#name()} is called.
      * <p/>
-     * For UnificationEntry - {@link UnificationEntry#toString()} is called.
+     * For {@link UnificationEntry} - {@link UnificationEntry#toString()} is called.
      * <p/>
-     * Lowercase Letters are reserved for Tools. They are as follows:
+     * For Lowercase Characters - gets IGTool from {@link ToolHelper#getToolFromSymbol(Character)}, and calls {@link IGTTool#getOreDictName()}
      * <p/>
+     * Base tool names are as follows:
      * <ul>
-     * <li>'b' -  ToolDictNames.craftingToolBlade</li>
-     * <li>'c' -  ToolDictNames.craftingToolCrowbar</li>
-     * <li>'d' -  ToolDictNames.craftingToolScrewdriver</li>
-     * <li>'f' -  ToolDictNames.craftingToolFile</li>
-     * <li>'h' -  ToolDictNames.craftingToolHardHammer</li>
-     * <li>'i' -  ToolDictNames.craftingToolSolderingIron</li>
-     * <li>'j' -  ToolDictNames.craftingToolSolderingMetal</li>
-     * <li>'k' -  ToolDictNames.craftingToolKnife</li>
-     * <li>'m' -  ToolDictNames.craftingToolMortar</li>
-     * <li>'p' -  ToolDictNames.craftingToolDrawplate</li>
-     * <li>'r' -  ToolDictNames.craftingToolSoftHammer</li>
-     * <li>'s' -  ToolDictNames.craftingToolSaw</li>
-     * <li>'w' -  ToolDictNames.craftingToolWrench</li>
-     * <li>'x' -  ToolDictNames.craftingToolWireCutter</li>
+     * <li>{@code 'c'} -  {@code craftingToolCrowbar}</li>
+     * <li>{@code 'd'} -  {@code craftingToolScrewdriver}</li>
+     * <li>{@code 'f'} -  {@code craftingToolFile}</li>
+     * <li>{@code 'h'} -  {@code craftingToolHardHammer}</li>
+     * <li>{@code 'k'} -  {@code craftingToolKnife}</li>
+     * <li>{@code 'm'} -  {@code craftingToolMortar}</li>
+     * <li>{@code 'r'} -  {@code craftingToolSoftHammer}</li>
+     * <li>{@code 's'} -  {@code craftingToolSaw}</li>
+     * <li>{@code 'w'} -  {@code craftingToolWrench}</li>
+     * <li>{@code 'x'} -  {@code craftingToolWireCutter}</li>
      * </ul>
+     *
+     * @param regName the registry name for the recipe
+     * @param result  the output for the recipe
+     * @param recipe  the contents of the recipe
      */
-
-    public static void addMirroredShapedRecipe(String regName, ItemStack result, Object... recipe) {
-        addMirroredShapedRecipe(false, regName, result, recipe);
-    }
-
-    public static void addMirroredShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
-        result = OreDictUnifier.getUnificated(result);
-        boolean skip = false;
-        if (result.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
-            skip = true;
-        }
-        skip = skip || validateRecipe(regName, recipe);
-        if (skip) {
-            RecipeMap.setFoundInvalidRecipe(true);
-            return;
-        }
-
-        IRecipe shapedOreRecipe = new GTShapedOreRecipe(false, new ResourceLocation(GTValues.MODID, "general"), result.copy(), finalizeShapedRecipeInput(recipe))
-                .setMirrored(true)
-                .setRegistryName(regName);
-        ForgeRegistries.RECIPES.register(shapedOreRecipe);
-
-        if (withUnificationData) OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
-
+    public static void addShapedRecipe(@Nonnull String regName, @Nonnull ItemStack result, @Nonnull Object... recipe) {
+        addShapedRecipe(false, regName, result, false, false, recipe);
     }
 
     /**
-     * Adds Shaped Crafting Recipes.
-     * <p/>
-     * MetaValueItem's are converted to ItemStack via {@link MetaItem.MetaValueItem#getStackForm()} method.
-     * <p/>
-     * For Enums - {@link Enum#name()} is called.
-     * <p/>
-     * For UnificationEntry - {@link UnificationEntry#toString()} is called.
-     * <p/>
-     * For Characters - gets IGTool from {@link ToolHelper#getToolFromSymbol(Character)}, and calls {@link IGTTool#getOreDictName()}
-     * <p/>
+     * Adds a shaped recipe with a single fluid container, which gets consumed as input and is output with different contents
+     *
+     * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
      */
-    public static void addShapedRecipe(String regName, ItemStack result, Object... recipe) {
-        addShapedRecipe(false, regName, result, false, recipe);
-    }
-
     public static void addFluidReplaceRecipe(String regName, ItemStack result, Object... recipe) {
         addFluidReplaceRecipe(regName, result, false, recipe);
     }
 
+    /**
+     * Adds a shaped recipe which clears the nbt of the outputs
+     *
+     * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
+     */
     public static void addShapedNBTClearingRecipe(String regName, ItemStack result, Object... recipe) {
-        addShapedRecipe(false, regName, result, true, recipe);
+        addShapedRecipe(false, regName, result, true, false, recipe);
     }
 
+    /**
+     * Adds a shaped recipe which sets the {@link UnificationEntry} for the output according to the crafting inputs
+     *
+     * @param withUnificationData whether to use unification data
+     * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
+     */
     public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
-        addShapedRecipe(withUnificationData, regName, result, false, recipe);
+        addShapedRecipe(withUnificationData, regName, result, false, false, recipe);
     }
 
-    public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
-        boolean skip = false;
-        if (result.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
-            skip = true;
-        }
-        skip = skip || validateRecipe(regName, recipe);
-        if (skip) {
-            RecipeMap.setFoundInvalidRecipe(true);
-            return;
-        }
+    /**
+     * Adds a mirrored shaped recipe
+     *
+     * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
+     */
+    public static void addMirroredShapedRecipe(String regName, ItemStack result, Object... recipe) {
+        addShapedRecipe(false, regName, result, false, true, recipe);
+    }
 
-        IRecipe shapedOreRecipe;
-        shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(), finalizeShapedRecipeInput(recipe))
-                .setMirrored(false) //make all recipes not mirrored by default
-                .setRegistryName(regName);
+    /**
+     * @param withUnificationData whether to use unification data
+     * @param isNBTClearing       whether to clear output nbt
+     * @param isMirrored          whether the recipe should be mirrored
+     * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
+     */
+    public static void addShapedRecipe(boolean withUnificationData, @Nonnull String regName, @Nonnull ItemStack result, boolean isNBTClearing, boolean isMirrored, @Nonnull Object... recipe) {
+        if (!validateRecipeWithOutput(regName, result, recipe)) return;
 
-        ForgeRegistries.RECIPES.register(shapedOreRecipe);
+        addRecipe(regName, result, isNBTClearing, isMirrored, recipe);
 
-        if (withUnificationData)
+        if (withUnificationData) {
             OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
+        }
     }
 
+    /**
+     * @see ModHandler#addFluidReplaceRecipe(String, ItemStack, Object...)
+     */
     public static void addFluidReplaceRecipe(String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
-        boolean skip = false;
-        if (result.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
-            skip = true;
-        }
-        skip = skip || validateRecipe(regName, recipe);
-        if (skip) {
-            RecipeMap.setFoundInvalidRecipe(true);
-            return;
-        }
+        if (!validateRecipeWithOutput(regName, result, recipe)) return;
 
-        IRecipe shapedOreRecipe;
-        shapedOreRecipe = new FluidReplaceRecipe(isNBTClearing, null, result.copy(),
+        IRecipe shapedOreRecipe = new FluidReplaceRecipe(isNBTClearing, null, result.copy(),
                 finalizeShapedRecipeInput(recipe))
                 .setMirrored(false) //make all recipes not mirrored by default
                 .setRegistryName(regName);
 
-        ForgeRegistries.RECIPES.register(shapedOreRecipe);
+        registerRecipe(shapedOreRecipe);
     }
 
+    /**
+     * @param chargePredicate   the predicate for charging the output
+     * @param overrideCharge    whether to override the energy amount
+     * @param transferMaxCharge whether to transfer all the potential charge
+     * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
+     */
     public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
-        boolean skip = false;
-        if (result.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
-            skip = true;
-        }
-        skip = skip || validateRecipe(regName, recipe);
-        if (skip) {
-            RecipeMap.setFoundInvalidRecipe(true);
-            return;
-        }
+        if (!validateRecipeWithOutput(regName, result, recipe)) return;
 
         IRecipe shapedOreRecipe = new ShapedOreEnergyTransferRecipe(null, result.copy(), chargePredicate, overrideCharge, transferMaxCharge, finalizeShapedRecipeInput(recipe))
-                .setMirrored(false) //make all recipes not mirrored by default
+                .setMirrored(false)
                 .setRegistryName(regName);
-        ForgeRegistries.RECIPES.register(shapedOreRecipe);
+
+        registerRecipe(shapedOreRecipe);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private static boolean validateRecipeWithOutput(@Nonnull String regName, @Nonnull ItemStack result, @Nonnull Object... recipe) {
+        if (result.isEmpty()) {
+            if (setErroredInvalidRecipe("Recipe output cannot be an empty ItemStack. Recipe: " + regName)) return false;
+        }
+        return validateRecipe(regName, recipe);
+    }
+
+    private static void addRecipe(@Nonnull String regName, @Nonnull ItemStack result, boolean isNBTClearing, boolean isMirrored, @Nonnull Object... recipe) {
+        IRecipe shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(), finalizeShapedRecipeInput(recipe))
+                .setMirrored(isMirrored)
+                .setRegistryName(regName);
+
+        registerRecipe(shapedOreRecipe);
+    }
+
+    private static void registerRecipe(@Nonnull IRecipe recipe) {
+        ForgeRegistries.RECIPES.register(recipe);
+    }
+
+    /**
+     * @param regName the name of the recipe
+     * @param recipe  the recipe to validate
+     * @return if the recipe should be skipped
+     */
     private static boolean validateRecipe(String regName, Object... recipe) {
-        boolean skip = false;
         if (recipe == null) {
-            GTLog.logger.error(new IllegalArgumentException("Recipe cannot be null"));
-            skip = true;
+            return !setErroredInvalidRecipe("Recipe cannot be null");
         } else if (recipe.length == 0) {
-            GTLog.logger.error(new IllegalArgumentException("Recipe cannot be empty"));
-            skip = true;
+            return !setErroredInvalidRecipe("Recipe cannot be empty");
         } else if (Arrays.asList(recipe).contains(null) || Arrays.asList(recipe).contains(ItemStack.EMPTY)) {
             String recipeMessage = Arrays.stream(recipe)
                     .map(o -> o == null ? "NULL" : o)
@@ -368,8 +405,7 @@ public final class ModHandler {
                     .map(Object::toString)
                     .map(s -> "\"" + s + "\"")
                     .collect(Collectors.joining(", "));
-            GTLog.logger.error(new IllegalArgumentException("Recipe cannot contain null elements or Empty ItemStacks. Recipe: " + recipeMessage));
-            skip = true;
+            return !setErroredInvalidRecipe("Recipe cannot contain null elements or Empty ItemStacks. Recipe: " + recipeMessage);
         } else {
             ModContainer container = Loader.instance().activeModContainer();
             if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(container == null ? GTValues.MODID : container.getModId().toLowerCase(), regName))) {
@@ -377,19 +413,24 @@ public final class ModHandler {
                         .map(Object::toString)
                         .map(s -> "\"" + s + "\"")
                         .collect(Collectors.joining(", "));
-                GTLog.logger.error(new IllegalArgumentException("Tried to register recipe, " + regName + ", with duplicate key. Recipe: " + recipeMessage));
-                skip = true;
+                logInvalidRecipe("Tried to register recipe, " + regName + ", with duplicate key. Recipe: " + recipeMessage);
+                return false;
             }
         }
-        return skip;
+        return true;
     }
 
+    /**
+     * @param recipe the recipe to finalize
+     * @return the finalized recipe
+     */
+    @Nonnull
     public static Object[] finalizeShapedRecipeInput(Object... recipe) {
         for (byte i = 0; i < recipe.length; i++) {
             recipe[i] = finalizeIngredient(recipe[i]);
         }
         int idx = 0;
-        List<Object> recipeList = new ArrayList<>(Arrays.asList(recipe));
+        Collection<Object> recipeList = new ArrayList<>(Arrays.asList(recipe));
 
         while (recipe[idx] instanceof String) {
             StringBuilder s = new StringBuilder((String) recipe[idx++]);
@@ -406,7 +447,12 @@ public final class ModHandler {
         return recipeList.toArray();
     }
 
-    public static Object finalizeIngredient(Object ingredient) {
+    /**
+     * @param ingredient the ingredient to finalize
+     * @return the finalized ingredient
+     */
+    @Nonnull
+    public static Object finalizeIngredient(@Nonnull Object ingredient) {
         if (ingredient instanceof MetaItem.MetaValueItem) {
             ingredient = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
         } else if (ingredient instanceof Enum) {
@@ -417,7 +463,7 @@ public final class ModHandler {
             UnificationEntry entry = (UnificationEntry) ingredient;
             if (ConfigHolder.misc.debug && entry.material != null && !entry.orePrefix.isIgnored(entry.material) &&
                     !entry.orePrefix.doGenerateItem(entry.material)) {
-                GTLog.logger.error(new IllegalArgumentException("Attempted to create recipe for invalid/missing Unification Entry " + ingredient));
+                logInvalidRecipe("Attempted to create recipe for invalid/missing Unification Entry " + ingredient);
             }
             ingredient = ingredient.toString();
         } else if (!(ingredient instanceof ItemStack
@@ -432,9 +478,15 @@ public final class ModHandler {
         return ingredient;
     }
 
-    public static ItemMaterialInfo getRecyclingIngredients(int outputCount, Object... recipe) {
-        Map<Character, Integer> inputCountMap = new HashMap<>();
-        Map<Material, Long> materialStacksExploded = new HashMap<>();
+    /**
+     * @param outputCount the amount of outputs the recipe has
+     * @param recipe      the recipe to retrieve from
+     * @return the recycling ingredients for a recipe
+     */
+    @Nullable
+    public static ItemMaterialInfo getRecyclingIngredients(int outputCount, @Nonnull Object... recipe) {
+        Char2IntOpenHashMap inputCountMap = new Char2IntOpenHashMap();
+        Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
 
         int itr = 0;
         while (recipe[itr] instanceof String) {
@@ -477,30 +529,28 @@ public final class ModHandler {
                 stack = OreDictUnifier.get((String) ingredient);
             } else continue; // throw out bad entries
 
-            BiConsumer<MaterialStack, Character> func = (ms, c) -> {
-                long amount = materialStacksExploded.getOrDefault(ms.material, 0L);
-                materialStacksExploded.put(ms.material, (ms.amount * inputCountMap.get(c)) + amount);
-            };
-
             // First try to get ItemMaterialInfo
             ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(stack);
             if (info != null) {
                 for (MaterialStack ms : info.getMaterials()) {
-                    if (!(ms.material instanceof MarkerMaterial)) func.accept(ms, lastChar);
+                    if (!(ms.material instanceof MarkerMaterial)) {
+                        addMaterialStack(materialStacksExploded, inputCountMap, ms, lastChar);
+                    }
                 }
                 continue;
             }
 
             // Then try to get a single Material (UnificationEntry needs this, for example)
             MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
-            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial))
-                func.accept(materialStack, lastChar);
+            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial)) {
+                addMaterialStack(materialStacksExploded, inputCountMap, materialStack, lastChar);
+            }
 
             // Gather any secondary materials if this item has an OrePrefix
             OrePrefix prefix = OreDictUnifier.getPrefix(stack);
             if (prefix != null && !prefix.secondaryMaterials.isEmpty()) {
                 for (MaterialStack ms : prefix.secondaryMaterials) {
-                    func.accept(ms, lastChar);
+                    addMaterialStack(materialStacksExploded, inputCountMap, ms, lastChar);
                 }
             }
         }
@@ -513,28 +563,47 @@ public final class ModHandler {
     }
 
     /**
-     * Add Shapeless Crafting Recipes
+     * Adds a MaterialStack to a map of {@code <Material, Quantity>}
+     *
+     * @param materialStacksExploded the map to add to
+     * @param inputCountMap          the map supplying quantities by char
+     * @param ms                     the stack to add
+     * @param c                      the char for quantities
      */
+    private static void addMaterialStack(@Nonnull Object2LongMap<Material> materialStacksExploded,
+                                         @Nonnull Char2IntFunction inputCountMap, @Nonnull MaterialStack ms, char c) {
+        long amount = materialStacksExploded.getOrDefault(ms.material, 0L);
+        materialStacksExploded.put(ms.material, (ms.amount * inputCountMap.get(c)) + amount);
+    }
 
-    public static void addShapelessRecipe(String regName, ItemStack result, Object... recipe) {
+    /**
+     * Add a shapeless recipe
+     *
+     * @param regName the registry name of the recipe
+     * @param result  the output of the recipe
+     * @param recipe  the recipe to add
+     */
+    public static void addShapelessRecipe(@Nonnull String regName, @Nonnull ItemStack result, @Nonnull Object... recipe) {
         addShapelessRecipe(regName, result, false, recipe);
     }
 
-    public static void addShapelessNBTClearingRecipe(String regName, ItemStack result, Object... recipe) {
+    /**
+     * Adds a shapeless recipe which clears the nbt of the outputs
+     *
+     * @see ModHandler#addShapelessRecipe(String, ItemStack, boolean, Object...)
+     */
+    public static void addShapelessNBTClearingRecipe(@Nonnull String regName, @Nonnull ItemStack result, @Nonnull Object... recipe) {
         addShapelessRecipe(regName, result, true, recipe);
     }
 
+    /**
+     * Add a shapeless recipe
+     *
+     * @param isNBTClearing if the recipe should clear the nbt of the outputs
+     * @see ModHandler#addShapelessRecipe(String, ItemStack, Object...)
+     */
     public static void addShapelessRecipe(String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
-        boolean skip = false;
-        if (result.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
-            skip = true;
-        }
-        skip = skip || validateRecipe(regName, recipe);
-        if (skip) {
-            RecipeMap.setFoundInvalidRecipe(true);
-            return;
-        }
+        if (!validateRecipeWithOutput(regName, result, recipe)) return;
 
         for (byte i = 0; i < recipe.length; i++) {
             if (recipe[i] instanceof MetaItem.MetaValueItem) {
@@ -558,13 +627,12 @@ public final class ModHandler {
                 throw new IllegalArgumentException(recipe.getClass().getSimpleName() + " type is not suitable for crafting input.");
             }
         }
-        IRecipe shapelessRecipe;
-        shapelessRecipe = new GTShapelessOreRecipe(isNBTClearing, null, result.copy(), recipe)
+        IRecipe shapelessRecipe = new GTShapelessOreRecipe(isNBTClearing, null, result.copy(), recipe)
                 .setRegistryName(regName);
 
         try {
-            //workaround for MC bug that makes all shaped recipe inputs that have enchanted items
-            //or renamed ones on input fail, even if all ingredients match it
+            // workaround for MC bug that makes all shaped recipe inputs that have enchanted items
+            // or renamed ones on input fail, even if all ingredients match it
             Field field = ShapelessOreRecipe.class.getDeclaredField("isSimple");
             field.setAccessible(true);
             field.setBoolean(shapelessRecipe, false);
@@ -572,51 +640,35 @@ public final class ModHandler {
             GTLog.logger.error("Failed to mark shapeless recipe as complex", exception);
         }
 
-        ForgeRegistries.RECIPES.register(shapelessRecipe);
+        registerRecipe(shapelessRecipe);
     }
 
-    public static Collection<ItemStack> getAllSubItems(ItemStack item) {
-        //match subtypes only on wildcard damage value items
-        if (item.getItemDamage() != GTValues.W)
-            return Collections.singleton(item);
-        NonNullList<ItemStack> stackList = NonNullList.create();
-        CreativeTabs[] visibleTags = item.getItem().getCreativeTabs();
-        for (CreativeTabs creativeTab : visibleTags) {
-            NonNullList<ItemStack> thisList = NonNullList.create();
-            item.getItem().getSubItems(creativeTab, thisList);
-            loop:
-            for (ItemStack newStack : thisList) {
-                for (ItemStack alreadyExists : stackList) {
-                    if (ItemStack.areItemStacksEqual(alreadyExists, newStack))
-                        continue loop; //do not add equal item stacks
-                }
-                stackList.add(newStack);
-            }
-        }
-        return stackList;
-    }
+    // recipe removal
 
-    ///////////////////////////////////////////////////
-    //              Recipe Remove Helpers            //
-    ///////////////////////////////////////////////////
-
-    public static boolean removeFurnaceSmelting(UnificationEntry input) {
+    /**
+     * Remove all recipes matching a unification entry as input
+     *
+     * @param input the input to match
+     * @return if a recipe was removed
+     */
+    @SuppressWarnings("unused")
+    public static boolean removeFurnaceSmelting(@Nonnull UnificationEntry input) {
         boolean result = false;
-        List<ItemStack> allStacks = OreDictUnifier.getAll(input);
-        for (ItemStack inputStack : allStacks) {
+        for (ItemStack inputStack : OreDictUnifier.getAll(input)) {
             result = result || removeFurnaceSmelting(inputStack);
         }
         return result;
     }
 
     /**
-     * Removes a Smelting Recipe
+     * Remove a Smelting Recipe by input
+     *
+     * @param input the input to remove by
+     * @return if the recipe was removed
      */
-    public static boolean removeFurnaceSmelting(ItemStack input) {
+    public static boolean removeFurnaceSmelting(@Nonnull ItemStack input) {
         if (input.isEmpty()) {
-            GTLog.logger.error(new IllegalArgumentException("Cannot remove furnace recipe with empty input."));
-            RecipeMap.setFoundInvalidRecipe(true);
-            return false;
+            if (setErroredInvalidRecipe("Cannot remove furnace recipe with empty input.")) return false;
         }
 
         boolean wasRemoved = FurnaceRecipes.instance().getSmeltingList().keySet().removeIf(currentStack -> currentStack.getItem() == input.getItem() && (currentStack.getMetadata() == GTValues.W || currentStack.getMetadata() == input.getMetadata()));
@@ -632,8 +684,15 @@ public final class ModHandler {
         return wasRemoved;
     }
 
-    public static int removeRecipes(ItemStack output) {
-        int recipesRemoved = removeRecipes(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
+    /**
+     * Remove all recipes matching an output
+     *
+     * @param output the output to match
+     * @return the amount of recipes removed
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public static int removeRecipeByOutput(@Nonnull ItemStack output) {
+        int recipesRemoved = removeRecipeByOutput(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
 
         if (ConfigHolder.misc.debug) {
             if (recipesRemoved != 0) {
@@ -645,11 +704,18 @@ public final class ModHandler {
         return recipesRemoved;
     }
 
-    public static int removeRecipes(Predicate<IRecipe> predicate) {
+    /**
+     * Remove all recipes matching a predicate
+     *
+     * @param predicate the matcher
+     * @return the amount of recipes removed
+     */
+    public static int removeRecipeByOutput(Predicate<IRecipe> predicate) {
         int recipesRemoved = 0;
 
-        IForgeRegistry<IRecipe> registry = ForgeRegistries.RECIPES;
-        List<IRecipe> toRemove = new ArrayList<>();
+        final IForgeRegistry<IRecipe> registry = ForgeRegistries.RECIPES;
+
+        Collection<IRecipe> toRemove = new ArrayList<>();
 
         for (IRecipe recipe : registry) {
             if (predicate.test(recipe)) {
@@ -658,7 +724,11 @@ public final class ModHandler {
             }
         }
 
-        toRemove.forEach(recipe -> registry.register(new DummyRecipe().setRegistryName(recipe.getRegistryName())));
+        toRemove.forEach(recipe -> {
+            if (recipe.getRegistryName() != null) {
+                registry.register(new DummyRecipe().setRegistryName(recipe.getRegistryName()));
+            }
+        });
 
         return recipesRemoved;
     }
@@ -666,19 +736,25 @@ public final class ModHandler {
     /**
      * Removes a Crafting Table Recipe with the given name.
      *
-     * @param location The ResourceLocation of the Recipe.
-     *                 Can also accept a String.
+     * @param location the ResourceLocation of the Recipe.
      */
-    public static void removeRecipeByName(ResourceLocation location) {
+    public static void removeRecipeByName(@Nonnull ResourceLocation location) {
         if (ConfigHolder.misc.debug) {
             String recipeName = location.toString();
-            if (ForgeRegistries.RECIPES.containsKey(location))
+            if (ForgeRegistries.RECIPES.containsKey(location)) {
                 GTLog.logger.info("Removed Recipe with Name: {}", recipeName);
-            else GTLog.logger.error("Failed to Remove Recipe with Name: {}", recipeName);
+            } else {
+                GTLog.logger.error("Failed to Remove Recipe with Name: {}", recipeName);
+            }
         }
         ForgeRegistries.RECIPES.register(new DummyRecipe().setRegistryName(location));
     }
 
+    /**
+     * Removes a Crafting Table Recipe with the given name.
+     *
+     * @param recipeName the name of the Recipe.
+     */
     public static void removeRecipeByName(String recipeName) {
         removeRecipeByName(new ResourceLocation(recipeName));
     }
@@ -703,26 +779,32 @@ public final class ModHandler {
      * @param startTier  The starting tier index, inclusive.
      * @param endTier    The ending tier index, inclusive.
      */
-    public static void removeTieredRecipeByName(String recipeName, int startTier, int endTier) {
-        for (int i = startTier; i <= endTier; i++)
+    @SuppressWarnings("unused")
+    public static void removeTieredRecipeByName(@Nonnull String recipeName, int startTier, int endTier) {
+        for (int i = startTier; i <= endTier; i++) {
             removeRecipeByName(String.format("%s%s", recipeName, GTValues.VN[i].toLowerCase()));
+        }
     }
 
     ///////////////////////////////////////////////////
     //            Get Recipe Output Helpers          //
     ///////////////////////////////////////////////////
 
-    public static Pair<IRecipe, ItemStack> getRecipeOutput(World world, ItemStack... recipe) {
-        if (recipe == null || recipe.length == 0)
-            return ImmutablePair.of(null, ItemStack.EMPTY);
-
+    /**
+     * @param world  the world to check the output from
+     * @param recipe the recipe to retrieve from
+     * @return a Pair of the recipe, and the output
+     */
+    @Nonnull
+    public static Pair<IRecipe, ItemStack> getRecipeOutput(@Nullable World world, @Nonnull ItemStack... recipe) {
+        if (recipe.length == 0) return ImmutablePair.of(null, ItemStack.EMPTY);
         if (world == null) world = DummyWorld.INSTANCE;
 
         InventoryCrafting craftingGrid = new InventoryCrafting(new DummyContainer(), 3, 3);
 
         for (int i = 0; i < 9 && i < recipe.length; i++) {
             ItemStack recipeStack = recipe[i];
-            if (recipeStack != null && !recipeStack.isEmpty()) {
+            if (!recipeStack.isEmpty()) {
                 craftingGrid.setInventorySlotContents(i, recipeStack);
             }
         }
@@ -737,15 +819,11 @@ public final class ModHandler {
         return ImmutablePair.of(null, ItemStack.EMPTY);
     }
 
-    public static ItemStack getSmeltingOutput(ItemStack input) {
-        if (input.isEmpty()) return ItemStack.EMPTY;
-        return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
-    }
-
-    /* Note: If a Furnace recipe is added through CT that is the exact same as one of the recipes that will be removed
-       then this recipe will not be added. Forge will prevent the duplicate smelting recipe from being added before we
-       remove the recipe added by another mod, therefore the CT recipe will fail. At this point, disable the config and
-       remove the recipes manually
+    /**
+     * Note: If a Furnace recipe is added through CT that is the exact same as one of the recipes that will be removed
+     * then this recipe will not be added. Forge will prevent the duplicate smelting recipe from being added
+     * before we remove the recipe added by another mod, therefore the CT recipe will fail. At this point,
+     * disable the config and remove the recipes manually
      */
     public static void removeSmeltingEBFMetals() {
         boolean isCTLoaded = Loader.isModLoaded(GTValues.MODID_CT);
@@ -804,5 +882,20 @@ public final class ModHandler {
                 }
             }
         }
+    }
+
+    /**
+     * @param message the message for the exception
+     * @return if recipe registration should continue
+     * @throws IllegalArgumentException if a recipe was invalid and invalid recipes are not ignored
+     */
+    public static boolean setErroredInvalidRecipe(@Nonnull String message) throws IllegalArgumentException {
+        hasInvalidRecipe = true;
+        logInvalidRecipe(message);
+        return ERROR_ON_INVALID_RECIPE;
+    }
+
+    public static void logInvalidRecipe(@Nonnull String message) {
+        GTLog.logger.warn("Invalid Recipe Found", new IllegalArgumentException(message));
     }
 }
