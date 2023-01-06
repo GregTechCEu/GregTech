@@ -60,10 +60,9 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(false, MetaTileEntities.HULL, "PLP", "CHC", 'P', HULL_PLATE, 'L', PLATE, 'C', CABLE, 'H', CASING);
 
         if (ConfigHolder.recipes.harderBrickRecipes) {
-            ModHandler.addShapedRecipe("bucket_of_concrete", FluidUtil.getFilledBucket(Materials.Concrete.getFluid(1000)),
-                    "CBS", "CWQ", " L ",
+            ModHandler.addFluidReplaceRecipe("bucket_of_concrete", FluidUtil.getFilledBucket(Materials.Concrete.getFluid(1000)),
+                    "C S", "CWQ", " L ",
                     'C', new UnificationEntry(OrePrefix.dust, Materials.Calcite),
-                    'B', new ItemStack(Items.BUCKET),
                     'S', new UnificationEntry(OrePrefix.dust, Materials.Stone),
                     'W', new ItemStack(Items.WATER_BUCKET),
                     'Q', new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
