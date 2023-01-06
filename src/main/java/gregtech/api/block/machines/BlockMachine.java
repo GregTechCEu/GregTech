@@ -287,23 +287,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (metaTileEntity == null || rayTraceResult == null) {
             return false;
         }
-        // when clicking cover with screwdriver or soft mallet, interact with cover
-        boolean toolClickResult = false;
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
-            toolClickResult = metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
-        }
-        else if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
-            toolClickResult = metaTileEntity.onCoverSoftMalletClick(playerIn, hand, rayTraceResult);
-        }
-        // if not interacting with cover, interact with the TileEntity
-        toolClickResult = toolClickResult || metaTileEntity.onToolClick(playerIn, itemStack.getItem().getToolClasses(itemStack),
+        boolean toolClickResult = metaTileEntity.onToolClick(playerIn, itemStack.getItem().getToolClasses(itemStack),
                 hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
-        // damage the tool and play sounds if used
-        if (toolClickResult) {
-            postToolClick(itemStack, playerIn);
-        }
+        // damage the tool and play sounds
+        if (toolClickResult) postToolClick(itemStack, playerIn);
         // if the tool did something, we don't bother with covers
-        // otherwise we handle cover clicking without tools
+        // otherwise we handle cover clicking
         return toolClickResult || metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
     }
 
