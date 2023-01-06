@@ -14,7 +14,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.common.blocks.BlockCompressed;
@@ -113,6 +112,7 @@ public class GroovyScriptCompat {
     }
 
     public static void loadMetaItemBracketHandler() {
+        metaItems.clear();
         for (Map.Entry<Material, BlockCompressed> entry : MetaBlocks.COMPRESSED.entrySet()) {
             metaItems.put("block" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
         }
@@ -136,7 +136,6 @@ public class GroovyScriptCompat {
             }
         }
 
-        metaItems.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
             for (MetaItem<?>.MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
