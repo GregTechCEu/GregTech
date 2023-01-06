@@ -75,7 +75,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    protected boolean openGUIOnRightClick() {
         return false;
     }
 
