@@ -831,7 +831,7 @@ public class CircuitRecipes {
 
         // Wetware Board
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(160).EUt(16)
+        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .notConsumable(SHAPE_MOLD_CYLINDER)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L / 4))
                 .output(PETRI_DISH)

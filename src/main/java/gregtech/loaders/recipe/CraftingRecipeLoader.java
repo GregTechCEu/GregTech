@@ -42,13 +42,13 @@ public class CraftingRecipeLoader {
         ToolRecipeHandler.registerPowerUnitRecipes();
         ToolRecipeHandler.registerCustomToolRecipes();
 
-        ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Wood, 6), "WsW", "W W", "WrW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-        ModHandler.addShapedRecipe("normal_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Wood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-        ModHandler.addShapedRecipe("large_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.Wood), "WrW", "W W", "WsW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+        ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Wood), "sWr", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+        ModHandler.addShapedRecipe("normal_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Wood), "WWW", "s r", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+        ModHandler.addShapedRecipe("large_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.Wood), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
 
-        ModHandler.addShapedRecipe("small_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.TreatedWood, 6), "WsW", "W W", "WrW", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
-        ModHandler.addShapedRecipe("normal_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.TreatedWood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
-        ModHandler.addShapedRecipe("large_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.TreatedWood), "WrW", "W W", "WsW", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
+        ModHandler.addShapedRecipe("small_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.TreatedWood), "sWr", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
+        ModHandler.addShapedRecipe("normal_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.TreatedWood), "WWW", "s r", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
+        ModHandler.addShapedRecipe("large_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.TreatedWood), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
 
         ModHandler.addShapelessRecipe("integrated_circuit", IntCircuitIngredient.getIntegratedCircuit(0), new UnificationEntry(OrePrefix.circuit, Tier.LV));
 

@@ -321,10 +321,14 @@ public class MetaItem1 extends StandardMetaItem {
         GRAVI_STAR = addItem(283, "gravistar");
 
         // Filters: ID 290-300
-        FLUID_FILTER = addItem(290, "fluid_filter");
-        ITEM_FILTER = addItem(291, "item_filter");
-        ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter");
-        SMART_FILTER = addItem(293, "smart_item_filter");
+        FLUID_FILTER = addItem(290, "fluid_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+        ITEM_FILTER = addItem(291, "item_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2), new MaterialStack(Materials.Steel, M)));
+        ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+        SMART_FILTER = addItem(293, "smart_item_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)));
 
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");
@@ -372,11 +376,11 @@ public class MetaItem1 extends StandardMetaItem {
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
         WOODEN_FORM_EMPTY = addItem(347, "wooden_form.empty");
         WOODEN_FORM_BRICK = addItem(348, "wooden_form.brick").addComponents(selfContainerItemProvider);
-        COMPRESSED_CLAY = addItem(349, "compressed.clay");
-        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay");
-        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay");
-        FIRECLAY_BRICK = addItem(352, "brick.fireclay");
-        COKE_OVEN_BRICK = addItem(353, "brick.coke");
+        COMPRESSED_CLAY = addItem(349, "compressed.clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        FIRECLAY_BRICK = addItem(352, "brick.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        COKE_OVEN_BRICK = addItem(353, "brick.coke").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
 
         if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();

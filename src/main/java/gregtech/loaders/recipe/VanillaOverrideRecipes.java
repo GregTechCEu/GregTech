@@ -849,7 +849,7 @@ public class VanillaOverrideRecipes {
         createPickaxeRecipe("iron_pickaxe", new ItemStack(Items.IRON_PICKAXE), Materials.Iron);
         createAxeRecipe("iron_axe", new ItemStack(Items.IRON_AXE), Materials.Iron);
         createSwordRecipe("iron_sword", new ItemStack(Items.IRON_SWORD), Materials.Iron);
-        createHoerecipe("iron_hoe", new ItemStack(Items.IRON_HOE), Materials.Iron);
+        createHoeRecipe("iron_hoe", new ItemStack(Items.IRON_HOE), Materials.Iron);
         createHelmetRecipe("iron_helmet", new ItemStack(Items.IRON_HELMET), Materials.Iron);
         createChestplateRecipe("iron_chestplate", new ItemStack(Items.IRON_CHESTPLATE), Materials.Iron);
         createLeggingsRecipe("iron_leggings", new ItemStack(Items.IRON_LEGGINGS), Materials.Iron);
@@ -859,7 +859,7 @@ public class VanillaOverrideRecipes {
         createPickaxeRecipe("golden_pickaxe", new ItemStack(Items.GOLDEN_PICKAXE), Materials.Gold);
         createAxeRecipe("golden_axe", new ItemStack(Items.GOLDEN_AXE), Materials.Gold);
         createSwordRecipe("golden_sword", new ItemStack(Items.GOLDEN_SWORD), Materials.Gold);
-        createHoerecipe("golden_hoe", new ItemStack(Items.GOLDEN_HOE), Materials.Gold);
+        createHoeRecipe("golden_hoe", new ItemStack(Items.GOLDEN_HOE), Materials.Gold);
         createHelmetRecipe("golden_helmet", new ItemStack(Items.GOLDEN_HELMET), Materials.Gold);
         createChestplateRecipe("golden_chestplate", new ItemStack(Items.GOLDEN_CHESTPLATE), Materials.Gold);
         createLeggingsRecipe("golden_leggings", new ItemStack(Items.GOLDEN_LEGGINGS), Materials.Gold);
@@ -869,7 +869,7 @@ public class VanillaOverrideRecipes {
         createPickaxeRecipe("diamond_pickaxe", new ItemStack(Items.DIAMOND_PICKAXE), Materials.Diamond);
         createAxeRecipe("diamond_axe", new ItemStack(Items.DIAMOND_AXE), Materials.Diamond);
         createSwordRecipe("diamond_sword", new ItemStack(Items.DIAMOND_SWORD), Materials.Diamond);
-        createHoerecipe("diamond_hoe", new ItemStack(Items.DIAMOND_HOE), Materials.Diamond);
+        createHoeRecipe("diamond_hoe", new ItemStack(Items.DIAMOND_HOE), Materials.Diamond);
         createHelmetRecipe("diamond_helmet", new ItemStack(Items.DIAMOND_HELMET), Materials.Diamond);
         createChestplateRecipe("diamond_chestplate", new ItemStack(Items.DIAMOND_CHESTPLATE), Materials.Diamond);
         createLeggingsRecipe("diamond_leggings", new ItemStack(Items.DIAMOND_LEGGINGS), Materials.Diamond);
@@ -993,7 +993,7 @@ public class VanillaOverrideRecipes {
         );
     }
 
-    private static void createHoerecipe(String regName, ItemStack output, Material material) {
+    private static void createHoeRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
         ModHandler.addShapedRecipe(regName, output, "PIf", "hS ", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
