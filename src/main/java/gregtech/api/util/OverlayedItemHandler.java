@@ -55,8 +55,9 @@ public class OverlayedItemHandler {
         for (int i = 0; i < this.slots.length; i++) {
             //populate the slot if it's not already populated
             initSlot(i);
-            //if its the same item
-            if (this.slots[i].getItemStackKey() == key) {
+            // if it's the same item or there is no item in the slot
+            ItemStackKey slotKey = this.slots[i].getItemStackKey();
+            if (slotKey == key || slotKey == null) {
                 //if the slot its not full
                 int canInsertUpTo = this.slots[i].slotLimit - this.slots[i].count;
                 if (canInsertUpTo > 0) {
