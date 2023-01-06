@@ -181,14 +181,16 @@ public class Material implements Comparable<Material> {
     }
 
     public int getBlockHarvestLevel() {
-        int harvestLevel = getToolHarvestLevel();
+        if (!hasProperty(PropertyKey.DUST))
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a harvest level! Is probably a Fluid");
+        int harvestLevel = getProperty(PropertyKey.DUST).getHarvestLevel();
         return harvestLevel > 0 ? harvestLevel - 1 : harvestLevel;
     }
 
     public int getToolHarvestLevel() {
-        if (!hasProperty(PropertyKey.DUST))
-            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a harvest level! Is probably a Fluid");
-        return getProperty(PropertyKey.DUST).getHarvestLevel();
+        if (!hasProperty(PropertyKey.TOOL))
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a tool harvest level! Is probably not a Tool Material");
+        return getProperty(PropertyKey.TOOL).getToolHarvestLevel();
     }
 
     @ZenMethod
@@ -716,16 +718,20 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder toolStats(float speed, float damage, int durability, int enchantability) {
-            return toolStats(speed, damage, 0.0F, durability, enchantability, false);
+        public Builder toolStats(float speed, float damage, int durability, int harvestLevel) {
+            return toolStats(speed, damage, 0.0F, durability, harvestLevel, 22, false);
         }
 
-        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int enchantability) {
-            return toolStats(speed, damage, attackSpeed, durability, enchantability, false);
+        public Builder toolStats(float speed, float damage, int durability, int harvestLevel, int enchantability) {
+            return toolStats(speed, damage, 0.0F, durability, harvestLevel, enchantability, false);
         }
 
-        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int enchantability, boolean ignoreCraftingTools) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, attackSpeed, durability, enchantability, ignoreCraftingTools));
+        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int harvestLevel, int enchantability) {
+            return toolStats(speed, damage, attackSpeed, durability, harvestLevel, enchantability, false);
+        }
+
+        public Builder toolStats(float speed, float damage, float attackSpeed, int durability, int harvestLevel, int enchantability, boolean ignoreCraftingTools) {
+            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, attackSpeed, durability, harvestLevel, enchantability, ignoreCraftingTools));
             return this;
         }
 
