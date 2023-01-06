@@ -236,8 +236,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default int getMaterialHarvestLevel(ItemStack stack) {
-        DustProperty dustProperty = getDustProperty(stack);
-        return dustProperty == null ? 0 : dustProperty.getHarvestLevel();
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0 : toolProperty.getToolHarvestLevel();
     }
 
     default long getMaxCharge(ItemStack stack) {

@@ -175,6 +175,15 @@ public class MaterialExpansion {
         return 0;
     }
 
+    @ZenGetter("toolHarvestLevel")
+    public static int toolHarvestLevel(Material m) {
+        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        if (prop != null) {
+            return prop.getToolHarvestLevel();
+        } else logError(m, "get the tool harvest level", "Tool");
+        return 0;
+    }
+
     @ZenGetter("toolEnchantability")
     public static int toolEnchant(Material m) {
         ToolProperty prop = m.getProperty(PropertyKey.TOOL);

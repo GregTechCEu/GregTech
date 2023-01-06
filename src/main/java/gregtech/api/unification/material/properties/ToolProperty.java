@@ -35,6 +35,13 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     private int toolDurability;
 
     /**
+     * Harvest level of tools made of this Material.
+     * <p>
+     * Default: 2 (Iron).
+     */
+    private int toolHarvestLevel;
+
+    /**
      * Enchantability of tools made from this Material.
      * <p>
      * Default: 10
@@ -58,11 +65,12 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      */
     private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
 
-    public ToolProperty(float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
+    public ToolProperty(float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, int toolHarvestLevel, int toolEnchantability, boolean ignoreCraftingTools) {
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
         this.toolAttackSpeed = toolAttackSpeed;
         this.toolDurability = toolDurability;
+        this.toolHarvestLevel = toolHarvestLevel;
         this.toolEnchantability = toolEnchantability;
         this.ignoreCraftingTools = ignoreCraftingTools;
     }
@@ -71,7 +79,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      * Default values constructor.
      */
     public ToolProperty() {
-        this(1.0f, 1.0f, 0.0f, 100, 10, false);
+        this(1.0f, 1.0f, 0.0f, 100, 2, 10, false);
     }
 
     public float getToolSpeed() {
@@ -108,6 +116,15 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     public void setToolDurability(int toolDurability) {
         if (toolDurability <= 0) throw new IllegalArgumentException("Tool Durability must be greater than zero!");
         this.toolDurability = toolDurability;
+    }
+
+    public int getToolHarvestLevel() {
+        return this.toolHarvestLevel;
+    }
+
+    public void setToolHarvestLevel(int toolHarvestLevel) {
+        if (toolHarvestLevel < 0) throw new IllegalArgumentException("Tool Harvest level must be greater than or equal to zero!");
+        this.toolHarvestLevel = toolHarvestLevel;
     }
 
     public int getToolEnchantability() {
