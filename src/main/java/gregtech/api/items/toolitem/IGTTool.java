@@ -22,6 +22,7 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -29,7 +30,8 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
-import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
@@ -417,8 +419,25 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (repair.getItem() instanceof IGTTool) {
             return getToolMaterial(toRepair) == ((IGTTool) repair.getItem()).getToolMaterial(repair);
         }
-        MaterialStack repairMaterialStack = OreDictUnifier.getMaterial(repair);
-        return repairMaterialStack != null && repairMaterialStack.material == getToolMaterial(toRepair);
+        UnificationEntry entry = OreDictUnifier.getUnificationEntry(repair);
+        if (entry == null || entry.material == null) return false;
+        if (entry.material == getToolMaterial(toRepair)) {
+            // special case wood to allow Wood Planks
+            if (ModHandler.isMaterialWood(entry.material)) {
+                return entry.orePrefix == OrePrefix.plank;
+            }
+            // Gems can use gem and plate, Ingots can use ingot and plate
+            if (entry.orePrefix == OrePrefix.plate) {
+                return true;
+            }
+            if (entry.material.hasProperty(PropertyKey.INGOT)) {
+                return entry.orePrefix == OrePrefix.ingot;
+            }
+            if (entry.material.hasProperty(PropertyKey.GEM)) {
+                return entry.orePrefix == OrePrefix.gem;
+            }
+        }
+        return false;
     }
 
     default Multimap<String, AttributeModifier> definition$getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
@@ -455,23 +474,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!definition$hasContainerItem(stack)) {
             return ItemStack.EMPTY;
         }
-        int damage = getToolStats().getToolDamagePerCraft(stack);
-        if (damage > 0) {
-            EntityPlayer player = ForgeHooks.getCraftingPlayer();
-            damageItem(stack, player, damage);
-            playCraftingSound(player, stack);
-            // We cannot simply return the copied stack here because Forge's bug
-            // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
-            // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
-            // While preliminarily fixing ItemStack being null in ForgeHooks#getContainerItem in the PR
-            // The semantics was misunderstood, any stack that are "broken" (damaged beyond maxDamage)
-            // Will be "empty" ItemStacks (while not == ItemStack.EMPTY, but isEmpty() == true)
-            // PlayerDestroyItemEvent will not be fired correctly because of this oversight.
-            if (stack.isEmpty()) { // Equal to listening to PlayerDestroyItemEvent
-                return getToolStats().getBrokenStack();
-            }
+        stack = stack.copy();
+        EntityPlayer player = ForgeHooks.getCraftingPlayer();
+        damageItemWhenCrafting(stack, player);
+        playCraftingSound(player, stack);
+        // We cannot simply return the copied stack here because Forge's bug
+        // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
+        // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
+        // While preliminarily fixing ItemStack being null in ForgeHooks#getContainerItem in the PR
+        // The semantics was misunderstood, any stack that are "broken" (damaged beyond maxDamage)
+        // Will be "empty" ItemStacks (while not == ItemStack.EMPTY, but isEmpty() == true)
+        // PlayerDestroyItemEvent will not be fired correctly because of this oversight.
+        if (stack.isEmpty()) { // Equal to listening to PlayerDestroyItemEvent
+            return getToolStats().getBrokenStack();
         }
-        return stack.copy();
+        return stack;
     }
 
     default boolean definition$shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
