@@ -283,33 +283,46 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void cleanMetaItemTooltips(ItemTooltipEvent event) {
+    public static void cleanupDebugTooltips(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty()) return;
         boolean isAdvanced = event.getFlags().isAdvanced();
-        Set<String> tooltipsToRemove = new HashSet<>();
+        List<String> tooltip = event.getToolTip();
 
-        // Gather the keys to try and remove given the current context
+        // Remove durability keys. These can always be removed, as GT puts one of its own in the tooltip already.
         if (isAdvanced && stack.getItem() instanceof IGTTool) {
-            // vanilla durability key (we handle this ourselves)
-            tooltipsToRemove.add(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
+            // vanilla durability key
+            tooltip.remove(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
             // EnderCore durability key
-            tooltipsToRemove.add(I18n.format("tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
+            tooltip.remove(I18n.format("tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
         }
 
-        // clean up the MC debug tooltips, which always insert themselves far too early in the list
-        if (isAdvanced && !ConfigHolder.misc.debug) {
+        // MC debug tooltips. Remove these always, as we will format them different later
+        if (isAdvanced) {
+            String nbtTags = null, registryName = null;
             if (stack.getTagCompound() != null) {
-                tooltipsToRemove.add(TextFormatting.DARK_GRAY + I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size()));
+                nbtTags = TextFormatting.DARK_GRAY + I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size());
+                tooltip.remove(nbtTags);
             }
             if (stack.getItem().getRegistryName() != null) {
-                tooltipsToRemove.add(TextFormatting.DARK_GRAY + stack.getItem().getRegistryName().toString());
+                registryName = TextFormatting.DARK_GRAY + stack.getItem().getRegistryName().toString();
+                tooltip.remove(registryName);
+                // also remove the EnderCore one, since again we are handling it different later
+                tooltip.remove(stack.getItem().getRegistryName().toString());
             }
-        }
 
-        // Check for these keys on the tooltip and remove them
-        if (!tooltipsToRemove.isEmpty()) {
-            event.getToolTip().removeIf(tooltipsToRemove::contains);
+            // Determine if we should add any information back
+            // check if the Actually Additions or AAInfo tooltip is here. If it is, skip, as it contains all relevant information
+
+            // Actually Additions Keys
+            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":")) return;
+            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc"))) return;
+            // Actually Advanced Info Keys
+            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Advanced Info:")) return;
+            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Press CTRL for Advanced Info")) return;
+
+            if (nbtTags != null) tooltip.add(nbtTags);
+            if (registryName != null) tooltip.add(registryName);
         }
     }
 
