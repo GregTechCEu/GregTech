@@ -20,6 +20,7 @@ import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
@@ -61,6 +62,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import paulscode.sound.SoundSystemConfig;
 
 import javax.annotation.Nonnull;
@@ -282,6 +284,7 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    @SuppressWarnings("deprecation") // we need the deprecated I18n to match EnderCore in all cases
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void cleanupDebugTooltips(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
@@ -289,16 +292,17 @@ public class ClientProxy extends CommonProxy {
         boolean isAdvanced = event.getFlags().isAdvanced();
         List<String> tooltip = event.getToolTip();
 
-        // Remove durability keys. These can always be removed, as GT puts one of its own in the tooltip already.
-        if (isAdvanced && stack.getItem() instanceof IGTTool) {
-            // vanilla durability key
-            tooltip.remove(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
-            // EnderCore durability key
-            tooltip.remove(I18n.format("tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
-        }
-
-        // MC debug tooltips. Remove these always, as we will format them different later
         if (isAdvanced) {
+
+            // Remove durability keys. These can always be removed, as GT puts one of its own in the tooltip already.
+            if (stack.getItem() instanceof IGTTool) {
+                // vanilla durability key
+                tooltip.remove(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
+                // EnderCore durability key
+                tooltip.remove(net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
+            }
+
+            // MC and EnderCore debug tooltips. Remove these always, as we will format them differently later
             String nbtTags = null, registryName = null;
             if (stack.getTagCompound() != null) {
                 nbtTags = TextFormatting.DARK_GRAY + I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size());
@@ -311,19 +315,32 @@ public class ClientProxy extends CommonProxy {
                 tooltip.remove(stack.getItem().getRegistryName().toString());
             }
 
-            // Determine if we should add any information back
-            // check if the Actually Additions or AAInfo tooltip is here. If it is, skip, as it contains all relevant information
-
-            // Actually Additions Keys
-            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":")) return;
-            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc"))) return;
-            // Actually Advanced Info Keys
-            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Advanced Info:")) return;
-            if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Press CTRL for Advanced Info")) return;
-
-            if (nbtTags != null) tooltip.add(nbtTags);
-            if (registryName != null) tooltip.add(registryName);
+            if (hasActuallyAdvancedInfo(tooltip)) {
+                // EnderCore ore-dict names. Remove these only if AAInfo is present, otherwise leave them be
+                if (TooltipHelper.isShiftDown()) {
+                    int[] oreIds = OreDictionary.getOreIDs(event.getItemStack());
+                    if (oreIds.length > 0) {
+                        tooltip.remove(net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.oreDictNames"));
+                        for (int i : oreIds) {
+                            tooltip.remove("  - " + OreDictionary.getOreName(i));
+                        }
+                    }
+                }
+            } else {
+                // Add back this information if AAInfo is not present
+                if (nbtTags != null) tooltip.add(nbtTags);
+                if (registryName != null) tooltip.add(registryName);
+            }
         }
+    }
+
+    private static boolean hasActuallyAdvancedInfo(List<String> tooltip) {
+        // Actually Additions Keys
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":")) return true;
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc"))) return true;
+        // Actually Advanced Info Keys
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Advanced Info:")) return true;
+        return tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Press CTRL for Advanced Info");
     }
 
     @Override
