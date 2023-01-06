@@ -367,32 +367,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
-    public final boolean onCoverRightClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
-        CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
-        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                coverBehavior.onRightClick(playerIn, hand, result);
-        if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
-        }
-        return onRightClick(playerIn, hand, result.sideHit, result);
-    }
-
-    public final boolean onCoverScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
-        EnumFacing hitFacing = ICoverable.determineGridSideHit(result);
-        boolean accessingActiveOutputSide = false;
-        if (this.getCapability(GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE, hitFacing) != null) {
-            accessingActiveOutputSide = playerIn.isSneaking();
-        }
-        EnumFacing coverSide = ICoverable.traceCoverSide(result);
-        CoverBehavior coverBehavior = coverSide == null ? null : getCoverAtSide(coverSide);
-        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                accessingActiveOutputSide ? EnumActionResult.PASS : coverBehavior.onScrewdriverClick(playerIn, hand, result);
-        if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
-        }
-        return onScrewdriverClick(playerIn, hand, result.sideHit, result);
-    }
-
     /**
      * Called when player clicks on specific side of this meta tile entity
      *
@@ -422,26 +396,32 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      *
      * @return true if something happened, so tools will get damaged and animations will be played
      */
-    public boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, EnumFacing side, CuboidRayTraceResult hitResult)  {
-        if (toolClasses.isEmpty()) return false;
+    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult)  {
+        // the side hit from the machine grid
+        EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
+        CoverBehavior coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
 
-        boolean result = false;
-        if (toolClasses.contains(ToolClasses.WRENCH)) {
-            result = onWrenchClick(playerIn, hand, side, hitResult);
-        }
+        // Prioritize covers where they apply (Screwdriver, Soft Mallet)
         if (toolClasses.contains(ToolClasses.SCREWDRIVER)) {
-            result |= onScrewdriverClick(playerIn, hand, side, hitResult);
-        }
-        if (toolClasses.contains(ToolClasses.CROWBAR)) {
-            result |= onCrowbarClick(playerIn, hand, side, hitResult);
+            if (coverBehavior != null && coverBehavior.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
+            } else return onScrewdriverClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
-            result |= onSoftMalletClick(playerIn, hand, side, hitResult);
+            if (coverBehavior != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
+            } else return onSoftMalletClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.WRENCH)) {
+            return onWrenchClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.CROWBAR)) {
+            return onCrowbarClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
-            result |= onHardHammerClick(playerIn, hand, side, hitResult);
+            return onHardHammerClick(playerIn, hand, gridSideHit, hitResult);
         }
-        return result;
+        return false;
     }
 
     /**
@@ -480,7 +460,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         if (getCoverAtSide(facing) != null) {
             return removeCover(facing);
         }
-
         return false;
     }
 
