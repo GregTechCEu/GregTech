@@ -49,6 +49,9 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -118,6 +121,20 @@ public final class ToolHelper {
     public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_HV = () -> MetaItems.POWER_UNIT_HV.getStackForm();
     public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_EV = () -> MetaItems.POWER_UNIT_EV.getStackForm();
     public static final Supplier<ItemStack> SUPPLY_POWER_UNIT_IV = () -> MetaItems.POWER_UNIT_IV.getStackForm();
+
+    // for retrieving the silk touch drop from a block. Cannot be Access-Transformed because it is a Forge method.
+    private static final MethodHandle GET_SILK_TOUCH_DROP;
+
+    static {
+        MethodType type = MethodType.methodType(ItemStack.class, IBlockState.class);
+        try {
+            GET_SILK_TOUCH_DROP = MethodHandles.lookup().findVirtual(Block.class, "getSilkTouchDrop", type);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private ToolHelper() {/**/}
 
     /**
      * @return finds the registered crafting symbol with the tool
@@ -303,15 +320,14 @@ public final class ToolHelper {
 
     /**
      * Retrieves the Fortune or Looting level for the passed in GregTech Tool
-     * @param tool The GregTech tool to retrieve the enchantment level from
      *
+     * @param tool The GregTech tool to retrieve the enchantment level from
      * @return The level of Fortune or Looting that the tool is enchanted with, or zero
      */
     public static int getFortuneOrLootingLevel(ItemStack tool) {
-        if(tool.getItem() instanceof ItemGTSword) {
+        if (tool.getItem() instanceof ItemGTSword) {
             return EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, tool);
-        }
-        else if (tool.getItem() instanceof IGTTool) {
+        } else if (tool.getItem() instanceof IGTTool) {
             return EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool);
         }
 
@@ -341,11 +357,11 @@ public final class ToolHelper {
                 }
 
                 remainingUses--;
-                if(stack.getItem() instanceof IGTTool && !((IGTTool) stack.getItem()).isElectric() && remainingUses == 0) {
+                if (stack.getItem() instanceof IGTTool && !((IGTTool) stack.getItem()).isElectric() && remainingUses == 0) {
                     return true;
                 }
                 // If the tool is an electric tool, catch the tool breaking and cancel the remaining AOE
-                else if(!player.getHeldItemMainhand().isItemEqualIgnoreDurability(stack)) {
+                else if (!player.getHeldItemMainhand().isItemEqualIgnoreDurability(stack)) {
                     return true;
                 }
             }
@@ -475,9 +491,7 @@ public final class ToolHelper {
             }
         }
         if (toolClasses.contains(ToolClasses.CROWBAR)) {
-            if (block instanceof BlockRailBase || material == net.minecraft.block.material.Material.CIRCUITS) {
-                return true;
-            }
+            return block instanceof BlockRailBase || material == net.minecraft.block.material.Material.CIRCUITS;
         }
         return false;
     }
@@ -532,8 +546,8 @@ public final class ToolHelper {
      * Tree Felling routine. Improved from GTI, GTCE, TiCon and other tree felling solutions:
      * - Works with weird Oak Trees (thanks to Syrcan for pointing out)
      * - Brought back tick-spread behaviour:
-     *     - Tree-felling is validated in the same tick as the stem being broken
-     *     - 1 block broken per tick, akin to chorus fruit
+     * - Tree-felling is validated in the same tick as the stem being broken
+     * - 1 block broken per tick, akin to chorus fruit
      * - Fix cheating durability loss
      * - Eliminates leaves as well as logs
      */
@@ -549,7 +563,7 @@ public final class ToolHelper {
      */
     public static void applyHammerDropConversion(ItemStack tool, IBlockState state, List<ItemStack> drops, int fortune, float dropChance, Random random) {
         if (tool.getItem().getToolClasses(tool).contains(ToolClasses.HARD_HAMMER) || EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, tool) > 0) {
-            ItemStack silktouchDrop = GTVisibilityHackBlock.getSilkTouchDrop(state.getBlock(), state);
+            ItemStack silktouchDrop = getSilkTouchDrop(state);
             if (!silktouchDrop.isEmpty()) {
                 // Stack lists can be immutable going into Recipe#matches barring no rewrites
                 List<ItemStack> dropAsList = Collections.singletonList(silktouchDrop);
@@ -627,6 +641,7 @@ public final class ToolHelper {
 
     /**
      * Shearing a Block.
+     *
      * @return -1 if not shearable, otherwise return 0 or 1, 0 if tool is now broken.
      */
     public static int shearBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
@@ -672,5 +687,16 @@ public final class ToolHelper {
         return successful;
     }
 
-    private ToolHelper() { }
+    /**
+     * @param state the BlockState of the block
+     * @return the silk touch drop
+     */
+    @Nonnull
+    public static ItemStack getSilkTouchDrop(@Nonnull IBlockState state) {
+        try {
+            return (ItemStack) GET_SILK_TOUCH_DROP.invokeExact(state.getBlock(), state);
+        } catch (Throwable ignored) {
+            return ItemStack.EMPTY;
+        }
+    }
 }
