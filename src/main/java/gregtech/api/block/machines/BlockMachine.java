@@ -7,8 +7,9 @@ import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
+import gregtech.api.block.UnlistedIntegerProperty;
+import gregtech.api.block.UnlistedStringProperty;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -24,6 +25,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -48,6 +50,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -66,6 +71,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     //used for rendering purposes of non-opaque machines like chests and tanks
     public static final PropertyBool OPAQUE = PropertyBool.create("opaque");
 
+    // Vanilla MC's getHarvestTool() and getHarvestLevel() only pass the state, which is
+    // not enough information to get the harvest tool and level from a MetaTileEntity on its own.
+    // Using unlisted properties lets us get this information from getActualState(), which
+    // provides enough information to get and read the MetaTileEntity data.
+    private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
+    private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
+
     public BlockMachine() {
         super(Material.IRON);
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
@@ -79,12 +91,14 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        return ToolClasses.WRENCH;
+        String value = ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
+        return value == null ? ToolClasses.WRENCH : value;
     }
 
     @Override
     public int getHarvestLevel(@Nonnull IBlockState state) {
-        return 1;
+        Integer value = ((IExtendedBlockState) state).getValue(HARVEST_LEVEL);
+        return value == null ? 1 : value;
     }
 
     @Override
@@ -94,8 +108,24 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nonnull
     @Override
+    public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
+        if (metaTileEntity == null) return state;
+
+        return ((IExtendedBlockState) state)
+                .withProperty(HARVEST_TOOL, metaTileEntity.getHarvestTool())
+                .withProperty(HARVEST_LEVEL, metaTileEntity.getHarvestLevel());
+    }
+
+    @Nonnull
+    @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, OPAQUE);
+        return new ExtendedBlockState(this, new IProperty[]{OPAQUE}, new IUnlistedProperty[]{HARVEST_TOOL, HARVEST_LEVEL});
+    }
+
+    @Override
+    public float getPlayerRelativeBlockHardness(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull World worldIn, @Nonnull BlockPos pos) {
+        return super.getPlayerRelativeBlockHardness(state.getBlock().getActualState(state, worldIn, pos), player, worldIn, pos);
     }
 
     @Nonnull
