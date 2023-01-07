@@ -17,7 +17,6 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -38,7 +37,6 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -341,18 +339,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .setTooltipText("gregtech.gui.silktouch"));
 
         return builder.build(getHolder(), entityPlayer);
-    }
-
-    @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!playerIn.isSneaking() && this.openGUIOnRightClick()) {
-            if (this.getWorld() != null && !this.getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP) playerIn);
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override

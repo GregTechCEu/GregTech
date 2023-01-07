@@ -22,6 +22,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
+import gregtech.common.crafting.FluidReplaceRecipe;
 import gregtech.common.crafting.GTShapedOreRecipe;
 import gregtech.common.crafting.GTShapelessOreRecipe;
 import net.minecraft.block.Block;
@@ -278,6 +279,10 @@ public final class ModHandler {
         addShapedRecipe(false, regName, result, false, recipe);
     }
 
+    public static void addFluidReplaceRecipe(String regName, ItemStack result, Object... recipe) {
+        addFluidReplaceRecipe(regName, result, false, recipe);
+    }
+
     public static void addShapedNBTClearingRecipe(String regName, ItemStack result, Object... recipe) {
         addShapedRecipe(false, regName, result, true, recipe);
     }
@@ -307,6 +312,27 @@ public final class ModHandler {
 
         if (withUnificationData)
             OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
+    }
+
+    public static void addFluidReplaceRecipe(String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
+        boolean skip = false;
+        if (result.isEmpty()) {
+            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
+            skip = true;
+        }
+        skip = skip || validateRecipe(regName, recipe);
+        if (skip) {
+            RecipeMap.setFoundInvalidRecipe(true);
+            return;
+        }
+
+        IRecipe shapedOreRecipe;
+        shapedOreRecipe = new FluidReplaceRecipe(isNBTClearing, null, result.copy(),
+                finalizeShapedRecipeInput(recipe))
+                .setMirrored(false) //make all recipes not mirrored by default
+                .setRegistryName(regName);
+
+        ForgeRegistries.RECIPES.register(shapedOreRecipe);
     }
 
     public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {

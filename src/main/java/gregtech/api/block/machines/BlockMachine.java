@@ -287,28 +287,19 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (metaTileEntity == null || rayTraceResult == null) {
             return false;
         }
-        boolean toolClickResult = metaTileEntity.onToolClick(playerIn, itemStack.getItem().getToolClasses(itemStack),
-                hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
-        // damage the tool and play sounds
-        if (toolClickResult) postToolClick(itemStack, playerIn);
-        // if the tool did something, we don't bother with covers
-        // otherwise we handle cover clicking
-        return toolClickResult || metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
-    }
 
-    /**
-     * Handles the result of clicking the block with a tool: damage and sounds
-     *
-     * @param stack the tool used to click the block
-     * @param player the player clicking the block
-     */
-    public void postToolClick(ItemStack stack, EntityPlayer player) {
-        // damage the tool
-        ToolHelper.damageItem(stack, player);
-        // if the tool is a GT tool, play its sound
-        if (stack.getItem() instanceof IGTTool) {
-            ((IGTTool) stack.getItem()).playSound(player);
+        // try to click with a tool first
+        Set<String> toolClasses = itemStack.getItem().getToolClasses(itemStack);
+        if (!toolClasses.isEmpty() && metaTileEntity.onToolClick(playerIn, toolClasses, hand, rayTraceResult)) {
+            ToolHelper.damageItem(itemStack, playerIn);
+            if (itemStack.getItem() instanceof IGTTool) {
+                ((IGTTool) itemStack.getItem()).playSound(playerIn);
+            }
+            return true;
         }
+
+        // then try to click with normal right hand
+        return metaTileEntity.onRightClick(playerIn, hand, facing, rayTraceResult);
     }
 
     @Override

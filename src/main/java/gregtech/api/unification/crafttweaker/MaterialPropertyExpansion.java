@@ -187,7 +187,7 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolEnchantability, @Optional boolean shouldIgnoreCraftingTools) {
+    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability, @Optional boolean shouldIgnoreCraftingTools) {
         if (checkFrozen("add Tools to a material")) return;
         if (toolEnchantability == 0) toolEnchantability = 10;
         if (m.hasProperty(PropertyKey.TOOL)) {
@@ -195,9 +195,10 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolAttackDamage(toolAttackDamage);
             m.getProperty(PropertyKey.TOOL).setToolAttackSpeed(toolAttackSpeed);
             m.getProperty(PropertyKey.TOOL).setToolDurability(toolDurability);
+            m.getProperty(PropertyKey.TOOL).setToolHarvestLevel(toolHarvestLevel);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
             m.getProperty(PropertyKey.TOOL).setShouldIgnoreCraftingTools(shouldIgnoreCraftingTools);
-        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolAttackSpeed, toolDurability, toolEnchantability, shouldIgnoreCraftingTools));
+        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolAttackSpeed, toolDurability, toolHarvestLevel, toolEnchantability, shouldIgnoreCraftingTools));
     }
 
     @ZenMethod

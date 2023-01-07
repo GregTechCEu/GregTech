@@ -137,32 +137,32 @@ public class ComponentRecipes {
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Tin)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_LV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_LV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Copper)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_MV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_MV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Gold)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_HV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_HV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Aluminium)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_EV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_EV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
@@ -170,8 +170,8 @@ public class ComponentRecipes {
             if (!materialEntry.getValue().equals(Rubber))
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .input(cableGtSingle, Tungsten)
-                        .input(plate, materialEntry.getValue(), 6)
                         .inputs(ELECTRIC_MOTOR_IV.getStackForm(2))
+                        .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                         .circuitMeta(1)
                         .outputs(CONVEYOR_MODULE_IV.getStackForm())
                         .duration(100).EUt(VA[LV]).buildAndRegister();

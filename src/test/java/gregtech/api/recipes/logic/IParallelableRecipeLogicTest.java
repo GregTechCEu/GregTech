@@ -2,6 +2,8 @@ package gregtech.api.recipes.logic;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -11,6 +13,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -41,6 +44,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     private static MetaTileEntityItemBus importItemBus;
     private static MetaTileEntityItemBus exportItemBus;
     private static MetaTileEntityFluidHatch importFluidBus;
+    private static MetaTileEntityFluidHatch secondImportFluidBus;
     private static MetaTileEntityFluidHatch exportFluidBus;
     private static boolean enableBonusOverride = false;
 
@@ -152,7 +156,18 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 return mbt;
             }
         };
-        exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.lv"), 1, true) {
+        secondImportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.zpm"), 7, false) {
+            @Override
+            public boolean isAttachedToMultiBlock() {
+                return true;
+            }
+
+            @Override
+            public MultiblockControllerBase getController() {
+                return mbt;
+            }
+        };
+        exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.uhv"), 9, true) {
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -284,6 +299,114 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         //Check the recipe inputs
         //assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4), parallelRecipe.getInputs().get(0));
+
+    }
+
+    @Test
+    public void findMultipliedRecipe_FluidOnlyMaxParallelTest() {
+
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(519);
+
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                2,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .blastFurnaceTemp(1000)
+                .fluidInputs(Materials.Toluene.getFluid(1000), Materials.RawGasoline.getFluid(10000))
+                .fluidOutputs(Materials.Gasoline.getFluid(11000))
+                .EUt(480).duration(10)
+                .build().getResult();
+
+
+        // Initially populate the input buses
+        importFluidBus.getImportFluids().fill(Materials.Toluene.getFluid(4000), true);
+        secondImportFluidBus.getImportFluids().fill(Materials.RawGasoline.getFluid(50000), true);
+
+        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
+
+        RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
+
+        //Check if the correct number of parallels were done
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
+
+        //Check that the EUt of the recipe was multiplied correctly
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(1920));
+
+        //Check if the recipe duration was not modified
+        MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
+
+        //Check the recipe outputs
+        MatcherAssert.assertThat(parallelRecipe.getFluidOutputs().isEmpty(), is(false));
+
+        MatcherAssert.assertThat(Materials.Gasoline.getFluid(44000).equals(parallelRecipe.getFluidOutputs().get(0)), is(true));
+
+    }
+
+    @Test
+    public void findMultipliedRecipe_FluidOnlyLessThanMaxParallelTest() {
+
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(520);
+
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                2,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .blastFurnaceTemp(1000)
+                .fluidInputs(Materials.Toluene.getFluid(1000), Materials.RawGasoline.getFluid(10000))
+                .fluidOutputs(Materials.Gasoline.getFluid(11000))
+                .EUt(480).duration(10)
+                .build().getResult();
+
+
+        // Initially populate the input buses
+        importFluidBus.getImportFluids().fill(Materials.Toluene.getFluid(2000), true);
+        secondImportFluidBus.getImportFluids().fill(Materials.RawGasoline.getFluid(50000), true);
+
+        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
+
+        RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
+
+        //Check if the correct number of parallels were done
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
+
+        //Check that the EUt of the recipe was multiplied correctly
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(960));
+
+        //Check if the recipe duration was not modified
+        MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
+
+        //Check the recipe outputs
+        MatcherAssert.assertThat(parallelRecipe.getFluidOutputs().isEmpty(), is(false));
+
+        MatcherAssert.assertThat(Materials.Gasoline.getFluid(22000).equals(parallelRecipe.getFluidOutputs().get(0)), is(true));
 
     }
 
