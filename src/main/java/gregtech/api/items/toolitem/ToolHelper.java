@@ -15,6 +15,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.function.QuintFunction;
+import gregtech.asm.util.ObfMapping;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.tools.enchants.EnchantmentHardHammer;
@@ -52,6 +53,7 @@ import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -126,9 +128,14 @@ public final class ToolHelper {
     private static final MethodHandle GET_SILK_TOUCH_DROP;
 
     static {
-        MethodType type = MethodType.methodType(ItemStack.class, IBlockState.class);
         try {
-            GET_SILK_TOUCH_DROP = MethodHandles.lookup().findVirtual(Block.class, "getSilkTouchDrop", type);
+            // archaic way to get around access violations for method handles.
+            // this was improved in Java 9 with MethodHandles.privateLookupIn(),
+            // but that does not exist in Java 8, so we have to unreflect instead.
+            Method method = Block.class.getDeclaredMethod(ObfMapping.mcpMapper.mapMethodName("func_180643_i"), IBlockState.class);
+            method.setAccessible(true);
+            GET_SILK_TOUCH_DROP = MethodHandles.lookup().unreflect(method);
+            method.setAccessible(false);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
