@@ -23,7 +23,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -47,15 +46,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IShearable;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
@@ -454,19 +450,6 @@ public final class ToolHelper {
 
     // encompasses all vanilla special case tool checks for harvesting
     public static boolean isToolEffective(IBlockState state, Set<String> toolClasses, int harvestLevel) {
-        System.out.println("State:");
-        System.out.println("Properties:");
-        for (Map.Entry<IProperty<?>, Comparable<?>> prop : state.getProperties().entrySet()) {
-            System.out.println("Name: " + prop.getKey().getName() + ", Value: " + prop.getValue());
-        }
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState extState = (IExtendedBlockState) state;
-            System.out.println("Unlisted:");
-            for (Map.Entry<IUnlistedProperty<?>, Optional<?>> prop : extState.getUnlistedProperties().entrySet()) {
-                System.out.println("Name: " + prop.getKey().getName() + ", Value: " + prop.getValue().orElse(null));
-            }
-        }
-
         Block block = state.getBlock();
         if (toolClasses.contains(block.getHarvestTool(state))) {
             return block.getHarvestLevel(state) <= harvestLevel;

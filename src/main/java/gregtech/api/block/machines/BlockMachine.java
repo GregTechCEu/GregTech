@@ -125,7 +125,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public float getPlayerRelativeBlockHardness(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull World worldIn, @Nonnull BlockPos pos) {
-        return super.getPlayerRelativeBlockHardness(state.getBlock().getActualState(state, worldIn, pos), player, worldIn, pos);
+        // make sure our extended block state info is here for callers (since forge does not do it for us in this case)
+        state = state.getBlock().getActualState(state, worldIn, pos);
+        return super.getPlayerRelativeBlockHardness(state, player, worldIn, pos);
     }
 
     @Nonnull
