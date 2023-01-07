@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 public class ObfMapping extends Remapper {
 
     public static final ObfRemapper obfMapper = new ObfRemapper();
-    public static Remapper mcpMapper = null;
+    public static MCPRemapper mcpMapper = null;
     public static final boolean obfuscated;
 
     public String s_owner;
@@ -332,10 +332,14 @@ public class ObfMapping extends Remapper {
             throw new RuntimeException("Failed to grab mappings from GradleStart args.");
         }
 
-        @Override
-        public String mapMethodName(String owner, String name, String desc) {
+        public String mapMethodName(String name) {
             String s = funcs.get(name);
             return s == null ? name : s;
+        }
+
+        @Override
+        public String mapMethodName(String owner, String name, String desc) {
+            return mapMethodName(name);
         }
 
         @Override
