@@ -2,6 +2,7 @@ package gregtech.integration.jei;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMultipleRecipeMaps;
@@ -22,7 +23,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -30,6 +30,10 @@ import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.jei.basic.*;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 import gregtech.integration.jei.recipe.*;
+import gregtech.integration.jei.recipe.primitive.MaterialTree;
+import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
+import gregtech.integration.jei.recipe.primitive.OreByProduct;
+import gregtech.integration.jei.recipe.primitive.OreByProductCategory;
 import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
 import gregtech.integration.jei.utils.ModularUIGuiHandler;
@@ -95,7 +99,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
         }
-        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE), new MachineSubtypeHandler());
+        MetaTileEntityBlock.registerSubtypeInterpreters(subtypeRegistry);
     }
 
     @Override

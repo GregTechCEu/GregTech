@@ -2,7 +2,7 @@ package gregtech.common.blocks;
 
 import com.google.common.collect.ImmutableMap;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -13,7 +13,6 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
-import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
@@ -78,7 +77,6 @@ public class MetaBlocks {
 
     private MetaBlocks() {}
 
-    public static BlockMachine MACHINE;
     public static final BlockCable[] CABLES = new BlockCable[10];
     public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[7];
     public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[8];
@@ -141,9 +139,6 @@ public class MetaBlocks {
     public static final List<BlockFluidBase> FLUID_BLOCKS = new ArrayList<>();
 
     public static void init() {
-        GregTechAPI.MACHINE = MACHINE = new BlockMachine();
-        MACHINE.setRegistryName("machine");
-
         for (Insulation ins : Insulation.values()) {
             CABLES[ins.ordinal()] = new BlockCable(ins);
             CABLES[ins.ordinal()].setRegistryName(ins.getName());
@@ -352,7 +347,7 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        MetaTileEntityBlock.registerItemModels();
         for (BlockCable cable : CABLES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.INSTANCE.getModelLocation());
         for (BlockFluidPipe pipe : FLUID_PIPES)
@@ -435,7 +430,7 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
-        ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        MetaTileEntityBlock.registerStateMappers();
 
         IStateMapper normalStateMapper = new SimpleStateMapper(CableRenderer.INSTANCE.getModelLocation());
         for (BlockCable cable : CABLES) {

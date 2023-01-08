@@ -20,6 +20,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -89,8 +90,20 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
+    public net.minecraft.block.material.Material getMaterial() {
+        return isMaterialWood(material)
+                ? net.minecraft.block.material.Material.WOOD
+                : super.getMaterial();
+    }
+
+    @Override
+    public SoundType getSoundType() {
+        return isMaterialWood(material) ? SoundType.WOOD : super.getSoundType();
+    }
+
+    @Override
     public String getHarvestTool() {
-        return ModHandler.isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
+        return isMaterialWood(material) ? ToolClasses.AXE : super.getHarvestTool();
     }
 
     @Override

@@ -1,6 +1,10 @@
 package gregtech.integration.crafttweaker;
 
 import crafttweaker.mc1120.data.NBTConverter;
+import gregtech.api.block.machines.MetaTileEntityItemBlock;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
