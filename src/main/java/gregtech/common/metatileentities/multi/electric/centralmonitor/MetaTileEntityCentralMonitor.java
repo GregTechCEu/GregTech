@@ -599,6 +599,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+    }
+
+    @Override
     public boolean hasMaintenanceMechanics() {
         return false;
     }

@@ -759,4 +759,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(null, -1);
     }
+
+    @Override
+    public boolean showToolUsages() {
+        return false;
+    }
 }

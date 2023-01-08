@@ -14,6 +14,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
 import gregtech.asm.util.ObfMapping;
 import gregtech.common.ConfigHolder;
@@ -167,12 +168,13 @@ public final class ToolHelper {
         return stack.getOrCreateSubCompound(TOOL_TAG_KEY);
     }
 
-    public static NBTTagCompound getBehavioursTag(ItemStack stack) {
+    public static NBTTagCompound getBehaviorsTag(ItemStack stack) {
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
     }
 
     public static ItemStack getAndSetToolData(IGTTool tool, Material material, int maxDurability, int harvestLevel, float toolSpeed, float attackDamage) {
         ItemStack stack = tool.getRaw();
+        GTUtility.getOrCreateNbtCompound(stack).setInteger(HIDE_FLAGS, 2);
         NBTTagCompound toolTag = getToolTag(stack);
         toolTag.setString(MATERIAL_KEY, material.toString());
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
@@ -341,11 +343,11 @@ public final class ToolHelper {
     }
 
     public static AoESymmetrical getMaxAoEDefinition(ItemStack stack) {
-        return AoESymmetrical.readMax(getBehavioursTag(stack));
+        return AoESymmetrical.readMax(getBehaviorsTag(stack));
     }
 
     public static AoESymmetrical getAoEDefinition(ItemStack stack) {
-        return AoESymmetrical.read(getBehavioursTag(stack), getMaxAoEDefinition(stack));
+        return AoESymmetrical.read(getBehaviorsTag(stack), getMaxAoEDefinition(stack));
     }
 
     /**
@@ -658,7 +660,7 @@ public final class ToolHelper {
                 IShearable shearable = (IShearable) state.getBlock();
                 if (shearable.isShearable(tool, world, pos)) {
                     List<ItemStack> shearedDrops = shearable.onSheared(tool, world, pos, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool));
-                    boolean relocateMinedBlocks = getBehavioursTag(tool).getBoolean(RELOCATE_MINED_BLOCKS_KEY);
+                    boolean relocateMinedBlocks = getBehaviorsTag(tool).getBoolean(RELOCATE_MINED_BLOCKS_KEY);
                     Iterator<ItemStack> iter = shearedDrops.iterator();
                     while (iter.hasNext()) {
                         ItemStack stack = iter.next();

@@ -5,6 +5,7 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -32,7 +33,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
         tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.getAmperage()));
         tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLossPerBlock()));
 
-        if (flagIn.isAdvanced()) {
+        if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getItemMaterial(stack).toCamelCaseString());
         }
     }
