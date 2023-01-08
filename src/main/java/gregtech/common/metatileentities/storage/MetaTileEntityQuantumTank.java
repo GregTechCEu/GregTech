@@ -183,6 +183,21 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         if (itemStack.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
             fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.getCompoundTag(FLUID_NBT_KEY)));
         }
+        if (itemStack.hasKey("IsVoiding")) {
+            setVoiding(true);
+        }
+        else if (itemStack.hasKey("IsPartialVoiding")) {
+            setPartialVoid(true);
+        }
+
+        if (itemStack.hasKey("LockedFluid")) {
+            setLocked(true);
+
+            // Additional check here because locked fluid and void all mode will not properly update locked fluid, due to there being no fluid
+            if (this.lockedFluid.getFluid() == null) {
+                lockedFluid.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.getCompoundTag("LockedFluid")));
+            }
+        }
     }
 
     @Override
@@ -191,6 +206,17 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         FluidStack stack = fluidTank.getFluid();
         if (stack != null && stack.amount > 0) {
             itemStack.setTag(FLUID_NBT_KEY, stack.writeToNBT(new NBTTagCompound()));
+        }
+
+        if (this.isVoiding) {
+            itemStack.setBoolean("IsVoiding", this.isVoiding);
+        }
+        else if (this.isPartialVoiding) {
+            itemStack.setBoolean("IsPartialVoiding", this.isPartialVoiding);
+        }
+
+        if (this.isLocked && this.lockedFluid != null) {
+            itemStack.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
         }
     }
 
