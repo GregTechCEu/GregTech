@@ -903,6 +903,9 @@ item.gt.tool.behavior.rail_rotation=§eRailroad Engineer: §fRotates Rails
 item.gt.tool.behavior.crop_harvesting=§aHarvester: §fHarvests Crops
 item.gt.tool.behavior.plunger=§9Plumber: §fDrains Fluids
 item.gt.tool.behavior.block_rotation=§2Mechanic: §fRotates Blocks
+item.gt.tool.behavior.damage_boost=§4Damage Boost: §fExtra damage against %s
+item.gt.tool.behavior.damage_boost_spider=Spiders
+item.gt.tool.behavior.damage_boost_golem=Golems
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
