@@ -6,7 +6,6 @@ import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.integration.jei.recipe.primitive.BasicRecipeCategory;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;

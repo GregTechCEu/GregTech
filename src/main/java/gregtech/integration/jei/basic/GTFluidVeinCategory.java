@@ -6,7 +6,6 @@ import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.integration.jei.recipe.primitive.BasicRecipeCategory;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
