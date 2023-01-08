@@ -148,4 +148,10 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
     }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
 }

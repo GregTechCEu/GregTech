@@ -96,13 +96,18 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     }
 
     private void setAmpMode() {
-        amps = amps == 16 ? 1 : amps << 1;
+        amps = amps == getMaxAmperage() ? 1 : amps << 1;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
             writeCustomData(AMP_INDEX, b -> b.writeInt(amps));
             notifyBlockUpdate();
             markDirty();
         }
+    }
+
+    /** Change this value (or override) to make the Diode able to handle more amps. Must be a power of 2 */
+    protected int getMaxAmperage() {
+        return 16;
     }
 
     protected void reinitializeEnergyContainer() {
@@ -149,9 +154,17 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.diode.tooltip_general"));
-        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
-                energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_starts_at"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in_out", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_out_till", getMaxAmperage()));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.toggle_mode"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

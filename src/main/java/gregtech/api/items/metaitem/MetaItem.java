@@ -23,6 +23,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
+import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
@@ -60,7 +62,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -560,7 +561,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
             if (fluidHandler instanceof IThermalFluidHandlerItemStack) {
                 IThermalFluidHandlerItemStack thermalFluidHandler = (IThermalFluidHandlerItemStack) fluidHandler;
-                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (TooltipHelper.isShiftDown()) {
                     lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", thermalFluidHandler.getMaxFluidTemperature()));
                     if (thermalFluidHandler.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
                     if (thermalFluidHandler.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
@@ -576,7 +577,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             behaviour.addInformation(itemStack, lines);
         }
 
-        if (tooltipFlag.isAdvanced()) {
+        if (ConfigHolder.misc.debug) {
             lines.add("MetaItem Id: " + item.unlocalizedName);
         }
     }

@@ -4,12 +4,14 @@ import codechicken.lib.texture.TextureUtils;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.IBlockOre;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
@@ -18,12 +20,14 @@ import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -50,18 +54,19 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import paulscode.sound.SoundSystemConfig;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -170,6 +175,17 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
+        if (itemStack.getItem() instanceof ItemBlock) {
+            Block block = ((ItemBlock) itemStack.getItem()).getBlock();
+            if (!(block instanceof BlockFrame) && !(block instanceof BlockCompressed) && !(block instanceof IBlockOre) && !(block instanceof IFluidBlock)) {
+                // Do not apply this tooltip to blocks other than:
+                // - Frames
+                // - Compressed Blocks
+                // - Ores
+                // - Fluids
+                return;
+            }
+        }
 
         // Handles Item tooltips
         List<String> tooltips = new ArrayList<>();
@@ -193,6 +209,7 @@ public class ClientProxy extends CommonProxy {
 
             // GTCE Cells, Forestry cans, some other containers
             if (tooltips == null || tooltips.size() == 0) {
+                //if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == GregTechAPI.MACHINE && itemStack.getItemDamage())
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
                     FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
@@ -265,6 +282,65 @@ public class ClientProxy extends CommonProxy {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("deprecation") // we need the deprecated I18n to match EnderCore in all cases
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void cleanupDebugTooltips(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty()) return;
+        boolean isAdvanced = event.getFlags().isAdvanced();
+        List<String> tooltip = event.getToolTip();
+
+        if (isAdvanced) {
+
+            // Remove durability keys. These can always be removed, as GT puts one of its own in the tooltip already.
+            if (stack.getItem() instanceof IGTTool) {
+                // vanilla durability key
+                tooltip.remove(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
+                // EnderCore durability key
+                tooltip.remove(net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
+            }
+
+            // MC and EnderCore debug tooltips. Remove these always, as we will format them differently later
+            String nbtTags = null, registryName = null;
+            if (stack.getTagCompound() != null) {
+                nbtTags = TextFormatting.DARK_GRAY + I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size());
+                tooltip.remove(nbtTags);
+            }
+            if (stack.getItem().getRegistryName() != null) {
+                registryName = TextFormatting.DARK_GRAY + stack.getItem().getRegistryName().toString();
+                tooltip.remove(registryName);
+                // also remove the EnderCore one, since again we are handling it different later
+                tooltip.remove(stack.getItem().getRegistryName().toString());
+            }
+
+            if (hasActuallyAdvancedInfo(tooltip)) {
+                // EnderCore ore-dict names. Remove these only if AAInfo is present, otherwise leave them be
+                if (TooltipHelper.isShiftDown()) {
+                    int[] oreIds = OreDictionary.getOreIDs(event.getItemStack());
+                    if (oreIds.length > 0) {
+                        tooltip.remove(net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.oreDictNames"));
+                        for (int i : oreIds) {
+                            tooltip.remove("  - " + OreDictionary.getOreName(i));
+                        }
+                    }
+                }
+            } else {
+                // Add back this information if AAInfo is not present
+                if (nbtTags != null) tooltip.add(nbtTags);
+                if (registryName != null) tooltip.add(registryName);
+            }
+        }
+    }
+
+    private static boolean hasActuallyAdvancedInfo(List<String> tooltip) {
+        // Actually Additions Keys
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":")) return true;
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc"))) return true;
+        // Actually Advanced Info Keys
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Advanced Info:")) return true;
+        return tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Press CTRL for Advanced Info");
     }
 
     @Override

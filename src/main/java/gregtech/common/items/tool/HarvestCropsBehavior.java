@@ -107,6 +107,6 @@ public class HarvestCropsBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.crop_harvesting"));
+        tooltip.add(I18n.format("item.gt.tool.behavior.crop_harvesting"));
     }
 }

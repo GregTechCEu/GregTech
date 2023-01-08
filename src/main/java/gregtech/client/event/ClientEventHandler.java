@@ -9,6 +9,7 @@ import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.handler.TerminalARRenderer;
 import gregtech.client.utils.DepthTextureUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -28,6 +29,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 import java.util.UUID;
+
+import static gregtech.api.GTValues.CLIENT_TIME;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -55,6 +58,8 @@ public class ClientEventHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         GTParticleManager.clientTick(event);
         TerminalARRenderer.onClientTick(event);
+        TooltipHelper.onClientTick(event);
+        CLIENT_TIME++;
     }
 
     @SubscribeEvent

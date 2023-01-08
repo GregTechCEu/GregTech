@@ -20,7 +20,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
-import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -64,12 +63,14 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -79,6 +80,7 @@ import static gregtech.api.GTValues.V;
 public class GTUtility {
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    private static final DecimalFormat TWO_PLACES_FORMAT = new DecimalFormat("#.##");
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
@@ -98,6 +100,8 @@ public class GTUtility {
             }
         };
     }
+
+    private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
 
     public static Stream<Object> flatten(Object[] array) {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
@@ -961,6 +965,11 @@ public class GTUtility {
         return NUMBER_FORMAT.format(number);
     }
 
+    @Nonnull
+    public static String formatNumber2Places(float number) {
+        return TWO_PLACES_FORMAT.format(number);
+    }
+
     /**
      * If pos of this world loaded
      */
@@ -1044,5 +1053,10 @@ public class GTUtility {
             return true;
         }
         return false;
+    }
+
+    @Nonnull
+    public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
+        return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
     }
 }

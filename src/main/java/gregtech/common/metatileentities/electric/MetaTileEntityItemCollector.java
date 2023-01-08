@@ -171,11 +171,18 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.item_collector.collect_range", maxItemSuckingRange, maxItemSuckingRange));
+        tooltip.add(I18n.format("gregtech.machine.item_collector.tooltip"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", getEnergyConsumedPerTick()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.max_voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.item_controller.tooltip.redstone"));
-        tooltip.add(I18n.format("gregtech.machine.item_controller.tooltip.consumption", getEnergyConsumedPerTick()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", maxItemSuckingRange, maxItemSuckingRange));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
