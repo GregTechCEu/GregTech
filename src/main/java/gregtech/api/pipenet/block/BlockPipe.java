@@ -290,10 +290,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (rayTraceResult == null || pipeTile == null) {
             return false;
         }
-        return onPipeActivated(worldIn, state, pos, playerIn, hand, rayTraceResult, pipeTile);
+        return onPipeActivated(worldIn, state, pos, playerIn, hand, facing, rayTraceResult, pipeTile);
     }
 
-    public boolean onPipeActivated(World world, IBlockState state, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public boolean onPipeActivated(World world, IBlockState state, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, EnumFacing side, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
         ItemStack itemStack = entityPlayer.getHeldItem(hand);
 
         if (pipeTile.getFrameMaterial() == null && pipeTile instanceof TileEntityPipeBase && itemStack.getItem() instanceof FrameItemBlock && pipeTile.getPipeType().getThickness() < 1) {
@@ -306,6 +306,21 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 itemStack.shrink(1);
             }
             return true;
+        }
+
+        if (itemStack.getItem() instanceof ItemBlockPipe) {
+            IBlockState blockStateAtSide = world.getBlockState(pos.offset(side));
+            if (blockStateAtSide.getBlock() instanceof BlockFrame) {
+                ItemBlockPipe<?, ?> itemBlockPipe = (ItemBlockPipe<?, ?>) itemStack.getItem();
+                if (itemBlockPipe.blockPipe.getItemPipeType(itemStack) == getItemPipeType(itemStack)) {
+                    BlockFrame frameBlock = (BlockFrame) blockStateAtSide.getBlock();
+                    boolean wasPlaced = frameBlock.replaceWithFramedPipe(world, pos.offset(side), blockStateAtSide, entityPlayer, itemStack, side);
+                    if (wasPlaced) {
+                        pipeTile.setConnection(side, true, false);
+                    }
+                    return wasPlaced;
+                }
+            }
         }
 
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
