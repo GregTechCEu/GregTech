@@ -199,7 +199,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                         break;
                     }
                 }
-                if (facing == null) throw new NullPointerException("Facing is null");
+                if (facing == null) {
+                    //not our neighbor
+                    return;
+                }
                 boolean open = pipeTile.isConnected(facing);
                 boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
                 if (!open && canConnect && state.getBlock() != blockIn)
