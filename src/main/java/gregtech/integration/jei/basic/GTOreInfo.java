@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FileUtility;
+import gregtech.api.util.GTJEIUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -259,7 +260,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Only add the Biome Information to the selected Ore
         if (slotIndex == 0) {
-            tooltip.addAll(GTUtility.createSpawnPageBiomeTooltip(biomeFunction, weight));
+            tooltip.addAll(GTJEIUtility.createSpawnPageBiomeTooltip(biomeFunction, weight));
             if (description != null) {
                 tooltip.add(description);
             }

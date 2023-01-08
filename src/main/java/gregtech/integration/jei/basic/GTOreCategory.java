@@ -1,6 +1,7 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.util.GTJEIUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
@@ -137,20 +138,20 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         //Give room for 5 lines of 5 ores each, so 25 unique ores in the vein
         //73 is SLOT_HEIGHT * (NUM_OF_SLOTS - 1) + 1
         if (baseYPos >= SLOT_HEIGHT * NUM_OF_SLOTS) {
-            minecraft.fontRenderer.drawString("Spawn Range: " + minHeight + "-" + maxHeight, 70, baseYPos + 1, 0x111111);
+            minecraft.fontRenderer.drawString("Spawn Range: " + minHeight + "-" + maxHeight, baseXPos, baseYPos + 1, 0x111111);
         } else {
-            minecraft.fontRenderer.drawString("Spawn Range: " + minHeight + "-" + maxHeight, 70, SLOT_HEIGHT * (NUM_OF_SLOTS - 1) + 1, 0x111111);
+            minecraft.fontRenderer.drawString("Spawn Range: " + minHeight + "-" + maxHeight, baseXPos, SLOT_HEIGHT * (NUM_OF_SLOTS - 1) + 1, 0x111111);
             //Update the position at which the spawn information ends
             baseYPos = 73;
         }
 
         //Create the Weight
-        minecraft.fontRenderer.drawString("Vein Weight: " + weight, 70, baseYPos + FONT_HEIGHT, 0x111111);
+        minecraft.fontRenderer.drawString("Vein Weight: " + weight, baseXPos, baseYPos + FONT_HEIGHT, 0x111111);
 
         //Create the Dimensions
-        minecraft.fontRenderer.drawString("Dimensions: ", 70, baseYPos + (2 * FONT_HEIGHT), 0x111111);
+        minecraft.fontRenderer.drawString("Dimensions: ", baseXPos, baseYPos + (2 * FONT_HEIGHT), 0x111111);
 
-        GTStringUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), baseYPos + 3 * FONT_HEIGHT, dimDisplayPos);
+        GTJEIUtility.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), minecraft.fontRenderer, baseXPos, baseYPos + 3 * FONT_HEIGHT, dimDisplayPos);
 
         //Label the Surface Identifier
         minecraft.fontRenderer.drawSplitString("SurfaceMaterial", 15, 92, minecraft.fontRenderer.getStringWidth("Surface"), 0x111111);

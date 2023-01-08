@@ -1113,6 +1113,7 @@ public class GTUtility {
         return false;
     }
 
+
     @Nonnull
     public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
         return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");

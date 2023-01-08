@@ -1,6 +1,7 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.util.GTJEIUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
@@ -40,7 +41,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
     private Supplier<List<Integer>> dimension;
-    private final int textStartX= 5;
+    private final int textStartX = 5;
     private int weightLength;
     private int minYieldLength;
     private int maxYieldLength;
@@ -147,7 +148,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         int dimensionLength = minecraft.fontRenderer.getStringWidth(veinDimension);
         minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, 0x111111);
 
-        GTStringUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
+        GTJEIUtility.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), minecraft.fontRenderer, textStartX,  startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
 
     }
 

@@ -1,7 +1,7 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.util.FileUtility;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTJEIUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -82,7 +82,7 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
             tooltip.add(description);
         }
 
-        List<String> biomeTooltip = GTUtility.createSpawnPageBiomeTooltip(biomeFunction, weight);
+        List<String> biomeTooltip = GTJEIUtility.createSpawnPageBiomeTooltip(biomeFunction, weight);
         if(!biomeTooltip.isEmpty()) {
             tooltip.addAll(biomeTooltip);
         }
