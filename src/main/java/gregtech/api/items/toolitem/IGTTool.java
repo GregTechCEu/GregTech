@@ -367,6 +367,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             if (result != 0) {
                 // prevent exploits with instantly breakable blocks
                 IBlockState state = player.world.getBlockState(pos);
+                state = state.getBlock().getActualState(state, player.world, pos);
                 boolean effective = false;
                 for (String type : getToolClasses(stack)) {
                     if (state.getBlock().isToolEffective(type, state)) {
