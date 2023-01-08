@@ -359,6 +359,7 @@ public class CommonProxy {
     }
 
     public void onLoad() {
+        GregTechDataFixers.init();
     }
 
     public void onPostLoad() {
