@@ -3,7 +3,7 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
-import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
@@ -70,7 +70,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering Blocks...");
         IForgeRegistry<Block> registry = event.getRegistry();
 
-        registry.register(MACHINE);
+        MetaTileEntityBlock.registerBlocks(registry);
 
         StoneType.init();
 
@@ -209,7 +209,7 @@ public class CommonProxy {
 
         GTRecipeManager.preLoad();
 
-        registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
+        MetaTileEntityBlock.registerItems(registry);
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(materialRegistry.getModid())) registry.register(createItemBlock(cable, ItemBlockCable::new));

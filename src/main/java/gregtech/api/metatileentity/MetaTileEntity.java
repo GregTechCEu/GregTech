@@ -14,7 +14,7 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -40,6 +40,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -147,6 +149,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public IGregTechTileEntity getHolder() {
         return holder;
+    }
+
+    public MetaTileEntityBlock getBlock() {
+        MetaTileEntityBlock block = MetaTileEntityBlock.get(
+                getMaterial(),
+                getSoundType(),
+                getHarvestTool(),
+                getHarvestLevel(),
+                isOpaqueCube(),
+                true
+        );
+        if (block == null) {
+            throw new IllegalStateException("Could not find registered Block for MetaTileEntity " + metaTileEntityId);
+        }
+        return block;
     }
 
     public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
@@ -259,7 +276,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
         return renderLayer == BlockRenderLayer.CUTOUT_MIPPED ||
                 renderLayer == BloomEffectUtil.getRealBloomLayer() ||
-                (renderLayer == BlockRenderLayer.TRANSLUCENT && !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
+                (renderLayer == BlockRenderLayer.TRANSLUCENT && !isOpaqueCube());
     }
 
     @SideOnly(Side.CLIENT)
@@ -815,7 +832,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public final ItemStack getStackForm(int amount) {
         int metaTileEntityIntId = GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntityId);
-        return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
+        return new ItemStack(getBlock(), amount, metaTileEntityIntId);
     }
 
     public final ItemStack getStackForm() {
@@ -878,6 +895,20 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      */
     public BlockFaceShape getFaceShape(EnumFacing side) {
         return isOpaqueCube() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+    }
+
+    /**
+     * @return the Minecraft Material type of this tile entity's Block
+     */
+    public Material getMaterial() {
+        return Material.IRON;
+    }
+
+    /**
+     * @return the sound type of this tile entity's block, used for breaking sound, walking sound, etc.
+     */
+    public SoundType getSoundType() {
+        return SoundType.METAL;
     }
 
     /**

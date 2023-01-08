@@ -3,7 +3,7 @@ package gregtech.api.util;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.block.machines.MetaTileEntityItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.items.metaitem.MetaItem;
@@ -695,7 +695,7 @@ public class GTUtility {
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
-        if (!(stack.getItem() instanceof MachineItemBlock)) return null;
+        if (!(stack.getItem() instanceof MetaTileEntityItemBlock)) return null;
         return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
     }
 
