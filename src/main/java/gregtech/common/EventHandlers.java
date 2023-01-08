@@ -13,8 +13,6 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.IStepAssist;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
-import gregtech.common.tools.ToolUtility;
-import gregtech.tools.enchants.EnchantmentHardHammer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
