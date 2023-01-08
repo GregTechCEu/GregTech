@@ -1,7 +1,7 @@
 package gregtech.core.network.packets;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
@@ -49,7 +49,7 @@ public class PacketRecoverMTE implements IPacket, IServerExecutor {
                 buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(holder.getMetaTileEntity().metaTileEntityId));
                 holder.getMetaTileEntity().writeInitialSyncData(buffer);
             });
-        } else if (!(world.getBlockState(pos).getBlock() instanceof BlockMachine)) {
+        } else if (!(world.getBlockState(pos).getBlock() instanceof MetaTileEntityBlock)) {
             handler.player.connection.sendPacket(new SPacketBlockChange(world, pos));
         }
     }

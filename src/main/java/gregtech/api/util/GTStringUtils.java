@@ -1,6 +1,6 @@
 package gregtech.api.util;
 
-import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.block.machines.MetaTileEntityItemBlock;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -37,7 +37,7 @@ public final class GTStringUtils {
                 }
                 return "(MetaItem) " + metaValueItem.unlocalizedName + " * " + stack.getCount();
             }
-        } else if (stack.getItem() instanceof MachineItemBlock) {
+        } else if (stack.getItem() instanceof MetaTileEntityItemBlock) {
             MetaTileEntity mte = GTUtility.getMetaTileEntity(stack);
             if (mte != null) {
                 String id = mte.metaTileEntityId.toString();

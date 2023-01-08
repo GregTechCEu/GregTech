@@ -14,6 +14,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +31,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static gregtech.api.recipes.ModHandler.isMaterialWood;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
 
@@ -60,8 +63,20 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
+    public net.minecraft.block.material.Material getMaterial() {
+        return isMaterialWood(material)
+                ? net.minecraft.block.material.Material.WOOD
+                : super.getMaterial();
+    }
+
+    @Override
+    public SoundType getSoundType() {
+        return isMaterialWood(material) ? SoundType.WOOD : super.getSoundType();
+    }
+
+    @Override
     public String getHarvestTool() {
-        return ModHandler.isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
+        return ModHandler.isMaterialWood(material) ? ToolClasses.AXE : super.getHarvestTool();
     }
 
     @Override

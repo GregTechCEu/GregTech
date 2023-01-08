@@ -7,7 +7,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
-import gregtech.common.blocks.MetaBlocks;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
@@ -519,9 +518,10 @@ public class BlockPattern {
                         // TODO
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                            holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
+                            MetaTileEntity mte = ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity();
+                            holder.setMetaTileEntity(mte);
                             holder.getMetaTileEntity().onPlacement();
-                            info = new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
+                            info = new BlockInfo(mte.getBlock().getDefaultState(), holder);
                         }
                         blocks.put(pos, info);
                         minX = Math.min(pos.getX(), minX);

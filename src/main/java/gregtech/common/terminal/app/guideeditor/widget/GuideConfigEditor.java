@@ -2,7 +2,7 @@ package gregtech.common.terminal.app.guideeditor.widget;
 
 import com.google.gson.JsonObject;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.block.machines.MetaTileEntityItemBlock;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
@@ -256,7 +256,7 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                             jsonObject.addProperty("item", Item.REGISTRY.getNameForObject(stack.getItem()).toString() + ":" + stack.getMetadata());
                         }
                     } else if ((app instanceof MultiBlockGuideApp || app instanceof SimpleMachineGuideApp)
-                            && stack.getItem() instanceof MachineItemBlock) {
+                            && stack.getItem() instanceof MetaTileEntityItemBlock) {
                         MetaTileEntity mte = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
                         if (mte != null) {
                             jsonObject.addProperty("metatileentity", GregTechAPI.MTE_REGISTRY.getNameForObject(mte).getPath());

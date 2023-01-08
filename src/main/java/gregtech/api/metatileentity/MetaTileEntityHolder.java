@@ -10,7 +10,7 @@ import appeng.me.helpers.IGridProxyable;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -82,7 +82,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
         this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
-            updateBlockOpacity();
             writeCustomData(INITIALIZE_MTE, buffer -> {
                 buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(getMetaTileEntity().metaTileEntityId));
                 getMetaTileEntity().writeInitialSyncData(buffer);
@@ -98,14 +97,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
         this.metaTileEntity.holder = this;
-    }
-
-    private void updateBlockOpacity() {
-        IBlockState currentState = world.getBlockState(getPos());
-        boolean isMetaTileEntityOpaque = metaTileEntity.isOpaqueCube();
-        if (currentState.getValue(BlockMachine.OPAQUE) != isMetaTileEntityOpaque) {
-            world.setBlockState(getPos(), currentState.withProperty(BlockMachine.OPAQUE, isMetaTileEntityOpaque));
-        }
     }
 
     @Override
@@ -187,7 +178,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         } else if (world.isRemote) { // recover the mte
             GregTechAPI.networkHandler.sendToServer(new PacketRecoverMTE(world.provider.getDimension(), getPos()));
         } else { // remove the block
-            if (world.getBlockState(pos).getBlock() instanceof BlockMachine) {
+            if (world.getBlockState(pos).getBlock() instanceof MetaTileEntityBlock) {
                 world.setBlockToAir(pos);
             }
         }

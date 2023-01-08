@@ -1,7 +1,7 @@
 package gregtech.api.util;
 
 import crafttweaker.mc1120.data.NBTConverter;
-import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.block.machines.MetaTileEntityItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
@@ -27,7 +27,7 @@ public class CTRecipeHelper {
         }
         if (item.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) item.getItem()).getBlock();
-            if (item.getItem() instanceof MachineItemBlock) {
+            if (item.getItem() instanceof MetaTileEntityItemBlock) {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(item);
                 if (mte != null) {
                     return (mte.metaTileEntityId.getNamespace().equals("gregtech") ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());

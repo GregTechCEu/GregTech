@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.IHeatingCoilBlockStats;
-import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
@@ -56,7 +55,6 @@ public class GregTechAPI {
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
     public static final MaterialRegistry MATERIAL_REGISTRY = new MaterialRegistry();
 
-    public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
     public static final Object2ObjectOpenHashMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
 

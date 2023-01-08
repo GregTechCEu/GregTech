@@ -30,9 +30,9 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class MachineItemBlock extends ItemBlock {
+public class MetaTileEntityItemBlock extends ItemBlock {
 
-    public MachineItemBlock(BlockMachine block) {
+    public MetaTileEntityItemBlock(MetaTileEntityBlock block) {
         super(block);
         setHasSubtypes(true);
     }
@@ -46,11 +46,7 @@ public class MachineItemBlock extends ItemBlock {
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
-        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
-        //prevent rendering glitch before meta tile entity sync to client, but after block placement
-        //set opaque property on the placing on block, instead during set of meta tile entity
-        boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
-                newState.withProperty(BlockMachine.OPAQUE, metaTileEntity != null && metaTileEntity.isOpaqueCube()));
+        boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();

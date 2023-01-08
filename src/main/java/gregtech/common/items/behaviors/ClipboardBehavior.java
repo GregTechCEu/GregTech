@@ -29,7 +29,6 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.common.blocks.MetaBlocks.MACHINE;
 import static gregtech.common.metatileentities.MetaTileEntities.CLIPBOARD_TILE;
 
 public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
@@ -248,7 +247,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                 BlockPos shiftedPos = pos.offset(facing);
                 Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
                 if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
-                    IBlockState state = MACHINE.getDefaultState();
+                    IBlockState state = CLIPBOARD_TILE.getBlock().getDefaultState();
                     world.setBlockState(shiftedPos, state);
                     // Get new TE
                     shiftedBlock.createTileEntity(world, state);

@@ -8,35 +8,39 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.sound.ISoundManager;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.VanillaNameHelper;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
+import gregtech.integration.jei.utils.MachineSubtypeHandler;
+import mezz.jei.api.ISubtypeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving.SpawnPlacementType;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -48,9 +52,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -60,57 +67,116 @@ import java.util.*;
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
 @SuppressWarnings("deprecation")
-public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
+public class MetaTileEntityBlock extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
+
+    private static final Map<String, MetaTileEntityBlock> META_TILE_ENTITY_BLOCK_MACHINE_MAP = new HashMap<>();
 
     private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Collections.emptyList();
-    //used for rendering purposes of non-opaque machines like chests and tanks
-    public static final PropertyBool OPAQUE = PropertyBool.create("opaque");
 
-    public BlockMachine() {
-        super(Material.IRON);
+    private final String nameInternal;
+    private final int harvestLevel;
+    private final String harvestTool;
+    private final boolean opaque;
+    private final boolean normalCube;
+
+    public static String getName(Material material, SoundType soundType, String harvestTool, int harvestLevel, boolean opaque, boolean normalCube) {
+        String materialName = VanillaNameHelper.getNameForMaterial(material);
+        String soundTypeName = VanillaNameHelper.getNameForSoundType(soundType);
+        return "gt.block.metatileentity." + materialName + "." + soundTypeName + "." + harvestTool + "." + harvestLevel + "." + opaque + "." + normalCube;
+    }
+
+    public static MetaTileEntityBlock get(Material material, SoundType soundType, String harvestTool, int harvestLevel, boolean opaque, boolean normalCube) {
+        return META_TILE_ENTITY_BLOCK_MACHINE_MAP.get(getName(material, soundType, harvestTool, harvestLevel, opaque, normalCube));
+    }
+
+    private static MetaTileEntityBlock getOrCreate(Material material, SoundType soundType, String harvestTool, int harvestLevel, boolean opaque, boolean normalCube) {
+        MetaTileEntityBlock block = get(material, soundType, harvestTool, harvestLevel, opaque, normalCube);
+        return block != null ? block : new MetaTileEntityBlock(material, soundType, harvestTool, harvestLevel, opaque, normalCube);
+    }
+
+    public static void registerBlocks(IForgeRegistry<Block> registry) {
+        for (MetaTileEntity mte : GregTechAPI.MTE_REGISTRY) {
+            MetaTileEntityBlock block = getOrCreate(
+                    mte.getMaterial(),
+                    mte.getSoundType(),
+                    mte.getHarvestTool(),
+                    mte.getHarvestLevel(),
+                    mte.isOpaqueCube(),
+                    true); // todo isNormalCube
+            if (!META_TILE_ENTITY_BLOCK_MACHINE_MAP.containsKey(block.nameInternal)) {
+                META_TILE_ENTITY_BLOCK_MACHINE_MAP.put(block.nameInternal, block);
+                registry.register(block);
+            }
+        }
+        System.out.println("Number of MetaTileEntityBlock instances: " + META_TILE_ENTITY_BLOCK_MACHINE_MAP.size());
+    }
+
+    public static void registerItems(IForgeRegistry<Item> registry) {
+        for (Map.Entry<String, MetaTileEntityBlock> entry : META_TILE_ENTITY_BLOCK_MACHINE_MAP.entrySet()) {
+            ItemBlock itemBlock = new MetaTileEntityItemBlock(entry.getValue());
+            itemBlock.setRegistryName(entry.getKey());
+            registry.register(itemBlock);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerItemModels() {
+        for (MetaTileEntityBlock block : META_TILE_ENTITY_BLOCK_MACHINE_MAP.values()) {
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(block), item -> MetaTileEntityRenderer.MODEL_LOCATION);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerStateMappers() {
+        for (MetaTileEntityBlock block : META_TILE_ENTITY_BLOCK_MACHINE_MAP.values()) {
+            ModelLoader.setCustomStateMapper(block, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        }
+    }
+
+    @Optional.Method(modid = GTValues.MODID_JEI)
+    public static void registerSubtypeInterpreters(@Nonnull ISubtypeRegistry registry) {
+        for (MetaTileEntityBlock block : META_TILE_ENTITY_BLOCK_MACHINE_MAP.values()) {
+            registry.registerSubtypeInterpreter(Item.getItemFromBlock(block), new MachineSubtypeHandler());
+        }
+    }
+
+    public static Map<String, MetaTileEntityBlock> getAllBlocks() {
+        return META_TILE_ENTITY_BLOCK_MACHINE_MAP;
+    }
+
+    private MetaTileEntityBlock(Material material, SoundType soundType, String harvestTool, int harvestLevel, boolean opaque, boolean normalCube) {
+        super(material);
+        this.nameInternal = getName(material, soundType, harvestTool, harvestLevel, opaque, normalCube);
+        setRegistryName(nameInternal);
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
-        setSoundType(SoundType.METAL);
-        setHardness(6.0f);
-        setResistance(6.0f);
+        setSoundType(soundType);
         setTranslationKey("unnamed");
-        setDefaultState(getDefaultState().withProperty(OPAQUE, true));
+        this.harvestLevel = harvestLevel;
+        this.harvestTool = harvestTool;
+        this.opaque = opaque;
+        this.normalCube = normalCube;
     }
 
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        return ToolClasses.WRENCH;
+        return harvestTool;
     }
 
     @Override
     public int getHarvestLevel(@Nonnull IBlockState state) {
-        return 1;
+        return harvestLevel;
     }
 
     @Override
-    public boolean causesSuffocation(IBlockState state) {
-        return state.getValue(OPAQUE);
+    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+        return opaque;
     }
 
-    @Nonnull
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, OPAQUE);
-    }
-
-    @Nonnull
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(OPAQUE, meta % 2 == 0);
-    }
+    // todo normal cube/full cube checks
 
     @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(OPAQUE) ? 0 : 1;
-    }
-
-    @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -376,16 +442,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
         return true;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return state.getValue(OPAQUE);
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return state.getValue(OPAQUE);
     }
 
     @Nonnull
