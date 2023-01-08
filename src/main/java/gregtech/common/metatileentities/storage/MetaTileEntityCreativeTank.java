@@ -93,14 +93,13 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
                 || getWorld().isRemote || !active) return;
 
-        FluidStack stack = fluidTank.getFluid().copy();
-
         TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getOutputFacing()));
         if (tile != null) {
             IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getOutputFacing().getOpposite());
             if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
                 return;
 
+            FluidStack stack = fluidTank.getFluid().copy();
             stack.amount = mBPerCycle;
             int canInsertAmount = fluidHandler.fill(stack, false);
             stack.amount = Math.min(mBPerCycle, canInsertAmount);
