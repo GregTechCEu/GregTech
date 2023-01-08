@@ -4630,7 +4630,7 @@ gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
 gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
-gregtech.machine.muffler_hatch.tooltip1=Recovers waste from recipes
+gregtech.machine.muffler_hatch.tooltip1=Recovers waste from machines
 gregtech.machine.muffler_hatch.tooltip2=DO NOT OBSTRUCT THE OUTPUT!
 
 gregtech.machine.muffler_hatch.ulv.name=ULV Muffler Hatch
@@ -4667,10 +4667,6 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to t
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
-
-# TODO:
-# - Multiblock fun descriptions like normal machines
-# - JEI pins
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -4744,12 +4740,6 @@ gregtech.tool_action.soft_mallet.toggle_mode=§8Use Soft Mallet to toggle Modes
 gregtech.tool_action.hammer=§8Use Hard Hammer to muffle Sounds
 gregtech.tool_action.crowbar=§8Use Crowbar to remove Covers
 gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems
-
-# todo clean up wrench usages and fix the tooltip description
-
-# todo obscure tool usages:
-# - Saw Ice harvesting
-# - Wrench Iron Golem Damage
 
 gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%s Plasma

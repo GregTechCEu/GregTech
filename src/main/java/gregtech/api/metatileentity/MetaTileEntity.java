@@ -201,7 +201,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             tooltip.add(I18n.format("gregtech.tool_action.hammer"));
         }
         tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
-        // todo tool_to_break (maybe in the block class where this is called would be easier?)
     }
 
     /** Override this to completely remove the "Tool Info" tooltip section */
