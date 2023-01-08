@@ -133,7 +133,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
 
         ItemStack stack = playerIn.getHeldItem(hand);
-        if(playerIn.isSneaking() && stack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm())) {
+        if(playerIn.isSneaking() && stack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm()) && !isTaped) {
             if(!playerIn.isCreative()) {
                 stack.shrink(1);
             }
@@ -171,7 +171,15 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         this.isTaped = itemStack.getBoolean(TAPED_NBT);
         if(isTaped) {
             this.inventory.deserializeNBT(itemStack.getCompoundTag("Inventory"));
+            itemStack.removeTag("Inventory");
         }
+
+        itemStack.removeTag(TAPED_NBT);
+        if(itemStack.isEmpty()) {
+            itemStack = null;
+        }
+
+        this.isTaped = false;
     }
 
     @Override
