@@ -21,6 +21,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,6 +31,19 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEndpoint {
+
+    private static final FluidTank DEFAULT_TANK = new FluidTank(10000) {
+        @Override
+        public int fill(FluidStack resource, boolean doFill) {
+            return 0;
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drainInternal(int maxDrain, boolean doDrain) {
+            return null;
+        }
+    };
 
     public MetaTileEntityLDFluidEndpoint(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, LDFluidPipeType.INSTANCE);
@@ -47,11 +62,16 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == getFrontFacing()) {
+            if (getWorld().isRemote) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(DEFAULT_TANK);
+            }
             ILDEndpoint endpoint = getLink();
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
                 TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
                 return te != null ? te.getCapability(capability, outputFacing.getOpposite()) : null;
+            } else {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(DEFAULT_TANK);
             }
         }
         return super.getCapability(capability, side);
