@@ -1104,17 +1104,20 @@ public class FirstDegreeMaterials {
         NitricAcid = new Material.Builder(401, "nitric_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xCCCC00)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
         SulfuricAcid = new Material.Builder(402, "sulfuric_acid")
                 .fluid(FluidTypes.ACID)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PhosphoricAcid = new Material.Builder(403, "phosphoric_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xDCDC01)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
                 .build();
 

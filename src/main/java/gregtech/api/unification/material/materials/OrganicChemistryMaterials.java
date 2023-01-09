@@ -404,7 +404,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         PhthalicAcid = new Material.Builder(1057, "phthalic_acid")
-                .fluid(FluidTypes.ACID, true)
+                .fluid(FluidTypes.ACID)
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)
