@@ -8,6 +8,8 @@ import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.entity.monster.EntityGolem;
+import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
@@ -86,7 +88,8 @@ public class ToolItems {
                 .toolClasses(ToolClasses.SAW));
         HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
-                        .attackDamage(1.0F).attackSpeed(-2.8F))
+                        .attackDamage(1.0F).attackSpeed(-2.8F)
+                        .behaviors(new EntityDamageBehavior(2.0F, EntityGolem.class)))
                 .oreDict(ToolOreDicts.craftingToolHammer)
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .symbol('h')
@@ -111,7 +114,7 @@ public class ToolItems {
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .attackDamage(1.0F).attackSpeed(-2.8F)
-                        .behaviors(new BlockRotatingBehavior()))
+                        .behaviors(new BlockRotatingBehavior(), new EntityDamageBehavior(3.0F, EntityGolem.class)))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDicts.craftingToolWrench)
                 .symbol('w')
@@ -133,7 +136,8 @@ public class ToolItems {
                 .toolClasses(ToolClasses.CROWBAR));
         SCREWDRIVER = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver")
                 .toolStats(b -> b.crafting().damagePerCraftingAction(4).sneakBypassUse()
-                        .attackDamage(-1.0F).attackSpeed(3.0F))
+                        .attackDamage(-1.0F).attackSpeed(3.0F)
+                        .behaviors(new EntityDamageBehavior(3.0F, EntitySpider.class)))
                 .sound(GTSoundEvents.SCREWDRIVER_TOOL)
                 .oreDict(ToolOreDicts.craftingToolScrewdriver)
                 .symbol('d')
@@ -227,6 +231,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(2.0F)
                         .attackDamage(1.0F).attackSpeed(-2.8F)
+                        .behaviors(new BlockRotatingBehavior(), new EntityDamageBehavior(3.0F, EntityGolem.class))
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDicts.craftingToolWrench)
@@ -236,6 +241,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(3.0F)
                         .attackDamage(1.0F).attackSpeed(-2.8F)
+                        .behaviors(new BlockRotatingBehavior(), new EntityDamageBehavior(3.0F, EntityGolem.class))
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDicts.craftingToolWrench)
@@ -245,6 +251,7 @@ public class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
                         .efficiencyMultiplier(4.0F)
                         .attackDamage(1.0F).attackSpeed(-2.8F)
+                        .behaviors(new BlockRotatingBehavior(), new EntityDamageBehavior(3.0F, EntityGolem.class))
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDicts.craftingToolWrench)
@@ -260,6 +267,7 @@ public class ToolItems {
         SCREWDRIVER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver_lv")
                 .toolStats(b -> b.crafting().sneakBypassUse()
                         .attackDamage(-1.0F).attackSpeed(3.0F)
+                        .behaviors(new EntityDamageBehavior(3.0F, EntitySpider.class))
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.SCREWDRIVER_TOOL)
                 .oreDict(ToolOreDicts.craftingToolScrewdriver)
