@@ -36,6 +36,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -199,7 +200,7 @@ public final class ToolHelper {
      * @param stack  stack to be damaged
      * @param entity entity that has damaged this stack
      */
-    public static void damageItemWhenCrafting(ItemStack stack, EntityLivingBase entity) {
+    public static void damageItemWhenCrafting(@Nonnull ItemStack stack, @Nullable EntityLivingBase entity) {
         int damage = 2;
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
@@ -220,7 +221,7 @@ public final class ToolHelper {
      * @param stack  stack to be damaged
      * @param entity entity that has damaged this stack
      */
-    public static void damageItem(ItemStack stack, EntityLivingBase entity) {
+    public static void damageItem(@Nonnull ItemStack stack, @Nullable EntityLivingBase entity) {
         damageItem(stack, entity, 1);
     }
 
@@ -232,21 +233,22 @@ public final class ToolHelper {
      * @param entity entity that has damaged this stack
      * @param damage how much damage the stack will take
      */
-    public static void damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
+    public static void damageItem(@Nonnull ItemStack stack, @Nullable EntityLivingBase entity, int damage) {
         if (!(stack.getItem() instanceof IGTTool)) {
-            stack.damageItem(damage, entity);
+            if (entity != null) stack.damageItem(damage, entity);
         } else {
             if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
                 return;
             }
             IGTTool tool = (IGTTool) stack.getItem();
             if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
+                Random random = entity == null ? GTValues.RNG : entity.getRNG();
                 if (tool.isElectric()) {
                     int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
                     IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                     if (electricItem != null) {
                         electricItem.discharge(electricDamage, tool.getElectricTier(), true, false, false);
-                        if (electricItem.getCharge() > 0 && entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
+                        if (electricItem.getCharge() > 0 && random.nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
                             return;
                         }
                     } else {
@@ -256,7 +258,7 @@ public final class ToolHelper {
                 int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
                 int negated = 0;
                 for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
-                    if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, entity.getRNG())) {
+                    if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, random)) {
                         negated++;
                     }
                 }
@@ -271,10 +273,14 @@ public final class ToolHelper {
                 stack.setItemDamage(newDurability);
                 if (newDurability > stack.getMaxDamage()) {
                     if (entity instanceof EntityPlayer) {
-                        EntityPlayer entityplayer = (EntityPlayer) entity;
-                        entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
+                        StatBase stat = StatList.getObjectBreakStats(stack.getItem());
+                        if (stat != null) {
+                            ((EntityPlayer) entity).addStat(stat);
+                        }
                     }
-                    entity.renderBrokenItemStack(stack);
+                    if (entity != null) {
+                        entity.renderBrokenItemStack(stack);
+                    }
                     stack.shrink(1);
                 }
             }
