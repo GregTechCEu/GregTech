@@ -36,6 +36,9 @@ public class ToolHeadReplaceRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             ItemStack stack = inv.getStackInSlot(i);
             if (!stack.isEmpty()) {
                 list.add(stack);
+                if (list.size() > 2) {
+                    return false;
+                }
             }
         }
 
