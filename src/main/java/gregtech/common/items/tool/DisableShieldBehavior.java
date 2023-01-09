@@ -15,6 +15,10 @@ import java.util.List;
 
 public class DisableShieldBehavior implements IToolBehavior {
 
+    public static final DisableShieldBehavior INSTANCE = new DisableShieldBehavior();
+
+    protected DisableShieldBehavior() {/**/}
+
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
         return true;

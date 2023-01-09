@@ -29,6 +29,10 @@ import static gregtech.api.items.toolitem.ToolHelper.TORCH_PLACING_KEY;
 
 public class TorchPlaceBehavior implements IToolBehavior {
 
+    public static final TorchPlaceBehavior INSTANCE = new TorchPlaceBehavior();
+
+    protected TorchPlaceBehavior() {/**/}
+
     @Nonnull
     @Override
     public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
