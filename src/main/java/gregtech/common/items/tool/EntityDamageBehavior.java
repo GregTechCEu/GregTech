@@ -17,10 +17,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Add to tools to have them deal bonus damage to specific mobs.
+ * Pass null for the mobType parameter to ignore the tooltip.
+ */
 public class EntityDamageBehavior implements IToolBehavior {
 
     private final List<Function<EntityLivingBase, Float>> shouldDoBonusList = new ArrayList<>();
     private final String mobType;
+
+    public EntityDamageBehavior(float bonus, Class<?>... entities) {
+        this(null, bonus, entities);
+    }
+
+    public EntityDamageBehavior(Map<Class<?>, Float> entities) {
+        this(null, entities);
+    }
 
     public EntityDamageBehavior(String mobType, float bonus, Class<?>... entities) {
         this.mobType = mobType;
@@ -51,6 +63,8 @@ public class EntityDamageBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(I18n.format("item.gt.tool.behavior.damage_boost", I18n.format("item.gt.tool.behavior.damage_boost_" + mobType)));
+        if (mobType != null && !mobType.isEmpty()) {
+            tooltip.add(I18n.format("item.gt.tool.behavior.damage_boost", I18n.format("item.gt.tool.behavior.damage_boost_" + mobType)));
+        }
     }
 }
