@@ -21,6 +21,10 @@ import java.util.List;
 
 public class RotateRailBehavior implements IToolBehavior {
 
+    public static final RotateRailBehavior INSTANCE = new RotateRailBehavior();
+
+    protected RotateRailBehavior() {/**/}
+
     @Nonnull
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {

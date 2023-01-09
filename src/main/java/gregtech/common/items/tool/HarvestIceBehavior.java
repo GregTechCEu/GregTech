@@ -18,6 +18,10 @@ import java.util.List;
  */
 public class HarvestIceBehavior implements IToolBehavior {
 
+    public static final HarvestIceBehavior INSTANCE = new HarvestIceBehavior();
+
+    protected HarvestIceBehavior() {/**/}
+
     // ice harvesting is handled in an event elsewhere
 
     @Override

@@ -26,6 +26,10 @@ import java.util.Set;
 
 public class GrassPathBehavior implements IToolBehavior {
 
+    public static final GrassPathBehavior INSTANCE = new GrassPathBehavior();
+
+    protected GrassPathBehavior() {/**/}
+
     @Nonnull
     @Override
     public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
