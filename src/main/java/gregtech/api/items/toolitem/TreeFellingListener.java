@@ -8,9 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -72,17 +72,12 @@ public final class TreeFellingListener {
 
     @SubscribeEvent
     public void onWorldTick(@Nonnull TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.START && event.world == player.world) {
+        if (event.phase == TickEvent.Phase.START && event.world == player.world && event.side == Side.SERVER) {
             if (orderedBlocks.isEmpty() || tool.isEmpty()) {
                 MinecraftForge.EVENT_BUS.unregister(this);
                 return;
             }
             ToolHelper.breakBlockRoutine(player, tool, orderedBlocks.removeLast());
         }
-    }
-
-    @SubscribeEvent
-    public void onNeighborNotified(BlockEvent.NeighborNotifyEvent event) {
-
     }
 }
