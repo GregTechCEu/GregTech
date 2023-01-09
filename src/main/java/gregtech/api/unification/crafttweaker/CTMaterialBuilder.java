@@ -146,8 +146,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder toolStats(float speed, float damage, int durability, int harvestLevel) {
-        backingBuilder.toolStats(ToolProperty.Builder.of(speed, damage, durability, harvestLevel).build());
+    public CTMaterialBuilder toolStats(float speed, float damage, int durability, int harvestLevel, @Optional int enchantability) {
+        if (enchantability == 0) enchantability = 10;
+        backingBuilder.toolStats(ToolProperty.Builder.of(speed, damage, durability, harvestLevel).enchantability(enchantability).build());
         return this;
     }
     @ZenMethod
