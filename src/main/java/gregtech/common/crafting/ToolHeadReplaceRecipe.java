@@ -33,30 +33,30 @@ public class ToolHeadReplaceRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         List<ItemStack> list = new ArrayList<>();
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack itemstack = inv.getStackInSlot(i);
-
-            if (!itemstack.isEmpty()) {
-                list.add(itemstack);
-
-                if (list.size() > 1) {
-                    ItemStack stack = list.get(0);
-
-                    IGTTool tool;
-                    UnificationEntry toolHead;
-                    if (itemstack.getItem() instanceof IGTTool) {
-                        tool = (IGTTool) itemstack.getItem();
-                        toolHead = OreDictUnifier.getUnificationEntry(stack);
-                    } else if (stack.getItem() instanceof IGTTool) {
-                        tool = (IGTTool) stack.getItem();
-                        toolHead = OreDictUnifier.getUnificationEntry(itemstack);
-                    } else return false;
-
-                    if (!tool.isElectric()) return false;
-                    if (toolHead == null) return false;
-                    IGTTool[] output = TOOL_HEAD_TO_TOOL_MAP.get(toolHead.orePrefix);
-                    return output != null && output[tool.getElectricTier()] != null;
-                }
+            ItemStack stack = inv.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                list.add(stack);
             }
+        }
+
+        if (list.size() == 2) {
+            ItemStack stack1 = list.get(0);
+            ItemStack stack2 = list.get(1);
+
+            IGTTool tool;
+            UnificationEntry toolHead;
+            if (stack1.getItem() instanceof IGTTool) {
+                tool = (IGTTool) stack1.getItem();
+                toolHead = OreDictUnifier.getUnificationEntry(stack2);
+            } else if (stack2.getItem() instanceof IGTTool) {
+                tool = (IGTTool) stack2.getItem();
+                toolHead = OreDictUnifier.getUnificationEntry(stack1);
+            } else return false;
+
+            if (!tool.isElectric()) return false;
+            if (toolHead == null) return false;
+            IGTTool[] output = TOOL_HEAD_TO_TOOL_MAP.get(toolHead.orePrefix);
+            return output != null && output[tool.getElectricTier()] != null;
         }
         return false;
     }
