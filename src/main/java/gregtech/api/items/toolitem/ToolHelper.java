@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
-import gregtech.asm.util.ObfMapping;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.tools.enchants.EnchantmentHardHammer;
@@ -49,6 +48,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -133,11 +133,11 @@ public final class ToolHelper {
             // archaic way to get around access violations for method handles.
             // this was improved in Java 9 with MethodHandles.privateLookupIn(),
             // but that does not exist in Java 8, so we have to unreflect instead.
-            Method method = Block.class.getDeclaredMethod(ObfMapping.mcpMapper.mapMethodName("func_180643_i"), IBlockState.class);
+            Method method = ObfuscationReflectionHelper.findMethod(Block.class, "func_180643_i", ItemStack.class, IBlockState.class);
             method.setAccessible(true);
             GET_SILK_TOUCH_DROP = MethodHandles.lookup().unreflect(method);
             method.setAccessible(false);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
     }

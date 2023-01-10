@@ -2,7 +2,6 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 
 import static gregtech.api.unification.material.Materials.*;
 
@@ -405,8 +404,5 @@ public class MaterialFlagAddition {
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
-
-        ToolProperty toolProp = Neutronium.getProperty(PropertyKey.TOOL);
-        toolProp.setUnbreakable(true);
     }
 }

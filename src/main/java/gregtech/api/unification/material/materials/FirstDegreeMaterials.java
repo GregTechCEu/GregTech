@@ -5,6 +5,7 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import net.minecraft.init.Enchantments;
 
 import static gregtech.api.GTValues.*;
@@ -93,7 +94,8 @@ public class FirstDegreeMaterials {
                 .color(0xFF8000).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME, GENERATE_SMALL_GEAR, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Tin, 1, Copper, 3)
-                .toolStats(3.0f, 2.0f, 192, 2, 18)
+                .toolStats(ToolProperty.Builder.of(3.0F, 2.0F, 192, 2)
+                        .enchantability(18).build())
                 .rotorStats(6.0f, 2.5f, 192)
                 .fluidPipeProperties(1696, 20, true)
                 .fluidTemp(1357)
@@ -208,7 +210,8 @@ public class FirstDegreeMaterials {
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
-                .toolStats(6.0f, 7.0f, 0.1f, 768, 3, 18)
+                .toolStats(ToolProperty.Builder.of(6.0F, 7.0F, 768, 3)
+                        .attackSpeed(0.1F).enchantability(18).build())
                 .build();
 
         Electrum = new Material.Builder(277, "electrum")
@@ -288,10 +291,11 @@ public class FirstDegreeMaterials {
                 .color(0xB4B478).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FRAME, GENERATE_GEAR)
                 .components(Iron, 2, Nickel, 1)
-                .toolStats(4.0f, 3.0f, 384, 2, 18)
+                .toolStats(ToolProperty.Builder.of(4.0F, 3.0F, 384, 2)
+                        .enchantability(18)
+                        .enchantment(Enchantments.BANE_OF_ARTHROPODS, 3)
+                        .enchantment(Enchantments.EFFICIENCY, 1).build())
                 .rotorStats(7.0f, 3.0f, 512)
-                .addDefaultEnchant(Enchantments.BANE_OF_ARTHROPODS, 3)
-                .addDefaultEnchant(Enchantments.EFFICIENCY, 1)
                 .fluidTemp(1916)
                 .build();
 
@@ -396,8 +400,9 @@ public class FirstDegreeMaterials {
                 .color(0xFADCE1).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .components(Copper, 1, Silver, 4)
-                .toolStats(3.0f, 8.0f, 0.3f, 768, 2, 33)
-                .addDefaultEnchant(Enchantments.SMITE, 3)
+                .toolStats(ToolProperty.Builder.of(3.0F, 8.0F, 768, 2)
+                        .attackSpeed(0.3F).enchantability(33)
+                        .enchantment(Enchantments.SMITE, 3).build())
                 .rotorStats(13.0f, 2.0f, 196)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1700, GasTier.LOW, VA[MV], 1000)
@@ -409,9 +414,10 @@ public class FirstDegreeMaterials {
                 .color(0xFFE61E).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING)
                 .components(Copper, 1, Gold, 4)
-                .toolStats(12.0f, 2.0f, 768, 2, 33)
+                .toolStats(ToolProperty.Builder.of(12.0F, 2.0F, 768, 2)
+                        .enchantability(33)
+                        .enchantment(Enchantments.FORTUNE, 2).build())
                 .rotorStats(14.0f, 2.0f, 152)
-                .addDefaultEnchant(Enchantments.FORTUNE, 2)
                 .itemPipeProperties(1024, 2)
                 .blastTemp(1600, GasTier.LOW, VA[MV], 1000)
                 .fluidTemp(1341)
@@ -571,7 +577,8 @@ public class FirstDegreeMaterials {
                 .color(0xC8C8DC).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
-                .toolStats(7.0f, 5.0f, 1024, 3, 14)
+                .toolStats(ToolProperty.Builder.of(7.0F, 5.0F, 1024, 3)
+                        .enchantability(14).build())
                 .rotorStats(7.0f, 4.0f, 480)
                 .fluidPipeProperties(2428, 75, true, true, true, false)
                 .blastTemp(1700, GasTier.LOW, VA[HV], 1100)
@@ -584,7 +591,8 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING,
                         GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Iron, 1)
-                .toolStats(5.0f, 3.0f, 512, 3, 14)
+                .toolStats(ToolProperty.Builder.of(5.0F, 3.0F, 512, 3)
+                        .enchantability(14).build())
                 .rotorStats(6.0f, 3.0f, 512)
                 .fluidPipeProperties(1855, 75, true)
                 .cableProperties(GTValues.V[4], 2, 2)
@@ -636,7 +644,8 @@ public class FirstDegreeMaterials {
                 .color(0xB4B4E6).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1)
-                .toolStats(10.0f, 7.0f, 0.1f, 2048, 4, 21)
+                .toolStats(ToolProperty.Builder.of(10.0F, 7.0F, 2048, 4)
+                        .attackSpeed(0.1F).enchantability(21).build())
                 .rotorStats(9.0f, 4.0f, 2048)
                 .itemPipeProperties(128, 16)
                 .blastTemp(2700, GasTier.MID, VA[HV], 1300)
@@ -672,7 +681,8 @@ public class FirstDegreeMaterials {
                 .color(0xC8B4B4).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
-                .toolStats(2.0f, 2.0f, -0.2f, 384, 2, 5)
+                .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 384, 2)
+                        .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(6.0f, 3.5f, 384)
                 .fluidTemp(2011)
                 .build();
@@ -1060,7 +1070,8 @@ public class FirstDegreeMaterials {
                 .color(0x330066).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Tungsten, 1, Carbon, 1)
-                .toolStats(60.0f, 2.0f, 1024, 4, 21)
+                .toolStats(ToolProperty.Builder.of(60.0F, 2.0F, 1024, 4)
+                        .enchantability(21).build())
                 .rotorStats(12.0f, 4.0f, 1280)
                 .fluidPipeProperties(3837, 200, true)
                 .blastTemp(3058, GasTier.MID, VA[HV], 1500)
@@ -1093,17 +1104,20 @@ public class FirstDegreeMaterials {
         NitricAcid = new Material.Builder(401, "nitric_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xCCCC00)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
         SulfuricAcid = new Material.Builder(402, "sulfuric_acid")
                 .fluid(FluidTypes.ACID)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PhosphoricAcid = new Material.Builder(403, "phosphoric_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xDCDC01)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
                 .build();
 

@@ -165,7 +165,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             }
             case MinecraftVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                ClassWriter classWriter = new ClassWriter(0);
                 classReader.accept(new TargetClassVisitor(classWriter, MinecraftVisitor.PROCESS_KEY_F3, MinecraftVisitor::new), ClassReader.EXPAND_FRAMES);
                 return classWriter.toByteArray();
             }

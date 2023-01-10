@@ -22,6 +22,10 @@ import java.util.List;
 
 public class BlockRotatingBehavior implements IToolBehavior {
 
+    public static final BlockRotatingBehavior INSTANCE = new BlockRotatingBehavior();
+
+    protected BlockRotatingBehavior() {/**/}
+
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
         TileEntity te = world.getTileEntity(pos);
