@@ -4885,6 +4885,7 @@ gregtech.command.worldgen.usage=使い方: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=使い方: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=configからWorldgenが正常に読み込まれました.
 gregtech.command.worldgen.reload.failed=Worldgenの読み込みに失敗しました. エラーを確認してください.
+gregtech.command.hand.groovy=§6/gs hand§rを検討してください.
 gregtech.command.hand.usage=使い方: /gregtech hand
 gregtech.command.hand.item_id=アイテムID: %s (メタデータ: %d)
 gregtech.command.hand.electric=蓄電量: %d / %d EU - Tier: %d; バッテリー？: %s
