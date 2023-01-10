@@ -1,7 +1,7 @@
 # Chinese translate by rentommy & 落樱之鱼 & Kasumi_Nova.
 # 中文翻译由 rentommy & 落樱之鱼 & Kasumi_Nova 翻译。
-# Corresponding Version: 2.2.3 - beta
-# 对应版本: 2.2.3 - beta
+# Corresponding Version: 2.5.0 - beta
+# 对应版本: 2.5.0 - beta
 
 death.attack.heat=%s 被煮熟了
 death.attack.frost=%s 被冻死了
@@ -12,6 +12,35 @@ death.attack.turbine=%s 将他的头伸进了涡轮机里
 death.attack.explosion=%s 爆炸了
 death.attack.explosion.player=%s 被 %s 炸死了
 death.attack.heat.player=%s 被 %s煮熟了
+
+death.attack.pickaxe=%s got mined by %s
+death.attack.shovel=%s got dug up by %s
+death.attack.axe=%s has been chopped by %s
+death.attack.hoe=%s had their head tilled by %s
+death.attack.hammer=%s was squashed by %s
+death.attack.mallet=%s got hammered to death by %s
+death.attack.mining_hammer=%s was mistaken for Ore by %s
+death.attack.spade=%s got excavated by %s
+death.attack.wrench=%s gave %s a whack with the Wrench!
+death.attack.file=%s has been filed D for 'Dead' by %s
+death.attack.crowbar=%s lost half a life to %s
+death.attack.screwdriver=%s has screwed with %s for the last time!
+death.attack.mortar=%s was ground to dust by %s
+death.attack.wire_cutter=%s has cut the cable for the Life Support Machine of %s
+death.attack.scythe=%s had their soul taken by %s
+death.attack.knife=%s was gently poked by %s
+death.attack.butchery_knife=%s was butchered by %s
+death.attack.drill_lv=%s was drilled with 32V by %s
+death.attack.drill_mv=%s was drilled with 128V by %s
+death.attack.drill_hv=%s was drilled with 512V by %s
+death.attack.drill_ev=%s was drilled with 2048V by %s
+death.attack.drill_iv=%s was drilled with 8192V by %s
+death.attack.chainsaw_lv=%s was massacred by %s
+death.attack.wrench_lv=%s's pipes were loosened by %s
+death.attack.wrench_hv=%s's pipes were loosened by %s
+death.attack.wrench_iv=%s had a Monkey Wrench thrown into their plans by %s
+death.attack.buzzsaw=%s got buzzed by %s
+death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=末影离析
 
@@ -29,8 +58,6 @@ gregtech.machine.steam_oven.name=蒸汽熔炉
 gregtech.machine.steam_oven.tooltip=每次合成最多熔炼8件物品. 需要1.5倍的处理时间, 不受物品数量的影响。要求§e蒸汽舱和总线
 gregtech.multiblock.steam_oven.description=一个蒸汽时代的多方块熔炉. 需要至少6个青铜机器外壳形成。不能使用正常的输入/输出总线，也不能使用除蒸汽舱以外的流体舱。蒸汽舱必须在底层，不能超过一个。
 
-gregtech.top.energy_stored=储存能量:
-gregtech.top.progress=进度:
 gregtech.top.working_disabled=工作暂停
 
 gregtech.top.energy_consumption=消耗:
@@ -44,19 +71,34 @@ gregtech.top.transform_output=§9输出:§r
 gregtech.top.convert_eu=§e正在转换 EU§r
 gregtech.top.convert_fe=§c正在转换 FE§r
 
-gregtech.top.fuel_burn=for
-gregtech.top.fuel_time=秒
 gregtech.top.fuel_min_consume=需要
-gregtech.top.fuel_name=燃料:
 gregtech.top.fuel_none=没有燃料
 
 gregtech.top.invalid_structure=§c结构不完整
 gregtech.top.valid_structure=§a已成型结构
 gregtech.top.obstructed_structure=§c结构被阻挡
+
 gregtech.top.maintenance_fixed=§a维护正常
 gregtech.top.maintenance_broken=§c需要维护
+gregtech.top.maintenance.wrench=管道松动
+gregtech.top.maintenance.screwdriver=螺丝松了
+gregtech.top.maintenance.soft_mallet=有东西被卡住了
+gregtech.top.maintenance.hard_hammer=镀层凹陷
+gregtech.top.maintenance.wire_cutter=电线烧坏了
+gregtech.top.maintenance.crowbar=那东西不应该在那
 
 gregtech.top.primitive_pump_production=产出:
+
+gregtech.top.filter.label=过滤器：
+gregtech.top.link_cover.color=颜色：
+
+gregtech.top.mode.export=正在导出
+gregtech.top.mode.import=正在导入
+
+gregtech.top.unit.items=物品
+gregtech.top.unit.fluid_milibuckets=L
+gregtech.top.unit.fluid_buckets=kL
+
 
 gregtech.multiblock.title=多方块结构
 gregtech.multiblock.primitive_blast_furnace.bronze.description=土高炉是一种用来在游戏前期生产钢的多方块结构. 尽管它不是很快, 却能为你的发展提供钢.
@@ -87,6 +129,10 @@ gregtech.multiblock.advanced_processing_array.description=处理阵列结合了�
 
 item.invalid.name=无效物品
 fluid.empty=空
+
+gregtech.tooltip.hold_shift=按住SHIFT获取更多信息
+gregtech.tooltip.fluid_pipe_hold_shift=按住SHIFT显示流体容器信息
+gregtech.tooltip.tool_fluid_hold_shift=按住SHIFT显示流体容器和工具信息
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - 等级 %s
@@ -133,8 +179,6 @@ metaitem.power_unit.ev.name=能量单元 (EV)
 metaitem.power_unit.iv.name=能量单元 (IV)
 metaitem.nano_saber.name=纳米剑
 metaitem.nano_saber.tooltip=竜神の剣を喰らえ！
-metaitem.energy_field_projector.name=能量场投影仪
-metaitem.energy_field_projector.tooltip=击退靠近佩戴者的实体
 
 metaitem.shape.mold.plate.name=模具（板）
 metaitem.shape.mold.plate.tooltip=用来制作板的模具
@@ -154,12 +198,6 @@ metaitem.shape.mold.block.name=模具(块)
 metaitem.shape.mold.block.tooltip=用来制作块的模具
 metaitem.shape.mold.nugget.name=模具(粒)
 metaitem.shape.mold.nugget.tooltip=用来制作粒的模具
-metaitem.shape.mold.bun.name=模具(小圆面包)
-metaitem.shape.mold.bun.tooltip=用来制作小圆面包的模具
-metaitem.shape.mold.bread.name=模具(面包)
-metaitem.shape.mold.bread.tooltip=用来制作面包的模具
-metaitem.shape.mold.baguette.name=模具(法棍)
-metaitem.shape.mold.baguette.tooltip=用来制作法棍的模具
 metaitem.shape.mold.cylinder.name=模具(圆柱)
 metaitem.shape.mold.cylinder.tooltip=用来制作圆柱的模具
 metaitem.shape.mold.anvil.name=模具(砧)
@@ -270,8 +308,6 @@ metaitem.tool.lighter.invar.name=打火机
 metaitem.tool.lighter.platinum.name=铂打火机
 metaitem.tool.lighter.platinum.tooltip=上面刻着一位知名的恶作剧大师
 
-metaitem.ingot.iridiumalloy.name=铱合金锭
-metaitem.ingot.iridiumalloy.tooltip=用来制作铱合金板
 
 metaitem.battery.hull.lv.name=小型电池外壳
 metaitem.battery.hull.lv.tooltip=一个空的 §7LV §7电池外壳
@@ -473,6 +509,8 @@ metaitem.robot.arm.uxv.name=UXV 机械臂
 metaitem.robot.arm.uxv.tooltip=按指定速率抽取物品 (作覆盖板时)
 metaitem.robot.arm.opv.name=OpV 机械臂
 metaitem.robot.arm.opv.tooltip=按指定速率抽取物品 (作覆盖板时)
+
+metaitem.robot.arm.tooltip=将§f物品§7限制为特定数量（作为覆盖板时）。
 
 metaitem.field.generator.lv.name=LV 力场发生器
 metaitem.field.generator.mv.name=MV 力场发生器
@@ -1084,6 +1122,11 @@ metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
 
 metaitem.nan.certificate.name=不再是菜鸟的证明
 metaitem.nan.certificate.tooltip=接受挑战!
+
+metaitem.fertilizer.name=肥料
+
+metaitem.blacklight.name=暗灯
+metaitem.blacklight.tooltip=长波§d紫外线§7光源
 
 gui.widget.incrementButton.default_tooltip=按住Shift键、Ctrl键或同时按住这两个键来改变数量
 gui.widget.recipeProgressWidget.default_tooltip=查看配方
@@ -2476,6 +2519,7 @@ tile.fusion_casing.fusion_casing_mk3.name=聚变机械方块 MK III
 tile.transparent_casing.tempered_glass.name=强化玻璃
 tile.transparent_casing.fusion_glass.name=聚变反应堆玻璃
 tile.transparent_casing.laminated_glass.name=夹层玻璃
+tile.transparent_casing.cleanroom_glass.name=超净间玻璃
 
 # Creative tabs
 itemGroup.gregtech.main=格雷科技
@@ -2529,6 +2573,13 @@ gregtech.multiblock.tank.tooltip=通过控制器或储罐阀门注水和排水
 gregtech.tank_valve.tooltip=用于填充和排水多方块结果储罐。面朝下时自动输出。
 
 gregtech.machine.clipboard.name=剪贴板
+
+# Cleanroom Casings
+tile.cleanroom_casing.plascrete.name=塑料混凝土
+tile.cleanroom_casing.filter_casing.name=过滤器机械方块
+tile.cleanroom_casing.filter_casing_sterile.name=除菌过滤器机械方块
+tile.cleanroom_casing.filter.tooltip=创造一个§a无尘§7环境
+tile.cleanroom_casing.filter_sterile.tooltip=创造一个§a无菌§7环境
 
 # Asphalt
 tile.asphalt.asphalt.name=沥青
@@ -4473,6 +4524,23 @@ gregtech.machine.fluid_drilling_rig.depletion=消耗速度: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=需要 %s§7 能量. 超频到 %s§7
 gregtech.machine.fluid_drilling_rig.overclock=超频可以提高§d50%%§7产出
 
+gregtech.machine.cleanroom.name=超净间
+gregtech.machine.cleanroom.tooltip.1=将机器放在里面运行超净间配方。
+gregtech.machine.cleanroom.tooltip.2=污染时使用§f30EU/t§7，洁净时使用§f4EU/t§7。
+gregtech.machine.cleanroom.tooltip.3=超频增加每个周期的清洁度。
+gregtech.machine.cleanroom.tooltip.4=§b大小：§f5x5x5到15x15x15
+gregtech.machine.cleanroom.tooltip.hold_ctrl=按住CTRL以显示完整的结构信息
+gregtech.machine.cleanroom.tooltip.5=天花板需要§f过滤器机械方块§7，不包含边缘。
+gregtech.machine.cleanroom.tooltip.6=接受最多§f4个门§7！ 门打开也保持洁净。
+gregtech.machine.cleanroom.tooltip.7=发电机、消声仓、钻机和原始机器对于超净间来说太脏了！
+gregtech.machine.cleanroom.tooltip.8=通过§f机械方块§7或墙上的§f二极管§7发送能量。
+gregtech.machine.cleanroom.tooltip.9=使用§f传送带(覆盖板)§7在墙上发送物品和流体。
+gregtech.machine.cleanroom.tooltip.ae2.channels=通过§f机械方块§7在墙上发送最多§f8AE2频道§7。
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=通过墙上的§f机械方块§7发送§aAE2网络§7。
+gregtech.multiblock.cleanroom.clean_state=状态：§a洁净
+gregtech.multiblock.cleanroom.dirty_state=状态：§4污染
+gregtech.multiblock.cleanroom.clean_amount=清洁度：§a%s%%
+
 gregtech.machine.central_monitor.name=中央显示器
 gregtech.multiblock.central_monitor.low_power=低功率
 gregtech.multiblock.central_monitor.height=屏幕高度: %d
@@ -4708,6 +4776,10 @@ gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆炸物: %s
 gregtech.recipe.eu_to_start=启动耗电: %sEU
 gregtech.recipe.dimensions=维度: %s
+
+gregtech.recipe.cleanroom=需求：%s
+gregtech.recipe.cleanroom.display_name=超净间
+gregtech.recipe.cleanroom_sterile.display_name=无菌超净间
 
 gregtech.fluid.click_to_fill=§7单击流体容器可 §b填充 §7这个容器 (Shift单击可以得到整组)。
 gregtech.fluid.click_combined=§7单击流体容器可 §c清空 §7或 §b填充 §7这个容器 (Shift单击可以得到整组)。
@@ -5177,9 +5249,10 @@ terminal.cape_selector.tip=你可以经过获得困难的进度以开放披风�
 
 metaitem.cover.digital.title.mode=模式:
 metaitem.cover.digital.title.spin=自旋:
-metaitem.cover.digital.wireless.tooltip.1=§e右击中央监视器以远程绑定到它。
-metaitem.cover.digital.wireless.tooltip.2=§e右移右键移除当前绑定。
-metaitem.cover.digital.wireless.tooltip.3=§c绑定: (%s)
+metaitem.cover.digital.wireless.tooltip.1=§f以无线的方式§7将机器连接到§f中央监视器§7作为§f覆盖板§7。
+metaitem.cover.digital.wireless.tooltip.2=§e右击中央监视器以远程绑定到它。
+metaitem.cover.digital.wireless.tooltip.3=§e右移右键移除当前绑定。
+metaitem.cover.digital.wireless.tooltip.4=§c绑定: (%s)
 monitor.gui.title.back=返回
 monitor.gui.title.scale=尺寸:
 monitor.gui.title.argb=颜色值:
@@ -5189,12 +5262,12 @@ monitor.gui.title.config=配置
 
 fluid.tile.lava=熔岩
 fluid.tile.water=水
-material.uu_matter=UU-物质
-
-metaitem.fertilizer.name=肥料
 
 # Keybindings
 gregtech.key.armor_mode_switch=盔甲模式开关
 gregtech.key.armor_hover=盔甲悬停切换
 gregtech.key.armor_charging=盔甲给背包物品充电的切换
 gregtech.key.tool_aoe_change=工具范围模式开关
+
+# Debug messaging
+gregtech.debug.f3_h.enabled=格雷科技修改了调试信息！对于开发人员：在GregTech配置文件中启用misc:debug配置选项以查看更多信息
