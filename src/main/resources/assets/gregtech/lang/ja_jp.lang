@@ -935,7 +935,7 @@ item.gt.tool.saw.name=%s製のこぎり
 item.gt.tool.saw.tooltip=氷も収集できる
 item.gt.tool.hammer.name=%s製ハンマー
 item.gt.tool.hammer.tooltip=鉱石を採掘する代わりに砕く
-item.gt.tool.mallet.name=%s製ソフトハンマー
+item.gt.tool.mallet.name=%s製ソフトマレット
 item.gt.tool.wrench.name=%s製レンチ
 item.gt.tool.wrench.tooltip=左クリックで機械を撤去
 item.gt.tool.file.name=%s製やすり
@@ -981,7 +981,8 @@ item.gt.tool.screwdriver_lv.tooltip=カバーと機械の設定に
 
 item.gt.tool.tooltip.crafting_uses=§a残り %s 回クラフトできる
 item.gt.tool.tooltip.general_uses=§b残り %s 回使用可能
-item.gt.tool.tooltip.attack_damage=§c攻撃力 %s 
+item.gt.tool.tooltip.attack_damage=§c攻撃力 %s
+item.gt.tool.tooltip.attack_speed=§9攻撃速度 %s
 item.gt.tool.tooltip.mining_speed=§d採掘速度 %s
 item.gt.tool.tooltip.harvest_level=§e採掘レベル %s
 
