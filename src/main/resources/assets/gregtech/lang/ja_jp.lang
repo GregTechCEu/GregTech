@@ -979,7 +979,7 @@ metaitem.behavior.mode_switch.tooltip=スニーク中に使うことでモード
 metaitem.behavior.mode_switch.mode_switched=§eモード設定: %s
 metaitem.behavior.mode_switch.current_mode=モード: %s
 
-metaitem.tool.tooltip.primary_material=§f素材: §e%s (%s lvl)
+metaitem.tool.tooltip.primary_material=§f素材: §e%s
 metaitem.tool.tooltip.attack_damage=§f攻撃力: §9%,.1f
 metaitem.tool.tooltip.mining_speed=§f採掘速度: §6%,.1f
 metaitem.tool.tooltip.durability=§f耐久値: §a%,d/%,d
