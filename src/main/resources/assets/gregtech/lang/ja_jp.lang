@@ -3,15 +3,44 @@
 # Corresponding Version: 2.5.0 - beta
 # 対応バージョン: 2.5.0 - beta
 
-death.attack.heat=%s は熱さを感じなくなった.
-death.attack.frost=%s のふとんがふっとんだ.
-death.attack.chemical=%s は化学に対する十分な知識を持っていなかった.
-death.attack.electric=%s は電気工事士ではなかった.
-death.attack.radiation=%s は青白い光で満ち溢れた.
-death.attack.turbine=%s はタービンで散髪しようとした.
-death.attack.explosion=%s の遺体が全国各地で発見された.
-death.attack.explosion.player=%s は %s のおかげで爆発した.
-death.attack.heat.player=%s は %s の水餃子の具になった.
+death.attack.heat=%s は熱さを感じなくなった
+death.attack.frost=%s のふとんがふっとんだ
+death.attack.chemical=%s は化学に対する十分な知識を持っていなかった
+death.attack.electric=%s は電気工事士ではなかった
+death.attack.radiation=%s は青白い光で満ち溢れた
+death.attack.turbine=%s はタービンで散髪しようとした
+death.attack.explosion=%s の遺体が全国各地で発見された
+death.attack.explosion.player=%s は %s のおかげで爆発した
+death.attack.heat.player=%s は %s の水餃子の具になった
+
+death.attack.pickaxe=%s は %s に採掘された
+death.attack.shovel=%s は %s に穴をあけられた
+death.attack.axe=%s は %s に割られた
+death.attack.hoe=%s は頭を %s も均された
+death.attack.hammer=%s は %s にぺしゃんこにされた
+death.attack.mallet=%s は %s に打ちのめされた
+death.attack.mining_hammer=%s は %s に鉱石と間違えられた
+death.attack.spade=%s は %s に体を抉られた
+death.attack.wrench=%s は %s にレンチで一撃を喰らわされた!
+death.attack.file=%s は %s に"DEAD"のDをファイリングされた
+death.attack.crowbar=%s は %s に半生を奪われた
+death.attack.screwdriver=%s は %s にめちゃくちゃにされた
+death.attack.mortar=%s は %s に粉々にすり潰された
+death.attack.wire_cutter=%s は %s に生命維持装置のケーブルを切断された
+death.attack.scythe=%s は %s に魂を刈り取られた
+death.attack.knife=%s は %s に突っつかれた
+death.attack.butchery_knife=%s は %s に屠殺された
+death.attack.drill_lv=%s は %s に32Vで穴を開けられた
+death.attack.drill_mv=%s は %s に128Vで穴を開けられた
+death.attack.drill_hv=%s は %s に512Vで穴を開けられた
+death.attack.drill_ev=%s は %s に2048Vで穴を開けられた
+death.attack.drill_iv=%s は %s に8192Vで穴を開けられた
+death.attack.chainsaw_lv=%s は %s に虐殺された
+death.attack.wrench_lv=%s のパイプが %s に撤去された
+death.attack.wrench_hv=%s のパイプが %s に撤去された
+death.attack.wrench_iv=%s の計画に %s が横槍を入れた
+death.attack.buzzsaw=%s は %s にブン殴られた
+death.attack.screwdriver_lv=%s のネジが %s に外された
 
 enchantment.disjunction=ディスジャンクション
 
