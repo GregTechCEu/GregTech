@@ -5746,3 +5746,6 @@ metaitem.robot.arm.tooltip=Ограничивает передачу §fПред
 metaitem.cover.infinite_water.tooltip.1=Заполняет прилегающие контейнеры §9Водой§7 как §fУлучшение машины§7.
 item.gt.tool.mallet.tooltip=§8Останавливает/Запускает машины
 item.gt.tool.plunger.tooltip=§8Удаляет Жидкости из машин
+item.gt.tool.tooltip.harvest_level_extra=§eУровень добычи: %s §f(%s§f)
+item.gt.tool.tooltip.repair_info=Удерживайте SHIFT для инф. Ремонта
+item.gt.tool.tooltip.repair_material=Чинится с: §a%s
