@@ -27,7 +27,14 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Used to allow a tool to hoe the ground, only if it cannot extend the {@link gregtech.api.items.toolitem.ItemGTHoe} class.
+ */
 public class HoeGroundBehavior implements IToolBehavior {
+
+    public static final HoeGroundBehavior INSTANCE = new HoeGroundBehavior();
+
+    protected HoeGroundBehavior() {/**/}
 
     @Nonnull
     @Override
@@ -112,6 +119,6 @@ public class HoeGroundBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.ground_tilling"));
+        tooltip.add(I18n.format("item.gt.tool.behavior.ground_tilling"));
     }
 }

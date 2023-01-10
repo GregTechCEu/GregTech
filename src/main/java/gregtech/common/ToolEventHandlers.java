@@ -8,7 +8,6 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.IGTToolDefinition;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -25,7 +24,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -40,7 +38,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -51,7 +48,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.util.ListIterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -102,7 +98,7 @@ public class ToolEventHandlers {
             if (!event.isSilkTouching()) {
                 ToolHelper.applyHammerDropConversion(stack, event.getState(), event.getDrops(), event.getFortuneLevel(), event.getDropChance(), player.getRNG());
             }
-            NBTTagCompound behaviorTag = ToolHelper.getBehavioursTag(stack);
+            NBTTagCompound behaviorTag = ToolHelper.getBehaviorsTag(stack);
             Block block = event.getState().getBlock();
             if (!event.isSilkTouching() && (block == Blocks.ICE || block == Blocks.PACKED_ICE) && behaviorTag.getBoolean(ToolHelper.HARVEST_ICE_KEY)) {
                 Item iceBlock = Item.getItemFromBlock(block);
@@ -135,47 +131,6 @@ public class ToolEventHandlers {
             IGTTool leftTool = (IGTTool) left.getItem(), rightTool = (IGTTool) right.getItem();
             if (leftTool.getToolMaterial(left) != rightTool.getToolMaterial(right)) {
                 event.setCanceled(true);
-            }
-        }
-    }
-
-    /**
-     * Handles formatting of stat tooltips, this is easier to be done here than in Item#addInformation
-     */
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onItemTooltipEvent(ItemTooltipEvent event) {
-        ItemStack stack = event.getItemStack();
-        if (stack.getItem() instanceof IGTTool) {
-            IGTTool tool = (IGTTool) stack.getItem();
-            NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
-            String mainHandTooltip = I18n.format("item.modifiers.mainhand");
-            ListIterator<String> tooltipIterator = event.getToolTip().listIterator(event.getToolTip().size());
-            // Check where in the tooltip list we are
-            while (tooltipIterator.hasPrevious()) {
-                if (mainHandTooltip.equals(tooltipIterator.previous())) {
-                    tooltipIterator.next(); // Turnover
-                    // Push
-                    IGTToolDefinition toolStats = tool.getToolStats();
-                    if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
-                        if (toolStats.isSuitableForCrafting(stack)) {
-                            tooltipIterator.add(I18n.format("item.gt.tool.tooltip.crafting_uses", (tool.getTotalMaxDurability(stack) - stack.getItemDamage()) / Math.max(1, toolStats.getToolDamagePerCraft(stack))));
-                        }
-
-                        // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.general_uses", tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1));
-                    }
-
-                    if (toolStats.isSuitableForAttacking(stack)) {
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_damage", 2 + tool.getTotalAttackDamage(stack)));
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.attack_speed", 4 + tool.getTotalAttackSpeed(stack)));
-                    }
-                    if (toolStats.isSuitableForBlockBreak(stack)) {
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.mining_speed", tool.getTotalToolSpeed(stack)));
-                        tooltipIterator.add(I18n.format("item.gt.tool.tooltip.harvest_level", tool.getTotalHarvestLevel(stack)));
-                    }
-                    break; // Exit early
-                }
             }
         }
     }

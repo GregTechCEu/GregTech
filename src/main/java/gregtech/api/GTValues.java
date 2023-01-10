@@ -49,6 +49,9 @@ public class GTValues {
 
     public static final Random RNG = new XSTR();
 
+    /** Current time on the Client. Will always be zero on the server. */
+    public static long CLIENT_TIME = 0;
+
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
@@ -88,14 +91,14 @@ public class GTValues {
     public static final String[] VNF = new String[]{
             DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
             GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
-            LIGHT_PURPLE + "LuV", WHITE + "ZPM", DARK_AQUA + "UV",
+            LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
             DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
-            YELLOW + "UXV", BLUE + "OpV", RED + "MAX"};
+            YELLOW + "UXV", BLUE + "OpV", RED.toString() + BOLD + "MAX"};
 
     /**
      * Color values for the voltages
      */
-    public static final int[] VC = new int[]{0xB4B4B4, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xDCDCF5, 0xC8C8F5, 0xB4B4F5, 0xA0A0F5, 0x8C8CF5, 0x7878F5, 0x6464F5, 0x5050F5, 0x2828F5};
+    public static final int[] VC = new int[]{0xC80000, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xE99797, 0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x914E91, 0x488748, 0x8C0000, 0x2828F5};
 
     /**
      * The long names for the voltages

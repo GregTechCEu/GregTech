@@ -169,7 +169,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.capacity", maxStoredItems));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_total", maxStoredItems));
 
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
@@ -184,11 +184,17 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 count = tempStack.getCount();
             }
             if (translationKey != null) {
-                tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip.item",
-                        I18n.format(translationKey)));
-                tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip.count", count));
+                tooltip.add(I18n.format("gregtech.universal.tooltip.item_stored",
+                        I18n.format(translationKey), count));
             }
         }
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

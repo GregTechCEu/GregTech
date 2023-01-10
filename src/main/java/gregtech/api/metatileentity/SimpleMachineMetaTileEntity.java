@@ -10,7 +10,6 @@ import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -184,25 +183,18 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
-        if (facing == getOutputFacingItems() || facing == getOutputFacingFluids() ||
-                ((hitFacing == getOutputFacingItems() || hitFacing == getOutputFacingFluids()) && playerIn.isSneaking())) {
-            if (!getWorld().isRemote) {
-                if (facing == getOutputFacingItems() || hitFacing == getOutputFacingItems()) {
-                    if (isAllowInputFromOutputSideItems()) {
-                        setAllowInputFromOutputSideItems(false);
-                        setAllowInputFromOutputSideFluids(false);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
-                    } else {
-                        setAllowInputFromOutputSideItems(true);
-                        setAllowInputFromOutputSideFluids(true);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
-                    }
-                }
+        if (!getWorld().isRemote) {
+            if (isAllowInputFromOutputSideItems()) {
+                setAllowInputFromOutputSideItems(false);
+                setAllowInputFromOutputSideFluids(false);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+            } else {
+                setAllowInputFromOutputSideItems(true);
+                setAllowInputFromOutputSideFluids(true);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
             }
-            return true;
         }
-        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+        return true;
     }
 
     @Override
@@ -510,5 +502,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean needsSneakToRotate() {
         return true;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

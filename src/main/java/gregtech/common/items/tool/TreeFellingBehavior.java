@@ -22,6 +22,10 @@ import java.util.List;
  */
 public class TreeFellingBehavior implements IToolBehavior {
 
+    public static final TreeFellingBehavior INSTANCE = new TreeFellingBehavior();
+
+    protected TreeFellingBehavior() {/**/}
+
     @Override
     public void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {
         tag.setBoolean(ToolHelper.TREE_FELLING_KEY, true);
@@ -29,6 +33,6 @@ public class TreeFellingBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.tree_felling"));
+        tooltip.add(I18n.format("item.gt.tool.behavior.tree_felling"));
     }
 }

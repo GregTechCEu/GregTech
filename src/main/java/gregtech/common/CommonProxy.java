@@ -29,6 +29,7 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -310,6 +311,9 @@ public class CommonProxy {
 
         if (Loader.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
+        }
+        if (GroovyScriptCompat.isLoaded()) {
+            GroovyScriptCompat.loadMetaItemBracketHandler();
         }
     }
 

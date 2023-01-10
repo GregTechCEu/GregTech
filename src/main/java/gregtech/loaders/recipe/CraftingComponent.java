@@ -487,13 +487,13 @@ public class CraftingComponent {
                 {0, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Bronze)},
                 {1, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.CobaltBrass)},
                 {2, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.VanadiumSteel)},
-                {3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlackBronze)},
+                {3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlueSteel)},
                 {4, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Ultimet)},
                 {5, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.TungstenCarbide)},
-                {6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSS)},
-                {7, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
-                {8, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
-                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
+                {6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSE)},
+                {7, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

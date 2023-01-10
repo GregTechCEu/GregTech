@@ -3,6 +3,7 @@ package gregtech.api.unification.material.materials;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
+import gregtech.api.unification.material.properties.ToolProperty;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -33,20 +34,22 @@ public class HigherDegreeMaterials {
                 .build();
 
         RedSteel = new Material.Builder(2510, "red_steel")
-                .ingot().fluid()
+                .ingot(3).fluid()
                 .color(0x8C6464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
                 .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(7.0f, 6.0f, 0.1f, 2560, 21)
+                .toolStats(ToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
+                        .attackSpeed(0.1F).enchantability(21).build())
                 .blastTemp(1300, GasTier.LOW, VA[HV], 1000)
                 .build();
 
         BlueSteel = new Material.Builder(2511, "blue_steel")
-                .ingot().fluid()
+                .ingot(3).fluid()
                 .color(0x64648C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
                 .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(15.0f, 6.0f, 0.1f, 1024, 33)
+                .toolStats(ToolProperty.Builder.of(15.0F, 6.0F, 1024, 3)
+                        .attackSpeed(0.1F).enchantability(33).build())
                 .blastTemp(1400, GasTier.LOW, VA[HV], 1000)
                 .build();
 
@@ -109,7 +112,8 @@ public class HigherDegreeMaterials {
                 .color(0x336600).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
-                .toolStats(5.0f, 10.0f, 0.3f, 3072, 33)
+                .toolStats(ToolProperty.Builder.of(5.0F, 10.0F, 3072, 4)
+                        .attackSpeed(0.3F).enchantability(33).build())
                 .rotorStats(10.0f, 8.0f, 5120)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1400)
                 .build();

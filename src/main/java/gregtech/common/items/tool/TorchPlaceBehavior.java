@@ -29,11 +29,15 @@ import static gregtech.api.items.toolitem.ToolHelper.TORCH_PLACING_KEY;
 
 public class TorchPlaceBehavior implements IToolBehavior {
 
+    public static final TorchPlaceBehavior INSTANCE = new TorchPlaceBehavior();
+
+    protected TorchPlaceBehavior() {/**/}
+
     @Nonnull
     @Override
     public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        NBTTagCompound behaviourTag = ToolHelper.getBehavioursTag(stack);
+        NBTTagCompound behaviourTag = ToolHelper.getBehaviorsTag(stack);
         if (behaviourTag.getBoolean(ToolHelper.TORCH_PLACING_KEY)) {
             int cachedTorchSlot;
             ItemStack slotStack;
@@ -103,6 +107,6 @@ public class TorchPlaceBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.torch_place"));
+        tooltip.add(I18n.format("item.gt.tool.behavior.torch_place"));
     }
 }

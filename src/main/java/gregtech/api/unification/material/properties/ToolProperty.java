@@ -7,39 +7,46 @@ import net.minecraft.enchantment.Enchantment;
 public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
-     * Speed of tools made from this Material.
+     * Harvest speed of tools made from this Material.
      * <p>
      * Default: 1.0F
      */
-    private float toolSpeed;
+    private float harvestSpeed;
 
     /**
      * Attack damage of tools made from this Material
      * <p>
      * Default: 1.0F
      */
-    private float toolAttackDamage;
+    private float attackDamage;
 
     /**
      * Attack speed of tools made from this Material
      * <p>
      * Default: 0.0F
      */
-    private float toolAttackSpeed;
+    private float attackSpeed;
 
     /**
      * Durability of tools made from this Material.
      * <p>
      * Default: 100
      */
-    private int toolDurability;
+    private int durability;
+
+    /**
+     * Harvest level of tools made of this Material.
+     * <p>
+     * Default: 2 (Iron).
+     */
+    private int harvestLevel;
 
     /**
      * Enchantability of tools made from this Material.
      * <p>
      * Default: 10
      */
-    private int toolEnchantability;
+    private int enchantability = 10;
 
     /**
      * If crafting tools should not be made from this material
@@ -47,76 +54,78 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     private boolean ignoreCraftingTools;
 
     /**
-     * If tools of made this material should be unbreakable and ignore durability checks.
+     * If tools made of this material should be unbreakable and ignore durability checks.
      */
     private boolean isUnbreakable;
 
     /**
+     * If tools made of this material should be "magnetic," meaning items go
+     * directly into the player's inventory instead of dropping on the ground.
+     */
+    private boolean isMagnetic;
+
+    /**
      * Enchantment to be applied to tools made from this Material.
-     * <p>
-     * Default: none.
      */
     private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
 
-    public ToolProperty(float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
-        this.toolSpeed = toolSpeed;
-        this.toolAttackDamage = toolAttackDamage;
-        this.toolAttackSpeed = toolAttackSpeed;
-        this.toolDurability = toolDurability;
-        this.toolEnchantability = toolEnchantability;
-        this.ignoreCraftingTools = ignoreCraftingTools;
+    public ToolProperty(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
+        this.harvestSpeed = harvestSpeed;
+        this.attackDamage = attackDamage;
+        this.durability = durability;
+        this.harvestLevel = harvestLevel;
     }
 
-    /**
-     * Default values constructor.
-     */
     public ToolProperty() {
-        this(1.0f, 1.0f, 0.0f, 100, 10, false);
+        this(1.0F, 1.0F, 100, 2);
     }
 
     public float getToolSpeed() {
-        return toolSpeed;
+        return harvestSpeed;
     }
 
     public void setToolSpeed(float toolSpeed) {
-        if (toolSpeed <= 0) throw new IllegalArgumentException("Tool Speed must be greater than zero!");
-        this.toolSpeed = toolSpeed;
+        this.harvestSpeed = toolSpeed;
     }
 
     public float getToolAttackDamage() {
-        return toolAttackDamage;
+        return attackDamage;
     }
 
     public void setToolAttackDamage(float toolAttackDamage) {
-        if (toolAttackDamage <= 0) throw new IllegalArgumentException("Tool Attack Damage must be greater than zero!");
-        this.toolAttackDamage = toolAttackDamage;
+        this.attackDamage = toolAttackDamage;
     }
 
     public float getToolAttackSpeed() {
-        return toolAttackSpeed;
+        return attackSpeed;
     }
 
     public void setToolAttackSpeed(float toolAttackSpeed) {
-        if (toolAttackSpeed <= 0) throw new IllegalArgumentException("Tool Attack Speed must be greater than zero!");
-        this.toolAttackSpeed = toolAttackSpeed;
+        this.attackSpeed = toolAttackSpeed;
     }
 
     public int getToolDurability() {
-        return toolDurability;
+        return durability;
     }
 
     public void setToolDurability(int toolDurability) {
-        if (toolDurability <= 0) throw new IllegalArgumentException("Tool Durability must be greater than zero!");
-        this.toolDurability = toolDurability;
+        this.durability = toolDurability;
+    }
+
+    public int getToolHarvestLevel() {
+        return this.harvestLevel;
+    }
+
+    public void setToolHarvestLevel(int toolHarvestLevel) {
+        this.harvestLevel = toolHarvestLevel;
     }
 
     public int getToolEnchantability() {
-        return toolEnchantability;
+        return enchantability;
     }
 
     public void setToolEnchantability(int toolEnchantability) {
-        if (toolEnchantability <= 0) throw new IllegalArgumentException("Tool Enchantability must be greater than zero!");
-        this.toolEnchantability = toolEnchantability;
+        this.enchantability = toolEnchantability;
     }
 
     public boolean getShouldIgnoreCraftingTools() {
@@ -139,6 +148,14 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
         return enchantments;
     }
 
+    public void setMagnetic(boolean isMagnetic) {
+        this.isMagnetic = isMagnetic;
+    }
+
+    public boolean isMagnetic() {
+        return isMagnetic;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
@@ -146,5 +163,52 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     public void addEnchantmentForTools(Enchantment enchantment, int level) {
         enchantments.put(enchantment, level);
+    }
+
+    public static class Builder {
+
+        private final ToolProperty toolProperty;
+
+        public static Builder of(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
+            return new Builder(harvestSpeed, attackDamage, durability, harvestLevel);
+        }
+
+        private Builder(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
+            toolProperty = new ToolProperty(harvestSpeed, attackDamage, durability, harvestLevel);
+        }
+
+        public Builder enchantability(int enchantability) {
+            toolProperty.setToolEnchantability(enchantability);
+            return this;
+        }
+
+        public Builder attackSpeed(float attackSpeed) {
+            toolProperty.setToolAttackSpeed(attackSpeed);
+            return this;
+        }
+
+        public Builder ignoreCraftingTools() {
+            toolProperty.setShouldIgnoreCraftingTools(true);
+            return this;
+        }
+
+        public Builder unbreakable() {
+            toolProperty.setUnbreakable(true);
+            return this;
+        }
+
+        public Builder enchantment(Enchantment enchantment, int level) {
+            toolProperty.addEnchantmentForTools(enchantment, level);
+            return this;
+        }
+
+        public Builder magnetic() {
+            toolProperty.setMagnetic(true);
+            return this;
+        }
+
+        public ToolProperty build() {
+            return toolProperty;
+        }
     }
 }

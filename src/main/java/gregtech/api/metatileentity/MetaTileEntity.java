@@ -15,9 +15,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -36,6 +34,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -177,7 +176,36 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    }
+
+    /**
+     * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.
+     * ALWAYS CALL SUPER LAST!
+     * Intended ordering:
+     * - Screwdriver
+     * - Wrench
+     * - Wire Cutter
+     * - Soft Hammer
+     * - Hammer
+     * - Crowbar
+     * - Others
+     * <br>
+     * The super method automatically handles Hammer muffling and Crowbar cover removal.
+     * If you have extended usages of these tools in your addon, let us know and we can amend
+     * this default appended tooltip information.
+     */
+    @SideOnly(Side.CLIENT)
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        if (getSound() != null) {
+            tooltip.add(I18n.format("gregtech.tool_action.hammer"));
+        }
+        tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+    }
+
+    /** Override this to completely remove the "Tool Info" tooltip section */
+    public boolean showToolUsages() {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)
@@ -367,32 +395,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
-    public final boolean onCoverRightClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
-        CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
-        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                coverBehavior.onRightClick(playerIn, hand, result);
-        if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
-        }
-        return onRightClick(playerIn, hand, result.sideHit, result);
-    }
-
-    public final boolean onCoverScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
-        EnumFacing hitFacing = ICoverable.determineGridSideHit(result);
-        boolean accessingActiveOutputSide = false;
-        if (this.getCapability(GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE, hitFacing) != null) {
-            accessingActiveOutputSide = playerIn.isSneaking();
-        }
-        EnumFacing coverSide = ICoverable.traceCoverSide(result);
-        CoverBehavior coverBehavior = coverSide == null ? null : getCoverAtSide(coverSide);
-        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                accessingActiveOutputSide ? EnumActionResult.PASS : coverBehavior.onScrewdriverClick(playerIn, hand, result);
-        if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
-        }
-        return onScrewdriverClick(playerIn, hand, result.sideHit, result);
-    }
-
     /**
      * Called when player clicks on specific side of this meta tile entity
      *
@@ -422,26 +424,32 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      *
      * @return true if something happened, so tools will get damaged and animations will be played
      */
-    public boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, EnumFacing side, CuboidRayTraceResult hitResult)  {
-        if (toolClasses.isEmpty()) return false;
+    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult)  {
+        // the side hit from the machine grid
+        EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
+        CoverBehavior coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
 
-        boolean result = false;
-        if (toolClasses.contains(ToolClasses.WRENCH)) {
-            result = onWrenchClick(playerIn, hand, side, hitResult);
-        }
+        // Prioritize covers where they apply (Screwdriver, Soft Mallet)
         if (toolClasses.contains(ToolClasses.SCREWDRIVER)) {
-            result |= onScrewdriverClick(playerIn, hand, side, hitResult);
-        }
-        if (toolClasses.contains(ToolClasses.CROWBAR)) {
-            result |= onCrowbarClick(playerIn, hand, side, hitResult);
+            if (coverBehavior != null && coverBehavior.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
+            } else return onScrewdriverClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
-            result |= onSoftMalletClick(playerIn, hand, side, hitResult);
+            if (coverBehavior != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
+            } else return onSoftMalletClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.WRENCH)) {
+            return onWrenchClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.CROWBAR)) {
+            return onCrowbarClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
-            result |= onHardHammerClick(playerIn, hand, side, hitResult);
+            return onHardHammerClick(playerIn, hand, gridSideHit, hitResult);
         }
-        return result;
+        return false;
     }
 
     /**
@@ -480,7 +488,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         if (getCoverAtSide(facing) != null) {
             return removeCover(facing);
         }
-
         return false;
     }
 

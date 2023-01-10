@@ -9,6 +9,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -350,9 +351,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.multiblock.universal.controller_information", I18n.format(getMetaFullName())));
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        if (this instanceof IMultipleRecipeMaps) {
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        }
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -406,12 +412,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return 0xFFFFFF;
     }
 
-    public void explodeMultiblock() {
+    public void explodeMultiblock(float explosionPower) {
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
         for (IMultiblockPart part : parts) {
             part.removeFromMultiBlock(this);
-            ((MetaTileEntity) part).doExplosion(8);
+            ((MetaTileEntity) part).doExplosion(explosionPower);
         }
-        doExplosion(8);
+        doExplosion(explosionPower);
     }
 }

@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
@@ -215,11 +216,9 @@ public class MetaPrefixItem extends StandardMetaItem {
         int damage = stack.getMetadata();
 
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
-        if (this.prefix != null && material != null) {
-            boolean isSolidState = this.prefix == OrePrefix.ingot || this.prefix == OrePrefix.gem;
-            DustProperty property = material.getProperty(PropertyKey.DUST);
-            boolean isMaterialTiered = property != null && property.getHarvestLevel() >= 2;
-            return isSolidState && isMaterialTiered;
+        if (material != null && this.prefix != OrePrefix.ingot && this.prefix != OrePrefix.gem) {
+            ToolProperty property = material.getProperty(PropertyKey.TOOL);
+            return property != null && property.getToolHarvestLevel() >= 2;
         }
         return false;
     }

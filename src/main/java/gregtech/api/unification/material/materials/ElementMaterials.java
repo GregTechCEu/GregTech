@@ -5,6 +5,7 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
+import gregtech.api.unification.material.properties.ToolProperty;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -24,7 +25,8 @@ public class ElementMaterials {
                 .color(0x80C8F0)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
                 .element(Elements.Al)
-                .toolStats(6.0f, 7.5f, 768, 14)
+                .toolStats(ToolProperty.Builder.of(6.0F, 7.5F, 768, 2)
+                        .enchantability(14).build())
                 .rotorStats(10.0f, 2.0f, 128)
                 .cableProperties(GTValues.V[4], 1, 1)
                 .fluidPipeProperties(1166, 100, true)
@@ -342,7 +344,8 @@ public class ElementMaterials {
                 .color(0xC8C8C8).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
-                .toolStats(2.0f, 2.0f, 256, 14)
+                .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 256, 2)
+                        .enchantability(14).build())
                 .rotorStats(7.0f, 2.5f, 256)
                 .cableProperties(GTValues.V[2], 2, 3)
                 .fluidTemp(1811)
@@ -750,7 +753,8 @@ public class ElementMaterials {
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ti)
-                .toolStats(8.0f, 6.0f, 1536, 14)
+                .toolStats(ToolProperty.Builder.of(8.0F, 6.0F, 1536, 3)
+                        .enchantability(14).build())
                 .rotorStats(7.0f, 3.0f, 1600)
                 .fluidPipeProperties(2426, 150, true)
                 .blastTemp(1941, GasTier.MID, VA[HV], 1500)
@@ -860,7 +864,8 @@ public class ElementMaterials {
                 .color(0xFAFAFA)
                 .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .element(Elements.Nt)
-                .toolStats(180.0f, 100.0f, 0.5f, 65535, 33)
+                .toolStats(ToolProperty.Builder.of(180.0F, 100.0F, 65535, 6)
+                        .attackSpeed(0.5F).enchantability(33).magnetic().unbreakable().build())
                 .rotorStats(24.0f, 12.0f, 655360)
                 .fluidPipeProperties(100_000, 5000, true, true, true, true)
                 .fluidTemp(100_000)
@@ -881,7 +886,8 @@ public class ElementMaterials {
                 .color(0x4BAFAF).iconSet(BRIGHT)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Dr)
-                .toolStats(14.0f, 12.0f, 0.3f, 8192, 33)
+                .toolStats(ToolProperty.Builder.of(14.0F, 12.0F, 8192, 5)
+                        .attackSpeed(0.3F).enchantability(33).magnetic().build())
                 .fluidPipeProperties(9625, 500, true, true, true, true)
                 .fluidTemp(7500)
                 .build();

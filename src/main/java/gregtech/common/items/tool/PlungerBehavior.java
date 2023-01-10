@@ -25,6 +25,10 @@ import java.util.List;
 
 public class PlungerBehavior implements IToolBehavior {
 
+    public static final PlungerBehavior INSTANCE = new PlungerBehavior();
+
+    protected PlungerBehavior() {/**/}
+
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
         IFluidHandler fluidHandler = FluidUtil.getFluidHandler(world, pos, facing);
@@ -59,6 +63,6 @@ public class PlungerBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.plunger"));
+        tooltip.add(I18n.format("item.gt.tool.behavior.plunger"));
     }
 }

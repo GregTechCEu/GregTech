@@ -6,6 +6,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -128,9 +130,20 @@ public class MachineItemBlock extends ItemBlock {
                 tooltip.addAll(Arrays.asList(lines));
             }
         }
+
+        // additional tooltips that the MTE provides
         metaTileEntity.addInformation(stack, worldIn, tooltip, flagIn.isAdvanced());
 
-        if (flagIn.isAdvanced()) {
+        // tool usages tooltips
+        if (metaTileEntity.showToolUsages()) {
+            if (TooltipHelper.isShiftDown()) {
+                metaTileEntity.addToolUsages(stack, worldIn, tooltip, flagIn.isAdvanced());
+            } else {
+                tooltip.add(I18n.format("gregtech.tool_action.show_tooltips"));
+            }
+        }
+
+        if (ConfigHolder.misc.debug) {
             tooltip.add(String.format("MetaTileEntity Id: %s", metaTileEntity.metaTileEntityId.toString()));
         }
     }

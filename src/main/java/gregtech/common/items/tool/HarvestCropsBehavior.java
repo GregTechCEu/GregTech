@@ -28,6 +28,10 @@ import java.util.Set;
 
 public class HarvestCropsBehavior implements IToolBehavior {
 
+    public static final HarvestCropsBehavior INSTANCE = new HarvestCropsBehavior();
+
+    protected HarvestCropsBehavior() {/**/}
+
     @Nonnull
     @Override
     public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -107,6 +111,6 @@ public class HarvestCropsBehavior implements IToolBehavior {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        tooltip.add(" " + I18n.format("item.gt.tool.behavior.crop_harvesting"));
+        tooltip.add(I18n.format("item.gt.tool.behavior.crop_harvesting"));
     }
 }
