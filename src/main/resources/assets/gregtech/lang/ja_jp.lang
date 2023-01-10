@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & Quarri6343
 # 日本語ローカライズ担当： MrKo_no & Quarri6343
-# Corresponding Version: 2.4.4 - beta
-# 対応バージョン: 2.4.4 - beta
+# Corresponding Version: 2.5.0 - beta
+# 対応バージョン: 2.5.0 - beta
 
 death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
@@ -4705,7 +4705,7 @@ gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出が無効
 gregtech.gui.item_auto_output.tooltip.enabled=アイテム自動搬出が有効
 gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出が無効
 gregtech.gui.charger_slot.tooltip=§f充電スロット§r/n%s§7バッテリーからエネルギーを吸い取る.§r/n%s§7の電動ツールとバッテリーを充電できる.
-gregtech.gui.configurator_slot.tooltip=§f設定用スロット§r/n§6プログラム回路§7 をここに置くと/n§7番号を変更できる./n§7§6シフトを押しながら§7ボタンを押すと§65§7ずつ変更できる.
+gregtech.gui.configurator_slot.tooltip=§f設定用スロット§r/n§6プログラム回路§7 をここに置くと/n§7番号を変更できる./n§7§6シフトを押しながら§7ボタンを押すと§65§7ずつ変更できる./n§aこのスロットのプログラム回路もレシピに認識される.§r
 gregtech.gui.fluid_lock.tooltip.enabled=液体ロックが有効
 gregtech.gui.fluid_lock.tooltip.disabled=液体ロックが無効
 gregtech.gui.fluid_voiding_partial.tooltip.enabled=%d%%以上の液体廃棄が有効
