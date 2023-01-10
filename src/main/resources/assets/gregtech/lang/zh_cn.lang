@@ -4534,7 +4534,7 @@ gregtech.machine.cleanroom.tooltip.5=天花板需要§f过滤器机械方块§7�
 gregtech.machine.cleanroom.tooltip.6=接受最多§f4个门§7！ 门打开也保持洁净。
 gregtech.machine.cleanroom.tooltip.7=发电机、消声仓、钻机和原始机器对于超净间来说太脏了！
 gregtech.machine.cleanroom.tooltip.8=通过§f机械方块§7或墙上的§f二极管§7发送能量。
-gregtech.machine.cleanroom.tooltip.9=使用§f传送带(覆盖板)§7在墙上发送物品和流体。
+gregtech.machine.cleanroom.tooltip.9=使用§f通行仓§7在墙上发送物品和流体。
 gregtech.machine.cleanroom.tooltip.ae2.channels=通过§f机械方块§7在墙上发送最多§f8AE2频道§7。
 gregtech.machine.cleanroom.tooltip.ae2.no_channels=通过墙上的§f机械方块§7发送§aAE2网络§7。
 gregtech.multiblock.cleanroom.clean_state=状态：§a洁净
@@ -4745,6 +4745,10 @@ gregtech.machine.machine_hatch.locked=机器接口锁定
 gregtech.machine.machine_hatch.tooltip=只保存有效物品的专用访问总线
 gregtech.machine.machine_hatch.processing_array=当在§e处理阵列§7中时, 只保留机器工作在§e处理阵列
 
+gregtech.machine.passthrough_hatch_item.name=物品通行仓
+gregtech.machine.passthrough_hatch_item.tooltip=将物品从一侧发送到另一侧
+gregtech.machine.passthrough_hatch_fluid.name=流体通行仓
+gregtech.machine.passthrough_hatch_fluid.tooltip=将流体从一侧输送到另一侧
 
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸: %dx%dx%d
 gregtech.machine.fluid_tank.fluid=包含 %s L 的 %s
