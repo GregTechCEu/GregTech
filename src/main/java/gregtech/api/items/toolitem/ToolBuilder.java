@@ -69,12 +69,12 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> oreDict(@Nonnull ToolOreDict oreDict) {
+    public ToolBuilder<T> oreDict(@Nonnull Enum<?> oreDict) {
         this.oreDict = oreDict.name();
         return this;
     }
 
-    public ToolBuilder<T> secondaryOreDicts(@Nonnull ToolOreDict... oreDicts) {
+    public ToolBuilder<T> secondaryOreDicts(@Nonnull Enum<?>... oreDicts) {
         Arrays.stream(oreDicts).map(Enum::name).forEach(this.secondaryOreDicts::add);
         return this;
     }
