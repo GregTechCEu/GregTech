@@ -954,6 +954,7 @@ item.gt.tool.behavior.ground_tilling=§e地面を耕す
 item.gt.tool.behavior.grass_path=§e草の道を作成
 item.gt.tool.behavior.rail_rotation=§eレールを回転
 item.gt.tool.behavior.crop_harvesting=§a作物を収穫
+item.gt.tool.behavior.plunger=§9液体を吸収
 
 item.gt.tool.sword.name=%s製剣
 item.gt.tool.pickaxe.name=%s製ピッケル
@@ -1006,6 +1007,7 @@ item.gt.tool.buzzsaw.name=LVの%s製のこぎり刃
 item.gt.tool.buzzsaw.tooltip=ブロック収集には適さない
 item.gt.tool.screwdriver_lv.name=LVの%s製スクリュードライバー
 item.gt.tool.screwdriver_lv.tooltip=カバーと機械の設定に
+item.gt.tool.plunger.name=%s製ラバーカップ
 
 
 item.gt.tool.tooltip.crafting_uses=§a残り %s 回クラフトできる
