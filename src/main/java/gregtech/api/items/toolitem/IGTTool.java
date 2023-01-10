@@ -26,7 +26,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -114,6 +113,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @Nullable
     String getOreDictName();
+
+    @Nonnull
+    List<String> getSecondaryOreDicts();
 
     @Nullable
     Supplier<ItemStack> getMarkerItem();

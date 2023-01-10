@@ -4,8 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 
-import java.util.Collections;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -15,6 +15,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
 
     protected final Set<String> toolClasses = new ObjectArraySet<>();
     protected String oreDict;
+    protected List<String> secondaryOreDicts = new ArrayList<>();
 
     protected int tier = -1;
     protected IGTToolDefinition toolStats;
@@ -63,13 +64,23 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> oreDict(String oreDict) {
+    public ToolBuilder<T> oreDict(@Nonnull String oreDict) {
         this.oreDict = oreDict;
         return this;
     }
 
-    public ToolBuilder<T> oreDict(ToolOreDicts oreDict) {
+    public ToolBuilder<T> oreDict(@Nonnull ToolOreDict oreDict) {
         this.oreDict = oreDict.name();
+        return this;
+    }
+
+    public ToolBuilder<T> secondaryOreDicts(@Nonnull ToolOreDict... oreDicts) {
+        Arrays.stream(oreDicts).map(Enum::name).forEach(this.secondaryOreDicts::add);
+        return this;
+    }
+
+    public ToolBuilder<T> secondaryOreDicts(@Nonnull String... oreDicts) {
+        this.secondaryOreDicts.addAll(Arrays.asList(oreDicts));
         return this;
     }
 
