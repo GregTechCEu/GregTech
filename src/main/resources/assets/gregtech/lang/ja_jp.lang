@@ -847,7 +847,7 @@ metaitem.cover.solar.panel.luv.name=LuVソーラーパネル
 metaitem.cover.solar.panel.zpm.name=Zero Point Moduleソーラーパネル
 metaitem.cover.solar.panel.uv.name=Ultimate Voltageソーラーパネル
 
-metaitem.cover.solar.panel.tooltip1=太陽と共にあれ
+metaitem.cover.solar.panel.tooltip.1=太陽と共にあれ
 metaitem.cover.solar.panel.tooltip.2=§e太陽§7から§fエネルギー§7を生産する§fカバー§7.
 
 metaitem.cover.infinite_water.name=無限水源カバー
@@ -895,7 +895,7 @@ metaitem.wooden_form.empty.name=木枠
 metaitem.wooden_form.brick.name=レンガ型の木枠
 
 item.gt.tool.replace_tool_head=ツールの先端とクラフトすると修理できる
-item.gt.tool.behaves_like=§f%s§7として使用可能
+item.gt.toolusable_as=§f%s§7として使用可能
 item.gt.tool.behavior.silk_ice=§b製氷: §b氷をシルクタッチ回収
 item.gt.tool.behavior.torch_place=§eスペランカー: §e松明設置
 item.gt.tool.behavior.tree_felling=§4木こり: §4一括伐採
@@ -961,13 +961,13 @@ item.gt.tool.plunger.name=%s製ラバーカップ
 item.gt.tool.plunger.tooltip=§8機械から液体を撤去
 
 
-item.gt.tool.tooltip.crafting_uses=§a残り %s 回クラフトできる
-item.gt.tool.tooltip.general_uses=§b残り %s 回使用可能
-item.gt.tool.tooltip.attack_damage=§c攻撃力 %s
-item.gt.tool.tooltip.attack_speed=§9攻撃速度 %s
-item.gt.tool.tooltip.mining_speed=§d採掘速度 %s
-item.gt.tool.tooltip.harvest_level=§e採掘レベル %s
-item.gt.tool.tooltip.harvest_level_extra=§e採掘レベル %s §f(%s§f)
+item.gt.tool.tooltip.crafting_uses=§aあと§l%s§r§a回クラフトに利用できる
+item.gt.tool.tooltip.general_uses=§bあと§l%s§r§b回使用可能
+item.gt.tool.tooltip.attack_damage=§c攻撃力 §l%s
+item.gt.tool.tooltip.attack_speed=§9攻撃速度 §l%s
+item.gt.tool.tooltip.mining_speed=§d採掘速度 §l%s
+item.gt.tool.tooltip.harvest_level=§e採掘レベル §l%s
+item.gt.tool.tooltip.harvest_level_extra=§e採掘レベル §l%s§r§f(%s§f)
 
 item.gt.tool.harvest_level.0=§8木 §f/ §8Wood
 item.gt.tool.harvest_level.1=§7石 §f/ §7Stone
@@ -978,7 +978,7 @@ item.gt.tool.harvest_level.5=§9ドゥラニウム §f/ §9Duranium
 item.gt.tool.harvest_level.6=§cニュートロニウム §f/ §cNeutronium
 
 item.gt.tool.tooltip.repair_info=SHIFTで修理情報を表示
-item.gt.tool.tooltip.repair_material=§a%s§で修理可能
+item.gt.tool.tooltip.repair_material=§a%s§7で修理可能
 
 item.gt.tool.aoe.rows=横
 item.gt.tool.aoe.columns=縦
@@ -3800,9 +3800,9 @@ gregtech.battery_buffer.average_output=出力平均: %s EU/t
 # Transformers
 gregtech.machine.transformer.description=異なる電圧間でエネルギーを輸送する
 gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転. 最初は§f降圧§7
-gregtech.machine.transformer.tooltip_transform_down=§a降圧: §a%dA %dEU (%s§f) -> %dA %dEU (%s§f)
+gregtech.machine.transformer.tooltip_transform_down=§a降圧: §a%dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_down=降圧;  In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer.tooltip_transform_up=§c昇圧: %dA %dEU (%s§f) -> %dA %dEU (%s§f)
+gregtech.machine.transformer.tooltip_transform_up=§c昇圧: %dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_up=昇圧; In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.description=異なる電圧間でエネルギーを輸送する. 複数Aに対応!
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更. 最初は§f4アンペア§7
@@ -3940,9 +3940,9 @@ gregtech.machine.energy_converter.max.16.name=MAX 16Aエネルギー変換機
 
 gregtech.machine.energy_converter.description=EUとFE間でエネルギーを変換
 gregtech.machine.energy_converter.tooltip_tool_usage=ソフトマレットで効果を反転. 最初は§fFE -> EU§7
-gregtech.machine.energy_converter.tooltip_conversion_fe=§cFE変換: §f%,dFE§7 -> %,dA %,dEU (%s§f)
+gregtech.machine.energy_converter.tooltip_conversion_fe=§cFE変換: §f%,dFE§f -> %,dA %,dEU §f(%s§f)
 gregtech.machine.energy_converter.message_conversion_fe=FE変換, In: %dFE, Out: %dA %dEU
-gregtech.machine.energy_converter.tooltip_conversion_eu=§aEU変換: §f%,dA %,dEU (%s§f) -> %,dFE
+gregtech.machine.energy_converter.tooltip_conversion_eu=§aEU変換: §f%,dA %,dEU §f(%s§f) -> %,dFE
 gregtech.machine.energy_converter.message_conversion_eu=EU変換, In: %dA %dEU, Out: %dFE
 
 # Pumps
@@ -4383,7 +4383,7 @@ gregtech.machine.large_miner.iv.name=発展型大型採掘機
 gregtech.machine.large_miner.luv.name=発展型大型採掘機 II
 gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モードがある.
 gregtech.machine.miner.multi.production=§f粉砕機§7の§f3倍§7以上の砕いた鉱石を生産.
-gregtech.machine.miner.fluid_usage=§f%s§7を§f%,d L/t§7で消費. オーバークロックごとに液体消費が2倍になる.
+gregtech.machine.miner.fluid_usage=§f%,d L/t§7で§f%s§7を消費する. オーバークロックごとに液体消費が2倍になる.
 gregtech.machine.miner.multi.description=広い面積をカバーし, 大量の鉱石を生産するマルチブロック採掘機.
 
 gregtech.machine.miner.startx=開始X: %d
@@ -4709,8 +4709,8 @@ gregtech.universal.tooltip.energy_tier_range=§a許容電圧: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6アイテムスロット数: §f%,d
 gregtech.universal.tooltip.item_storage_total=§6アイテム容量: §f%,dアイテム
 gregtech.universal.tooltip.item_stored=§dアイテム数: §f%s, %,dアイテム
-gregtech.universal.tooltip.item_transfer_rate=§b運搬速度: §f%,d アイテム/秒
-gregtech.universal.tooltip.item_transfer_rate_stacks=§b運搬速度: §f%,d スタック/秒
+gregtech.universal.tooltip.item_transfer_rate=§b運搬速度: §f毎秒%,d アイテム
+gregtech.universal.tooltip.item_transfer_rate_stacks=§b運搬速度: §f毎秒%,d スタック
 gregtech.universal.tooltip.fluid_storage_capacity=§9液体容量: §f%,d L
 gregtech.universal.tooltip.fluid_storage_capacity_mult=§9液体容量: §f%,d §7タンク, §f%,d L §7ずつ
 gregtech.universal.tooltip.fluid_stored=§d液体量: §f%s, %,d L
@@ -4724,7 +4724,7 @@ gregtech.universal.tooltip.uses_per_tick_steam=稼働に蒸気を§f毎秒 %,d L
 gregtech.universal.tooltip.uses_per_hour_lubricant=稼働に潤滑油を§f毎時間 %,d L§7消費
 gregtech.universal.tooltip.uses_per_second=稼働に§f毎秒 %,d EU§7消費
 gregtech.universal.tooltip.uses_per_op=§f動作ごとに%,d EU§7消費
-gregtech.universal.tooltip.base_production_eut=§eB基礎発電量: §f%,d EU/t
+gregtech.universal.tooltip.base_production_eut=§e基礎発電量: §f%,d EU/t
 gregtech.universal.tooltip.base_production_fluid=§e基礎生産量: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§e生産量: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=この機械は環境の影響で爆発しません
@@ -4921,7 +4921,7 @@ gregtech.multiblock.large_boiler.steam_output=蒸気生産量: %s L/t
 gregtech.multiblock.large_boiler.throttle=スロットル: %d
 gregtech.multiblock.large_boiler.throttle.tooltip=ボイラーはより少ない蒸気を生産し, より少ない燃料を消費する. これにより効率が失われることはなく, 予熱時間は影響されない
 gregtech.multiblock.large_boiler.throttle_modify=スロットル調整:
-gregtech.multiblock.large_boiler.rate_tooltip= §f石炭1つ§7から§f%d L§7の蒸気を生産 
+gregtech.multiblock.large_boiler.rate_tooltip=§f石炭1つ§7から§f%d L§7の蒸気を生産 
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7予熱に§f%,d 秒§7必要
 gregtech.multiblock.large_boiler.explosion_tooltip=水がない状態で燃料を入れると爆発する
 
@@ -4944,7 +4944,7 @@ gregtech.command.worldgen.usage=使い方: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=使い方: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=configからWorldgenが正常に読み込まれました.
 gregtech.command.worldgen.reload.failed=Worldgenの読み込みに失敗しました. エラーを確認してください.
-gregtech.command.hand.groovy=§6/gs hand§rを検討してください.
+gregtech.command.hand.groovy=§6/gs hand§7を検討してください.
 gregtech.command.hand.usage=使い方: /gregtech hand
 gregtech.command.hand.item_id=アイテムID: %s (メタデータ: %d)
 gregtech.command.hand.electric=蓄電量: %d / %d EU - Tier: %d; バッテリー？: %s
