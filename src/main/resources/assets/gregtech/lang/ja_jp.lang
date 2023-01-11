@@ -129,8 +129,9 @@ gregtech.multiblock.advanced_processing_array.description=発展型処理アレ�
 item.invalid.name=無効なアイテム
 fluid.empty=空
 
-gregtech.tooltip.hold_shift=§aShift§7を押して詳細を表示
-gregtech.tooltip.fluid_pipe_hold_shift=§aShift§7で耐流体性能を表示
+gregtech.tooltip.hold_shift=SHIFTを押して詳細を表示
+gregtech.tooltip.fluid_pipe_hold_shift=SHIFTで耐流体性能を表示
+gregtech.tooltip.tool_fluid_hold_shift=SHIFTで耐流体性能とツール情報を表示
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -4088,8 +4089,10 @@ gregtech.machine.world_accelerator.uev.name=史上最高の世界加速機 II
 gregtech.machine.world_accelerator.uiv.name=史上最高の世界加速機 III
 gregtech.machine.world_accelerator.uxv.name=史上最高の世界加速機 IV
 gregtech.machine.world_accelerator.opv.name=伝説の世界加速機
-gregtech.machine.world_accelerator.description=ティックごとのティック更新を増やす.TileEntityまたはRandom Tickの2つのモードがあり, スクリュードライバーを使うことで変更できる.
-gregtech.machine.world_accelerator.area=TileEntityモード:§c隣接したブロック§7の動作速度を加速する. Random Tickモード:%dx%dブロック内の§cRandom Tick§7を加速させる.
+gregtech.machine.world_accelerator.description=§fTile Entity§7または§fRandom Tick§7の2つのモードを用いてTickを加速させる. スクリュードライバーでモード変更ができる.
+gregtech.machine.world_accelerator.working_area=§b有効範囲:
+gregtech.machine.world_accelerator.working_area_tile=  Tile Entity モード:§f 隣接ブロック
+gregtech.machine.world_accelerator.working_area_random=  Random Tickモード:§f %dx%d
 gregtech.machine.world_accelerator.mode_tile=Tile Entityモード
 gregtech.machine.world_accelerator.mode_entity=Random Tickモード
 
@@ -4328,17 +4331,17 @@ behaviour.prospecting=鉱石探知に
 gregtech.machine.primitive_water_pump.name=初歩的な揚水ポンプ
 gregtech.machine.primitive_blast_furnace.bronze.name=初歩的な溶鉱炉
 gregtech.machine.electric_blast_furnace.name=工業用電気炉
-gregtech.machine.electric_blast_furnace.tooltip.1=レシピの温度よりも§a900K§7高い毎に, オーバークロック前に消費エネルギーが§a95%%§7になる効果が適用される.
-gregtech.machine.electric_blast_furnace.tooltip.2=レシピの温度よりも§a1800K§7高い毎に, 1つのオーバークロックが§a100%%§7効率的になる.
-gregtech.machine.electric_blast_furnace.tooltip.3=使用電圧が§aMV以上§7かつレシピの電圧よりも高い場合, 電圧Tier毎に温度が§a100K§7上昇する.
+gregtech.machine.electric_blast_furnace.tooltip.1=レシピの温度よりも§f900K§7高い毎に, オーバークロック(OC)前に消費エネルギーが§f95%%§7になる効果が適用される.
+gregtech.machine.electric_blast_furnace.tooltip.2=レシピの温度よりも§f1800K§7高い毎に, 1つのOCが§f100%%§7効率的(=完璧なOC)になる.
+gregtech.machine.electric_blast_furnace.tooltip.3=使用電圧が§bMV以上§7かつレシピの電圧よりも高い場合, 電圧Tier毎に温度が§f100K§7上昇する.
 gregtech.machine.vacuum_freezer.name=真空冷却機
 gregtech.machine.implosion_compressor.name=内破圧縮機
 gregtech.machine.pyrolyse_oven.name=熱分解炉
-gregtech.machine.pyrolyse_oven.tooltip.1=コイルブロックが§aキュプロニッケル§7製では速度が§a25%%§7遅くなります. §aカンタル§7製以上の場合, コイルごとに速度が§a50%%§7上昇します.
+gregtech.machine.pyrolyse_oven.tooltip.1=コイルブロックが§6キュプロニッケル§7製では速度が§f25%%§7遅くなります. §bカンタル§7製以上の場合, コイルごとに速度が§f50%%§7上昇します.
 gregtech.machine.distillation_tower.name=蒸留塔
 gregtech.machine.multi_furnace.name=マルチスメルター
 gregtech.machine.cracker.name=接触分解装置
-gregtech.machine.cracker.tooltip.1=§aキュプロニッケル§7製以上のコイルブロックを用いた場合, コイルごとに消費エネルギーが§a10%%§7軽減されます.
+gregtech.machine.cracker.tooltip.1=§cキュプロニッケル§7製以上のコイルブロックを用いた場合, コイルごとに消費エネルギーが§f10%%§7軽減されます.
 gregtech.machine.coke_oven.name=コークス炉
 gregtech.machine.processing_array.name=プロセッシングアレイ
 gregtech.machine.advanced_processing_array.name=発展型プロセッシングアレイ
@@ -4349,11 +4352,10 @@ gregtech.machine.large_chemical_reactor.name=大型化学反応炉
 
 
 gregtech.machine.large_combustion_engine.name=大型燃焼エンジン
-gregtech.machine.large_combustion_engine.tooltip.1=最大§e%s§7 EU/tで発電.
-gregtech.machine.large_combustion_engine.tooltip.2=稼働時に潤滑剤を§e1000 L/hr§7で消費.
+gregtech.machine.extreme_combustion_engine.name=強化型大型燃焼エンジン
 gregtech.machine.large_combustion_engine.tooltip.boost_regular=酸素を§e20 L/s§7で供給すると, 燃料消費§e2倍§7最大出力§e%s§7 EU/tとなる.
 gregtech.machine.large_combustion_engine.tooltip.boost_extreme=液体酸素を§e80 L/s§7で供給すると, 燃料消費§e2倍§7最大出力§e%s§7 EU/tとなる.
-gregtech.machine.extreme_combustion_engine.name=強化型大型燃焼エンジン
+
 gregtech.machine.large_turbine.steam.name=大型蒸気タービン
 gregtech.machine.large_turbine.gas.name=大型ガスタービン
 gregtech.machine.large_turbine.plasma.name=大型プラズマタービン
@@ -4373,19 +4375,15 @@ gregtech.machine.fusion_reactor.overclocking=オーバークロックすると�
 gregtech.machine.miner.lv.name=基本型採掘機
 gregtech.machine.miner.mv.name=発展型採掘機
 gregtech.machine.miner.hv.name=発展型採掘機 II
-gregtech.machine.miner.tooltip=採掘するのは採掘機より下§bのみ§7! スクリュードライバーで半径を変更.
-gregtech.machine.miner.usage=最大範囲: §b%dx%d§7 ブロック. 1ブロックにつき§b%d秒§7.§b%d§7 EU/t使用.
-
+gregtech.machine.miner.tooltip=採掘するのは採掘機より下! §f%sx%s §7の範囲から始まる
+gregtech.machine.miner.usage=§71ブロックにつき§f%,d秒§7掛かる
 gregtech.machine.large_miner.ev.name=基本型大型採掘機
 gregtech.machine.large_miner.iv.name=発展型大型採掘機
 gregtech.machine.large_miner.luv.name=発展型大型採掘機 II
 gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モードがある.
-gregtech.machine.miner.multi.tooltip=最大範囲: §b%dx%d§7チャンク.
-gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産.
+gregtech.machine.miner.multi.production=§f粉砕機§7の§f3倍§7以上の砕いた鉱石を生産.
+gregtech.machine.miner.fluid_usage=§f%s§7を§f%,d L/t§7で消費. オーバークロックごとに液体消費が2倍になる.
 gregtech.machine.miner.multi.description=広い面積をカバーし, 大量の鉱石を生産するマルチブロック採掘機.
-#Small ores lang:gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産. Small ore Fortune §b%d§7.
-gregtech.machine.miner.fluid_usage=§b%dmb/tick§7で§e%s§7を消費. オーバークロックごとに液体消費が2倍になる.
-gregtech.machine.miner.overclock=%s§7を要求. %s§7までオーバークロック可能.
 
 gregtech.machine.miner.startx=開始X: %d
 gregtech.machine.miner.starty=開始Y: %d
@@ -4400,23 +4398,22 @@ gregtech.machine.fluid_drilling_rig.mv.name=基本型液体採掘機
 gregtech.machine.fluid_drilling_rig.hv.name=発展型液体採掘機
 gregtech.machine.fluid_drilling_rig.ev.name=発展型液体採掘機 II
 gregtech.machine.fluid_drilling_rig.description=液体を岩盤下から汲みだす.
-gregtech.machine.fluid_drilling_rig.production=生産倍率: §e%sx§7
-gregtech.machine.fluid_drilling_rig.depletion=枯渇速度: §b%s%%§7
-gregtech.machine.fluid_drilling_rig.energy=%s§7を要求. %s§7までオーバークロック可能.
-gregtech.machine.fluid_drilling_rig.overclock=オーバークロックで生産が§d50%%§7上昇する.
+gregtech.machine.fluid_drilling_rig.production=§e生産倍率: §f%sx, オーバークロックで%f倍
+gregtech.machine.fluid_drilling_rig.depletion=§b枯渇速度: §f%s%%
 
 gregtech.machine.cleanroom.name=クリーンルーム
 gregtech.machine.cleanroom.tooltip.1=機械を中に設置すると繊細な素材を加工できるようになる.
-gregtech.machine.cleanroom.tooltip.2=非清潔時は§a30 EU/t§7, 清潔時は§a4 EU/t§7消費する.
+gregtech.machine.cleanroom.tooltip.2=非清潔時は§f30 EU/t§7, 清潔時は§44 EU/t§7消費する.
 gregtech.machine.cleanroom.tooltip.3=オーバークロックで1回当たりの浄化量が増加する.
-gregtech.machine.cleanroom.tooltip.4=§b5x5x5§7から§b15x15x15§7までの好きなサイズで建設可能.
-gregtech.machine.cleanroom.tooltip.5=天井にはフィルター外装が必要 (4辺を除く).
-gregtech.machine.cleanroom.tooltip.6=4つまでドアを設置できる. ドアを開けたままでも清潔度は減らない.
+gregtech.machine.cleanroom.tooltip.4=§b大きさ : §f5x5x5§7から§f15x15x15
+gregtech.machine.cleanroom.tooltip.hold_ctrl=CTRLで構造の追加樹法を表示
+gregtech.machine.cleanroom.tooltip.5=天井には§fフィルター外装§7が必要 (4辺を除く).
+gregtech.machine.cleanroom.tooltip.6=§fを4つまで§7設置できる. ドアを開けたままでも清潔度は減らない.
 gregtech.machine.cleanroom.tooltip.7=発電機, マフラー, ドリル及び初歩的な機械はクリーンルームの清潔度を損なう.
-gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の筐体またはダイオードを通して送ることができる.
-gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の通過ハッチを通して送ることができる.
-gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2チャンネルs§7を壁面の筐体を通して送信できる.
-gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aMEネットワーク§7を壁面の筐体を通して送信できる.
+gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の§f筐体§7または§fダイオード§7を通して送ることができる.
+gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の§f通過ハッチ§7を通して送ることができる.
+gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2チャンネル§7を壁面の§f筐体§7を通して送信できる.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aMEネットワーク§7を壁面の§f筐体§7を通して送信できる.
 gregtech.multiblock.cleanroom.clean_state=状態: §a清潔
 gregtech.multiblock.cleanroom.dirty_state=状態: §4清潔でない
 gregtech.multiblock.cleanroom.clean_amount=清潔度: §a%s%%
@@ -4449,9 +4446,42 @@ gregtech.machine.monitor_screen.name=モニタースクリーン
 
 
 # Multiblock Tooltips
-gregtech.machine.primitive_blast_furnace.bronze.tooltip=構造: 3x3x4 (幅x奥行x高)/n耐火レンガブロックで構築される. (32個必要)./n最下段: 3x3/n2-4段目 3x3 (中空)./nこのブロックは2段目側面の中央に設置./nこのブロックがない面は高炉間で共有できる.
-gregtech.machine.multiblock.universal.controller_information=§e%s§7を制御するブロック.
-
+gregtech.machine.primitive_water_pump.tooltip=お家のエンダーバー
+gregtech.machine.primitive_blast_furnace.bronze.tooltip=初めてのスチールづくりに
+gregtech.machine.electric_blast_furnace.tooltip=電子タバコを吸う人はどこ?
+gregtech.machine.vacuum_freezer.tooltip=アルミ製冷凍機
+gregtech.machine.implosion_compressor.tooltip=ブームに乗るための唯一の機械
+gregtech.machine.pyrolyse_oven.tooltip=電気式コークス炉
+gregtech.machine.distillation_tower.tooltip=液体精製
+gregtech.machine.multi_furnace.tooltip=お家のオーブンレンジと同じ
+gregtech.machine.large_combustion_engine.tooltip=燃料着火室
+gregtech.machine.extreme_combustion_engine.tooltip=極限化学エネルギー放出装置
+gregtech.machine.cracker.tooltip=オイルを便利に
+gregtech.machine.large_turbine.steam.tooltip=頭を突っ込んじゃ駄目よ
+gregtech.machine.large_turbine.gas.tooltip=ジェットエンジンではありません
+gregtech.machine.large_turbine.plasma.tooltip=プラズマエネルギーサイフォン
+gregtech.machine.large_boiler.bronze.tooltip=もっと蒸気を!
+gregtech.machine.large_boiler.steel.tooltip=木炭焼却炉
+gregtech.machine.large_boiler.titanium.tooltip=マジックスーパー燃料はどこ?
+gregtech.machine.large_boiler.tungstensteel.tooltip=どうやって燃料を維持するんだ?
+gregtech.machine.coke_oven.tooltip=スチールやエネルギー用のより良い燃料を
+gregtech.machine.assembly_line.tooltip=マルチブロック式組立機じゃないよ!
+gregtech.machine.fusion_reactor.luv.tooltip=原子合金製錬炉
+gregtech.machine.fusion_reactor.zpm.tooltip=地上に沈む夕日
+gregtech.machine.fusion_reactor.uv.tooltip=白色矮星を基地に
+gregtech.machine.large_chemical_reactor.tooltip=黒箱反応炉
+gregtech.machine.steam_oven.tooltip=マルチスメルターと混同しないでね
+gregtech.machine.steam_grinder.tooltip=副産物が得られないマルチブロック式粉砕機
+gregtech.machine.large_miner.ev.tooltip=君の代わりに鉱石を採掘
+gregtech.machine.large_miner.iv.tooltip=バイオーム掘削機
+gregtech.machine.large_miner.luv.tooltip=地上採掘機
+gregtech.machine.central_monitor.tooltip=しかし, Doomを動かせますか?
+gregtech.machine.processing_array.tooltip=数台の機械では足りないときに
+gregtech.machine.advanced_processing_array.tooltip=世界の並列化
+gregtech.machine.fluid_drilling_rig.mv.tooltip=石油抽出ポンプ
+gregtech.machine.fluid_drilling_rig.hv.tooltip=フラッキングは行わない
+gregtech.machine.fluid_drilling_rig.ev.tooltip=良い液体回収機
+gregtech.machine.cleanroom.tooltip=粉塵を寄せ付けない
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=マルチブロックへの搬入
 gregtech.universal.disabled=マルチブロック間での共有: §4不可能
@@ -4500,8 +4530,6 @@ gregtech.machine.fluid_hatch.import_4x.name=四重搬入ハッチ
 gregtech.machine.fluid_hatch.import_9x.name=九重搬入ハッチ
 gregtech.machine.fluid_hatch.export_4x.name=四重搬出ハッチ
 gregtech.machine.fluid_hatch.export_9x.name=九重搬出ハッチ
-gregtech.machine.multi_fluid_hatch_universal.tooltip.1=容量: §b16000mB§7毎タンク.
-gregtech.machine.multi_fluid_hatch_universal.tooltip.2=タンク数: §b%d
 
 gregtech.machine.fluid_hatch.export.ulv.name=ULV搬出ハッチ
 gregtech.machine.fluid_hatch.export.lv.name=LV搬出ハッチ
@@ -4610,7 +4638,8 @@ gregtech.maintenance.configurable_time=故障率: %fx
 gregtech.maintenance.configurable_time.unchanged_description=故障は通常の頻度で発生します. 設定を変更するとアップデートされます.
 gregtech.maintenance.configurable_time.changed_description=故障は通常の%f倍の頻度で発生します.
 
-gregtech.machine.muffler_hatch.tooltip=搬出口を塞ぐな!
+gregtech.machine.muffler_hatch.tooltip1=機械からの煤を回収
+gregtech.machine.muffler_hatch.tooltip2=搬出口を塞ぐな!
 
 gregtech.machine.muffler_hatch.ulv.name=ULVマフラーハッチ
 gregtech.machine.muffler_hatch.lv.name=LVマフラーハッチ
@@ -4628,7 +4657,7 @@ gregtech.machine.muffler_hatch.uxv.name=UXVマフラーハッチ
 gregtech.machine.muffler_hatch.opv.name=OpVマフラーハッチ
 gregtech.machine.muffler_hatch.max.name=MAXマフラーハッチ
 
-gregtech.muffler.recovery_tooltip=§b%d%%§7の確率でアイテムを回収する.
+gregtech.muffler.recovery_tooltip=§b回収確率: §f%d%%
 
 gregtech.machine.pump_hatch.name=ポンプ搬出ハッチ
 gregtech.machine.pump_hatch.tooltip=揚水ポンプ用の初歩的な搬出ハッチ
@@ -4662,13 +4691,50 @@ gregtech.universal.tooltip.item_storage_capacity=アイテムスロット数: %,
 gregtech.universal.tooltip.fluid_storage_capacity=液体容量: %,d mb
 gregtech.universal.tooltip.max_voltage_in=最大許容入力電圧: §a%,d §7(§a%s§7)
 gregtech.universal.tooltip.terrain_resist=この機械は雨・火・水または溶岩で爆発しません
+gregtech.universal.tooltip.voltage_in=§a入力電圧: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.max_voltage_in=§a最大入力電圧: §f%,d (%s§f)
+gregtech.universal.tooltip.voltage_out=§a出力電圧: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.max_voltage_out=§a最大出力電圧: §f%,d (%s§f)
+gregtech.universal.tooltip.voltage_in_out=§a入出力電圧: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.max_voltage_in_out=§a最大入出力電圧: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.amperage_in=§e入力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_till=§e許容最大入力電流: §f%,dA
+gregtech.universal.tooltip.amperage_out=§e出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_out_till=§e許容最大出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_out=§e入出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_out_till=§e許容最大入出力電流: §f%,dA
+gregtech.universal.tooltip.energy_storage_capacity=§c蓄電量: §r%,d EU
+gregtech.universal.tooltip.energy_tier_range=§a許容電圧: §f%s §f- %s
+gregtech.universal.tooltip.item_storage_capacity=§6アイテムスロット数: §f%,d
+gregtech.universal.tooltip.item_storage_total=§6アイテム容量: §f%,dアイテム
+gregtech.universal.tooltip.item_stored=§dアイテム数: §f%s, %,dアイテム
+gregtech.universal.tooltip.item_transfer_rate=§b運搬速度: §f%,d アイテム/秒
+gregtech.universal.tooltip.item_transfer_rate_stacks=§b運搬速度: §f%,d スタック/秒
+gregtech.universal.tooltip.fluid_storage_capacity=§9液体容量: §f%,d L
+gregtech.universal.tooltip.fluid_storage_capacity_mult=§9液体容量: §f%,d §7タンク, §f%,d L §7ずつ
+gregtech.universal.tooltip.fluid_stored=§d液体量: §f%s, %,d L
+gregtech.universal.tooltip.fluid_transfer_rate=§b運搬速度: §f%,d L/t
+gregtech.universal.tooltip.parallel=§d最大並列処理数: §f%d
+gregtech.universal.tooltip.working_area=§b稼働範囲: §f%,dx%,d
+gregtech.universal.tooltip.working_area_max=§b最大稼働範囲: §f%,dx%,d
+gregtech.universal.tooltip.working_area_chunks_max=§b最大稼働範囲: §f%,dx%,d チャンク
+gregtech.universal.tooltip.uses_per_tick=稼働に§f%,d EU/t§7消費
+gregtech.universal.tooltip.uses_per_tick_steam=稼働に蒸気を§f毎秒 %,d L§7消費
+gregtech.universal.tooltip.uses_per_hour_lubricant=稼働に潤滑油を§f毎時間 %,d L§7消費
+gregtech.universal.tooltip.uses_per_second=稼働に§f毎秒 %,d EU§7消費
+gregtech.universal.tooltip.uses_per_op=§f動作ごとに%,d EU§7消費
+gregtech.universal.tooltip.base_production_eut=§eB基礎発電量: §f%,d EU/t
+gregtech.universal.tooltip.base_production_fluid=§e基礎生産量: §f%,d L/t
+gregtech.universal.tooltip.produces_fluid=§e生産量: §f%,d L/t
+gregtech.universal.tooltip.terrain_resist=この機械は環境の影響で爆発しません
+gregtech.universal.tooltip.requires_redstone=§4赤石信号が必要
 
 gregtech.recipe.total=合計: %,d EU
 gregtech.recipe.eu=消費: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=発電: %,d EU/t
 gregtech.recipe.duration=処理時間: %,.2f 秒
 gregtech.recipe.amperage=電流: %,d
-gregtech.recipe.not_consumed=§bこのレシピでは消費されない
+gregtech.recipe.not_consumed=このレシピでは消費されない
 gregtech.recipe.chance=確率: %s%% +%s%%/tier
 gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆薬: %s
@@ -4680,8 +4746,22 @@ gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 
 gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると, §b中身をタンクに移す§7. Shiftクリックで1スタック全て移す.
 gregtech.fluid.click_combined=§7液体容器でクリックすると, 液体を§c液体容器§7と§b内部タンク§7間をやり取りできる. Shiftクリックで1スタック全て移す.
-
 gregtech.fluid.click_to_empty=§7液体容器でクリックすると, 液体を§c液体容器§7と§b内部タンク§7間をやり取りできる. Shiftクリックで1スタック全て移す.
+
+gregtech.tool_action.show_tooltips=SHIFTでツール情報を表示
+gregtech.tool_action.screwdriver.auto_output_covers=§8スクリュードライバーで搬出面からの搬入やカバーにアクセスできます
+gregtech.tool_action.screwdriver.toggle_mode_covers=§8スクリュードライバーでモード変更やカバーにアクセスできます
+gregtech.tool_action.screwdriver.access_covers=§8スクリュードライバーでカバーにアクセスできます
+gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバーで自動搬出を切替できます
+gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます
+gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます
+gregtech.tool_action.wrench.connect=§8レンチで接続を設定でき, スニークで接続をブロックできます
+gregtech.tool_action.wire_cutter.connect=§8ワイヤーカッターで接続を設定できます
+gregtech.tool_action.soft_mallet.reset=§8ソフトマレットで動作をON / OFFできます
+gregtech.tool_action.soft_mallet.toggle_mode=§8ソフトマレットでモーを切替できます
+gregtech.tool_action.hammer=§8ハードハンマーで消音できます
+gregtech.tool_action.crowbar=§8バールでカバーを撤去できます
+gregtech.tool_action.tape=§8テープでメンテナンスの問題を解決できます
 
 gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%sプラズマ
@@ -4750,18 +4830,15 @@ gregtech.cable.amperage=最大電流: §e%,d
 gregtech.cable.loss_per_block=損失/メートル/アンペア: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s ロスレス
 
-gregtech.fluid_pipe.throughput=§b運搬速度: %,d L/t
-gregtech.fluid_pipe.capacity=§9液体容量: %,d L
-gregtech.fluid_pipe.max_temperature=§c限界温度: %,d K
-gregtech.fluid_pipe.channels=§eチャンネル: %d
+gregtech.fluid_pipe.capacity=§9容量: §f%,d L
+gregtech.fluid_pipe.max_temperature=§c限界温度: §f%,d K
+gregtech.fluid_pipe.channels=§eチャンネル: §f%d
 gregtech.fluid_pipe.gas_proof=§6気体を運搬可能
 gregtech.fluid_pipe.acid_proof=§6酸性の液体を運搬可能
 gregtech.fluid_pipe.cryo_proof=§6極低温の液体を運搬可能
 gregtech.fluid_pipe.plasma_proof=§6全てのプラズマを運搬可能
 gregtech.fluid_pipe.not_gas_proof=§4気体を密封できない!
 
-gregtech.item_pipe.rate_items=§9運搬速度: %d items/s
-gregtech.item_pipe.rate_stacks=§9運搬速度: %d stacks/s
 gregtech.item_pipe.priority=§9優先度: %d
 
 gregtech.multiblock.work_paused=一時停止中.
@@ -4836,7 +4913,6 @@ gregtech.multiblock.turbine.efficiency=タービン効率: %s%%
 gregtech.multiblock.turbine.energy_per_tick=エネルギー出力: %s/%s EU/t
 gregtech.multiblock.turbine.energy_per_tick_maxed=エネルギー出力: %s EU/t
 gregtech.multiblock.turbine.obstructed=タービン正面が塞がれている.
-gregtech.multiblock.turbine.voltage_tooltip=基本出力: §e%s§7 EU/t
 gregtech.multiblock.turbine.efficiency_tooltip=%s§7以上のローターホルダーごとに§610%%§7の効率化.
 
 gregtech.multiblock.large_boiler.efficiency=効率: %s
@@ -4844,9 +4920,9 @@ gregtech.multiblock.large_boiler.steam_output=蒸気生産量: %s L/t
 gregtech.multiblock.large_boiler.throttle=スロットル: %d
 gregtech.multiblock.large_boiler.throttle.tooltip=ボイラーはより少ない蒸気を生産し, より少ない燃料を消費する. これにより効率が失われることはなく, 予熱時間は影響されない
 gregtech.multiblock.large_boiler.throttle_modify=スロットル調整:
-gregtech.multiblock.large_boiler.rate_tooltip=石炭1つで%dLの蒸気を%dL/tで生産
-gregtech.multiblock.large_boiler.heat_time_tooltip=予熱に%.2f秒必要
-gregtech.multiblock.large_boiler.explosion_tooltip=§c水がない状態で燃料を入れると爆発する
+gregtech.multiblock.large_boiler.rate_tooltip= §f石炭1つ§7から§f%d L§7の蒸気を生産 
+gregtech.multiblock.large_boiler.heat_time_tooltip=§7予熱に§f%,d 秒§7必要
+gregtech.multiblock.large_boiler.explosion_tooltip=水がない状態で燃料を入れると爆発する
 
 gregtech.multiblock.large_miner.done=終了!
 gregtech.multiblock.large_miner.working=稼働中...
@@ -5149,9 +5225,10 @@ terminal.cape_selector.tip=象徴的な実績を達成することでマント�
 
 metaitem.cover.digital.title.mode=モード:
 metaitem.cover.digital.title.spin=回転:
-metaitem.cover.digital.wireless.tooltip.1=§eセントラルモニターを右クリックすることで無線でリンクできます.
-metaitem.cover.digital.wireless.tooltip.2=§eシフト右クリックで現在のバインドを除去します.
-metaitem.cover.digital.wireless.tooltip.3=§cリンク先: (%s)
+metaitem.cover.digital.wireless.tooltip.1=§fセントラルモニター§7に機械を§f無線で§7接続できる§fカバー§7.
+metaitem.cover.digital.wireless.tooltip.2=§fセントラルモニター§7を§f右クリック§7することで無線でリンクできます.
+metaitem.cover.digital.wireless.tooltip.3=§fシフト右クリック§7でリンクを除去します.
+metaitem.cover.digital.wireless.tooltip.4=§aリンク先: §f%s
 monitor.gui.title.back=戻る
 monitor.gui.title.scale=スケール:
 monitor.gui.title.argb=ARGB:
@@ -5167,3 +5244,6 @@ gregtech.key.armor_mode_switch=装備のモード切替
 gregtech.key.armor_hover=装備のホバーモードの切替
 gregtech.key.armor_charging=装備のインベントリ充電機能の切替
 gregtech.key.tool_aoe_change=採掘範囲の切替
+
+# Debug messaging
+gregtech.debug.f3_h.enabled=GregTechがデバッグ情報を修正しました! 開発者向け : GregTech.cfgのmisc:debug設定オプションを有効にすることでより多くの情報を見ることができます。
