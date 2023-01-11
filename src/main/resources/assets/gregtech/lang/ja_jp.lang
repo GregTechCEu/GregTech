@@ -908,6 +908,7 @@ item.gt.tool.behavior.rail_rotation=§e鉄道会社: §fレールを回転
 item.gt.tool.behavior.crop_harvesting=§a収穫家: §f作物を収穫
 item.gt.tool.behavior.plunger=§9排水業者: §f液体を回収
 item.gt.tool.behavior.block_rotation=§2メカニック: §fブロックを回転
+item.gt.tool.behavior.damage_boost=§4ダメージブースト: §f%sに対してダメージ増加
 
 item.gt.tool.sword.name=%s製剣
 item.gt.tool.pickaxe.name=%s製ピッケル
