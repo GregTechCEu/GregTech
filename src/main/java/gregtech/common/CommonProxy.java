@@ -348,6 +348,11 @@ public class CommonProxy {
         }
     }
 
+    @SubscribeEvent
+    public static void onMissingMappings(RegistryEvent.MissingMappings<Item> event) {
+        // todo crushedCentrifuged -> crushedRefined
+    }
+
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {
         ItemBlock itemBlock = producer.apply(block);
         itemBlock.setRegistryName(block.getRegistryName());
