@@ -310,8 +310,9 @@ public class Material implements Comparable<Material> {
         return materialInfo.metaItemSubId;
     }
 
+    // must be named multiply for GroovyScript to allow `mat * quantity -> MaterialStack`
     @ZenOperator(OperatorType.MUL)
-    public MaterialStack createMaterialStack(long amount) {
+    public MaterialStack multiply(long amount) {
         return new MaterialStack(this, amount);
     }
 
@@ -681,6 +682,11 @@ public class Material implements Comparable<Material> {
                         (Integer) components[i + 1]
                 ));
             }
+            return this;
+        }
+
+        public Builder components(MaterialStack... components) {
+            composition = Arrays.asList(components);
             return this;
         }
 
