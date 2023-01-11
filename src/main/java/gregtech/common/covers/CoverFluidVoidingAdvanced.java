@@ -131,7 +131,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-        // TODO replace soft mallet with toggle button
         primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
                 "cover.voiding.disabled", "cover.voiding.enabled")
                 .setTooltipHoverString("cover.voiding.tooltip"));

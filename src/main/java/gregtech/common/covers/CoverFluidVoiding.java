@@ -62,7 +62,6 @@ public class CoverFluidVoiding extends CoverPump {
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-        // TODO add toggle button instead of soft hammer
         primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
                 "cover.voiding.disabled", "cover.voiding.enabled")
                 .setTooltipHoverString("cover.voiding.tooltip"));
@@ -78,12 +77,6 @@ public class CoverFluidVoiding extends CoverPump {
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.FLUID_VOIDING.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
-    }
-
-    @Override
-    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        this.isWorkingAllowed = !this.isWorkingAllowed;
-        return EnumActionResult.SUCCESS;
     }
 
     @Override
