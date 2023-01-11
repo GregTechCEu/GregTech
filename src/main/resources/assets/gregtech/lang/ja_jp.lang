@@ -1020,11 +1020,11 @@ metaitem.voltage_coil.uhv.name=Ultra High Voltage コイル
 metaitem.voltage_coil.uhv.tooltip=ウルトラコイル
 metaitem.voltage_coil.uev.name=Ultra Excessive Voltage コイル
 metaitem.voltage_coil.uev.tooltip=非現実的なコイル
-metaitem.voltage_coil.uiv.name=Ultra Insane Voltage コイル
+metaitem.voltage_coil.uiv.name=Ultra Immense Voltage コイル
 metaitem.voltage_coil.uiv.tooltip=非常識なコイル
 metaitem.voltage_coil.uxv.name=Ultra Extreme Voltage コイル
 metaitem.voltage_coil.uxv.tooltip=エピックコイル
-metaitem.voltage_coil.opv.name=Ultra Immense Voltage コイル
+metaitem.voltage_coil.opv.name=Overpowered Voltage コイル
 metaitem.voltage_coil.opv.tooltip=伝説のコイル
 metaitem.voltage_coil.max.name=Maximum Voltage コイル
 metaitem.voltage_coil.max.tooltip=マキシマムコイル
@@ -1250,6 +1250,7 @@ item.material.oreprefix.nugget=%sナゲット
 item.material.oreprefix.plateDense=高密度な%sプレート
 item.material.oreprefix.plateDouble=二重%sプレート
 item.material.oreprefix.plate=%sプレート
+item.material.oreprefix.plank=%s板
 item.material.oreprefix.foil=%sのフォイル
 item.material.oreprefix.stickLong=長い%sの棒
 item.material.oreprefix.stick=%sの棒
@@ -2261,7 +2262,8 @@ metaitem.plugin.text.name=テキストプラグイン
 metaitem.plugin.online_pic.name=オンライン画像プラグイン
 metaitem.plugin.fake_gui.name=GUIプロキシプラグイン
 metaitem.plugin.advanced_monitor.name=発展モニタープロキシプラグイン
-metaitem.cover.digital.name=デジタルインターフェースカバー
+metaitem.cover.digital.name=デジタルインターフェース
+metaitem.cover.digital.tooltip=§fケーブル§7を介して機械と§fセントラルモニター§7を繋げる§fカバー§7.
 metaitem.cover.digital.wireless.name=ワイヤレスデジタルインターフェースカバー
 metaitem.coloured.leds.name=彩色LED
 metaitem.display.name=ディスプレイ
@@ -2274,14 +2276,15 @@ tile.casing.ev=EVマシン筐体
 tile.casing.iv=IVマシン筐体
 
 # Wire coil blocks
-tile.wire_coil.tooltip_heat=基本最大温度: §e%,dK
-tile.wire_coil.tooltip_smelter=§aマルチスメルター§7:
-tile.wire_coil.tooltip_parallel_smelter=最大並行処理数: §e%s§7
-tile.wire_coil.tooltip_energy_smelter=エネルギー使用量: §e%s EU/t毎レシピ§7
-tile.wire_coil.tooltip_pyro=§a熱分解炉§7:
-tile.wire_coil.tooltip_speed_pyro=処理速度: §e%s%%§7
-tile.wire_coil.tooltip_cracking=§a接触分解装置§7:
-tile.wire_coil.tooltip_energy_cracking=エネルギー使用量: §e%s%%§7
+tile.wire_coil.tooltip_extended_info=SHIFTでコイルのボーナス情報を表示
+tile.wire_coil.tooltip_heat=§c基本最大温度: §f%,d K
+tile.wire_coil.tooltip_smelter=§8マルチスメルター:
+tile.wire_coil.tooltip_parallel_smelter=  §5最大並行処理数: §f%s
+tile.wire_coil.tooltip_energy_smelter=  §aエネルギー使用量: §f%s EU/t §8p毎レシピ
+tile.wire_coil.tooltip_pyro=§8熱分解炉:
+tile.wire_coil.tooltip_speed_pyro=  §b処理速度: §f%s%%
+tile.wire_coil.tooltip_cracking=§8接触分解装置:
+tile.wire_coil.tooltip_energy_cracking=  §aエネルギー使用量: §f%s%%
 
 tile.wire_coil.cupronickel.name=キュプロニッケルコイルブロック
 tile.wire_coil.kanthal.name=カンタルコイルブロック
@@ -2291,10 +2294,6 @@ tile.wire_coil.hss_g.name=HSS-Gコイルブロック
 tile.wire_coil.naquadah.name=ナクアダコイルブロック
 tile.wire_coil.trinium.name=トリニウムコイルブロック
 tile.wire_coil.tritanium.name=トリタニウムコイルブロック
-
-# General casing block tooltip
-tile.machine_casing.tooltip1=Mobはこの上にスポーンできない
-tile.machine_casing.tooltip2=これはTileEntityではありません!
 
 # Warning sign blocks
 tile.warning_sign.yellow_stripes.name=黄色斜線ブロック
@@ -2440,8 +2439,10 @@ gregtech.machine.locked_safe.name=金庫
 gregtech.machine.locked_safe.malfunctioning=§c故障中!
 gregtech.machine.locked_safe.requirements=§7要交換部品:
 
-#Workbench
+# Workbench
 gregtech.machine.workbench.name=クラフティングステーション
+gregtech.machine.workbench.tooltip1=Forestryより優秀
+gregtech.machine.workbench.tooltip2=アイテム / ツール用のストレージを持ち, 隣接インベントリのアイテムを認識し、レシピを記憶する.
 gregtech.machine.workbench.tab.workbench=クラフト
 gregtech.machine.workbench.tab.item_list=ストレージ
 gregtech.machine.workbench.storage_note_1=(隣接ストレージのアイテムを
@@ -2586,8 +2587,6 @@ tile.stone_bricks_square.concrete_dark.name=暗色コンクリートの大レン
 
 
 # Steam machines
-gregtech.machine.steam_boiler.tooltip_produces=%,dmb/tickで蒸気を生産
-
 gregtech.machine.steam_boiler_coal_bronze.name=固形燃料用小型ボイラー
 gregtech.machine.steam_boiler_coal_bronze.tooltip=蒸気の力を得るための最初の手段
 gregtech.machine.steam_boiler_coal_steel.name=固形燃料用高圧ボイラー
@@ -2633,7 +2632,6 @@ gregtech.machine.steam_rock_breaker_steel.name=高圧蒸気式破砕機
 gregtech.machine.steam_rock_breaker_steel.tooltip=水と溶岩に水平に隣接させて設置
 gregtech.machine.steam_miner.name=蒸気式採掘機
 gregtech.machine.steam_miner.tooltip=採掘機より下§bのみ§7採掘!
-gregtech.machine.steam_miner.description=採掘範囲: §b%dx%d§7 ブロック. 1ブロックにつき§b%d秒§7. 蒸気を §b16mB/t§7消費.
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=可燃性液体が必要
@@ -2666,8 +2664,6 @@ gregtech.machine.block_breaker.mv.name=発展型ブロック破壊機
 gregtech.machine.block_breaker.hv.name=発展型ブロック破壊機 II
 gregtech.machine.block_breaker.ev.name=発展型ブロック破壊機 III
 gregtech.machine.block_breaker.tooltip=正面のブロックを破壊しドロップアイテムを集める
-gregtech.machine.block_breaker.redstone=稼働にはレッドストーン信号が必要
-gregtech.machine.block_breaker.consumption=動作毎に§e%,d EU§7を消費.
 gregtech.machine.block_breaker.speed_bonus=速度ボーナス: §e%,d%%
 
 # Electric Furnace
@@ -3204,7 +3200,7 @@ gregtech.machine.extruder.uxv.tooltip=形状変更装置
 gregtech.machine.extruder.opv.name=伝説の押出機
 gregtech.machine.extruder.opv.tooltip=形状変更装置
 
-# Fermenter TODO
+# Fermenter
 gregtech.machine.fermenter.lv.name=基本型発酵槽
 gregtech.machine.fermenter.lv.tooltip=液体の発酵に
 gregtech.machine.fermenter.mv.name=発展型発酵槽
@@ -3709,15 +3705,15 @@ gregtech.machine.scanner.opv.name=伝説のスキャナー
 gregtech.machine.scanner.opv.tooltip=電子顕微鏡
 
 gregtech.machine.infinite_energy.name=クリエイティブEU電源
-gregtech.machine.infinite_energy.tooltip=§8扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モ§9ー§1ド§r§8が必要です.
 gregtech.machine.creative_chest.name=クリエイティブ量子チェスト
-gregtech.machine.creative_chest.tooltip=§8扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モ§9ー§1ド§r§8が必要です.
 gregtech.machine.creative_tank.name=クリエイティブ量子タンク
-gregtech.machine.creative_tank.tooltip=§8扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モ§9ー§1ド§r§8が必要です.
+gregtech.creative_tooltip.1=§7使うには
+gregtech.creative_tooltip.2= クリエイティブモード
+gregtech.creative_tooltip.3=§7が必要です
 
 
 # Machine hulls
-gregtech.machine.hull.tooltip=§f使うには§5そ§dう§4ぞ§cう§eす§aる§bの§3う§9り§1ょ§5く§f が必要です.
+gregtech.machine.hull.tooltip=§7使うには§5そ§dう§4ぞ§cう§eす§aる§bの§3う§9り§1ょ§5く§7が必要です.
 
 gregtech.machine.hull.ulv.name=ULVマシン筐体
 gregtech.machine.hull.lv.name=LVマシン筐体
@@ -3800,12 +3796,14 @@ gregtech.battery_buffer.average_input=入力平均: %s EU/t
 gregtech.battery_buffer.average_output=出力平均: %s EU/t
 
 # Transformers
-gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転. 最初は降圧
-gregtech.machine.transformer.tooltip_transform_down=降圧: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
+gregtech.machine.transformer.description=異なる電圧間でエネルギーを輸送する
+gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転. 最初は§f降圧§7
+gregtech.machine.transformer.tooltip_transform_down=§a降圧: §a%dA %dEU (%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_down=降圧;  In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer.tooltip_transform_up=昇圧: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
+gregtech.machine.transformer.tooltip_transform_up=§c昇圧: %dA %dEU (%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_up=昇圧; In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更. 最初は4アンペア
+gregtech.machine.transformer_adjustable.description=異なる電圧間でエネルギーを輸送する. 複数Aに対応!
+gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更. 最初は§f4アンペア§7
 gregtech.machine.transformer_adjustable.message_adjust=%dEU %dAを%dEU %dAに変圧
 
 gregtech.machine.transformer.ulv.name=ULV変圧器
@@ -3840,8 +3838,9 @@ gregtech.machine.transformer.adjustable.opv.name=OpV可変変圧器
 
 # Diodes
 gregtech.machine.diode.message=通す最大アンペア数: %s
-gregtech.machine.diode.tooltip_general=一方向にのみエネルギーを流すことができるシンプルなダイオード.
 gregtech.machine.diode.tooltip_tool_usage=ソフトマレットで叩いて通すアンペア数を切り替えます.
+gregtech.machine.diode.tooltip_general=エネルギーを一方通行にし、通すA数を制限できる.
+gregtech.machine.diode.tooltip_starts_at=ソフトマレットでA数を変更. 初期は§f1A§7.
 
 gregtech.machine.diode.ulv.name=ULVダイオード
 gregtech.machine.diode.lv.name=LVダイオード
@@ -3937,16 +3936,16 @@ gregtech.machine.energy_converter.max.4.name=MAX 4Aエネルギー変換機
 gregtech.machine.energy_converter.max.8.name=MAX 8Aエネルギー変換機
 gregtech.machine.energy_converter.max.16.name=MAX 16Aエネルギー変換機
 
-gregtech.machine.energy_converter.tooltip_tool_usage=ソフトマレットで効果を反転. 最初はFE -> EU
-gregtech.machine.energy_converter.tooltip_conversion_fe=FE変換: §c%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
+gregtech.machine.energy_converter.description=EUとFE間でエネルギーを変換
+gregtech.machine.energy_converter.tooltip_tool_usage=ソフトマレットで効果を反転. 最初は§fFE -> EU§7
+gregtech.machine.energy_converter.tooltip_conversion_fe=§cFE変換: §f%,dFE§7 -> %,dA %,dEU (%s§f)
 gregtech.machine.energy_converter.message_conversion_fe=FE変換, In: %dFE, Out: %dA %dEU
-gregtech.machine.energy_converter.tooltip_conversion_eu=EU変換: §a%,dA %,dEU (§r%s§a)§7 -> §c%,dFE
+gregtech.machine.energy_converter.tooltip_conversion_eu=§aEU変換: §f%,dA %,dEU (%s§f) -> %,dFE
 gregtech.machine.energy_converter.message_conversion_eu=EU変換, In: %dA %dEU, Out: %dFE
 
 # Pumps
-gregtech.machine.pump.tooltip=海を枯らすのに最適! 正面から搬出.
-gregtech.machine.pump.tooltip_range=範囲: %,dx%,d
-gregtech.machine.pump.tooltip_rate=%dEU/動作, %d ticks/バケツ
+gregtech.machine.pump.tooltip=海を枯らすのに最適!
+gregtech.machine.pump.tooltip_buckets=§f%,d §7ticks/バケツ
 
 gregtech.machine.pump.lv.name=基本型ポンプ
 gregtech.machine.pump.mv.name=発展型ポンプ
@@ -3962,15 +3961,11 @@ gregtech.machine.item_collector.mv.name=発展型アイテム収集器
 gregtech.machine.item_collector.hv.name=発展型アイテム収集器 II
 gregtech.machine.item_collector.ev.name=発展型アイテム収集器 III
 
-gregtech.machine.item_collector.collect_range=収集範囲: %,dx%,d
 gregtech.machine.item_collector.gui.collect_range=%s ブロック内のアイテム収集
+gregtech.machine.item_collector.tooltip=赤石信号入力時に周囲のアイテムを回収する
 
 #Quantum Chests
-gregtech.machine.quantum_chest.tooltip=JABBAよりもいい.
-gregtech.machine.quantum_chest.capacity=最大容量: %,d 個
-gregtech.machine.quantum_chest.items_stored=貯蔵量:
-gregtech.machine.quantum_chest.tooltip.item=内容: §b%s
-gregtech.machine.quantum_chest.tooltip.count=§e%,d 個
+gregtech.machine.quantum_chest.tooltip=Storage Drawersよりも良い
 
 gregtech.machine.super_chest.lv.name=スーパーチェスト I
 gregtech.machine.super_chest.mv.name=スーパーチェスト II
@@ -3982,13 +3977,10 @@ gregtech.machine.quantum_chest.luv.name=クァンタムチェスト II
 gregtech.machine.quantum_chest.zpm.name=クァンタムチェスト III
 gregtech.machine.quantum_chest.uv.name=クァンタムチェスト IV
 gregtech.machine.quantum_chest.uhv.name=クァンタムチェスト V
+gregtech.machine.quantum_chest.items_stored=アイテム量:
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=大量の液体を保管するコンパクトな空間.
-gregtech.machine.quantum_tank.capacity=最大容量: %,d L
-gregtech.machine.quantum_tank.tooltip.name=内容: §b%s
-gregtech.machine.quantum_tank.tooltip.count=現在容量: §e%,d L
-
 gregtech.machine.super_tank.lv.name=スーパータンク I
 gregtech.machine.super_tank.mv.name=スーパータンク II
 gregtech.machine.super_tank.hv.name=スーパータンク III
@@ -4002,8 +3994,6 @@ gregtech.machine.quantum_tank.uhv.name=クァンタムタンク V
 
 #Buffers
 gregtech.machine.buffer.tooltip=アイテムと液体を補完する小さなバッファー
-gregtech.machine.buffer.inventory=アイテム容量: %d スロット
-gregtech.machine.buffer.tanks=液体容量: %d タンク, 64,000Lまで
 gregtech.machine.buffer.lv.name=基本型バッファー
 gregtech.machine.buffer.mv.name=発展型バッファー
 gregtech.machine.buffer.hv.name=発展型バッファー II
