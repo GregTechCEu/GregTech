@@ -9,7 +9,9 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
@@ -60,12 +62,16 @@ public class CoverFluidVoiding extends CoverPump {
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
+        // TODO add toggle button instead of soft hammer
+        primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
+                "cover.voiding.disabled", "cover.voiding.enabled")
+                .setTooltipHoverString("cover.voiding.tooltip"));
 
         this.fluidFilter.initUI(20, primaryGroup::addWidget);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16)
                 .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16);
         return builder.build(this, player);
     }
 

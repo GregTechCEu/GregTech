@@ -1144,6 +1144,9 @@ cover.fluid.voiding.title=Fluid Voiding Settings
 cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
 cover.item.voiding.title=Item Voiding Settings
 cover.item.voiding.advanced.title=Advanced Item Voiding Settings
+cover.voiding.disabled=Disabled
+cover.voiding.enabled=Enabled
+cover.voiding.tooltip=WARNING! Setting this to "Enabled" means that fluids or items WILL be voided.
 
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer

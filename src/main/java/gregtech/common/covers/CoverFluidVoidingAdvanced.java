@@ -131,6 +131,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
+        // TODO replace soft mallet with toggle button
+        primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
+                "cover.voiding.disabled", "cover.voiding.enabled")
+                .setTooltipHoverString("cover.voiding.tooltip"));
 
         primaryGroup.addWidget(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
@@ -176,10 +180,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         stackSizeGroup.addWidget(new SimpleTextWidget(129, 86, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16)
                 .widget(primaryGroup)
                 .widget(stackSizeGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16);
         return buildUI(builder, player);
     }
 
