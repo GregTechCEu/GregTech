@@ -4706,6 +4706,9 @@ gregtech.machine.maintenance_hatch_configurable.name=可配置维护仓
 gregtech.machine.maintenance_hatch_configurable.tooltip=为了更好地控制多方块结构/n启动，没有维护问题！
 gregtech.machine.maintenance_hatch_full_auto.name=自动维护仓
 gregtech.machine.maintenance_hatch_full_auto.tooltip=用于自动维护多方块结构
+gregtech.machine.maintenance_hatch_cleanroom_auto.name=自动过滤维护仓
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=通过清洗自动维护多方块结构！
+gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=可清洗：
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=当维护的所需工具在背包中时，用空手右击即可解决维护问题
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=放入胶带以防止出现问题
 
