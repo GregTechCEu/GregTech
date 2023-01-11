@@ -896,10 +896,10 @@ metaitem.wooden_form.brick.name=レンガ型の木枠
 
 item.gt.tool.replace_tool_head=ツールの先端とクラフトすると修理できる
 item.gt.tool.usable_as=§f%s§7として使用可能
-item.gt.tool.behavior.silk_ice=§b製氷: §b氷をシルクタッチ回収
-item.gt.tool.behavior.torch_place=§eスペランカー: §e松明設置
-item.gt.tool.behavior.tree_felling=§4木こり: §4一括伐採
-item.gt.tool.behavior.shield_disable=§c野蛮: §7盾無効
+item.gt.tool.behavior.silk_ice=§b製氷: §f氷をシルクタッチ回収
+item.gt.tool.behavior.torch_place=§eスペランカー: §f松明設置
+item.gt.tool.behavior.tree_felling=§4木こり: §f一括伐採
+item.gt.tool.behavior.shield_disable=§c野蛮: §f盾無効
 item.gt.tool.behavior.relocate_mining=§2磁力: §f採掘ブロックを直接回収
 item.gt.tool.behavior.aoe_mining=§5範囲採掘: §f%sx%sx%s
 item.gt.tool.behavior.ground_tilling=§e農家: §f地面を耕す
