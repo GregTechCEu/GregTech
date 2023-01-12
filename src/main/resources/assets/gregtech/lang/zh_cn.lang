@@ -1009,7 +1009,7 @@ metaitem.behavior.mode_switch.tooltip=在切换模式时使用
 metaitem.behavior.mode_switch.mode_switched=§e模式设置为: %s
 metaitem.behavior.mode_switch.current_mode=模式: %s
 
-metaitem.tool.tooltip.primary_material=§f材料: §e%s (%s lvl)
+metaitem.tool.tooltip.primary_material=§f材料: §e%s
 metaitem.tool.tooltip.attack_damage=§f攻击伤害: §9%,.1f
 metaitem.tool.tooltip.mining_speed=§f采矿速度: §6%,.1f
 metaitem.tool.tooltip.durability=§f耐久: §a%,d / %,d
