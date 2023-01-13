@@ -70,9 +70,9 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.text.DecimalFormat;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -1113,7 +1113,6 @@ public class GTUtility {
         return false;
     }
 
-
     @Nonnull
     public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
         return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
@@ -1172,5 +1171,21 @@ public class GTUtility {
             set.addAll(subItems);
         }
         return set;
+    }
+
+    /**
+     * Checks if an (X,Y) point is within a defined box range
+     *
+     * @param initialX The initial X point of the box
+     * @param initialY The initial Y point of the box
+     * @param width    The width of the box
+     * @param height   The height of the box
+     * @param pointX   The X value of the point to check
+     * @param pointY   The Y value of the point to check
+     *
+     * @return True if the provided (X,Y) point is within the described box, else false
+     */
+    public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
+        return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
 }

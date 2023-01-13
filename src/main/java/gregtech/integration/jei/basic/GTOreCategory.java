@@ -2,7 +2,6 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTJEIUtility;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -15,16 +14,11 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static gregtech.api.GTValues.MODID_AR;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
@@ -84,22 +78,8 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
         this.dimension = GTUtility.getAllRegisteredDimensions(definition.getDimensionFilter());
 
-        //Slight cleanup of the list if Advanced Rocketry is installed
-        if (Loader.isModLoaded(MODID_AR)) {
-            try {
-                int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
+        GTJEIUtility.cleanupDimensionList(this.dimension);
 
-                //Remove Space from the dimension list
-                for (int spaceDim : spaceDims) {
-                    if (this.dimension.get().contains(spaceDim)) {
-                        this.dimension.get().remove((Integer) spaceDim);
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                GTLog.logger.error("Something went wrong with AR JEI integration, No DimensionType found");
-                GTLog.logger.error(e);
-            }
-        }
     }
 
     @Nonnull

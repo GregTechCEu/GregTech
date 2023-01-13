@@ -4,10 +4,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static gregtech.api.GTValues.MODID_AR;
 
 /**
  * Package for various helper methods used in Gregtech JEI integration
@@ -80,16 +86,18 @@ public class GTJEIUtility {
 
         for (int i = 0; i < dimensionIDs.size(); i++) {
 
+            boolean isLastDimension = i == dimensionIDs.size() - 1;
+
             //If the dimension name is included, append it to the dimension number
             if (namedDimensions.containsKey(dimensionIDs.get(i))) {
                 dimName = namedDimensions.get(dimensionIDs.get(i));
-                fullDimName = i == dimensionIDs.size() - 1 ?
+                fullDimName = isLastDimension ?
                         dimensionIDs.get(i) + " (" + dimName + ")" :
                         dimensionIDs.get(i) + " (" + dimName + "), ";
             }
             //If the dimension name is not included, just add the dimension number
             else {
-                fullDimName = i == dimensionIDs.size() - 1 ?
+                fullDimName = isLastDimension ?
                         Integer.toString(dimensionIDs.get(i)) :
                         dimensionIDs.get(i) + ", ";
             }
@@ -107,6 +115,30 @@ public class GTJEIUtility {
 
             //Increment the dimension name display position
             dimDisplayPosX = dimDisplayPosX + dimDisplayLength;
+        }
+    }
+
+    /**
+     * Cleans up the dimension list present on some JEI pages by removing specific dimensions that are not applicable
+     *
+     * @param dimensions A list of all dimensions
+     */
+    public static void cleanupDimensionList(Supplier<List<Integer>> dimensions) {
+
+        if (Loader.isModLoaded(MODID_AR)) {
+            try {
+                int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
+
+                //Remove Space from the dimension list
+                for (int spaceDim : spaceDims) {
+                    if (dimensions.get().contains(spaceDim)) {
+                        dimensions.get().remove((Integer) spaceDim);
+                    }
+                }
+            } catch (IllegalArgumentException e) {
+                GTLog.logger.error("Something went wrong with AR JEI integration, No DimensionType found");
+                GTLog.logger.error(e);
+            }
         }
     }
 }

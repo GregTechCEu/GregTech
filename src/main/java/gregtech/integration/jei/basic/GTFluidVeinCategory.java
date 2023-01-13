@@ -2,7 +2,6 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTJEIUtility;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
@@ -15,17 +14,12 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static gregtech.api.GTValues.MODID_AR;
 
 public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GTFluidVeinInfo> {
 
@@ -81,22 +75,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
 
         this.dimension = GTUtility.getAllRegisteredDimensions(definition.getDimensionFilter());
 
-        //Slight cleanup of the list if Advanced Rocketry is installed
-        if (Loader.isModLoaded(MODID_AR)) {
-            try {
-                int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
-
-                //Remove Space from the dimension list
-                for (int spaceDim : spaceDims) {
-                    if (this.dimension.get().contains(spaceDim)) {
-                        this.dimension.get().remove((Integer) spaceDim);
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                GTLog.logger.error("Something went wrong with AR JEI integration, No DimensionType found");
-                GTLog.logger.error(e);
-            }
-        }
+        GTJEIUtility.cleanupDimensionList(this.dimension);
 
     }
 
@@ -156,22 +135,22 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
 
-        if(textStartX <= mouseX && mouseX <= weightLength && startPosY <= mouseY && mouseY <= startPosY + FONT_HEIGHT) {
+        if(GTUtility.isPointWithinRange(textStartX, startPosY, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.weight_hover"));
         }
-        else if(textStartX <= mouseX && mouseX <= minYieldLength && startPosY + FONT_HEIGHT + 1 <= mouseY && mouseY <= startPosY + 2 * FONT_HEIGHT + 1) {
+        else if (GTUtility.isPointWithinRange(textStartX, startPosY + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.min_hover"));
         }
-        else if(textStartX <= mouseX && mouseX <= maxYieldLength && startPosY + 2 * FONT_HEIGHT + 1 <= mouseY && mouseY <= startPosY + 3 * FONT_HEIGHT + 1) {
+        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.max_hover"));
         }
-        else if(textStartX <= mouseX && mouseX <= depletionChanceLength && startPosY + 3 * FONT_HEIGHT + 1 <= mouseY && mouseY <= startPosY + 4 * FONT_HEIGHT + 1) {
+        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 3 * FONT_HEIGHT + 1, depletionChanceLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_chance_hover"));
         }
-        else if(textStartX <= mouseX && mouseX <= depletionAmountLength && startPosY + 4 * FONT_HEIGHT + 1 <= mouseY && mouseY <= startPosY + 5 * FONT_HEIGHT + 1) {
+        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 4 * FONT_HEIGHT + 1, depletionAmountLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_amount_hover"));
         }
-        else if(textStartX <= mouseX && mouseX <= depletedYieldLength && startPosY + 5 * FONT_HEIGHT + 1 <= mouseY && mouseY <= startPosY + 6 * FONT_HEIGHT + 1) {
+        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 5 * FONT_HEIGHT + 1, depletedYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_yield_hover"));
         }
 
