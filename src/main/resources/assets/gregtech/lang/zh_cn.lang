@@ -54,7 +54,7 @@ gregtech.machine.steam_import_bus.name=输入总线 (蒸汽)
 gregtech.machine.steam_export_bus.name=输出总线 (蒸汽)
 gregtech.machine.steam_bus.tooltip=不工作、非蒸汽多方块结构
 gregtech.machine.steam_oven.name=蒸汽熔炉
-gregtech.multiblock.steam_oven.description=一个蒸汽时代的多方块熔炉. 需要至少6个青铜机器外壳形成。不能使用正常的输入/输出总线，也不能使用除蒸汽舱以外的流体舱。蒸汽舱必须在底层，不能超过一个。
+gregtech.multiblock.steam_oven.description=一个蒸汽时代的多方块熔炉. 需要至少6个青铜机器外壳形成。不能使用正常的输入/输出总线，也不能使用除蒸汽仓以外的流体仓。蒸汽仓必须在底层，不能超过一个。
 gregtech.multiblock.require_steam_parts=需求§e蒸汽仓和总线！
 gregtech.multiblock.steam_.duration_modifier=每次合成最多熔炼8件物品. 需要§f1.5§7倍的处理时间, 不受物品数量的影响。
 
