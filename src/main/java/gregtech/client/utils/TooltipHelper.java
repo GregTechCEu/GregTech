@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
@@ -43,7 +44,7 @@ public class TooltipHelper {
      * @param codes The codes, in order, that this formatting code should oscillate through. MUST be at least 2.
      */
     public static GTFormatCode createNewCode(int rate, TextFormatting... codes) {
-        if (rate <= 0) {
+        if (rate <= 0 && !ConfigHolder.client.blinkingTooltips) {
             GTLog.logger.error("Could not create GT Format Code with rate {}, must be greater than zero!", rate);
             return null;
         }
@@ -57,7 +58,7 @@ public class TooltipHelper {
     }
 
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+        if (ConfigHolder.client.blinkingTooltips && event.phase == TickEvent.Phase.END) {
             CODES.forEach(GTFormatCode::updateIndex);
         }
     }
