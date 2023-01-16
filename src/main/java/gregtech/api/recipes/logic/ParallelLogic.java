@@ -65,17 +65,16 @@ public abstract class ParallelLogic {
         int modifiedFluidParallelAmount = Integer.MAX_VALUE;
 
         // If we are voiding both items and fluids, return the maximum number of parallels that can be performed from the inputs
-        if(voidItems && voidFluids) {
+        if (voidItems && voidFluids) {
             return parallelAmount;
         }
 
         // Check both normal item outputs and chanced item outputs
         if (recipe.getOutputs().size() > 0 || recipe.getChancedOutputs().size() > 0) {
             // If we are voiding items, reset the item limit to the maximum number of parallels
-            if(voidItems) {
+            if (voidItems) {
                 modifiedItemParallelAmount = parallelAmount;
-            }
-            else {
+            } else {
                 modifiedItemParallelAmount = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
             }
 
@@ -88,15 +87,14 @@ public abstract class ParallelLogic {
         // TODO, check both regular and chanced fluid outputs when fluid outputs are implemented
         if (recipe.getFluidOutputs().size() > 0) {
             // If we are voiding fluids, reset the fluid limit to the maximum number of parallels
-            if(voidFluids) {
+            if (voidFluids) {
                 modifiedFluidParallelAmount = parallelAmount;
-            }
-            else {
+            } else {
                 modifiedFluidParallelAmount = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), modifiedItemParallelAmount);
             }
 
             // If we are not voiding, and cannot fit any fluids, return 0
-            if(modifiedFluidParallelAmount == 0 && !voidFluids) {
+            if (modifiedFluidParallelAmount == 0 && !voidFluids) {
                 return 0;
             }
         }
@@ -121,9 +119,15 @@ public abstract class ParallelLogic {
             overlayedItemHandler.reset();
 
             int returnedAmount = 0;
+            int amountToInsert = 0;
 
             for (Map.Entry<ItemStackKey, Integer> entry : recipeOutputs.entrySet()) {
-                int amountToInsert = entry.getValue() * multiplier;
+                // Since multiplier starts at Int.MAX, check here for integer overflow
+                if (entry.getValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getValue()) {
+                    amountToInsert = Integer.MAX_VALUE;
+                } else {
+                    amountToInsert = entry.getValue() * multiplier;
+                }
                 returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
@@ -242,7 +246,12 @@ public abstract class ParallelLogic {
             int amountLeft = 0;
 
             for (Map.Entry<FluidKey, Integer> entry : recipeFluidOutputs.entrySet()) {
-                amountLeft = entry.getValue() * multiplier;
+                // Since multiplier starts at Int.MAX, check here for integer overflow
+                if (entry.getValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getValue()) {
+                    amountLeft = Integer.MAX_VALUE;
+                } else {
+                    amountLeft = entry.getValue() * multiplier;
+                }
                 int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountLeft);
                 if (inserted > 0) {
                     amountLeft -= inserted;
@@ -316,7 +325,7 @@ public abstract class ParallelLogic {
 
         // Return the maximum parallel limit here if there are only non-consumed inputs, which are all found in the input bus
         // At this point, we would have already returned 0 if we were missing any non-consumable inputs, so we can omit that check
-        if(countableMap.isEmpty() && !notConsumableMap.isEmpty()) {
+        if (countableMap.isEmpty() && !notConsumableMap.isEmpty()) {
             return parallelAmount;
         }
 
@@ -398,7 +407,7 @@ public abstract class ParallelLogic {
 
         // Return the maximum parallel limit here if there are only non-consumed inputs, which are all found in the input bus
         // At this point, we would have already returned 0 if we were missing any non-consumable inputs, so we can omit that check
-        if(fluidCountMap.isEmpty() && !notConsumableMap.isEmpty()) {
+        if (fluidCountMap.isEmpty() && !notConsumableMap.isEmpty()) {
             return parallelAmount;
         }
 
@@ -447,7 +456,8 @@ public abstract class ParallelLogic {
             int limitByVoltage = Math.abs((int) (maxVoltage / recipeEUt));
             int parallelizable = Math.min(limitByVoltage, limitByOutput);
             if (parallelizable != 0)
-                recipeBuilder.append(currentRecipe, parallelizable, false);
+                // Use the minimum between the amount of recipes we can run with available inputs and amount of recipe outputs that can fit
+                recipeBuilder.append(currentRecipe, Math.min(parallelizable, multiplierByInputs), false);
         } else if (limitByOutput > 0) {
             recipeBuilder.append(currentRecipe, limitByOutput, false);
         }
@@ -464,7 +474,7 @@ public abstract class ParallelLogic {
      * @param exportInventory The {@link IItemHandlerModifiable} that contains the items to be used as outputs
      * @param parallelAmount  The maximum amount of recipes that can be performed at one time
      * @param maxVoltage      The maximum voltage of the machine
-     * @param voidable             The MetaTileEntity performing the parallel recipe
+     * @param voidable        The MetaTileEntity performing the parallel recipe
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
     public static RecipeBuilder<?> appendItemRecipes(@Nonnull RecipeMap<?> recipeMap, @Nonnull IItemHandlerModifiable importInventory, @Nonnull IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, IVoidable voidable) {
@@ -516,7 +526,7 @@ public abstract class ParallelLogic {
 
             //how much we can add to the output inventory
             int limitByOutput = Integer.MAX_VALUE;
-            if(!voidable.canVoidRecipeItemOutputs()) {
+            if (!voidable.canVoidRecipeItemOutputs()) {
                 // Limit by the number of recipe outputs and chanced outputs, to simulate cases where 100% chanced outputs were obtained
                 limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getAllItemOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
             }

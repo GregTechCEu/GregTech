@@ -15,6 +15,7 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -262,7 +263,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public String getHarvestTool() {
-        return "axe";
+        return ToolClasses.AXE;
     }
 
     @Override
@@ -434,13 +435,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (data.length != 0 && data[0] instanceof ItemStack)
-            this.setClipboard((ItemStack) data[0]);
-    }
-
-    @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) { // JEI shouldn't show this
     }
 
@@ -480,6 +474,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public boolean canRenderMachineGrid() {
+        return false;
+    }
+
+    @Override
+    public boolean showToolUsages() {
         return false;
     }
 

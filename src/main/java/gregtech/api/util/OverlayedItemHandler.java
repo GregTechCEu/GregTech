@@ -50,12 +50,14 @@ public class OverlayedItemHandler {
 
 
     public int insertStackedItemStackKey(ItemStackKey key, int amountToInsert) {
+        int lastKnownPopulatedSlot = 0;
         //loop through all slots, looking for ones matching the key
         for (int i = 0; i < this.slots.length; i++) {
             //populate the slot if it's not already populated
             initSlot(i);
-            //if its the same item
-            if (this.slots[i].getItemStackKey() == key) {
+            // if it's the same item or there is no item in the slot
+            ItemStackKey slotKey = this.slots[i].getItemStackKey();
+            if (slotKey == key || slotKey == null) {
                 //if the slot its not full
                 int canInsertUpTo = this.slots[i].slotLimit - this.slots[i].count;
                 if (canInsertUpTo > 0) {
@@ -65,11 +67,18 @@ public class OverlayedItemHandler {
                     amountToInsert -= insertedAmount;
                 }
             }
+            lastKnownPopulatedSlot = i;
+
+            // early exit if finished inserting everything
+            if (amountToInsert == 0) {
+                return 0;
+            }
         }
-        //if the amountToInsert is still greater than 0, we need to insert it into a new slot
+
+        // if the amountToInsert is still greater than 0, we need to insert it into a new slot
         if (amountToInsert > 0) {
-            //loop through all slots, again, looking for empty ones.
-            for (int i = 0; i < this.slots.length; i++) {
+            //loop through all slots, starting from after the last seen slot with items in it, looking for empty ones.
+            for (int i = lastKnownPopulatedSlot + 1; i < this.slots.length; i++) {
                 OverlayedItemHandlerSlot slot = this.slots[i];
                 //if the slot is empty
                 if (slot.getItemStackKey() == null) {

@@ -24,6 +24,7 @@ import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
 import gregtech.core.sound.GTSoundEvents;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
@@ -92,14 +93,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(41, "shape.extruder.pipe.large").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(42, "shape.extruder.pipe.huge").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[13] = SHAPE_EXTRUDER_SWORD = addItem(44, "shape.extruder.sword").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[14] = SHAPE_EXTRUDER_PICKAXE = addItem(45, "shape.extruder.pickaxe").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[15] = SHAPE_EXTRUDER_SHOVEL = addItem(46, "shape.extruder.shovel").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[16] = SHAPE_EXTRUDER_AXE = addItem(47, "shape.extruder.axe").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[17] = SHAPE_EXTRUDER_HOE = addItem(48, "shape.extruder.hoe").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[18] = SHAPE_EXTRUDER_HAMMER = addItem(49, "shape.extruder.hammer").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[19] = SHAPE_EXTRUDER_FILE = addItem(50, "shape.extruder.file").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[20] = SHAPE_EXTRUDER_SAW = addItem(51, "shape.extruder.saw").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        // Extruder Shapes index 13-20 (inclusive), id 44-51 (inclusive) are unused
         SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(52, "shape.extruder.gear").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(53, "shape.extruder.bottle").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[23] = SHAPE_EXTRUDER_FOIL = addItem(54, "shape.extruder.foil").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
@@ -198,34 +192,112 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_MOTOR_OpV = addItem(139, "electric.motor.opv").setInvisible(GTValues.HT);
 
         // Pumps: ID 141-155
-        ELECTRIC_PUMP_LV = addItem(142, "electric.pump.lv");
-        ELECTRIC_PUMP_MV = addItem(143, "electric.pump.mv");
-        ELECTRIC_PUMP_HV = addItem(144, "electric.pump.hv");
-        ELECTRIC_PUMP_EV = addItem(145, "electric.pump.ev");
-        ELECTRIC_PUMP_IV = addItem(146, "electric.pump.iv");
-        ELECTRIC_PUMP_LuV = addItem(147, "electric.pump.luv");
-        ELECTRIC_PUMP_ZPM = addItem(148, "electric.pump.zpm");
-        ELECTRIC_PUMP_UV = addItem(149, "electric.pump.uv");
-        ELECTRIC_PUMP_UHV = addItem(150, "electric.pump.uhv").setInvisible(GTValues.HT);
-        ELECTRIC_PUMP_UEV = addItem(151, "electric.pump.uev").setInvisible(GTValues.HT);
-        ELECTRIC_PUMP_UIV = addItem(152, "electric.pump.uiv").setInvisible(GTValues.HT);
-        ELECTRIC_PUMP_UXV = addItem(153, "electric.pump.uxv").setInvisible(GTValues.HT);
-        ELECTRIC_PUMP_OpV = addItem(154, "electric.pump.opv").setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_LV = addItem(142, "electric.pump.lv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 / 20));
+        }));
+        ELECTRIC_PUMP_MV = addItem(143, "electric.pump.mv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 4 / 20));
+        }));
+        ELECTRIC_PUMP_HV = addItem(144, "electric.pump.hv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 16 / 20));
+        }));
+        ELECTRIC_PUMP_EV = addItem(145, "electric.pump.ev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 / 20));
+        }));
+        ELECTRIC_PUMP_IV = addItem(146, "electric.pump.iv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 4 / 20));
+        }));
+        ELECTRIC_PUMP_LuV = addItem(147, "electric.pump.luv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 16 / 20));
+        }));
+        ELECTRIC_PUMP_ZPM = addItem(148, "electric.pump.zpm").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 / 20));
+        }));
+        ELECTRIC_PUMP_UV = addItem(149, "electric.pump.uv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        }));
+        ELECTRIC_PUMP_UHV = addItem(150, "electric.pump.uhv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        })).setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UEV = addItem(151, "electric.pump.uev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        })).setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UIV = addItem(152, "electric.pump.uiv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        })).setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UXV = addItem(153, "electric.pump.uxv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        })).setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_OpV = addItem(154, "electric.pump.opv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        })).setInvisible(GTValues.HT);
 
         // Conveyors: ID 156-170
-        CONVEYOR_MODULE_LV = addItem(157, "conveyor.module.lv");
-        CONVEYOR_MODULE_MV = addItem(158, "conveyor.module.mv");
-        CONVEYOR_MODULE_HV = addItem(159, "conveyor.module.hv");
-        CONVEYOR_MODULE_EV = addItem(160, "conveyor.module.ev");
-        CONVEYOR_MODULE_IV = addItem(161, "conveyor.module.iv");
-        CONVEYOR_MODULE_LuV = addItem(162, "conveyor.module.luv");
-        CONVEYOR_MODULE_ZPM = addItem(163, "conveyor.module.zpm");
-        CONVEYOR_MODULE_UV = addItem(164, "conveyor.module.uv");
-        CONVEYOR_MODULE_UHV = addItem(165, "conveyor.module.uhv").setInvisible(GTValues.HT);
-        CONVEYOR_MODULE_UEV = addItem(166, "conveyor.module.uev").setInvisible(GTValues.HT);
-        CONVEYOR_MODULE_UIV = addItem(167, "conveyor.module.uiv").setInvisible(GTValues.HT);
-        CONVEYOR_MODULE_UXV = addItem(168, "conveyor.module.uxv").setInvisible(GTValues.HT);
-        CONVEYOR_MODULE_OpV = addItem(169, "conveyor.module.opv").setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_LV = addItem(157, "conveyor.module.lv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 8));
+        }));
+        CONVEYOR_MODULE_MV = addItem(158, "conveyor.module.mv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 32));
+        }));
+        CONVEYOR_MODULE_HV = addItem(159, "conveyor.module.hv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 64));
+        }));
+        CONVEYOR_MODULE_EV = addItem(160, "conveyor.module.ev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 3));
+        }));
+        CONVEYOR_MODULE_IV = addItem(161, "conveyor.module.iv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 8));
+        }));
+        CONVEYOR_MODULE_LuV = addItem(162, "conveyor.module.luv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        }));
+        CONVEYOR_MODULE_ZPM = addItem(163, "conveyor.module.zpm").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        }));
+        CONVEYOR_MODULE_UV = addItem(164, "conveyor.module.uv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        }));
+        CONVEYOR_MODULE_UHV = addItem(165, "conveyor.module.uhv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UEV = addItem(166, "conveyor.module.uev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UIV = addItem(167, "conveyor.module.uiv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UXV = addItem(168, "conveyor.module.uxv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_OpV = addItem(169, "conveyor.module.opv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
 
         // Pistons: ID 171-185
         ELECTRIC_PISTON_LV = addItem(172, "electric.piston.lv");
@@ -243,19 +315,58 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_PISTON_OpV = addItem(184, "electric.piston.opv").setInvisible(GTValues.HT);
 
         // Robot Arms: ID 186-200
-        ROBOT_ARM_LV = addItem(187, "robot.arm.lv");
-        ROBOT_ARM_MV = addItem(188, "robot.arm.mv");
-        ROBOT_ARM_HV = addItem(189, "robot.arm.hv");
-        ROBOT_ARM_EV = addItem(190, "robot.arm.ev");
-        ROBOT_ARM_IV = addItem(191, "robot.arm.iv");
-        ROBOT_ARM_LuV = addItem(192, "robot.arm.luv");
-        ROBOT_ARM_ZPM = addItem(193, "robot.arm.zpm");
-        ROBOT_ARM_UV = addItem(194, "robot.arm.uv");
-        ROBOT_ARM_UHV = addItem(195, "robot.arm.uhv").setInvisible(GTValues.HT);
-        ROBOT_ARM_UEV = addItem(196, "robot.arm.uev").setInvisible(GTValues.HT);
-        ROBOT_ARM_UIV = addItem(197, "robot.arm.uiv").setInvisible(GTValues.HT);
-        ROBOT_ARM_UXV = addItem(198, "robot.arm.uxv").setInvisible(GTValues.HT);
-        ROBOT_ARM_OpV = addItem(199, "robot.arm.opv").setInvisible(GTValues.HT);
+        ROBOT_ARM_LV = addItem(187, "robot.arm.lv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 8));
+        }));
+        ROBOT_ARM_MV = addItem(188, "robot.arm.mv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 32));
+        }));
+        ROBOT_ARM_HV = addItem(189, "robot.arm.hv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 64));
+        }));
+        ROBOT_ARM_EV = addItem(190, "robot.arm.ev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 3));
+        }));
+        ROBOT_ARM_IV = addItem(191, "robot.arm.iv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 8));
+        }));
+        ROBOT_ARM_LuV = addItem(192, "robot.arm.luv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        }));
+        ROBOT_ARM_ZPM = addItem(193, "robot.arm.zpm").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        }));
+        ROBOT_ARM_UV = addItem(194, "robot.arm.uv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        }));
+        ROBOT_ARM_UHV = addItem(195, "robot.arm.uhv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        ROBOT_ARM_UEV = addItem(196, "robot.arm.uev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        ROBOT_ARM_UIV = addItem(197, "robot.arm.uiv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        ROBOT_ARM_UXV = addItem(198, "robot.arm.uxv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
+        ROBOT_ARM_OpV = addItem(199, "robot.arm.opv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisible(GTValues.HT);
 
         // Field Generators: ID 201-215
         FIELD_GENERATOR_LV = addItem(202, "field.generator.lv");
@@ -303,14 +414,38 @@ public class MetaItem1 extends StandardMetaItem {
         SENSOR_OpV = addItem(244, "sensor.opv").setInvisible(GTValues.HT);
 
         // Fluid Regulators: ID 246-260
-        FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv");
-        FLUID_REGULATOR_MV = addItem(248, "fluid.regulator.mv");
-        FLUID_REGULATOR_HV = addItem(249, "fluid.regulator.hv");
-        FLUID_REGULATOR_EV = addItem(250, "fluid.regulator.ev");
-        FLUID_REGULATOR_IV = addItem(251, "fluid.regulator.iv");
-        FLUID_REGULATOR_LUV = addItem(252, "fluid.regulator.luv");
-        FLUID_REGULATOR_ZPM = addItem(253, "fluid.regulator.zpm");
-        FLUID_REGULATOR_UV = addItem(254, "fluid.regulator.uv");
+        FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 / 20));
+        }));
+        FLUID_REGULATOR_MV = addItem(248, "fluid.regulator.mv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 4 / 20));
+        }));
+        FLUID_REGULATOR_HV = addItem(249, "fluid.regulator.hv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 16 / 20));
+        }));
+        FLUID_REGULATOR_EV = addItem(250, "fluid.regulator.ev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 / 20));
+        }));
+        FLUID_REGULATOR_IV = addItem(251, "fluid.regulator.iv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 4 / 20));
+        }));
+        FLUID_REGULATOR_LUV = addItem(252, "fluid.regulator.luv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 16 / 20));
+        }));
+        FLUID_REGULATOR_ZPM = addItem(253, "fluid.regulator.zpm").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 / 20));
+        }));
+        FLUID_REGULATOR_UV = addItem(254, "fluid.regulator.uv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4/ 20));
+        }));
 
         // Data Items: ID 261-265
         TOOL_DATA_STICK = addItem(261, "tool.datastick");
@@ -328,10 +463,14 @@ public class MetaItem1 extends StandardMetaItem {
         GRAVI_STAR = addItem(283, "gravistar");
 
         // Filters: ID 290-300
-        FLUID_FILTER = addItem(290, "fluid_filter");
-        ITEM_FILTER = addItem(291, "item_filter");
-        ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter");
-        SMART_FILTER = addItem(293, "smart_item_filter");
+        FLUID_FILTER = addItem(290, "fluid_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+        ITEM_FILTER = addItem(291, "item_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2), new MaterialStack(Materials.Steel, M)));
+        ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+        SMART_FILTER = addItem(293, "smart_item_filter")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)));
 
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");
@@ -344,7 +483,10 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SCREEN = addItem(307, "cover.screen");
         COVER_CRAFTING = addItem(308, "cover.crafting");
         COVER_SHUTTER = addItem(309, "cover.shutter");
-        COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
+        COVER_INFINITE_WATER = addItem(310, "cover.infinite_water").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.infinite_water.tooltip.1"));
+            lines.add(I18n.format("gregtech.universal.tooltip.produces_fluid", 16_000 / 20));
+        }));
         COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
         COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
         COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
@@ -356,16 +498,56 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         // Solar Panels: ID 331-346
-        COVER_SOLAR_PANEL = addItem(331, "cover.solar.panel");
-        COVER_SOLAR_PANEL_ULV = addItem(332, "cover.solar.panel.ulv");
-        COVER_SOLAR_PANEL_LV = addItem(333, "cover.solar.panel.lv");
-        COVER_SOLAR_PANEL_MV = addItem(334, "cover.solar.panel.mv");
-        COVER_SOLAR_PANEL_HV = addItem(335, "cover.solar.panel.hv");
-        COVER_SOLAR_PANEL_EV = addItem(336, "cover.solar.panel.ev");
-        COVER_SOLAR_PANEL_IV = addItem(337, "cover.solar.panel.iv");
-        COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv");
-        COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm");
-        COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv");
+        COVER_SOLAR_PANEL = addItem(331, "cover.solar.panel").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", 1, GTValues.VNF[GTValues.ULV]));
+        }));
+        COVER_SOLAR_PANEL_ULV = addItem(332, "cover.solar.panel.ulv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.ULV], GTValues.VNF[GTValues.ULV]));
+        }));
+        COVER_SOLAR_PANEL_LV = addItem(333, "cover.solar.panel.lv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.LV], GTValues.VNF[GTValues.LV]));
+        }));
+        COVER_SOLAR_PANEL_MV = addItem(334, "cover.solar.panel.mv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.MV], GTValues.VNF[GTValues.MV]));
+        }));
+        COVER_SOLAR_PANEL_HV = addItem(335, "cover.solar.panel.hv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.HV], GTValues.VNF[GTValues.HV]));
+        }));
+        COVER_SOLAR_PANEL_EV = addItem(336, "cover.solar.panel.ev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.EV], GTValues.VNF[GTValues.EV]));
+        }));
+        COVER_SOLAR_PANEL_IV = addItem(337, "cover.solar.panel.iv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.IV], GTValues.VNF[GTValues.IV]));
+        }));
+        COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.LuV], GTValues.VNF[GTValues.LuV]));
+        }));
+        COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.ZPM], GTValues.VNF[GTValues.ZPM]));
+        }));
+        COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UV], GTValues.VNF[GTValues.UV]));
+        }));
         // MAX-tier solar panel?
 
         if (!ConfigHolder.machines.enableHighTierSolars) {
@@ -379,11 +561,11 @@ public class MetaItem1 extends StandardMetaItem {
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
         WOODEN_FORM_EMPTY = addItem(347, "wooden_form.empty");
         WOODEN_FORM_BRICK = addItem(348, "wooden_form.brick").addComponents(selfContainerItemProvider);
-        COMPRESSED_CLAY = addItem(349, "compressed.clay");
-        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay");
-        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay");
-        FIRECLAY_BRICK = addItem(352, "brick.fireclay");
-        COKE_OVEN_BRICK = addItem(353, "brick.coke");
+        COMPRESSED_CLAY = addItem(349, "compressed.clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        FIRECLAY_BRICK = addItem(352, "brick.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        COKE_OVEN_BRICK = addItem(353, "brick.coke").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
 
         if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();
@@ -440,7 +622,10 @@ public class MetaItem1 extends StandardMetaItem {
         DYNAMITE = addItem(460, "dynamite").addComponents(new DynamiteBehaviour());
         INTEGRATED_CIRCUIT = addItem(461, "circuit.integrated").addComponents(new IntCircuitBehaviour()).setModelAmount(33);
         FOAM_SPRAYER = addItem(462, "foam_sprayer").addComponents(new FoamSprayerBehavior()).setMaxStackSize(1);
+
         NANO_SABER = addItem(463, "nano_saber").addComponents(ElectricStats.createElectricItem(4_000_000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
+        NANO_SABER.getMetaItem().addPropertyOverride(NanoSaberBehavior.OVERRIDE_KEY_LOCATION, (stack, worldIn, entityIn) -> NanoSaberBehavior.isItemActive(stack) ? 1.0f : 0.0f);
+
         CLIPBOARD = addItem(464, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
         TERMINAL = addItem(465, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour()).setMaxStackSize(1);
         PROSPECTOR_LV = addItem(466, "prospector.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV)).setMaxStackSize(1);

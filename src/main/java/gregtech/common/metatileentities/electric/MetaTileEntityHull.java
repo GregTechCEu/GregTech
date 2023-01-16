@@ -75,7 +75,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    protected boolean openGUIOnRightClick() {
         return false;
     }
 
@@ -88,9 +88,8 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
         tooltip.add(I18n.format("gregtech.machine.hull.tooltip"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in_out", energyContainer.getInputVoltage(), tierName));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_out", 1));
     }
 
     @Override
@@ -132,5 +131,12 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     @Override
     public Class<?> getPassthroughType() {
         return IEnergyContainer.class;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

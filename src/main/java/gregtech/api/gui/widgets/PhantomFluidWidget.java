@@ -12,6 +12,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TooltipHelper;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -25,7 +26,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -255,10 +255,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            ClickData clickData = new ClickData(button,
-                    (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
-                    (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
-                    true);
+            ClickData clickData = new ClickData(button, TooltipHelper.isShiftDown(), TooltipHelper.isCtrlDown(), true);
             writeClientAction(1, clickData::writeToBuf);
             return true;
         }
@@ -270,9 +267,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         if (isMouseOverElement(mouseX, mouseY)) {
             if (showTip) {
                 WheelData wheelData = new WheelData(MathHelper.clamp(wheelDelta, -1, 1),
-                        (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
-                        (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
-                        true);
+                        TooltipHelper.isShiftDown(), TooltipHelper.isCtrlDown(), true);
                 writeClientAction(3, wheelData::writeToBuf);
             }
             return true;

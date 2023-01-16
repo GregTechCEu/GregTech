@@ -3,13 +3,13 @@ package gregtech.api.gui.widgets;
 import com.google.common.collect.Lists;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.SlotUtil;
+import gregtech.client.utils.TooltipHelper;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
@@ -55,7 +55,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
             writeClientAction(1, buffer -> {
                 buffer.writeItemStack(slotReference.getStack());
                 int mouseButton = Mouse.getEventButton();
-                boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                boolean shiftDown = TooltipHelper.isShiftDown();
                 buffer.writeVarInt(mouseButton);
                 buffer.writeBoolean(shiftDown);
             });
@@ -92,7 +92,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
             public void accept(@Nonnull Object ingredient) {
                 if (ingredient instanceof ItemStack) {
                     int mouseButton = Mouse.getEventButton();
-                    boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                    boolean shiftDown = TooltipHelper.isShiftDown();
                     ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
                     SlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, (ItemStack) ingredient);
                     writeClientAction(1, buffer -> {

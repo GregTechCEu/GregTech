@@ -7,6 +7,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -171,6 +172,8 @@ public class MaterialInfoLoader {
                 new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
                 new MaterialStack(Materials.Glass, M / 2) // 1 block / 2
         ));
+
+        OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS), new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M * 4)));
 
         if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, M / 9))); // screw

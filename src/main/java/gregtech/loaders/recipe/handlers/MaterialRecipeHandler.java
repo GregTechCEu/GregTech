@@ -221,18 +221,6 @@ public class MaterialRecipeHandler {
                     OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X', new UnificationEntry(ingotPrefix, material));
         }
 
-        if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            if (ConfigHolder.recipes.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "PhP", "PPP", " P ", 'P', new UnificationEntry(OrePrefix.plate, material));
-            } else {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
-            }
-        }
-
         if (material.hasFlag(GENERATE_ROD)) {
             ModHandler.addShapedRecipe(String.format("stick_%s", material),
                     OreDictUnifier.get(OrePrefix.stick, material, 1),

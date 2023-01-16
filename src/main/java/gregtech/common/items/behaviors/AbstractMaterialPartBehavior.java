@@ -12,7 +12,6 @@ import gregtech.api.util.LocalizationUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.List;
@@ -75,7 +74,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         int maxDurability = getPartMaxDurability(stack);
         int damage = getPartDamage(stack);
         lines.add(I18n.format("metaitem.tool.tooltip.durability", maxDurability - damage, maxDurability));
-        lines.add(I18n.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName(), material.getToolHarvestLevel()));
+        lines.add(I18n.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName()));
     }
 
     @Override
@@ -85,17 +84,8 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
     }
 
     @Override
-    public boolean showsDurabilityBar(ItemStack itemStack) {
-        return getPartDamage(itemStack) > 0;
-    }
-
-    @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        return getPartDamage(itemStack) / (getPartMaxDurability(itemStack) * 1.0);
-    }
-
-    @Override
-    public int getRGBDurabilityForDisplay(ItemStack itemStack) {
-        return MathHelper.hsvToRGB((1.0f - (float) getDurabilityForDisplay(itemStack)) / 3.0f, 1.0f, 1.0f);
+        int maxDurability = getPartMaxDurability(itemStack);
+        return (double) (maxDurability - getPartDamage(itemStack)) / (double) maxDurability;
     }
 }

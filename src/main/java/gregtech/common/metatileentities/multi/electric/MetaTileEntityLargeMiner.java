@@ -17,7 +17,6 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -38,7 +37,6 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -180,7 +178,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .where('X', states(getCasingState())
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setExactLimit(1).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(2).setPreviewCount(1)))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1)))
                 .where('C', states(getCasingState()))
                 .where('F', getFramePredicate())
                 .where('#', any())
@@ -194,15 +192,23 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        int workingRadius = this.minerLogic.getCurrentRadius() / CHUNK_LENGTH;
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
         tooltip.add(I18n.format("gregtech.machine.miner.multi.production"));
-        //small ore: tooltip.add(I18n.format("gregtech.machine.miner.multi.production", getRomanNumeralString()));
-        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid().getUnlocalizedName())));
-        tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
+        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), DrillingFluid.getLocalizedName()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area_chunks_max", workingRadius, workingRadius));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
     }
 
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        if (getSound() != null) {
+            tooltip.add(I18n.format("gregtech.tool_action.hammer"));
+        }
+        tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+    }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
@@ -344,18 +350,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .setTooltipText("gregtech.gui.silktouch"));
 
         return builder.build(getHolder(), entityPlayer);
-    }
-
-    @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!playerIn.isSneaking() && this.openGUIOnRightClick()) {
-            if (this.getWorld() != null && !this.getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP) playerIn);
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override

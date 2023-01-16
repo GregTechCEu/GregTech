@@ -110,7 +110,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(3)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(2))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(1)))
                 .where('C', states(getCasingState()))
                 .where('F', getFramePredicate())
@@ -183,13 +183,18 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier()));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.energy", GTValues.VNF[tier], GTValues.VNF[tier + 1]));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.overclock"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), GTUtility.formatNumbers(getRigMultiplier() * 1.5)));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

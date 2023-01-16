@@ -7,6 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -79,13 +80,29 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
+    protected void reinitializeEnergyContainer() {
+        long tierVoltage = GTValues.V[getTier()];
+        this.energyContainer = EnergyContainerHandler.receiverContainer(this,
+                tierVoltage * 256L, tierVoltage, getMaxInputOutputAmperage());
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in", getMaxInputOutputAmperage()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
-        int area = getTier() * 2;
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.area", area, area));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area"));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_tile"));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_random", getTier() * 2, getTier() * 2));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

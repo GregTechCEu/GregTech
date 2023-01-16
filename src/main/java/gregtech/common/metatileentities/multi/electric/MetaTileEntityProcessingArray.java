@@ -153,7 +153,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", getMachineLimit()));
     }
 
     @Override

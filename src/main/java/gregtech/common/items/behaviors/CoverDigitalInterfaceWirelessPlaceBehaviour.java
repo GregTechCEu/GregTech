@@ -86,6 +86,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         String binding = pos == null ? "---" : String.format("%d, %d, %d", pos.getX(), pos.getY(), pos.getZ());
         lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.1"));
         lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.2"));
-        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3", binding));
+        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3"));
+        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.4", binding));
     }
 }

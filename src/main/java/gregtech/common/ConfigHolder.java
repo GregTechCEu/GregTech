@@ -47,8 +47,8 @@ public class ConfigHolder {
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed", "Default: false"})
         public boolean recipeProgressLowEnergy = false;
 
-        @Config.Comment({"Whether to require a Wrench to break machines.", "Default: false"})
-        public boolean requireWrenchForMachines = false;
+        @Config.Comment({"Whether to require a Wrench, Wirecutter, or other GregTech tools to break machines, casings, wires, and more.", "Default: false"})
+        public boolean requireGTToolsForBlocks = false;
 
         @Config.Comment({"Whether to enable the Maintenance Hatch, required for Multiblocks.", "Default: true"})
         public boolean enableMaintenance = true;
@@ -204,9 +204,6 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
         public boolean harderEBFControllerRecipe = false;
-
-        @Config.Comment({"Whether Wrenches should require Plates instead of Ingots to craft.", "Default: false"})
-        public boolean plateWrenches = false;
     }
 
     public static class CompatibilityOptions {
@@ -459,9 +456,6 @@ public class ConfigHolder {
         @Config.Name("NanoSaber Options")
         public NanoSaber nanoSaber = new NanoSaber();
 
-        @Config.Comment({"Should EV and IV Drills be enabled, which may cause lag when used on low-end devices?", "Default: true"})
-        public boolean enableHighTierDrills = true;
-
         @Config.Comment("NightVision Goggles Voltage Tier. Default: 1 (LV)")
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierNightVision = 1;
@@ -490,6 +484,11 @@ public class ConfigHolder {
         @Config.Comment({"Advanced Electric Jetpack Voltage Tier.", "Default: 3 (HV)"})
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierAdvImpeller = 3;
+
+        @Config.Comment({"Random chance for electric tools to take actual damage", "Default: 10%"})
+        @Config.RangeInt(min = 0, max = 100)
+        @Config.SlidingOption
+        public int rngDamageElectricTools = 10;
 
         @Config.Comment("Armor HUD Location")
         public ArmorHud armorHud = new ArmorHud();

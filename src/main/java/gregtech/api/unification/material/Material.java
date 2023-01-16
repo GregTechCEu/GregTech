@@ -181,14 +181,16 @@ public class Material implements Comparable<Material> {
     }
 
     public int getBlockHarvestLevel() {
-        int harvestLevel = getToolHarvestLevel();
+        if (!hasProperty(PropertyKey.DUST))
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a harvest level! Is probably a Fluid");
+        int harvestLevel = getProperty(PropertyKey.DUST).getHarvestLevel();
         return harvestLevel > 0 ? harvestLevel - 1 : harvestLevel;
     }
 
     public int getToolHarvestLevel() {
-        if (!hasProperty(PropertyKey.DUST))
-            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a harvest level! Is probably a Fluid");
-        return getProperty(PropertyKey.DUST).getHarvestLevel();
+        if (!hasProperty(PropertyKey.TOOL))
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a tool harvest level! Is probably not a Tool Material");
+        return getProperty(PropertyKey.TOOL).getToolHarvestLevel();
     }
 
     @ZenMethod
@@ -597,9 +599,7 @@ public class Material implements Comparable<Material> {
         public Builder polymer(int harvestLevel) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) dust(harvestLevel, 0);
-            else {
-                if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
-            }
+            else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
             properties.ensureSet(PropertyKey.FLUID);
             return this;
@@ -718,12 +718,17 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder toolStats(float speed, float damage, int durability, int enchantability) {
-            return toolStats(speed, damage, durability, enchantability, false);
+        /**
+         * Replaced the old toolStats methods which took many parameters.
+         * Use {@link ToolProperty.Builder} instead to create a Tool Property.
+         */
+        public Builder toolStats(ToolProperty toolProperty) {
+            properties.setProperty(PropertyKey.TOOL, toolProperty);
+            return this;
         }
 
-        public Builder toolStats(float speed, float damage, int durability, int enchantability, boolean ignoreCraftingTools) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability, ignoreCraftingTools));
+        public Builder rotorStats(float speed, float damage, int durability) {
+            properties.setProperty(PropertyKey.ROTOR, new RotorProperty(speed, damage, durability));
             return this;
         }
 
@@ -860,6 +865,8 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        // TODO Clean this up post 2.5 release
+        @Deprecated
         public Builder addDefaultEnchant(Enchantment enchant, int level) {
             if (!properties.hasProperty(PropertyKey.TOOL)) // cannot assign default here
                 throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");

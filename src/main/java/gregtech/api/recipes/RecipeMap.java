@@ -731,10 +731,26 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                             return v;
                         } else {
                             if (recipe.getIsCTRecipe()) {
-                                CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", CTRecipeHelper.getRecipeAddLine(this, recipe), this.unlocalizedName));
+                                CraftTweakerAPI.logError(String.format("Recipe duplicate or conflict found in RecipeMap %s and was not added. See next lines for details.", this.unlocalizedName));
+
+                                CraftTweakerAPI.logError(String.format("Attempted to add Recipe: %s", CTRecipeHelper.getRecipeAddLine(this, recipe)));
+
+                                if (v.left().isPresent()) {
+                                    CraftTweakerAPI.logError(String.format("Which conflicts with: %s", CTRecipeHelper.getRecipeAddLine(this, v.left().get())));
+                                } else {
+                                    CraftTweakerAPI.logError("Could not identify exact duplicate/conflict.");
+                                }
                             }
-                            if (ConfigHolder.misc.debug) {
-                                GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
+                            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
+                                GTLog.logger.warn("Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details", this.unlocalizedName);
+
+                                GTLog.logger.warn("Attempted to add Recipe: {}", recipe.toString());
+
+                                if (v.left().isPresent()) {
+                                    GTLog.logger.warn("Which conflicts with: {}", v.left().get().toString());
+                                } else {
+                                    GTLog.logger.warn("Could not find exact duplicate/conflict.");
+                                }
                             }
                         }
                     } else {

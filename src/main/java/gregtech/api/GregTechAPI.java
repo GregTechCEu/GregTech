@@ -22,6 +22,7 @@ import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -64,7 +65,7 @@ public class GregTechAPI {
     public static final BaseCreativeTab TAB_GREGTECH_MATERIALS =
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
-            new BaseCreativeTab(GTValues.MODID + ".ores", () -> MetaItems.DRILL_MV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".ores", () -> ToolItems.DRILL_MV.get(Materials.Aluminium), true);
 
     public static class RegisterEvent<V> extends GenericEvent<V> {
 

@@ -1,7 +1,0 @@
-{
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "gregtech:items/tools/power_unit_hv",
-    "layer1": "gregtech:items/tools/chainsaw"
-  }
-}

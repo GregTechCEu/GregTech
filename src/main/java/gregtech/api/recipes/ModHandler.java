@@ -3,8 +3,9 @@ package gregtech.api.recipes;
 import crafttweaker.mc1120.actions.ActionAddFurnaceRecipe;
 import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import gregtech.api.GTValues;
-import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
@@ -21,6 +22,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
+import gregtech.common.crafting.FluidReplaceRecipe;
 import gregtech.common.crafting.GTShapedOreRecipe;
 import gregtech.common.crafting.GTShapelessOreRecipe;
 import net.minecraft.block.Block;
@@ -270,27 +272,15 @@ public final class ModHandler {
      * <p/>
      * For UnificationEntry - {@link UnificationEntry#toString()} is called.
      * <p/>
-     * Lowercase Letters are reserved for Tools. They are as follows:
+     * For Characters - gets IGTool from {@link ToolHelper#getToolFromSymbol(Character)}, and calls {@link IGTTool#getOreDictName()}
      * <p/>
-     * <ul>
-     * <li>'b' -  ToolDictNames.craftingToolBlade</li>
-     * <li>'c' -  ToolDictNames.craftingToolCrowbar</li>
-     * <li>'d' -  ToolDictNames.craftingToolScrewdriver</li>
-     * <li>'f' -  ToolDictNames.craftingToolFile</li>
-     * <li>'h' -  ToolDictNames.craftingToolHardHammer</li>
-     * <li>'i' -  ToolDictNames.craftingToolSolderingIron</li>
-     * <li>'j' -  ToolDictNames.craftingToolSolderingMetal</li>
-     * <li>'k' -  ToolDictNames.craftingToolKnife</li>
-     * <li>'m' -  ToolDictNames.craftingToolMortar</li>
-     * <li>'p' -  ToolDictNames.craftingToolDrawplate</li>
-     * <li>'r' -  ToolDictNames.craftingToolSoftHammer</li>
-     * <li>'s' -  ToolDictNames.craftingToolSaw</li>
-     * <li>'w' -  ToolDictNames.craftingToolWrench</li>
-     * <li>'x' -  ToolDictNames.craftingToolWireCutter</li>
-     * </ul>
      */
     public static void addShapedRecipe(String regName, ItemStack result, Object... recipe) {
         addShapedRecipe(false, regName, result, false, recipe);
+    }
+
+    public static void addFluidReplaceRecipe(String regName, ItemStack result, Object... recipe) {
+        addFluidReplaceRecipe(regName, result, false, recipe);
     }
 
     public static void addShapedNBTClearingRecipe(String regName, ItemStack result, Object... recipe) {
@@ -322,6 +312,27 @@ public final class ModHandler {
 
         if (withUnificationData)
             OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
+    }
+
+    public static void addFluidReplaceRecipe(String regName, ItemStack result, boolean isNBTClearing, Object... recipe) {
+        boolean skip = false;
+        if (result.isEmpty()) {
+            GTLog.logger.error(new IllegalArgumentException("Result cannot be an empty ItemStack. Recipe: " + regName));
+            skip = true;
+        }
+        skip = skip || validateRecipe(regName, recipe);
+        if (skip) {
+            RecipeMap.setFoundInvalidRecipe(true);
+            return;
+        }
+
+        IRecipe shapedOreRecipe;
+        shapedOreRecipe = new FluidReplaceRecipe(isNBTClearing, null, result.copy(),
+                finalizeShapedRecipeInput(recipe))
+                .setMirrored(false) //make all recipes not mirrored by default
+                .setRegistryName(regName);
+
+        ForgeRegistries.RECIPES.register(shapedOreRecipe);
     }
 
     public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
@@ -385,10 +396,10 @@ public final class ModHandler {
             while (s.length() < 3) s.append(" ");
             if (s.length() > 3) throw new IllegalArgumentException("Recipe row cannot be larger than 3. Index: " + idx);
             for (char c : s.toString().toCharArray()) {
-                String toolName = getToolNameByCharacter(c);
-                if (toolName != null) {
+                IGTTool tool = ToolHelper.getToolFromSymbol(c);
+                if (tool != null && tool.getOreDictName() != null) {
                     recipeList.add(c);
-                    recipeList.add(toolName);
+                    recipeList.add(tool.getOreDictName());
                 }
             }
         }
@@ -429,7 +440,7 @@ public final class ModHandler {
         while (recipe[itr] instanceof String) {
             String s = (String) recipe[itr];
             for (char c : s.toCharArray()) {
-                if (getToolNameByCharacter(c) != null) continue; // skip tools
+                if (ToolHelper.getToolFromSymbol(c) != null) continue; // skip tools
                 int count = inputCountMap.getOrDefault(c, 0);
                 inputCountMap.put(c, count + 1);
             }
@@ -535,11 +546,11 @@ public final class ModHandler {
             } else if (recipe[i] instanceof UnificationEntry) {
                 recipe[i] = recipe[i].toString();
             } else if (recipe[i] instanceof Character) {
-                String toolName = getToolNameByCharacter((char) recipe[i]);
-                if (toolName == null) {
+                IGTTool tool = ToolHelper.getToolFromSymbol((char) recipe[i]);
+                if (tool == null || tool.getOreDictName() == null) {
                     throw new IllegalArgumentException("Tool name is not found for char " + recipe[i]);
                 }
-                recipe[i] = toolName;
+                recipe[i] = tool.getOreDictName();
             } else if (!(recipe[i] instanceof ItemStack
                     || recipe[i] instanceof Item
                     || recipe[i] instanceof Block
@@ -562,42 +573,6 @@ public final class ModHandler {
         }
 
         ForgeRegistries.RECIPES.register(shapelessRecipe);
-    }
-
-    @Nullable
-    private static String getToolNameByCharacter(char character) {
-        switch (character) {
-            case 'b':
-                return ToolDictNames.craftingToolBlade.name();
-            case 'c':
-                return ToolDictNames.craftingToolCrowbar.name();
-            case 'd':
-                return ToolDictNames.craftingToolScrewdriver.name();
-            case 'f':
-                return ToolDictNames.craftingToolFile.name();
-            case 'h':
-                return ToolDictNames.craftingToolHardHammer.name();
-            case 'i':
-                return ToolDictNames.craftingToolSolderingIron.name();
-            case 'j':
-                return ToolDictNames.craftingToolSolderingMetal.name();
-            case 'k':
-                return ToolDictNames.craftingToolKnife.name();
-            case 'm':
-                return ToolDictNames.craftingToolMortar.name();
-            case 'p':
-                return ToolDictNames.craftingToolDrawplate.name();
-            case 'r':
-                return ToolDictNames.craftingToolSoftHammer.name();
-            case 's':
-                return ToolDictNames.craftingToolSaw.name();
-            case 'w':
-                return ToolDictNames.craftingToolWrench.name();
-            case 'x':
-                return ToolDictNames.craftingToolWireCutter.name();
-            default:
-                return null;
-        }
     }
 
     public static Collection<ItemStack> getAllSubItems(ItemStack item) {

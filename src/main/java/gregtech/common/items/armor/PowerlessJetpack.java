@@ -8,11 +8,15 @@ import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GradientUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +24,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
@@ -33,8 +36,11 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -237,32 +243,29 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         return 0;
     }
 
-    public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour {
+    public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour, ISubItemHandler {
 
         public final int maxCapacity;
+        private final Pair<Color, Color> durabilityBarColors;
 
         public Behaviour(int internalCapacity) {
             this.maxCapacity = internalCapacity;
-        }
-
-        @Override
-        public boolean showsDurabilityBar(ItemStack itemStack) {
-            return true;
+            this.durabilityBarColors = GradientUtil.getGradient(0xB7AF08, 10);
         }
 
         @Override
         public double getDurabilityForDisplay(@Nonnull ItemStack itemStack) {
             IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandlerItem == null)
-                return 1.0;
+            if (fluidHandlerItem == null) return 0;
             IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = fluidTankProperties.getContents();
-            return fluidStack == null ? 1.0 : (1.0 - fluidStack.amount / (fluidTankProperties.getCapacity() * 1.0));
+            return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
         }
 
+        @Nullable
         @Override
-        public int getRGBDurabilityForDisplay(ItemStack itemStack) {
-            return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
+        public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+            return durabilityBarColors;
         }
 
         @Override
@@ -295,6 +298,23 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         @Override
         public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
             return onRightClick(world, player, hand);
+        }
+
+        @Override
+        public String getItemSubType(ItemStack itemStack) {
+            return "";
+        }
+
+        @Override
+        public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+            ItemStack copy = itemStack.copy();
+            IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandlerItem != null) {
+                fluidHandlerItem.fill(Materials.Diesel.getFluid(tankCapacity), true);
+                subItems.add(copy);
+            } else {
+                subItems.add(itemStack);
+            }
         }
     }
 }

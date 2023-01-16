@@ -110,6 +110,7 @@ public class MachineRecipeLoader {
         }
 
         for (MetaItem<?>.MetaValueItem shapeExtruder : SHAPE_EXTRUDERS) {
+            if (shapeExtruder == null) continue;
             FORMING_PRESS_RECIPES.recipeBuilder()
                     .duration(120).EUt(22)
                     .notConsumable(shapeExtruder.getStackForm())
@@ -955,6 +956,7 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_stainless_steel", MetaItems.FLUID_CELL_LARGE_STAINLESS_STEEL.getStackForm(), MetaItems.FLUID_CELL_LARGE_STAINLESS_STEEL.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_titanium", MetaItems.FLUID_CELL_LARGE_TITANIUM.getStackForm(), MetaItems.FLUID_CELL_LARGE_TITANIUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_tungstensteel", MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm(), MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("cell_vial_nbt", MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm(), MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm());
 
 
         //Jetpacks

@@ -38,7 +38,7 @@ jobs:
         run: echo ::set-output name=version::$(echo "$(./gradlew getVersionFromJava --q | sed -E 's/1.12.2-|-.+//g')")
 
       - name: Retrieve Jar from Latest Release
-        run: wget "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get_version_no_extra.outputs.version }}/gregtech-${{ steps.get_current_version.outputs.version }}.jar"
+        run: wget "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get_version_no_extra.outputs.version }}/gregtech-1.12.2-${{ steps.get_current_version.outputs.version }}.jar"
 
       - name: Create CurseForge Release
         uses: itsmeow/curseforge-upload@v3
@@ -49,6 +49,6 @@ jobs:
           changelog: "Changelog is available [here](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.get_version_no_extra.outputs.version }})."
           changelog_type: "markdown"
           relations: "codechicken-lib-1-8:requiredDependency,gregtechce:incompatible,gregtech-chill-edition:incompatible"
-          file_path: "gregtech-${{ steps.get_current_version.outputs.version }}.jar"
+          file_path: "gregtech-1.12.2-${{ steps.get_current_version.outputs.version }}.jar"
           project_id: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
           token: "${{ secrets.CURSEFORGE_API_KEY }}"

@@ -36,6 +36,7 @@ import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -99,7 +100,6 @@ public class CoreModule implements IGregTechModule {
         /* init GroovyScript compat */
         GroovyScriptCompat.init();
 
-
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
         logger.info("Registering GTCEu UI Factories");
@@ -145,6 +145,7 @@ public class CoreModule implements IGregTechModule {
 
         MetaBlocks.init();
         MetaItems.init();
+        ToolItems.init();
         MetaFluids.init();
 
         /* Start MetaTileEntity Registration */
