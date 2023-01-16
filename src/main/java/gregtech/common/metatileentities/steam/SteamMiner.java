@@ -139,7 +139,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+        textList.add(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -333,6 +333,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     @Override
     public List<ITextComponent> getDataInfo() {
         int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
+        return Collections.singletonList(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
     }
 }
