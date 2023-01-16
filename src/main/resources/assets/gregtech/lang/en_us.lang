@@ -2617,8 +2617,6 @@ gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizonta
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
 gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
-gregtech.machine.steam_miner.vent=Venting Blocked!
-gregtech.machine.steam_miner.steam=Needs Steam!
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=Requires flammable Liquids
@@ -4374,11 +4372,11 @@ gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per
 gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
 gregtech.machine.large_miner.iv.name=Advanced Ore Drilling Plant
 gregtech.machine.large_miner.luv.name=Advanced Ore Drilling Plant II
-gregtech.machine.large_miner.modes=Has Silk Touch and Chunk Aligned Modes.
-gregtech.machine.large_miner.tooltip=Max Working Area: §b%dx%d§7 chunks.
-gregtech.machine.large_miner.production=Produces §b3x§7 more crushed ore than a macerator.
-gregtech.machine.large_miner.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
-#Small ores lang:gregtech.machine.large_miner.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
+gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
+gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
+gregtech.machine.miner.multi.production=Produces §b3x§7 more crushed ore than a macerator.
+gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
+#Small ores lang:gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
@@ -4388,7 +4386,8 @@ gregtech.machine.miner.startz=sZ: %d
 gregtech.machine.miner.minex=mX: %d
 gregtech.machine.miner.miney=mY: %d
 gregtech.machine.miner.minez=mZ: %d
-gregtech.machine.miner.area_blocks=Radius: §a%dx%d§r Blocks
+gregtech.machine.miner.radius=Radius: %d
+gregtech.machine.miner.chunkradius=Chunk Radius: %d
 
 gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
@@ -4846,8 +4845,11 @@ gregtech.multiblock.large_miner.done=Done!
 gregtech.multiblock.large_miner.working=Working...
 gregtech.multiblock.large_miner.invfull=Inventory Full!
 gregtech.multiblock.large_miner.needspower=Needs Power!
-gregtech.multiblock.large_miner.area_chunks=Area: §a%dx%d§r Chunks
-gregtech.multiblock.large_miner.errorradius=§cCannot change working area while working!
+gregtech.multiblock.large_miner.vent=Venting Blocked!
+gregtech.multiblock.large_miner.steam=Needs Steam!
+gregtech.multiblock.large_miner.radius=Radius: §a%d§r Blocks
+gregtech.multiblock.large_miner.chunkradius=Radius: §a%d§r Chunks
+gregtech.multiblock.large_miner.errorradius=§cCannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%

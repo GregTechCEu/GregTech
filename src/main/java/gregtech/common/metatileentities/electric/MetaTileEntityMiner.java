@@ -133,7 +133,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.area_blocks", this.minerLogic.getCurrentRadius() * 2 + 1, this.minerLogic.getCurrentRadius() * 2 + 1));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -204,7 +204,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
             this.minerLogic.resetArea();
 
-            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.machine.miner.area_blocks", this.minerLogic.getCurrentRadius() * 2 + 1, this.minerLogic.getCurrentRadius() * 2 + 1)));
+            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
         } else {
             playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.errorradius")));
         }
@@ -290,6 +290,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.machine.miner.area_blocks", this.minerLogic.getCurrentRadius() * 2 + 1, this.minerLogic.getCurrentRadius() * 2 + 1)));
+        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
     }
 }
