@@ -6,6 +6,7 @@ import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModSupport;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
+import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -222,12 +223,12 @@ public class GroovyScriptCompat {
                 builder.append(")");
             }
 
-            /*if (itemStack.serializeNBT().hasKey("tag")) {
+            if (itemStack.serializeNBT().hasKey("tag")) {
                 String nbt = NBTConverter.from(itemStack.serializeNBT().getCompoundTag("tag"), false).toString();
                 if (nbt.length() > 0) {
                     builder.append(".withTag(").append(nbt).append(")");
                 }
-            }*/
+            }
         }
 
         if (recipeInput.getAmount() > 1) {
