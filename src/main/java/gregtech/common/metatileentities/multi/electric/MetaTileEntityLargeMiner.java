@@ -227,9 +227,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get()));
             textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get()));
             if (this.minerLogic.isChunkMode())
-                textList.add(I18n.format("gregtech.universal.tooltip.working_area_chunks", workingAreaChunks, workingAreaChunks));
+                textList.add(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area_chunks", workingAreaChunks, workingAreaChunks)));
             else
-                textList.add(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+                textList.add(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
             if (this.minerLogic.isDone())
                 textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
             else if (this.minerLogic.isWorking())
@@ -367,14 +367,14 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 else
                     this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH);
                 int workingAreaChunks = this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH;
-                playerIn.sendMessage(I18n.format("gregtech.universal.tooltip.working_area_chunks", workingAreaChunks, workingAreaChunks));
+                playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area_chunks", workingAreaChunks, workingAreaChunks)));
             } else {
                 if (currentRadius - CHUNK_LENGTH / 2 <= 0)
                     this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
                 else
                     this.minerLogic.setCurrentRadius(currentRadius - CHUNK_LENGTH / 2);
                 int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-                playerIn.sendMessage(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+                playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
             }
 
             this.minerLogic.resetArea();
@@ -458,7 +458,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public List<ITextComponent> getDataInfo() {
         int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        return Collections.singletonList(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
     }
 
     @Override

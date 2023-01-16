@@ -134,7 +134,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+        textList.add(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -218,9 +218,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             this.minerLogic.resetArea();
 
             int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-            playerIn.sendMessage(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
         } else {
-            playerIn.sendMessage(I18n.format("gregtech.machine.miner.errorradius"));
+            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.machine.miner.errorradius")));
         }
         return true;
     }
@@ -305,6 +305,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Override
     public List<ITextComponent> getDataInfo() {
         int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        return Collections.singletonList(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea));
+        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
     }
 }
