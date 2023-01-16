@@ -179,7 +179,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         }
 
         if (minerLogic.isInventoryFull())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     @Override
