@@ -29,7 +29,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
     public static Collection<AbstractMapIngredient> from(GTRecipeInput r) {
         ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
         for (ItemStack s : r.getInputStacks()) {
-            list.add(new MapItemStackNBTIngredient(s,r));
+            list.add(new MapItemStackNBTIngredient(s, r));
         }
         return list;
     }
@@ -48,7 +48,18 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         }
         if (obj instanceof MapItemStackNBTIngredient) {
             MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
-            return other.gtRecipeInput.acceptsStack(this.stack);
+            if (this.stack.getItem() != other.stack.getItem()) {
+                return false;
+            }
+            if (this.meta != other.meta) {
+                return false;
+            }
+            if (this.matcher != null && !this.matcher.equals(other.matcher)) return false;
+            if (this.condition != null && !this.condition.equals(other.condition)) return false;
+            if (other.matcher != null) {
+                return other.matcher.evaluate(this.stack, other.condition);
+            }
+            return true;
         }
         return false;
     }
