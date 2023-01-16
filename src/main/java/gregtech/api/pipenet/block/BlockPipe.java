@@ -327,7 +327,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
 
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
-        if (coverSide == null) {
+        CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
+        if (coverBehavior == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
@@ -339,15 +340,22 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     return false;
             }
         }
-        CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
-        if (coverBehavior == null) {
-            return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
-        }
 
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
             if (coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
                 ToolHelper.damageItem(itemStack, entityPlayer);
                 if (itemStack.getItem() instanceof IGTTool) {
+                    ((IGTTool) itemStack.getItem()).playSound(entityPlayer);
+                }
+                return true;
+            }
+        }
+
+        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.CROWBAR)) {
+            if (!world.isRemote) {
+                pipeTile.getCoverableImplementation().removeCover(coverSide);
+                ToolHelper.damageItem(itemStack, entityPlayer);
+                if (itemStack.getItem() instanceof IGTTool){
                     ((IGTTool) itemStack.getItem()).playSound(entityPlayer);
                 }
                 return true;

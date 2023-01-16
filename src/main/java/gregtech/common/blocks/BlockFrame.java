@@ -3,9 +3,9 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -19,6 +19,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.common.blocks.properties.PropertyMaterial;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.BlockFaceShape;
@@ -185,6 +186,24 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return false;
     }
 
+    public boolean removeFrame(World world, BlockPos pos, IBlockState state, EntityPlayer player, ItemStack stack, EnumFacing facing) {
+
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof IPipeTile && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
+            TileEntityPipeBase<?, ?> pipeTile = (TileEntityPipeBase<?, ?>) te;
+            Material frameMaterial = pipeTile.getFrameMaterial();
+            pipeTile.setFrameMaterial(null);
+            Block.spawnAsEntity(world, pos, this.getItem(frameMaterial));
+            ToolHelper.damageItem(stack, player);
+            if (stack.getItem() instanceof IGTTool) {
+                ((IGTTool) stack.getItem()).playSound(player);
+            }
+            return true;
+
+        }
+        return false;
+    }
+
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
@@ -194,6 +213,10 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         // replace frame with pipe and set the frame material to this frame
         if (stackInHand.getItem() instanceof ItemBlockPipe) {
             return replaceWithFramedPipe(worldIn, pos, state, playerIn, stackInHand, facing);
+        }
+
+        if (stackInHand.getItem().getToolClasses(stackInHand).contains(ToolClasses.CROWBAR))  {
+            return removeFrame(worldIn, pos, state, playerIn, stackInHand, facing);
         }
 
         if (!(stackInHand.getItem() instanceof FrameItemBlock)) {
