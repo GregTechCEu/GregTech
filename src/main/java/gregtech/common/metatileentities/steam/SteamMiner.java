@@ -138,7 +138,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.area_blocks", this.minerLogic.getCurrentRadius() * 2 + 1, this.minerLogic.getCurrentRadius() * 2 + 1));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -148,9 +148,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         if (this.isInventoryFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
         if (ventingStuck)
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
         else if (!drainEnergy(true))
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     void addDisplayText2(List<ITextComponent> textList) {
@@ -321,6 +321,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.machine.miner.area_blocks", this.minerLogic.getCurrentRadius() * 2 + 1, this.minerLogic.getCurrentRadius() * 2 + 1)));
     }
 }

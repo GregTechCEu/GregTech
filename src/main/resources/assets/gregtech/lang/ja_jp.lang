@@ -2622,6 +2622,8 @@ gregtech.machine.steam_rock_breaker_steel.tooltip=水と溶岩に水平に隣接
 gregtech.machine.steam_miner.name=蒸気式採掘機
 gregtech.machine.steam_miner.tooltip=採掘機より下§bのみ§7採掘!
 gregtech.machine.steam_miner.description=採掘範囲: §b%dx%d§7 ブロック. 1ブロックにつき§b%d秒§7. 蒸気を §b16mB/t§7消費.
+gregtech.machine.steam_miner.vent=排気がブロックされた!
+gregtech.machine.steam_miner.steam=蒸気不足!
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=可燃性液体が必要
@@ -4377,11 +4379,11 @@ gregtech.machine.miner.usage=最大範囲: §b%dx%d§7 ブロック. 1ブロッ�
 gregtech.machine.large_miner.ev.name=基本型大型採掘機
 gregtech.machine.large_miner.iv.name=発展型大型採掘機
 gregtech.machine.large_miner.luv.name=発展型大型採掘機 II
-gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モードがある.
-gregtech.machine.miner.multi.tooltip=最大範囲: §b%dx%d§7チャンク.
-gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産.
-gregtech.machine.miner.multi.description=広い面積をカバーし, 大量の鉱石を生産するマルチブロック採掘機.
-#Small ores lang:gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産. Small ore Fortune §b%d§7.
+gregtech.machine.large_miner.modes=シルクタッチとチャンク整列モードがある.
+gregtech.machine.large_miner.tooltip=最大範囲: §b%dx%d§7チャンク.
+gregtech.machine.large_miner.production=粉砕機の3倍以上の砕いた鉱石を生産.
+gregtech.machine.large_miner.description=広い面積をカバーし, 大量の鉱石を生産するマルチブロック採掘機.
+#Small ores lang:gregtech.machine.large_miner.production=粉砕機の3倍以上の砕いた鉱石を生産. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=§b%dmb/tick§7で§e%s§7を消費. オーバークロックごとに液体消費が2倍になる.
 gregtech.machine.miner.overclock=%s§7を要求. %s§7までオーバークロック可能.
 
@@ -4391,8 +4393,7 @@ gregtech.machine.miner.startz=開始Z: %d
 gregtech.machine.miner.minex=採掘X: %d
 gregtech.machine.miner.miney=採掘Y: %d
 gregtech.machine.miner.minez=採掘Z: %d
-gregtech.machine.miner.radius=半径: %dブロック
-gregtech.machine.miner.chunkradius=半径: %dチャンク
+gregtech.machine.miner.area_blocks=最大範囲: §a%dx%d§r ブロック
 
 gregtech.machine.fluid_drilling_rig.mv.name=基本型液体採掘機
 gregtech.machine.fluid_drilling_rig.hv.name=発展型液体採掘機
@@ -4850,9 +4851,7 @@ gregtech.multiblock.large_miner.done=終了!
 gregtech.multiblock.large_miner.working=稼働中...
 gregtech.multiblock.large_miner.invfull=インベントリが満タン!
 gregtech.multiblock.large_miner.needspower=エネルギー不足!
-gregtech.multiblock.large_miner.vent=排気がブロックされた!
-gregtech.multiblock.large_miner.steam=蒸気不足!
-gregtech.multiblock.large_miner.radius=半径: §a%d§rブロック
+gregtech.multiblock.large_miner.area_chunks=最大範囲: §a%dx%d§rチャンク
 gregtech.multiblock.large_miner.errorradius=§c動作中は変更できない!
 gregtech.multiblock.large_miner.needsfluid=掘削油が必要
 
