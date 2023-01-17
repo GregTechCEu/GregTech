@@ -2782,13 +2782,13 @@ gregtech.machine.arc_furnace.opv.tooltip=短絡加熱器
 
 # Assembler
 gregtech.machine.assembler.lv.name=基本型組立機
-gregtech.machine.assembler.lv.tooltip=Avengers, Assemble! //TODO
+gregtech.machine.assembler.lv.tooltip=野郎共, 組立だ!
 gregtech.machine.assembler.mv.name=発展型組立機
-gregtech.machine.assembler.mv.tooltip=Avengers, Assemble! //TODO
+gregtech.machine.assembler.mv.tooltip=野郎共, 組立だ!
 gregtech.machine.assembler.hv.name=発展型組立機 II
-gregtech.machine.assembler.hv.tooltip=Avengers, Assemble! //TODO
+gregtech.machine.assembler.hv.tooltip=野郎共, 組立だ!
 gregtech.machine.assembler.ev.name=発展型組立機 III
-gregtech.machine.assembler.ev.tooltip=Avengers, Assemble! //TODO
+gregtech.machine.assembler.ev.tooltip=野郎共, 組立だ!
 gregtech.machine.assembler.iv.name=精鋭型組立機
 gregtech.machine.assembler.iv.tooltip=作業台ではありません
 gregtech.machine.assembler.luv.name=精鋭型組立機 II
@@ -4373,7 +4373,7 @@ gregtech.machine.miner.lv.name=基本型採掘機
 gregtech.machine.miner.mv.name=発展型採掘機
 gregtech.machine.miner.hv.name=発展型採掘機 II
 gregtech.machine.miner.tooltip=採掘するのは採掘機より下! §f%sx%s §7の範囲から始まる
-gregtech.machine.miner.per_block=§7takes §f%,ds §7per Block //TODO
+gregtech.machine.miner.per_block=§71ブロックにつき§f%,d秒§7掛かる
 
 gregtech.machine.large_miner.ev.name=基本型大型採掘機
 gregtech.machine.large_miner.iv.name=発展型大型採掘機
