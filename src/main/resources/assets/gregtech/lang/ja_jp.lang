@@ -700,73 +700,73 @@ metaitem.plate.simple_system_on_chip.tooltip=簡易型システムオンチッ�
 
 # T1: Electronic
 metaitem.circuit.electronic.name=電子回路
-metaitem.circuit.electronic.tooltip=最初の回路/n§cLV時代の回路§r/n§cLV-tier Circuit
+metaitem.circuit.electronic.tooltip=最初の回路/n§cLV時代の回路§r/n§cLV-Tier Circuit
 metaitem.circuit.good_electronic.name=改良型電子回路
-metaitem.circuit.good_electronic.tooltip=2番目の回路/n§cMV時代の回路§r/n§cMV-tier Circuit
+metaitem.circuit.good_electronic.tooltip=2番目の回路/n§cMV時代の回路§r/n§cMV-Tier Circuit
 
 # T2: Integrated
 metaitem.circuit.basic_integrated.name=論理集積回路
-metaitem.circuit.basic_integrated.tooltip=より小さくより強力な/n§6LV時代の回路§r/n§6LV-tier Circuit
+metaitem.circuit.basic_integrated.tooltip=より小さくより強力な/n§6LV時代の回路§r/n§6LV-Tier Circuit
 metaitem.circuit.good_integrated.name=改良型集積回路
-metaitem.circuit.good_integrated.tooltip=より小さくより強力な/n§6MV時代の回路§r/n§6MV-tier Circuit
+metaitem.circuit.good_integrated.tooltip=より小さくより強力な/n§6MV時代の回路§r/n§6MV-Tier Circuit
 metaitem.circuit.advanced_integrated.name=発展型集積回路
-metaitem.circuit.advanced_integrated.tooltip=より小さくより強力な/n§6HV時代の回路§r/n§6HV-tier Circuit
+metaitem.circuit.advanced_integrated.tooltip=より小さくより強力な/n§6HV時代の回路§r/n§6HV-Tier Circuit
 
 # Misc
 metaitem.circuit.nand_chip.name=NANDチップ
-metaitem.circuit.nand_chip.tooltip=優れたシンプルな回路/n§eULV時代の回路§r/n§6ULV-tier Circuit
+metaitem.circuit.nand_chip.tooltip=優れたシンプルな回路/n§eULV時代の回路§r/n§6ULV-Tier Circuit
 metaitem.circuit.microprocessor.name=マイクロプロセッサー
-metaitem.circuit.microprocessor.tooltip=優れたシンプルな回路/n§eLV時代の回路§r/n§eLV-tier Circuit
+metaitem.circuit.microprocessor.tooltip=優れたシンプルな回路/n§eLV時代の回路§r/n§eLV-Tier Circuit
 
 # T3: Processor
 metaitem.circuit.processor.name=集積処理装置
-metaitem.circuit.processor.tooltip=驚きの計算速度!!/n§eMV時代の回路§r/n§eMV-tier Circuit
+metaitem.circuit.processor.tooltip=驚きの計算速度!!/n§eMV時代の回路§r/n§eMV-Tier Circuit
 metaitem.circuit.assembly.name=処理演算装置
-metaitem.circuit.assembly.tooltip=驚きの計算速度!!/n§eHV時代の回路§r/n§eHV-tier Circuit
+metaitem.circuit.assembly.tooltip=驚きの計算速度!!/n§eHV時代の回路§r/n§eHV-Tier Circuit
 metaitem.circuit.workstation.name=ワークステーション
-metaitem.circuit.workstation.tooltip=驚きの計算速度!!/n§eEV時代の回路§r/n§eEV-tier Circuit
+metaitem.circuit.workstation.tooltip=驚きの計算速度!!/n§eEV時代の回路§r/n§eEV-Tier Circuit
 metaitem.circuit.mainframe.name=メインフレーム
-metaitem.circuit.mainframe.tooltip=驚きの計算速度!!/n§eIV時代の回路§r/n§eIV-tier Circuit
+metaitem.circuit.mainframe.tooltip=驚きの計算速度!!/n§eIV時代の回路§r/n§eIV-Tier Circuit
 
 # T4: Nano
 metaitem.circuit.nano_processor.name=ナノプロセッサー
-metaitem.circuit.nano_processor.tooltip=かつてないほど小さい/n§bHV時代の回路§r/n§bHV-tier Circuit
+metaitem.circuit.nano_processor.tooltip=かつてないほど小さい/n§bHV時代の回路§r/n§bHV-Tier Circuit
 metaitem.circuit.nano_assembly.name=ナノ演算処理装置
-metaitem.circuit.nano_assembly.tooltip=かつてないほど小さい/n§bEV時代の回路§r/n§bEV-tier Circuit
+metaitem.circuit.nano_assembly.tooltip=かつてないほど小さい/n§bEV時代の回路§r/n§bEV-Tier Circuit
 metaitem.circuit.nano_computer.name=ナノスーパーコンピュータ
-metaitem.circuit.nano_computer.tooltip=かつてないほど小さい/n§bIV時代の回路§r/n§bIV-tier Circuit
+metaitem.circuit.nano_computer.tooltip=かつてないほど小さい/n§bIV時代の回路§r/n§bIV-Tier Circuit
 metaitem.circuit.nano_mainframe.name=ナノプロセッサーメインフレーム
-metaitem.circuit.nano_mainframe.tooltip=かつてないほど小さい/n§bLuV時代の回路§r/n§bLuV-tier Circuit
+metaitem.circuit.nano_mainframe.tooltip=かつてないほど小さい/n§bLuV時代の回路§r/n§bLuV-Tier Circuit
 
 # T5: Quantum
 metaitem.circuit.quantum_processor.name=量子処理装置
-metaitem.circuit.quantum_processor.tooltip=量子コンピュータが現実に!/n§aEV時代の回路§r/n§aEV-tier Circuit
+metaitem.circuit.quantum_processor.tooltip=量子コンピュータが現実に!/n§aEV時代の回路§r/n§aEV-Tier Circuit
 metaitem.circuit.quantum_assembly.name=量子演算処理装置
-metaitem.circuit.quantum_assembly.tooltip=量子コンピュータが現実に!/n§aIV時代の回路§r/n§aIV-tier Circuit
+metaitem.circuit.quantum_assembly.tooltip=量子コンピュータが現実に!/n§aIV時代の回路§r/n§aIV-Tier Circuit
 metaitem.circuit.quantum_computer.name=量子スーパーコンピュータ
-metaitem.circuit.quantum_computer.tooltip=量子コンピュータが現実に!/n§aLuV時代の回路§r/n§aLuV-tier Circuit
+metaitem.circuit.quantum_computer.tooltip=量子コンピュータが現実に!/n§aLuV時代の回路§r/n§aLuV-Tier Circuit
 metaitem.circuit.quantum_mainframe.name=量子処理メインフレーム
-metaitem.circuit.quantum_mainframe.tooltip=量子コンピュータが現実に!/n§aZPM時代の回路§r/n§aZPM-tier Circuit
+metaitem.circuit.quantum_mainframe.tooltip=量子コンピュータが現実に!/n§aZPM時代の回路§r/n§aZPM-Tier Circuit
 
 # T6: Crystal
 metaitem.circuit.crystal_processor.name=クリスタル処理装置
-metaitem.circuit.crystal_processor.tooltip=クリスタルの彫刻を活用/n§9IV時代の回路§r/n§9IV-tier Circuit
+metaitem.circuit.crystal_processor.tooltip=クリスタルの彫刻を活用/n§9IV時代の回路§r/n§9IV-Tier Circuit
 metaitem.circuit.crystal_assembly.name=クリスタル演算処理装置
-metaitem.circuit.crystal_assembly.tooltip=クリスタルの彫刻を活用/n§9LuV時代の回路§r/n§9LuV-tier Circuit
+metaitem.circuit.crystal_assembly.tooltip=クリスタルの彫刻を活用/n§9LuV時代の回路§r/n§9LuV-Tier Circuit
 metaitem.circuit.crystal_computer.name=クリスタルスーパーコンピュータ
-metaitem.circuit.crystal_computer.tooltip=クリスタルの彫刻を活用/n§9ZPM時代の回路§r/n§9ZPM-tier Circuit
+metaitem.circuit.crystal_computer.tooltip=クリスタルの彫刻を活用/n§9ZPM時代の回路§r/n§9ZPM-Tier Circuit
 metaitem.circuit.crystal_mainframe.name=クリスタル処理メインフレーム
-metaitem.circuit.crystal_mainframe.tooltip=クリスタルの彫刻を活用/n§9UV時代の回路§r/n§9UV-tier Circuit
+metaitem.circuit.crystal_mainframe.tooltip=クリスタルの彫刻を活用/n§9UV時代の回路§r/n§9UV-Tier Circuit
 
 # T7: Wetware
 metaitem.circuit.wetware_processor.name=ウェットウェア処理装置
-metaitem.circuit.wetware_processor.tooltip=何かの視線を感じる/n§4LuV時代の回路§r/n§4LuV-tier Circuit
+metaitem.circuit.wetware_processor.tooltip=何かの視線を感じる/n§4LuV時代の回路§r/n§4LuV-Tier Circuit
 metaitem.circuit.wetware_assembly.name=ウェットウェア演算装置
-metaitem.circuit.wetware_assembly.tooltip=Minecraftを動かせる/n§4ZPM時代の回路§r/n§4ZPM-tier Circuit
+metaitem.circuit.wetware_assembly.tooltip=Minecraftを動かせる/n§4ZPM時代の回路§r/n§4ZPM-Tier Circuit
 metaitem.circuit.wetware_computer.name=ウェットウェアスーパーコンピュータ
-metaitem.circuit.wetware_computer.tooltip=肉体と機械の究極の融合/n§4UV時代の回路§r/n§4UV-tier Circuit
+metaitem.circuit.wetware_computer.tooltip=肉体と機械の究極の融合/n§4UV時代の回路§r/n§4UV-Tier Circuit
 metaitem.circuit.wetware_mainframe.name=ウェットウェアメインフレーム
-metaitem.circuit.wetware_mainframe.tooltip=今まで見た中での最高傑作/n§4UHV時代の回路§r/n§4UHV-tier Circuit
+metaitem.circuit.wetware_mainframe.tooltip=今まで見た中での最高傑作/n§4UHV時代の回路§r/n§4UHV-Tier Circuit
 
 metaitem.stem_cells.name=幹細胞
 metaitem.stem_cells.tooltip=生の知性
@@ -2666,7 +2666,7 @@ gregtech.machine.block_breaker.mv.name=発展型ブロック破壊機
 gregtech.machine.block_breaker.hv.name=発展型ブロック破壊機 II
 gregtech.machine.block_breaker.ev.name=発展型ブロック破壊機 III
 gregtech.machine.block_breaker.tooltip=正面のブロックを破壊しドロップアイテムを集める
-gregtech.machine.block_breaker.speed_bonus=速度ボーナス: §e%,d%%
+gregtech.machine.block_breaker.speed_bonus=速度ボーナス: §f%,d%%
 
 # Electric Furnace
 gregtech.machine.electric_furnace.lv.name=基本型電気かまど
@@ -2782,13 +2782,13 @@ gregtech.machine.arc_furnace.opv.tooltip=短絡加熱器
 
 # Assembler
 gregtech.machine.assembler.lv.name=基本型組立機
-gregtech.machine.assembler.lv.tooltip=Avengers, Assemble!
+gregtech.machine.assembler.lv.tooltip=Avengers, Assemble! //TODO
 gregtech.machine.assembler.mv.name=発展型組立機
-gregtech.machine.assembler.mv.tooltip=Avengers, Assemble!
+gregtech.machine.assembler.mv.tooltip=Avengers, Assemble! //TODO
 gregtech.machine.assembler.hv.name=発展型組立機 II
-gregtech.machine.assembler.hv.tooltip=Avengers, Assemble!
+gregtech.machine.assembler.hv.tooltip=Avengers, Assemble! //TODO
 gregtech.machine.assembler.ev.name=発展型組立機 III
-gregtech.machine.assembler.ev.tooltip=Avengers, Assemble!
+gregtech.machine.assembler.ev.tooltip=Avengers, Assemble! //TODO
 gregtech.machine.assembler.iv.name=精鋭型組立機
 gregtech.machine.assembler.iv.tooltip=作業台ではありません
 gregtech.machine.assembler.luv.name=精鋭型組立機 II
@@ -2838,13 +2838,13 @@ gregtech.machine.autoclave.opv.tooltip=高圧与圧装置
 
 # Bending Machine
 gregtech.machine.bender.lv.name=基本型金属加工機
-gregtech.machine.bender.lv.tooltip=Boo, he's bad! We want BENDER!!!
+gregtech.machine.bender.lv.tooltip=Boo, he's bad! We want BENDER!!! //TODO
 gregtech.machine.bender.mv.name=発展型金属加工機
-gregtech.machine.bender.mv.tooltip=Boo, he's bad! We want BENDER!!!
+gregtech.machine.bender.mv.tooltip=Boo, he's bad! We want BENDER!!! //TODO
 gregtech.machine.bender.hv.name=発展型金属加工機 II
-gregtech.machine.bender.hv.tooltip=Boo, he's bad! We want BENDER!!!
+gregtech.machine.bender.hv.tooltip=Boo, he's bad! We want BENDER!!! //TODO
 gregtech.machine.bender.ev.name=発展型金属加工機 III
-gregtech.machine.bender.ev.tooltip=Boo, he's bad! We want BENDER!!!
+gregtech.machine.bender.ev.tooltip=Boo, he's bad! We want BENDER!!! //TODO
 gregtech.machine.bender.iv.name=精鋭型金属加工機
 gregtech.machine.bender.iv.tooltip=形状湾曲化装置
 gregtech.machine.bender.luv.name=精鋭型金属加工機 II
@@ -2966,7 +2966,7 @@ gregtech.machine.chemical_bath.luv.tooltip=化学含浸装置
 gregtech.machine.chemical_bath.zpm.name=精鋭型化学槽 III
 gregtech.machine.chemical_bath.zpm.tooltip=化学含浸装置
 gregtech.machine.chemical_bath.uv.name=究極型化学槽
-gregtech.machine.chemical_bath.uv.tooltip=Chemical Dunktron
+gregtech.machine.chemical_bath.uv.tooltip=化学泡だて器
 gregtech.machine.chemical_bath.uhv.name=史上最高の化学槽
 gregtech.machine.chemical_bath.uhv.tooltip=化学泡だて器
 gregtech.machine.chemical_bath.uev.name=史上最高の化学槽 II
@@ -3148,13 +3148,13 @@ gregtech.machine.electromagnetic_separator.opv.tooltip=EMF ディスペラー
 
 # Extractor
 gregtech.machine.extractor.lv.name=基本型抽出機
-gregtech.machine.extractor.lv.tooltip=Dejuicer-Device of Doom - D123
+gregtech.machine.extractor.lv.tooltip=Dejuicer-Device of Doom - D123 //TODO
 gregtech.machine.extractor.mv.name=発展型抽出機
-gregtech.machine.extractor.mv.tooltip=Dejuicer-Device of Doom - D123
+gregtech.machine.extractor.mv.tooltip=Dejuicer-Device of Doom - D123 //TODO
 gregtech.machine.extractor.hv.name=発展型抽出機 II
-gregtech.machine.extractor.hv.tooltip=Dejuicer-Device of Doom - D123
+gregtech.machine.extractor.hv.tooltip=Dejuicer-Device of Doom - D123 //TODO
 gregtech.machine.extractor.ev.name=発展型抽出機 III
-gregtech.machine.extractor.ev.tooltip=Dejuicer-Device of Doom - D123
+gregtech.machine.extractor.ev.tooltip=Dejuicer-Device of Doom - D123 //TODO
 gregtech.machine.extractor.iv.name=精鋭型抽出機
 gregtech.machine.extractor.iv.tooltip=真空抽出装置
 gregtech.machine.extractor.luv.name=精鋭型抽出機 II
@@ -3202,7 +3202,6 @@ gregtech.machine.extruder.uxv.tooltip=形状変更装置
 gregtech.machine.extruder.opv.name=伝説の押出機
 gregtech.machine.extruder.opv.tooltip=形状変更装置
 
-# Fermenter
 gregtech.machine.fermenter.lv.name=基本型発酵槽
 gregtech.machine.fermenter.lv.tooltip=液体の発酵に
 gregtech.machine.fermenter.mv.name=発展型発酵槽
@@ -3288,13 +3287,13 @@ gregtech.machine.fluid_solidifier.opv.tooltip=液体硬質化装置
 
 # Forge Hammer
 gregtech.machine.forge_hammer.lv.name=基本型鍛造機
-gregtech.machine.forge_hammer.lv.tooltip=Stop, Hammertime!
+gregtech.machine.forge_hammer.lv.tooltip=Stop, Hammertime! //TODO
 gregtech.machine.forge_hammer.mv.name=発展型鍛造機
-gregtech.machine.forge_hammer.mv.tooltip=Stop, Hammertime!
+gregtech.machine.forge_hammer.mv.tooltip=Stop, Hammertime! //TODO
 gregtech.machine.forge_hammer.hv.name=発展型鍛造機 II
-gregtech.machine.forge_hammer.hv.tooltip=Stop, Hammertime!
+gregtech.machine.forge_hammer.hv.tooltip=Stop, Hammertime! //TODO
 gregtech.machine.forge_hammer.ev.name=発展型鍛造機 III
-gregtech.machine.forge_hammer.ev.tooltip=Stop, Hammertime!
+gregtech.machine.forge_hammer.ev.tooltip=Stop, Hammertime! //TODO
 gregtech.machine.forge_hammer.iv.name=精鋭型鍛造機
 gregtech.machine.forge_hammer.iv.tooltip=プレート鍛造装置
 gregtech.machine.forge_hammer.luv.name=精鋭型鍛造機 II
@@ -3800,10 +3799,10 @@ gregtech.battery_buffer.average_output=出力平均: %s EU/t
 # Transformers
 gregtech.machine.transformer.description=異なる電圧間でエネルギーを輸送する
 gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転. 最初は§f降圧§7
-gregtech.machine.transformer.tooltip_transform_down=§a降圧: §a%dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
-gregtech.machine.transformer.message_transform_down=降圧;  In: %dEU %dA, Out: %dEU %dA
+gregtech.machine.transformer.tooltip_transform_down=§a降圧: §f%dA %dEU (%s§f) -> %dA %dEU (%s§f)
+gregtech.machine.transformer.message_transform_down=降圧:  In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=§c昇圧: %dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
-gregtech.machine.transformer.message_transform_up=昇圧; In: %dEU %dA, Out: %dEU %dA
+gregtech.machine.transformer.message_transform_up=昇圧: In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.description=異なる電圧間でエネルギーを輸送する. 複数アンペアに対応!
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更. 最初は§f4アンペア§7
 gregtech.machine.transformer_adjustable.message_adjust=%dEU %dAを%dEU %dAに変圧
@@ -3968,7 +3967,6 @@ gregtech.machine.item_collector.tooltip=赤石信号入力時に周囲のアイ�
 
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Storage Drawersよりも良い
-
 gregtech.machine.super_chest.lv.name=スーパーチェスト I
 gregtech.machine.super_chest.mv.name=スーパーチェスト II
 gregtech.machine.super_chest.hv.name=スーパーチェスト III
@@ -4118,7 +4116,7 @@ gregtech.advancement.steam.4_bronze_boiler.name=ボイラーの公式
 gregtech.advancement.steam.4_bronze_boiler.desc=小型ボイラーを作成する.
 gregtech.advancement.steam.5_bronze_forge_hammer.name=粉砕機より手頃
 gregtech.advancement.steam.5_bronze_forge_hammer.desc=蒸気式鍛造機を作成する.
-gregtech.advancement.steam.6_bronze_alloy_smelter.name=I have a pen. I have an apple...
+gregtech.advancement.steam.6_bronze_alloy_smelter.name=合金製錬炉を作成する.
 gregtech.advancement.steam.6_bronze_alloy_smelter.desc=蒸気式合金製錬炉を作成する.
 gregtech.advancement.steam.7_bronze_extractor.name=ラバードリッパー
 gregtech.advancement.steam.7_bronze_extractor.desc=蒸気式抽出機を作成する.
@@ -4350,8 +4348,6 @@ gregtech.machine.coke_oven_hatch.name=コークス炉用ハッチ
 gregtech.machine.coke_oven_hatch.tooltip=コークス炉の自動化に必要.
 gregtech.machine.large_chemical_reactor.name=大型化学反応炉
 
-
-
 gregtech.machine.large_combustion_engine.name=大型燃焼エンジン
 gregtech.machine.extreme_combustion_engine.name=強化型大型燃焼エンジン
 gregtech.machine.large_combustion_engine.tooltip.boost_regular=酸素を§e20 L/s§7で供給すると, 燃料消費§e2倍§7最大出力§e%s§7 EU/tとなる.
@@ -4377,7 +4373,8 @@ gregtech.machine.miner.lv.name=基本型採掘機
 gregtech.machine.miner.mv.name=発展型採掘機
 gregtech.machine.miner.hv.name=発展型採掘機 II
 gregtech.machine.miner.tooltip=採掘するのは採掘機より下! §f%sx%s §7の範囲から始まる
-gregtech.machine.miner.usage=§71ブロックにつき§f%,d秒§7掛かる
+gregtech.machine.miner.per_block=§7takes §f%,ds §7per Block //TODO
+
 gregtech.machine.large_miner.ev.name=基本型大型採掘機
 gregtech.machine.large_miner.iv.name=発展型大型採掘機
 gregtech.machine.large_miner.luv.name=発展型大型採掘機 II
@@ -4483,6 +4480,7 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=世界が石油で埋まる前に
 gregtech.machine.fluid_drilling_rig.hv.tooltip=地面は砕かない
 gregtech.machine.fluid_drilling_rig.ev.tooltip=井戸の破壊者
 gregtech.machine.cleanroom.tooltip=これ以上花粉に暴れさせてたまるか
+
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=マルチブロックへの搬入
 gregtech.universal.disabled=マルチブロック間での共有: §4不可能
@@ -4677,38 +4675,24 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=一方通行で液体を送る
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
 
-gregtech.machine.item_controller.tooltip.redstone=動作にはレッドストーン入力が必要です
-gregtech.machine.item_controller.tooltip.consumption=動作中は常に%,d EU/tを消費します
-
 # Universal tooltips
-gregtech.universal.tooltip.voltage_in=入力電圧: §a%,d §7(§a%s§7)
-gregtech.universal.tooltip.voltage_out=出力電圧: §a%,d §7(§a%s§7)
-gregtech.universal.tooltip.energy_storage_capacity=内部蓄電量: §9%,d
-gregtech.universal.tooltip.amperage_in=入力電流: §e%,d
-gregtech.universal.tooltip.amperage_in_till=許容最大入力電流: §e%,d
-gregtech.universal.tooltip.amperage_out=出力電流: §e%,d
-gregtech.universal.tooltip.amperage_out_till=最大出力電流: §e%,d
-gregtech.universal.tooltip.item_storage_capacity=アイテムスロット数: %,d
-gregtech.universal.tooltip.fluid_storage_capacity=液体容量: %,d mb
-gregtech.universal.tooltip.max_voltage_in=最大許容入力電圧: §a%,d §7(§a%s§7)
-gregtech.universal.tooltip.terrain_resist=この機械は雨・火・水または溶岩で爆発しません
 gregtech.universal.tooltip.voltage_in=§a入力電圧: §f%,d EU/t (%s§f)
 gregtech.universal.tooltip.max_voltage_in=§a最大入力電圧: §f%,d (%s§f)
 gregtech.universal.tooltip.voltage_out=§a出力電圧: §f%,d EU/t (%s§f)
 gregtech.universal.tooltip.max_voltage_out=§a最大出力電圧: §f%,d (%s§f)
 gregtech.universal.tooltip.voltage_in_out=§a入出力電圧: §f%,d EU/t (%s§f)
 gregtech.universal.tooltip.max_voltage_in_out=§a最大入出力電圧: §f%,d EU/t (%s§f)
-gregtech.universal.tooltip.amperage_in=§e入力電流: §f%,dA
-gregtech.universal.tooltip.amperage_in_till=§e許容最大入力電流: §f%,dA
-gregtech.universal.tooltip.amperage_out=§e出力電流: §f%,dA
-gregtech.universal.tooltip.amperage_out_till=§e許容最大出力電流: §f%,dA
-gregtech.universal.tooltip.amperage_in_out=§e入出力電流: §f%,dA
-gregtech.universal.tooltip.amperage_in_out_till=§e許容最大入出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in=§e許容入力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_till=§e許容入力電流: §f%,dA
+gregtech.universal.tooltip.amperage_out=§e許容出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_out_till=§e許容出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_out=§e許容入出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_out_till=§e許容入出力電流: §f%,dA
 gregtech.universal.tooltip.energy_storage_capacity=§c蓄電量: §r%,d EU
 gregtech.universal.tooltip.energy_tier_range=§a許容電圧: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6アイテムスロット数: §f%,d
-gregtech.universal.tooltip.item_storage_total=§6アイテム容量: §f%,dアイテム
-gregtech.universal.tooltip.item_stored=§dアイテム数: §f%s, %,dアイテム
+gregtech.universal.tooltip.item_storage_total=§6アイテム容量: §f%,d アイテム
+gregtech.universal.tooltip.item_stored=§dアイテム数: §f%s, %,d アイテム
 gregtech.universal.tooltip.item_transfer_rate=§b運搬速度: §f%,d アイテム/秒
 gregtech.universal.tooltip.item_transfer_rate_stacks=§b運搬速度: §f%,d スタック/秒
 gregtech.universal.tooltip.fluid_storage_capacity=§9液体容量: §f%,d L
@@ -4718,14 +4702,14 @@ gregtech.universal.tooltip.fluid_transfer_rate=§b運搬速度: §f%,d L/t
 gregtech.universal.tooltip.parallel=§d最大並列処理数: §f%d
 gregtech.universal.tooltip.working_area=§b稼働範囲: §f%,dx%,d
 gregtech.universal.tooltip.working_area_max=§b最大稼働範囲: §f%,dx%,d
-gregtech.universal.tooltip.working_area_chunks_max=§b最大稼働範囲: §f%,dx%,d チャンク
-gregtech.universal.tooltip.uses_per_tick=稼働に§f%,d EU/t§7消費
-gregtech.universal.tooltip.uses_per_tick_steam=稼働に蒸気を§f毎秒 %,d L§7消費
-gregtech.universal.tooltip.uses_per_hour_lubricant=稼働に潤滑油を§f毎時間 %,d L§7消費
-gregtech.universal.tooltip.uses_per_second=稼働に§f毎秒 %,d EU§7消費
+gregtech.universal.tooltip.working_area_chunks_max=§b最大稼働範囲: §f%,dx%,dチャンク
+gregtech.universal.tooltip.uses_per_tick=稼働に§f%,d EU/t §7消費
+gregtech.universal.tooltip.uses_per_tick_steam=稼働に蒸気を§f%毎秒,d L§7消費
+gregtech.universal.tooltip.uses_per_hour_lubricant=稼働に潤滑油を§f%毎時間,d L§7消費
+gregtech.universal.tooltip.uses_per_second=稼働に§f%毎秒,d EU§7消費
 gregtech.universal.tooltip.uses_per_op=§f動作ごとに%,d EU§7消費
 gregtech.universal.tooltip.base_production_eut=§e基礎発電量: §f%,d EU/t
-gregtech.universal.tooltip.base_production_fluid=§e基礎生産量: §f%,d L/t
+gregtech.universal.tooltip.base_production_fluid=§eB基礎生産量: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§e生産量: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=この機械は環境の影響で爆発しません
 gregtech.universal.tooltip.requires_redstone=§4赤石信号が必要
@@ -4987,11 +4971,11 @@ gregtech.cover.activity_detector_advanced.message_activity_inverted=反転
 
 gregtech.creative.chest.item=アイテム
 gregtech.creative.chest.ipc=アイテム毎サイクル
-gregtech.creative.chest.tpc=tick毎サイクル
+gregtech.creative.chest.tpc=Tick毎サイクル
 
 gregtech.creative.tank.fluid=液体
 gregtech.creative.tank.mbpc=mB毎サイクル
-gregtech.creative.tank.tpc=tick毎サイクル
+gregtech.creative.tank.tpc=Tick毎サイクル
 
 gregtech.creative.energy.amperage=電流
 gregtech.creative.energy.voltage=電圧
