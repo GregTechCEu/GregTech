@@ -22,6 +22,7 @@ import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,11 +81,11 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     }
 
     public List<ControllerMode> getAllowedModes() {
-        ArrayList<ControllerMode> results = new ArrayList<>();
-        for (ControllerMode controllerMode : ControllerMode.values()) {
+        List<ControllerMode> results = new ArrayList<>();
+        for (ControllerMode controllerMode : ControllerMode.VALUES) {
             IControllable controllable = null;
             if (controllerMode.side == null) {
-                controllable = coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
+                controllable = getControllableCover();
             } else {
                 CoverBehavior coverBehavior = coverHolder.getCoverAtSide(controllerMode.side);
                 if (coverBehavior != null) {
@@ -172,7 +173,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     private IControllable getControllable() {
         EnumFacing side = controllerMode.side;
         if (side == null) {
-            return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
+            return getControllableCover();
         } else {
             CoverBehavior coverBehavior = coverHolder.getCoverAtSide(side);
             if (coverBehavior == null) {
@@ -180,6 +181,21 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
             }
             return coverBehavior.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         }
+    }
+
+    @Nullable
+    private IControllable getControllableCover() {
+        IControllable controllable = coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
+        if (controllable == null) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                CoverBehavior coverBehavior = coverHolder.getCoverAtSide(facing);
+                if (coverBehavior != null) {
+                    controllable = coverBehavior.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+                    if (controllable != null) break;
+                }
+            }
+        }
+        return controllable;
     }
 
     private void resetCurrentControllable() {
@@ -205,7 +221,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     private boolean doesOtherAllowingWork() {
         boolean otherAllow = true;
         CoverMachineController cover;
-        for (EnumFacing side : EnumFacing.values()) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             if (side != attachedSide && coverHolder.getCoverAtSide(side) instanceof CoverMachineController) {
                 cover = (CoverMachineController) coverHolder.getCoverAtSide(side);
                 otherAllow = otherAllow && cover.controllerMode == controllerMode && cover.shouldAllowWorking();
@@ -229,7 +245,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         super.readFromNBT(tagCompound);
         this.minRedstoneStrength = tagCompound.getInteger("MinRedstoneStrength");
         this.isInverted = tagCompound.getBoolean("Inverted");
-        this.controllerMode = ControllerMode.values()[tagCompound.getInteger("ControllerMode")];
+        this.controllerMode = ControllerMode.VALUES[tagCompound.getInteger("ControllerMode")];
     }
 
     public enum ControllerMode implements IStringSerializable {
@@ -241,6 +257,8 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         COVER_EAST("cover.machine_controller.mode.cover_east", EnumFacing.EAST),
         COVER_WEST("cover.machine_controller.mode.cover_west", EnumFacing.WEST);
 
+        public static final ControllerMode[] VALUES = values();
+
         public final String localeName;
         public final EnumFacing side;
 
@@ -248,7 +266,6 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
             this.localeName = localeName;
             this.side = side;
         }
-
 
         @Nonnull
         @Override
