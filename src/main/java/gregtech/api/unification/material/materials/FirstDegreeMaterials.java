@@ -980,7 +980,7 @@ public class FirstDegreeMaterials {
         PotassiumPersulfate = new Material.Builder(390, "potassium_persulfate")
                 .fluid()
                 .color(0xFAB482)
-                .components(Potassium, 1, Sulfur, 1, Oxygen, 4)
+                .components(Potassium, 2, Sulfur, 2, Oxygen, 8)
                 .build();
 
         // Free ID 391
@@ -1491,7 +1491,7 @@ public class FirstDegreeMaterials {
 
         SodiumEthylXanthate = new Material.Builder(462, "sodium_ethyl_xanthate")
                 .fluid()
-                .color(0x444FB8)
+                .color(0xEAF514)
                 .components(Carbon, 3, Hydrogen, 5, Oxygen, 1, Sulfur, 2, Sodium, 1)
                 .build();
 

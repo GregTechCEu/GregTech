@@ -56,7 +56,16 @@ public class PurifiedRecipeHandler {
         if (byproduct.hasProperty(PropertyKey.ORE)) {
             SLUICE_RECIPES.recipeBuilder()
                     .input(crushedPurified, material)
-                    .fluidInputs(Water.getFluid(1000))
+                    .fluidInputs(SodiumPersulfate.getFluid(1000))
+                    .output(crushedRefined, material)
+                    .chancedOutput(crushedRefined, byproduct, byproductMultiplier, 3750, 0)
+                    .output(dust, Stone)
+                    .fluidOutputs(SluiceJuice.getFluid(500))
+                    .duration(256).EUt(64).buildAndRegister();
+
+            SLUICE_RECIPES.recipeBuilder()
+                    .input(crushedPurified, material)
+                    .fluidInputs(PotassiumPersulfate.getFluid(1000))
                     .output(crushedRefined, material)
                     .chancedOutput(crushedRefined, byproduct, byproductMultiplier, 3750, 0)
                     .output(dust, Stone)
