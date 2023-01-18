@@ -58,8 +58,8 @@ public class OrePrefix {
     // TODO adjust material amount
     // Third ore processing output from Ore blocks. Worth 1.33 Dust
     public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 4 / 3, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
-    // Second ore processing output from Ore blocks. Worth 1.25 Dust
-    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 5 / 4, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
+    // Second ore processing output from Ore blocks. Worth 1.16 Dust
+    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 7 / 6, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
     // First ore processing output from Ore blocks. Worth 1 Dust
     public static final OrePrefix crushed = new OrePrefix("crushed", M, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
 
@@ -85,8 +85,8 @@ public class OrePrefix {
     public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty);
     // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
     public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
-    // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
-    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
+    // Pure Dust worth of 1.5 Ingot or Gem. Introduced by Alblaka.
+    public static final OrePrefix dustPure = new OrePrefix("dustPure", M * 3 / 2, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
     // Dust worth of one Ingot or Gem
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty);
 
