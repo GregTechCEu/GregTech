@@ -1483,6 +1483,18 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Platinum, 1, Chlorine, 6)
                 .build();
 
+        CarbonDisulfide = new Material.Builder(461, "carbon_disulfide")
+                .fluid(FluidTypes.GAS)
+                .color(0x302C01)
+                .components(Carbon, 1, Sulfur, 2)
+                .build();
+
+        SodiumEthylXanthate = new Material.Builder(462, "sodium_ethyl_xanthate")
+                .fluid()
+                .color(0x444FB8)
+                .components(Carbon, 3, Hydrogen, 5, Oxygen, 1, Sulfur, 2, Sodium, 1)
+                .build();
+
         GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
                 .dust(1).ore()
                 .color(0x283C3C).iconSet(SAND)

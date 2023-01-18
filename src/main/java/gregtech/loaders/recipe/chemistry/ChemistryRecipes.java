@@ -125,5 +125,23 @@ public class ChemistryRecipes {
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(80).EUt(VA[HV])
                 .buildAndRegister();
+
+        // CH4 + 2S -> CS2 + 4H
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sulfur, 2)
+                .notConsumable(dust, Alumina)
+                .fluidInputs(Methane.getFluid(1000))
+                .fluidOutputs(CarbonDisulfide.getFluid(1000))
+                .fluidOutputs(Hydrogen.getFluid(4000))
+                .duration(300).EUt(VA[MV])
+                .buildAndRegister();
+
+        // C2H5OH + Na + CS2 -> C3H5OS2Na
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sodium)
+                .fluidInputs(Ethanol.getFluid(1000))
+                .fluidInputs(CarbonDisulfide.getFluid(1000))
+                .fluidOutputs(SodiumEthylXanthate.getFluid(1000))
+                .duration(600).EUt(VA[HV]).buildAndRegister();
     }
 }

@@ -474,6 +474,8 @@ public class Materials {
     public static Material ClayVitriol;
     public static Material ChloroauricAcid;
     public static Material ChloroplatinicAcid;
+    public static Material CarbonDisulfide;
+    public static Material SodiumEthylXanthate;
     public static Material Alumina;
     public static Material GraniticMineralSand;
     public static Material BasalticMineralSand;
