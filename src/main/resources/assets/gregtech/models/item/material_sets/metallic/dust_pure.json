@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:item/material_sets/dull/dust_pure",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/metallic/dust"
+  }
+}

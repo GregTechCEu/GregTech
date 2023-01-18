@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:item/material_sets/metallic/dust_pure",
+  "textures": {
+    "layer1": "gregtech:items/material_sets/magnetic/dust_pure_overlay"
+  }
+}
