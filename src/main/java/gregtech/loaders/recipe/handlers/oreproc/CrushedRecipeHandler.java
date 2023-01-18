@@ -32,12 +32,11 @@ public class CrushedRecipeHandler {
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
-        // Crushed Ore -> Impure Dust (with byproduct)
+        // Crushed Ore -> Dust (without byproduct)
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushed, material)
-                .output(dustImpure, material, property.getOreMultiplier())
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 1500, 0)
-                .output(dust, Stone)
+                .output(dust, material, property.getOreMultiplier())
+                .chancedOutput(dust, Stone, 7500, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Sluice recipe

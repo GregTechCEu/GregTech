@@ -40,8 +40,7 @@ public class RefinedRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
                 .output(dust, material, property.getOreMultiplier())
-                .chancedOutput(dust, material, property.getOreMultiplier(), 3333, 0)
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 2500, 0)
+                .chancedOutput(dust, material, property.getOreMultiplier(), 5000, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Hard Hammer crafting recipe

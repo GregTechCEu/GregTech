@@ -40,8 +40,8 @@ public class PurifiedRecipeHandler {
         // Purified Ore -> Dust
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
-                .output(dustImpure, material, property.getOreMultiplier())
-                .chancedOutput(secondaryByproductPrefix, primaryByproduct, 1500, 0)
+                .output(dust, material, property.getOreMultiplier())
+                .chancedOutput(dust, material, 2500, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Purified Ore -> Refined Ore
