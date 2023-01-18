@@ -629,6 +629,13 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.CHEMICAL_REACTOR);
 
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> FLOTATION_RECIPES = new RecipeMap<>("flotation_cell", 1, 2, 0, 3, 0, 1, 0, 1, new SimpleRecipeBuilder().duration(7200).EUt(2), false)
+            .setSlotOverlay(false, false, true, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL)
+            .setSound(SoundEvents.BLOCK_SAND_PLACE);
+
     /**
      * Example:
      * <pre>

@@ -29,18 +29,18 @@ public class RefinedRecipeHandler {
             byproductMultiplier = byproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
 
         // Forge Hammer recipe
-        // Centrifuged Ore -> Dust
+        // Refined Ore -> Dust
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
                 .output(dust, material, property.getOreMultiplier())
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
-        // Centrifuged Ore -> Dust
+        // Refined Ore -> 1.75x Purified Dust
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
-                .output(dust, material, property.getOreMultiplier())
-                .chancedOutput(dust, material, property.getOreMultiplier(), 5000, 0)
+                .output(dustImpure, material, property.getOreMultiplier())
+                .chancedOutput(dustImpure, material, property.getOreMultiplier(), 7500, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Hard Hammer crafting recipe
