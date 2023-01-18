@@ -44,7 +44,7 @@ public class CrushedRecipeHandler {
                 .input(crushed, material)
                 .output(dust, material, property.getOreMultiplier())
                 .chancedOutput(dust, Stone, 7500, 0)
-                .duration(400).EUt(2).buildAndRegister();
+                .duration(256).EUt(2).buildAndRegister();
 
         // Purified Ore -> Refined Ore
         if (material.hasProperty(PropertyKey.GEM)) {
@@ -55,7 +55,7 @@ public class CrushedRecipeHandler {
                     .chancedOutput(gemFlawless, material, property.getOreMultiplier(), 500, 0)
                     .chancedOutput(gem, material, property.getOreMultiplier(), 1000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(16).buildAndRegister();
+                    .duration(256).EUt(16).buildAndRegister();
         } else if (material.hasFlag(REFINE_BY_SIFTING)) {
             // Certain ores flagged to be in Sifter
             SIFTER_RECIPES.recipeBuilder()
@@ -63,7 +63,7 @@ public class CrushedRecipeHandler {
                     .output(crushedPurified, material)
                     .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(16).buildAndRegister();
+                    .duration(256).EUt(16).buildAndRegister();
         } else if (material.hasFlag(MAGNETIC_ORE) || primaryByproduct.hasFlag(MAGNETIC_ORE)) {
             // Magnetic Materials or Byproducts go in the Magnetic Separator
             ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
@@ -71,7 +71,7 @@ public class CrushedRecipeHandler {
                     .output(crushedPurified, material)
                     .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(16).buildAndRegister();
+                    .duration(256).EUt(16).buildAndRegister();
         } else {
             // Anything else goes in the Centrifuge
             CENTRIFUGE_RECIPES.recipeBuilder()
@@ -79,7 +79,7 @@ public class CrushedRecipeHandler {
                     .output(crushedPurified, material)
                     .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 2000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(16).buildAndRegister();
+                    .duration(256).EUt(16).buildAndRegister();
         }
 
         // Hard Hammer crafting recipe

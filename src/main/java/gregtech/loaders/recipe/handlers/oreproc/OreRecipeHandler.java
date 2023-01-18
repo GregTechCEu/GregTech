@@ -99,7 +99,7 @@ public class OreRecipeHandler {
                 .output(crushed, material, 2 * oreTypeMultiplier)
                 .chancedOutput(byproductPrefix, byproduct, byproductMultiplier * oreTypeMultiplier, 2000, chancePerTier ? 500 : 0)
                 .chancedOutput(stoneTypeDust, 6000, chancePerTier ? 1000 : 0)
-                .duration(400 * oreTypeMultiplier).EUt(2)
+                .duration(256 * oreTypeMultiplier).EUt(2)
                 .buildAndRegister();
 
         // Smelting recipe

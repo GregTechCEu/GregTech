@@ -29,7 +29,7 @@ public class PureDustRecipeHandler {
                 .input(dustPure, material)
                 .output(dust, material, property.getOreMultiplier())
                 .chancedOutput(dust, material, property.getOreMultiplier(), 5000, 0)
-                .duration(400).EUt(VA[ULV]).buildAndRegister();
+                .duration(256).EUt(VA[ULV]).buildAndRegister();
 
         // Flotation recipe
         if (byproduct.hasProperty(PropertyKey.ORE)) {

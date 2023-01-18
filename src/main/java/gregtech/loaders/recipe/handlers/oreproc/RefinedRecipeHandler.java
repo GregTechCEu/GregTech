@@ -70,7 +70,7 @@ public class RefinedRecipeHandler {
                         .fluidInputs(Materials.Mercury.getFluid(100))
                         .output(dustPure, material)
                         .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
-                        .duration(400).EUt(VA[LV]).buildAndRegister();
+                        .duration(256).EUt(VA[LV]).buildAndRegister();
             }
 
             if (byproduct.hasFlag(WASHING_PERSULFATE)) {
@@ -79,14 +79,14 @@ public class RefinedRecipeHandler {
                         .fluidInputs(Materials.SodiumPersulfate.getFluid(100))
                         .output(dustPure, material)
                         .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
-                        .duration(400).EUt(VA[LV]).buildAndRegister();
+                        .duration(256).EUt(VA[LV]).buildAndRegister();
 
                 CHEMICAL_BATH_RECIPES.recipeBuilder()
                         .input(crushedRefined, material)
                         .fluidInputs(Materials.PotassiumPersulfate.getFluid(100))
                         .output(dustPure, material)
                         .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
-                        .duration(400).EUt(VA[LV]).buildAndRegister();
+                        .duration(256).EUt(VA[LV]).buildAndRegister();
             }
 
             // Chemical Bath Recipe (fallback)

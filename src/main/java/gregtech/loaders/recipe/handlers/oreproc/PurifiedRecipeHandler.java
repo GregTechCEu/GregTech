@@ -39,7 +39,7 @@ public class PurifiedRecipeHandler {
                 .input(crushedPurified, material)
                 .output(dust, material, property.getOreMultiplier())
                 .chancedOutput(dust, material, property.getOreMultiplier(), 1666, 0)
-                .duration(400).EUt(2).buildAndRegister();
+                .duration(256).EUt(2).buildAndRegister();
 
         // Sluice recipes
         // Crushed Ore -> Purified Ore + Byproduct Dust (Water)
@@ -50,7 +50,7 @@ public class PurifiedRecipeHandler {
                 .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 3750, 0)
                 .output(dust, Stone)
                 .fluidOutputs(SluiceJuice.getFluid(1000))
-                .duration(400).EUt(16).buildAndRegister();
+                .duration(256).EUt(16).buildAndRegister();
 
         // Crushed Ore -> Purified Ore + Byproduct Purified Ore (Persulfate)
         if (byproduct.hasProperty(PropertyKey.ORE)) {
@@ -61,7 +61,7 @@ public class PurifiedRecipeHandler {
                     .chancedOutput(crushedRefined, byproduct, byproductMultiplier, 3750, 0)
                     .output(dust, Stone)
                     .fluidOutputs(SluiceJuice.getFluid(500))
-                    .duration(400).EUt(64).buildAndRegister();
+                    .duration(256).EUt(64).buildAndRegister();
         }
 
 
