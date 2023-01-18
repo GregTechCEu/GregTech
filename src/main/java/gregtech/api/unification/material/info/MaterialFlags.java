@@ -253,6 +253,13 @@ public class MaterialFlags {
     //     ORE     //
     /////////////////
 
+    /**
+     * Add to material if its Purified Ore should be processed in the Sifter (instead of Thermal Centrifuge or Electromagnetic Separator).
+     */
+    public static final MaterialFlag REFINE_BY_SIFTING = new MaterialFlag.Builder("refine_by_sifting")
+            .requireProps(PropertyKey.ORE)
+            .build();
+
     public static final MaterialFlag HIGH_SIFTER_OUTPUT = new MaterialFlag.Builder("high_sifter_output")
             .requireProps(PropertyKey.GEM, PropertyKey.ORE)
             .build();

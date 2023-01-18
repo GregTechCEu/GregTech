@@ -10,24 +10,21 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 
 import static gregtech.api.recipes.RecipeMaps.*;
+import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.MAGNETIC_ORE;
+import static gregtech.api.unification.material.info.MaterialFlags.REFINE_BY_SIFTING;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
 public class PurifiedRecipeHandler {
 
     public static void processPurified(OrePrefix prefix, Material material, OreProperty property) {
-        // Get the byproducts used for this step
-        Material primaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 2, material);
-        OrePrefix primaryByproductPrefix = primaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
-        int primaryByproductMultiplier = 1;
-        if (primaryByproduct.hasProperty(PropertyKey.ORE))
-            primaryByproductMultiplier = primaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
-        Material secondaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
-        OrePrefix secondaryByproductPrefix = secondaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
-        int secondaryByproductMultiplier = 1;
-        if (secondaryByproduct.hasProperty(PropertyKey.ORE))
-            secondaryByproductMultiplier = secondaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
+        // Get the byproduct used for this step
+        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
+        OrePrefix byproductPrefix = byproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
+        int byproductMultiplier = 1;
+        if (byproduct.hasProperty(PropertyKey.ORE))
+            byproductMultiplier = byproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
 
         // Forge Hammer recipe
         // Purified Ore -> Dust
@@ -44,31 +41,26 @@ public class PurifiedRecipeHandler {
                 .chancedOutput(dust, material, property.getOreMultiplier(), 1666, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
-        // Purified Ore -> Refined Ore
-        if (material.hasProperty(PropertyKey.GEM)) {
-            // Gems go in the Sifter
-            // TODO add gem quality?
-            SIFTER_RECIPES.recipeBuilder()
-                    .input(crushedPurified, material)
-                    .output(crushedRefined, material)
-                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
-                    .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(64).buildAndRegister();
-        } else if (material.hasFlag(MAGNETIC_ORE) || primaryByproduct.hasFlag(MAGNETIC_ORE)) {
-            // Magnetic Materials or Byproducts go in the Magnetic Separator
-            ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
-                    .input(crushedPurified, material)
-                    .output(crushedRefined, material)
-                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
-                    .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
-                    .duration(400).EUt(64).buildAndRegister();
-        } else {
-            // Anything else goes in the Thermal Centrifuge
-            THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
-                    .input(crushedPurified, material)
-                    .output(crushedRefined, material)
-                    .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 2000, 0)
-                    .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier,2000, 0)
+        // Sluice recipes
+        // Crushed Ore -> Purified Ore + Byproduct Dust (Water)
+        SLUICE_RECIPES.recipeBuilder()
+                .input(crushed, material)
+                .fluidInputs(Water.getFluid(1000))
+                .output(crushedPurified, material)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 3750, 0)
+                .output(dust, Stone)
+                .fluidOutputs(SluiceJuice.getFluid(1000))
+                .duration(400).EUt(16).buildAndRegister();
+
+        // Crushed Ore -> Purified Ore + Byproduct Purified Ore (Persulfate)
+        if (byproduct.hasProperty(PropertyKey.ORE)) {
+            SLUICE_RECIPES.recipeBuilder()
+                    .input(crushed, material)
+                    .fluidInputs(Water.getFluid(1000))
+                    .output(crushedPurified, material)
+                    .chancedOutput(crushedRefined, byproduct, byproductMultiplier, 3750, 0)
+                    .output(dust, Stone)
+                    .fluidOutputs(SluiceJuice.getFluid(500))
                     .duration(400).EUt(64).buildAndRegister();
         }
 
