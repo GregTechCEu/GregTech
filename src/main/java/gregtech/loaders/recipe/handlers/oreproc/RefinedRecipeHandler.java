@@ -36,11 +36,11 @@ public class RefinedRecipeHandler {
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
-        // Refined Ore -> 1.75x Purified Dust
+        // Refined Ore -> 1.33 Dust
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
-                .output(dustImpure, material, property.getOreMultiplier())
-                .chancedOutput(dustImpure, material, property.getOreMultiplier(), 7500, 0)
+                .output(dust, material, property.getOreMultiplier())
+                .chancedOutput(dust, material, property.getOreMultiplier(), 3333, 0)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Hard Hammer crafting recipe
@@ -51,7 +51,7 @@ public class RefinedRecipeHandler {
         processMetalSmelting(prefix, material, property);
 
         // Chemical Bath recipe (if applicable)
-        // Refined Ore -> 2x Dust + Vitriol
+        // Refined Ore -> 2x Purified Dust + Vitriol
         OreProperty byproductProp = byproduct.getProperty(PropertyKey.ORE);
         if (byproductProp != null && byproductProp.getBathRecipe() != null) {
             byproductProp.getBathRecipe().accept(material, property, byproduct);

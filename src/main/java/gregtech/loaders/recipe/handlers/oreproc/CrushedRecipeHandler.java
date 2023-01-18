@@ -45,7 +45,7 @@ public class CrushedRecipeHandler {
                 .input(crushed, material)
                 .fluidInputs(Water.getFluid(1000))
                 .output(crushedPurified, material)
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 1000, 0)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 2500, 0)
                 .output(dust, Stone)
                 .fluidOutputs(SluiceJuice.getFluid(1000))
                 .duration(400).EUt(16).buildAndRegister();
