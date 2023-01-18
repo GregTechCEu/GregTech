@@ -54,6 +54,7 @@ public class OreRecipeHandler {
         crushedPurified.addProcessingHandler(PropertyKey.ORE, PurifiedRecipeHandler::processPurified);
         crushedRefined.addProcessingHandler(PropertyKey.ORE, RefinedRecipeHandler::processRefined);
         dustImpure.addProcessingHandler(PropertyKey.ORE, DustRecipeHandler::processImpure);
+        dustPure.addProcessingHandler(PropertyKey.ORE, FlotationRecipeHandler::processFlotation);
         dust.addProcessingHandler(PropertyKey.ORE, DustRecipeHandler::processDust);
 
         SpecialRecipeHandler.init();
