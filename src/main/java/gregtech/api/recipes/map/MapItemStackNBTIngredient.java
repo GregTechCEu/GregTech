@@ -54,12 +54,19 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
             if (this.meta != other.meta) {
                 return false;
             }
-            if (this.matcher != null && !this.matcher.equals(other.matcher)) return false;
-            if (this.condition != null && !this.condition.equals(other.condition)) return false;
-            if (other.matcher != null) {
-                return other.matcher.evaluate(this.stack, other.condition);
+            if (this.matcher != null && other.matcher != null) {
+                if (!this.matcher.equals(other.matcher)) {
+                    return false;
+                }
             }
-            return true;
+            if (this.condition != null && other.condition != null) {
+                if (!this.condition.equals(other.condition)) {
+                    return false;
+                }
+            }
+            //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
+            //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
+            return ItemStack.areItemsEqual(stack, other.stack) && other.matcher.evaluate(this.stack, other.condition);
         }
         return false;
     }
