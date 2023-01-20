@@ -58,7 +58,7 @@ public class CrushedRecipeHandler {
         if (byproduct.hasProperty(PropertyKey.ORE)) {
             SLUICE_RECIPES.recipeBuilder()
                     .input(crushed, material)
-                    .fluidInputs(SodiumPersulfate.getFluid(1000))
+                    .fluidInputs(SodiumPersulfate.getFluid(125))
                     .output(crushedPurified, material)
                     .chancedOutput(crushedPurified, byproduct, byproductMultiplier, 3750, 0)
                     .output(dust, Stone)
@@ -67,7 +67,7 @@ public class CrushedRecipeHandler {
 
             SLUICE_RECIPES.recipeBuilder()
                     .input(crushed, material)
-                    .fluidInputs(PotassiumPersulfate.getFluid(1000))
+                    .fluidInputs(PotassiumPersulfate.getFluid(125))
                     .output(crushedPurified, material)
                     .chancedOutput(crushedPurified, byproduct, byproductMultiplier, 3750, 0)
                     .output(dust, Stone)
