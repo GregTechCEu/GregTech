@@ -9,6 +9,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.LV;
 import static gregtech.api.GTValues.VA;
@@ -53,6 +54,16 @@ public class RefinedRecipeHandler {
         processMetalSmelting(prefix, material, property);
 
         // Chemical Bath recipe
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(crushedRefined, material)
+                .fluidInputs(property.getBathInputStack())
+                .output(dustPure, material)
+                .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
+                .fluidOutputs(property.getBathOutputStacks())
+                .duration(256).EUt(64).buildAndRegister();
+
+        /* old
         // Refined Ore -> Purified Dust + Vitriol
         OreProperty byproductProp = byproduct.getProperty(PropertyKey.ORE);
         if (byproductProp != null && byproductProp.getBathRecipe() != null) {
@@ -175,5 +186,8 @@ public class RefinedRecipeHandler {
                 .fluidOutputs(NitrogenDioxide.getFluid(3000))
                 .fluidOutputs(Water.getFluid(3000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
+
+
+         */
     }
 }
