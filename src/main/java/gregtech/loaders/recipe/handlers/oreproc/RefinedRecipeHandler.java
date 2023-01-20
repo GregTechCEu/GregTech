@@ -24,12 +24,18 @@ import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processM
 public class RefinedRecipeHandler {
 
     public static void processRefined(OrePrefix prefix, Material material, OreProperty property) {
-        // Get the byproduct used for this step
-        Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 0, material);
-        OrePrefix byproductPrefix = byproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
-        int byproductMultiplier = 1;
-        if (byproduct.hasProperty(PropertyKey.ORE))
-            byproductMultiplier = byproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
+        // Get the byproducts used for this step
+        Material primaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
+        OrePrefix primaryByproductPrefix = primaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
+        int primaryByproductMultiplier = 1;
+        if (primaryByproduct.hasProperty(PropertyKey.ORE))
+            primaryByproductMultiplier = primaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
+
+        Material tertiaryByproduct = GTUtility.getOrDefault(property.getOreByProducts(), 3, material);
+        OrePrefix tertiaryByproductPrefix = tertiaryByproduct.hasProperty(PropertyKey.GEM) ? gem : dust;
+        int tertiaryByproductMultiplier = 1;
+        if (tertiaryByproduct.hasProperty(PropertyKey.ORE))
+            tertiaryByproductMultiplier = tertiaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
 
         // Forge Hammer recipe
         // Refined Ore -> Dust
@@ -47,21 +53,30 @@ public class RefinedRecipeHandler {
                 .duration(400).EUt(2).buildAndRegister();
 
         // Hard Hammer crafting recipe
-        // Centrifuged Ore -> Dust
-        ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material),
+        // Refined Ore -> Dust
+        ModHandler.addShapelessRecipe(String.format("refined_ore_to_dust_%s", material),
                 OreDictUnifier.get(dust, material, property.getOreMultiplier()), 'h', new UnificationEntry(crushedRefined, material));
 
         processMetalSmelting(prefix, material, property);
 
-        // Chemical Bath recipe
-
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
+        // Thermal Centrifuge recipes
+        THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
-                .fluidInputs(property.getBathInputStack())
                 .output(dustPure, material)
-                .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
-                .fluidOutputs(property.getBathOutputStacks())
+                .chancedOutput(dust, primaryByproduct, primaryByproductMultiplier, 5000, 0)
+                .chancedOutput(dust, tertiaryByproduct, tertiaryByproductMultiplier, 1500, 0)
                 .duration(256).EUt(64).buildAndRegister();
+
+        // Chemical Bath recipes
+        if (property.getBathOutputs() != null) {
+            CHEMICAL_BATH_RECIPES.recipeBuilder()
+                    .input(crushedRefined, material)
+                    .fluidInputs(property.getBathInputStack())
+                    .output(dustPure, material)
+                    .chancedOutput(dust, primaryByproduct, primaryByproductMultiplier, 5000, 0)
+                    .fluidOutputs(property.getBathOutputStacks())
+                    .duration(256).EUt(VA[LV]).buildAndRegister();
+        }
 
         /* old
         // Refined Ore -> Purified Dust + Vitriol

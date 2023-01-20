@@ -46,7 +46,7 @@ public class MetaTileEntityFlotationCell extends RecipeMapMultiblockController {
                 .aisle("XXXXX", "X   X", "A   A", "X   X", "X P X")
                 .aisle("FXXXF", "FXAXF", "FASAF", "FXAXF", "FXXXF")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(autoAbilities()))
+                .where('X', states(getCasingState()).setMinGlobalLimited(36).or(autoAbilities()))
                 .where('F', frames(Materials.Titanium))
                 .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)))
                 .where('P', states(MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE)))

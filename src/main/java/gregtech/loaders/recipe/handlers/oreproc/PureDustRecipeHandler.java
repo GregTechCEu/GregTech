@@ -39,7 +39,7 @@ public class PureDustRecipeHandler {
                     .input(dustPure, material)
                     .fluidInputs(SodiumEthylXanthate.getFluid(500))
                     .output(dust, material, 2 * property.getOreMultiplier())
-                    .chancedOutput(dustPure, byproduct, byproductMultiplier, 1500, 0)
+                    .chancedOutput(dustPure, byproduct, 1500, 0)
                     .fluidOutputs(SluiceJuice.getFluid(1500))
                     .buildAndRegister();
         } else {
@@ -48,7 +48,7 @@ public class PureDustRecipeHandler {
                     .input(dustPure, material)
                     .fluidInputs(SodiumEthylXanthate.getFluid(500))
                     .output(dust, material, 2 * property.getOreMultiplier())
-                    .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
+                    .chancedOutput(dust, byproduct, 5000, 0)
                     .fluidOutputs(SluiceJuice.getFluid(1500))
                     .buildAndRegister();
         }
