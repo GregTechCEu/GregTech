@@ -1668,6 +1668,8 @@ material.clay_vitriol=Clay Vitriol
 material.chloroauric_acid=Chloroauric Acid
 material.chloroplatinic_acid=Chloroplatinic Acid
 material.alumina=Alumina
+material.carbon_disulfide=Carbon Disulfide
+material.sodium_ethyl_xanthate=Sodium Ethyl Xanthate
 
 
 # Organic Chemistry Materials
@@ -2184,6 +2186,7 @@ recipemap.gas_collector.name=Gas Collector
 recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
+recipemap.flotation_cell.name=Froth Flotation
 
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
@@ -4442,6 +4445,9 @@ gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for ea
 gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-click of a screwdriver.
 gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
 gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
+
+gregtech.machine.flotation_cell.name=Flotation Cell
+gregtech.machine.flotation_cell.tooltip.1=Pushing Ore Processing to the Max
 
 metaitem.cover.digital.mode.proxy.disabled=Click to enable Proxy Mode
 metaitem.cover.digital.mode.proxy.enabled=Proxy Mode enabled
