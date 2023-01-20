@@ -4,37 +4,45 @@ import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.loaders.recipe.handlers.oreproc.BathRecipeHandler;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static gregtech.api.unification.material.Materials.*;
 
 public class MaterialFlagAddition {
+    // Bath Stacks
+    private static final ArrayList<Object> RED_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, RedVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> BLUE_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, BlueVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> GREEN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, GreenVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> PINK_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, PinkVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> CYAN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, CyanVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> WHITE_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, WhiteVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> GRAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 500, GrayVitriol, 500, Hydrogen, 1000));
+    private static final ArrayList<Object> CLAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1500, ClayVitriol, 500, Hydrogen, 1000));
 
     public static void register() {
         OreProperty oreProp = Aluminium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Bauxite, Bauxite, Ilmenite, Rutile);
-        oreProp.setVitriol(ClayVitriol);
-        oreProp.setBathHandler(BathRecipeHandler::bathClayVitriol);
+        oreProp.setBathIOStacks(CLAY_VITRIOL);
 
         oreProp = Beryllium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Emerald, Emerald, Thorium);
 
         oreProp = Cobalt.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobaltite);
-        oreProp.setVitriol(RedVitriol);
-        oreProp.setBathHandler(BathRecipeHandler::bathRedVitriol);
+        oreProp.setBathIOStacks(RED_VITRIOL);
 
         oreProp = Copper.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobalt, Gold, Nickel, Gold);
-        oreProp.setVitriol(BlueVitriol);
-        oreProp.setBathHandler(BathRecipeHandler::bathBlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Gold.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Copper, Nickel, Silver);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Iron.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, Tin, Tin, Gold);
-        oreProp.setVitriol(GreenVitriol);
-        oreProp.setBathHandler(BathRecipeHandler::bathGreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Lead.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Silver, Sulfur);
@@ -47,23 +55,22 @@ public class MaterialFlagAddition {
 
         oreProp = Magnesium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Olivine);
-        oreProp.setBathHandler(BathRecipeHandler::bathPinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Manganese.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Chrome, Iron);
-        oreProp.setBathHandler(BathRecipeHandler::bathGrayVitriol);
+        oreProp.setBathIOStacks(GRAY_VITRIOL);
 
         oreProp = Neodymium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(RareEarth);
 
         oreProp = Nickel.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobalt, Iron, Platinum);
-        oreProp.setVitriol(CyanVitriol);
-        oreProp.setBathHandler(BathRecipeHandler::bathCyanVitriol);
+        oreProp.setBathIOStacks(CYAN_VITRIOL);
 
         oreProp = Platinum.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Platinum);
-        oreProp.setVitriol(CyanVitriol);
+        oreProp.setBathIOStacks(CYAN_VITRIOL);
 
         oreProp = Plutonium239.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Uraninite, Lead, Uraninite);
@@ -95,28 +102,27 @@ public class MaterialFlagAddition {
 
         oreProp = Zinc.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Zinc, Zinc, Gallium);
-        oreProp.setVitriol(WhiteVitriol);
-        oreProp.setBathHandler(BathRecipeHandler::bathWhiteVitriol);
+        oreProp.setBathIOStacks(WHITE_VITRIOL);
 
         oreProp = CertusQuartz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(NetherQuartz, Barite);
 
         oreProp = Almandine.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetRed, Aluminium);
-        oreProp.setVitriol(ClayVitriol);
+        oreProp.setBathIOStacks(CLAY_VITRIOL);
 
         oreProp = Asbestos.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Diatomite, Silicon, Magnesium);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = BlueTopaz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Topaz);
-        oreProp.setVitriol(ClayVitriol);
+        oreProp.setBathIOStacks(CLAY_VITRIOL);
 
         oreProp = BrownLimonite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Malachite, YellowLimonite);
         oreProp.setDirectSmeltResult(Iron);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Calcite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Calcium, Calcium, Sodalite, Malachite);
@@ -132,11 +138,11 @@ public class MaterialFlagAddition {
         oreProp = Chalcopyrite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
         oreProp.setDirectSmeltResult(Copper);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Chromite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Magnesium, Chrome);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Cinnabar.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Redstone, Sulfur, Glowstone);
@@ -147,11 +153,11 @@ public class MaterialFlagAddition {
         oreProp = Cobaltite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Cobalt);
         oreProp.setDirectSmeltResult(Cobalt);
-        oreProp.setVitriol(RedVitriol);
+        oreProp.setBathIOStacks(RED_VITRIOL);
 
         oreProp = Cooperite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Palladium);
-        oreProp.setVitriol(CyanVitriol);
+        oreProp.setBathIOStacks(CYAN_VITRIOL);
 
         oreProp = Diamond.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Graphite);
@@ -166,7 +172,7 @@ public class MaterialFlagAddition {
         oreProp = Garnierite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Nickel);
         oreProp.setDirectSmeltResult(Nickel);
-        oreProp.setVitriol(CyanVitriol);
+        oreProp.setBathIOStacks(CYAN_VITRIOL);
 
         oreProp = GreenSapphire.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Aluminium, Sapphire);
@@ -176,11 +182,11 @@ public class MaterialFlagAddition {
 
         oreProp = Ilmenite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Rutile);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Bauxite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Grossular, Rutile, Gallium);
-        oreProp.setVitriol(ClayVitriol);
+        oreProp.setBathIOStacks(CLAY_VITRIOL);
 
         oreProp = Lazurite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sodalite, Lapis);
@@ -188,12 +194,12 @@ public class MaterialFlagAddition {
         oreProp = Magnesite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Magnesium, Magnesium, Cobaltite);
         oreProp.setDirectSmeltResult(Magnesium);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Magnetite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Iron, Gold);
         oreProp.setDirectSmeltResult(Iron);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Molybdenite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Molybdenum, Sulfur, Quartzite);
@@ -202,16 +208,16 @@ public class MaterialFlagAddition {
         oreProp = Pyrite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, TricalciumPhosphate, Iron);
         oreProp.setDirectSmeltResult(Iron);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Pyrolusite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Manganese, Tantalite, Niobium, Silver);
         oreProp.setDirectSmeltResult(Manganese);
-        oreProp.setVitriol(GrayVitriol);
+        oreProp.setBathIOStacks(GRAY_VITRIOL);
 
         oreProp = Pyrope.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetRed, Magnesium);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Realgar.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Antimony, Barite);
@@ -233,23 +239,23 @@ public class MaterialFlagAddition {
 
         oreProp = Scheelite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Manganese, Molybdenum, Calcium);
-        oreProp.setVitriol(GrayVitriol);
+        oreProp.setBathIOStacks(GRAY_VITRIOL);
 
         oreProp = Sodalite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Lazurite, Lapis);
 
         oreProp = Tantalite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Manganese, Niobium, Tantalum);
-        oreProp.setVitriol(GrayVitriol);
+        oreProp.setBathIOStacks(GRAY_VITRIOL);
 
         oreProp = Spessartine.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetRed, Manganese);
-        oreProp.setVitriol(GrayVitriol);
+        oreProp.setBathIOStacks(GRAY_VITRIOL);
 
         oreProp = Sphalerite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetYellow, Gallium, Cadmium, Zinc);
         oreProp.setDirectSmeltResult(Zinc);
-        oreProp.setVitriol(WhiteVitriol);
+        oreProp.setBathIOStacks(WHITE_VITRIOL);
 
         oreProp = Stibnite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Antimony);
@@ -257,15 +263,15 @@ public class MaterialFlagAddition {
         oreProp = Tetrahedrite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Zinc, Antimony, Cadmium, Copper);
         oreProp.setDirectSmeltResult(Copper);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Topaz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(BlueTopaz);
-        oreProp.setVitriol(ClayVitriol);
+        oreProp.setBathIOStacks(CLAY_VITRIOL);
 
         oreProp = Tungstate.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Manganese, Silver, Lithium);
-        oreProp.setVitriol(GrayVitriol);
+        oreProp.setBathIOStacks(GRAY_VITRIOL);
 
         oreProp = Uraninite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Uraninite, Thorium, Silver);
@@ -273,7 +279,7 @@ public class MaterialFlagAddition {
         oreProp = YellowLimonite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, BrownLimonite, Cobalt);
         oreProp.setDirectSmeltResult(Iron);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = NetherQuartz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Netherrack, Barite);
@@ -287,12 +293,12 @@ public class MaterialFlagAddition {
         oreProp = Bornite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
         oreProp.setDirectSmeltResult(Copper);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Chalcocite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Lead, Silver);
         oreProp.setDirectSmeltResult(Copper);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Bastnasite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Neodymium, RareEarth);
@@ -300,7 +306,7 @@ public class MaterialFlagAddition {
         oreProp = Pentlandite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Sulfur, Cobalt);
         oreProp.setDirectSmeltResult(Nickel);
-        oreProp.setVitriol(CyanVitriol);
+        oreProp.setBathIOStacks(CYAN_VITRIOL);
 
         oreProp = Spodumene.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Aluminium, Lithium);
@@ -314,11 +320,11 @@ public class MaterialFlagAddition {
         oreProp = Malachite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Copper, BrownLimonite, Calcite);
         oreProp.setDirectSmeltResult(Copper);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Olivine.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrope, Magnesium, Manganese);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Opal.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Opal);
@@ -343,7 +349,7 @@ public class MaterialFlagAddition {
 
         oreProp = VanadiumMagnetite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Magnetite, Magnetite, Vanadium);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Pollucite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Caesium, Aluminium, Potassium);
@@ -380,25 +386,25 @@ public class MaterialFlagAddition {
         oreProp = Hematite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Magnetite, Calcium, Magnesium);
         oreProp.setDirectSmeltResult(Iron);
-        oreProp.setVitriol(GreenVitriol);
+        oreProp.setBathIOStacks(GREEN_VITRIOL);
 
         oreProp = Wulfenite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Manganese, Manganese, Lead);
 
         oreProp = Soapstone.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(SiliconDioxide, Magnesium, Calcite, Talc);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Kyanite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Talc, Aluminium, Silicon);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Gypsum.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Calcium, Salt);
 
         oreProp = Talc.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Clay, Carbon, Clay);
-        oreProp.setVitriol(PinkVitriol);
+        oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Powellite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Potassium, Molybdenite);
@@ -414,7 +420,7 @@ public class MaterialFlagAddition {
 
         oreProp = Electrotine.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Copper);
-        oreProp.setVitriol(BlueVitriol);
+        oreProp.setBathIOStacks(BLUE_VITRIOL);
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
