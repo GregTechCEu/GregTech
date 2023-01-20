@@ -31,7 +31,7 @@ public class HigherDegreeMaterials {
         Electrotine = new Material.Builder(2507, "electrotine")
                 .dust().ore(true)
                 .color(0x3CB4C8).iconSet(SHINY)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, PURIFY_BY_SIFTING)
                 .components(Redstone, 1, Electrum, 1)
                 .build();
 

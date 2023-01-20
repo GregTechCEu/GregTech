@@ -60,7 +60,7 @@ public class OreProperty implements IMaterialProperty {
     /**
      * Material that this Ore requires as Fluid in a special Washing step.
      * <p>
-     * Default: Sulfuric Acid
+     * Default: none
      */
     private Material bathInput;
 
@@ -76,7 +76,7 @@ public class OreProperty implements IMaterialProperty {
      * List of Materials this Ore will output as Fluids in a special Washing step.
      * Cannot have more than 3 Fluids (max allowed outputs in Chemical Bath).
      *
-     * Default: Blue Vitriol, Hydrogen
+     * Default: none
      */
 
     private List<Material> bathOutputs;
@@ -86,7 +86,7 @@ public class OreProperty implements IMaterialProperty {
      * Cannot have more than 3 Fluids (max allowed outputs in Chemical Bath).
      * Order is the same as the bath outputs list.
      *
-     * Default: 500, 1000
+     * Default: none
      */
 
     private List<Integer> bathOutputAmounts;
@@ -156,7 +156,6 @@ public class OreProperty implements IMaterialProperty {
     }
 
     public Material getBathInput() {
-        if (bathInput == null) return SulfuricAcid;
         return bathInput;
     }
 
@@ -185,7 +184,6 @@ public class OreProperty implements IMaterialProperty {
     }
 
     public List<Material> getBathOutputs() {
-        if (bathOutputs == null) return Arrays.asList(BlueVitriol, Hydrogen);
         return bathOutputs;
     }
 
@@ -198,7 +196,6 @@ public class OreProperty implements IMaterialProperty {
     }
 
     public List<Integer> getBathOutputAmounts() {
-        if (bathOutputAmounts == null) return Arrays.asList(500, 1000);
         return bathOutputAmounts;
     }
 
@@ -261,7 +258,7 @@ public class OreProperty implements IMaterialProperty {
 
         for (int i = 2; i < components.length; i += 2) {
             if (components[i] == null) {
-                throw new IllegalArgumentException("Material in Bath Output Stacks List is null. Tried: " + Arrays.toString(components));
+                throw new IllegalArgumentException("Material in Bath I/O Stacks List is null. Tried: " + Arrays.toString(components));
             }
 
             materials.add((Material) components[i]);
@@ -293,7 +290,7 @@ public class OreProperty implements IMaterialProperty {
 
         for (int i = 2; i < components.size(); i += 2) {
             if (components.get(i) == null) {
-                throw new IllegalArgumentException("Material in Bath Output Stacks List is null. Tried: " + components.toString());
+                throw new IllegalArgumentException("Material in Bath I/O Stacks List is null. Tried: " + components.toString());
             }
 
             materials.add((Material) components.get(i));

@@ -32,7 +32,7 @@ public class SecondDegreeMaterials {
         Asbestos = new Material.Builder(253, "asbestos")
                 .dust(1).ore()
                 .color(0xE6E6E6)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, PURIFY_BY_SIFTING)
                 .components(Magnesium, 3, SiliconDioxide, 2, Water, 2, Oxygen, 3)
                 .build();
 
@@ -348,6 +348,7 @@ public class SecondDegreeMaterials {
         Zeolite = new Material.Builder(2033, "zeolite")
                 .dust().ore()
                 .color(0xF0E6E6)
+                .flags(PURIFY_BY_SIFTING)
                 .components(Alumina, 1, Sodium, 2, SiliconDioxide, 3, Water, 2, Oxygen, 1)
                 .build();
 
@@ -579,7 +580,7 @@ public class SecondDegreeMaterials {
                 .dust().ore(4, true).fluid()
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
-                        EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
+                        EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING, PURIFY_BY_SIFTING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
                 .fluidTemp(500)
                 .build();
@@ -596,6 +597,13 @@ public class SecondDegreeMaterials {
                 .color(0xA0A078).iconSet(FINE)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Clay, 13)
+                .build();
+
+        PlatinumGroupSlurry = new Material.Builder(2028, "platinum_group_slurry")
+                .fluid()
+                .color(0x2F3030)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(PlatinumGroupSludge, 1)
                 .build();
     }
 }
