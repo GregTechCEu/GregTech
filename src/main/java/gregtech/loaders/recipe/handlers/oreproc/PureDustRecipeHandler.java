@@ -37,7 +37,7 @@ public class PureDustRecipeHandler {
             // TODO replace sluice juice with flotation waste fluid?
             FLOTATION_RECIPES.recipeBuilder()
                     .input(dustPure, material)
-                    .fluidInputs(SodiumEthylXanthate.getFluid(1000))
+                    .fluidInputs(SodiumEthylXanthate.getFluid(500))
                     .output(dust, material, 2 * property.getOreMultiplier())
                     .chancedOutput(dustPure, byproduct, byproductMultiplier, 1500, 0)
                     .fluidOutputs(SluiceJuice.getFluid(1500))
@@ -46,7 +46,7 @@ public class PureDustRecipeHandler {
             // Purified Dust -> 2 Dust + 0.5 3rd Byproduct (4 Dust per Ore)
             FLOTATION_RECIPES.recipeBuilder()
                     .input(dustPure, material)
-                    .fluidInputs(SodiumEthylXanthate.getFluid(1000))
+                    .fluidInputs(SodiumEthylXanthate.getFluid(500))
                     .output(dust, material, 2 * property.getOreMultiplier())
                     .chancedOutput(dust, byproduct, byproductMultiplier, 5000, 0)
                     .fluidOutputs(SluiceJuice.getFluid(1500))
