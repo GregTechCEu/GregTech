@@ -693,6 +693,7 @@ public class Materials {
 
     public static Material SluiceJuice;
     public static Material SluiceSand;
+    public static Material FlotationWaste;
 
     /**
      * Second Degree Compounds

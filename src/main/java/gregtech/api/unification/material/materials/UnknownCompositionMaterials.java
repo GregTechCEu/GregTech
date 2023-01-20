@@ -490,5 +490,7 @@ public class UnknownCompositionMaterials {
         SluiceJuice = new Material.Builder(1650, "sluice_juice").fluid().color(0x5C3C24).build();
 
         SluiceSand = new Material.Builder(1651, "sluice_sand").dust().color(0xA5A578).iconSet(FINE).build();
+
+        FlotationWaste = new Material.Builder(1652, "flotation_waste").fluid().color(0x3D1E10).build();
     }
 }

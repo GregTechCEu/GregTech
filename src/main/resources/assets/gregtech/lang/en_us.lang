@@ -1670,6 +1670,8 @@ material.chloroplatinic_acid=Chloroplatinic Acid
 material.alumina=Alumina
 material.carbon_disulfide=Carbon Disulfide
 material.sodium_ethyl_xanthate=Sodium Ethyl Xanthate
+material.sodium_cyanide=Sodium Cyanide
+material.sodium_gold_cyanide=Sodium Gold Cyanide
 
 
 # Organic Chemistry Materials
@@ -1882,6 +1884,8 @@ material.lapotron=Lapotron
 material.uu_matter=UU-Matter
 material.sluice_juice=Sluice Juice
 material.sluice_sand=Sluice Sand
+material.flotation_waste=Flotation Waste
+
 item.sluice_sand.dust=Sluice Sand
 item.sluice_sand.dustSmall=Small Pile of Sluice Sand
 item.sluice_sand.dustTiny=Tiny Pile of Sluice Sand
@@ -1941,6 +1945,7 @@ material.aqua_regia=Aqua Regia
 material.salt_water=Salt Water
 material.clay=Clay
 material.redstone=Redstone
+material.platinum_group_slurry=Platinum Group Slurry
 
 
 # Third Degree Materials
