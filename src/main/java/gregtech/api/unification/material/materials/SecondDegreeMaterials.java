@@ -585,6 +585,13 @@ public class SecondDegreeMaterials {
                 .fluidTemp(500)
                 .build();
 
+        PlatinumGroupSlurry = new Material.Builder(2065, "platinum_group_slurry")
+                .fluid()
+                .color(0x2F3030)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(PlatinumGroupSludge, 1)
+                .build();
+
         Bentonite = new Material.Builder(2026, "bentonite")
                 .dust().ore()
                 .color(0xF5D7D2).iconSet(ROUGH)
@@ -597,13 +604,6 @@ public class SecondDegreeMaterials {
                 .color(0xA0A078).iconSet(FINE)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Clay, 13)
-                .build();
-
-        PlatinumGroupSlurry = new Material.Builder(2028, "platinum_group_slurry")
-                .fluid()
-                .color(0x2F3030)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(PlatinumGroupSludge, 1)
                 .build();
     }
 }
