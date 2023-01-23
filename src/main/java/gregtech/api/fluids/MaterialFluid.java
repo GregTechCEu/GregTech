@@ -1,9 +1,7 @@
 package gregtech.api.fluids;
 
 import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -23,10 +21,6 @@ public class MaterialFluid extends Fluid {
         super(fluidName, texture, texture, GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
         this.material = material;
         this.fluidType = fluidType;
-    }
-
-    public void registerFluidTooltip() {
-        FluidTooltipUtil.registerTooltip(this, FluidTooltipUtil.getMaterialTooltip(material, getTemperature(), fluidType.equals(FluidTypes.PLASMA)));
     }
 
     @Nonnull

@@ -6,6 +6,7 @@ public class PropertyKey<T extends IMaterialProperty<T>> {
     public static final PropertyKey<DustProperty> DUST = new PropertyKey<>("dust", DustProperty.class);
     public static final PropertyKey<FluidPipeProperties> FLUID_PIPE = new PropertyKey<>("fluid_pipe", FluidPipeProperties.class);
     public static final PropertyKey<FluidProperty> FLUID = new PropertyKey<>("fluid", FluidProperty.class);
+    public static final PropertyKey<AdvancedFluidProperty> ADV_FLUID = new PropertyKey<>("adv_fluid", AdvancedFluidProperty.class);
     public static final PropertyKey<GemProperty> GEM = new PropertyKey<>("gem", GemProperty.class);
     public static final PropertyKey<IngotProperty> INGOT = new PropertyKey<>("ingot", IngotProperty.class);
     public static final PropertyKey<PolymerProperty> POLYMER = new PropertyKey<>("polymer", PolymerProperty.class);

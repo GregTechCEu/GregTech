@@ -1,7 +1,10 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.info.FluidDataTypes;
+import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -258,7 +261,9 @@ public class FirstDegreeMaterials {
                 .build();
 
         Ice = new Material.Builder(283, "ice")
-                .dust(0).fluid()
+                .dust(0)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(273).customTexture(true))
                 .color(0xC8C8FF, false).iconSet(SHINY)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
@@ -970,7 +975,8 @@ public class FirstDegreeMaterials {
                 .build();
 
         SodiumPersulfate = new Material.Builder(378, "sodium_persulfate")
-                .fluid()
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .customTexture(true))
                 .components(Sodium, 2, Sulfur, 2, Oxygen, 8)
                 .build();
 
@@ -1078,87 +1084,94 @@ public class FirstDegreeMaterials {
                 .build();
 
         CarbonDioxide = new Material.Builder(397, "carbon_dioxide")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0xA9D0F5)
                 .components(Carbon, 1, Oxygen, 2)
                 .build();
 
         TitaniumTetrachloride = new Material.Builder(398, "titanium_tetrachloride")
-                .fluid()
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .customTexture(true))
                 .color(0xD40D5C)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Chlorine, 4)
                 .build();
 
         NitrogenDioxide = new Material.Builder(399, "nitrogen_dioxide")
-                .fluid(FluidTypes.GAS)
-                .color(0x85FCFF).iconSet(GAS)
+                .fluid(FluidTypeKeys.GAS)
+                .color(0x85FCFF)
                 .components(Nitrogen, 1, Oxygen, 2)
                 .build();
 
         HydrogenSulfide = new Material.Builder(400, "hydrogen_sulfide")
-                .fluid(FluidTypes.GAS)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .customTexture(true))
                 .components(Hydrogen, 2, Sulfur, 1)
                 .build();
 
         NitricAcid = new Material.Builder(401, "nitric_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.ACID))
                 .color(0xCCCC00)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
         SulfuricAcid = new Material.Builder(402, "sulfuric_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.ACID).customTexture(true))
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PhosphoricAcid = new Material.Builder(403, "phosphoric_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.ACID))
                 .color(0xDCDC01)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
                 .build();
 
         SulfurTrioxide = new Material.Builder(404, "sulfur_trioxide")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0xA0A014)
                 .components(Sulfur, 1, Oxygen, 3)
                 .build();
 
         SulfurDioxide = new Material.Builder(405, "sulfur_dioxide")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0xC8C819)
                 .components(Sulfur, 1, Oxygen, 2)
                 .build();
 
         CarbonMonoxide = new Material.Builder(406, "carbon_monoxide")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x0E4880)
                 .components(Carbon, 1, Oxygen, 1)
                 .build();
 
         HypochlorousAcid = new Material.Builder(407, "hypochlorous_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.ACID))
                 .color(0x6F8A91)
                 .components(Hydrogen, 1, Chlorine, 1, Oxygen, 1)
                 .build();
 
         Ammonia = new Material.Builder(408, "ammonia")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x3F3480)
                 .components(Nitrogen, 1, Hydrogen, 3)
                 .build();
 
         HydrofluoricAcid = new Material.Builder(409, "hydrofluoric_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.ACID))
                 .color(0x0088AA)
                 .components(Hydrogen, 1, Fluorine, 1)
                 .build();
 
         NitricOxide = new Material.Builder(410, "nitric_oxide")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x7DC8F0)
                 .components(Nitrogen, 1, Oxygen, 1)
                 .build();
@@ -1171,7 +1184,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         UraniumHexafluoride = new Material.Builder(412, "uranium_hexafluoride")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x42D126)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Fluorine, 6)
@@ -1179,7 +1192,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UF6", true);
 
         EnrichedUraniumHexafluoride = new Material.Builder(413, "enriched_uranium_hexafluoride")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x4BF52A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Fluorine, 6)
@@ -1187,7 +1200,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UF6", true);
 
         DepletedUraniumHexafluoride = new Material.Builder(414, "depleted_uranium_hexafluoride")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x74BA66)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Fluorine, 6)
@@ -1195,7 +1208,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UF6", true);
 
         NitrousOxide = new Material.Builder(415, "nitrous_oxide")
-                .fluid(FluidTypes.GAS)
+                .fluid(FluidTypeKeys.GAS)
                 .color(0x7DC8FF)
                 .components(Nitrogen, 2, Oxygen, 1)
                 .build();
@@ -1225,12 +1238,14 @@ public class FirstDegreeMaterials {
         Neodymium.getProperty(PropertyKey.INGOT).setMagneticMaterial(NeodymiumMagnetic);
 
         HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.ACID).customTexture(true))
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
         Steam = new Material.Builder(420, "steam")
-                .fluid(FluidTypes.GAS, true)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .customTexture(true))
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .fluidTemp(373)
@@ -1390,7 +1405,8 @@ public class FirstDegreeMaterials {
                 .build();
 
         FluoroantimonicAcid = new Material.Builder(438, "fluoroantimonic_acid")
-                .fluid(FluidTypes.ACID)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .data(FluidDataTypes.SUPERACID).customTexture(true))
                 .components(Hydrogen, 2, Antimony, 1, Fluorine, 7)
                 .build();
 

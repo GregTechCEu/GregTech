@@ -2,7 +2,7 @@ package gregtech;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistrator;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -47,7 +47,7 @@ public final class Bootstrap {
         GregTechAPI.MATERIAL_REGISTRY.freeze();
 
         OrePrefix.runMaterialHandlers();
-        MetaFluids.init();
+        GTFluidRegistrator.init();
         MetaItems.init();
         ModHandler.init();
         bootstrapped = true;

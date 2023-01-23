@@ -4882,6 +4882,8 @@ gregtech.tool_action.crowbar=§8Use Crowbar to remove Covers
 gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems
 
 gregtech.fluid.generic=%s
+gregtech.fluid.liquid=Liquid %s
+gregtech.fluid.gas=%s Vapor
 gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
@@ -4891,6 +4893,7 @@ gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
 gregtech.fluid.type_acid.tooltip=§6Acidic! Handle with care!
+gregtech.fluid.type_superacid.tooltip=§6Superacid! Corrodes quickly!
 gregtech.gui.fuel_amount=Fuel Amount:
 gregtech.gui.fluid_amount=Fluid Amount:
 gregtech.gui.amount_raw=Amount:

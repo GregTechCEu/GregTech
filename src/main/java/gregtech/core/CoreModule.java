@@ -8,7 +8,7 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistrator;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -144,7 +144,7 @@ public class CoreModule implements IGregTechModule {
         MetaBlocks.init();
         MetaItems.init();
         ToolItems.init();
-        MetaFluids.init();
+        GTFluidRegistrator.init();
         ModHandler.init();
 
         /* Start MetaTileEntity Registration */

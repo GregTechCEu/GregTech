@@ -136,7 +136,7 @@ public class RecyclingRecipes {
             if (m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getMacerateInto() != m) {
                 m = m.getProperty(PropertyKey.INGOT).getMacerateInto();
             }
-            if (!m.hasProperty(PropertyKey.FLUID) || (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST))) {
+            if (!m.hasProperty(PropertyKey.ADV_FLUID) || (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST))) {
                 return;
             }
             RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
@@ -151,7 +151,7 @@ public class RecyclingRecipes {
 
         // Find the first Material which can create a Fluid.
         // If no Material in the list can create a Fluid, return.
-        MaterialStack fluidMs = materials.stream().filter(ms -> ms.material.hasProperty(PropertyKey.FLUID)).findFirst().orElse(null);
+        MaterialStack fluidMs = materials.stream().filter(ms -> ms.material.hasProperty(PropertyKey.ADV_FLUID)).findFirst().orElse(null);
         if (fluidMs == null) return;
 
         // Find the next MaterialStack, which will be the Item output.

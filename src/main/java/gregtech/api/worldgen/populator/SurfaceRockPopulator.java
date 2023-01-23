@@ -1,7 +1,7 @@
 package gregtech.api.worldgen.populator;
 
 import com.google.gson.JsonObject;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistrator;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -56,7 +56,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             Material resultMaterial;
             if (blockState.getBlock() instanceof IFluidBlock || blockState.getBlock() instanceof BlockLiquid) {
                 Fluid fluid = FluidRegistry.lookupFluidForBlock(blockState.getBlock());
-                resultMaterial = fluid == null ? null : MetaFluids.getMaterialFromFluid(fluid);
+                resultMaterial = fluid == null ? null : GTFluidRegistrator.getMaterialFromFluid(fluid);
             } else {
                 ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);

@@ -4,8 +4,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.MaterialFluidDefinition;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.info.FluidDataTypes;
+import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTypeKey;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -164,7 +169,7 @@ public class Material implements Comparable<Material> {
             boolean onlyMetalMaterials = true;
             for (MaterialStack materialStack : materialInfo.componentList) {
                 Material material = materialStack.material;
-                onlyMetalMaterials &= material.hasProperty(PropertyKey.INGOT);
+                onlyMetalMaterials = onlyMetalMaterials && material.hasProperty(PropertyKey.INGOT);
             }
             //allow centrifuging of alloy materials only
             if (onlyMetalMaterials) {
@@ -175,20 +180,60 @@ public class Material implements Comparable<Material> {
         }
     }
 
+    /**
+     * Returns a Liquid if it exists, otherwise returns the gas if it exists.
+     *
+     * @return the material's fluid
+     */
+    @Nullable
     public Fluid getFluid() {
-        FluidProperty prop = getProperty(PropertyKey.FLUID);
-        if (prop == null)
+        AdvancedFluidProperty prop = getProperty(PropertyKey.ADV_FLUID);
+        if (prop == null) {
             throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
+        }
 
-        Fluid fluid = prop.getFluid();
-        if (fluid == null)
-            GTLog.logger.warn("Material {} Fluid was null!", this);
+        Fluid fluid = prop.getFluid(FluidTypeKeys.LIQUID);
+        if (fluid != null) return fluid;
 
-        return fluid;
+        fluid = prop.getFluid(FluidTypeKeys.GAS);
+        if (fluid != null) return fluid;
+
+        GTLog.logger.warn("Material {} Fluid was null!", this);
+
+        return null;
     }
 
+    /**
+     * @param key the key corresponding to the desired fluid
+     * @return the material's fluid
+     */
+    @Nullable
+    public Fluid getFluid(@Nonnull FluidTypeKey key) {
+        AdvancedFluidProperty prop = getProperty(PropertyKey.ADV_FLUID);
+        if (prop == null) {
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
+        }
+
+        Fluid fluid = prop.getFluid(key);
+        if (fluid != null) return fluid;
+
+        GTLog.logger.warn("Material {} Fluid was null for key {}!", this, key);
+
+        return null;
+    }
+
+    @Nullable
     public FluidStack getFluid(int amount) {
-        return new FluidStack(getFluid(), amount);
+        Fluid fluid = getFluid();
+        if (fluid == null) return null;
+        return new FluidStack(fluid, amount);
+    }
+
+    @Nullable
+    public FluidStack getFluid(@Nonnull FluidTypeKey key, int amount) {
+        Fluid fluid = getFluid(key);
+        if (fluid == null) return null;
+        return new FluidStack(fluid, amount);
     }
 
     public int getBlockHarvestLevel() {
@@ -286,8 +331,13 @@ public class Material implements Comparable<Material> {
     }
 
     public FluidStack getPlasma(int amount) {
-        PlasmaProperty prop = properties.getProperty(PropertyKey.PLASMA);
-        return prop == null ? null : prop.getPlasma(amount);
+        AdvancedFluidProperty prop = properties.getProperty(PropertyKey.ADV_FLUID);
+        if (prop == null) throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a plasma");
+
+        Fluid fluid = prop.getFluid(FluidTypeKeys.PLASMA);
+        if (fluid == null) return null;
+
+        return new FluidStack(fluid, amount);
     }
 
     @ZenGetter("camelCaseName")
@@ -353,7 +403,7 @@ public class Material implements Comparable<Material> {
     }
 
     public boolean hasFluid() {
-        return hasProperty(PropertyKey.FLUID);
+        return hasProperty(PropertyKey.ADV_FLUID);
     }
 
     public void verifyMaterial() {
@@ -404,36 +454,103 @@ public class Material implements Comparable<Material> {
          */
 
         /**
-         * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidTypes#LIQUID}, without a Fluid Block.
+         * Add a {@link AdvancedFluidProperty} to this Material.
+         * <br>
+         * Will be created as a {@link FluidTypeKeys#LIQUID}, without a Fluid Block.
          *
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * @throws IllegalArgumentException If a {@link AdvancedFluidProperty} has already been added to this Material.
          */
         public Builder fluid() {
-            properties.ensureSet(PropertyKey.FLUID);
+            properties.ensureSet(PropertyKey.ADV_FLUID);
+            AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
+            property.addDefinition(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID).build());
             return this;
         }
 
         /**
-         * Add a {@link FluidProperty} to this Material.<br>
+         * Add a {@link AdvancedFluidProperty} to this Material.<br>
          * Will be created without a Fluid Block.
          *
          * @param type The {@link FluidType} of this Material, either Fluid or Gas.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * @throws IllegalArgumentException If a {@link AdvancedFluidProperty} has already been added to this Material.
+         * @deprecated use {@link Builder#fluid(FluidTypeKey...)} instead.
          */
+        @Deprecated
         public Builder fluid(FluidType type) {
             return fluid(type, false);
         }
 
         /**
-         * Add a {@link FluidProperty} to this Material.
+         * Add a {@link AdvancedFluidProperty} to this Material.
+         *
+         * @param keys the keys for fluids to add
+         * @throws IllegalArgumentException If a {@link AdvancedFluidProperty} has already been added to this Material.
+         */
+        public Builder fluid(@Nonnull FluidTypeKey... keys) {
+            properties.ensureSet(PropertyKey.ADV_FLUID);
+            AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
+            for (FluidTypeKey key : keys) {
+                FluidState state;
+                if (key == FluidTypeKeys.LIQUID) state = FluidState.LIQUID;
+                else if (key == FluidTypeKeys.GAS) state = FluidState.GAS;
+                else if (key == FluidTypeKeys.PLASMA) state = FluidState.PLASMA;
+                else {
+                    throw new IllegalArgumentException("FluidTypeKey was not Liquid, Gas, or Plasma. Use the method with definitions directly.");
+                }
+                property.addDefinition(new MaterialFluidDefinition.Builder(key, state).build());
+            }
+            return this;
+        }
+
+        /**
+         * Add a {@link AdvancedFluidProperty} to this Material.
          *
          * @param type     The {@link FluidType} of this Material.
          * @param hasBlock If true, create a Fluid Block for this Material.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * @throws IllegalArgumentException If a {@link AdvancedFluidProperty} has already been added to this Material.
+         * @deprecated use {@link Builder#fluid(MaterialFluidDefinition...)} instead
          */
+        @Deprecated
         public Builder fluid(FluidType type, boolean hasBlock) {
-            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
+            FluidState state = type == FluidTypes.LIQUID || type == FluidTypes.ACID ? FluidState.LIQUID : FluidState.GAS;
+            FluidTypeKey key = state == FluidState.LIQUID ? FluidTypeKeys.LIQUID : FluidTypeKeys.GAS;
+
+            MaterialFluidDefinition.Builder builder = new MaterialFluidDefinition.Builder(key, state).block(hasBlock);
+            if (type == FluidTypes.ACID) builder.data(FluidDataTypes.ACID);
+
+            properties.ensureSet(PropertyKey.ADV_FLUID);
+            AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
+            property.addDefinition(builder.build());
+            return this;
+        }
+
+        /**
+         * Add a {@link AdvancedFluidProperty} to this Material.
+         *
+         * @param definitions the definitions to add
+         * @throws IllegalArgumentException If a {@link AdvancedFluidProperty} has already been added to this Material.
+         */
+        public Builder fluid(@Nonnull MaterialFluidDefinition... definitions) {
+            properties.ensureSet(PropertyKey.ADV_FLUID);
+            AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
+            property.addDefinitions(Arrays.asList(definitions));
+
+            return this;
+        }
+
+        /**
+         * Add a {@link AdvancedFluidProperty} to this Material.
+         *
+         * @param definitions the definitions to add
+         * @throws IllegalArgumentException If a {@link AdvancedFluidProperty} has already been added to this Material.
+         */
+        public Builder fluid(@Nonnull MaterialFluidDefinition.Builder... definitions) {
+            properties.ensureSet(PropertyKey.ADV_FLUID);
+            AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
+            for (MaterialFluidDefinition.Builder builder : definitions) {
+                property.addDefinition(builder.build());
+            }
+
             return this;
         }
 
@@ -442,9 +559,13 @@ public class Material implements Comparable<Material> {
          * Is not required to have a {@link FluidProperty}, and will not automatically apply one.
          *
          * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
+         * @deprecated use {@link Builder#fluid(FluidTypeKey...)} or {@link Builder#fluid(MaterialFluidDefinition...)}
          */
+        @Deprecated
         public Builder plasma() {
-            properties.ensureSet(PropertyKey.PLASMA);
+            properties.ensureSet(PropertyKey.ADV_FLUID);
+            AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
+            property.addDefinition(new MaterialFluidDefinition.Builder(FluidTypeKeys.PLASMA, FluidState.PLASMA).build());
             return this;
         }
 
@@ -613,7 +734,7 @@ public class Material implements Comparable<Material> {
             if (prop == null) dust(harvestLevel, 0);
             else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
-            properties.ensureSet(PropertyKey.FLUID);
+            properties.ensureSet(PropertyKey.ADV_FLUID);
             return this;
         }
 
@@ -664,8 +785,7 @@ public class Material implements Comparable<Material> {
          * <ul>
          * <li> {@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
          * <li> {@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
-         * <li> {@link FluidProperty}, it will default to either {@link MaterialIconSet#FLUID}
-         *      or {@link MaterialIconSet#GAS}, depending on the {@link FluidType}
+         * <li> {@link FluidProperty}, it will default to {@link MaterialIconSet#FLUID}
          * <li> {@link PlasmaProperty}, it will default to {@link MaterialIconSet#FLUID}
          * </ul>
          * Default will be determined by first-found Property in this order, unless specified.
@@ -789,9 +909,11 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * @deprecated use {@link Builder#fluid(MaterialFluidDefinition...)} instead
+         */
+        @Deprecated
         public Builder fluidTemp(int temp) {
-            properties.ensureSet(PropertyKey.FLUID);
-            properties.getProperty(PropertyKey.FLUID).setFluidTemperature(temp);
             return this;
         }
 
@@ -968,10 +1090,11 @@ public class Material implements Comparable<Material> {
                     iconSet = MaterialIconSet.GEM_VERTICAL;
                 } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) || p.hasProperty(PropertyKey.POLYMER)) {
                     iconSet = MaterialIconSet.DULL;
-                } else if (p.hasProperty(PropertyKey.FLUID)) {
-                    if (p.getProperty(PropertyKey.FLUID).isGas()) {
-                        iconSet = MaterialIconSet.GAS;
-                    } else iconSet = MaterialIconSet.FLUID;
+                } else if (p.hasProperty(PropertyKey.ADV_FLUID)) {
+//                    if (p.getProperty(PropertyKey.FLUID).isGas()) {
+//                        iconSet = MaterialIconSet.GAS;
+//                    } else iconSet = MaterialIconSet.FLUID;
+                    iconSet = MaterialIconSet.FLUID;
                 } else if (p.hasProperty(PropertyKey.PLASMA))
                     iconSet = MaterialIconSet.FLUID;
                 else iconSet = MaterialIconSet.DULL;
