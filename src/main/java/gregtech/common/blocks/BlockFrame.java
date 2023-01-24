@@ -3,7 +3,6 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
-import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -186,18 +185,16 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return false;
     }
 
-    public boolean removeFrame(World world, BlockPos pos, IBlockState state, EntityPlayer player, ItemStack stack, EnumFacing facing) {
+    public boolean removeFrame(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
 
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IPipeTile && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
+        if (te instanceof TileEntityPipeBase<?, ?> && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
             TileEntityPipeBase<?, ?> pipeTile = (TileEntityPipeBase<?, ?>) te;
             Material frameMaterial = pipeTile.getFrameMaterial();
             pipeTile.setFrameMaterial(null);
             Block.spawnAsEntity(world, pos, this.getItem(frameMaterial));
             ToolHelper.damageItem(stack, player);
-            if (stack.getItem() instanceof IGTTool) {
-                ((IGTTool) stack.getItem()).playSound(player);
-            }
+            ToolHelper.playToolSound(stack, player);
             return true;
 
         }
@@ -216,7 +213,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         }
 
         if (stackInHand.getItem().getToolClasses(stackInHand).contains(ToolClasses.CROWBAR))  {
-            return removeFrame(worldIn, pos, state, playerIn, stackInHand, facing);
+            return removeFrame(worldIn, pos, playerIn, stackInHand);
         }
 
         if (!(stackInHand.getItem() instanceof FrameItemBlock)) {

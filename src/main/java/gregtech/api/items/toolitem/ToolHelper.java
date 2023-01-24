@@ -713,4 +713,11 @@ public final class ToolHelper {
             return ItemStack.EMPTY;
         }
     }
+
+    public static void playToolSound(ItemStack stack, EntityPlayer player) {
+        if (stack.getItem() instanceof IGTTool) {
+            ((IGTTool) stack.getItem()).playSound(player);
+        }
+
+    }
 }

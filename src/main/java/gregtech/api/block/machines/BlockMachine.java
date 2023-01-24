@@ -11,7 +11,6 @@ import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -324,9 +323,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         Set<String> toolClasses = itemStack.getItem().getToolClasses(itemStack);
         if (!toolClasses.isEmpty() && metaTileEntity.onToolClick(playerIn, toolClasses, hand, rayTraceResult)) {
             ToolHelper.damageItem(itemStack, playerIn);
-            if (itemStack.getItem() instanceof IGTTool) {
-                ((IGTTool) itemStack.getItem()).playSound(playerIn);
-            }
+            ToolHelper.playToolSound(itemStack, playerIn);
             return true;
         }
 
