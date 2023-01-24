@@ -1,6 +1,9 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -92,12 +95,13 @@ public class HigherDegreeMaterials {
                 .build();
 
         RedAlloy = new Material.Builder(2517, "red_alloy")
-                .ingot(0).fluid()
+                .ingot(0)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(1400))
                 .color(0xC80000)
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Redstone, 4)
                 .cableProperties(GTValues.V[0], 1, 0)
-                .fluidTemp(1400)
                 .build();
 
         BasalticMineralSand = new Material.Builder(2518, "basaltic_mineral_sand")
@@ -165,12 +169,13 @@ public class HigherDegreeMaterials {
                 .build();
 
         BlueAlloy = new Material.Builder(2527, "blue_alloy")
-                .ingot().fluid()
+                .ingot()
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(1400))
                 .color(0x64B4FF).iconSet(DULL)
                 .flags(GENERATE_PLATE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Electrotine, 4, Silver, 1)
                 .cableProperties(GTValues.V[GTValues.HV], 2, 1)
-                .fluidTemp(1400)
                 .build();
     }
 }

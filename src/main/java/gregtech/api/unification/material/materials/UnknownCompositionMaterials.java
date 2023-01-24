@@ -37,7 +37,9 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE, EXPLOSIVE).build();
 
         FermentedBiomass = new Material.Builder(1506, "fermented_biomass")
-                .fluid().color(0x445500).fluidTemp(300).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(300))
+                .color(0x445500).build();
 
         Creosote = new Material.Builder(1507, "creosote")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
@@ -98,25 +100,28 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE).build();
 
         LightlyHydroCrackedHeavyFuel = new Material.Builder(1524, "lightly_hydrocracked_heavy_fuel")
-                .fluid().color(0xFFFF00).fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(775))
+                .color(0xFFFF00).flags(FLAMMABLE).build();
 
         SeverelyHydroCrackedHeavyFuel = new Material.Builder(1525, "severely_hydrocracked_heavy_fuel")
-                .fluid().color(0xFFFF00).fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(775)).color(0xFFFF00).flags(FLAMMABLE).build();
 
         LightlySteamCrackedHeavyFuel = new Material.Builder(1526, "lightly_steamcracked_heavy_fuel")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .customTexture(true))
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                        .temperature(775).customTexture(true))
+                .flags(FLAMMABLE).build();
 
         SeverelySteamCrackedHeavyFuel = new Material.Builder(1527, "severely_steamcracked_heavy_fuel")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .customTexture(true))
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                        .temperature(775).customTexture(true))
+                .flags(FLAMMABLE).build();
 
         SulfuricLightFuel = new Material.Builder(1528, "sulfuric_light_fuel")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .customTexture(true))
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                        .temperature(775).customTexture(true))
+                .flags(FLAMMABLE).build();
 
         LightFuel = new Material.Builder(1529, "light_fuel")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
@@ -124,20 +129,24 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE).build();
 
         LightlyHydroCrackedLightFuel = new Material.Builder(1530, "lightly_hydrocracked_light_fuel")
-                .fluid().color(0xB7AF08).fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(775))
+                .color(0xB7AF08).flags(FLAMMABLE).build();
 
         SeverelyHydroCrackedLightFuel = new Material.Builder(1531, "severely_hydrocracked_light_fuel")
-                .fluid().color(0xB7AF08).fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(775))
+                .color(0xB7AF08).flags(FLAMMABLE).build();
 
         LightlySteamCrackedLightFuel = new Material.Builder(1532, "lightly_steamcracked_light_fuel")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .customTexture(true))
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                        .temperature(775).customTexture(true))
+                .flags(FLAMMABLE).build();
 
         SeverelySteamCrackedLightFuel = new Material.Builder(1533, "severely_steamcracked_light_fuel")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .customTexture(true))
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                        .temperature(775).customTexture(true))
+                .flags(FLAMMABLE).build();
 
         SulfuricNaphtha = new Material.Builder(1534, "sulfuric_naphtha")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
@@ -180,76 +189,112 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE).build();
 
         LightlyHydroCrackedGas = new Material.Builder(1542, "lightly_hydrocracked_gas")
-                .fluid(FluidTypeKeys.GAS).color(0xB4B4B4)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xB4B4B4)
+                .flags(FLAMMABLE).build();
 
         SeverelyHydroCrackedGas = new Material.Builder(1543, "severely_hydrocracked_gas")
-                .fluid(FluidTypeKeys.GAS).color(0xB4B4B4)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xB4B4B4)
+                .flags(FLAMMABLE).build();
 
         LightlySteamCrackedGas = new Material.Builder(1544, "lightly_steamcracked_gas")
-                .fluid(FluidTypeKeys.GAS).color(0xB4B4B4)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xB4B4B4)
+                .flags(FLAMMABLE).build();
 
         SeverelySteamCrackedGas = new Material.Builder(1545, "severely_steamcracked_gas")
-                .fluid(FluidTypeKeys.GAS).color(0xB4B4B4)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xB4B4B4)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedEthane = new Material.Builder(1546, "hydrocracked_ethane")
-                .fluid(FluidTypeKeys.GAS).color(0x9696BC)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0x9696BC)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedEthylene = new Material.Builder(1547, "hydrocracked_ethylene")
-                .fluid(FluidTypeKeys.GAS).color(0xA3A3A0)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xA3A3A0)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedPropene = new Material.Builder(1548, "hydrocracked_propene")
-                .fluid(FluidTypeKeys.GAS).color(0xBEA540)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xBEA540)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedPropane = new Material.Builder(1549, "hydrocracked_propane")
-                .fluid(FluidTypeKeys.GAS).color(0xBEA540)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xBEA540)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedButane = new Material.Builder(1550, "hydrocracked_butane")
-                .fluid(FluidTypeKeys.GAS).color(0x852C18)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0x852C18)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedButene = new Material.Builder(1551, "hydrocracked_butene")
-                .fluid(FluidTypeKeys.GAS).color(0x993E05)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0x993E05)
+                .flags(FLAMMABLE).build();
 
         HydroCrackedButadiene = new Material.Builder(1552, "hydrocracked_butadiene")
-                .fluid(FluidTypeKeys.GAS).color(0xAD5203)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xAD5203)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedEthane = new Material.Builder(1553, "steamcracked_ethane")
-                .fluid(FluidTypeKeys.GAS).color(0x9696BC)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0x9696BC)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedEthylene = new Material.Builder(1554, "steamcracked_ethylene")
-                .fluid(FluidTypeKeys.GAS).color(0xA3A3A0)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xA3A3A0)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedPropene = new Material.Builder(1555, "steamcracked_propene")
-                .fluid(FluidTypeKeys.GAS).color(0xBEA540)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xBEA540)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedPropane = new Material.Builder(1556, "steamcracked_propane")
-                .fluid(FluidTypeKeys.GAS).color(0xBEA540)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xBEA540)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedButane = new Material.Builder(1557, "steamcracked_butane")
-                .fluid(FluidTypeKeys.GAS).color(0x852C18)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0x852C18)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedButene = new Material.Builder(1558, "steamcracked_butene")
-                .fluid(FluidTypeKeys.GAS).color(0x993E05)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0x993E05)
+                .flags(FLAMMABLE).build();
 
         SteamCrackedButadiene = new Material.Builder(1559, "steamcracked_butadiene")
-                .fluid(FluidTypeKeys.GAS).color(0xAD5203)
-                .fluidTemp(775).flags(FLAMMABLE).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.GAS, FluidState.GAS)
+                        .temperature(775))
+                .color(0xAD5203)
+                .flags(FLAMMABLE).build();
 
         //Free IDs 1560-1575
 
@@ -355,13 +400,16 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Lava = new Material.Builder(1600, "lava")
-                .fluid().color(0xFF4000).fluidTemp(1300).build();
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(1300))
+                .color(0xFF4000).build();
 
         Glowstone = new Material.Builder(1601, "glowstone")
-                .dust(1).fluid()
+                .dust(1)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
+                        .temperature(500))
                 .color(0xFFFF00).iconSet(SHINY)
                 .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
-                .fluidTemp(500)
                 .build();
 
         NetherStar = new Material.Builder(1602, "nether_star")
@@ -414,9 +462,8 @@ public class UnknownCompositionMaterials {
 
         Milk = new Material.Builder(1613, "milk")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .customTexture(true))
+                        .temperature(295).customTexture(true))
                 .color(0xFEFEFE).iconSet(FINE)
-                .fluidTemp(295)
                 .build();
 
         Cocoa = new Material.Builder(1614, "cocoa")

@@ -535,7 +535,6 @@ public class Material implements Comparable<Material> {
             properties.ensureSet(PropertyKey.ADV_FLUID);
             AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
             property.addDefinitions(Arrays.asList(definitions));
-
             return this;
         }
 

@@ -1,5 +1,6 @@
 package gregtech.api.unification.crafttweaker;
 
+import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
@@ -225,7 +226,7 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluidTemp(int temp) {
-        backingBuilder.fluidTemp(temp);
+        CraftTweakerAPI.logError("FluidTemp is deprecated. Use a MaterialFluidDefinition.");
         return this;
     }
 
