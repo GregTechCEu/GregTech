@@ -806,6 +806,8 @@ metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
 metaitem.cover.activity.detector_advanced.tooltip=Gives out §fMachine Progress§7 as Redstone as §fCover§7.
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out §fFluid Amount§7 as Redstone as §fCover§7.
+metaitem.cover.fluid.detector.advanced.name=Advanced Fluid Detector
+metaitem.cover.fluid.detector.advanced.tooltip=Gives out §fFluid Amount§7 as Redstone as §fCover§7.
 metaitem.cover.item.detector.name=Item Detector
 metaitem.cover.item.detector.tooltip=Gives out §fItem Amount§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.name=Energy Detector
@@ -1212,6 +1214,11 @@ cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logi
 cover.advanced_energy_detector.invert_label=Inverted:
 cover.advanced_energy_detector.normal=Normal
 cover.advanced_energy_detector.inverted=Inverted
+
+cover.advanced_fluid_detector.label=Advanced Fluid Detector
+cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
+cover.advanced_fluid_detector.max=Maximum L Fluid
+cover.advanced_fluid_detector.min=Minimum L Fluid
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore

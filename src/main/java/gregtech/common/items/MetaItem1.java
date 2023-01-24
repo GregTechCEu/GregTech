@@ -477,6 +477,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ACTIVITY_DETECTOR = addItem(302, "cover.activity.detector");
         COVER_ACTIVITY_DETECTOR_ADVANCED = addItem(303, "cover.activity.detector_advanced");
         COVER_FLUID_DETECTOR = addItem(304, "cover.fluid.detector");
+        COVER_FLUID_DETECTOR_ADVANCED = addItem(319, "cover.fluid.detector.advanced");
         COVER_ITEM_DETECTOR = addItem(305, "cover.item.detector");
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
         COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
