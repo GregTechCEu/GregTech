@@ -92,7 +92,7 @@ public class ToolEventHandlers {
         EntityPlayer player = event.getHarvester();
         if (player != null) {
             ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.hasTagCompound()) {
+            if (!stack.hasTagCompound() || !(stack.getTagCompound() instanceof IGTTool)) {
                 return;
             }
             if (!event.isSilkTouching()) {
