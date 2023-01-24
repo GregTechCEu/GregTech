@@ -3,8 +3,8 @@ package gregtech.api.unification.crafttweaker;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GregTechAPI;
-import gregtech.api.fluids.info.FluidTypeKey;
-import gregtech.api.fluids.info.FluidTypeKeys;
+import gregtech.api.fluids.info.FluidType;
+import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.MaterialStack;
 
@@ -17,13 +17,13 @@ public class CTMaterialHelpers {
         return components == null || components.length == 0 ? ImmutableList.of() : ImmutableList.copyOf(components);
     }
 
-    public static FluidTypeKey validateFluidTypeKey(String typeName) {
-        if (typeName == null) return FluidTypeKeys.LIQUID;
-        FluidTypeKey key = FluidTypeKeys.getKey(typeName);
-        if (key != FluidTypeKeys.LIQUID && key != FluidTypeKeys.GAS && key != FluidTypeKeys.PLASMA) {
-            CraftTweakerAPI.logError("FluidTypeKey must be \"liquid\", \"gas\", or \"plasma\"!");
+    public static FluidType validateFluidType(String typeName) {
+        if (typeName == null) return FluidTypes.LIQUID;
+        FluidType type = FluidTypes.getType(typeName);
+        if (type != FluidTypes.LIQUID && type != FluidTypes.GAS && type != FluidTypes.PLASMA) {
+            CraftTweakerAPI.logError("FluidType must be \"liquid\", \"gas\", or \"plasma\"!");
         }
-        return key;
+        return type;
     }
 
     protected static Material[] validateMaterialNames(String methodName, String... names) {

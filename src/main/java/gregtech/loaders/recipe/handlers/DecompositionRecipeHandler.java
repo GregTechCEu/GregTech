@@ -44,7 +44,7 @@ public class DecompositionRecipeHandler {
             totalInputAmount += component.amount;
             if (component.material.hasProperty(PropertyKey.DUST)) {
                 outputs.add(OreDictUnifier.get(OrePrefix.dust, component.material, (int) component.amount));
-            } else if (component.material.hasProperty(PropertyKey.ADV_FLUID)) {
+            } else if (component.material.hasProperty(PropertyKey.FLUID)) {
                 fluidOutputs.add(component.material.getFluid((int) (1000 * component.amount)));
             }
         }

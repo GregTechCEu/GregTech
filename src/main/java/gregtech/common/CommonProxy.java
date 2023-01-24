@@ -107,8 +107,8 @@ public class CommonProxy {
         for (BlockFluidPipe pipe : FLUID_PIPES) {
             if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
                     !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
-                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(5, new FluidContainmentInfo.Builder().temperature(340).build()));
-                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(10, new FluidContainmentInfo.Builder().temperature(340).build()));
+                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(5, new FluidContainmentInfo.Builder().liquids().temperature(340).build()));
+                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(10, new FluidContainmentInfo.Builder().liquids().temperature(340).build()));
             }
         }
 

@@ -4,8 +4,8 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.info.FluidTypeKey;
-import gregtech.api.fluids.info.FluidTypeKeys;
+import gregtech.api.fluids.info.FluidType;
+import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -21,7 +21,7 @@ import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateComponentList;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeKey;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidType;
 
 @ZenClass("mods.gregtech.material.MaterialBuilder")
 @ZenRegister
@@ -50,19 +50,19 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type) {
-        backingBuilder.fluid(validateFluidTypeKey(type));
+        backingBuilder.fluid(validateFluidType(type));
         return this;
     }
 
     @ZenMethod
-    public CTMaterialBuilder fluid(@Optional FluidTypeKey key) {
-        backingBuilder.fluid(validateFluidTypeKey(key == null ? null : key.getName()));
+    public CTMaterialBuilder fluid(@Optional FluidType type) {
+        backingBuilder.fluid(validateFluidType(type == null ? null : type.getName()));
         return this;
     }
 
     @ZenMethod
     public CTMaterialBuilder plasma() {
-        backingBuilder.fluid(FluidTypeKeys.PLASMA);
+        backingBuilder.fluid(FluidTypes.PLASMA);
         return this;
     }
 

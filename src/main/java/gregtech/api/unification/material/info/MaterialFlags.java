@@ -179,15 +179,15 @@ public class MaterialFlags {
     /////////////////
 
     public static final MaterialFlag SOLDER_MATERIAL = new MaterialFlag.Builder("solder_material")
-            .requireProps(PropertyKey.ADV_FLUID)
+            .requireProps(PropertyKey.FLUID)
             .build();
 
     public static final MaterialFlag SOLDER_MATERIAL_BAD = new MaterialFlag.Builder("solder_material_bad")
-            .requireProps(PropertyKey.ADV_FLUID)
+            .requireProps(PropertyKey.FLUID)
             .build();
 
     public static final MaterialFlag SOLDER_MATERIAL_GOOD = new MaterialFlag.Builder("solder_material_good")
-            .requireProps(PropertyKey.ADV_FLUID)
+            .requireProps(PropertyKey.FLUID)
             .build();
 
     /////////////////

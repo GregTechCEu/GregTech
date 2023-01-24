@@ -1,99 +1,108 @@
 package gregtech.api.unification.material.properties;
 
-import com.google.common.base.Preconditions;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.info.FluidType;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
-    public static final int BASE_TEMP = 293; // Room Temperature
+    private final Map<FluidType, Fluid> fluids = new Object2ObjectOpenHashMap<>();
+    private final Collection<MaterialFluidDefinition> definitions = new ObjectOpenHashSet<>();
 
     /**
-     * Internal material fluid field
+     * Create a property with no fluids initially
      */
-    private Fluid fluid;
+    public FluidProperty() {/**/}
 
-    private final FluidType fluidType;
-
-    private boolean hasBlock;
-    private boolean isGas;
-    private int fluidTemperature = BASE_TEMP;
-
-    public FluidProperty(@Nonnull FluidType fluidType, boolean hasBlock) {
-        this.fluidType = fluidType;
-        this.isGas = fluidType == FluidTypes.GAS;
-        this.hasBlock = hasBlock;
+    /**
+     * Create a property with one fluid initially
+     *
+     * @param definition the definition to add
+     */
+    public FluidProperty(@Nonnull MaterialFluidDefinition definition) {
+        this.definitions.add(definition);
     }
 
     /**
-     * Default values of: no Block, not Gas.
+     * Create a property with many fluids initially
+     *
+     * @param definitions the definitions to add
      */
-    public FluidProperty() {
-        this(FluidTypes.LIQUID, false);
-    }
-
-    public boolean isGas() {
-        return isGas;
+    public FluidProperty(@Nonnull MaterialFluidDefinition... definitions) {
+        this(Arrays.asList(definitions));
     }
 
     /**
-     * internal usage only
+     * Create a property with many fluids initially
+     *
+     * @param definitions the definitions to add
      */
-    public void setFluid(@Nonnull Fluid materialFluid) {
-        Preconditions.checkNotNull(materialFluid);
-        this.fluid = materialFluid;
+    public FluidProperty(@Nonnull Collection<MaterialFluidDefinition> definitions) {
+        this.definitions.addAll(definitions);
     }
 
-    public Fluid getFluid() {
-        return fluid;
+    /**
+     * Add a definition to this property
+     *
+     * @param definition the definition to add
+     */
+    public void addDefinition(@Nonnull MaterialFluidDefinition definition) {
+        this.definitions.add(definition);
     }
 
-    public boolean hasBlock() {
-        return hasBlock;
+    /**
+     * Add definitions to this property
+     *
+     * @param definitions the definitions to add
+     */
+    public void addDefinitions(@Nonnull Collection<MaterialFluidDefinition> definitions) {
+        this.definitions.addAll(definitions);
     }
 
-    public void setHasBlock(boolean hasBlock) {
-        this.hasBlock = hasBlock;
+    /**
+     * Forcibly sets and potentially overrides a fluid mapping. Use with caution.
+     *
+     * @param type  the type for the fluid
+     * @param fluid the fluid to set
+     */
+    public final void setFluid(@Nonnull FluidType type, @Nonnull Fluid fluid) {
+        this.fluids.put(type, fluid);
     }
 
-    public void setIsGas(boolean isGas) {
-        this.isGas = isGas;
+    /**
+     * @param type the type for the fluid
+     * @return the fluid associated with the type, if it exists
+     */
+    @Nullable
+    public Fluid getFluid(@Nonnull FluidType type) {
+        return this.fluids.get(type);
     }
 
+    /**
+     * @param type the type to check
+     * @return if the property has a fluid for the type
+     */
+    public boolean hasFluid(@Nonnull FluidType type) {
+        return this.fluids.containsKey(type);
+    }
+
+    /**
+     * @return all the definitions for this property
+     */
     @Nonnull
-    public FluidStack getFluid(int amount) {
-        return new FluidStack(fluid, amount);
-    }
-
-    public void setFluidTemperature(int fluidTemperature) {
-        setFluidTemperature(fluidTemperature, true);
-    }
-
-    public void setFluidTemperature(int fluidTemperature, boolean isKelvin) {
-        if (isKelvin) Preconditions.checkArgument(fluidTemperature >= 0, "Invalid temperature");
-        else fluidTemperature += 273;
-        this.fluidTemperature = fluidTemperature;
-        if (fluid != null)
-            fluid.setTemperature(fluidTemperature);
-    }
-
-    public int getFluidTemperature() {
-        return fluidTemperature;
-    }
-
-    @Nonnull
-    public FluidType getFluidType() {
-        return this.fluidType;
+    public Collection<MaterialFluidDefinition> getDefinitions() {
+        return Collections.unmodifiableCollection(this.definitions);
     }
 
     @Override
-    public void verifyProperty(MaterialProperties properties) {
-        if (properties.hasProperty(PropertyKey.PLASMA)) {
-            hasBlock = false;
-        }
-    }
+    public void verifyProperty(MaterialProperties properties) {/**/}
 }

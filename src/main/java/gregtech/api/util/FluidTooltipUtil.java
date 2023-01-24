@@ -1,6 +1,6 @@
 package gregtech.api.util;
 
-import gregtech.api.fluids.info.FluidTypeKeys;
+import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.material.Materials;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -87,7 +87,7 @@ public class FluidTooltipUtil {
      */
     @Nonnull
     public static List<String> getWaterTooltip() {
-        return getFluidTooltip(Objects.requireNonNull(Materials.Water.getFluid(FluidTypeKeys.LIQUID)));
+        return getFluidTooltip(Objects.requireNonNull(Materials.Water.getFluid(FluidTypes.LIQUID)));
     }
 
     /**
@@ -95,6 +95,6 @@ public class FluidTooltipUtil {
      */
     @Nonnull
     public static List<String> getLavaTooltip() {
-        return getFluidTooltip(Objects.requireNonNull(Materials.Lava.getFluid(FluidTypeKeys.LIQUID)));
+        return getFluidTooltip(Objects.requireNonNull(Materials.Lava.getFluid(FluidTypes.LIQUID)));
     }
 }

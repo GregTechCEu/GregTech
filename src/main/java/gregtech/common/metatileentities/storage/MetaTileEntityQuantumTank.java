@@ -492,6 +492,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
+        //noinspection ReturnOfInnerClass
         return new AdvancedFluidHandlerItemStack(itemStack, maxFluidCapacity, new FluidContainmentInfo.Builder()
                 .liquids()
                 .gases()

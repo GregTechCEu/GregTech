@@ -3,7 +3,7 @@ package gregtech.api.fluids;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
-import gregtech.api.fluids.info.FluidTypeKey;
+import gregtech.api.fluids.info.FluidType;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
@@ -17,13 +17,13 @@ import java.util.Collection;
 
 public class MaterialFluidDefinition extends FluidDefinition {
 
-    protected FluidTypeKey key;
+    protected FluidType type;
     protected MaterialIconType stillIconType;
     protected MaterialIconType flowingIconType;
     protected boolean hasCustomTexture;
 
     /**
-     * @param key              the key for the fluid
+     * @param type             the type for the fluid
      * @param state            the state for the fluid
      * @param data             the data for the fluid
      * @param translationKey   the translation key for the fluid
@@ -35,12 +35,12 @@ public class MaterialFluidDefinition extends FluidDefinition {
      * @param hasCustomTexture if the fluid has a custom texture
      * @see Builder
      */
-    public MaterialFluidDefinition(@Nonnull FluidTypeKey key, @Nonnull FluidState state, @Nonnull Collection<FluidTag> data,
+    public MaterialFluidDefinition(@Nonnull FluidType type, @Nonnull FluidState state, @Nonnull Collection<FluidTag> data,
                                    @Nonnull String translationKey, @Nonnull MaterialIconType stillIconType,
                                    @Nonnull MaterialIconType flowingIconType, int color, int temperature,
                                    boolean hasBlock, boolean hasCustomTexture) {
         super(state, data, translationKey, null, null, color, temperature, hasBlock);
-        this.key = key;
+        this.type = type;
         this.stillIconType = stillIconType;
         this.flowingIconType = flowingIconType;
         if (temperature == -1) { // override the super class's inference, handled elsewhere
@@ -88,7 +88,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
             if (this.state == FluidState.LIQUID) this.translationKey = "gregtech.fluid.liquid";
             else if (this.state == FluidState.GAS) this.translationKey = "gregtech.fluid.gas";
         } else if (this.state == FluidState.GAS) {
-            if (material.getProperty(PropertyKey.ADV_FLUID).getDefinitions().stream()
+            if (material.getProperty(PropertyKey.FLUID).getDefinitions().stream()
                     .anyMatch(d -> d.getState() == FluidState.LIQUID)) {
                 this.translationKey = "gregtech.fluid.gas";
             }
@@ -111,18 +111,18 @@ public class MaterialFluidDefinition extends FluidDefinition {
     }
 
     /**
-     * @return the fluid type key for this fluid
+     * @return the fluid type for this fluid
      */
     @Nonnull
-    public FluidTypeKey getKey() {
-        return key;
+    public FluidType getType() {
+        return type;
     }
 
     /**
-     * @param key the key to set
+     * @param type the type to set
      */
-    public void setKey(@Nonnull FluidTypeKey key) {
-        this.key = key;
+    public void setType(@Nonnull FluidType type) {
+        this.type = type;
     }
 
     /**
@@ -157,18 +157,18 @@ public class MaterialFluidDefinition extends FluidDefinition {
 
     public static class Builder extends FluidDefinition.AbstractBuilder<MaterialFluidDefinition, Builder> {
 
-        protected FluidTypeKey key;
+        protected FluidType type;
         protected MaterialIconType stillIconType;
         protected MaterialIconType flowingIconType;
         protected boolean hasCustomTexture = false;
 
         /**
-         * @param key   the fluid type key for this fluid
+         * @param type   the fluid type for this fluid
          * @param state the state of the fluid
          */
-        public Builder(@Nonnull FluidTypeKey key, @Nonnull FluidState state) {
+        public Builder(@Nonnull FluidType type, @Nonnull FluidState state) {
             super(state);
-            this.key = key;
+            this.type = type;
             this.stillIconType = state.getStillIconType();
             this.flowingIconType = state.getStillIconType();
         }
@@ -208,7 +208,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
 
         @Nonnull
         public MaterialFluidDefinition build() {
-            return new MaterialFluidDefinition(key, state, data, translationKey, stillIconType, flowingIconType, color,
+            return new MaterialFluidDefinition(type, state, data, translationKey, stillIconType, flowingIconType, color,
                     temperature, hasBlock, hasCustomTexture);
         }
     }

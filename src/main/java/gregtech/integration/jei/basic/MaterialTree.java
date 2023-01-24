@@ -71,7 +71,7 @@ public class MaterialTree implements IRecipeWrapper {
         }
 
         List<FluidStack> matFluidsStack = new ArrayList<>();
-        if (material.hasProperty(PropertyKey.ADV_FLUID)) {
+        if (material.hasProperty(PropertyKey.FLUID)) {
             matFluidsStack.add(material.getFluid(1000));
         }
         this.fluidInputs.add(matFluidsStack);

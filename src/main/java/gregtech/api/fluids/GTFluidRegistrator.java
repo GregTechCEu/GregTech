@@ -2,12 +2,12 @@ package gregtech.api.fluids;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.info.FluidState;
-import gregtech.api.fluids.info.FluidTypeKey;
-import gregtech.api.fluids.info.FluidTypeKeys;
+import gregtech.api.fluids.info.FluidType;
+import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialFlags;
-import gregtech.api.unification.material.properties.AdvancedFluidProperty;
+import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -45,8 +45,8 @@ public final class GTFluidRegistrator {
     }
 
     public static void init() {
-        overrideMaterialFluid(Materials.Water, FluidTypeKeys.LIQUID, FluidRegistry.WATER);
-        overrideMaterialFluid(Materials.Lava, FluidTypeKeys.LIQUID, FluidRegistry.LAVA);
+        overrideMaterialFluid(Materials.Water, FluidTypes.LIQUID, FluidRegistry.WATER);
+        overrideMaterialFluid(Materials.Lava, FluidTypes.LIQUID, FluidRegistry.LAVA);
 
         registerMaterialFluids();
     }
@@ -55,30 +55,30 @@ public final class GTFluidRegistrator {
      * Override a material's fluid with another
      *
      * @param material the material whose fluid should be overriden
-     * @param key      the key corresponding to the fluid
+     * @param type     the type corresponding to the fluid
      * @param fluid    the fluid to use
      */
-    public static void overrideMaterialFluid(@Nonnull Material material, @Nonnull FluidTypeKey key, @Nonnull Fluid fluid) {
-        material.getProperty(PropertyKey.ADV_FLUID).setFluid(key, fluid);
+    public static void overrideMaterialFluid(@Nonnull Material material, @Nonnull FluidType type, @Nonnull Fluid fluid) {
+        material.getProperty(PropertyKey.FLUID).setFluid(type, fluid);
         createMaterialFluidTooltip(material, fluid);
     }
 
     private static void addAlternativeNames() {
-        setAlternativeFluidName(Materials.Ethanol, FluidTypeKeys.LIQUID, "bio.ethanol");
-        setAlternativeFluidName(Materials.SeedOil, FluidTypeKeys.LIQUID, "seed.oil");
-        setAlternativeFluidName(Materials.Ice, FluidTypeKeys.LIQUID, "fluid.ice");
-        setAlternativeFluidName(Materials.Diesel, FluidTypeKeys.LIQUID, "fuel");
+        setAlternativeFluidName(Materials.Ethanol, FluidTypes.LIQUID, "bio.ethanol");
+        setAlternativeFluidName(Materials.SeedOil, FluidTypes.LIQUID, "seed.oil");
+        setAlternativeFluidName(Materials.Ice, FluidTypes.LIQUID, "fluid.ice");
+        setAlternativeFluidName(Materials.Diesel, FluidTypes.LIQUID, "fuel");
     }
 
     /**
      * Set an alternative name for a fluid, to use if found instead of the default
      *
      * @param material        the material whose fluid to get
-     * @param key             the key for the fluid
+     * @param type            the type for the fluid
      * @param alternativeName the alternative name
      */
-    public static void setAlternativeFluidName(@Nonnull Material material, @Nonnull FluidTypeKey key, @Nonnull String alternativeName) {
-        setAlternativeFluidName(key.getFluidNameForMaterial(material), alternativeName);
+    public static void setAlternativeFluidName(@Nonnull Material material, @Nonnull FluidType type, @Nonnull String alternativeName) {
+        setAlternativeFluidName(type.getFluidNameForMaterial(material), alternativeName);
     }
 
     /**
@@ -102,16 +102,16 @@ public final class GTFluidRegistrator {
 
     private static void registerMaterialFluids() {
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            AdvancedFluidProperty fluidProperty = material.getProperty(PropertyKey.ADV_FLUID);
+            FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
             if (fluidProperty == null) continue;
             createMaterialFluid(material, fluidProperty);
         }
     }
 
-    private static void createMaterialFluid(@Nonnull Material material, @Nonnull AdvancedFluidProperty property) {
+    private static void createMaterialFluid(@Nonnull Material material, @Nonnull FluidProperty property) {
         for (MaterialFluidDefinition definition : property.getDefinitions()) {
 
-            String fluidName = definition.getKey().getFluidNameForMaterial(material);
+            String fluidName = definition.getType().getFluidNameForMaterial(material);
 
             // if the fluid already exists, exit
             if (FluidRegistry.getFluid(fluidName) != null) return;
@@ -131,7 +131,7 @@ public final class GTFluidRegistrator {
             registerFluidTexture(definition.getStill());
             registerFluidTexture(definition.getFlowing());
 
-            property.setFluid(definition.getKey(), fluid);
+            property.setFluid(definition.getType(), fluid);
 
             // add buckets for each fluid - this also registers it
             FluidRegistry.addBucketForFluid(fluid);
@@ -155,7 +155,7 @@ public final class GTFluidRegistrator {
 
     @Nonnull
     public static List<String> createMaterialFluidTooltip(@Nonnull Material material, @Nonnull Fluid fluid) {
-        List<String> tooltip =createFluidTooltip(fluid);
+        List<String> tooltip = createFluidTooltip(fluid);
         if (!material.getChemicalFormula().isEmpty()) {
             tooltip.add(0, TextFormatting.YELLOW + material.getChemicalFormula());
         }
