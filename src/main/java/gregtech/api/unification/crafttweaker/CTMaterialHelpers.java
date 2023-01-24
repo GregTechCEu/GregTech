@@ -3,8 +3,8 @@ package gregtech.api.unification.crafttweaker;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GregTechAPI;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.info.FluidTypeKey;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.MaterialStack;
 
@@ -17,35 +17,13 @@ public class CTMaterialHelpers {
         return components == null || components.length == 0 ? ImmutableList.of() : ImmutableList.copyOf(components);
     }
 
-    protected static FluidType validateFluidType(String fluidTypeName) {
-        if (fluidTypeName == null || fluidTypeName.equals("fluid"))
-            return FluidTypes.LIQUID;
-
-        FluidType type = FluidType.getByName(fluidTypeName);
-        if (type == null) {
-            String message = "Fluid Type must be either \"liquid\", \"gas\", \"plasma\", or \"acid\"!";
-            CraftTweakerAPI.logError(message);
-            throw new IllegalArgumentException(message);
+    public static FluidTypeKey validateFluidTypeKey(String typeName) {
+        if (typeName == null) return FluidTypeKeys.LIQUID;
+        FluidTypeKey key = FluidTypeKeys.getKey(typeName);
+        if (key != FluidTypeKeys.LIQUID && key != FluidTypeKeys.GAS && key != FluidTypeKeys.PLASMA) {
+            CraftTweakerAPI.logError("FluidTypeKey must be \"liquid\", \"gas\", or \"plasma\"!");
         }
-        return type;
-    }
-
-    protected static FluidType validateFluidTypeNoPlasma(String fluidTypeName) {
-        if (fluidTypeName == null || fluidTypeName.equals("fluid"))
-            return FluidTypes.LIQUID;
-
-        FluidType type = FluidType.getByName(fluidTypeName);
-        if (type == null) {
-            String message = "Fluid Type must be either \"liquid\", \"gas\", or \"acid\"!";
-            CraftTweakerAPI.logError(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (type == FluidTypes.PLASMA) {
-            String message = "Fluid Type cannot be \"plasma\". Use the plasma method instead.";
-            CraftTweakerAPI.logError(message);
-            throw new IllegalArgumentException(message);
-        }
-        return type;
+        return key;
     }
 
     protected static Material[] validateMaterialNames(String methodName, String... names) {

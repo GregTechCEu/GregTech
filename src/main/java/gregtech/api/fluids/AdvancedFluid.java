@@ -57,7 +57,7 @@ public class AdvancedFluid extends Fluid implements IAdvancedFluid {
 
     @Nonnull
     @Override
-    public Collection<FluidTag> getData() {
-        return this.definition.getData();
+    public Collection<FluidTag> getTags() {
+        return this.definition.getTags();
     }
 }

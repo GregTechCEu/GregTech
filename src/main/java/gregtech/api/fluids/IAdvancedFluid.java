@@ -19,7 +19,7 @@ public interface IAdvancedFluid {
      * @return the fluid data for this fluid
      */
     @Nonnull
-    Collection<FluidTag> getData();
+    Collection<FluidTag> getTags();
 
     /**
      * New implementations of this should not return values less than or equal to 0.

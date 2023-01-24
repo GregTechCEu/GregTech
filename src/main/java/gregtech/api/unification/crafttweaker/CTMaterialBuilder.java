@@ -4,7 +4,8 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.info.FluidTypeKey;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -20,7 +21,7 @@ import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateComponentList;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeKey;
 
 @ZenClass("mods.gregtech.material.MaterialBuilder")
 @ZenRegister
@@ -43,25 +44,25 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluid() {
-        backingBuilder.fluid(validateFluidTypeNoPlasma(null), false);
+        backingBuilder.fluid();
         return this;
     }
 
     @ZenMethod
-    public CTMaterialBuilder fluid(@Optional String type, @Optional boolean hasBlock) {
-        backingBuilder.fluid(validateFluidTypeNoPlasma(type), hasBlock);
+    public CTMaterialBuilder fluid(@Optional String type) {
+        backingBuilder.fluid(validateFluidTypeKey(type));
         return this;
     }
 
     @ZenMethod
-    public CTMaterialBuilder fluid(@Optional FluidType type, @Optional boolean hasBlock) {
-        backingBuilder.fluid(validateFluidTypeNoPlasma(type == null ? null : type.getName()), hasBlock);
+    public CTMaterialBuilder fluid(@Optional FluidTypeKey key) {
+        backingBuilder.fluid(validateFluidTypeKey(key == null ? null : key.getName()));
         return this;
     }
 
     @ZenMethod
     public CTMaterialBuilder plasma() {
-        backingBuilder.plasma();
+        backingBuilder.fluid(FluidTypeKeys.PLASMA);
         return this;
     }
 
@@ -226,7 +227,7 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluidTemp(int temp) {
-        CraftTweakerAPI.logError("FluidTemp is deprecated. Use a MaterialFluidDefinition.");
+        CraftTweakerAPI.logError("FluidTemp is no longer compatible with CraftTweaker. Use the GroovyScript mod instead.");
         return this;
     }
 

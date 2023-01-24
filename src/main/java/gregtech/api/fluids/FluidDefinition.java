@@ -16,7 +16,7 @@ import java.util.Objects;
 public class FluidDefinition implements IAdvancedFluid {
 
     protected final FluidState state;
-    protected final Collection<FluidTag> data;
+    protected final Collection<FluidTag> tags;
     protected String translationKey;
     protected ResourceLocation still;
     protected ResourceLocation flowing;
@@ -26,7 +26,7 @@ public class FluidDefinition implements IAdvancedFluid {
 
     /**
      * @param state          the state for the fluid
-     * @param data           the data for the fluid
+     * @param tags           the data for the fluid
      * @param translationKey the translation key for the fluid
      * @param still          the still texture - can be null upon construction, but must be set later
      * @param flowing        the flowing texture - can be null upon construction, but must be set later
@@ -35,11 +35,11 @@ public class FluidDefinition implements IAdvancedFluid {
      * @param hasBlock       if the fluid has a block
      * @see FluidDefinition.Builder
      */
-    public FluidDefinition(@Nonnull FluidState state, @Nonnull Collection<FluidTag> data,
+    public FluidDefinition(@Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
                            @Nonnull String translationKey, @Nullable ResourceLocation still, @Nullable ResourceLocation flowing,
                            int color, int temperature, boolean hasBlock) {
         this.state = state;
-        this.data = data;
+        this.tags = tags;
         this.translationKey = translationKey;
         this.still = still;
         this.flowing = flowing;
@@ -77,22 +77,22 @@ public class FluidDefinition implements IAdvancedFluid {
 
     @Nonnull
     @Override
-    public Collection<FluidTag> getData() {
-        return data;
+    public Collection<FluidTag> getTags() {
+        return tags;
     }
 
     /**
      * @param data the data to add
      */
     public void addData(@Nonnull FluidTag data) {
-        this.data.add(data);
+        this.tags.add(data);
     }
 
     /**
      * @param data the data to add
      */
     public void addData(@Nonnull FluidTag... data) {
-        this.data.addAll(Arrays.asList(data));
+        this.tags.addAll(Arrays.asList(data));
     }
 
     @Override
@@ -189,13 +189,13 @@ public class FluidDefinition implements IAdvancedFluid {
         if (o == null || getClass() != o.getClass()) return false;
         //noinspection TypeMayBeWeakened
         FluidDefinition that = (FluidDefinition) o;
-        return state == that.getState() && data.equals(that.getData());
+        return state == that.getState() && tags.equals(that.getTags());
     }
 
     @Override
     public int hashCode() {
         //noinspection ObjectInstantiationInEqualsHashCode
-        return Objects.hash(state, data);
+        return Objects.hash(state, tags);
     }
 
     @SuppressWarnings("unchecked")

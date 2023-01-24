@@ -30,4 +30,9 @@ public final class FluidTypeKeys {
     public static FluidTypeKey createKey(@Nonnull String name, @Nullable String prefix, @Nullable String suffix) {
         return registeredKeys.computeIfAbsent(name, n -> new FluidTypeKey(n, prefix, suffix));
     }
+
+    @Nullable
+    public static FluidTypeKey getKey(@Nonnull String name) {
+        return registeredKeys.get(name);
+    }
 }

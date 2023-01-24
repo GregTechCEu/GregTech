@@ -2,8 +2,10 @@ package gregtech.api.unification.crafttweaker;
 
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.capability.FluidContainmentInfo;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTypeKey;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.*;
 import stanhebben.zenscript.annotations.Optional;
@@ -11,7 +13,7 @@ import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeKey;
 
 //TODO UPDATE FOR NEW THINGS
 @ZenExpansion("mods.gregtech.material.Material")
@@ -145,30 +147,37 @@ public class MaterialPropertyExpansion {
     @ZenMethod
     public static void addFluid(Material m) {
         if (checkFrozen("add a Fluid to a material")) return;
-        if (m.hasProperty(PropertyKey.FLUID)) {
-            m.getProperty(PropertyKey.FLUID).setIsGas(false);
-            m.getProperty(PropertyKey.FLUID).setHasBlock(false);
-        } else m.setProperty(PropertyKey.FLUID, new FluidProperty());
+        if (!m.hasProperty(PropertyKey.ADV_FLUID)) {
+            m.setProperty(PropertyKey.ADV_FLUID, new AdvancedFluidProperty(
+                    new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID).build()));
+        }
     }
 
     @ZenMethod
-    public static void addFluid(Material m, @Optional String fluidTypeName, @Optional boolean hasBlock) {
+    public static void addFluid(Material m, @Optional String fluidKeyName, @Optional boolean hasBlock) {
         if (checkFrozen("add a Fluid to a material")) return;
-        FluidType type = validateFluidTypeNoPlasma(fluidTypeName);
-        if (m.hasProperty(PropertyKey.FLUID)) {
-            m.getProperty(PropertyKey.FLUID).setIsGas(type == FluidTypes.GAS);
-            m.getProperty(PropertyKey.FLUID).setHasBlock(hasBlock);
-        } else m.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
-    }
 
-    @ZenMethod
-    public static void addFluid(Material m, @Optional FluidType fluidType, @Optional boolean hasBlock) {
-        if (checkFrozen("add a Fluid to a material")) return;
-        FluidType type = validateFluidTypeNoPlasma(fluidType == null ? null : fluidType.getName());
-        if (m.hasProperty(PropertyKey.FLUID)) {
-            m.getProperty(PropertyKey.FLUID).setIsGas(type == FluidTypes.GAS);
-            m.getProperty(PropertyKey.FLUID).setHasBlock(hasBlock);
-        } else m.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
+        FluidTypeKey key = validateFluidTypeKey(fluidKeyName);
+        FluidState state = key == FluidTypeKeys.LIQUID ? FluidState.LIQUID :
+                key == FluidTypeKeys.GAS ? FluidState.GAS : FluidState.PLASMA;
+
+        if (m.hasProperty(PropertyKey.ADV_FLUID)) {
+            boolean found = false;
+            for (MaterialFluidDefinition definition : m.getProperty(PropertyKey.ADV_FLUID).getDefinitions()) {
+                if (definition.getKey() == key) {
+                    definition.setHasBlock(hasBlock);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                m.getProperty(PropertyKey.ADV_FLUID).addDefinition(
+                        new MaterialFluidDefinition.Builder(key, state).build());
+            }
+        } else {
+            m.setProperty(PropertyKey.ADV_FLUID, new AdvancedFluidProperty(
+                    new MaterialFluidDefinition.Builder(key, state).build()));
+        }
     }
 
     @ZenMethod

@@ -32,7 +32,7 @@ public interface IAdvancedFluidContainer {
             if (!this.canHandleState(state)) return false;
             if (!this.canHandleTemperature(state, fluid.getTemperature(stack))) return false;
 
-            for (FluidTag data : advanced.getData()) {
+            for (FluidTag data : advanced.getTags()) {
                 if (data.requiresChecking() && !this.canHandleData(data)) return false;
             }
         } else {

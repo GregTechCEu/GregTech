@@ -6,11 +6,14 @@ import crafttweaker.api.enchantments.IEnchantment;
 import crafttweaker.api.liquid.ILiquidDefinition;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.info.FluidTypeKey;
+import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraftforge.fluids.Fluid;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -56,24 +59,32 @@ public class MaterialExpansion {
 
     @ZenGetter
     public static boolean isGaseous(Material m) {
-        FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        return prop != null && prop.isGas();
+        AdvancedFluidProperty prop = m.getProperty(PropertyKey.ADV_FLUID);
+        return prop != null && prop.getFluid(FluidTypeKeys.GAS) != null;
     }
 
     @ZenMethod
-    public static void setFluidTemperature(Material m, int fluidTemperature) {
+    public static void setFluidTemperature(Material m, String fluidTypeKey, int fluidTemperature) {
         if (checkFrozen("set fluid temperature")) return;
-        FluidProperty prop = m.getProperty(PropertyKey.FLUID);
+        AdvancedFluidProperty prop = m.getProperty(PropertyKey.ADV_FLUID);
         if (prop != null) {
-            prop.setFluidTemperature(fluidTemperature);
+            FluidTypeKey key = FluidTypeKeys.getKey(fluidTypeKey);
+            if (key == null) CraftTweakerAPI.logError("Cannot find fluid key for " + fluidTypeKey);
+            else {
+                Fluid fluid = prop.getFluid(key);
+                if (fluid == null) CraftTweakerAPI.logError("Cannot find fluid for material " + m);
+                else fluid.setTemperature(fluidTemperature);
+            }
         } else logError(m, "set temperature", "Fluid");
     }
 
     @ZenGetter("fluidTemperature") // todo is this allowed here?
     public static int fluidTemperature(Material m) {
-        FluidProperty prop = m.getProperty(PropertyKey.FLUID);
+        AdvancedFluidProperty prop = m.getProperty(PropertyKey.ADV_FLUID);
         if (prop != null) {
-            return prop.getFluidTemperature();
+            Fluid fluid = m.getFluid();
+            if (fluid == null) logError(m, "get temperature", "Fluid");
+            else return fluid.getTemperature();
         } else logError(m, "get temperature", "Fluid");
         return 0;
     }
@@ -82,9 +93,23 @@ public class MaterialExpansion {
     @ZenGetter("fluid")
     @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
     public static ILiquidDefinition getFluid(Material m) {
-        FluidProperty prop = m.getProperty(PropertyKey.FLUID);
+        AdvancedFluidProperty prop = m.getProperty(PropertyKey.ADV_FLUID);
         if (prop != null) {
-            return CraftTweakerMC.getILiquidDefinition(prop.getFluid());
+            return CraftTweakerMC.getILiquidDefinition(m.getFluid());
+        } else logError(m, "get a Fluid", "Fluid");
+        return null;
+    }
+
+    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
+    public static ILiquidDefinition getFluid(Material m, String fluidTypeKey) {
+        AdvancedFluidProperty prop = m.getProperty(PropertyKey.ADV_FLUID);
+        if (prop != null) {
+            FluidTypeKey key = FluidTypeKeys.getKey(fluidTypeKey);
+            if (key == null) CraftTweakerAPI.logError("Cannot find fluid key for " + fluidTypeKey);
+            else {
+                Fluid fluid = prop.getFluid(key);
+                return CraftTweakerMC.getILiquidDefinition(fluid);
+            }
         } else logError(m, "get a Fluid", "Fluid");
         return null;
     }

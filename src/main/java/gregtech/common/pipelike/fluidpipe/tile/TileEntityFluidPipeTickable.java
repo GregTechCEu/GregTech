@@ -3,8 +3,9 @@ package gregtech.common.pipelike.fluidpipe.tile;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.fluids.MaterialFluid;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.IAdvancedFluid;
+import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.EntityDamageUtil;
@@ -201,13 +202,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         boolean shattering = !getNodeData().isCryoProof() && GTUtility.isTemperatureCryogenic(fluid.getTemperature()); // fluids less than 120K are cryogenic
         boolean corroding = false;
         boolean melting = false;
-        if (fluid instanceof MaterialFluid) {
-            MaterialFluid materialFluid = (MaterialFluid) fluid;
-            corroding = !getNodeData().isAcidProof() && materialFluid.getFluidType().equals(FluidTypes.ACID);
-            melting = !getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA);
+        if (fluid instanceof IAdvancedFluid) {
+            IAdvancedFluid advancedFluid = (IAdvancedFluid) fluid;
+            corroding = !getNodeData().isAcidProof() && advancedFluid.getTags().contains(FluidTags.ACID);
+            melting = !getNodeData().isPlasmaProof() && advancedFluid.getState() == FluidState.PLASMA;
 
             // carrying plasmas which are too hot when plasma proof does not burn pipes
-            if (burning && getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA))
+            if (burning && getNodeData().isPlasmaProof() && advancedFluid.getState() == FluidState.PLASMA)
                 burning = false;
         }
 
