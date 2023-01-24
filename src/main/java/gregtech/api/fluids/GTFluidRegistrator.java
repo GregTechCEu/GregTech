@@ -177,7 +177,9 @@ public final class GTFluidRegistrator {
             else tooltip.add(I18n.format(FluidState.LIQUID.getTooltipTranslationKey()));
         }
 
-        if (temperature < 120) tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
+        if (GTUtility.isTemperatureCryogenic(temperature)) {
+            tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
+        }
         return tooltip;
     }
 

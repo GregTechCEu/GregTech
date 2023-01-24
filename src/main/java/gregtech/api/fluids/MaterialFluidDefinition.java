@@ -1,8 +1,8 @@
 package gregtech.api.fluids;
 
 import gregtech.api.GTValues;
-import gregtech.api.fluids.info.FluidData;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTag;
 import gregtech.api.fluids.info.FluidTypeKey;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -35,7 +35,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
      * @param hasCustomTexture if the fluid has a custom texture
      * @see Builder
      */
-    public MaterialFluidDefinition(@Nonnull FluidTypeKey key, @Nonnull FluidState state, @Nonnull Collection<FluidData> data,
+    public MaterialFluidDefinition(@Nonnull FluidTypeKey key, @Nonnull FluidState state, @Nonnull Collection<FluidTag> data,
                                    @Nonnull String translationKey, @Nonnull MaterialIconType stillIconType,
                                    @Nonnull MaterialIconType flowingIconType, int color, int temperature,
                                    boolean hasBlock, boolean hasCustomTexture) {

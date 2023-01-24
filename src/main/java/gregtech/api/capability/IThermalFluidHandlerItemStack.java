@@ -3,6 +3,7 @@ package gregtech.api.capability;
 import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.util.GTUtility;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -25,7 +26,7 @@ public interface IThermalFluidHandlerItemStack {
         Fluid fluid = stack.getFluid();
         if (fluid.getTemperature() > getMaxFluidTemperature()) return false;
         // fluids less than 120K are cryogenic
-        if (fluid.getTemperature() < 120 && !isCryoProof()) return false;
+        if (GTUtility.isTemperatureCryogenic(fluid.getTemperature()) && !isCryoProof()) return false;
         if (fluid.isGaseous() && !isGasProof()) return false;
 
         if (fluid instanceof MaterialFluid) {

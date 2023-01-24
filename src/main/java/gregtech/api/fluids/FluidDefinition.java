@@ -1,8 +1,8 @@
 package gregtech.api.fluids;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.fluids.info.FluidData;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTag;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class FluidDefinition implements IAdvancedFluid {
 
     protected final FluidState state;
-    protected final Collection<FluidData> data;
+    protected final Collection<FluidTag> data;
     protected String translationKey;
     protected ResourceLocation still;
     protected ResourceLocation flowing;
@@ -35,7 +35,7 @@ public class FluidDefinition implements IAdvancedFluid {
      * @param hasBlock       if the fluid has a block
      * @see FluidDefinition.Builder
      */
-    public FluidDefinition(@Nonnull FluidState state, @Nonnull Collection<FluidData> data,
+    public FluidDefinition(@Nonnull FluidState state, @Nonnull Collection<FluidTag> data,
                            @Nonnull String translationKey, @Nullable ResourceLocation still, @Nullable ResourceLocation flowing,
                            int color, int temperature, boolean hasBlock) {
         this.state = state;
@@ -77,21 +77,21 @@ public class FluidDefinition implements IAdvancedFluid {
 
     @Nonnull
     @Override
-    public Collection<FluidData> getData() {
+    public Collection<FluidTag> getData() {
         return data;
     }
 
     /**
      * @param data the data to add
      */
-    public void addData(@Nonnull FluidData data) {
+    public void addData(@Nonnull FluidTag data) {
         this.data.add(data);
     }
 
     /**
      * @param data the data to add
      */
-    public void addData(@Nonnull FluidData... data) {
+    public void addData(@Nonnull FluidTag... data) {
         this.data.addAll(Arrays.asList(data));
     }
 
@@ -202,7 +202,7 @@ public class FluidDefinition implements IAdvancedFluid {
     protected abstract static class AbstractBuilder<T extends FluidDefinition, B extends AbstractBuilder<T, B>> {
 
         protected final FluidState state;
-        protected final Collection<FluidData> data = new ObjectOpenHashSet<>();
+        protected final Collection<FluidTag> data = new ObjectOpenHashSet<>();
         protected String translationKey;
         protected int color = -1;
         protected int temperature = -1;
@@ -222,7 +222,7 @@ public class FluidDefinition implements IAdvancedFluid {
          * @param data the data to add
          */
         @Nonnull
-        public B data(@Nonnull FluidData... data) {
+        public B data(@Nonnull FluidTag... data) {
             return data(Arrays.asList(data));
         }
 
@@ -232,7 +232,7 @@ public class FluidDefinition implements IAdvancedFluid {
          * @param data the data to add
          */
         @Nonnull
-        public B data(@Nonnull Collection<FluidData> data) {
+        public B data(@Nonnull Collection<FluidTag> data) {
             this.data.addAll(data);
             return (B) this;
         }

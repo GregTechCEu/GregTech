@@ -198,7 +198,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         Fluid fluid = stack.getFluid();
         boolean burning = getNodeData().getMaxFluidTemperature() < fluid.getTemperature(stack);
         boolean leaking = !getNodeData().isGasProof() && fluid.isGaseous(stack);
-        boolean shattering = !getNodeData().isCryoProof() && fluid.getTemperature() < 120; // fluids less than 120K are cryogenic
+        boolean shattering = !getNodeData().isCryoProof() && GTUtility.isTemperatureCryogenic(fluid.getTemperature()); // fluids less than 120K are cryogenic
         boolean corroding = false;
         boolean melting = false;
         if (fluid instanceof MaterialFluid) {

@@ -1,8 +1,8 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.fluids.MaterialFluidDefinition;
-import gregtech.api.fluids.info.FluidDataTypes;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 
@@ -337,7 +337,7 @@ public class OrganicChemistryMaterials {
 
         AceticAcid = new Material.Builder(1044, "acetic_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0xC8B4A0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4, Oxygen, 2)
@@ -421,7 +421,7 @@ public class OrganicChemistryMaterials {
 
         PhthalicAcid = new Material.Builder(1057, "phthalic_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)

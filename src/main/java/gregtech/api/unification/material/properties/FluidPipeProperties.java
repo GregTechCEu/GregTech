@@ -1,40 +1,53 @@
 package gregtech.api.unification.material.properties;
 
-import java.util.Objects;
+import gregtech.api.capability.FluidContainmentInfo;
+import gregtech.api.fluids.info.FluidTag;
 
-public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties> {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.Set;
+
+public class FluidPipeProperties extends FluidContainmentInfo implements IMaterialProperty<FluidPipeProperties> {
 
     private int throughput;
     private final int tanks;
 
-    private int maxFluidTemperature;
-    private boolean gasProof;
-    private boolean acidProof;
-    private boolean cryoProof;
-    private boolean plasmaProof;
-
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
-        this(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof, 1);
+    public FluidPipeProperties(int throughput, @Nonnull FluidContainmentInfo info) {
+        this(1, throughput, info);
     }
 
     /**
      * Should only be called from {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
      */
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof, int tanks) {
-        this.maxFluidTemperature = maxFluidTemperature;
-        this.throughput = throughput;
-        this.gasProof = gasProof;
-        this.acidProof = acidProof;
-        this.cryoProof = cryoProof;
-        this.plasmaProof = plasmaProof;
-        this.tanks = tanks;
+    public FluidPipeProperties(int tanks, int throughput, @Nonnull FluidContainmentInfo info) {
+        this(tanks, throughput, info.canHoldLiquids(), info.canHoldGases(), info.canHoldPlasmas(),
+                info.canHoldCryogenics(), info.canHoldAcids(), info.canHoldSuperacids(), info.getMaxTemperature());
     }
 
-    /**
-     * Default property constructor.
-     */
+    public FluidPipeProperties(int throughput, boolean canHoldLiquids, boolean canHoldGases, boolean canHoldPlasmas,
+                               boolean canHoldCryogenics, boolean canHoldAcids, boolean canHoldSuperacids, int maxTemperature) {
+        this(1, throughput, canHoldLiquids, canHoldGases, canHoldPlasmas, canHoldCryogenics, canHoldAcids, canHoldSuperacids, maxTemperature);
+    }
+
+    public FluidPipeProperties(int tanks, int throughput, boolean canHoldLiquids, boolean canHoldGases, boolean canHoldPlasmas,
+                               boolean canHoldCryogenics, boolean canHoldAcids, boolean canHoldSuperacids, int maxTemperature) {
+        this(tanks, throughput, canHoldLiquids, canHoldGases, canHoldPlasmas, canHoldCryogenics, canHoldAcids, canHoldSuperacids, maxTemperature, null);
+    }
+
+    public FluidPipeProperties(int tanks, int throughput, boolean canHoldLiquids, boolean canHoldGases, boolean canHoldPlasmas,
+                               boolean canHoldCryogenics, boolean canHoldAcids, boolean canHoldSuperacids, int maxTemperature,
+                               @Nullable Set<FluidTag> allowedTags) {
+        super(canHoldLiquids, canHoldGases, canHoldPlasmas, canHoldCryogenics, canHoldAcids, canHoldSuperacids, maxTemperature, allowedTags);
+        this.tanks = tanks;
+        this.throughput = throughput;
+    }
+
+        /**
+         * Default property constructor.
+         */
     public FluidPipeProperties() {
-        this(300, 1, false, false, false, false);
+        this(1, false, false, false, false, false, false, 300);
     }
 
     @Override
@@ -61,69 +74,96 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
     }
 
     public int getMaxFluidTemperature() {
-        return maxFluidTemperature;
+        return maxTemperature;
     }
 
-    public void setMaxFluidTemperature(int maxFluidTemperature) {
-        this.maxFluidTemperature = maxFluidTemperature;
+    public void setMaxFluidTemperature(int maxTemperature) {
+        this.maxTemperature = maxTemperature;
+    }
+
+    public boolean isLiquidProof() {
+        return canHoldLiquids;
+    }
+
+    public void setLiquidProof(boolean canHoldLiquids) {
+        this.canHoldLiquids = canHoldLiquids;
     }
 
     public boolean isGasProof() {
-        return gasProof;
+        return canHoldGases;
     }
 
-    public void setGasProof(boolean gasProof) {
-        this.gasProof = gasProof;
-    }
-
-    public boolean isAcidProof() {
-        return acidProof;
-    }
-
-    public void setAcidProof(boolean acidProof) {
-        this.acidProof = acidProof;
-    }
-
-    public boolean isCryoProof() {
-        return cryoProof;
-    }
-
-    public void setCryoProof(boolean cryoProof) {
-        this.cryoProof = cryoProof;
+    public void setGasProof(boolean canHoldGases) {
+        this.canHoldGases = canHoldGases;
     }
 
     public boolean isPlasmaProof() {
-        return plasmaProof;
+        return canHoldPlasmas;
     }
 
     public void setPlasmaProof(boolean plasmaProof) {
-        this.plasmaProof = plasmaProof;
+        this.canHoldPlasmas = plasmaProof;
+    }
+
+    public boolean isCryoProof() {
+        return canHoldCryogenics;
+    }
+
+    public void setCryoProof(boolean canHoldCryogenics) {
+        this.canHoldCryogenics = canHoldCryogenics;
+    }
+
+    public boolean isAcidProof() {
+        return canHoldAcids;
+    }
+
+    public void setAcidProof(boolean canHoldAcids) {
+        this.canHoldAcids = canHoldAcids;
+    }
+
+    public boolean isSuperAcidProof() {
+        return canHoldSuperacids;
+    }
+
+    public void setSuperAcidProof(boolean canHoldSuperacids) {
+        this.canHoldSuperacids = canHoldSuperacids;
+    }
+
+    public void addAllowedData(@Nonnull FluidTag data) {
+        this.allowedTags.add(data);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FluidPipeProperties)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         FluidPipeProperties that = (FluidPipeProperties) o;
-        return maxFluidTemperature == that.maxFluidTemperature &&
-            throughput == that.throughput && gasProof == that.gasProof && tanks == that.tanks;
+        return getThroughput() == that.getThroughput() && getTanks() == that.getTanks() &&
+                canHoldLiquids == that.isLiquidProof() && canHoldGases == that.isGasProof() &&
+                canHoldPlasmas == that.isPlasmaProof() && canHoldCryogenics == that.isCryoProof() &&
+                canHoldAcids == that.isAcidProof() && canHoldSuperacids == that.isSuperAcidProof() &&
+                maxTemperature == that.getMaxFluidTemperature();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(maxFluidTemperature, throughput, gasProof, tanks);
+        //noinspection ObjectInstantiationInEqualsHashCode
+        return Objects.hash(getThroughput(), getTanks(), canHoldLiquids, canHoldGases, canHoldPlasmas,
+                canHoldCryogenics, canHoldAcids, canHoldSuperacids, maxTemperature);
     }
 
     @Override
     public String toString() {
         return "FluidPipeProperties{" +
-                "maxFluidTemperature=" + maxFluidTemperature +
-                ", throughput=" + throughput +
-                ", gasProof=" + gasProof +
-                ", acidProof=" + acidProof +
-                ", cryoProof=" + cryoProof +
-                ", plasmaProof=" + plasmaProof +
+                "throughput=" + throughput +
                 ", tanks=" + tanks +
+                ", canHoldLiquids=" + canHoldLiquids +
+                ", canHoldGases=" + canHoldGases +
+                ", canHoldPlasmas=" + canHoldPlasmas +
+                ", canHoldCryogenics=" + canHoldCryogenics +
+                ", canHoldAcids=" + canHoldAcids +
+                ", canHoldSuperacids=" + canHoldSuperacids +
+                ", maxTemperature=" + maxTemperature +
                 '}';
     }
 }

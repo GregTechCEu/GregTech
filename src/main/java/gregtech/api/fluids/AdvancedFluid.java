@@ -1,7 +1,7 @@
 package gregtech.api.fluids;
 
-import gregtech.api.fluids.info.FluidData;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTag;
 import gregtech.api.util.GTUtility;
 import net.minecraftforge.fluids.Fluid;
 
@@ -57,7 +57,7 @@ public class AdvancedFluid extends Fluid implements IAdvancedFluid {
 
     @Nonnull
     @Override
-    public Collection<FluidData> getData() {
+    public Collection<FluidTag> getData() {
         return this.definition.getData();
     }
 }

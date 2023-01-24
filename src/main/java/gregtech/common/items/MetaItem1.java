@@ -2,6 +2,7 @@ package gregtech.common.items;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.FluidContainmentInfo;
 import gregtech.api.items.metaitem.*;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
@@ -121,41 +122,41 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Fluid Cells: ID 78-88
         FLUID_CELL = addItem(78, "fluid_cell")
-                .addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, false), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(1000, false, new FluidContainmentInfo.Builder().liquids().gases().temperature(1800).build()), new ItemFluidContainer())
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal")
-                .addComponents(new ThermalFluidStats(1000, 1800, true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(1000, true, new FluidContainmentInfo.Builder().liquids().gases().temperature(1800).build()), new ItemFluidContainer())
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
-                .addComponents(new ThermalFluidStats(8000, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(8000, true, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
-                .addComponents(new ThermalFluidStats(32000, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(32000, true, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
-                .addComponents(new ThermalFluidStats(64000, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true, true, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(64000, true, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
-                .addComponents(new ThermalFluidStats(128000, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(128000, true, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
-                .addComponents(new ThermalFluidStats(512000, Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(512000, true, Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE)), new ItemFluidContainer())
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
-                .addComponents(new ThermalFluidStats(1000, 1200, false, true, false, false, true), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(1000, true, new FluidContainmentInfo.Builder().liquids().gases().acids().temperature(1200).build()), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))) // small dust
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 

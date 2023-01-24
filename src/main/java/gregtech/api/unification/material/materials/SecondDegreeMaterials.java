@@ -2,8 +2,8 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MaterialFluidDefinition;
-import gregtech.api.fluids.info.FluidDataTypes;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
@@ -335,14 +335,14 @@ public class SecondDegreeMaterials {
 
         SulfuricNickelSolution = new Material.Builder(2043, "sulfuric_nickel_solution")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0x3EB640)
                 .components(Nickel, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
 
         SulfuricCopperSolution = new Material.Builder(2044, "sulfuric_copper_solution")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0x48A5C0)
                 .components(Copper, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
@@ -356,7 +356,7 @@ public class SecondDegreeMaterials {
 
         NitrationMixture = new Material.Builder(2046, "nitration_mixture")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0xE6E2AB)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, SulfuricAcid, 1)
@@ -364,7 +364,7 @@ public class SecondDegreeMaterials {
 
         DilutedSulfuricAcid = new Material.Builder(2047, "diluted_sulfuric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0xC07820)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(SulfuricAcid, 2, Water, 1)
@@ -372,7 +372,7 @@ public class SecondDegreeMaterials {
 
         DilutedHydrochloricAcid = new Material.Builder(2048, "diluted_hydrochloric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0x99A7A3)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(HydrochloricAcid, 1, Water, 1)
@@ -435,7 +435,7 @@ public class SecondDegreeMaterials {
 
         AquaRegia = new Material.Builder(2056, "aqua_regia")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, HydrochloricAcid, 2)
@@ -471,7 +471,7 @@ public class SecondDegreeMaterials {
 
         AcidicOsmiumSolution = new Material.Builder(2061, "acidic_osmium_solution")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0xA3AA8A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)

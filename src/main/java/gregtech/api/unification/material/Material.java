@@ -4,11 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.FluidContainmentInfo;
 import gregtech.api.fluids.MaterialFluidDefinition;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
-import gregtech.api.fluids.info.FluidDataTypes;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.fluids.info.FluidTypeKey;
 import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.Element;
@@ -516,7 +517,7 @@ public class Material implements Comparable<Material> {
             FluidTypeKey key = state == FluidState.LIQUID ? FluidTypeKeys.LIQUID : FluidTypeKeys.GAS;
 
             MaterialFluidDefinition.Builder builder = new MaterialFluidDefinition.Builder(key, state).block(hasBlock);
-            if (type == FluidTypes.ACID) builder.data(FluidDataTypes.ACID);
+            if (type == FluidTypes.ACID) builder.data(FluidTags.ACID);
 
             properties.ensureSet(PropertyKey.ADV_FLUID);
             AdvancedFluidProperty property = properties.getProperty(PropertyKey.ADV_FLUID);
@@ -993,8 +994,19 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+            return fluidPipeProperties(throughput, new FluidContainmentInfo.Builder()
+                    .liquids()
+                    .gases(gasProof)
+                    .acids(acidProof)
+                    .cryogenics(cryoProof)
+                    .plasmas(plasmaProof)
+                    .temperature(maxTemp)
+                    .build());
+        }
+
+        public Builder fluidPipeProperties(int throughput, @Nonnull FluidContainmentInfo info) {
             properties.ensureSet(PropertyKey.INGOT);
-            properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+            properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(throughput, info));
             return this;
         }
 

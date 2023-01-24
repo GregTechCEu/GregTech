@@ -1,6 +1,7 @@
 package gregtech.api.unification.crafttweaker;
 
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.capability.FluidContainmentInfo;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
@@ -12,6 +13,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
 
+//TODO UPDATE FOR NEW THINGS
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister
 @SuppressWarnings("unused")
@@ -130,7 +132,13 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
             m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
         } else {
-            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(throughput, new FluidContainmentInfo.Builder()
+                    .gases(gasProof)
+                    .acids(acidProof)
+                    .cryogenics(cryoProof)
+                    .plasmas(plasmaProof)
+                    .temperature(maxFluidTemperature)
+                    .build()));
         }
     }
 

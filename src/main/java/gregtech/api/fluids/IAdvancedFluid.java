@@ -1,7 +1,7 @@
 package gregtech.api.fluids;
 
-import gregtech.api.fluids.info.FluidData;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTag;
 import net.minecraftforge.fluids.Fluid;
 
 import javax.annotation.Nonnull;
@@ -19,7 +19,7 @@ public interface IAdvancedFluid {
      * @return the fluid data for this fluid
      */
     @Nonnull
-    Collection<FluidData> getData();
+    Collection<FluidTag> getData();
 
     /**
      * New implementations of this should not return values less than or equal to 0.

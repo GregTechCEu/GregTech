@@ -1209,4 +1209,8 @@ public class GTUtility {
     public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
         return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
+
+    public static boolean isTemperatureCryogenic(int temperature) {
+        return temperature < 120;
+    }
 }

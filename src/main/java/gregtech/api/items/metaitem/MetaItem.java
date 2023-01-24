@@ -7,8 +7,8 @@ import com.google.common.collect.Multimap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IAdvancedFluidContainer;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.ModularUI;
@@ -24,7 +24,6 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -570,17 +569,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluidTankProperties.getCapacity(),
                     fluid == null ? "" : fluid.getLocalizedName()));
 
-            if (fluidHandler instanceof IThermalFluidHandlerItemStack) {
-                IThermalFluidHandlerItemStack thermalFluidHandler = (IThermalFluidHandlerItemStack) fluidHandler;
-                if (TooltipHelper.isShiftDown()) {
-                    lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", thermalFluidHandler.getMaxFluidTemperature()));
-                    if (thermalFluidHandler.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-                    if (thermalFluidHandler.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-                    if (thermalFluidHandler.isCryoProof()) lines.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-                    if (thermalFluidHandler.isPlasmaProof()) lines.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
-                } else if (thermalFluidHandler.isGasProof() || thermalFluidHandler.isAcidProof() || thermalFluidHandler.isCryoProof() || thermalFluidHandler.isPlasmaProof()) {
-                    lines.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
-                }
+            if (fluidHandler instanceof IAdvancedFluidContainer) {
+                ((IAdvancedFluidContainer) fluidHandler).appendTooltips(lines, true);
             }
         }
 

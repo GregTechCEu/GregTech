@@ -1,8 +1,8 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.fluids.MaterialFluidDefinition;
-import gregtech.api.fluids.info.FluidDataTypes;
 import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.fluids.info.FluidTypeKeys;
 import gregtech.api.unification.material.Material;
 
@@ -70,7 +70,7 @@ public class UnknownCompositionMaterials {
 
         IndiumConcentrate = new Material.Builder(1513, "indium_concentrate")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0x0E2950).build();
 
         SeedOil = new Material.Builder(1514, "seed_oil")
@@ -519,7 +519,7 @@ public class UnknownCompositionMaterials {
 
         AcidicEnrichedNaquadahSolution = new Material.Builder(1641, "acidic_enriched_naquadah_solution")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0x3DD63D).build();
 
         EnrichedNaquadahWaste = new Material.Builder(1642, "enriched_naquadah_waste")
@@ -533,7 +533,7 @@ public class UnknownCompositionMaterials {
 
         AcidicNaquadriaSolution = new Material.Builder(1645, "acidic_naquadria_solution")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypeKeys.LIQUID, FluidState.LIQUID)
-                        .data(FluidDataTypes.ACID))
+                        .data(FluidTags.ACID))
                 .color(0x70D670).build();
 
         NaquadriaWaste = new Material.Builder(1646, "naquadria_waste")
