@@ -15,7 +15,6 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidType;
 
-//TODO UPDATE FOR NEW THINGS
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister
 @SuppressWarnings("unused")
@@ -156,10 +155,10 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addFluid(Material m, @Optional String fluidKeyName, @Optional boolean hasBlock) {
+    public static void addFluid(Material m, @Optional String fluidType, @Optional boolean hasBlock) {
         if (checkFrozen("add a Fluid to a material")) return;
 
-        FluidType type = validateFluidType(fluidKeyName);
+        FluidType type = validateFluidType(fluidType);
         FluidState state = type == FluidTypes.LIQUID ? FluidState.LIQUID :
                 type == FluidTypes.GAS ? FluidState.GAS : FluidState.PLASMA;
 

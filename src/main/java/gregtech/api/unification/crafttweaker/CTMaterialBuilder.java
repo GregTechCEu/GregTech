@@ -4,7 +4,6 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.info.FluidType;
 import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
@@ -51,12 +50,6 @@ public class CTMaterialBuilder {
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type) {
         backingBuilder.fluid(validateFluidType(type));
-        return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder fluid(@Optional FluidType type) {
-        backingBuilder.fluid(validateFluidType(type == null ? null : type.getName()));
         return this;
     }
 

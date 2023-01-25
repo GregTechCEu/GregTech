@@ -195,8 +195,7 @@ public class Material implements Comparable<Material> {
 
         fluid = prop.getFluid(FluidTypes.GAS);
         if (fluid != null) return fluid;
-
-        GTLog.logger.warn("Material {} Fluid was null!", this);
+        GTLog.logger.warn("Material {} Fluid was null! Retrieve by the proper FluidType instead!", this);
 
         return null;
     }
@@ -215,7 +214,7 @@ public class Material implements Comparable<Material> {
         Fluid fluid = prop.getFluid(type);
         if (fluid != null) return fluid;
 
-        GTLog.logger.warn("Material {} Fluid was null for type {}!", this, type);
+        GTLog.logger.warn("Material {} Fluid was null for FluidType {}!", this, type);
 
         return null;
     }

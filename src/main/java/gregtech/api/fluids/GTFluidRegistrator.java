@@ -200,20 +200,23 @@ public final class GTFluidRegistrator {
         for (MaterialFluidDefinition definition : property.getDefinitions()) {
             String fluidName = definition.getType().getFluidNameForMaterial(material);
 
-            // if the fluid already exists, skip it
-            if (getExistingFluid(fluidName) != null) continue;
+            // if the fluid already exists, don't make a new one from GT
+            Fluid fluid = getExistingFluid(fluidName);
+            if (fluid == null) {
+                // construct the fluid
+                fluid = definition.constructFluid(material, fluidName);
 
-            // construct the fluid
-            Fluid fluid = definition.constructFluid(material, fluidName);
+                // register the fluid's textures
+                // must be done after material fluids are created
+                registerFluidTexture(definition.getStill());
+                registerFluidTexture(definition.getFlowing());
+            }
 
-            // register the fluid's textures
-            // must be done after material fluids are created
-            registerFluidTexture(definition.getStill());
-            registerFluidTexture(definition.getFlowing());
-
+            // store the fluid in the property
             property.setFluid(definition.getType(), fluid);
 
-            // add buckets for each fluid - this also registers it
+            // add buckets for each fluid
+            // this also registers it if not already registered
             FluidRegistry.addBucketForFluid(fluid);
 
             // create the tooltip for each fluid
