@@ -339,7 +339,7 @@ public class OrganicChemistryMaterials {
 
         AceticAcid = new Material.Builder(1044, "acetic_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID))
+                        .tags(FluidTags.ACID))
                 .color(0xC8B4A0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4, Oxygen, 2)
@@ -423,7 +423,7 @@ public class OrganicChemistryMaterials {
 
         PhthalicAcid = new Material.Builder(1057, "phthalic_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID))
+                        .tags(FluidTags.ACID))
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)

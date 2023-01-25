@@ -28,7 +28,7 @@ public class FluidDefinition implements IAdvancedFluid {
 
     /**
      * @param state          the state for the fluid
-     * @param tags           the data for the fluid
+     * @param tags           the tags for the fluid
      * @param translationKey the translation key for the fluid
      * @param still          the still texture - can be null upon construction, but must be set later
      * @param flowing        the flowing texture - can be null upon construction, but must be set later
@@ -84,17 +84,17 @@ public class FluidDefinition implements IAdvancedFluid {
     }
 
     /**
-     * @param data the data to add
+     * @param tag the tags to add
      */
-    public void addData(@Nonnull FluidTag data) {
-        this.tags.add(data);
+    public void addTag(@Nonnull FluidTag tag) {
+        this.tags.add(tag);
     }
 
     /**
-     * @param data the data to add
+     * @param tags the tags to add
      */
-    public void addData(@Nonnull FluidTag... data) {
-        this.tags.addAll(Arrays.asList(data));
+    public void addTags(@Nonnull FluidTag... tags) {
+        this.tags.addAll(Arrays.asList(tags));
     }
 
     @Override
@@ -204,7 +204,7 @@ public class FluidDefinition implements IAdvancedFluid {
     protected abstract static class AbstractBuilder<T extends FluidDefinition, B extends AbstractBuilder<T, B>> {
 
         protected final FluidState state;
-        protected final Collection<FluidTag> data = new ObjectOpenHashSet<>();
+        protected final Collection<FluidTag> tags = new ObjectOpenHashSet<>();
         protected String translationKey;
         protected int color = -1;
         protected int temperature = -1;
@@ -219,23 +219,23 @@ public class FluidDefinition implements IAdvancedFluid {
         }
 
         /**
-         * Add fluid data to this fluid
+         * Add fluid tags to this fluid
          *
-         * @param data the data to add
+         * @param tags the tags to add
          */
         @Nonnull
-        public B data(@Nonnull FluidTag... data) {
-            return data(Arrays.asList(data));
+        public B tags(@Nonnull FluidTag... tags) {
+            return tags(Arrays.asList(tags));
         }
 
         /**
-         * Add fluid data to this fluid
+         * Add fluid tags to this fluid
          *
-         * @param data the data to add
+         * @param tags the tags to add
          */
         @Nonnull
-        public B data(@Nonnull Collection<FluidTag> data) {
-            this.data.addAll(data);
+        public B tags(@Nonnull Collection<FluidTag> tags) {
+            this.tags.addAll(tags);
             return (B) this;
         }
 
@@ -325,7 +325,7 @@ public class FluidDefinition implements IAdvancedFluid {
         @Nonnull
         @Override
         public FluidDefinition build() {
-            return new FluidDefinition(state, data, translationKey, still, flowing, color, temperature, hasBlock);
+            return new FluidDefinition(state, tags, translationKey, still, flowing, color, temperature, hasBlock);
         }
     }
 }

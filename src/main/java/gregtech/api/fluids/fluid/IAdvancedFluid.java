@@ -21,7 +21,7 @@ public interface IAdvancedFluid {
     FluidState getState();
 
     /**
-     * @return the fluid data for this fluid
+     * @return the fluid tags for this fluid
      */
     @Nonnull
     Collection<FluidTag> getTags();

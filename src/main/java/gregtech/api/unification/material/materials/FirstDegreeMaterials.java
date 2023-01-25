@@ -1137,7 +1137,7 @@ public class FirstDegreeMaterials {
 
         NitricAcid = new Material.Builder(401, "nitric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID))
+                        .tags(FluidTags.ACID))
                 .color(0xCCCC00)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
@@ -1145,14 +1145,14 @@ public class FirstDegreeMaterials {
 
         SulfuricAcid = new Material.Builder(402, "sulfuric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID).customTexture(true))
+                        .tags(FluidTags.ACID).customTexture(true))
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PhosphoricAcid = new Material.Builder(403, "phosphoric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID))
+                        .tags(FluidTags.ACID))
                 .color(0xDCDC01)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
@@ -1178,7 +1178,7 @@ public class FirstDegreeMaterials {
 
         HypochlorousAcid = new Material.Builder(407, "hypochlorous_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID))
+                        .tags(FluidTags.ACID))
                 .color(0x6F8A91)
                 .components(Hydrogen, 1, Chlorine, 1, Oxygen, 1)
                 .build();
@@ -1191,7 +1191,7 @@ public class FirstDegreeMaterials {
 
         HydrofluoricAcid = new Material.Builder(409, "hydrofluoric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID))
+                        .tags(FluidTags.ACID))
                 .color(0x0088AA)
                 .components(Hydrogen, 1, Fluorine, 1)
                 .build();
@@ -1265,7 +1265,7 @@ public class FirstDegreeMaterials {
 
         HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.ACID).customTexture(true))
+                        .tags(FluidTags.ACID).customTexture(true))
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
@@ -1440,7 +1440,7 @@ public class FirstDegreeMaterials {
 
         FluoroantimonicAcid = new Material.Builder(438, "fluoroantimonic_acid")
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .data(FluidTags.SUPERACID).customTexture(true))
+                        .tags(FluidTags.SUPERACID).customTexture(true))
                 .components(Hydrogen, 2, Antimony, 1, Fluorine, 7)
                 .build();
 

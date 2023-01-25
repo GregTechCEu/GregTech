@@ -26,7 +26,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
     /**
      * @param type             the type for the fluid
      * @param state            the state for the fluid
-     * @param data             the data for the fluid
+     * @param tags             the tags for the fluid
      * @param translationKey   the translation key for the fluid
      * @param stillIconType    the icon type for the fluid when still
      * @param flowingIconType  the icon type for the fluid when flowing
@@ -36,11 +36,11 @@ public class MaterialFluidDefinition extends FluidDefinition {
      * @param hasCustomTexture if the fluid has a custom texture
      * @see Builder
      */
-    public MaterialFluidDefinition(@Nonnull FluidType type, @Nonnull FluidState state, @Nonnull Collection<FluidTag> data,
+    public MaterialFluidDefinition(@Nonnull FluidType type, @Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
                                    @Nonnull String translationKey, @Nonnull MaterialIconType stillIconType,
                                    @Nonnull MaterialIconType flowingIconType, int color, int temperature,
                                    boolean hasBlock, boolean hasCustomTexture) {
-        super(state, data, translationKey, null, null, color, temperature, hasBlock);
+        super(state, tags, translationKey, null, null, color, temperature, hasBlock);
         this.type = type;
         this.stillIconType = stillIconType;
         this.flowingIconType = flowingIconType;
@@ -209,7 +209,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
 
         @Nonnull
         public MaterialFluidDefinition build() {
-            return new MaterialFluidDefinition(type, state, data, translationKey, stillIconType, flowingIconType, color,
+            return new MaterialFluidDefinition(type, state, tags, translationKey, stillIconType, flowingIconType, color,
                     temperature, hasBlock, hasCustomTexture);
         }
     }

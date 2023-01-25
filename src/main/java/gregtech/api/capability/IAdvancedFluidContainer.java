@@ -32,8 +32,8 @@ public interface IAdvancedFluidContainer {
             if (!this.canHandleState(state)) return false;
             if (!this.canHandleTemperature(state, fluid.getTemperature(stack))) return false;
 
-            for (FluidTag data : advanced.getTags()) {
-                if (data.requiresChecking() && !this.canHandleData(data)) return false;
+            for (FluidTag tag : advanced.getTags()) {
+                if (tag.requiresChecking() && !this.canHandleTag(tag)) return false;
             }
         } else {
             FluidState state;
@@ -85,16 +85,16 @@ public interface IAdvancedFluidContainer {
     }
 
     /**
-     * @param data the data to test
-     * @return if the container can handle a fluid with this data
+     * @param tag the tag to test
+     * @return if the container can handle a fluid with this tag
      */
-    default boolean canHandleData(@Nonnull FluidTag data) {
+    default boolean canHandleTag(@Nonnull FluidTag tag) {
         FluidContainmentInfo info = getContainmentInfo();
-        if (data == FluidTags.ACID) return info.canHoldAcids();
-        if (data == FluidTags.SUPERACID) return info.canHoldSuperacids();
+        if (tag == FluidTags.ACID) return info.canHoldAcids();
+        if (tag == FluidTags.SUPERACID) return info.canHoldSuperacids();
 
         Collection<FluidTag> allowedTags = info.getAllowedTags();
-        return allowedTags != null && allowedTags.contains(data);
+        return allowedTags != null && allowedTags.contains(tag);
     }
 
     /**

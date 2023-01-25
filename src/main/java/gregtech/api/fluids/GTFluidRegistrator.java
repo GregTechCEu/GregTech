@@ -267,7 +267,7 @@ public final class GTFluidRegistrator {
         if (fluid instanceof IAdvancedFluid) {
             IAdvancedFluid advanced = (IAdvancedFluid) fluid;
             tooltip.add(I18n.format(advanced.getState().getTooltipTranslationKey()));
-            advanced.getTags().forEach(data -> data.appendTooltips(tooltip));
+            advanced.getTags().forEach(tag -> tag.appendTooltips(tooltip));
         } else {
             if (fluid.isGaseous()) tooltip.add(I18n.format(FluidState.GAS.getTooltipTranslationKey()));
             else tooltip.add(I18n.format(FluidState.LIQUID.getTooltipTranslationKey()));
