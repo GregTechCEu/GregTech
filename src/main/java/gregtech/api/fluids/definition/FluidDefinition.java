@@ -1,6 +1,8 @@
-package gregtech.api.fluids;
+package gregtech.api.fluids.definition;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.fluids.fluid.AdvancedFluid;
+import gregtech.api.fluids.fluid.IAdvancedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;

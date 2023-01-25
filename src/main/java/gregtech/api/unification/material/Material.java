@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.FluidContainmentInfo;
-import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.definition.MaterialFluidDefinition;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidType;
 import gregtech.api.fluids.info.FluidTypes;

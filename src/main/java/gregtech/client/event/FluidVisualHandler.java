@@ -1,7 +1,7 @@
 package gregtech.client.event;
 
 import gregtech.api.GTValues;
-import gregtech.api.fluids.MaterialFluidBlock;
+import gregtech.api.fluids.block.MaterialFluidBlock;
 import gregtech.api.unification.material.Material;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

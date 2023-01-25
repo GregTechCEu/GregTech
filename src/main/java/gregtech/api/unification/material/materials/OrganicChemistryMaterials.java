@@ -1,7 +1,7 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.capability.FluidContainmentInfo;
-import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.definition.MaterialFluidDefinition;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.fluids.info.FluidTypes;

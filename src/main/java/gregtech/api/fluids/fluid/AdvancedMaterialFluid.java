@@ -1,5 +1,6 @@
-package gregtech.api.fluids;
+package gregtech.api.fluids.fluid;
 
+import gregtech.api.fluids.definition.MaterialFluidDefinition;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;

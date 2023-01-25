@@ -1,5 +1,6 @@
-package gregtech.api.fluids;
+package gregtech.api.fluids.fluid;
 
+import gregtech.api.fluids.definition.FluidDefinition;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
 import gregtech.api.util.GTUtility;

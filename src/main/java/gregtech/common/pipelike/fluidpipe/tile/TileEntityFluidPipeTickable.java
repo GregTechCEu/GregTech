@@ -3,7 +3,7 @@ package gregtech.common.pipelike.fluidpipe.tile;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.fluids.IAdvancedFluid;
+import gregtech.api.fluids.fluid.IAdvancedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -199,17 +199,19 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         Fluid fluid = stack.getFluid();
         boolean burning = getNodeData().getMaxFluidTemperature() < fluid.getTemperature(stack);
         boolean leaking = !getNodeData().isGasProof() && fluid.isGaseous(stack);
-        boolean shattering = !getNodeData().isCryoProof() && GTUtility.isTemperatureCryogenic(fluid.getTemperature()); // fluids less than 120K are cryogenic
+        boolean shattering = !getNodeData().isCryoProof() && GTUtility.isTemperatureCryogenic(fluid.getTemperature());
         boolean corroding = false;
         boolean melting = false;
         if (fluid instanceof IAdvancedFluid) {
             IAdvancedFluid advancedFluid = (IAdvancedFluid) fluid;
-            corroding = !getNodeData().isAcidProof() && advancedFluid.getTags().contains(FluidTags.ACID);
+            corroding = (!getNodeData().isAcidProof() && advancedFluid.getTags().contains(FluidTags.ACID)) ||
+                    (!getNodeData().isSuperAcidProof() && advancedFluid.getTags().contains(FluidTags.SUPERACID));
             melting = !getNodeData().isPlasmaProof() && advancedFluid.getState() == FluidState.PLASMA;
 
             // carrying plasmas which are too hot when plasma proof does not burn pipes
-            if (burning && getNodeData().isPlasmaProof() && advancedFluid.getState() == FluidState.PLASMA)
+            if (burning && getNodeData().isPlasmaProof() && advancedFluid.getState() == FluidState.PLASMA) {
                 burning = false;
+            }
         }
 
         if (burning || leaking || corroding || shattering || melting) {

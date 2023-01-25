@@ -1,4 +1,4 @@
-package gregtech.api.fluids;
+package gregtech.api.fluids.block;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;

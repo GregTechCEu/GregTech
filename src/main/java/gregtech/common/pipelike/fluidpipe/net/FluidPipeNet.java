@@ -57,7 +57,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
             NBTTagCompound allowedTags = tagCompound.getCompoundTag("allowed_tags");
             for (String key : allowedTags.getKeySet()) {
                 if (allowedTags.getBoolean(key)) {
-                    tags.add(FluidTags.getDataByName(key));
+                    tags.add(FluidTags.getTagByName(key));
                 }
             }
         } else tags = null;

@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-import gregtech.api.fluids.MaterialFluidDefinition;
+import gregtech.api.fluids.definition.MaterialFluidDefinition;
 import gregtech.api.fluids.info.FluidType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;

@@ -8,10 +8,22 @@ import javax.annotation.Nonnull;
  * Possible states for a fluid
  */
 public enum FluidState {
+    /**
+     * A regular liquid, like water
+     */
     LIQUID,
+    /**
+     * A gas, like air
+     */
     GAS,
+    /**
+     * A plama, like helium plasma
+     */
     PLASMA;
 
+    /**
+     * @return the default icon type for the still texture for this state
+     */
     @Nonnull
     public MaterialIconType getStillIconType() {
         switch (this) {
@@ -22,6 +34,9 @@ public enum FluidState {
         }
     }
 
+    /**
+     * @return the default icon type for the flowing texture for this state
+     */
     @Nonnull
     public MaterialIconType getFlowingIconType() {
         switch (this) {
@@ -32,6 +47,9 @@ public enum FluidState {
         }
     }
 
+    /**
+     * @return the translation key for this state for a fluid tooltip
+     */
     @Nonnull
     public String getTooltipTranslationKey() {
         switch (this) {

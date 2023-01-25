@@ -1,7 +1,7 @@
 package gregtech.api.capability;
 
-import gregtech.api.fluids.AdvancedFluid;
-import gregtech.api.fluids.IAdvancedFluid;
+import gregtech.api.fluids.fluid.AdvancedFluid;
+import gregtech.api.fluids.fluid.IAdvancedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
 import gregtech.api.fluids.info.FluidTags;

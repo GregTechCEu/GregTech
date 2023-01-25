@@ -1,4 +1,4 @@
-package gregtech.api.fluids;
+package gregtech.api.fluids.block;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.MaterialLiquid;

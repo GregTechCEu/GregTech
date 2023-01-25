@@ -1,4 +1,4 @@
-package gregtech.api.fluids;
+package gregtech.api.fluids.fluid;
 
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
@@ -7,6 +7,11 @@ import net.minecraftforge.fluids.Fluid;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+/**
+ * Interface defining advanced fluid capabilities.
+ * <p>
+ * Implement this on an {@link Fluid} or {@link gregtech.api.fluids.definition.FluidDefinition}
+ */
 public interface IAdvancedFluid {
 
     /**

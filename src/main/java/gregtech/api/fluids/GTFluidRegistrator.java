@@ -1,6 +1,11 @@
 package gregtech.api.fluids;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.block.GTFluidMaterial;
+import gregtech.api.fluids.block.MaterialFluidBlock;
+import gregtech.api.fluids.definition.FluidDefinition;
+import gregtech.api.fluids.definition.MaterialFluidDefinition;
+import gregtech.api.fluids.fluid.IAdvancedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidType;
 import gregtech.api.fluids.info.FluidTypes;
@@ -236,6 +241,12 @@ public final class GTFluidRegistrator {
         }
     }
 
+    /**
+     * Create a fluid tooltip for a material
+     * @param material the material whose tooltip to create
+     * @param fluid the fluid to add the tooltip to
+     * @return the tooltip
+     */
     @Nonnull
     public static List<String> createMaterialFluidTooltip(@Nonnull Material material, @Nonnull Fluid fluid) {
         List<String> tooltip = createFluidTooltip(fluid);
@@ -246,6 +257,11 @@ public final class GTFluidRegistrator {
         return tooltip;
     }
 
+    /**
+     * Create a fluid tooltip
+     * @param fluid the fluid to create the tooltip for
+     * @return the tooltip
+     */
     @Nonnull
     public static List<String> createFluidTooltip(@Nonnull Fluid fluid) {
         List<String> tooltip = new ArrayList<>();
@@ -266,6 +282,10 @@ public final class GTFluidRegistrator {
         return tooltip;
     }
 
+    /**
+     * @param fluid the fluid to get from
+     * @return the material associated with the fluid
+     */
     @Nullable
     public static Material getMaterialFromFluid(@Nonnull Fluid fluid) {
         Material material = materialByFluidName.get(fluid.getName());
@@ -275,16 +295,14 @@ public final class GTFluidRegistrator {
 
     /**
      * Called during the fluid registration phase, where fluids for materials can be overridden with another.
-     * <br>
+     * <p>
      * Use {@link GTFluidRegistrator#overrideMaterialFluid(Material, FluidType, Fluid)} to add overrides.
      */
-    public static class MaterialFluidOverrideEvent extends Event {
-        public MaterialFluidOverrideEvent() {/**/}
-    }
+    public static class MaterialFluidOverrideEvent extends Event {/**/}
 
     /**
      * Called during the fluid registration phase where alternative registry names for fluids can be added or removed.
-     * <br>
+     * <p>
      * Use any of the following to achieve this:
      * <ul>
      * <li>{@link GTFluidRegistrator#addAlternativeFluidName(String, String)}</li>
@@ -293,7 +311,5 @@ public final class GTFluidRegistrator {
      * <li>{@link GTFluidRegistrator#removeAlternativeFluidName(String, String)}</li>
      * </ul>
      */
-    public static class AlternativeFluidNameEvent extends Event {
-        public AlternativeFluidNameEvent() {/**/}
-    }
+    public static class AlternativeFluidNameEvent extends Event {/**/}
 }
