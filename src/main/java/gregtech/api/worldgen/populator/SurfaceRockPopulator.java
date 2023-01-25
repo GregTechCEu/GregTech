@@ -1,7 +1,6 @@
 package gregtech.api.worldgen.populator;
 
 import com.google.gson.JsonObject;
-import gregtech.api.fluids.GTFluidRegistrator;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -12,7 +11,6 @@ import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.generator.GridEntryInfo;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -20,11 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.IFluidBlock;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -50,23 +44,14 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     public void initializeForVein(OreDepositDefinition definition) {
     }
 
-    private static Set<Material> findUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
+    private static Set<Material> findUndergroundMaterials(Iterable<IBlockState> generatedBlocks) {
         Set<Material> result = new HashSet<>();
         for (IBlockState blockState : generatedBlocks) {
-            Material resultMaterial;
-            if (blockState.getBlock() instanceof IFluidBlock || blockState.getBlock() instanceof BlockLiquid) {
-                Fluid fluid = FluidRegistry.lookupFluidForBlock(blockState.getBlock());
-                resultMaterial = fluid == null ? null : GTFluidRegistrator.getMaterialFromFluid(fluid);
-            } else {
-                ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
-                UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
-                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE))
-                    resultMaterial = entry.material;
-                else
-                    resultMaterial = null;
-            }
-            if (resultMaterial != null) {
-                result.add(resultMaterial);
+            ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
+            UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
+
+            if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE)) {
+                result.add(entry.material);
             }
         }
         return result;

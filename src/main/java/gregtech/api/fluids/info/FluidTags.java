@@ -2,6 +2,7 @@ package gregtech.api.fluids.info;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -21,5 +22,13 @@ public final class FluidTags {
     @Nullable
     public static FluidTag getTagByName(@Nonnull String name) {
         return FluidTag.TAGS.get(name);
+    }
+
+    /**
+     * @return all created Fluid Tags
+     */
+    @Nonnull
+    public static Collection<FluidTag> getAllTags() {
+        return FluidTag.TAGS.values();
     }
 }

@@ -41,7 +41,6 @@ public final class GTFluidRegistrator {
 
     private static final Collection<ResourceLocation> fluidSprites = new ObjectOpenHashSet<>();
     private static final Map<String, Set<String>> alternativeFluidNames = new Object2ObjectOpenHashMap<>();
-    private static final Map<String, Material> materialByFluidName = new Object2ObjectOpenHashMap<>();
 
     private GTFluidRegistrator() {/**/}
 
@@ -236,8 +235,6 @@ public final class GTFluidRegistrator {
                 fluidBlock.setRegistryName(fluidName);
                 MetaBlocks.FLUID_BLOCKS.add(fluidBlock);
             }
-
-            materialByFluidName.put(fluid.getName(), material);
         }
     }
 
@@ -280,17 +277,6 @@ public final class GTFluidRegistrator {
             tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
         }
         return tooltip;
-    }
-
-    /**
-     * @param fluid the fluid to get from
-     * @return the material associated with the fluid
-     */
-    @Nullable
-    public static Material getMaterialFromFluid(@Nonnull Fluid fluid) {
-        Material material = materialByFluidName.get(fluid.getName());
-        if (material != null && material.hasFluid()) return material;
-        return null;
     }
 
     /**

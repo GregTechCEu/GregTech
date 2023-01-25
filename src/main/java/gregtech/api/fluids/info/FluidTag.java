@@ -35,7 +35,7 @@ public class FluidTag {
         this.name = name;
         this.requiresChecking = requiresChecking;
         this.tooltips = tooltips;
-        if (TAGS.containsKey(name)) throw new IllegalArgumentException("FluidTag " + name + " is already registered");
+        if (TAGS.containsKey(name)) throw new IllegalArgumentException("FluidTag " + name + " already exists!");
         else TAGS.put(name, this);
     }
 

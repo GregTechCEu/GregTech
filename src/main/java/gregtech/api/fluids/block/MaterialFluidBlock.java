@@ -43,7 +43,9 @@ public class MaterialFluidBlock extends BlockFluidClassic {
 
     @Nullable
     @Override
-    public Boolean isEntityInsideMaterial(@Nonnull IBlockAccess world, @Nonnull BlockPos blockpos, @Nonnull IBlockState iblockstate, @Nonnull Entity entity, double yToTest, @Nonnull net.minecraft.block.material.Material materialIn, boolean testingHead) {
+    public Boolean isEntityInsideMaterial(@Nonnull IBlockAccess world, @Nonnull BlockPos blockpos,
+                                          @Nonnull IBlockState state, @Nonnull Entity entity, double yToTest,
+                                          @Nonnull net.minecraft.block.material.Material materialIn, boolean testingHead) {
         return materialIn == net.minecraft.block.material.Material.WATER ? true : null;
     }
 
@@ -90,14 +92,6 @@ public class MaterialFluidBlock extends BlockFluidClassic {
             return false;
         }
         return super.canDisplace(world, pos);
-    }
-
-    @Override
-    public boolean displaceIfPossible(@Nonnull World world, @Nonnull BlockPos pos) {
-        if (this.isFlammable && world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
-            return false;
-        }
-        return super.displaceIfPossible(world, pos);
     }
 
     @Nonnull
