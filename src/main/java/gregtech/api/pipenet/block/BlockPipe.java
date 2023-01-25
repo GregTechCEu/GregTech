@@ -350,11 +350,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.CROWBAR)) {
             if (!world.isRemote) {
-                pipeTile.getCoverableImplementation().removeCover(coverSide);
-                ToolHelper.damageItem(itemStack, entityPlayer);
-                ToolHelper.playToolSound(itemStack, entityPlayer);
-
-                return true;
+                if (pipeTile.getCoverableImplementation().removeCover(coverSide)) {
+                    ToolHelper.damageItem(itemStack, entityPlayer);
+                    ToolHelper.playToolSound(itemStack, entityPlayer);
+                    return true;
+                }
             }
         }
 
