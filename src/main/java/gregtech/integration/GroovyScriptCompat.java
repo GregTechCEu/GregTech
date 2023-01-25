@@ -5,8 +5,9 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModSupport;
+import com.cleanroommc.groovyscript.helper.ingredient.IngredientHelper;
+import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
-import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -169,11 +170,7 @@ public class GroovyScriptCompat {
         if (recipe.getFluidInputs().size() > 0) {
             builder.append("[");
             for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
-                // TODO update grs since the current version results in a crash when mekanism is not installed
-                //builder.append(IngredientHelper.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
-                builder.append("fluid('")
-                        .append(fluidIngredient.getInputFluidStack().getFluid().getName())
-                        .append("')");
+                builder.append(IngredientHelper.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
 
                 if (fluidIngredient.getAmount() > 1) {
                     builder.append(" * ")
@@ -211,23 +208,13 @@ public class GroovyScriptCompat {
         }
         if (itemStack != null) {
             if (itemId == null) {
-                // TODO update grs since the current version results in a crash when mekanism is not installed
-                //builder.append(IngredientHelper.asGroovyCode(itemStack, false, false));
-                builder.append("item('")
-                        .append(itemStack.getItem().getRegistryName())
-                        .append("'");
-                if (itemStack.getMetadata() != 0) {
-                    builder.append(", ")
-                            .append(itemStack.getMetadata());
-                }
-                builder.append(")");
+                builder.append(IngredientHelper.asGroovyCode(itemStack, false));
             }
 
-            if (itemStack.serializeNBT().hasKey("tag")) {
-                String nbt = NBTConverter.from(itemStack.serializeNBT().getCompoundTag("tag"), false).toString();
-                if (nbt.length() > 0) {
-                    builder.append(".withTag(").append(nbt).append(")");
-                }
+            if (itemStack.getTagCompound() != null) {
+                builder.append(".withNbt(")
+                        .append(NbtHelper.toGroovyCode(itemStack.getTagCompound(), false, false))
+                        .append(")");
             }
         }
 
