@@ -90,6 +90,12 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
+    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        this.isWorkingAllowed = !this.isWorkingAllowed;
+        return EnumActionResult.SUCCESS;
+    }
+
+    @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(nullItemHandler);

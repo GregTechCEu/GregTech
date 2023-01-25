@@ -80,6 +80,12 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     @Override
+    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        this.isWorkingAllowed = !this.isWorkingAllowed;
+        return EnumActionResult.SUCCESS;
+    }
+
+    @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(nullFluidTank);
