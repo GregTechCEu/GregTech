@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
@@ -13,54 +14,40 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.regex.Pattern;
 
-public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWithUI, ITickable {
+public class CoverDetectorItemAdvanced extends CoverBehavior implements CoverWithUI, ITickable {
 
     private boolean isInverted;
     private int min, max;
-    protected FluidFilterContainer fluidFilter;
+    protected ItemFilterContainer itemFilter;
 
-    public CoverDetectorFluidAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
+    public CoverDetectorItemAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.isInverted = false;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
-        this.min = 1000; // 1 Bucket
-        this.max = 16000; // 16 Buckets
+        this.itemFilter = new ItemFilterContainer(this);
+        this.min = 64;
+        this.max = 512;
     }
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null) != null;
-    }
-
-    protected boolean shouldShowTip() {
-        return false;
-    }
-
-    @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!this.coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
-        }
-        return EnumActionResult.SUCCESS;
+        return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) != null;
     }
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_FLUID.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.DETECTOR_ITEM.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -69,40 +56,38 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
         int SIZE = 18;
 
         WidgetGroup group = new WidgetGroup();
-        group.addWidget(new LabelWidget(10, 8, "cover.advanced_fluid_detector.label"));
+        group.addWidget(new LabelWidget(10, 8, "cover.advanced_item_detector.label"));
 
         // set min fluid amount
-        group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_fluid_detector.min"));
+        group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_item_detector.min"));
         group.addWidget(new ImageWidget(98 - 4, (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
                 .setMaxLength(10)
                 .setAllowedChars(Pattern.compile(".[0-9]*"))
-                .setPostFix("L")
         );
 
         // set max fluid amount
-        group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_fluid_detector.max"));
+        group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_item_detector.max"));
         group.addWidget(new ImageWidget(98 - 4, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
                 .setMaxLength(10)
                 .setAllowedChars(Pattern.compile(".[0-9]*"))
-                .setPostFix("L")
         );
 
         // invert logic button
         group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
         group.addWidget(new CycleButtonWidget(98 - 4, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                 "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                .setTooltipHoverString("cover.advanced_fluid_detector.invert_tooltip")
+                .setTooltipHoverString("cover.advanced_item_detector.invert_tooltip")
         );
 
-        this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
+        this.itemFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 160 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 184 + 82)
                 .widget(group)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 160)
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184)
                 .build(this, player);
     }
 
@@ -118,7 +103,7 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
             this.min = Math.min(max - 1, c);
         } catch (NumberFormatException e) {
             GTLog.logger.warn(e);
-            this.min = Math.max(max - 1, 1000);
+            this.min = Math.max(max - 1, 64);
         }
     }
     private void setMaxValue(String val){
@@ -127,37 +112,42 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
             max = Math.max(min + 1, c);
         } catch (NumberFormatException e) {
             GTLog.logger.warn(e);
-            this.max = Math.max(min + 1, 16000);
+            this.max = Math.max(min + 1, 512);
         }
     }
+
     private boolean isInverted(){
         return this.isInverted;
     }
     private void setInverted(boolean b){
         this.isInverted = b;
     }
+
+    @Override
+    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        if (!this.coverHolder.getWorld().isRemote) {
+            openUI((EntityPlayerMP) playerIn);
+        }
+        return EnumActionResult.SUCCESS;
+    }
+
     @Override
     public void update() {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
             return;
 
-        IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-        if (fluidHandler == null)
+        IItemHandler itemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (itemHandler == null)
             return;
 
-        IFluidTankProperties[] tankProperties = fluidHandler.getTankProperties();
-        int storedFluid = 0;
+        int storedItems = 0;
 
-        for (IFluidTankProperties properties : tankProperties) {
-            FluidStack contents = properties.getContents();
-
-            if (contents != null && fluidFilter.testFluidStack(contents))
-                storedFluid += contents.amount;
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            if(itemFilter.testItemStack(itemHandler.getStackInSlot(i)))
+                storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        int outputAmount = compareValue(storedFluid, max, min);
-
-        setRedstoneSignalOutput(outputAmount);
+        setRedstoneSignalOutput(compareValue(storedItems, max, min));
     }
 
     private int compareValue(int value, float maxValue, float minValue) {
@@ -176,6 +166,10 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
 
         return Math.round(ratio);
     }
+    @Override
+    public boolean canConnectRedstone() {
+        return true;
+    }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
@@ -183,7 +177,7 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
         tagCompound.setBoolean("isInverted", this.isInverted);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
-        tagCompound.setTag("filter", fluidFilter.serializeNBT());
+        tagCompound.setTag("filter", itemFilter.serializeNBT());
 
         return tagCompound;
     }
@@ -194,7 +188,7 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
         this.isInverted = tagCompound.getBoolean("isInverted");
         this.min = tagCompound.getInteger("min");
         this.max = tagCompound.getInteger("max");
-        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
+        this.itemFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
 
     @Override
