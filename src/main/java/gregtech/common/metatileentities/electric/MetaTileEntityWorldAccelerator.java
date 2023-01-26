@@ -13,7 +13,10 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -34,6 +37,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
@@ -41,6 +45,8 @@ import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
 public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity implements IControllable {
 
+    private static final Map<String, Class<?>> blacklistedClasses = new Object2ObjectOpenHashMap<>();
+    private static boolean gatheredClasses = false;
     private static Class<?> cofhTileClass;
 
     private static boolean considerTile(TileEntity tile) {
@@ -48,12 +54,32 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) {
             return false;
         }
+
         if (cofhTileClass == null) {
             try {
                 cofhTileClass = Class.forName("cofh.thermalexpansion.block.device.TileDeviceBase");
-            } catch (Exception ignored) {}
+            } catch (ClassNotFoundException ignored) {}
         }
-        return cofhTileClass == null || !cofhTileClass.isInstance(tile);
+        if (cofhTileClass != null) return !cofhTileClass.isInstance(tile);
+
+        if (!gatheredClasses) {
+            for (String name : ConfigHolder.machines.worldAcceleratorBlacklist) {
+                if (!blacklistedClasses.containsKey(name)) {
+                    try {
+                        blacklistedClasses.put(name, Class.forName(name));
+                    } catch (ClassNotFoundException ignored) {
+                        GTLog.logger.warn("Could not find class {} for World Accelerator Blacklist.", name);
+                    }
+                }
+            }
+            gatheredClasses = true;
+        }
+
+        for (Class<?> clazz : blacklistedClasses.values()) {
+            if (clazz != null && clazz.isInstance(tile)) return false;
+        }
+
+        return true;
     }
 
     private final long energyPerTick;
