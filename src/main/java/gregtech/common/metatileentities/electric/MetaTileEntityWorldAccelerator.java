@@ -16,6 +16,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -45,22 +46,14 @@ import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
 public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity implements IControllable {
 
+    private static final String COFH_CLASS_NAME = "cofh.thermalexpansion.block.device.TileDeviceBase";
+
     private static final Map<String, Class<?>> blacklistedClasses = new Object2ObjectOpenHashMap<>();
+    private static final Map<Class<? extends TileEntity>, Boolean> blacklistCache = new Object2BooleanOpenHashMap<>();
     private static boolean gatheredClasses = false;
-    private static Class<?> cofhTileClass;
 
     private static boolean considerTile(TileEntity tile) {
-        // TODO interface for this?
-        if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) {
-            return false;
-        }
-
-        if (cofhTileClass == null) {
-            try {
-                cofhTileClass = Class.forName("cofh.thermalexpansion.block.device.TileDeviceBase");
-            } catch (ClassNotFoundException ignored) {}
-        }
-        if (cofhTileClass != null) return !cofhTileClass.isInstance(tile);
+        if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) return false;
 
         if (!gatheredClasses) {
             for (String name : ConfigHolder.machines.worldAcceleratorBlacklist) {
@@ -72,14 +65,22 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                     }
                 }
             }
+            try {
+                blacklistedClasses.put(COFH_CLASS_NAME, Class.forName(COFH_CLASS_NAME));
+            } catch (ClassNotFoundException ignored) {/**/}
+
             gatheredClasses = true;
         }
 
-        for (Class<?> clazz : blacklistedClasses.values()) {
-            if (clazz != null && clazz.isInstance(tile)) return false;
-        }
-
-        return true;
+        return blacklistCache.computeIfAbsent(tile.getClass(), c -> {
+            for (Class<?> clazz : blacklistedClasses.values()) {
+                if (clazz.isAssignableFrom(c)) {
+                    blacklistCache.put(c, true);
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 
     private final long energyPerTick;
