@@ -514,7 +514,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                     MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
                     for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
                         if (behaviour instanceof LighterBehaviour) {
-                            ((LighterBehaviour) behaviour).prepareLighter(stack);
                             if (((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
 
                                 // lighter sound does not get played when handled like this
