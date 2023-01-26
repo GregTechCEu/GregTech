@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 
+import javax.annotation.Nullable;
+
 public class DamageSources {
 
     private static final DamageSource EXPLOSION = new DamageSource("explosion").setExplosion();
@@ -48,9 +50,9 @@ public class DamageSources {
 
     // accessed via ASM
     @SuppressWarnings("unused")
-    public static DamageSource getPlayerDamage(EntityPlayer source) {
-        ItemStack stack = source.getHeldItemMainhand();
-        if (stack != ItemStack.EMPTY && stack.getItem() instanceof IGTTool) {
+    public static DamageSource getPlayerDamage(@Nullable EntityPlayer source) {
+        ItemStack stack = source != null ? source.getHeldItemMainhand() : ItemStack.EMPTY;
+        if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
             return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getId()));
         }
@@ -59,9 +61,9 @@ public class DamageSources {
 
     // accessed via ASM
     @SuppressWarnings("unused")
-    public static DamageSource getMobDamage(EntityLivingBase source) {
-        ItemStack stack = source.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-        if (stack != ItemStack.EMPTY && stack.getItem() instanceof IGTTool) {
+    public static DamageSource getMobDamage(@Nullable EntityLivingBase source) {
+        ItemStack stack = source != null ? source.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND) : ItemStack.EMPTY;
+        if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
             return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getId()));
         }
