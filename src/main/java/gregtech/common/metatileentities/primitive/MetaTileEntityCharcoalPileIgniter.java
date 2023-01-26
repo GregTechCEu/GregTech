@@ -20,6 +20,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -44,7 +45,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.input.Keyboard;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -342,11 +342,11 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.2"));
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (TooltipHelper.isCtrlDown()) {
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.3"));
             tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.4"));
         } else {
-            tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+            tooltip.add(I18n.format("gregtech.tooltip.hold_ctrl"));
         }
     }
 
@@ -533,5 +533,10 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                 }
             }
         }
+    }
+
+    @Override
+    public boolean hasFrontFacing() {
+        return false;
     }
 }
