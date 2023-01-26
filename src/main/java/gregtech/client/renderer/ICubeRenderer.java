@@ -6,11 +6,19 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import java.io.IOException;
+
 public interface ICubeRenderer extends IIconRegister {
+
+    String EMISSIVE = "emissive";
 
     @SideOnly(Side.CLIENT)
     default void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
@@ -55,4 +63,17 @@ public interface ICubeRenderer extends IIconRegister {
         renderOrientedState(renderState, translation, pipeline, Cuboid6.full, frontFacing, isActive, isWorkingEnabled);
     }
 
+    /**
+     * @param manager  the ResourceManager to retrieve resources from
+     * @param location the location of the resource
+     * @return if the resource exists
+     */
+    @SideOnly(Side.CLIENT)
+    static boolean resourceExists(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location) {
+        try (IResource ignored1 = manager.getResource(location)) {
+            return true;
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
 }

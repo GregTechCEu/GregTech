@@ -5,15 +5,16 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.OverlayFace;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -26,8 +27,10 @@ import java.util.Map;
 
 public class SidedCubeRenderer implements ICubeRenderer {
 
+    private static final String BASE_DIR = "blocks/%s/%s";
+    private static final String TEXTURE_DIR = "textures/blocks/%s.png";
+
     protected final String basePath;
-    protected final OverlayFace[] faces;
 
     @SideOnly(Side.CLIENT)
     protected Map<OverlayFace, TextureAtlasSprite> sprites;
@@ -35,9 +38,16 @@ public class SidedCubeRenderer implements ICubeRenderer {
     @SideOnly(Side.CLIENT)
     protected Map<OverlayFace, TextureAtlasSprite> spritesEmissive;
 
-    public SidedCubeRenderer(String basePath, OverlayFace... faces) {
+    /**
+     * @deprecated Use {@link SidedCubeRenderer#basePath}. OverlayFace directions are determined automatically.
+     */
+    @Deprecated
+    public SidedCubeRenderer(String basePath, OverlayFace... ignored) {
         this.basePath = basePath;
-        this.faces = faces;
+    }
+
+    public SidedCubeRenderer(String basePath) {
+        this.basePath = basePath;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
@@ -54,13 +64,22 @@ public class SidedCubeRenderer implements ICubeRenderer {
         }
         this.sprites = new EnumMap<>(OverlayFace.class);
         this.spritesEmissive = new EnumMap<>(OverlayFace.class);
-        for (OverlayFace overlayFace : faces) {
-            String faceName = overlayFace.name().toLowerCase();
-            ResourceLocation resourceLocation = new ResourceLocation(modID, String.format("blocks/%s/%s", basePath, faceName));
+
+        final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+
+        for (OverlayFace overlayFace : OverlayFace.VALUES) {
+            final String faceName = overlayFace.name().toLowerCase();
+            final String overlayPath = String.format(BASE_DIR, basePath, faceName);
+
+            boolean exists = ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, overlayPath)));
+            if (!exists) continue;
+
+            ResourceLocation resourceLocation = new ResourceLocation(modID, overlayPath);
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
-            ResourceLocation emissiveLocation = new ResourceLocation(modID, String.format("blocks/%s/%s_emissive", basePath, faceName));
-            if (ResourceHelper.isTextureExist(emissiveLocation)) {
-                spritesEmissive.put(overlayFace, textureMap.registerSprite(emissiveLocation));
+
+            final String emissive = overlayPath + EMISSIVE;
+            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, emissive)))) {
+                spritesEmissive.put(overlayFace, textureMap.registerSprite(new ResourceLocation(modID, emissive)));
             }
         }
     }

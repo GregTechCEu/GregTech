@@ -6,15 +6,16 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import gregtech.api.GTValues;
-import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -22,13 +23,19 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 
 public class OrientedOverlayRenderer implements ICubeRenderer {
 
+    private static final String TEXTURE_DIR = "textures/%s.png";
+
     public enum OverlayFace {
         FRONT, BACK, TOP, BOTTOM, SIDE;
+
+        public static final OverlayFace[] VALUES = values();
 
         public static OverlayFace bySide(EnumFacing side, EnumFacing frontFacing) {
             if (side == frontFacing) {
@@ -44,7 +51,6 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
     }
 
     protected final String basePath;
-    protected final OverlayFace[] faces;
 
     @SideOnly(Side.CLIENT)
     public Map<OverlayFace, ActivePredicate> sprites;
@@ -98,13 +104,19 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
         }
     }
 
-    public OrientedOverlayRenderer(String basePath, OverlayFace... faces) {
+    /**
+     * @deprecated Use {@link OrientedOverlayRenderer#basePath}. OverlayFace directions are determined automatically.
+     */
+    @Deprecated
+    public OrientedOverlayRenderer(@Nonnull String basePath, @Nullable OverlayFace... ignored) {
+        this(basePath);
+    }
+
+    public OrientedOverlayRenderer(@Nonnull String basePath) {
         this.basePath = basePath;
-        this.faces = faces;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
-
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -117,22 +129,51 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             modID = split[0];
             basePath = split[1];
         }
-        for (OverlayFace overlayFace : faces) {
-            String faceName = overlayFace.name().toLowerCase();
-            ResourceLocation normalLocation = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s", basePath, faceName));
-            TextureAtlasSprite normalSprite = textureMap.registerSprite(normalLocation);
-            ResourceLocation activeLocation = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_active", basePath, faceName));
-            TextureAtlasSprite activeSprite = textureMap.registerSprite(activeLocation);
-            ResourceLocation pausedLocation = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_paused", basePath, faceName));
-            TextureAtlasSprite pausedSprite = ResourceHelper.isTextureExist(pausedLocation) ? textureMap.registerSprite(pausedLocation) : null;
 
-            ResourceLocation normalLocationEmissive = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_emissive", basePath, faceName));
-            TextureAtlasSprite normalSpriteEmissive = ResourceHelper.isTextureExist(normalLocationEmissive) ? textureMap.registerSprite(normalLocationEmissive) : null;
-            ResourceLocation activeLocationEmissive = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_active_emissive", basePath, faceName));
-            TextureAtlasSprite activeSpriteEmissive = ResourceHelper.isTextureExist(activeLocationEmissive) ? textureMap.registerSprite(activeLocationEmissive) : null;
-            ResourceLocation pausedLocationEmissive = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_paused_emissive", basePath, faceName));
-            TextureAtlasSprite pausedSpriteEmissive = ResourceHelper.isTextureExist(pausedLocationEmissive) ? textureMap.registerSprite(pausedLocationEmissive) : null;
-            sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, pausedSprite, normalSpriteEmissive, activeSpriteEmissive, pausedSpriteEmissive));
+        final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        for (OverlayFace overlayFace : OverlayFace.VALUES) {
+            final String faceName = overlayFace.name().toLowerCase();
+            final String overlayPath = String.format("blocks/%s/overlay_%s", basePath, faceName);
+
+            // if a normal texture location is found, try to find the rest
+            boolean exists = ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, overlayPath)));
+            if (!exists) continue;
+
+            // normal
+
+            TextureAtlasSprite normalSprite = textureMap.registerSprite(new ResourceLocation(modID, overlayPath));
+
+            final String active = String.format("%s_active", overlayPath);
+            TextureAtlasSprite activeSprite = textureMap.registerSprite(new ResourceLocation(modID, active));
+
+            TextureAtlasSprite pausedSprite;
+            final String paused = String.format("%s_paused", overlayPath);
+            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, paused)))) {
+                pausedSprite = textureMap.registerSprite(new ResourceLocation(modID, paused));
+            } else pausedSprite = null;
+
+            // emissive
+
+            TextureAtlasSprite normalSpriteEmissive;
+            final String normal_emissive = overlayPath + EMISSIVE;
+            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, normal_emissive)))) {
+                normalSpriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, normal_emissive));
+            } else normalSpriteEmissive = null;
+
+            TextureAtlasSprite activeSpriteEmissive;
+            final String active_emissive = active + EMISSIVE;
+            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, active_emissive)))) {
+                activeSpriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, active_emissive));
+            } else activeSpriteEmissive = null;
+
+            TextureAtlasSprite pausedSpriteEmissive;
+            final String paused_emissive = paused + EMISSIVE;
+            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, paused_emissive)))) {
+                pausedSpriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, paused_emissive));
+            } else pausedSpriteEmissive = null;
+
+            sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, pausedSprite,
+                    normalSpriteEmissive, activeSpriteEmissive, pausedSpriteEmissive));
         }
     }
 
@@ -194,5 +235,4 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             }
         }
     }
-
 }
