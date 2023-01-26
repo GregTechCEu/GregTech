@@ -3,6 +3,7 @@ package gregtech.common.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
+import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
 import gregtech.common.items.MetaItems;
@@ -28,8 +29,15 @@ import java.util.List;
 
 public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
 
+    @SideOnly(Side.CLIENT)
+    protected ArmorUtils.ModularHUD HUD;
+
     public NanoMuscleSuite(EntityEquipmentSlot slot, int energyPerUse, long maxCapacity, int tier) {
         super(energyPerUse, maxCapacity, tier, slot);
+        if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
+            //noinspection NewExpressionSideOnly
+            HUD = new ArmorUtils.ModularHUD();
+        }
     }
 
     @Override
@@ -137,13 +145,9 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return true;
-    }
-
     @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         this.HUD.draw();
         this.HUD.reset();
     }

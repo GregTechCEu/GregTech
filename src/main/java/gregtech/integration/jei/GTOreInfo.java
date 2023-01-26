@@ -36,7 +36,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 
-import static gregtech.api.GTValues.*;
+import static gregtech.api.GTValues.M;
+import static gregtech.api.GTValues.MODID_CC;
 
 public class GTOreInfo implements IRecipeWrapper {
 
@@ -228,7 +229,7 @@ public class GTOreInfo implements IRecipeWrapper {
         if (veinPopulator instanceof SurfaceRockPopulator) {
             mat = ((SurfaceRockPopulator) veinPopulator).getMaterial();
             // Create a Tiny Dust for the Identifier.
-            stack = OreDictUnifier.getDust(mat.createMaterialStack(M / 9));
+            stack = OreDictUnifier.getDust(mat.multiply(M / 9));
             return stack.isEmpty() ? new ItemStack(Items.AIR) : stack;
         }
         // Surface Block support

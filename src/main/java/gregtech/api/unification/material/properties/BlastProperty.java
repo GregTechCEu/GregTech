@@ -2,6 +2,8 @@ package gregtech.api.unification.material.properties;
 
 import crafttweaker.CraftTweakerAPI;
 
+import javax.annotation.Nonnull;
+
 public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     /**
@@ -16,21 +18,21 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     /**
      * The {@link GasTier} of this Material, representing which Gas EBF recipes will be generated.
-     *
+     * <p>
      * Default: null, meaning no Gas EBF recipes.
      */
     private GasTier gasTier = null;
 
     /**
      * The duration of the EBF recipe, overriding the stock behavior.
-     *
+     * <p>
      * Default: -1, meaning the duration will be: material.getAverageMass() * blastTemperature / 50
      */
     private int durationOverride = -1;
 
     /**
      * The EU/t of the EBF recipe, overriding the stock behavior.
-     *
+     * <p>
      * Default: -1, meaning the EU/t will be 120.
      */
     private int eutOverride = -1;
@@ -66,12 +68,24 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
         return gasTier;
     }
 
+    public void setGasTier(@Nonnull GasTier tier) {
+        this.gasTier = tier;
+    }
+
     public int getDurationOverride() {
         return durationOverride;
     }
 
+    public void setDurationOverride(int duration) {
+        this.durationOverride = duration;
+    }
+
     public int getEUtOverride() {
         return eutOverride;
+    }
+
+    public void setEutOverride(int eut) {
+        this.eutOverride = eut;
     }
 
     @Override
@@ -85,14 +99,14 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     public static GasTier validateGasTier(String gasTierName) {
         if (gasTierName == null) return null;
-        else if (gasTierName.equalsIgnoreCase("LOW")) return GasTier.LOW;
-        else if (gasTierName.equalsIgnoreCase("MID")) return GasTier.MID;
-        else if (gasTierName.equalsIgnoreCase("HIGH")) return GasTier.HIGH;
-        else if (gasTierName.equalsIgnoreCase("HIGHER")) return GasTier.HIGHER;
-        else if (gasTierName.equalsIgnoreCase("HIGHEST")) return GasTier.HIGHEST;
+        else if ("LOW".equalsIgnoreCase(gasTierName)) return GasTier.LOW;
+        else if ("MID".equalsIgnoreCase(gasTierName)) return GasTier.MID;
+        else if ("HIGH".equalsIgnoreCase(gasTierName)) return GasTier.HIGH;
+        else if ("HIGHER".equalsIgnoreCase(gasTierName)) return GasTier.HIGHER;
+        else if ("HIGHEST".equalsIgnoreCase(gasTierName)) return GasTier.HIGHEST;
         else {
             CraftTweakerAPI.logError("Gas Tier must be either \"LOW\", \"MID\", \"HIGH\", \"HIGHER\", or \"HIGHEST\"");
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Could not find valid gas tier for name: " + gasTierName);
         }
     }
 
