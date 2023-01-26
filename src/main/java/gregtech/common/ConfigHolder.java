@@ -59,9 +59,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable World Accelerators, which accelerate ticks for surrounding Tile Entities, Crops, etc.", "Default: true"})
         public boolean enableWorldAccelerators = true;
 
-        @Config.Comment({"List for TileEntities that the World Accelerator should not be able to accelerate.",
+        @Config.Comment({"List of TileEntities that the World Accelerator should not accelerate.",
                 "GregTech TileEntities are always blocked.",
-                "Entries must be in a fully qualified format. For example: gregtech.api.metatileentity.interfaces.IGregTechTileEntity",
+                "Entries must be in a fully qualified format. For example: appeng.tile.networking.TileController",
                 "Default: none"})
         public String[] worldAcceleratorBlacklist = new String[0];
 
