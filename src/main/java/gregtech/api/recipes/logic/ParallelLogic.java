@@ -440,7 +440,12 @@ public abstract class ParallelLogic {
         if (multiplierByInputs == 0) {
             return null;
         }
-        RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
+        // Make a copy of the recipe builder and zero the EUt, since we append
+        // the total multiplied EUt, and not doing so may add an extra multiple
+        // for the EUt (for example, x2 recipes but x3 EUt) if the original
+        // recipe builder already has a cost applied. Don't also zero the
+        // duration as it doesn't get multiplied.
+        RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder().EUt(0);
 
         boolean voidItems = voidable.canVoidRecipeItemOutputs();
         boolean voidFluids = voidable.canVoidRecipeFluidOutputs();

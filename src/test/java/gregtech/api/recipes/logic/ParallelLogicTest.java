@@ -5,22 +5,29 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
+import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static gregtech.api.recipes.logic.ParallelLogic.doParallelRecipes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class ParallelLogicTest {
 
@@ -939,6 +946,39 @@ public class ParallelLogicTest {
                 recipe, parallelLimit);
 
         assertThat(secondFluidRatio, is(parallelLimit));
+
+    }
+
+    @Test
+    public void doParallelRecipes_ExistingEUValueTest() {
+
+        int parallelAmount = 4;
+
+        // Do not specify the EUt or duration to test how they are taken into account
+        Recipe maceratorRecipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .input(Blocks.STONE)
+                .output(Items.CARROT)
+                .build().getResult();
+
+        MetaTileEntityMacerator macerator = MetaTileEntities.registerMetaTileEntity(1, new MetaTileEntityMacerator(
+                new ResourceLocation(GTValues.MODID, "macerator"),
+                RecipeMaps.MACERATOR_RECIPES,
+                4,
+                null,
+                GTValues.EV));
+
+        macerator.getImportItems().setStackInSlot(0, new ItemStack(Blocks.STONE, 10));
+
+        RecipeBuilder<?> testMaceratorRecipe = doParallelRecipes(maceratorRecipe, RecipeMaps.MACERATOR_RECIPES, macerator.getImportItems(),
+                macerator.getImportFluids(), macerator.getExportItems(), macerator.getExportFluids(), parallelAmount, GTValues.V[GTValues.EV], macerator);
+
+        assertThat(testMaceratorRecipe, notNullValue());
+
+        // 2 is the default EUt value assigned to macerator recipes when not specified
+        assertThat(testMaceratorRecipe.getEUt(), is(2 * parallelAmount));
+
+        // 150 is the default duration value assigned to macerator recipes when not specified
+        assertThat(testMaceratorRecipe.getDuration(), is(150));
 
     }
 }

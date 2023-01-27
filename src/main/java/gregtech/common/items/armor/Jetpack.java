@@ -26,8 +26,15 @@ import java.util.List;
 
 public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
+    @SideOnly(Side.CLIENT)
+    protected ArmorUtils.ModularHUD HUD;
+
     public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
+        if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
+            //noinspection NewExpressionSideOnly
+            HUD = new ArmorUtils.ModularHUD();
+        }
     }
 
     @Override
@@ -99,14 +106,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean isNeedDrawHUD() {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
             if (data.hasKey("hover")) {
