@@ -268,4 +268,15 @@ public class MaterialFlags {
     public static final MaterialFlag HIGH_SIFTER_OUTPUT = new MaterialFlag.Builder("high_sifter_output")
             .requireProps(PropertyKey.GEM, PropertyKey.ORE)
             .build();
+
+    //////////////////
+    //     TOOL     //
+    //////////////////
+
+    /**
+     * Adds extra durability to tools made from this material
+     */
+    public static final MaterialFlag STURDY = new MaterialFlag.Builder("sturdy")
+            .requireProps(PropertyKey.TOOL)
+            .build();
 }
