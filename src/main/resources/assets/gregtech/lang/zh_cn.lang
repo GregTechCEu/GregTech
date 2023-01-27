@@ -4654,7 +4654,7 @@ gregtech.machine.muffler_hatch.uxv.name=UXV 消声仓
 gregtech.machine.muffler_hatch.opv.name=OpV 消声仓
 gregtech.machine.muffler_hatch.max.name=MAX 消声仓
 
-gregtech.muffler.recovery_tooltip=恢复物品 §b%d%%§7 的时间!
+gregtech.muffler.recovery_tooltip=§b回收几率：§f%d%%
 
 gregtech.machine.pump_hatch.name=泵输出仓
 gregtech.machine.pump_hatch.tooltip=原始流体输出水泵
