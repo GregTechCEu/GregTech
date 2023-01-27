@@ -184,13 +184,9 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return true;
-    }
-
     @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) return;
         if (!cont.canUse(energyPerUse)) return;
