@@ -6,6 +6,8 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BuiltInRenderBlock;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.CoverSideData;
@@ -46,6 +48,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,10 +56,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import javax.tools.Tool;
+import java.util.*;
 
 import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 
@@ -332,7 +333,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
 
         if (!(hit.cuboid6.data instanceof CoverSideData)) {
-            switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer)) {
+            switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer, hand)) {
                 case SUCCESS:
                     return true;
                 case FAIL:
@@ -342,6 +343,16 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
         if (coverBehavior == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
+        }
+
+        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
+            if (coverBehavior.onSoftMalletClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
+                ToolHelper.damageItem(itemStack, entityPlayer);
+                if (itemStack.getItem() instanceof IGTTool) {
+                    ((IGTTool) itemStack.getItem()).playSound(entityPlayer);
+                }
+                return true;
+            }
         }
 
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
@@ -376,7 +387,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * @return 1 if successfully used tool, 0 if failed to use tool,
      * -1 if ItemStack failed the capability check (no action done, continue checks).
      */
-    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
+    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer, EnumHand hand) {
         if (isPipeTool(stack)) {
             if (!entityPlayer.world.isRemote) {
                 if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
@@ -395,6 +406,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 ToolHelper.damageItem(stack, entityPlayer);
                 return EnumActionResult.SUCCESS;
             }
+            entityPlayer.swingArm(hand);
         }
         return EnumActionResult.PASS;
     }
