@@ -146,7 +146,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-        toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability());
+        int maxAOEArea = Math.max(getMaxAoEDefinition(stack).column, Math.max(getMaxAoEDefinition(stack).row, getMaxAoEDefinition(stack).layer));
+        toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability() * maxAOEArea);
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
