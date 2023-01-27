@@ -344,9 +344,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
             if (coverBehavior.onSoftMalletClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
                 ToolHelper.damageItem(itemStack, entityPlayer);
-                if (itemStack.getItem() instanceof IGTTool) {
-                    ((IGTTool) itemStack.getItem()).playSound(entityPlayer);
-                }
+                ToolHelper.playToolSound(itemStack, entityPlayer);
                 return true;
             }
         }
