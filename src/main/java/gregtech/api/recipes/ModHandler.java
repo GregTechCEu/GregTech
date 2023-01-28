@@ -222,11 +222,11 @@ public final class ModHandler {
      * @param experience the experience of the recipe
      */
     public static void addSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, float experience) {
-        if (input.isEmpty()) {
-            if (setErroredInvalidRecipe("Furnace Recipe Input cannot be an empty ItemStack")) return;
+        if (input.isEmpty() && setErroredInvalidRecipe("Furnace Recipe Input cannot be an empty ItemStack")) {
+            return;
         }
-        if (output.isEmpty()) {
-            if (setErroredInvalidRecipe("Furnace Recipe Output cannot be an empty ItemStack")) return;
+        if (output.isEmpty() && setErroredInvalidRecipe("Furnace Recipe Output cannot be an empty ItemStack")) {
+            return;
         }
 
         FurnaceRecipes recipes = FurnaceRecipes.instance();
@@ -792,12 +792,12 @@ public final class ModHandler {
 
     /**
      * @param world  the world to check the output from
-     * @param recipe the recipe to retrieve from
+     * @param recipe the recipe to retrieve from. Must not contain null values.
      * @return a Pair of the recipe, and the output
      */
     @Nonnull
-    public static Pair<IRecipe, ItemStack> getRecipeOutput(@Nullable World world, @Nonnull ItemStack... recipe) {
-        if (recipe.length == 0) return ImmutablePair.of(null, ItemStack.EMPTY);
+    public static Pair<IRecipe, ItemStack> getRecipeOutput(@Nullable World world, @Nullable ItemStack[] recipe) {
+        if (recipe == null || recipe.length == 0) return ImmutablePair.of(null, ItemStack.EMPTY);
         if (world == null) world = DummyWorld.INSTANCE;
 
         InventoryCrafting craftingGrid = new InventoryCrafting(new DummyContainer(), 3, 3);
