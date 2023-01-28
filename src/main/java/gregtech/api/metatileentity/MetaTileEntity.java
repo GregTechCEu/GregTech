@@ -436,7 +436,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             } else return onScrewdriverClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
-            if (getCoverAtSide(hitResult.sideHit) != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+            if (getCoverAtSide(hitResult.sideHit) != null && getCoverAtSide(hitResult.sideHit).onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
                 return true;
             } else return onSoftMalletClick(playerIn, hand, gridSideHit, hitResult);
         }
