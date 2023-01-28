@@ -321,8 +321,8 @@ public class ConfigHolder {
                 "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
         public int defaultUIColor = 0xD2DCFF;
 
-        @Config.Comment("Whether some tooltips should be blinking for better visibility")
-        public boolean blinkingTooltips = true;
+        @Config.Comment("Prevent tooltips from blinking for better visibility")
+        public boolean blinkingTooltips = false;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})

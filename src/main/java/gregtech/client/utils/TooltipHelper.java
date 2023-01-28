@@ -44,7 +44,7 @@ public class TooltipHelper {
      * @param codes The codes, in order, that this formatting code should oscillate through. MUST be at least 2.
      */
     public static GTFormatCode createNewCode(int rate, TextFormatting... codes) {
-        if (rate <= 0 && !ConfigHolder.client.blinkingTooltips) {
+        if (rate <= 0) {
             GTLog.logger.error("Could not create GT Format Code with rate {}, must be greater than zero!", rate);
             return null;
         }
@@ -58,7 +58,7 @@ public class TooltipHelper {
     }
 
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (ConfigHolder.client.blinkingTooltips && event.phase == TickEvent.Phase.END) {
+        if (event.phase == TickEvent.Phase.END) {
             CODES.forEach(GTFormatCode::updateIndex);
         }
     }
@@ -83,7 +83,7 @@ public class TooltipHelper {
         }
 
         private void updateIndex() {
-            if (CLIENT_TIME % rate == 0) {
+            if (CLIENT_TIME % rate == 0 && !ConfigHolder.client.blinkingTooltips) {
                 if (index + 1 >= codes.length) index = 0;
                 else index++;
             }
