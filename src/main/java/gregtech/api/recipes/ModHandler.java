@@ -796,7 +796,7 @@ public final class ModHandler {
      * @return a Pair of the recipe, and the output
      */
     @Nonnull
-    public static Pair<IRecipe, ItemStack> getRecipeOutput(@Nullable World world, @Nullable ItemStack[] recipe) {
+    public static Pair<IRecipe, ItemStack> getRecipeOutput(@Nullable World world, @Nullable ItemStack... recipe) {
         if (recipe == null || recipe.length == 0) return ImmutablePair.of(null, ItemStack.EMPTY);
         if (world == null) world = DummyWorld.INSTANCE;
 
