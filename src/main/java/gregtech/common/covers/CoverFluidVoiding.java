@@ -21,6 +21,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -81,6 +82,10 @@ public class CoverFluidVoiding extends CoverPump {
 
     @Override
     public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        if (!playerIn.world.isRemote) {
+            playerIn.sendMessage(new TextComponentTranslation(!isWorkingEnabled() ?
+                    "behaviour.cover.voiding.enabled" : "behaviour.cover.voiding.disabled"));
+        }
         this.isWorkingAllowed = !this.isWorkingAllowed;
         return EnumActionResult.SUCCESS;
     }
