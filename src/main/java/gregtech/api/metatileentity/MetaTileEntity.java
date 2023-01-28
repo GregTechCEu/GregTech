@@ -436,7 +436,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             } else return onScrewdriverClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
-            if (coverBehavior != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+            if (getCoverAtSide(hitResult.sideHit) != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
                 return true;
             } else return onSoftMalletClick(playerIn, hand, gridSideHit, hitResult);
         }
@@ -497,6 +497,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        CoverBehavior behavior = getCoverAtSide(hitResult.sideHit);
+        if (behavior != null && behavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+            return true;
+        }
+
         IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         if (controllable != null) {
             controllable.setWorkingEnabled(!controllable.isWorkingEnabled());
