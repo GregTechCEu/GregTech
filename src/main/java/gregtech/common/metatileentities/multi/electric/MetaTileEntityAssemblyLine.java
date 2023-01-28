@@ -161,22 +161,13 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 Vector3 endPos = startPos.copy().subtract(0, 1, 0);
 
                 beamParticles[i][0] = createALParticles(getWorld(), startPos, endPos);
-                beamParticles[i][0].setOnUpdate(p -> { // remove it if machine is inValid
-                    if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos()) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
-                        p.setExpired();
-                    }
-                });
+
                 pos.setPos(getPos());
                 startPos = new Vector3().add(
                                 pos.move(getFrontFacing().rotateY().getOpposite(), i).move(getFrontFacing().getOpposite(), 2))
                         .add(0.5, 0, 0.5);
                 endPos = startPos.copy().subtract(0, 1, 0);
                 beamParticles[i][1] = createALParticles(getWorld(), startPos, endPos);
-                beamParticles[i][1].setOnUpdate(p -> { // remove it if machine is inValid
-                    if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos()) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
-                        p.setExpired();
-                    }
-                });
 
                 // Don't forget to add particles
                 GTParticleManager.INSTANCE.addEffect(beamParticles[i][0], beamParticles[i][1]);
@@ -191,7 +182,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
-        return new GTLaserBeamParticle(world, startPos, endPos)
+        GTLaserBeamParticle particle =  new GTLaserBeamParticle(world, startPos, endPos)
                 .setBody(LASER_LOCATION)
                 .setBeamHeight(0.125f)
                 // Try commenting or adjusting on the next four lines to see what happens
@@ -199,5 +190,13 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .setHead(LASER_HEAD_LOCATION)
                 .setHeadWidth(0.1f)
                 .setEmit(0.2f);
+
+        particle.setOnUpdate(p -> {
+            if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos()) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
+                p.setExpired();
+            }
+        });
+
+        return particle;
     }
 }
