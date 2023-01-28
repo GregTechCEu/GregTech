@@ -12,10 +12,8 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -29,8 +27,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class OrientedOverlayRenderer implements ICubeRenderer {
-
-    private static final String TEXTURE_DIR = "textures/%s.png";
 
     public enum OverlayFace {
         FRONT, BACK, TOP, BOTTOM, SIDE;
@@ -130,47 +126,30 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             basePath = split[1];
         }
 
-        final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
         for (OverlayFace overlayFace : OverlayFace.VALUES) {
             final String faceName = overlayFace.name().toLowerCase();
             final String overlayPath = String.format("blocks/%s/overlay_%s", basePath, faceName);
 
             // if a normal texture location is found, try to find the rest
-            boolean exists = ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, overlayPath)));
-            if (!exists) continue;
+            TextureAtlasSprite normalSprite = ICubeRenderer.getResource(textureMap, modID, overlayPath);
+            // require the normal texture to get the rest
+            if (normalSprite == null) continue;
 
             // normal
-
-            TextureAtlasSprite normalSprite = textureMap.registerSprite(new ResourceLocation(modID, overlayPath));
 
             final String active = String.format("%s_active", overlayPath);
             TextureAtlasSprite activeSprite = textureMap.registerSprite(new ResourceLocation(modID, active));
 
-            TextureAtlasSprite pausedSprite;
             final String paused = String.format("%s_paused", overlayPath);
-            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, paused)))) {
-                pausedSprite = textureMap.registerSprite(new ResourceLocation(modID, paused));
-            } else pausedSprite = null;
+            TextureAtlasSprite pausedSprite = ICubeRenderer.getResource(textureMap, modID, paused);
 
             // emissive
 
-            TextureAtlasSprite normalSpriteEmissive;
-            final String normal_emissive = overlayPath + EMISSIVE;
-            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, normal_emissive)))) {
-                normalSpriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, normal_emissive));
-            } else normalSpriteEmissive = null;
+            TextureAtlasSprite normalSpriteEmissive = ICubeRenderer.getResource(textureMap, modID, overlayPath + EMISSIVE);
 
-            TextureAtlasSprite activeSpriteEmissive;
-            final String active_emissive = active + EMISSIVE;
-            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, active_emissive)))) {
-                activeSpriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, active_emissive));
-            } else activeSpriteEmissive = null;
+            TextureAtlasSprite activeSpriteEmissive = ICubeRenderer.getResource(textureMap, modID, active + EMISSIVE);
 
-            TextureAtlasSprite pausedSpriteEmissive;
-            final String paused_emissive = paused + EMISSIVE;
-            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, paused_emissive)))) {
-                pausedSpriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, paused_emissive));
-            } else pausedSpriteEmissive = null;
+            TextureAtlasSprite pausedSpriteEmissive = ICubeRenderer.getResource(textureMap, modID, paused + EMISSIVE);
 
             sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, pausedSprite,
                     normalSpriteEmissive, activeSpriteEmissive, pausedSpriteEmissive));

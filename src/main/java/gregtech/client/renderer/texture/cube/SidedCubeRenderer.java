@@ -11,13 +11,10 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.OverlayFace;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -28,7 +25,6 @@ import java.util.Map;
 public class SidedCubeRenderer implements ICubeRenderer {
 
     private static final String BASE_DIR = "blocks/%s/%s";
-    private static final String TEXTURE_DIR = "textures/blocks/%s.png";
 
     protected final String basePath;
 
@@ -65,22 +61,17 @@ public class SidedCubeRenderer implements ICubeRenderer {
         this.sprites = new EnumMap<>(OverlayFace.class);
         this.spritesEmissive = new EnumMap<>(OverlayFace.class);
 
-        final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-
         for (OverlayFace overlayFace : OverlayFace.VALUES) {
             final String faceName = overlayFace.name().toLowerCase();
             final String overlayPath = String.format(BASE_DIR, basePath, faceName);
 
-            boolean exists = ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, overlayPath)));
-            if (!exists) continue;
+            TextureAtlasSprite normalSprite = ICubeRenderer.getResource(textureMap, modID, overlayPath);
+            // require the normal texture to get the rest
+            if (normalSprite == null) continue;
 
-            ResourceLocation resourceLocation = new ResourceLocation(modID, overlayPath);
-            sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
+            sprites.put(overlayFace, normalSprite);
 
-            final String emissive = overlayPath + EMISSIVE;
-            if (ICubeRenderer.resourceExists(manager, new ResourceLocation(modID, String.format(TEXTURE_DIR, emissive)))) {
-                spritesEmissive.put(overlayFace, textureMap.registerSprite(new ResourceLocation(modID, emissive)));
-            }
+            spritesEmissive.put(overlayFace, ICubeRenderer.getResource(textureMap, modID, overlayPath + EMISSIVE));
         }
     }
 

@@ -2,13 +2,10 @@ package gregtech.api.gui.resources;
 
 import gregtech.api.GTValues;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
-import java.io.Closeable;
-import java.io.IOException;
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,13 +52,16 @@ public class ResourceHelper {
         return true;
     }
 
-    public static boolean isTextureExist(ResourceLocation textureResource) {
-        InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/textures/%s.png", textureResource.getNamespace(), textureResource.getPath()));
-        if(inputstream == null) {
+    public static boolean isTextureExist(@Nonnull String modid, @Nonnull String textureResource) {
+        InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/textures/%s.png", modid, textureResource));
+        if (inputstream == null) {
             return false;
         }
         IOUtils.closeQuietly(inputstream);
         return true;
     }
 
+    public static boolean isTextureExist(@Nonnull ResourceLocation textureResource) {
+        return isTextureExist(textureResource.getNamespace(), textureResource.getPath());
+    }
 }
