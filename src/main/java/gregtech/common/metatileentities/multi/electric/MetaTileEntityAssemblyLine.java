@@ -26,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,8 +34,8 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
-    private static final ResourceLocation laserLocation = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png");
-    private static final ResourceLocation laserHeadLocation = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png");
+    private static final ResourceLocation LASER_LOCATION = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png");
+    private static final ResourceLocation LASER_HEAD_LOCATION = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png");
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -159,32 +160,22 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .add(0.5, 0, 0.5);
                 Vector3 endPos = startPos.copy().subtract(0, 1, 0);
 
-                beamParticles[i][0] = new GTLaserBeamParticle(getWorld(), startPos, endPos)
-                        .setBody(laserLocation)
-                        .setBeamHeight(0.125f)
-                        // Try commenting or adjusting on the next four lines to see what happens
-                        .setDoubleVertical(true)
-                        .setHead(laserHeadLocation)
-                        .setHeadWidth(0.1f)
-                        .setEmit(0.2f);
+                beamParticles[i][0] = createALParticles(getWorld(), startPos, endPos);
                 beamParticles[i][0].setOnUpdate(p -> { // remove it if machine is inValid
-                    if (!isValid() || getWorld().getTileEntity(getPos()) != this.getHolder()) p.setExpired();
+                    if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos()) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
+                        p.setExpired();
+                    }
                 });
                 pos.setPos(getPos());
                 startPos = new Vector3().add(
                                 pos.move(getFrontFacing().rotateY().getOpposite(), i).move(getFrontFacing().getOpposite(), 2))
                         .add(0.5, 0, 0.5);
                 endPos = startPos.copy().subtract(0, 1, 0);
-                beamParticles[i][1] = new GTLaserBeamParticle(getWorld(), startPos, endPos)
-                        .setBody(laserLocation)
-                        .setBeamHeight(0.125f)
-                        // Try commenting or adjusting on the next four lines to see what happens
-                        .setDoubleVertical(true)
-                        .setHead(laserHeadLocation)
-                        .setHeadWidth(0.1f)
-                        .setEmit(0.15f);
+                beamParticles[i][1] = createALParticles(getWorld(), startPos, endPos);
                 beamParticles[i][1].setOnUpdate(p -> { // remove it if machine is inValid
-                    if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos())) p.setExpired();
+                    if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos()) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
+                        p.setExpired();
+                    }
                 });
 
                 // Don't forget to add particles
@@ -197,5 +188,16 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 beamParticles[i][1] = null;
             }
         }
+    }
+
+    private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
+        return new GTLaserBeamParticle(world, startPos, endPos)
+                .setBody(LASER_LOCATION)
+                .setBeamHeight(0.125f)
+                // Try commenting or adjusting on the next four lines to see what happens
+                .setDoubleVertical(true)
+                .setHead(LASER_HEAD_LOCATION)
+                .setHeadWidth(0.1f)
+                .setEmit(0.2f);
     }
 }
