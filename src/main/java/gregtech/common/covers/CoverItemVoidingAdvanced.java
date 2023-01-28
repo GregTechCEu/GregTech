@@ -152,12 +152,6 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         Textures.ITEM_VOIDING_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
-    @Override
-    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        this.isWorkingAllowed = !this.isWorkingAllowed;
-        return EnumActionResult.SUCCESS;
-    }
-
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
         this.itemFilterContainer.setMaxStackSize(voidingMode.maxStackSize);

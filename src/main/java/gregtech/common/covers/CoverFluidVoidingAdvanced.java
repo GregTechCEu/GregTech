@@ -195,12 +195,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     @Override
-    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        this.isWorkingAllowed = !this.isWorkingAllowed;
-        return EnumActionResult.SUCCESS;
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidingMode", voidingMode.ordinal());
