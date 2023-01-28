@@ -82,11 +82,11 @@ public class CoverFluidVoiding extends CoverPump {
 
     @Override
     public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
-            playerIn.sendMessage(new TextComponentTranslation(!isWorkingEnabled() ?
+            playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
                     "behaviour.cover.voiding.enabled" : "behaviour.cover.voiding.disabled"));
         }
-        this.isWorkingAllowed = !this.isWorkingAllowed;
         return EnumActionResult.SUCCESS;
     }
 
