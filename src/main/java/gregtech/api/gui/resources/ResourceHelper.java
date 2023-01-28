@@ -3,15 +3,16 @@ package gregtech.api.gui.resources;
 import gregtech.api.GTValues;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * copy from com.brandon3055.draconicevolution.helpers;
+ * Original copied from com.brandon3055.draconicevolution.helpers;
+ * <p>
+ * Modified for improved performance.
  */
 public class ResourceHelper {
 
@@ -42,23 +43,16 @@ public class ResourceHelper {
 
     public static boolean isResourceExist(String rs) {
         if (!cachedResources.containsKey(rs)) {
-            InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/%s", GTValues.MODID, rs));
-            if(inputstream == null) {
-                return false;
-            }
-            IOUtils.closeQuietly(inputstream);
+            URL url = ResourceHelper.class.getResource(String.format("/assets/%s/%s", GTValues.MODID, rs));
+            if (url == null) return false;
             cachedResources.put(rs, new ResourceLocation(GTValues.MODID, rs));
         }
         return true;
     }
 
     public static boolean isTextureExist(@Nonnull String modid, @Nonnull String textureResource) {
-        InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/textures/%s.png", modid, textureResource));
-        if (inputstream == null) {
-            return false;
-        }
-        IOUtils.closeQuietly(inputstream);
-        return true;
+        URL url = ResourceHelper.class.getResource(String.format("/assets/%s/textures/%s.png", modid, textureResource));
+        return url != null;
     }
 
     public static boolean isTextureExist(@Nonnull ResourceLocation textureResource) {
