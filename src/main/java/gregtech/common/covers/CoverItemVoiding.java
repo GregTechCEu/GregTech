@@ -74,7 +74,7 @@ public class CoverItemVoiding extends CoverConveyor {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
         primaryGroup.addWidget(new CycleButtonWidget(10, 115, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
-                "cover.voiding.disabled", "cover.voiding.enabled")
+                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
                 .setTooltipHoverString("cover.voiding.tooltip"));
 
         this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
@@ -95,7 +95,7 @@ public class CoverItemVoiding extends CoverConveyor {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
             playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
-                    "behaviour.cover.voiding.enabled" : "behaviour.cover.voiding.disabled"));
+                    "cover.voiding.enabled" : "cover.voiding.disabled"));
         }
         return EnumActionResult.SUCCESS;
     }
