@@ -1,24 +1,13 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.collect.Lists;
-import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.SlotUtil;
 import gregtech.client.utils.TooltipHelper;
-import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.lwjgl.input.Mouse;
 
-import javax.annotation.Nonnull;
-import java.awt.*;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class GhostCircuitSlotWidget extends SlotWidget {
 
