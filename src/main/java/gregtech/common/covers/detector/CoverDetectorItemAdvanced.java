@@ -26,7 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.regex.Pattern;
 
-public class CoverDetectorItemAdvanced extends CoverBehavior implements CoverWithUI, ITickable {
+public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI, ITickable {
 
     private boolean isInverted;
     private int min, max;
@@ -41,12 +41,8 @@ public class CoverDetectorItemAdvanced extends CoverBehavior implements CoverWit
     }
 
     @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) != null;
-    }
-
-    @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+        // todo replace with unique texture
         Textures.DETECTOR_ITEM.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
@@ -167,11 +163,6 @@ public class CoverDetectorItemAdvanced extends CoverBehavior implements CoverWit
         return Math.round(ratio);
     }
     @Override
-    public boolean canConnectRedstone() {
-        return true;
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("isInverted", this.isInverted);
@@ -193,6 +184,7 @@ public class CoverDetectorItemAdvanced extends CoverBehavior implements CoverWit
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeBoolean(this.isInverted);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
@@ -200,6 +192,7 @@ public class CoverDetectorItemAdvanced extends CoverBehavior implements CoverWit
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
         this.isInverted = packetBuffer.readBoolean();
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();

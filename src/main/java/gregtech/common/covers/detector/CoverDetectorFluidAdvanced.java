@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import java.util.regex.Pattern;
 
-public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWithUI, ITickable {
+public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI, ITickable {
 
     private boolean isInverted;
     private int min, max;
@@ -39,11 +39,6 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
         this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
         this.min = 1000; // 1 Bucket
         this.max = 16000; // 16 Buckets
-    }
-
-    @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null) != null;
     }
 
     protected boolean shouldShowTip() {
@@ -60,6 +55,7 @@ public class CoverDetectorFluidAdvanced extends CoverBehavior implements CoverWi
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+        // todo replace with unique texture
         Textures.DETECTOR_FLUID.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
