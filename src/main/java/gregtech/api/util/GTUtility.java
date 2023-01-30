@@ -731,6 +731,8 @@ public class GTUtility {
             }
         } else if (item.getToolClasses(itemStack).contains(ToolClasses.CROWBAR)) {
             return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
+        } else if (item.getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
+            return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
         }
         return false;
     }
