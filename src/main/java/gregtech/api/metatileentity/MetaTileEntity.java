@@ -497,12 +497,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        /*
-        CoverBehavior behavior = getCoverAtSide(hitResult.sideHit);
-        if (behavior != null && behavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
-            return true;
-        }*/
-
         IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         if (controllable != null) {
             controllable.setWorkingEnabled(!controllable.isWorkingEnabled());
