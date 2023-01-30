@@ -3287,13 +3287,13 @@ gregtech.machine.fluid_solidifier.opv.tooltip=液体硬質化装置
 
 # Forge Hammer
 gregtech.machine.forge_hammer.lv.name=基本型鍛造機
-gregtech.machine.forge_hammer.lv.tooltip=ハンマーで殴るのをやめるんだ!
+gregtech.machine.forge_hammer.lv.tooltip=君がッ曲がるまで殴るのをやめないッ!!
 gregtech.machine.forge_hammer.mv.name=発展型鍛造機
-gregtech.machine.forge_hammer.mv.tooltip=ハンマーで殴るのをやめるんだ!
+gregtech.machine.forge_hammer.mv.tooltip=君がッ曲がるまで殴るのをやめないッ!!
 gregtech.machine.forge_hammer.hv.name=発展型鍛造機 II
-gregtech.machine.forge_hammer.hv.tooltip=ハンマーで殴るのをやめるんだ!
+gregtech.machine.forge_hammer.hv.tooltip=君がッ曲がるまで殴るのをやめないッ!!
 gregtech.machine.forge_hammer.ev.name=発展型鍛造機 III
-gregtech.machine.forge_hammer.ev.tooltip=ハンマーで殴るのをやめるんだ!
+gregtech.machine.forge_hammer.ev.tooltip=君がッ曲がるまで殴るのをやめないッ!!
 gregtech.machine.forge_hammer.iv.name=精鋭型鍛造機
 gregtech.machine.forge_hammer.iv.tooltip=プレート鍛造装置
 gregtech.machine.forge_hammer.luv.name=精鋭型鍛造機 II
@@ -4116,7 +4116,7 @@ gregtech.advancement.steam.4_bronze_boiler.name=ボイラーの公式
 gregtech.advancement.steam.4_bronze_boiler.desc=小型ボイラーを作成する.
 gregtech.advancement.steam.5_bronze_forge_hammer.name=粉砕機より手頃
 gregtech.advancement.steam.5_bronze_forge_hammer.desc=蒸気式鍛造機を作成する.
-gregtech.advancement.steam.6_bronze_alloy_smelter.name=合金製錬炉を作成する.
+gregtech.advancement.steam.6_bronze_alloy_smelter.name=I have a pen. I have an apple...
 gregtech.advancement.steam.6_bronze_alloy_smelter.desc=蒸気式合金製錬炉を作成する.
 gregtech.advancement.steam.7_bronze_extractor.name=ラバードリッパー
 gregtech.advancement.steam.7_bronze_extractor.desc=蒸気式抽出機を作成する.
