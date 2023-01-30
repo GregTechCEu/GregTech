@@ -2782,13 +2782,13 @@ gregtech.machine.arc_furnace.opv.tooltip=短絡加熱器
 
 # Assembler
 gregtech.machine.assembler.lv.name=基本型組立機
-gregtech.machine.assembler.lv.tooltip=野郎共, 組立だ!
+gregtech.machine.assembler.lv.tooltip=アベンジャーズ, アッセンブル！
 gregtech.machine.assembler.mv.name=発展型組立機
-gregtech.machine.assembler.mv.tooltip=野郎共, 組立だ!
+gregtech.machine.assembler.mv.tooltip=アベンジャーズ, アッセンブル！
 gregtech.machine.assembler.hv.name=発展型組立機 II
-gregtech.machine.assembler.hv.tooltip=野郎共, 組立だ!
+gregtech.machine.assembler.hv.tooltip=アベンジャーズ, アッセンブル！
 gregtech.machine.assembler.ev.name=発展型組立機 III
-gregtech.machine.assembler.ev.tooltip=野郎共, 組立だ!
+gregtech.machine.assembler.ev.tooltip=アベンジャーズ, アッセンブル！
 gregtech.machine.assembler.iv.name=精鋭型組立機
 gregtech.machine.assembler.iv.tooltip=作業台ではありません
 gregtech.machine.assembler.luv.name=精鋭型組立機 II
@@ -2838,13 +2838,13 @@ gregtech.machine.autoclave.opv.tooltip=高圧与圧装置
 
 # Bending Machine
 gregtech.machine.bender.lv.name=基本型金属加工機
-gregtech.machine.bender.lv.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
+gregtech.machine.bender.lv.tooltip=俺達にはひん曲がっててマシーンみたいな奴が必要だ！
 gregtech.machine.bender.mv.name=発展型金属加工機
-gregtech.machine.bender.mv.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
+gregtech.machine.bender.mv.tooltip=俺達にはひん曲がっててマシーンみたいな奴が必要だ！
 gregtech.machine.bender.hv.name=発展型金属加工機 II
-gregtech.machine.bender.hv.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
+gregtech.machine.bender.hv.tooltip=俺達にはひん曲がっててマシーンみたいな奴が必要だ！
 gregtech.machine.bender.ev.name=発展型金属加工機 III
-gregtech.machine.bender.ev.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
+gregtech.machine.bender.ev.tooltip=俺達にはひん曲がっててマシーンみたいな奴が必要だ！
 gregtech.machine.bender.iv.name=精鋭型金属加工機
 gregtech.machine.bender.iv.tooltip=形状湾曲化装置
 gregtech.machine.bender.luv.name=精鋭型金属加工機 II
@@ -3148,13 +3148,13 @@ gregtech.machine.electromagnetic_separator.opv.tooltip=EMF ディスペラー
 
 # Extractor
 gregtech.machine.extractor.lv.name=基本型抽出機
-gregtech.machine.extractor.lv.tooltip=ドゥームのデジューサーデバイス-D123
+gregtech.machine.extractor.lv.tooltip=終末の果汁絞り器-D123
 gregtech.machine.extractor.mv.name=発展型抽出機
-gregtech.machine.extractor.mv.tooltip=ドゥームのデジューサーデバイス-D123
+gregtech.machine.extractor.mv.tooltip=終末の果汁絞り器-D123
 gregtech.machine.extractor.hv.name=発展型抽出機 II
-gregtech.machine.extractor.hv.tooltip=ドゥームのデジューサーデバイス-D123
+gregtech.machine.extractor.hv.tooltip=終末の果汁絞り器-D123
 gregtech.machine.extractor.ev.name=発展型抽出機 III
-gregtech.machine.extractor.ev.tooltip=ドゥームのデジューサーデバイス-D123
+gregtech.machine.extractor.ev.tooltip=終末の果汁絞り器-D123
 gregtech.machine.extractor.iv.name=精鋭型抽出機
 gregtech.machine.extractor.iv.tooltip=真空抽出装置
 gregtech.machine.extractor.luv.name=精鋭型抽出機 II
@@ -5161,7 +5161,7 @@ terminal.battery.hover=%s: %d EU/s使用
 terminal.battery.low_energy=電源不足! ターミナルを充電してください.
 
 terminal.store.description=アプリストア. 購入履歴を確認しますか? アプリのインストールとアップグレードに.
-terminal.store.match=アップグレードまたはインストールをするしないに関わらず, インベントリ内に要求アイテムがあるか確認しますか?
+terminal.store.match=Appのアップグレード/ダウングレードに必要なアイテムを検知しますか?
 terminal.store.miss=要求 %s (%d).
 
 terminal.ar.open=ARを開く
