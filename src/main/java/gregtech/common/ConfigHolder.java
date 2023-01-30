@@ -322,7 +322,7 @@ public class ConfigHolder {
         public int defaultUIColor = 0xD2DCFF;
 
         @Config.Comment("Prevent tooltips from blinking for better visibility")
-        public boolean blinkingTooltips = false;
+        public boolean preventBlinkingTooltips = false;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})

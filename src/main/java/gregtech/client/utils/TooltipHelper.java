@@ -83,7 +83,7 @@ public class TooltipHelper {
         }
 
         private void updateIndex() {
-            if (CLIENT_TIME % rate == 0 && !ConfigHolder.client.blinkingTooltips) {
+            if (CLIENT_TIME % rate == 0 && !ConfigHolder.client.preventBlinkingTooltips) {
                 if (index + 1 >= codes.length) index = 0;
                 else index++;
             }
