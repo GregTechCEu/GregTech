@@ -2838,13 +2838,13 @@ gregtech.machine.autoclave.opv.tooltip=高圧与圧装置
 
 # Bending Machine
 gregtech.machine.bender.lv.name=基本型金属加工機
-gregtech.machine.bender.lv.tooltip=Boo, he's bad! We want BENDER!!! //TODO
+gregtech.machine.bender.lv.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
 gregtech.machine.bender.mv.name=発展型金属加工機
-gregtech.machine.bender.mv.tooltip=Boo, he's bad! We want BENDER!!! //TODO
+gregtech.machine.bender.mv.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
 gregtech.machine.bender.hv.name=発展型金属加工機 II
-gregtech.machine.bender.hv.tooltip=Boo, he's bad! We want BENDER!!! //TODO
+gregtech.machine.bender.hv.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
 gregtech.machine.bender.ev.name=発展型金属加工機 III
-gregtech.machine.bender.ev.tooltip=Boo, he's bad! We want BENDER!!! //TODO
+gregtech.machine.bender.ev.tooltip=ブー, 彼は悪いやつだ! 彼は酒に浸りたいんだ!!!
 gregtech.machine.bender.iv.name=精鋭型金属加工機
 gregtech.machine.bender.iv.tooltip=形状湾曲化装置
 gregtech.machine.bender.luv.name=精鋭型金属加工機 II
@@ -3148,13 +3148,13 @@ gregtech.machine.electromagnetic_separator.opv.tooltip=EMF ディスペラー
 
 # Extractor
 gregtech.machine.extractor.lv.name=基本型抽出機
-gregtech.machine.extractor.lv.tooltip=Dejuicer-Device of Doom - D123 //TODO
+gregtech.machine.extractor.lv.tooltip=ドゥームのデジューサーデバイス-D123
 gregtech.machine.extractor.mv.name=発展型抽出機
-gregtech.machine.extractor.mv.tooltip=Dejuicer-Device of Doom - D123 //TODO
+gregtech.machine.extractor.mv.tooltip=ドゥームのデジューサーデバイス-D123
 gregtech.machine.extractor.hv.name=発展型抽出機 II
-gregtech.machine.extractor.hv.tooltip=Dejuicer-Device of Doom - D123 //TODO
+gregtech.machine.extractor.hv.tooltip=ドゥームのデジューサーデバイス-D123
 gregtech.machine.extractor.ev.name=発展型抽出機 III
-gregtech.machine.extractor.ev.tooltip=Dejuicer-Device of Doom - D123 //TODO
+gregtech.machine.extractor.ev.tooltip=ドゥームのデジューサーデバイス-D123
 gregtech.machine.extractor.iv.name=精鋭型抽出機
 gregtech.machine.extractor.iv.tooltip=真空抽出装置
 gregtech.machine.extractor.luv.name=精鋭型抽出機 II
@@ -3287,13 +3287,13 @@ gregtech.machine.fluid_solidifier.opv.tooltip=液体硬質化装置
 
 # Forge Hammer
 gregtech.machine.forge_hammer.lv.name=基本型鍛造機
-gregtech.machine.forge_hammer.lv.tooltip=Stop, Hammertime! //TODO
+gregtech.machine.forge_hammer.lv.tooltip=ハンマーで殴るのをやめるんだ!
 gregtech.machine.forge_hammer.mv.name=発展型鍛造機
-gregtech.machine.forge_hammer.mv.tooltip=Stop, Hammertime! //TODO
+gregtech.machine.forge_hammer.mv.tooltip=ハンマーで殴るのをやめるんだ!
 gregtech.machine.forge_hammer.hv.name=発展型鍛造機 II
-gregtech.machine.forge_hammer.hv.tooltip=Stop, Hammertime! //TODO
+gregtech.machine.forge_hammer.hv.tooltip=ハンマーで殴るのをやめるんだ!
 gregtech.machine.forge_hammer.ev.name=発展型鍛造機 III
-gregtech.machine.forge_hammer.ev.tooltip=Stop, Hammertime! //TODO
+gregtech.machine.forge_hammer.ev.tooltip=ハンマーで殴るのをやめるんだ!
 gregtech.machine.forge_hammer.iv.name=精鋭型鍛造機
 gregtech.machine.forge_hammer.iv.tooltip=プレート鍛造装置
 gregtech.machine.forge_hammer.luv.name=精鋭型鍛造機 II
