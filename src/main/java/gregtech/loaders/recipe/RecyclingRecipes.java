@@ -2,12 +2,14 @@ package gregtech.loaders.recipe;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTTagType;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -507,7 +509,9 @@ public class RecyclingRecipes {
         MetaTileEntity mte = GTUtility.getMetaTileEntity(input);
         if (mte != null) {
             builder.clearInputs();
-            builder.inputNBT(mte, NBTMatcher.ANY, NBTCondition.ANY);
+            // Don't use ANY to avoid issues with Drums, Super Chests, and other MTEs that hold an inventory
+            NBTCondition condition = NBTCondition.create(NBTTagType.STRING, GregtechDataCodes.CUSTOM_NAME, "");
+            builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, condition);
         }
     }
 }

@@ -131,6 +131,17 @@ public interface NBTMatcher {
         return false;
     };
 
+    /**
+     * Return true if NBT isn't present or is the provided key is present
+     */
+    NBTMatcher NOT_PRESENT_OR_HAS_KEY = (tag, condition) -> {
+        if (tag == null) {
+            return true;
+        }
+
+        return hasKey(tag, condition.nbtKey, condition.tagType.typeId);
+    };
+
     boolean evaluate(NBTTagCompound nbtTagCompound, NBTCondition nbtCondition);
 
     default boolean evaluate(ItemStack stack, NBTCondition nbtCondition) {
