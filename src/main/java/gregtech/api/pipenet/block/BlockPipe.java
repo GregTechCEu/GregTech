@@ -326,7 +326,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
         }
 
-        EnumFacing coverSide = ICoverable.traceCoverSide(hit);
+        EnumFacing coverSide = ICoverable.determineGridSideHit(hit);
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
         if (coverBehavior == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
@@ -594,7 +594,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return isPipeTool(stack) || ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER) ||
+        return isPipeTool(stack) || ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER) || ToolHelper.isTool(stack, ToolClasses.SOFT_MALLET) ||
                 GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
                 coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
