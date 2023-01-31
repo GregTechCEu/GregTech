@@ -8,15 +8,16 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -27,6 +28,17 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     public void addInformation(ItemStack itemStack, List<String> lines) {
         int configuration = IntCircuitIngredient.getCircuitConfiguration(itemStack);
         lines.add(I18n.format("metaitem.int_circuit.configuration", configuration));
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
+        if (!(mte instanceof SimpleMachineMetaTileEntity)) {
+            return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
+        }
+        SimpleMachineMetaTileEntity smte = (SimpleMachineMetaTileEntity) mte;
+        smte.setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(player.getHeldItem(hand)));
+        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override

@@ -358,6 +358,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
     }
 
+    public void setGhostCircuitConfig(int config) {
+        this.circuitInventory.setStackInSlot(0, IntCircuitIngredient.getIntegratedCircuit(config));
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+    }
+
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);

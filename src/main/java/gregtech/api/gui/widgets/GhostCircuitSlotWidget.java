@@ -9,6 +9,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 
+/**
+ * Like a phantom slot, but for real fake items like circuits (and maybe molds later?)
+ */
 public class GhostCircuitSlotWidget extends SlotWidget {
 
     public GhostCircuitSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
