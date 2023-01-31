@@ -1,7 +1,6 @@
 package gregtech.api.gui.widgets;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.client.utils.TooltipHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
@@ -25,12 +24,36 @@ public class GhostCircuitSlotWidget extends SlotWidget {
                 slotReference.putStack(IntCircuitIngredient.getIntegratedCircuit(0));
                 writeClientAction(1, buf -> {});
             }
-            else if (button == 1 && TooltipHelper.isShiftDown() && !slotReference.getStack().isEmpty()){
+            else if (button == 1 && !slotReference.getStack().isEmpty()){
                 slotReference.putStack(ItemStack.EMPTY);
                 writeClientAction(2, buf -> {});
             }
             else {
                 gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            if (!slotReference.getStack().isEmpty()) {
+                int dir = wheelDelta >= 0 ? 1 : -1;
+                int currentConfig = IntCircuitIngredient.getCircuitConfiguration(slotReference.getStack());
+                int newConfig = currentConfig + dir;
+
+                // return early if invalid
+                if (newConfig < 0 || newConfig > IntCircuitIngredient.CIRCUIT_MAX){
+                    return true;
+                }
+
+                slotReference.putStack(IntCircuitIngredient.getIntegratedCircuit(newConfig));
+                writeClientAction(3, buf -> buf.writeInt(newConfig));
+            }
+            else {
+                super.mouseWheelMove(mouseX, mouseY, wheelDelta);
             }
             return true;
         }
@@ -62,6 +85,8 @@ public class GhostCircuitSlotWidget extends SlotWidget {
             slotReference.putStack(IntCircuitIngredient.getIntegratedCircuit(0));
         } else if (id == 2) {
             slotReference.putStack(ItemStack.EMPTY);
+        } else if (id == 3) {
+            slotReference.putStack(IntCircuitIngredient.getIntegratedCircuit(buffer.readInt()));
         }
     }
 }
