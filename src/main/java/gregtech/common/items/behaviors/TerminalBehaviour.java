@@ -59,7 +59,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
         NBTTagCompound tabletNBT = itemStack.getOrCreateSubCompound("terminal");
-        if (tabletNBT.hasKey("_ar")) {
+        if (entity.ticksExisted % 20 == 0 && tabletNBT.hasKey("_ar")) {
             String appName = tabletNBT.getString("_ar");
             int tier = TerminalRegistry.getApplication(appName).getMaxTier();
             if (!TerminalBehaviour.isCreative(itemStack)) {
