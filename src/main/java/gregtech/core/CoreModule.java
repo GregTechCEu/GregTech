@@ -13,6 +13,7 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -147,6 +148,7 @@ public class CoreModule implements IGregTechModule {
         MetaItems.init();
         ToolItems.init();
         MetaFluids.init();
+        ModHandler.init();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();
@@ -242,6 +244,8 @@ public class CoreModule implements IGregTechModule {
                 TemperatureProperty.registerCoilType(value.getCoilTemperature(), value.getMaterial(), name);
             }
         }
+
+        ModHandler.postInit();
     }
 
     @Override

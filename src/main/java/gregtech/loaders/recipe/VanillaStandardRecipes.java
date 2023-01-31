@@ -184,7 +184,7 @@ public class VanillaStandardRecipes {
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
             if (ConfigHolder.recipes.hardGlassRecipes) {
-                ModHandler.removeRecipes(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
+                ModHandler.removeRecipeByOutput(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
             }
 
             ModHandler.addShapedRecipe("stained_glass_pane_" + i, new ItemStack(Blocks.STAINED_GLASS_PANE, 2, i), "sG", 'G', new ItemStack(Blocks.STAINED_GLASS, 1, i));
@@ -196,7 +196,7 @@ public class VanillaStandardRecipes {
         }
 
         if (ConfigHolder.recipes.hardGlassRecipes)
-            ModHandler.removeRecipes(new ItemStack(Blocks.GLASS_PANE, 16));
+            ModHandler.removeRecipeByOutput(new ItemStack(Blocks.GLASS_PANE, 16));
 
         ModHandler.addShapedRecipe("glass_pane", new ItemStack(Blocks.GLASS_PANE, 2), "sG", 'G', new ItemStack(Blocks.GLASS));
 
