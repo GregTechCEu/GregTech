@@ -32,7 +32,6 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
     private int depletedYield; // yield after the vein is depleted
     private final int SLOT_CENTER = 79;
-    protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
     private Supplier<List<Integer>> dimension;
     private final int textStartX = 5;

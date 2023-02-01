@@ -29,7 +29,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     protected int maxHeight;
     protected int outputCount;
     protected int weight;
-    protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
     private Supplier<List<Integer>> dimension;
     private final int NUM_OF_SLOTS = 5;

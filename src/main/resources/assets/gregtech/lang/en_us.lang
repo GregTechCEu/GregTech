@@ -4802,14 +4802,14 @@ fluid.spawnlocation.name=Fluid Vein Information
 gregtech.jei.fluid.vein_weight=Vein Weight:
 gregtech.jei.fluid.min_yield=Minimum Yield:
 gregtech.jei.fluid.max_yield=Maximum Yield:
-gregtech.jei.fluid.depletion_chance=Depletion Chance:
+gregtech.jei.fluid.depletion_chance=Depletion Chance (Percent):
 gregtech.jei.fluid.depletion_amount=Depletion Amount:
 gregtech.jei.fluid.depleted_rate=Depleted Yield:
 gregtech.jei.fluid.dimension=Dimensions:
 gregtech.jei.fluid.weight_hover=The Weight of the vein. Hover over the fluid to see any possible biome modifications
 gregtech.jei.fluid.min_hover=The minimum yield that any fluid vein of this fluid can have
 gregtech.jei.fluid.max_hover=The maximum yield that any fluid vein of this fluid can have
-gregtech.jei.fluid.dep_chance_hover=The chance for the vein to be depleted upon harvest
+gregtech.jei.fluid.dep_chance_hover=The percentage chance for the vein to be depleted upon harvest
 gregtech.jei.fluid.dep_amount_hover=The amount the vein will be depleted by
 gregtech.jei.fluid.dep_yield_hover=The maximum yield of the vein when it is fully depleted
 

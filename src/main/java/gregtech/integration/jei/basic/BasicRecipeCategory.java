@@ -19,6 +19,7 @@ public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implement
     public final String uniqueName;
     public final String localizedName;
     protected final IDrawable background;
+    protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 
     public BasicRecipeCategory(String uniqueName, String localKey, IDrawable background, IGuiHelper guiHelper) {
         this.uniqueName = uniqueName;

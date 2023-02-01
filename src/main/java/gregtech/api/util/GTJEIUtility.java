@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.api.worldgen.config.OreDepositDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -33,10 +34,15 @@ public class GTJEIUtility {
      */
     public static List<String> createSpawnPageBiomeTooltip(Function<Biome, Integer> biomeFunction, int originalWeight) {
 
+        List<String> tooltip = new ArrayList<>();
+
+        if (biomeFunction == OreDepositDefinition.NO_BIOME_INFLUENCE) {
+            return tooltip;
+        }
+
         Iterator<Biome> biomeIterator = Biome.REGISTRY.iterator();
         int biomeWeight;
         Map<Biome, Integer> modifiedBiomeMap = new HashMap<>();
-        List<String> tooltip = new ArrayList<>();
 
         //Tests biomes against all registered biomes to find which biomes have had their weights modified
         while (biomeIterator.hasNext()) {
