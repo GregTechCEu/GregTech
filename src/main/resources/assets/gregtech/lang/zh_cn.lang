@@ -351,7 +351,7 @@ metaitem.energy.module.tooltip=可充电电池
 metaitem.energy.cluster.name=能量簇
 metaitem.energy.cluster.tooltip=可充电电池
 metaitem.max.battery.name=终极电池
-metaitem.max.battery.tooltip=填满它以通关 Minecraft
+metaitem.max.battery.tooltip=填满就能通关 Minecraft
 
 metaitem.electric.motor.lv.name=电动马达（LV）
 metaitem.electric.motor.mv.name=电动马达（MV）
