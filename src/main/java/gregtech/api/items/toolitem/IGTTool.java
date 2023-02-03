@@ -156,8 +156,19 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             maxAOEArea = Math.max(aoeDefinition.column, Math.max(aoeDefinition.row, aoeDefinition.layer));
         }
 
-        int finalDurability = (toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier() + toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack)) * maxAOEArea;
-        toolTag.setInteger(MAX_DURABILITY_KEY, finalDurability);
+        int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
+
+        // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So apply the multiplier to the material durability if that would happen
+        if (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack) == 0) {
+            durability *= toolStats.getDurabilityMultiplier(stack);
+        }
+        else {
+            durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
+        }
+
+        durability *= maxAOEArea;
+
+        toolTag.setInteger(MAX_DURABILITY_KEY, durability);
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
@@ -319,7 +330,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             return toolTag.getInteger(MAX_DURABILITY_KEY);
         }
         int maxAOE = Math.max(getMaxAoEDefinition(stack).column, Math.max(getMaxAoEDefinition(stack).row, getMaxAoEDefinition(stack).layer));
-        int maxDurability = (getMaterialDurability(stack) + toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack)) * maxAOE;
+        int maxDurability = getMaterialDurability(stack) * maxAOE;
+        int builderDurability = toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
+        maxDurability = builderDurability == 0 ? maxDurability * toolStats.getDurabilityMultiplier(stack) : maxDurability + builderDurability;
+
+        maxDurability *= maxAOE;
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
         return maxDurability;
     }
