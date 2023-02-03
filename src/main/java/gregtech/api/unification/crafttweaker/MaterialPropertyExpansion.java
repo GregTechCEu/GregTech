@@ -204,9 +204,10 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability) {
+    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability, @Optional int durabilityMultiplier) {
         if (checkFrozen("add Tools to a material")) return;
         if (toolEnchantability == 0) toolEnchantability = 10;
+        if (durabilityMultiplier <= 0) durabilityMultiplier = 1;
         if (m.hasProperty(PropertyKey.TOOL)) {
             m.getProperty(PropertyKey.TOOL).setToolSpeed(toolSpeed);
             m.getProperty(PropertyKey.TOOL).setToolAttackDamage(toolAttackDamage);
@@ -214,8 +215,9 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolDurability(toolDurability);
             m.getProperty(PropertyKey.TOOL).setToolHarvestLevel(toolHarvestLevel);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
+            m.getProperty(PropertyKey.TOOL).setDurabilityMultiplier(durabilityMultiplier);
         } else m.setProperty(PropertyKey.TOOL, ToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
-                .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability).build());
+                .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability).durabilityMultiplier(durabilityMultiplier).build());
     }
 
     @ZenMethod

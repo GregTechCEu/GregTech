@@ -26,7 +26,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -147,10 +146,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
         int maxAOEArea = Math.max(getMaxAoEDefinition(stack).column, Math.max(getMaxAoEDefinition(stack).row, getMaxAoEDefinition(stack).layer));
-        if (material.hasFlag(MaterialFlags.STURDY)) {
-            maxAOEArea *= 1.75;
-        }
-        toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability() * maxAOEArea);
+
+        toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability() * maxAOEArea * toolProperty.getDurabilityMultiplier());
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
