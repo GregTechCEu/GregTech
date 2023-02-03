@@ -143,9 +143,17 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         // Set Material
         toolTag.setString(MATERIAL_KEY, material.toString());
 
+        // Grab the definition here because we cannot use getMaxAoEDefinition as it is not initialized yet
+        AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
+
         // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-        int maxAOEArea = Math.max(getMaxAoEDefinition(stack).column, Math.max(getMaxAoEDefinition(stack).row, getMaxAoEDefinition(stack).layer));
+
+        // Multiply the durability based on the maximum AOE definition of the tool
+        int maxAOEArea = 1;
+        if (aoeDefinition != AoESymmetrical.none()) {
+            maxAOEArea = Math.max(aoeDefinition.column, Math.max(aoeDefinition.row, aoeDefinition.layer));
+        }
 
         toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability() * maxAOEArea * toolProperty.getDurabilityMultiplier());
         toolTag.setInteger(DURABILITY_KEY, 0);
@@ -164,7 +172,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         NBTTagCompound behaviourTag = getBehaviorsTag(stack);
         getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
 
-        AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         if (aoeDefinition != AoESymmetrical.none()) {
             behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
