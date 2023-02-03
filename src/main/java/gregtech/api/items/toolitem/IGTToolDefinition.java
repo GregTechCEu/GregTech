@@ -55,6 +55,10 @@ public interface IGTToolDefinition {
         return 0;
     }
 
+    default int getDurabilityMultiplier(ItemStack stack) {
+        return 1;
+    }
+
     default int getBaseQuality(ItemStack stack) {
         return 0;
     }
