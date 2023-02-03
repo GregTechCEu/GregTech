@@ -5198,3 +5198,110 @@ gregtech.key.armor_mode_switch=盔甲模式开关
 gregtech.key.armor_hover=盔甲悬停切换
 gregtech.key.armor_charging=盔甲给背包物品充电的切换
 gregtech.key.tool_aoe_change=工具范围模式开关
+
+
+#在原基础上的补充
+item.gt.tool.sword.name=%s剑
+item.gt.tool.pickaxe.name=%s镐
+item.gt.tool.shovel.name=%s锹
+item.gt.tool.axe.name=%s斧
+item.gt.tool.hoe.name=%s锄
+item.gt.tool.saw.name=%s锯
+item.gt.tool.hammer.name=%s锻造锤
+item.gt.tool.hammer.tooltip=§8粉碎矿石而非采集它们
+item.gt.tool.mallet.name=%s软锤
+item.gt.tool.mallet.tooltip=§8关闭/启动机器
+item.gt.tool.wrench.name=%s扳手
+item.gt.tool.wrench.tooltip=§8按住左键以拆卸机器
+item.gt.tool.file.name=%s锉
+item.gt.tool.crowbar.name=%s撬棍
+item.gt.tool.crowbar.tooltip=§8卸下覆盖板并且旋转铁轨
+item.gt.tool.screwdriver.name=%s螺丝刀
+item.gt.tool.screwdriver.tooltip=§8调整覆盖板和机器
+item.gt.tool.mortar.name=%s研钵
+item.gt.tool.wire_cutter.name=%s剪线钳
+item.gt.tool.knife.name=%s刀
+item.gt.tool.butchery_knife.name=%s屠刀
+item.gt.tool.butchery_knife.tooltip=§8攻击速度慢
+item.gt.tool.scythe.name=%s镰刀
+item.gt.tool.scythe.tooltip=§8镰刀又能代表着什么呢？
+item.gt.tool.rolling_pin.name=%s擀面杖
+item.gt.tool.drill_lv.name=%s电钻 (LV)
+item.gt.tool.drill_mv.name=%s电钻 (MV)
+item.gt.tool.drill_hv.name=%s电钻 (HV)
+item.gt.tool.drill_ev.name=%s电钻 (EV)
+item.gt.tool.drill_iv.name=%s电钻 (IV)
+item.gt.tool.mining_hammer.name=%s采矿锤
+item.gt.tool.mining_hammer.tooltip=§8可以挖掘 3 * 3 的范围 (蹲下时不会)
+item.gt.tool.spade.name=%s铲
+item.gt.tool.spade.tooltip=§8可以挖掘 3 * 3 的范围 (蹲下时不会)
+item.gt.tool.chainsaw_lv.name=%s链锯 (LV)
+item.gt.tool.chainsaw_mv.name=%s链锯 (MV)
+item.gt.tool.chainsaw_hv.name=%s链锯 (HV)
+item.gt.tool.wrench_lv.name=%s扳手 (LV)
+item.gt.tool.wrench_lv.tooltip=§8按住左键以拆卸机器
+item.gt.tool.wrench_hv.name=%s扳手 (HV)
+item.gt.tool.wrench_hv.tooltip=§8按住左键以拆卸机器
+item.gt.tool.wrench_iv.name=%s扳手 (IV)
+item.gt.tool.wrench_iv.tooltip=§8按住左键以拆卸机器
+item.gt.tool.buzzsaw.name=%s圆锯 (LV)
+item.gt.tool.buzzsaw.tooltip=§8并不适用于采集方块
+item.gt.tool.screwdriver_lv.name=%s螺丝刀 (LV)
+item.gt.tool.screwdriver_lv.tooltip=§8调整覆盖板和机器
+item.gt.tool.plunger.name=%s搋子
+item.gt.tool.plunger.tooltip=§8清除机器中的流体
+
+
+metaitem.cover.fluid.voiding.name=虚空流体覆盖板
+metaitem.cover.fluid.voiding.tooltip=Voids §fFluids§7 as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
+metaitem.cover.fluid.voiding.advanced.name=高级虚空流体覆盖板
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids §fFluids§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
+metaitem.cover.item.voiding.name=虚空物品覆盖板
+metaitem.cover.item.voiding.tooltip=Voids §fItems§7 as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
+metaitem.cover.item.voiding.advanced.name=高级虚空物品覆盖板
+metaitem.cover.item.voiding.advanced.tooltip=Voids §fItems§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
+
+
+metaitem.blacklight.name=Blacklight
+metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
+
+metaitem.nms.leggings.name=纳米科技™套装护腿
+
+metaitem.qts.leggings.name=量子科技™套装护腿
+
+tile.transparent_casing.cleanroom_glass.name=超净间玻璃
+
+tile.cleanroom_casing.plascrete.name=塑料混凝土
+tile.cleanroom_casing.filter_casing.name=过滤器外壳
+tile.cleanroom_casing.filter_casing_sterile.name=无菌过滤器外壳
+tile.cleanroom_casing.filter.tooltip=Creates a §aParticle-Free§7 environment
+tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environment
+
+gregtech.machine.cleanroom.name=超净间
+gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
+gregtech.machine.cleanroom.tooltip.2=Uses §f30 EU/t§7 when dirty, §f4 EU/t§7 when clean.
+gregtech.machine.cleanroom.tooltip.3=Overclocking increases cleaning per cycle.
+gregtech.machine.cleanroom.tooltip.4=§bSize: §f5x5x5 to 15x15x15
+gregtech.machine.cleanroom.tooltip.hold_ctrl=Hold CTRL to show additional Structure Information
+gregtech.machine.cleanroom.tooltip.5=Requires §fFilter Casings §7in the ceiling, excluding the edges.
+gregtech.machine.cleanroom.tooltip.6=Accepts up to §f4 Doors§7! Remains clean when the door is open.
+gregtech.machine.cleanroom.tooltip.7=Generators, Mufflers, Drills, and Primitive Machines are too dirty for the cleanroom!
+gregtech.machine.cleanroom.tooltip.8=Send power through §fHulls §7or §fDiodes §7in the walls.
+gregtech.machine.cleanroom.tooltip.9=Send items and fluids with §fPassthrough Hatches §7in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.channels=Send up to §f8 AE2 Channels §7through §fHulls§7 in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through §fHulls§7 in the walls.
+gregtech.multiblock.cleanroom.clean_state=状态: §a洁净
+gregtech.multiblock.cleanroom.dirty_state=状态: §4被污染
+gregtech.multiblock.cleanroom.clean_amount=洁净度: §a%s%%
+
+gregtech.machine.cleanroom.tooltip=将那些讨厌的灰尘挡在外面
+
+gregtech.machine.maintenance_hatch_cleanroom_auto.name=自动过滤维护仓
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=用于自动维护带有清洁功能的多方块结构!
+gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
+
+
+gregtech.machine.passthrough_hatch_item.name=物品传输仓
+gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the other
+gregtech.machine.passthrough_hatch_fluid.name=流体传输仓
+gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
