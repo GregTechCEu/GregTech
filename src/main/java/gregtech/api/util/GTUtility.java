@@ -18,8 +18,11 @@ import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -27,6 +30,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -51,9 +55,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -1058,5 +1061,60 @@ public class GTUtility {
     @Nonnull
     public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
         return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
+    }
+
+    /**
+     * @param fluidHandler the handler to drain from
+     * @param doDrain      if the handler should be actually drained
+     * @return a valid boiler fluid from a container, with amount=1
+     */
+    @Nullable
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
+        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
+    }
+
+    /**
+     * @param fluidHandler the handler to drain from
+     * @param amount       the amount to drain
+     * @param doDrain      if the handler should be actually drained
+     * @return a valid boiler fluid from a container
+     */
+    @Nullable
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
+        if (amount == 0) return null;
+        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
+        if (drainedWater == null || drainedWater.amount == 0) {
+            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
+        }
+        if (drainedWater == null || drainedWater.amount == 0) {
+            for (String fluidName : ConfigHolder.machines.boilerFluids) {
+                Fluid fluid = FluidRegistry.getFluid(fluidName);
+                if (fluid != null) {
+                    drainedWater = fluidHandler.drain(new FluidStack(fluid, amount), doDrain);
+                    if (drainedWater != null && drainedWater.amount > 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return drainedWater;
+    }
+
+    /**
+     * @param stack the stack to retrieve from
+     * @return all the sub-items of an ItemStack
+     */
+    @Nonnull
+    public static Set<ItemStack> getAllSubItems(@Nonnull ItemStack stack) {
+        //match subtypes only on wildcard damage value items
+        if (stack.getItemDamage() != GTValues.W) return Collections.singleton(stack);
+
+        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
+        for (CreativeTabs tab : stack.getItem().getCreativeTabs()) {
+            NonNullList<ItemStack> subItems = NonNullList.create();
+            stack.getItem().getSubItems(tab, subItems);
+            set.addAll(subItems);
+        }
+        return set;
     }
 }
