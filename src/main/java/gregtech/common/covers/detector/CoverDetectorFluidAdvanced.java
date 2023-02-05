@@ -29,13 +29,11 @@ import java.util.regex.Pattern;
 
 public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
 
-    private boolean isInverted;
     private int min, max;
     protected FluidFilterContainer fluidFilter;
 
     public CoverDetectorFluidAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.isInverted = false;
         this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
         this.min = 1000; // 1 Bucket
         this.max = 16000; // 16 Buckets
@@ -177,7 +175,6 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("isInverted", this.isInverted);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
         tagCompound.setTag("filter", fluidFilter.serializeNBT());
@@ -188,7 +185,6 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.isInverted = tagCompound.getBoolean("isInverted");
         this.min = tagCompound.getInteger("min");
         this.max = tagCompound.getInteger("max");
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
@@ -196,14 +192,12 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(this.isInverted);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
-        this.isInverted = packetBuffer.readBoolean();
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();
     }

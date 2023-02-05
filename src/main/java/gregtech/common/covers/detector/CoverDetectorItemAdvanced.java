@@ -27,14 +27,11 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.regex.Pattern;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
-
-    private boolean isInverted;
     private int min, max;
     protected ItemFilterContainer itemFilter;
 
     public CoverDetectorItemAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.isInverted = false;
         this.itemFilter = new ItemFilterContainer(this);
         this.min = 64;
         this.max = 512;
@@ -166,7 +163,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("isInverted", this.isInverted);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
         tagCompound.setTag("filter", itemFilter.serializeNBT());
@@ -177,7 +173,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.isInverted = tagCompound.getBoolean("isInverted");
         this.min = tagCompound.getInteger("min");
         this.max = tagCompound.getInteger("max");
         this.itemFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
@@ -186,7 +181,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeBoolean(this.isInverted);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
     }
@@ -194,7 +188,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.isInverted = packetBuffer.readBoolean();
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();
     }

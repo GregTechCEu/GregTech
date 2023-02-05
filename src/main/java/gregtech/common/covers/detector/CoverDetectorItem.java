@@ -18,7 +18,7 @@ import net.minecraftforge.items.IItemHandler;
 
 public class CoverDetectorItem extends CoverBehavior implements ITickable {
 
-    private boolean isInverted;
+    protected boolean isInverted;
 
     public CoverDetectorItem(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
