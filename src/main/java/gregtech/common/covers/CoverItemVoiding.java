@@ -99,7 +99,7 @@ public class CoverItemVoiding extends CoverConveyor {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
             playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
-                    "cover.voiding.enabled" : "cover.voiding.disabled"));
+                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"));
         }
         return EnumActionResult.SUCCESS;
     }
