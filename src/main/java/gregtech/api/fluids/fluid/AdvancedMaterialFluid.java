@@ -25,10 +25,17 @@ public class AdvancedMaterialFluid extends AdvancedFluid {
     public AdvancedMaterialFluid(@Nonnull String name, @Nonnull Material material, @Nonnull MaterialFluidDefinition definition) {
         super(name, material.getMaterialRGB(), definition);
         this.material = material;
-        if (definition.getState() == FluidState.GAS) {
+        if (AIR_MASS == -1) AIR_MASS = Materials.Air.getMass();
+
+        int mass = (int) material.getMass();
+        if (mass > AIR_MASS) {
+            this.density = (int) (100 * material.getMass());
+        } else if (mass < AIR_MASS){
+            this.density = (int) ((material.getMass() / -10.0));
             // use positive density for materials heavier than air, so the universal bucket's orientation is correct
-            if (AIR_MASS < 0) AIR_MASS = Materials.Air.getMass();
-            this.density = Math.abs(this.density);
+            if (definition.getState() == FluidState.GAS) this.density = Math.abs(this.density);
+        } else {
+            this.density = 0;
         }
         if (material.hasFlag(MaterialFlags.STICKY)) this.viscosity = 2000;
     }
