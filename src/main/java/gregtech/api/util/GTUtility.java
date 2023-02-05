@@ -1064,6 +1064,47 @@ public class GTUtility {
     }
 
     /**
+     * Tries to parse a string into an int, returning a default value if it fails.
+     * @param val string to parse
+     * @param defaultValue default value to return
+     * @return returns an int from the parsed string, otherwise the default value
+     */
+    public static int tryParseInt(String val, int defaultValue){
+        try {
+            int parsedValue = Integer.parseInt(val);
+            return parsedValue;
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Compares a value against a min and max, with an option to invert the logic
+     * @param value value to be compared
+     * @param maxValue the max that the value can be
+     * @param minValue the min that the value can be
+     * @param isInverted whether to invert the logic of this method
+     * @return an int from 0 (value <= min) to 15 (value >= max) normally, with a ratio when the value is between min and max
+     */
+    public static int compareValue(int value, float maxValue, float minValue, boolean isInverted) {
+        if (value >= maxValue) {
+            return isInverted ? 0 : 15; // value above maxValue should normally be 15, otherwise 0
+        } else if (value <= minValue) {
+            return isInverted ? 15 : 0; // value below minValue should normally be 0, otherwise 15
+        }
+
+        float ratio;
+        if (!isInverted) {
+            ratio = 15 * (value - minValue) / (maxValue - minValue); // value closer to max results in higher output
+        } else {
+            ratio = 15 * (maxValue - value) / (maxValue - minValue); // value closer to min results in higher output
+        }
+
+        return Math.round(ratio);
+    }
+
+    /**
      * @param fluidHandler the handler to drain from
      * @param doDrain      if the handler should be actually drained
      * @return a valid boiler fluid from a container, with amount=1
