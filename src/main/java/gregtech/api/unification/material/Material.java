@@ -142,7 +142,8 @@ public class Material implements Comparable<Material> {
         return materialInfo.element != null;
     }
 
-    public @Nullable Element getElement() {
+    @Nullable
+    public Element getElement() {
         return materialInfo.element;
     }
 
