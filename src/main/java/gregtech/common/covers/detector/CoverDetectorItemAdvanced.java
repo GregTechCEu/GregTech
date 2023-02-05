@@ -26,7 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.regex.Pattern;
 
-public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI, ITickable {
+public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
 
     private boolean isInverted;
     private int min, max;

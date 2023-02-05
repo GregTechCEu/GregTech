@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import java.util.regex.Pattern;
 
-public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI, ITickable {
+public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
 
     private boolean isInverted;
     private int min, max;
