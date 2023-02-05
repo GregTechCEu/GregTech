@@ -85,7 +85,7 @@ public class CoverItemVoiding extends CoverConveyor {
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82 + 16 + 24)
                 .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125 + 16 + 23);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125 + 16 + 24);
         return builder.build(this, player);
     }
 

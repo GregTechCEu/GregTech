@@ -76,7 +76,7 @@ public class CoverFluidVoiding extends CoverPump {
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16 + 24)
                 .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16 + 23);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16 + 24);
         return builder.build(this, player);
     }
 
