@@ -150,16 +150,24 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
 
-        // Multiply the durability based on the maximum AOE definition of the tool
+        // Durability formuala we are working with:
+        // Final Durability = ((material durability * material durability multiplier) + (tool definition durability * definition durability multiplier)) * maximum Area of Effect
+
+        // Calculate the maximum AOE definition of the tool to multiply the final durability by
         int maxAOEArea = 1;
         if (aoeDefinition != AoESymmetrical.none()) {
             maxAOEArea = Math.max(aoeDefinition.column, Math.max(aoeDefinition.row, aoeDefinition.layer));
+
+            // Check for tools with no AOE
+            if (maxAOEArea == 0) {
+                maxAOEArea = 1;
+            }
         }
 
         int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
 
         // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So apply the multiplier to the material durability if that would happen
-        if (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack) == 0) {
+        if (toolStats.getBaseDurability(stack) == 0) {
             durability *= toolStats.getDurabilityMultiplier(stack);
         }
         else {
@@ -325,13 +333,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default int getTotalMaxDurability(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        IGTToolDefinition toolStats = getToolStats();
         if (toolTag.hasKey(MAX_DURABILITY_KEY, Constants.NBT.TAG_INT)) {
             return toolTag.getInteger(MAX_DURABILITY_KEY);
         }
-        int maxAOE = Math.max(getMaxAoEDefinition(stack).column, Math.max(getMaxAoEDefinition(stack).row, getMaxAoEDefinition(stack).layer));
-        int maxDurability = getMaterialDurability(stack) * maxAOE;
+        IGTToolDefinition toolStats = getToolStats();
+        AoESymmetrical AOE = getMaxAoEDefinition(stack);
+        int maxAOE = Math.max(AOE.column, Math.max(AOE.row, AOE.layer));
+
+        // Account for cases with no AOE
+        if (maxAOE == 0) {
+            maxAOE = 1;
+        }
+
+        int maxDurability = getMaterialDurability(stack);
         int builderDurability = toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
+        // If there is no durability set in the tool builder, multiply the builder AOE multiplier to the material durability
         maxDurability = builderDurability == 0 ? maxDurability * toolStats.getDurabilityMultiplier(stack) : maxDurability + builderDurability;
 
         maxDurability *= maxAOE;
