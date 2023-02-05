@@ -308,8 +308,8 @@ public class ObfMapping extends Remapper {
         public MCPRemapper() {
             File[] mappings = getConfFiles();
             try {
+                Resources.readLines(mappings[0].toURI().toURL(), Charsets.UTF_8, this);
                 Resources.readLines(mappings[1].toURI().toURL(), Charsets.UTF_8, this);
-                Resources.readLines(mappings[2].toURI().toURL(), Charsets.UTF_8, this);
             } catch (IOException e) {
                 FMLLog.log.error("Could not instantiate GregTech MCPRemapper", e);
             }
@@ -317,15 +317,15 @@ public class ObfMapping extends Remapper {
 
         public static File[] getConfFiles() {
             // check for GradleStart system vars
-            File notchSrg = new File(System.getProperty("net.minecraftforge.gradle.GradleStart.srg.notch-srg"));
+//            File notchSrg = new File(System.getProperty("net.minecraftforge.gradle.GradleStart.srg.notch-srg"));
             File csvDir = new File(System.getProperty("net.minecraftforge.gradle.GradleStart.csvDir"));
 
-            if (notchSrg.exists() && csvDir.exists()) {
+            if (csvDir.exists()) {
                 File fieldCsv = new File(csvDir, "fields.csv");
                 File methodCsv = new File(csvDir, "methods.csv");
 
-                if (notchSrg.exists() && fieldCsv.exists() && methodCsv.exists()) {
-                    return new File[]{notchSrg, fieldCsv, methodCsv};
+                if (fieldCsv.exists() && methodCsv.exists()) {
+                    return new File[]{fieldCsv, methodCsv};
                 }
             }
 

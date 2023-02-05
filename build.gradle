@@ -4,6 +4,10 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 buildscript {
     repositories {
         maven {
+            name 'Forge'
+            url 'https://maven.minecraftforge.net'
+        }
+        maven {
             name 'MixinGradle'
             url 'https://repo.spongepowered.org/repository/maven-public'
         }
@@ -20,63 +24,11 @@ plugins {
     id 'wtf.gofancy.fancygradle' version '1.1.+'
 }
 
-// apply plugin: 'org.spongepowered.mixin'
-if (project.use_mixins.toBoolean()) {
-    apply plugin: 'org.spongepowered.mixin'
-}
-
 tasks.register('getVersionFromJava') {
-
-    String major = '0'
-    String minor = '0'
-    String revision = '0'
-    String extra = ''
-    String finalVersion = ''
-    File sourceFile = files('src/main/java/gregtech/GregTechVersion.java').getSingleFile()
-
-
-    String prefix = 'public static final int'
-    String extraPrefix = 'public static final String'
-    sourceFile.eachLine { line ->
-        String s = line.trim()
-        if (s.startsWith(prefix)) {
-            s = s.substring(prefix.size(), s.size() - 1)
-            s = s.replace("=", " ").replace(" +", " ").trim()
-            String[] pts = s.split(" ")
-
-            // Switch on the variable name
-            switch (pts[0]) {
-                case "MAJOR" :
-                    major = pts[pts.size() - 1]
-                    break
-                case "MINOR" :
-                    minor = pts[pts.size() - 1]
-                    break
-                case "REVISION" :
-                    revision = pts[pts.size() - 1]
-                    break
-            }
-        } else if (s.startsWith(extraPrefix)) {
-            s = s.substring(extraPrefix.size(), s.size() - 2)
-            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
-            String[] pts = s.split(" ")
-            if (pts[0] == "EXTRA") {
-                extra = pts[pts.size() - 1]
-            }
-        }
-    }
-    if (extra != "") {
-        finalVersion = major + '.' + minor + '.' + revision + '-' + extra
-    }
-    else {
-        finalVersion = major + '.' + minor + '.' + revision
-    }
-
-    return finalVersion
-
+    return getVersionFromJava()
 }
 
-version = getVersionFromJava//project.mod_version
+version = getVersionFromJava() //project.mod_version
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 
@@ -92,7 +44,6 @@ if (project.use_intellij_idea.toBoolean()) {
         plugin 'idea'
     }
 
-
     idea {
         module {
             downloadJavadoc = true
@@ -107,7 +58,6 @@ if (project.use_eclipse.toBoolean()) {
         plugin 'eclipse'
     }
 
-
     eclipse {
         module {
             downloadJavadoc = true
@@ -118,12 +68,11 @@ if (project.use_eclipse.toBoolean()) {
 
 
 minecraft {
-
     mappings channel: 'stable', version: '39-1.12'
-
 
     if (project.has_access_transformer.toBoolean()) {
         accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+        // accessTransformer = file('src/main/resources/gregtech_at.cfg')
     }
 
     runs {
@@ -157,7 +106,6 @@ minecraft {
         }
     }
 }
-
 
 repositories {
     maven {
@@ -215,7 +163,7 @@ fancyGradle {
 
 if (project.build_deobfJar.toBoolean()) {
     // Create deobf dev jars
-    task deobfJar(type: Jar) {
+    tasks.register('deobfJar') {
         archiveClassifier.set("deobf")
         from sourceSets.main.output
     }
@@ -223,20 +171,20 @@ if (project.build_deobfJar.toBoolean()) {
 
 if (project.build_apiJar.toBoolean()) {
     // Create API library jar
-    task apiZip(type: Jar) {
+    tasks.register('apiZip') {
         archiveClassifier.set("api")
         from(sourceSets.main.java) {
-            include "name/api/**"
+            include "gregtech/api/**"
         }
         from(sourceSets.main.output) {
-            include "name/api/**"
+            include "gregtech/api/**"
         }
     }
 }
 
 if (project.build_sourceJar.toBoolean()) {
     // Create source jar
-    task sourcesJar(type: Jar) {
+    tasks.register('sourcesJar') {
         archiveClassifier.set("sources")
         from sourceSets.main.allJava
     }
@@ -268,7 +216,7 @@ sourceSets {
     }
 
     // at compile time, put resources in same directories as classes
-    main.output.setResourcesDir(main.java.outputDir)
+    main.output.setResourcesDir(main.java.classesDirectory)
 }
 
 jar {
@@ -305,17 +253,18 @@ jar.finalizedBy('reobfJar')
 
 processResources {
     // required to allow file expansion later
-    duplicatesStrategy = 'include'
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', version
+    inputs.property 'mcversion', minecraft_version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
         // replace version and mcversion
-        expand 'version': version
+        expand(['version': version, 'mcversion': minecraft_version])
     }
 
     // copy everything else except the mcmod.info
@@ -338,23 +287,19 @@ test {
     useJUnitPlatform()
 }
 
-//tasks.register<Exec>('getVersionFromJava') {
-/*getVersionFromJava {
-
+private String getVersionFromJava() {
     String major = '0'
     String minor = '0'
     String revision = '0'
     String extra = ''
-    String finalVersion = ''
-    File sourceFile = 'src/main/java/gregtech/GregTechVersion.java'
-
+    File sourceFile = files('src/main/java/gregtech/GregTechVersion.java').getSingleFile()
 
     String prefix = 'public static final int'
     String extraPrefix = 'public static final String'
-    sourceFile.forEachLine { line ->
+    sourceFile.eachLine { line ->
         String s = line.trim()
         if (s.startsWith(prefix)) {
-            s = s.substring(prefix.length, s.length - 1)
+            s = s.substring(prefix.size(), s.size() - 1)
             s = s.replace("=", " ").replace(" +", " ").trim()
             String[] pts = s.split(" ")
 
@@ -369,25 +314,22 @@ test {
                 case "REVISION" :
                     revision = pts[pts.size() - 1]
                     break
-                }
+            }
         } else if (s.startsWith(extraPrefix)) {
-            s = s.substring(extraPrefix.length, s.length - 2)
+            s = s.substring(extraPrefix.size(), s.size() - 2)
             s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
             String[] pts = s.split(" ")
             if (pts[0] == "EXTRA") {
                 extra = pts[pts.size() - 1]
             }
         }
+        return
     }
+
     if (extra != "") {
-        finalVersion = '$major.$minor.$revision-$extra'
+        return major + '.' + minor + '.' + revision + '-' + extra
     }
     else {
-        finalVersion = '$major.$minor.$revision'
+        return major + '.' + minor + '.' + revision
     }
-
-    doLast{
-        commandLine("echo", finalVersion)
-    }
-} */
-
+}

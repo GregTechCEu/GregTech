@@ -142,6 +142,10 @@ public class OreBakedModel implements IBakedModel {
 
         private final ThreadLocal<ItemStack> stack = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
 
+        public OreItemOverride() {
+            super(Collections.emptyList());
+        }
+
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
             this.stack.set(stack);
