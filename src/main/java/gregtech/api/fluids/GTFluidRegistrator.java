@@ -232,7 +232,7 @@ public final class GTFluidRegistrator {
                         material.hasFlag(MaterialFlags.STICKY));
 
                 BlockFluidBase fluidBlock = new MaterialFluidBlock(fluid, fluidMaterial, material);
-                fluidBlock.setRegistryName(fluidName);
+                fluidBlock.setRegistryName("fluid." + fluidName);
                 MetaBlocks.FLUID_BLOCKS.add(fluidBlock);
             }
         }
