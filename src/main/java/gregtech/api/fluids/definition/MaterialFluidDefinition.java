@@ -1,6 +1,7 @@
 package gregtech.api.fluids.definition;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.fluid.AdvancedMaterialFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
@@ -22,6 +23,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
     protected MaterialIconType stillIconType;
     protected MaterialIconType flowingIconType;
     protected boolean hasCustomTexture;
+    protected boolean needsTemperatureInference;
 
     /**
      * @param type             the type for the fluid
@@ -44,9 +46,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
         this.type = type;
         this.stillIconType = stillIconType;
         this.flowingIconType = flowingIconType;
-        if (temperature == -1) { // override the super class's inference, handled elsewhere
-            this.temperature = -1;
-        }
+        this.needsTemperatureInference = temperature == -1;
         this.hasCustomTexture = hasCustomTexture;
     }
 
@@ -69,18 +69,18 @@ public class MaterialFluidDefinition extends FluidDefinition {
             this.setFlowing(this.flowingIconType.getBlockTexturePath(iconSet));
         }
 
-        if (this.temperature == -1) {
+        if (this.needsTemperatureInference) {
             BlastProperty property = material.getProperty(PropertyKey.BLAST);
             if (property == null) {
                 if (material.hasProperty(PropertyKey.DUST) && state != FluidState.PLASMA) {
-                    this.temperature = 1200;
+                    this.temperature = FluidConstants.LIQUID_TEMPERATURE_FOR_SOLIDS;
                 } else {
                     this.temperature = getInferredTemperature();
                 }
             } else {
                 if (this.state == FluidState.LIQUID) this.temperature = property.getBlastTemperature();
-                else if (this.state == FluidState.PLASMA) this.temperature = 30_000 + property.getBlastTemperature();
-                else this.temperature = 298;
+                else if (this.state == FluidState.PLASMA) this.temperature = FluidConstants.PLASMA_TEMPERATURE + property.getBlastTemperature();
+                else this.temperature = FluidConstants.AMBIENT_TEMPERATURE;
             }
         }
 
@@ -109,6 +109,12 @@ public class MaterialFluidDefinition extends FluidDefinition {
     @Override
     public Fluid constructFluid(@Nonnull String fluidName) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Use constructFluid(material) instead.");
+    }
+
+    @Override
+    public void setTemperature(int temperature) {
+        super.setTemperature(temperature);
+        this.needsTemperatureInference = temperature == -1;
     }
 
     /**

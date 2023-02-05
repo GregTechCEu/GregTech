@@ -168,7 +168,7 @@ public final class GTFluidRegistrator {
      *
      * @param registryName the registry name for the fluid
      * @param definition   the definition of the fluid
-     * @return the fluid
+     * @return the already existing fluid if it exists, otherwise a new fluid
      */
     @SuppressWarnings("unused")
     @Nonnull

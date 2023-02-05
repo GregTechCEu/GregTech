@@ -1,6 +1,7 @@
 package gregtech.api.fluids.definition;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.fluid.AdvancedFluid;
 import gregtech.api.fluids.fluid.IAdvancedFluid;
 import gregtech.api.fluids.info.FluidState;
@@ -56,9 +57,9 @@ public class FluidDefinition implements IAdvancedFluid {
 
     protected int getInferredTemperature() {
         if (this.state == FluidState.PLASMA) {
-            return 30_000;
+            return FluidConstants.PLASMA_TEMPERATURE;
         }
-        return 298;
+        return FluidConstants.AMBIENT_TEMPERATURE;
     }
 
     /**
@@ -108,7 +109,8 @@ public class FluidDefinition implements IAdvancedFluid {
     public void setTemperature(int temperature) {
         Preconditions.checkArgument(temperature > 0 || temperature == -1,
                 "Temperature must be > 0, or -1 for inferred values.");
-        this.temperature = temperature;
+        if (temperature == -1) this.temperature = getInferredTemperature();
+        else this.temperature = temperature;
     }
 
     /**

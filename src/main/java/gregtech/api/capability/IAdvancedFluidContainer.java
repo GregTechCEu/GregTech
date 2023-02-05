@@ -36,10 +36,9 @@ public interface IAdvancedFluidContainer {
                 if (tag.requiresChecking() && !this.canHandleTag(tag)) return false;
             }
         } else {
-            FluidState state;
+            FluidState state = FluidState.LIQUID;
             if (fluid.getUnlocalizedName().contains("plasma")) state = FluidState.PLASMA;
             else if (fluid.isGaseous()) state = FluidState.GAS;
-            else state = FluidState.LIQUID;
 
             if (!this.canHandleState(state)) return false;
             //noinspection RedundantIfStatement

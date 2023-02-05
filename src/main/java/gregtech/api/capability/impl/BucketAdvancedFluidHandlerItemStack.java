@@ -7,11 +7,16 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class SimpleAdvancedFluidHandlerItemStack extends GTSimpleFluidHandlerItemStack implements IAdvancedFluidContainer {
+/**
+ * Advanced fluid handler for item stacks, which behaves like vanilla buckets (no partial fill).
+ * <p>
+ * Works on all FluidHandlerItemStacks, does not require a bucket!
+ */
+public class BucketAdvancedFluidHandlerItemStack extends GTSimpleFluidHandlerItemStack implements IAdvancedFluidContainer {
 
     private final FluidContainmentInfo info;
 
-    public SimpleAdvancedFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, @Nonnull FluidContainmentInfo info) {
+    public BucketAdvancedFluidHandlerItemStack(@Nonnull ItemStack container, int capacity, @Nonnull FluidContainmentInfo info) {
         super(container, capacity);
         this.info = info;
     }

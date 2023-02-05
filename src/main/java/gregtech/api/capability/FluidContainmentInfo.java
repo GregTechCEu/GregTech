@@ -78,9 +78,11 @@ public class FluidContainmentInfo {
         protected boolean canHoldAcids = false;
         protected boolean canHoldSuperacids = false;
         protected int maxTemperature = 300;
-        protected Set<FluidTag> allowedTags = null;
+        protected Set<FluidTag> allowedTags;
 
-        public Builder() {/**/}
+        public Builder() {
+            this.allowedTags = new ObjectOpenHashSet<>();
+        }
 
         public Builder(@Nonnull FluidContainmentInfo info) {
             this.canHoldLiquids = info.canHoldLiquids();
@@ -167,21 +169,18 @@ public class FluidContainmentInfo {
 
         @Nonnull
         public Builder allowedTag(@Nonnull FluidTag allowedTag) {
-            if (this.allowedTags == null) this.allowedTags = new ObjectOpenHashSet<>();
             this.allowedTags.add(allowedTag);
             return this;
         }
 
         @Nonnull
         public Builder allowedTags(@Nonnull FluidTag... allowedTags) {
-            if (this.allowedTags == null) this.allowedTags = new ObjectOpenHashSet<>();
             this.allowedTags.addAll(Arrays.asList(allowedTags));
             return this;
         }
 
         @Nonnull
         public Builder allowedTags(@Nonnull Collection<FluidTag> allowedTags) {
-            if (this.allowedTags == null) this.allowedTags = new ObjectOpenHashSet<>();
             this.allowedTags.addAll(allowedTags);
             return this;
         }
@@ -189,7 +188,7 @@ public class FluidContainmentInfo {
         @Nonnull
         public FluidContainmentInfo build() {
             return new FluidContainmentInfo(canHoldLiquids, canHoldGases, canHoldPlasmas, canHoldCryogenics,
-                    canHoldAcids, canHoldSuperacids, maxTemperature, allowedTags);
+                    canHoldAcids, canHoldSuperacids, maxTemperature, allowedTags.isEmpty() ? null : allowedTags);
         }
     }
 }
