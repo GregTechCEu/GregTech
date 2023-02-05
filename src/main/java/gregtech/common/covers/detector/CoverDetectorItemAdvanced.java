@@ -134,23 +134,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
         setRedstoneSignalOutput(GTUtility.compareValue(storedItems, max, min, isInverted));
     }
-
-    private int compareValue(int value, float maxValue, float minValue) {
-        if (value >= maxValue) {
-            return isInverted ? 0 : 15; // value above maxValue should normally be 15, otherwise 0
-        } else if (value <= minValue) {
-            return isInverted ? 15 : 0; // value below minValue should normally be 0, otherwise 15
-        }
-
-        float ratio;
-        if (!isInverted) {
-            ratio = 15 * (value - minValue) / (maxValue - minValue); // value closer to max results in higher output
-        } else {
-            ratio = 15 * (maxValue - value) / (maxValue - minValue); // value closer to min results in higher output
-        }
-
-        return Math.round(ratio);
-    }
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
