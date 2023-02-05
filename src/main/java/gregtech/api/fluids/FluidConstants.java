@@ -20,5 +20,10 @@ public final class FluidConstants {
      */
     public static final int PLASMA_TEMPERATURE = 30_000;
 
+    /**
+     * Maximum temperature in Kelvin for a fluid to be considered cryogenic
+     */
+    public static final int CRYOGENIC_FLUID_TEMPERATURE = 120;
+
     private FluidConstants() {/**/}
 }

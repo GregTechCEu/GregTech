@@ -8,6 +8,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.metaitem.MetaItem;
@@ -1211,6 +1212,6 @@ public class GTUtility {
     }
 
     public static boolean isTemperatureCryogenic(int temperature) {
-        return temperature < 120;
+        return temperature <= FluidConstants.CRYOGENIC_FLUID_TEMPERATURE;
     }
 }
