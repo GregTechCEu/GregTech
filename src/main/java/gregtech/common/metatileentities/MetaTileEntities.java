@@ -459,7 +459,7 @@ public class MetaTileEntities {
         MAGIC_ENERGY_ABSORBER = registerMetaTileEntity(984, new MetaTileEntityMagicEnergyAbsorber(gregtechId("magic_energy_absorber")));
 
         // Hulls, IDs 985-999
-        int endPos = GTValues.HT ? HULL.length : Math.min(HULL.length - 1, GTValues.UV + 2);
+        int endPos = GregTechAPI.highTier ? HULL.length : Math.min(HULL.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             HULL[i] = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[i].toLowerCase()), i);
             registerMetaTileEntity(985 + i, HULL[i]);
@@ -539,7 +539,7 @@ public class MetaTileEntities {
         MULTI_FLUID_EXPORT_HATCH[1] = registerMetaTileEntity(1206, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x"), 3, true));
 
         // Energy Input/Output Hatches, IDs 1210-1269
-        endPos = GTValues.HT ? ENERGY_INPUT_HATCH.length - 1 : Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 2);
+        endPos = GregTechAPI.highTier ? ENERGY_INPUT_HATCH.length - 1 : Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             ENERGY_INPUT_HATCH[i] = registerMetaTileEntity(1210 + i, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, 2, false));
@@ -557,7 +557,7 @@ public class MetaTileEntities {
 
 
         // Transformer, IDs 1270-1299
-        endPos = GTValues.HT ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UV);
+        endPos = GregTechAPI.highTier ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UV);
         for (int i = 0; i <= endPos; i++) {
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
             TRANSFORMER[i] = registerMetaTileEntity(1270 + (i), transformer);
@@ -566,7 +566,7 @@ public class MetaTileEntities {
         }
 
         // Diode, IDs 1300-1314
-        endPos = GTValues.HT ? DIODES.length - 1 : Math.min(DIODES.length - 1, GTValues.UV + 2);
+        endPos = GregTechAPI.highTier ? DIODES.length - 1 : Math.min(DIODES.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             String diodeId = "diode." + GTValues.VN[i].toLowerCase();
             MetaTileEntityDiode diode = new MetaTileEntityDiode(gregtechId(diodeId), i);
@@ -574,7 +574,7 @@ public class MetaTileEntities {
         }
 
         // Battery Buffer, IDs 1315-1360
-        endPos = GTValues.HT ? BATTERY_BUFFER[0].length - 1 : Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UHV + 1);
+        endPos = GregTechAPI.highTier ? BATTERY_BUFFER[0].length - 1 : Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UHV + 1);
         int[] batteryBufferSlots = new int[]{4, 8, 16};
         for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
             BATTERY_BUFFER[slot] = new MetaTileEntityBatteryBuffer[endPos];
@@ -586,7 +586,7 @@ public class MetaTileEntities {
         }
 
         // Charger, IDs 1375-1389
-        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UHV + 1);
+        endPos = GregTechAPI.highTier ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UHV + 1);
         for (int i = 0; i < endPos; i++) {
             String chargerId = "charger." + GTValues.VN[i].toLowerCase();
             MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);
@@ -734,7 +734,7 @@ public class MetaTileEntities {
         CREATIVE_TANK = registerMetaTileEntity(1669, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
         // Energy Converter, IDs 1670-1729
-        endPos = GTValues.HT ? ENERGY_CONVERTER[0].length - 1 : Math.min(ENERGY_CONVERTER[0].length - 1, GTValues.UHV + 1);
+        endPos = GregTechAPI.highTier ? ENERGY_CONVERTER[0].length - 1 : Math.min(ENERGY_CONVERTER[0].length - 1, GTValues.UHV + 1);
         int[] amps = {1, 4, 8, 16};
         for(int i = 0; i < endPos; i++) {
             for(int j = 0; j < 4; j++) {
@@ -830,7 +830,7 @@ public class MetaTileEntities {
     @SuppressWarnings("unused")
     public static void setHighTier(String key, boolean enabled) {
         HIGH_TIER.put(key, enabled);
-        GTValues.HT = enabled || HIGH_TIER.containsValue(true);
+        GregTechAPI.highTier = enabled || HIGH_TIER.containsValue(true);
     }
 
     public static boolean getMidTier(String key) {
@@ -838,6 +838,6 @@ public class MetaTileEntities {
     }
 
     public static boolean getHighTier(String key) {
-        return HIGH_TIER.getOrDefault(key, GTValues.HT);
+        return HIGH_TIER.getOrDefault(key, GregTechAPI.highTier);
     }
 }

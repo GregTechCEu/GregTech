@@ -53,6 +53,8 @@ public class GregTechAPI {
     public static IAdvancementManager advancementManager;
     /** Will be available at the Pre-Initialization stage */
     public static ISoundManager soundManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static boolean highTier;
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
