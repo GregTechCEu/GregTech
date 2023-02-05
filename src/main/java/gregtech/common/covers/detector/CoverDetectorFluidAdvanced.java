@@ -12,6 +12,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -144,7 +145,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
-        tagCompound.setTag("filter", fluidFilter.serializeNBT());
+        tagCompound.setTag("filter", this.fluidFilter.serializeNBT());
 
         return tagCompound;
     }
