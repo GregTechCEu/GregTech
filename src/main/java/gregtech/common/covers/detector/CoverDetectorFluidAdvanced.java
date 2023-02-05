@@ -30,13 +30,15 @@ import java.util.regex.Pattern;
 public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
 
     private int min, max;
+    private final int DEFAULT_MIN = 1000; // 1 Bucket
+    private final int DEFAULT_MAX = 16000; // 16 Buckets
     protected FluidFilterContainer fluidFilter;
 
     public CoverDetectorFluidAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
-        this.min = 1000; // 1 Bucket
-        this.max = 16000; // 16 Buckets
+        this.fluidFilter = new FluidFilterContainer(this);
+        this.min = DEFAULT_MIN;
+        this.max = DEFAULT_MAX;
     }
 
     protected boolean shouldShowTip() {
@@ -107,23 +109,12 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         return String.valueOf(max);
     }
     private void setMinValue(String val){
-        try {
-            int c = Integer.parseInt(val);
-            if (c < 0) c = 0;
-            this.min = Math.min(max - 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.min = Math.min(max - 1, 1000);
-        }
+        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
+        this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
     private void setMaxValue(String val){
-        try {
-            int c = Integer.parseInt(val);
-            max = Math.max(min + 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.max = Math.max(min + 1, 16000);
-        }
+        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
+        this.max = Math.max(min + 1, parsedValue);
     }
     private boolean isInverted(){
         return this.isInverted;
@@ -150,9 +141,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 storedFluid += contents.amount;
         }
 
-        int outputAmount = compareValue(storedFluid, max, min);
-
-        setRedstoneSignalOutput(outputAmount);
+        setRedstoneSignalOutput(GTUtility.compareValue(storedFluid, max, min, isInverted));
     }
 
     private int compareValue(int value, float maxValue, float minValue) {

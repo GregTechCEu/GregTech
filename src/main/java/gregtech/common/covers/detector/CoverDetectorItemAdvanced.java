@@ -27,14 +27,16 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.regex.Pattern;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
+    private final int DEFAULT_MIN = 64;
+    private final int DEFAULT_MAX = 512;
     private int min, max;
     protected ItemFilterContainer itemFilter;
 
     public CoverDetectorItemAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.itemFilter = new ItemFilterContainer(this);
-        this.min = 64;
-        this.max = 512;
+        this.min = DEFAULT_MIN;
+        this.max = DEFAULT_MAX;
     }
 
     @Override
@@ -91,23 +93,12 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         return String.valueOf(max);
     }
     private void setMinValue(String val){
-        try {
-            int c = Integer.parseInt(val);
-            if (c < 0) c = 0;
-            this.min = Math.min(max - 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.min = Math.max(max - 1, 64);
-        }
+        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
+        this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
     private void setMaxValue(String val){
-        try {
-            int c = Integer.parseInt(val);
-            max = Math.max(min + 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.max = Math.max(min + 1, 512);
-        }
+        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
+        max = Math.max(min + 1, parsedValue);
     }
 
     private boolean isInverted(){
@@ -141,7 +132,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(compareValue(storedItems, max, min));
+        setRedstoneSignalOutput(GTUtility.compareValue(storedItems, max, min, isInverted));
     }
 
     private int compareValue(int value, float maxValue, float minValue) {
