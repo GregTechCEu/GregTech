@@ -12,7 +12,6 @@ import gregtech.api.capability.impl.CleanroomLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
@@ -79,7 +78,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     private IEnergyContainer energyContainer;
 
     private final CleanroomLogic cleanroomLogic;
-    private final HashSet<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
+    private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -229,11 +228,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return isBlockEdge(world, pos, direction) || world.getBlockState(pos) == MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
-        if (getWorld() != null && !updateStructureDimensions()) {
-            return null;
-        }
+        // return the default structure, even if there is no valid size found
+        // this means auto-build will still work, and prevents terminal crashes.
+        if (getWorld() != null) updateStructureDimensions();
 
         // these can sometimes get set to 0 when loading the game, breaking JEI
         if (lDist < MIN_RADIUS) lDist = MIN_RADIUS;
@@ -394,9 +394,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return new TraceabilityPredicate(blockWorldState -> {
             // all non-MetaTileEntities are allowed inside by default
             TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof MetaTileEntityHolder)) return true;
+            if (!(tileEntity instanceof IGregTechTileEntity)) return true;
 
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
 
             // always ban other cleanrooms, can cause problems otherwise
             if (metaTileEntity instanceof ICleanroomProvider)
@@ -621,6 +621,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         this.bDist = data.hasKey("bDist") ? data.getInteger("bDist") : this.bDist;
         this.fDist = data.hasKey("fDist") ? data.getInteger("fDist") : this.fDist;
+        reinitializeStructurePattern();
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
     }

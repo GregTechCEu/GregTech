@@ -328,6 +328,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         EnumFacing coverSide = ICoverable.determineGridSideHit(hit);
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
+        
         if (coverBehavior == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
