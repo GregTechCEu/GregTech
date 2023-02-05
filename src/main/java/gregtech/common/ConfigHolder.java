@@ -351,6 +351,9 @@ public class ConfigHolder {
             @Config.Name("Fusion Reactor")
             public FusionBloom fusionBloom = new FusionBloom();
 
+            @Config.Comment("Particle config option for the Assembly Line")
+            public boolean assemblyLineParticles = false;
+
             @Config.Comment("Bloom config options for the heat effect (cable burning).")
             @Config.Name("Heat Effect")
             public HeatEffectBloom heatEffectBloom = new HeatEffectBloom();

@@ -95,7 +95,8 @@ public class MaterialRecipeHandler {
                 if (blastTemp <= 0) {
                     // smelting magnetic dusts is handled elsewhere
                     if (!mat.hasFlag(IS_MAGNETIC)) {
-                        ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, mat), ingotStack);
+                        // do not register inputs by ore dict here. Let other mods register their own dust -> ingots
+                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
                     }
                 } else {
                     IngotProperty ingotProperty = mat.getProperty(PropertyKey.INGOT);
