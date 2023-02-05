@@ -96,6 +96,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     private void setMinValue(String val){
         try {
             int c = Integer.parseInt(val);
+            if (c < 0) c = 0;
             this.min = Math.min(max - 1, c);
         } catch (NumberFormatException e) {
             GTLog.logger.warn(e);
