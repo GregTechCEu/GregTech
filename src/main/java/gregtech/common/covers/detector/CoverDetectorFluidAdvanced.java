@@ -115,7 +115,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
             this.min = Math.min(max - 1, c);
         } catch (NumberFormatException e) {
             GTLog.logger.warn(e);
-            this.min = Math.max(max - 1, 1000);
+            this.min = Math.min(max - 1, 1000);
         }
     }
     private void setMaxValue(String val){
