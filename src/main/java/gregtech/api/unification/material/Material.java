@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 @ZenClass("mods.gregtech.material.Material")
@@ -135,6 +136,14 @@ public class Material implements Comparable<Material> {
 
     public boolean hasFlag(MaterialFlag flag) {
         return flags.hasFlag(flag);
+    }
+
+    public boolean isElement() {
+        return materialInfo.element != null;
+    }
+
+    public @Nullable Element getElement() {
+        return materialInfo.element;
     }
 
     public boolean hasFlags(MaterialFlag... flags) {
