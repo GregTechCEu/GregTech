@@ -174,7 +174,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(111, 41, 36, 11, this::getTransferAmountString, val -> {
+        stackSizeGroup.addWidget(new TextFieldWidget2(111, 39, 37, 11, this::getTransferAmountString, val -> {
             if (val != null && !val.isEmpty()) {
                 int amount = Integer.parseInt(val);
                 if (this.bucketMode == BucketMode.BUCKET) {
@@ -188,14 +188,14 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .setMaxLength(10)
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new CycleButtonWidget(115, 41, 30, 20,
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 47, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+
+        stackSizeGroup.addWidget(new CycleButtonWidget(114, 53, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {
             if (mode != bucketMode) {
                 setBucketMode(mode);
             }
         }));
-
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 41, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
         widgetGroup.accept(stackSizeGroup);
 
