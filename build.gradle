@@ -37,7 +37,6 @@ archivesBaseName = project.archives_base_name
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
-
 if (project.use_intellij_idea.toBoolean()) {
     apply {
         plugin 'java'
@@ -65,7 +64,6 @@ if (project.use_eclipse.toBoolean()) {
         }
     }
 }
-
 
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
@@ -151,6 +149,9 @@ dependencies {
 
         annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     }
+
+    // groovyscript dependency
+    runtimeOnly 'zone.rong:mixinbooter:7.0'
 }
 
 fancyGradle {
