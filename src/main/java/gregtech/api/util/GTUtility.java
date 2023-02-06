@@ -1071,8 +1071,7 @@ public class GTUtility {
      */
     public static int tryParseInt(String val, int defaultValue){
         try {
-            int parsedValue = Integer.parseInt(val);
-            return parsedValue;
+            return Integer.parseInt(val);
         } catch (NumberFormatException e) {
             GTLog.logger.warn(e);
         }
