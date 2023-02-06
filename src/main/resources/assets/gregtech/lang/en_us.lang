@@ -1219,12 +1219,12 @@ cover.advanced_energy_detector.inverted=Inverted
 
 cover.advanced_fluid_detector.label=Advanced Fluid Detector
 cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
-cover.advanced_fluid_detector.max=Maximum Fluid
-cover.advanced_fluid_detector.min=Minimum Fluid
+cover.advanced_fluid_detector.max=Maximum Fluid:
+cover.advanced_fluid_detector.min=Minimum Fluid:
 cover.advanced_item_detector.label=Advanced Item Detector
 cover.advanced_item_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum amount of items, and starts emitting when greater than the min amount of items up to the set maximum
-cover.advanced_item_detector.max=Maximum Amount
-cover.advanced_item_detector.min=Minimum Amount
+cover.advanced_item_detector.max=Maximum Items:
+cover.advanced_item_detector.min=Minimum Items:
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore

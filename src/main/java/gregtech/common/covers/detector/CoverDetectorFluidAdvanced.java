@@ -93,9 +93,9 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
         this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 160 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 164 + 82)
                 .widget(group)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 160)
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 164)
                 .build(this, player);
     }
 

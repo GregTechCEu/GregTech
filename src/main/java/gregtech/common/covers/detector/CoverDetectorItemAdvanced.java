@@ -81,9 +81,9 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
         this.itemFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 184 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 188 + 82)
                 .widget(group)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184)
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 188)
                 .build(this, player);
     }
 
