@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
@@ -82,7 +83,7 @@ public class TooltipHelper {
         }
 
         private void updateIndex() {
-            if (CLIENT_TIME % rate == 0) {
+            if (CLIENT_TIME % rate == 0 && !ConfigHolder.client.preventBlinkingTooltips) {
                 if (index + 1 >= codes.length) index = 0;
                 else index++;
             }
