@@ -16,6 +16,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
@@ -49,7 +50,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     private static final String COFH_CLASS_NAME = "cofh.thermalexpansion.block.device.TileDeviceBase";
 
     private static final Map<String, Class<?>> blacklistedClasses = new Object2ObjectOpenHashMap<>();
-    private static final Map<Class<? extends TileEntity>, Boolean> blacklistCache = new Object2BooleanOpenHashMap<>();
+    private static final Object2BooleanFunction<Class<? extends TileEntity>> blacklistCache = new Object2BooleanOpenHashMap<>();
     private static boolean gatheredClasses = false;
 
     private static boolean considerTile(TileEntity tile) {
@@ -72,15 +73,19 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
             gatheredClasses = true;
         }
 
-        return blacklistCache.computeIfAbsent(tile.getClass(), c -> {
+        final Class<? extends TileEntity> tileClass = tile.getClass();
+        if (blacklistCache.containsKey(tileClass)) {
+            return blacklistCache.getBoolean(tileClass);
+        } else {
             for (Class<?> clazz : blacklistedClasses.values()) {
-                if (clazz.isAssignableFrom(c)) {
-                    blacklistCache.put(c, true);
+                if (clazz.isAssignableFrom(tileClass)) {
+                    blacklistCache.put(tileClass, false);
                     return false;
                 }
             }
+            blacklistCache.put(tileClass, true);
             return true;
-        });
+        }
     }
 
     private final long energyPerTick;
