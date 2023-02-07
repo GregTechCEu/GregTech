@@ -1149,6 +1149,12 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Items.CLAY_BALL))
                 .duration(600).EUt(24).buildAndRegister();
 
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Clay)
+                .fluidInputs(Materials.DistilledWater.getFluid(250))
+                .outputs(new ItemStack(Items.CLAY_BALL))
+                .duration(300).EUt(24).buildAndRegister();
+
         COMPRESSOR_RECIPES.recipeBuilder()
                 .input(dust, Redstone, 9)
                 .output(block, Redstone)
