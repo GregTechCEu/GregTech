@@ -50,7 +50,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 .setTooltip("cover.ore_dictionary_filter.info"));
         widgetGroup.accept(new ImageWidget(10, 25, 156, 14, GuiTextures.DISPLAY));
         widgetGroup.accept(new TextFieldWidget2(14, 29, 152, 12, () -> oreDictFilterExpression, this::setOreDictFilterExpression)
-                .setAllowedChars(Pattern.compile("[(!]* *[0-9a-zA-Z*]* *\\)*( *[&|^]? *[(!]* *[0-9a-zA-Z*]* *\\)*)*"))
+                .setAllowedChars(Pattern.compile("[0-9a-zA-Z* &|^!()]*"))
                 .setMaxLength(64)
                 .setScale(0.75f)
                 .setValidator(input -> {
