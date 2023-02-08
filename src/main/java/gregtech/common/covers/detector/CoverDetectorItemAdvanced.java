@@ -31,9 +31,11 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
     private static final int PADDING = 3;
     private static final int SIZE = 18;
-    private int min, max;
+
     private static final int DEFAULT_MIN = 64;
     private static final int DEFAULT_MAX = 512;
+
+    private int min, max;
     protected ItemFilterContainer itemFilter;
 
     public CoverDetectorItemAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {

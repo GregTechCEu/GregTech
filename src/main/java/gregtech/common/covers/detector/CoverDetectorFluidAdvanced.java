@@ -32,9 +32,12 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     private static final int PADDING = 3;
     private static final int SIZE = 18;
-    private int min, max;
+
     private static final int DEFAULT_MIN = 1000; // 1 Bucket
     private static final int DEFAULT_MAX = 16000; // 16 Buckets
+
+    private int min, max;
+
     protected FluidFilterContainer fluidFilter;
 
     public CoverDetectorFluidAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
