@@ -28,7 +28,7 @@ public class ToolDefinitionBuilder {
     private boolean suitableForAttacking = false;
     private boolean suitableForCrafting = false;
     private int baseDurability = 0;
-    private int durabilityMultiplier = 1;
+    private float durabilityMultiplier = 1.0f;
     private int baseQuality = 0;
     private float attackDamage = 0F;
     private float baseEfficiency = 4F;
@@ -78,7 +78,7 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder durabilityMultiplier(int multiplier) {
+    public ToolDefinitionBuilder durabilityMultiplier(float multiplier) {
         this.durabilityMultiplier = multiplier;
         return this;
     }
@@ -190,7 +190,7 @@ public class ToolDefinitionBuilder {
             private final boolean suitableForAttacking = ToolDefinitionBuilder.this.suitableForAttacking;
             private final boolean suitableForCrafting = ToolDefinitionBuilder.this.suitableForCrafting;
             private final int baseDurability = ToolDefinitionBuilder.this.baseDurability;
-            private final int durabilityMultiplier = ToolDefinitionBuilder.this.durabilityMultiplier;
+            private final float durabilityMultiplier = ToolDefinitionBuilder.this.durabilityMultiplier;
             private final int baseQuality = ToolDefinitionBuilder.this.baseQuality;
             private final float attackDamage = ToolDefinitionBuilder.this.attackDamage;
             private final float baseEfficiency = ToolDefinitionBuilder.this.baseEfficiency;
@@ -263,7 +263,7 @@ public class ToolDefinitionBuilder {
             }
 
             @Override
-            public int getDurabilityMultiplier(ItemStack stack) {
+            public float getDurabilityMultiplier(ItemStack stack) {
                 return durabilityMultiplier;
             }
 
