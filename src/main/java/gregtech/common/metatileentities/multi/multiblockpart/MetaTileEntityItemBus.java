@@ -35,6 +35,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     @Override
     public void update() {
-        IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
             if (workingEnabled) {
@@ -69,8 +69,11 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 }
             }
             // Only attempt to auto collapse the inventory contents once the bus has been notified
-            if (isAutoCollapse() && (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory))){
-                collapseInventorySlotContents(inventory);
+            if (isAutoCollapse()) {
+                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
+                if  (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
+                    collapseInventorySlotContents(inventory);
+                }
             }
         }
     }
@@ -162,6 +165,14 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS) {
+            this.autoCollapse = buf.readBoolean();
+        }
+    }
+
+    @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
         abilityList.add(isExportHatch ? this.exportItems : this.importItems);
     }
@@ -197,9 +208,9 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         List<ItemStack> inventoryItemContents = new ArrayList<>();
 
         // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
-        for(ItemStackKey key : inventoryContents.keySet()) {
-            ItemStack stack = key.getItemStack();
-            stack.setCount(inventoryContents.get(key));
+        for(Map.Entry<ItemStackKey, Integer> slot : inventoryContents.entrySet()) {
+            ItemStack stack = slot.getKey().getItemStack();
+            stack.setCount(slot.getValue());
             inventoryItemContents.addAll(InventoryUtils.apportionStack(stack, stack.getMaxStackSize()));
         }
 
@@ -222,29 +233,25 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
 
-        // Check if the player is sneaking to not interfere with machine grid access
-        if (playerIn.isSneaking()){
-            boolean isAttached = false;
-            if (this.isAttachedToMultiBlock()){
-                setAutoCollapse(!this.autoCollapse);
-                isAttached = true;
-            }
-
-            if(!getWorld().isRemote) {
-                if (isAttached) {
-                    if(this.autoCollapse) {
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_true"));
-                    }
-                    else {
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_false"));
-                    }
-                } else {
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse.error"));
-                }
-            }
-            return true;
+        boolean isAttached = false;
+        if (this.isAttachedToMultiBlock()){
+            setAutoCollapse(!this.autoCollapse);
+            isAttached = true;
         }
-        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+
+        if(!getWorld().isRemote) {
+            if (isAttached) {
+                if(this.autoCollapse) {
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_true"));
+                }
+                else {
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_false"));
+                }
+            } else {
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse.error"));
+            }
+        }
+        return true;
     }
 
     public boolean isAutoCollapse() {
@@ -253,22 +260,27 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     public void setAutoCollapse(boolean inverted) {
         autoCollapse = inverted;
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS, packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
+            notifyBlockUpdate();
+            markDirty();
+        }
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         if (this.isExportHatch)
             tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
         else
             tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
-        tooltip.add(I18n.format("gregtech.bus.collapse.info"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @Override
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_collapse"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
