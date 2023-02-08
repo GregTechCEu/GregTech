@@ -101,23 +101,29 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     private String getMinValue() {
         return String.valueOf(min);
     }
+
     private String getMaxValue() {
         return String.valueOf(max);
     }
-    private void setMinValue(String val){
+
+    private void setMinValue(String val) {
         int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
         this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
-    private void setMaxValue(String val){
+
+    private void setMaxValue(String val) {
         int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
         this.max = Math.max(min + 1, parsedValue);
     }
+
     private boolean isInverted(){
         return this.isInverted;
     }
+
     private void setInverted(boolean b){
         this.isInverted = b;
     }
+
     @Override
     public void update() {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
