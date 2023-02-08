@@ -327,9 +327,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
 
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
-        CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
+
         
-        if (coverBehavior == null) {
+        if (coverSide == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
@@ -341,6 +341,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     return false;
             }
         }
+
+        CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
 
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
             if (coverBehavior.onSoftMalletClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
