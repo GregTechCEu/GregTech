@@ -4486,6 +4486,7 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
 gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
 gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
+gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks

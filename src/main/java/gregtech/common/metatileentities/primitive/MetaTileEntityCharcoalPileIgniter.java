@@ -9,6 +9,7 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -51,6 +52,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +65,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     private static final Set<Block> WALL_BLOCKS = new ObjectOpenHashSet<>();
 
-    private final Set<BlockPos> logPositions = new ObjectOpenHashSet<>();
+    private final Collection<BlockPos> logPositions = new ObjectOpenHashSet<>();
 
     static {
         WALL_BLOCKS.add(Blocks.DIRT);
@@ -337,7 +339,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.2"));
@@ -485,7 +487,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (tileEntity instanceof IGregTechTileEntity) {
             mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
         }
-        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((MetaTileEntityCharcoalPileIgniter) mte).isStructureFormed()) {
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((IMultiblockController) mte).isStructureFormed()) {
             if (event.getSide().isClient()) {
                 event.setCanceled(true);
                 event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
