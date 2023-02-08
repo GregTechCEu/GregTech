@@ -48,7 +48,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         // todo replace with unique texture
-        Textures.DETECTOR_ITEM.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.DETECTOR_ITEM_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
