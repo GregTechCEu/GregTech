@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 public interface ICubeRenderer extends IIconRegister {
 
-    String EMISSIVE = "emissive";
+    String EMISSIVE = "_emissive";
 
     @SideOnly(Side.CLIENT)
     default void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
