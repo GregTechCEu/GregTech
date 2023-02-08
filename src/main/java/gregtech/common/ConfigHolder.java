@@ -59,6 +59,12 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable World Accelerators, which accelerate ticks for surrounding Tile Entities, Crops, etc.", "Default: true"})
         public boolean enableWorldAccelerators = true;
 
+        @Config.Comment({"List of TileEntities that the World Accelerator should not accelerate.",
+                "GregTech TileEntities are always blocked.",
+                "Entries must be in a fully qualified format. For example: appeng.tile.networking.TileController",
+                "Default: none"})
+        public String[] worldAcceleratorBlacklist = new String[0];
+
         @Config.Comment({"Whether to use GT6-style pipe and cable connections, meaning they will not auto-connect " +
                 "unless placed directly onto another pipe or cable.", "Default: true"})
         public boolean gt6StylePipesCables = true;
@@ -335,6 +341,9 @@ public class ConfigHolder {
                 "Default: 3355443 (0x333333), which is minecraft's dark gray color."})
         @Config.RangeInt(min = 0, max = 0xFFFFFF)
         public int multiblockPreviewFontColor = 0x333333;
+
+        @Config.Comment("Prevent tooltips from blinking for better visibility")
+        public boolean preventBlinkingTooltips = false;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})

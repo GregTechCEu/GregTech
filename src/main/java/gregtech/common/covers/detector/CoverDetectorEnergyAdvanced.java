@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
+    private static final Pattern ALLOWED_CHARS = Pattern.compile(".[0-9]*");
+
     public long minEU, maxEU;
     private int outputAmount;
     private boolean inverted;
@@ -107,7 +109,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         group.addWidget(new TextFieldWidget2(72, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
                     .setMaxLength(19)
-                    .setAllowedChars(Pattern.compile(".[0-9]*"))
+                    .setAllowedChars(ALLOWED_CHARS)
                     .setPostFix(" EU")
         );
 
@@ -117,7 +119,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         group.addWidget(new TextFieldWidget2(72, 5 + 3 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
                     .setMaxLength(19)
-                    .setAllowedChars(Pattern.compile(".[0-9]*"))
+                    .setAllowedChars(ALLOWED_CHARS)
                     .setPostFix(" EU")
         );
 

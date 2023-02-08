@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 
 public class OreDictionaryItemFilter extends ItemFilter {
 
+    private static final Pattern ALLOWED_CHARS = Pattern.compile("[0-9a-zA-Z* &|^!()]*");
+
     protected String oreDictFilterExpression = "";
     private String testMsg = "";
     private boolean testResult;
@@ -50,7 +52,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 .setTooltip("cover.ore_dictionary_filter.info"));
         widgetGroup.accept(new ImageWidget(10, 25, 156, 14, GuiTextures.DISPLAY));
         widgetGroup.accept(new TextFieldWidget2(14, 29, 152, 12, () -> oreDictFilterExpression, this::setOreDictFilterExpression)
-                .setAllowedChars(Pattern.compile("[(!]* *[0-9a-zA-Z*]* *\\)*( *[&|^]? *[(!]* *[0-9a-zA-Z*]* *\\)*)*"))
+                .setAllowedChars(ALLOWED_CHARS)
                 .setMaxLength(64)
                 .setScale(0.75f)
                 .setValidator(input -> {
