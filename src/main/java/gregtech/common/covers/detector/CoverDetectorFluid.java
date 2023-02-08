@@ -20,7 +20,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class CoverDetectorFluid extends CoverBehavior implements ITickable {
 
-    protected boolean isInverted;
+    private boolean isInverted;
 
     public CoverDetectorFluid(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -51,6 +51,14 @@ public class CoverDetectorFluid extends CoverBehavior implements ITickable {
             playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.fluid_detector.message_fluid_storage_inverted"));
         }
         return EnumActionResult.SUCCESS;
+    }
+
+    protected boolean isInverted(){
+        return this.isInverted;
+    }
+
+    protected void setInverted(boolean b){
+        this.isInverted = b;
     }
 
     private void setInverted() {
