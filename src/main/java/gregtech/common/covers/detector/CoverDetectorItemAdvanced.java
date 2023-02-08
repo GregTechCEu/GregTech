@@ -28,9 +28,12 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.regex.Pattern;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
-    private final int DEFAULT_MIN = 64;
-    private final int DEFAULT_MAX = 512;
+
+    private static final int PADDING = 3;
+    private static final int SIZE = 18;
     private int min, max;
+    private static final int DEFAULT_MIN = 64;
+    private static final int DEFAULT_MAX = 512;
     protected ItemFilterContainer itemFilter;
 
     public CoverDetectorItemAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
@@ -48,9 +51,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        int PADDING = 3;
-        int SIZE = 18;
-
         WidgetGroup group = new WidgetGroup();
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_item_detector.label"));
 

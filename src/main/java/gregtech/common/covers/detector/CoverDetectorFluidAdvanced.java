@@ -30,9 +30,11 @@ import java.util.regex.Pattern;
 
 public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
 
+    private static final int PADDING = 3;
+    private static final int SIZE = 18;
     private int min, max;
-    private final int DEFAULT_MIN = 1000; // 1 Bucket
-    private final int DEFAULT_MAX = 16000; // 16 Buckets
+    private static final int DEFAULT_MIN = 1000; // 1 Bucket
+    private static final int DEFAULT_MAX = 16000; // 16 Buckets
     protected FluidFilterContainer fluidFilter;
 
     public CoverDetectorFluidAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
@@ -58,9 +60,6 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        int PADDING = 3;
-        int SIZE = 18;
-
         WidgetGroup group = new WidgetGroup();
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_fluid_detector.label"));
 
