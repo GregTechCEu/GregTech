@@ -143,7 +143,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 storedFluid += contents.amount;
         }
 
-        setRedstoneSignalOutput(GTUtility.compareValue(storedFluid, max, min, isInverted));
+        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedFluid, max, min, isInverted));
     }
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {

@@ -137,7 +137,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(GTUtility.compareValue(storedItems, max, min, isInverted));
+        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, isInverted));
     }
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
