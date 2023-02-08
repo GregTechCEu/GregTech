@@ -106,6 +106,8 @@ public class GTUtility {
 
     private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
 
+    public static final Pattern VALID_NUMERIC = Pattern.compile(".[0-9]*");
+
     public static Stream<Object> flatten(Object[] array) {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
@@ -1086,7 +1088,7 @@ public class GTUtility {
      * @param isInverted whether to invert the logic of this method
      * @return an int from 0 (value <= min) to 15 (value >= max) normally, with a ratio when the value is between min and max
      */
-    public static int compareValue(int value, float maxValue, float minValue, boolean isInverted) {
+    public static int computeRedstoneBetweenValues(int value, float maxValue, float minValue, boolean isInverted) {
         if (value >= maxValue) {
             return isInverted ? 0 : 15; // value above maxValue should normally be 15, otherwise 0
         } else if (value <= minValue) {
