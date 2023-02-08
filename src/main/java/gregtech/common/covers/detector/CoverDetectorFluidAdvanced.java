@@ -119,14 +119,6 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         this.max = Math.max(min + 1, parsedValue);
     }
 
-    private boolean isInverted(){
-        return this.isInverted;
-    }
-
-    private void setInverted(boolean b){
-        this.isInverted = b;
-    }
-
     @Override
     public void update() {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
@@ -146,7 +138,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 storedFluid += contents.amount;
         }
 
-        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedFluid, max, min, isInverted));
+        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
     }
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {

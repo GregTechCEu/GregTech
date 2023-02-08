@@ -107,14 +107,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         max = Math.max(min + 1, parsedValue);
     }
 
-    private boolean isInverted(){
-        return this.isInverted;
-    }
-
-    private void setInverted(boolean b){
-        this.isInverted = b;
-    }
-
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!this.coverHolder.getWorld().isRemote) {
@@ -139,7 +131,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, isInverted));
+        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, this.isInverted()));
     }
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
