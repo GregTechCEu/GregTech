@@ -111,14 +111,13 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         updateMaxProgressTime();
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         // update the structure's dimensions just before we create it
-        if (getWorld() != null) {
-            if (!updateStructureDimensions()){
-                return null;
-            }
-        }
+        // return the default structure, even if there is no valid size found
+        // this means auto-build will still work, and prevents terminal crashes.
+        if (getWorld() != null) updateStructureDimensions();
 
         // these can sometimes get set to 0 when loading the game, breaking JEI
         if (lDist < 1) lDist = MIN_RADIUS;
