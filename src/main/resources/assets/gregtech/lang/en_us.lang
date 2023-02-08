@@ -1146,7 +1146,7 @@ cover.item.voiding.title=Item Voiding Settings
 cover.item.voiding.advanced.title=Advanced Item Voiding Settings
 cover.voiding.label.disabled=Disabled
 cover.voiding.label.enabled=Enabled
-cover.voiding.tooltip=WARNING! Setting this to "Enabled" means that fluids or items WILL be voided.
+cover.voiding.tooltip=§cWARNING!§7 Setting this to "Enabled" means that fluids or items WILL be voided.
 cover.voiding.message.disabled=Voiding Cover Disabled
 cover.voiding.message.enabled=Voiding Cover Enabled
 
