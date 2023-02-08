@@ -60,7 +60,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
                 .setMaxLength(10)
-                .setAllowedChars(Pattern.compile(".[0-9]*"))
+                .setAllowedChars(GTUtility.VALID_NUMERIC)
         );
 
         // set max fluid amount
@@ -69,7 +69,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
                 .setMaxLength(10)
-                .setAllowedChars(Pattern.compile(".[0-9]*"))
+                .setAllowedChars(GTUtility.VALID_NUMERIC)
         );
 
         // invert logic button
