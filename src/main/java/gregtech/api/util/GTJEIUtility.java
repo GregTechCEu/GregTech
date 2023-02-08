@@ -4,7 +4,6 @@ import gregtech.api.worldgen.config.OreDepositDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.DimensionManager;
@@ -58,16 +57,17 @@ public class GTJEIUtility {
         }
 
         if(!modifiedBiomeMap.isEmpty()) {
-            tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("gregtech.jei.ore.biome_weighting_title"));
+            tooltip.add("§\n");
+            tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting_title"));
         }
         for (Map.Entry<Biome, Integer> entry : modifiedBiomeMap.entrySet()) {
             //Don't show non changed weights, to save room
             if (!(entry.getValue() == originalWeight)) {
                 //Cannot Spawn
                 if (entry.getValue() <= 0) {
-                    tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
+                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
                 } else {
-                    tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
+                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
                 }
             }
         }
@@ -136,9 +136,9 @@ public class GTJEIUtility {
                 int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
 
                 //Remove Space from the dimension list
-                for (int spaceDim : spaceDims) {
-                    if (dimensions.get().contains(spaceDim)) {
-                        dimensions.get().remove((Integer) spaceDim);
+                for (int i = 0; i < spaceDims.length; i++) {
+                    if (dimensions.get().contains(spaceDims[i])) {
+                        dimensions.get().remove(spaceDims[i]);
                     }
                 }
             } catch (IllegalArgumentException e) {

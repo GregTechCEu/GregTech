@@ -33,7 +33,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     private int depletedYield; // yield after the vein is depleted
     private final int SLOT_CENTER = 79;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
-    private Supplier<List<Integer>> dimension;
+    private Supplier<List<Integer>> dimensions;
     private final int textStartX = 5;
     private int weightLength;
     private int minYieldLength;
@@ -72,9 +72,9 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         this.depletionChance = gtFluidVeinInfo.getDepletionChance();
         this.depletedYield = gtFluidVeinInfo.getDepletedYield();
 
-        this.dimension = GTUtility.getAllRegisteredDimensions(definition.getDimensionFilter());
+        this.dimensions = GTUtility.getAllRegisteredDimensions(definition.getDimensionFilter());
 
-        GTJEIUtility.cleanupDimensionList(this.dimension);
+        GTJEIUtility.cleanupDimensionList(this.dimensions);
 
     }
 
@@ -92,32 +92,32 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         this.slot.draw(minecraft, SLOT_CENTER - 1, 18);
 
         // Vein Weight information
-        String veinWeight = I18n.format("gregtech.jei.fluid.vein_weight") + " " + weight;
+        String veinWeight = I18n.format("gregtech.jei.fluid.vein_weight", weight);
         weightLength = minecraft.fontRenderer.getStringWidth(veinWeight);
         minecraft.fontRenderer.drawString(veinWeight, textStartX, startPosY, 0x111111);
 
         // Vein Minimum Yield information
-        String veinMinYield = I18n.format("gregtech.jei.fluid.min_yield") + " " + yields[0];
+        String veinMinYield = I18n.format("gregtech.jei.fluid.min_yield", yields[0]);
         minYieldLength = minecraft.fontRenderer.getStringWidth(veinMinYield);
         minecraft.fontRenderer.drawString(veinMinYield, textStartX, startPosY + FONT_HEIGHT + 1, 0x111111);
 
         // Vein Maximum Yield information
-        String veinMaxYield = I18n.format("gregtech.jei.fluid.max_yield") + " " + yields[1];
+        String veinMaxYield = I18n.format("gregtech.jei.fluid.max_yield", yields[1]);
         maxYieldLength = minecraft.fontRenderer.getStringWidth(veinMaxYield);
         minecraft.fontRenderer.drawString(veinMaxYield, textStartX, startPosY + 2 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Depletion Chance information
-        String veinDepletionChance = I18n.format("gregtech.jei.fluid.depletion_chance") + " " + depletionChance;
+        String veinDepletionChance = I18n.format("gregtech.jei.fluid.depletion_chance", depletionChance);
         depletionChanceLength = minecraft.fontRenderer.getStringWidth(veinDepletionChance);
         minecraft.fontRenderer.drawString(veinDepletionChance, textStartX, startPosY + 3 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Depletion Amount information
-        String veinDepletionAmount = I18n.format("gregtech.jei.fluid.depletion_amount") + " " + depletionAmount;
+        String veinDepletionAmount = I18n.format("gregtech.jei.fluid.depletion_amount", depletionAmount);
         depletionAmountLength = minecraft.fontRenderer.getStringWidth(veinDepletionAmount);
         minecraft.fontRenderer.drawString(veinDepletionAmount, textStartX, startPosY + 4 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Depleted Yield information
-        String veinDepletedYield = I18n.format("gregtech.jei.fluid.depleted_rate") + " " + depletedYield;
+        String veinDepletedYield = I18n.format("gregtech.jei.fluid.depleted_rate", depletedYield);
         depletedYieldLength = minecraft.fontRenderer.getStringWidth(veinDepletedYield);
         minecraft.fontRenderer.drawString(veinDepletedYield, textStartX, startPosY + 5 * FONT_HEIGHT + 1, 0x111111);
 
@@ -126,7 +126,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         int dimensionLength = minecraft.fontRenderer.getStringWidth(veinDimension);
         minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, 0x111111);
 
-        GTJEIUtility.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), minecraft.fontRenderer, textStartX,  startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
+        GTJEIUtility.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimensions.get(), minecraft.fontRenderer, textStartX,  startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
 
     }
 
