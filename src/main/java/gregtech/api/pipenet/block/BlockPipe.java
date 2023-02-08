@@ -326,7 +326,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
         }
 
-        EnumFacing coverSide = ICoverable.determineGridSideHit(hit);
+        EnumFacing coverSide = ICoverable.traceCoverSide(hit);
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
         
         if (coverBehavior == null) {
