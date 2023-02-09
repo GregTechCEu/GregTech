@@ -106,13 +106,13 @@ public final class ToolItems {
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
-                        .durabilityMultiplier(9)
+                        .durabilityMultiplier(3)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .toolClasses(ToolClasses.PICKAXE));
         SPADE = register(ItemGTTool.Builder.of(GTValues.MODID, "spade")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
-                        .durabilityMultiplier(9)
+                        .durabilityMultiplier(3)
                         .behaviors(GrassPathBehavior.INSTANCE))
                 .toolClasses(ToolClasses.SHOVEL));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
@@ -178,7 +178,7 @@ public final class ToolItems {
                 .toolClasses(ToolClasses.BUTCHERY_KNIFE));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
-                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(1.5f)
+                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(3.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -187,7 +187,7 @@ public final class ToolItems {
                 .electric(GTValues.LV));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 2)
-                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(3)
+                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(4.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -196,7 +196,7 @@ public final class ToolItems {
                 .electric(GTValues.MV));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
                 .toolStats(b -> b.blockBreaking().aoe(2, 2, 4)
-                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(5)
+                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(5.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -205,7 +205,7 @@ public final class ToolItems {
                 .electric(GTValues.HV));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
                 .toolStats(b -> b.blockBreaking().aoe(3, 3, 6)
-                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(9)
+                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(6.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .oreDict(ToolOreDicts.craftingToolDrill)
@@ -214,7 +214,7 @@ public final class ToolItems {
                 .electric(GTValues.EV));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
                 .toolStats(b -> b.blockBreaking().aoe(4, 4, 8)
-                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(11)
+                        .attackDamage(1.0F).attackSpeed(-3.2F).durabilityMultiplier(7.0F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .oreDict(ToolOreDicts.craftingToolDrill)
