@@ -65,6 +65,12 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     private boolean isMagnetic;
 
     /**
+     * A multiplier to the base durability for this material
+     * Mostly for modpack makers
+     */
+    private int durabilityMultiplier = 1;
+
+    /**
      * Enchantment to be applied to tools made from this Material.
      */
     private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
@@ -156,6 +162,14 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
         return isMagnetic;
     }
 
+    public void setDurabilityMultiplier(int multiplier) {
+        this.durabilityMultiplier = multiplier;
+    }
+
+    public int getDurabilityMultiplier() {
+        return durabilityMultiplier;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
@@ -204,6 +218,11 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
         public Builder magnetic() {
             toolProperty.setMagnetic(true);
+            return this;
+        }
+
+        public Builder durabilityMultiplier(int multiplier) {
+            toolProperty.setDurabilityMultiplier(multiplier);
             return this;
         }
 

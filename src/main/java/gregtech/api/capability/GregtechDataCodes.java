@@ -77,8 +77,14 @@ public class GregtechDataCodes {
     public static final int IS_FRONT_FACE_FREE = 554;
     public static final int MAINTENANCE_MULTIPLIER = 555;
 
+    // Item Bus Item Stack Auto Collapsing
+    public static final int TOGGLE_COLLAPSE_ITEMS = 600;
+
     // Fusion Reactor
     public static final int UPDATE_COLOR = 371;
+
+    // Assembly Line
+    public static final int UPDATE_PARTICLE = 371;
 
     // Central Monitor
     public static final int UPDATE_ALL = 1;

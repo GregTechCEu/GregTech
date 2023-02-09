@@ -88,6 +88,9 @@ public class RecipeRepairItemHooks {
                 }
 
                 if (first.getItem() instanceof IGTTool && second.getItem() instanceof IGTTool) {
+                    // do not allow repairing tools if both are full durability
+                    if (first.getItemDamage() == 0 && second.getItemDamage() == 0) return ItemStack.EMPTY;
+
                     // two GT tools, so use own logic to produce the correct output
                     IGTTool tool = (IGTTool) first.getItem();
                     ItemStack output = tool.get(tool.getToolMaterial(first));

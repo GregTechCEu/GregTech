@@ -46,8 +46,7 @@ public class VanillaOverrideRecipes {
         }
         removeCompressionRecipes();
         toolArmorRecipes();
-
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
+        alwaysRemovedRecipes();
     }
 
     private static void woodRecipes() {
@@ -233,7 +232,7 @@ public class VanillaOverrideRecipes {
      */
     private static void glassRecipes() {
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
-        ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));
+        ModHandler.removeRecipeByOutput(new ItemStack(Items.GLASS_BOTTLE, 3));
     }
 
     /**
@@ -1028,5 +1027,19 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe(regName, output, "P P", "PhP",
                 'P', new UnificationEntry(OrePrefix.plate, material)
         );
+    }
+
+    private static void alwaysRemovedRecipes() {
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
+
+        // always remove these, GT ore processing changes their output
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.COAL_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.IRON_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.GOLD_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.DIAMOND_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.EMERALD_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.LAPIS_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.REDSTONE_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.QUARTZ_ORE));
     }
 }

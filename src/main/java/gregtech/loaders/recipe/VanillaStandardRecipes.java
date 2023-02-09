@@ -184,7 +184,7 @@ public class VanillaStandardRecipes {
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
             if (ConfigHolder.recipes.hardGlassRecipes) {
-                ModHandler.removeRecipes(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
+                ModHandler.removeRecipeByOutput(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
             }
 
             ModHandler.addShapedRecipe("stained_glass_pane_" + i, new ItemStack(Blocks.STAINED_GLASS_PANE, 2, i), "sG", 'G', new ItemStack(Blocks.STAINED_GLASS, 1, i));
@@ -196,7 +196,7 @@ public class VanillaStandardRecipes {
         }
 
         if (ConfigHolder.recipes.hardGlassRecipes)
-            ModHandler.removeRecipes(new ItemStack(Blocks.GLASS_PANE, 16));
+            ModHandler.removeRecipeByOutput(new ItemStack(Blocks.GLASS_PANE, 16));
 
         ModHandler.addShapedRecipe("glass_pane", new ItemStack(Blocks.GLASS_PANE, 2), "sG", 'G', new ItemStack(Blocks.GLASS));
 
@@ -1098,7 +1098,7 @@ public class VanillaStandardRecipes {
                 .input(OrePrefix.stick, Iron, 12)
                 .input(stick, Wood)
                 .input(dust, Redstone)
-                .circuitMeta(4)
+                .circuitMeta(5)
                 .outputs(new ItemStack(Blocks.DETECTOR_RAIL, 12))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
@@ -1106,7 +1106,7 @@ public class VanillaStandardRecipes {
                 .input(stick, Iron, 12)
                 .input(stick, Wood, 2)
                 .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                .circuitMeta(4)
+                .circuitMeta(5)
                 .outputs(new ItemStack(Blocks.ACTIVATOR_RAIL, 12))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
@@ -1148,6 +1148,12 @@ public class VanillaStandardRecipes {
                 .fluidInputs(Materials.Water.getFluid(250))
                 .outputs(new ItemStack(Items.CLAY_BALL))
                 .duration(600).EUt(24).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Clay)
+                .fluidInputs(Materials.DistilledWater.getFluid(250))
+                .outputs(new ItemStack(Items.CLAY_BALL))
+                .duration(300).EUt(24).buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
                 .input(dust, Redstone, 9)
