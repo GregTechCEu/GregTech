@@ -9,7 +9,9 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
@@ -19,6 +21,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -63,9 +66,17 @@ public class CoverFluidVoiding extends CoverPump {
 
         this.fluidFilter.initUI(20, primaryGroup::addWidget);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82)
+        primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
+                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
+                .setTooltipHoverString("cover.voiding.tooltip"));
+
+        primaryGroup.addWidget(new CycleButtonWidget(10, 112, 116, 18,
+                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16 + 24)
                 .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16 + 24);
         return builder.build(this, player);
     }
 
@@ -77,6 +88,10 @@ public class CoverFluidVoiding extends CoverPump {
     @Override
     public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
+        if (!playerIn.world.isRemote) {
+            playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
+                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"));
+        }
         return EnumActionResult.SUCCESS;
     }
 
