@@ -812,8 +812,12 @@ metaitem.cover.activity.detector_advanced.name=発展型動作検出器
 metaitem.cover.activity.detector_advanced.tooltip=レッドストーン信号として§f作業の進捗§7を検出する§fカバー§7
 metaitem.cover.fluid.detector.name=液体検出器
 metaitem.cover.fluid.detector.tooltip=レッドストーン信号として§f液量§7を検出する§fカバー§7
+#metaitem.cover.fluid.detector.advanced.name=発展型液体検出器
+#metaitem.cover.fluid.detector.advanced.tooltip=§f液体量§7に基づいた赤石信号を与える§fカバー§7
 metaitem.cover.item.detector.name=アイテム検出器
 metaitem.cover.item.detector.tooltip=レッドストーン信号として§fアイテム量§7を検出する§fカバー§7
+#metaitem.cover.item.detector.advanced.name=発展型アイテム検出器
+#metaitem.cover.item.detector.advanced.tooltip=§fアイテム量§7に基づいた赤石信号を与える§fカバー§7
 metaitem.cover.energy.detector.name=エネルギー検出器
 metaitem.cover.energy.detector.tooltip=レッドストーン信号として§fエネルギー量§7を検出する§fカバー§7
 metaitem.cover.energy.detector.advanced.name=発展型エネルギー検出器
@@ -1220,10 +1224,19 @@ cover.ender_fluid_link.incomplete_hex=入力した色が不完全です!/n8桁�
 cover.advanced_energy_detector.label=発展型エネルギー検出器
 cover.advanced_energy_detector.min=最小EU
 cover.advanced_energy_detector.max=最大EU
-cover.advanced_energy_detector.invert_tooltip=赤石ロジックを反転させます/nデフォルトでは、信号は最小EUを下回った時に出力され、最大EUを上回った時に信号出力が停止します。
+cover.advanced_energy_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、信号は最小EUを下回った時に出力され、最大EUを上回った時に信号出力が停止します。
 cover.advanced_energy_detector.invert_label=反転:
 cover.advanced_energy_detector.normal=しない
 cover.advanced_energy_detector.inverted=する
+
+#cover.advanced_fluid_detector.label=発展型液体検出器
+#cover.advanced_fluid_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小液体量を下回った時に信号が停止し、最大液体量を上回った時に信号が出力されます。
+#cover.advanced_fluid_detector.max=最大液体量:
+#cover.advanced_fluid_detector.min=最小液体量:
+#cover.advanced_item_detector.label=発展型アイテム検出器
+#cover.advanced_item_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小アイテム量を下回った時に信号が停止し、最大アイテム量を上回った時に信号が出力されます。 
+#cover.advanced_item_detector.max=最大アイテム量:
+#cover.advanced_item_detector.min=最小アイテム量:
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=%s鉱石 (黒色花崗岩)
