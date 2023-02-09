@@ -106,13 +106,13 @@ public final class ToolItems {
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
-                        .durabilityMultiplier(3)
+                        .durabilityMultiplier(3.0F)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .toolClasses(ToolClasses.PICKAXE));
         SPADE = register(ItemGTTool.Builder.of(GTValues.MODID, "spade")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
-                        .durabilityMultiplier(3)
+                        .durabilityMultiplier(3.0F)
                         .behaviors(GrassPathBehavior.INSTANCE))
                 .toolClasses(ToolClasses.SHOVEL));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
@@ -162,7 +162,7 @@ public final class ToolItems {
                 .toolClasses(ToolClasses.WIRE_CUTTER));
         SCYTHE = register(ItemGTSword.Builder.of(GTValues.MODID, "scythe")
                 .toolStats(b -> b.blockBreaking().attacking()
-                        .attackDamage(5.0F).attackSpeed(-3.0F)
+                        .attackDamage(5.0F).attackSpeed(-3.0F).durabilityMultiplier(3.0F)
                         .aoe(2, 2, 2)
                         .behaviors(HoeGroundBehavior.INSTANCE, HarvestCropsBehavior.INSTANCE).canApplyEnchantment(EnumEnchantmentType.DIGGER))
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
