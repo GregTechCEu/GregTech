@@ -106,8 +106,6 @@ public class GTUtility {
 
     private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
 
-    public static final Pattern VALID_NUMERIC = Pattern.compile(".[0-9]*");
-
     public static Stream<Object> flatten(Object[] array) {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }

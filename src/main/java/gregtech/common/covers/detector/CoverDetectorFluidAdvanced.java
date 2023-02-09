@@ -72,7 +72,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
                 .setMaxLength(10)
-                .setAllowedChars(GTUtility.VALID_NUMERIC)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
                 .setPostFix("L")
         );
 
@@ -82,7 +82,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
                 .setMaxLength(10)
-                .setAllowedChars(GTUtility.VALID_NUMERIC)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
                 .setPostFix("L")
         );
 
