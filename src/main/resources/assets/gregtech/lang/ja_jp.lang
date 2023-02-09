@@ -130,6 +130,7 @@ item.invalid.name=無効なアイテム
 fluid.empty=空
 
 gregtech.tooltip.hold_shift=SHIFTを押して詳細を表示
+gregtech.tooltip.hold_ctrl=CTRLを押して詳細を表示
 gregtech.tooltip.fluid_pipe_hold_shift=SHIFTで耐流体性能を表示
 gregtech.tooltip.tool_fluid_hold_shift=SHIFTで耐流体性能とツール情報を表示
 
@@ -2202,6 +2203,10 @@ tile.rubber_sapling.name=ゴムの木の苗
 
 tile.planks.rubber.name=ゴムの木材
 tile.planks.treated.name=防腐木材
+
+tile.brittle_charcoal.name=脆い木炭
+tile.brittle_charcoal.tooltip.1=炭窯で製造される。
+tile.brittle_charcoal.tooltip.2=採掘すると木炭を得られる。
 
 metaitem.prospector.lv.name=LV電動探知機
 metaitem.prospector.hv.name=HV電動探知機
@@ -4422,6 +4427,13 @@ gregtech.multiblock.cleanroom.clean_state=状態: §a清潔
 gregtech.multiblock.cleanroom.dirty_state=状態: §4清潔でない
 gregtech.multiblock.cleanroom.clean_amount=清潔度: §a%s%%
 
+gregtech.machine.charcoal_pile.name=炭窯
+gregtech.machine.charcoal_pile.tooltip.1=§c点火されている§7時、原木を§a木炭§7に変化させる。
+gregtech.machine.charcoal_pile.tooltip.2=着火具で右クリックすることで点火できる。
+gregtech.machine.charcoal_pile.tooltip.3=炭焼きはこのブロック下最大§b9x4x9§7の空間で行われる。
+gregtech.machine.charcoal_pile.tooltip.4=原木は§e空気§7に接してはならない!
+gregtech.multiblock.charcoal_pile.description=最大9×4×9の範囲の原木を脆い木炭に変える。\n\n窯の床はレンガブロックでなければならないが、壁や屋根には地盤に関連するあらゆるブロックが使用できる。窯内に空気があってはならない。\n\n大きな窯は原木の変換により時間がかかるがより効率的である。
+
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
 gregtech.multiblock.central_monitor.height=スクリーンの高さ:
@@ -4486,6 +4498,7 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=世界が石油で埋まる前に
 gregtech.machine.fluid_drilling_rig.hv.tooltip=地面は砕かない
 gregtech.machine.fluid_drilling_rig.ev.tooltip=井戸の破壊者
 gregtech.machine.cleanroom.tooltip=これ以上花粉に暴れさせてたまるか
+gregtech.machine.charcoal_pile.tooltip=地下の燃料屋さん
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=マルチブロックへの搬入
