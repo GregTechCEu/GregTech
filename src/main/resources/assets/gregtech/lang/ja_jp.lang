@@ -4529,6 +4529,10 @@ gregtech.machine.item_bus.export.zpm.name=ZPM搬出バス
 gregtech.machine.item_bus.export.uv.name=UV搬出バス
 gregtech.machine.item_bus.export.uhv.name=UHV搬出バス
 
+gregtech.bus.collapse_true=バス内でアイテムを整頓を行う
+gregtech.bus.collapse_false=バス内でアイテムを整頓を行わない
+gregtech.bus.collapse.error=第一にバスはマルチブロックを一部分でなければならない
+
 gregtech.machine.fluid_hatch.import.tooltip=マルチブロックへの液体搬入
 
 gregtech.machine.fluid_hatch.import.ulv.name=ULV搬入ハッチ
@@ -4756,6 +4760,7 @@ gregtech.tool_action.show_tooltips=SHIFTでツール情報を表示
 gregtech.tool_action.screwdriver.auto_output_covers=§8スクリュードライバーで搬出面からの搬入やカバーにアクセスできます。
 gregtech.tool_action.screwdriver.toggle_mode_covers=§8スクリュードライバーでモード変更やカバーにアクセスできます。
 gregtech.tool_action.screwdriver.access_covers=§8スクリュードライバーでカバーにアクセスできます。
+gregtech.tool_action.screwdriver.auto_collapse=§8スクリュードライバーでバス内の整頓を切替できます。
 gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバーで自動搬出を切替できます。
 gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます。
 gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます。
@@ -5180,7 +5185,7 @@ terminal.battery.hover=%s: %d EU/s使用
 terminal.battery.low_energy=電源不足! ターミナルを充電してください。
 
 terminal.store.description=アプリストア。購入履歴を確認しますか? アプリのインストールとアップグレードに。
-terminal.store.match=Appのアップグレード/ダウングレードに必要なアイテムを確認しますか?
+terminal.store.match=インベントリで必要なアイテムが検出されました。アプリをインストール/アップグレードを行いますか？
 terminal.store.miss=要求 %s (%d)
 
 terminal.ar.open=ARを開く
