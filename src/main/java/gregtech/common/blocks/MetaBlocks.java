@@ -55,8 +55,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -125,6 +123,8 @@ public class MetaBlocks {
     public static BlockRubberLeaves RUBBER_LEAVES;
     public static BlockRubberSapling RUBBER_SAPLING;
     public static BlockGregPlanks PLANKS;
+
+    public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
@@ -227,6 +227,8 @@ public class MetaBlocks {
         RUBBER_SAPLING.setRegistryName("rubber_sapling");
         PLANKS = new BlockGregPlanks();
         PLANKS.setRegistryName("planks");
+        BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
+        BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
@@ -244,6 +246,7 @@ public class MetaBlocks {
         Blocks.FIRE.setFireInfo(RUBBER_LOG, 5, 5);
         Blocks.FIRE.setFireInfo(RUBBER_LEAVES, 30, 60);
         Blocks.FIRE.setFireInfo(PLANKS, 5, 20);
+        Blocks.FIRE.setFireInfo(BRITTLE_CHARCOAL, 5, 5);
     }
 
     /**
@@ -350,6 +353,7 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
         registerItemModel(PLANKS);
+        registerItemModel(BRITTLE_CHARCOAL);
 
         BOILER_FIREBOX_CASING.onModelRegister();
         WIRE_COIL.onModelRegister();

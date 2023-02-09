@@ -125,6 +125,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold SHIFT for more info
+gregtech.tooltip.hold_ctrl=Hold CTRL for more info
 gregtech.tooltip.fluid_pipe_hold_shift=Hold SHIFT to show Fluid Containment Info
 gregtech.tooltip.tool_fluid_hold_shift=Hold SHIFT to show Fluid Containment and Tool Info
 
@@ -2195,6 +2196,10 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
+
+tile.brittle_charcoal.name=Brittle Charcoal
+tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
+tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -4415,6 +4420,13 @@ gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
 gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
 gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
 
+gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
+gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
+gregtech.machine.charcoal_pile.tooltip.2=Right Click with fire-starting items to start.
+gregtech.machine.charcoal_pile.tooltip.3=Pyrolysis occurs in up to a §b9x4x9§7 space beneath.
+gregtech.machine.charcoal_pile.tooltip.4=Logs must be not be exposed to §eAir§7!
+gregtech.multiblock.charcoal_pile.description=Converts logs into Brittle Charcoal in a 9x4x9 area beneath it.\n\nThe floor of the pit must be made from bricks, and any ground-related block can be used for the walls and roof. No air can be inside the pit.\n\nLarger pits take more time to process logs, but are more efficient.
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4479,6 +4491,7 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
 gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
 gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
+gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
