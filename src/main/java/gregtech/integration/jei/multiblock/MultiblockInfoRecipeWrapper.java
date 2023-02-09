@@ -21,6 +21,7 @@ import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TrackedDummyWorld;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -367,7 +368,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         List<String> lines = fontRenderer.listFormattedStringToWidth(localizedName, recipeWidth - 10);
         for (int i = 0; i < lines.size(); i++) {
-            fontRenderer.drawString(lines.get(i), (recipeWidth - fontRenderer.getStringWidth(lines.get(i))) / 2, fontRenderer.FONT_HEIGHT * i, 0x333333);
+            fontRenderer.drawString(lines.get(i), (recipeWidth - fontRenderer.getStringWidth(lines.get(i))) / 2, fontRenderer.FONT_HEIGHT * i, ConfigHolder.client.multiblockPreviewFontColor);
         }
     }
 
@@ -553,7 +554,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
-        worldSceneRenderer.setClearColor(0xC6C6C6);
+        worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
         world.addBlocks(blockMap);
 
         Vector3f size = world.getSize();
