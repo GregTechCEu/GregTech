@@ -1149,6 +1149,12 @@ cover.fluid.voiding.title=液体消去設定
 cover.fluid.voiding.advanced.title=発展型液体消去設定
 cover.item.voiding.title=アイテム消去設定
 cover.item.voiding.advanced.title=発展型アイテム消去設定
+cover.voiding.label.disabled=無効
+cover.voiding.label.enabled=有効
+cover.voiding.tooltip=§c警告!§7 これを"有効"にするということは液体やアイテムが消去されることを意味します。
+cover.voiding.message.disabled=消去カバーを無効化
+cover.voiding.message.enabled=消去カバーを有効化
+
 
 cover.smart_item_filter.title=スマートアイテムフィルター
 cover.smart_item_filter.filtering_mode.electrolyzer=電解槽
@@ -5161,7 +5167,7 @@ terminal.battery.hover=%s: %d EU/s使用
 terminal.battery.low_energy=電源不足! ターミナルを充電してください。
 
 terminal.store.description=アプリストア。購入履歴を確認しますか? アプリのインストールとアップグレードに。
-terminal.store.match=Appのアップグレード/ダウングレードに必要なアイテムを検知しますか?
+terminal.store.match=Appのアップグレード/ダウングレードに必要なアイテムを確認しますか?
 terminal.store.miss=要求 %s (%d)
 
 terminal.ar.open=ARを開く
