@@ -159,6 +159,7 @@ fancyGradle {
         resources
         coremods
         asm
+        codeChickenLib
     }
 }
 

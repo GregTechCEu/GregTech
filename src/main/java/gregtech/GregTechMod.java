@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
@@ -41,10 +42,16 @@ public class GregTechMod {
 
     @EventHandler
     public void onConstruction(FMLConstructionEvent event) {
+        //TODO is setting this needed?
         try {
             Field field = LaunchClassLoader.class.getDeclaredField("DEBUG");
             field.setAccessible(true);
-            field.set(null, true);
+
+            Field modifiers = Field.class.getDeclaredField("modifiers");
+            modifiers.setAccessible(true);
+            modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.setBoolean(null, true);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
