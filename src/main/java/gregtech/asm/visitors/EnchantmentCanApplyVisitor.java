@@ -2,6 +2,7 @@ package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
 
 import java.util.HashMap;
@@ -16,16 +17,14 @@ import java.util.Map;
  * {@link gregtech.api.items.toolitem.IGTTool#definition$canApplyAtEnchantingTable}
  * for this ASM to make a change in-game.
  */
-public final class EnchantmentCanApplyVisitor extends AdviceAdapter {
+public final class EnchantmentCanApplyVisitor extends AdviceAdapter implements Opcodes {
 
-    public static boolean hasMappings = false;
     public static final Map<String, ObfMapping> CLASS_TO_MAPPING_MAP = new HashMap<>();
 
-    public static void createMappings() {
+    static {
         createMapping("net/minecraft/enchantment/EnchantmentDurability"); // Minecraft Unbreaking
         createMapping("cofh/core/enchantment/EnchantmentSmelting"); // CoFHCore Smelting
         createMapping("cofh/core/enchantment/EnchantmentSmashing"); // CoFHCore Smashing
-        hasMappings = true;
     }
 
     private static void createMapping(String className) {

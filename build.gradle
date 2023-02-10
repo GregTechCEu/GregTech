@@ -75,6 +75,7 @@ minecraft {
 
     runs {
         client {
+            //noinspection GroovyAssignabilityCheck
             workingDirectory project.file('run')
             if (project.use_coremod.toBoolean()) {
                 jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
@@ -90,6 +91,7 @@ minecraft {
         }
 
         server {
+            //noinspection GroovyAssignabilityCheck
             workingDirectory project.file('run')
             if (project.use_coremod.toBoolean()) {
                 jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
@@ -335,8 +337,7 @@ private String getVersionFromJava() {
 
     if (extra != "") {
         return major + '.' + minor + '.' + revision + '-' + extra
-    }
-    else {
+    } else {
         return major + '.' + minor + '.' + revision
     }
 }
