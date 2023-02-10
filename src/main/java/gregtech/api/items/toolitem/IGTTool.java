@@ -114,6 +114,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     String getOreDictName();
 
+    @Nonnull
+    List<String> getSecondaryOreDicts();
+
     @Nullable
     Supplier<ItemStack> getMarkerItem();
 
