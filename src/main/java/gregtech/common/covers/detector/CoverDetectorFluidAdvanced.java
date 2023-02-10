@@ -57,7 +57,6 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        // todo replace with unique texture
         Textures.DETECTOR_FLUID_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
