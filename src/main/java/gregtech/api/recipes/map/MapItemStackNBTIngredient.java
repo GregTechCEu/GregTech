@@ -66,7 +66,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
             }
             //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
             //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
-            return ItemStack.areItemsEqual(stack, other.stack) && other.matcher.evaluate(this.stack, other.condition);
+            return ItemStack.areItemsEqual(stack, other.stack) && other.matcher != null && other.matcher.evaluate(this.stack, other.condition);
         }
         return false;
     }

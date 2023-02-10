@@ -467,6 +467,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Set the parallel limit
+     *
      * @param amount the amount to set
      */
     public void setParallelLimit(int amount) {
@@ -498,6 +499,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Find a recipe using inputs
+     *
      * @param maxVoltage  the maximum voltage the recipe can have
      * @param inputs      the item inputs used to search for the recipe
      * @param fluidInputs the fluid inputs used to search for the recipe
@@ -514,7 +516,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (recipe == null) {
             return null;
         }
-        return batchRecipe(recipe);
+        Recipe batchRecipe = batchRecipe(recipe);
+        if (!batchRecipe.matches(false, inputs, fluidInputs)) {
+            return null;
+        }
+        return batchRecipe;
     }
 
     private Recipe batchRecipe(Recipe recipe) {
@@ -523,54 +529,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         int multiplier = calcMultiplier(recipe);
-//
-//        RecipeBuilder builder = new RecipeBuilder();
-//        builder.fluidInputs()
-//
-//        if (recipe.getInputs() != null && recipe.getInputs().size() > 0) {
-//            List<GTRecipeInput> itemInputs = recipe.getInputs();
-//            List<GTRecipeInput> newItemInputs = new ArrayList<>(itemInputs.size());
-//            for (GTRecipeInput item : itemInputs) {
-//                GTRecipeInput newItem = item.copyWithAmount(item.getAmount() * multipler);
-//                newItemInputs.add(newItem);
-//            }
-//        }
-//        if (recipe.getFluidInputs() != null && recipe.getFluidInputs().size() > 0) {
-//            List<GTRecipeInput> fluidInputs = recipe.getFluidInputs();
-//            List<GTRecipeInput> newFluidInputs = new ArrayList<>(fluidInputs.size());
-//            for (GTRecipeInput item : fluidInputs) {
-//                GTRecipeInput newItem = item.copyWithAmount(item.getAmount() * multipler);
-//                newFluidInputs.add(newItem);
-//            }
-//        }
-//
-//        if (recipe.getOutputs() != null && recipe.getOutputs().size() > 0) {
-//            List<ItemStack> itemOutputs = recipe.getOutputs();
-//            List<ItemStack> newItemOutputs = new ArrayList<>(itemOutputs.size());
-//            for (ItemStack item : itemOutputs) {
-//                ItemStack newItemStack = new ItemStack(item.getItem(), item.getCount() * multipler, item.getMetadata(), item.getTagCompound());
-//                newItemOutputs.add(newItemStack);
-//            }
-//        }
-//        if (recipe.getFluidOutputs() != null && recipe.getFluidOutputs().size() > 0) {
-//            List<FluidStack> newFluidOutputs = new ArrayList<>(recipe.getFluidOutputs().size());
-//            for (FluidStack fluidStack : recipe.getFluidOutputs()) {
-//                FluidStack newFluidStack = new FluidStack(fluidStack.getFluid(), fluidStack.amount * multipler);
-//                newFluidOutputs.add(newFluidStack);
-//            }
-//        }
-//
-//        if (recipe.getChancedOutputs() != null && recipe.getChancedOutputs().size() > 0) {
-//            List<Recipe.ChanceEntry> itemOutputs = recipe.getChancedOutputs();
-//            List<Recipe.ChanceEntry> newItemOutpus = new ArrayList<>(itemOutputs.size());
-//            for (Recipe.ChanceEntry item : itemOutputs) {
-//                ItemStack itemStack = item.getItemStack();
-//                ItemStack newItemStack = new ItemStack(itemStack.getItem(), itemStack.getCount() * multipler, itemStack.getMetadata(), itemStack.getTagCompound());
-//                Recipe.ChanceEntry newChanceEntry = new Recipe.ChanceEntry(newItemStack, item.getChance(), item.getBoostPerTier());
-//                newItemOutpus.add(newChanceEntry);
-//            }
-//        }
-//
+
         // rebuild recipe
         RecipeBuilder<?> recipeBuilder = getRecipeMap().recipeBuilder();
         return recipeBuilder.append(recipe, multiplier, true).build().getResult();
@@ -607,7 +566,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         if (recipe.getFluidOutputs() != null && recipe.getFluidOutputs().size() > 0) {
             for (FluidStack fluidStack : recipe.getFluidOutputs()) {
-                multipler = Math.min(metaTileEntity.getFluidOutputLimit() / 2 / fluidStack.amount, multipler);
+                multipler = Math.min(32000 / 2 / fluidStack.amount, multipler);
             }
         }
 
