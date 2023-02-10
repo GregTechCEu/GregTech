@@ -52,6 +52,7 @@ public final class ToolItems {
     public static IGTTool BUZZSAW;
     public static IGTTool SCREWDRIVER_LV;
     public static IGTTool PLUNGER;
+
     private ToolItems() {/**/}
 
     public static List<IGTTool> getAllTools() {
@@ -144,6 +145,7 @@ public final class ToolItems {
                         .sneakBypassUse().behaviors(RotateRailBehavior.INSTANCE))
                 .sound(SoundEvents.ENTITY_ITEM_BREAK)
                 .oreDict(ToolOreDict.toolCrowbar)
+                .secondaryOreDicts("craftingToolCrowbar")
                 .symbol('c')
                 .toolClasses(ToolClasses.CROWBAR));
         SCREWDRIVER = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver")
