@@ -540,6 +540,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default int definition$getDamage(ItemStack stack) {
+        // bypass the Forge OreDictionary using ItemStack#getItemDamage instead of ItemStack#getMetadata
+        // this will allow tools to retain their oredicts when durability changes.
+        // No normal tool ItemStack a player has should ever have a metadata value other than 0
+        // so this should not cause unexpected behavior for them
+        if (stack.getMetadata() == GTValues.W) {
+            return GTValues.W;
+        }
+
         NBTTagCompound toolTag = getToolTag(stack);
         if (toolTag.hasKey(DURABILITY_KEY, Constants.NBT.TAG_INT)) {
             return toolTag.getInteger(DURABILITY_KEY);
