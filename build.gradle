@@ -132,15 +132,20 @@ dependencies {
 
     implementation 'curse.maven:crafttweaker-239197:3935788'
 
+    implementation fg.deobf('curse.maven:jei-238222:4364085')
+    implementation fg.deobf('curse.maven:top-245211:2667280')
+    implementation fg.deobf('curse.maven:ctm-267602:2915363')
+    implementation fg.deobf('curse.maven:groovyscript-687577:4329872')
 
-    implementation (files("etc/jei_1.12.2-4.16.1.301.jar"))
-    implementation (files("etc/theoneprobe-1.12-1.4.28.jar"))
-    implementation (files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
-    implementation (files("etc/groovyscript-0.1.0.jar"))
+
+    //implementation (files("etc/jei_1.12.2-4.16.1.301.jar"))
+    //implementation (files("etc/theoneprobe-1.12-1.4.28.jar"))
+    //implementation (files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
+   // implementation fg.deobf(files("etc/groovyscript-0.1.0.jar"))
 
     testImplementation('org.junit.jupiter:junit-jupiter:5.9.1')
     testImplementation('org.hamcrest:hamcrest:2.2')
-    implementation 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
     if (project.use_mixins.toBoolean()) {
