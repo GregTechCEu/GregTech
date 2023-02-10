@@ -22,6 +22,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
@@ -49,10 +50,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.*;
@@ -73,6 +77,7 @@ import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
@@ -1041,6 +1046,25 @@ public class GTUtility {
         return color;
     }
 
+    /**
+     * Gather a list of all registered dimensions. Done as a Supplier so that it can be called at any time and catch
+     * dimensions that are registered late
+     *
+     * @param filter An Optional filter to restrict the returned dimensions
+     * @return A Supplier containing a list of all registered dimensions
+     */
+    public static Supplier<List<Integer>> getAllRegisteredDimensions(@Nullable Predicate<WorldProvider> filter) {
+        List<Integer> dims = new ArrayList<>();
+
+        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
+        dimMap.values().stream()
+                .flatMapToInt(s -> Arrays.stream(s.toIntArray()))
+                .filter(num -> filter == null || filter.test(DimensionManager.createProviderFor(num)))
+                .forEach(dims::add);
+
+        return () -> dims;
+    }
+
     public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
         return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
     }
@@ -1158,5 +1182,21 @@ public class GTUtility {
             set.addAll(subItems);
         }
         return set;
+    }
+
+    /**
+     * Checks if an (X,Y) point is within a defined box range
+     *
+     * @param initialX The initial X point of the box
+     * @param initialY The initial Y point of the box
+     * @param width    The width of the box
+     * @param height   The height of the box
+     * @param pointX   The X value of the point to check
+     * @param pointY   The Y value of the point to check
+     *
+     * @return True if the provided (X,Y) point is within the described box, else false
+     */
+    public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
+        return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
 }

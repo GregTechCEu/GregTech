@@ -1,4 +1,4 @@
-package gregtech.integration.jei.recipe.primitive;
+package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
@@ -37,7 +37,6 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
 
     protected final IDrawable slot;
     protected final IDrawable icon;
-    protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 
     protected List<Boolean> itemExists = new ArrayList<>();
     protected List<Boolean> fluidExists = new ArrayList<>();
