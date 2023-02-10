@@ -9,12 +9,14 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.integration.GroovyScriptCompat;
+import gregtech.api.util.GTLog;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
@@ -52,7 +54,14 @@ public class CommandHand extends CommandBase {
                     throw new CommandException("gregtech.command.hand.no_item");
                 }
             }
-            String registryName = stackInHand.getItem().getRegistryName().toString();
+            String registryName;
+            ResourceLocation registryLocation =  stackInHand.getItem().getRegistryName();
+            if  (registryLocation != null) {
+                registryName = registryLocation.toString();
+            } else {
+                registryName = "ERROR";
+                GTLog.logger.warn("ItemStack {} has a null registry name", stackInHand.getTranslationKey());
+            }
             ClickEvent itemNameEvent = new ClickEvent(Action.OPEN_URL, registryName);
             player.sendMessage(new TextComponentTranslation("gregtech.command.hand.item_id", registryName, stackInHand.getItemDamage())
                     .setStyle(new Style().setClickEvent(itemNameEvent)));

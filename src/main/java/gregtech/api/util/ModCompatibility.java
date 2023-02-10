@@ -29,7 +29,7 @@ public class ModCompatibility {
     }
 
     public static ItemStack getRealItemStack(ItemStack itemStack) {
-        if (refinedStorage != null && refinedStorage.canHandleItemStack(itemStack)) {
+        if (refinedStorage != null && RefinedStorage.canHandleItemStack(itemStack)) {
             return refinedStorage.getRealItemStack(itemStack);
         }
         return itemStack;
@@ -44,7 +44,7 @@ public class ModCompatibility {
             this.getOutputsMethod = getPatternFromCacheMethod.getReturnType().getMethod("getOutputs");
         }
 
-        public boolean canHandleItemStack(ItemStack itemStack) {
+        public static boolean canHandleItemStack(ItemStack itemStack) {
             ResourceLocation registryName = Objects.requireNonNull(itemStack.getItem().getRegistryName());
             return registryName.getNamespace().equals("refinedstorage") &&
                     registryName.getPath().equals("pattern");

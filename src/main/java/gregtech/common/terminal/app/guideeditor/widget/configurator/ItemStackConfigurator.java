@@ -11,12 +11,11 @@ import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
-import gregtech.common.terminal.app.guide.widget.SlotListWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
+import gregtech.common.terminal.app.guide.widget.SlotListWidget;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -41,6 +41,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
@@ -352,7 +353,11 @@ public class CommonProxy {
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {
         ItemBlock itemBlock = producer.apply(block);
-        itemBlock.setRegistryName(block.getRegistryName());
+        ResourceLocation registryName = block.getRegistryName();
+        if (registryName == null) {
+            throw new IllegalArgumentException("Block " + block.getTranslationKey() + " has no registry name.");
+        }
+        itemBlock.setRegistryName(registryName);
         return itemBlock;
     }
 

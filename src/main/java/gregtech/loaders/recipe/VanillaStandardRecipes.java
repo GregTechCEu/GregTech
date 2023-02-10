@@ -1180,6 +1180,32 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.SLIME_BLOCK))
                 .duration(300).EUt(2).buildAndRegister();
 
+        if (ConfigHolder.recipes.harderRods) {
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.COBBLESTONE))
+                    .output(OrePrefix.stick, Materials.Stone, 1)
+                    .output(dustSmall, Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE))
+                    .output(OrePrefix.stick, Materials.Stone, 1)
+                    .output(dustSmall, Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+        } else {
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.COBBLESTONE))
+                    .output(OrePrefix.stick, Materials.Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE))
+                    .output(OrePrefix.stick, Materials.Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+        }
+
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.NETHER_WART, 9))
                 .notConsumable(new IntCircuitIngredient(9))

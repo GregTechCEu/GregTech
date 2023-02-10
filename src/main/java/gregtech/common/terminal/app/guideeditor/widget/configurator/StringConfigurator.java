@@ -7,8 +7,6 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 
-import java.awt.*;
-
 public class StringConfigurator extends ConfiguratorWidget<String>{
     private TextFieldWidget textFieldWidget;
 

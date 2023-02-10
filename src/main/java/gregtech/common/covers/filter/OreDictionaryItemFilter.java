@@ -25,6 +25,13 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     private static final Pattern ALLOWED_CHARS = Pattern.compile("[0-9a-zA-Z* &|^!()]*");
 
+    private static final Pattern DOUBLE_WILDCARD = Pattern.compile("\\*{2,}");
+    private static final Pattern DOUBLE_AND = Pattern.compile("&{2,}");
+    private static final Pattern DOUBLE_OR = Pattern.compile("\\|{2,}");
+    private static final Pattern DOUBLE_NOT = Pattern.compile("!{2,}");
+    private static final Pattern DOUBLE_XOR = Pattern.compile("\\^{2,}");
+    private static final Pattern DOUBLE_SPACE = Pattern.compile(" {2,}");
+
     protected String oreDictFilterExpression = "";
     private String testMsg = "";
     private boolean testResult;
@@ -57,12 +64,12 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 .setScale(0.75f)
                 .setValidator(input -> {
                     // remove all operators that are double
-                    input = input.replaceAll("\\*{2,}", "*");
-                    input = input.replaceAll("&{2,}", "&");
-                    input = input.replaceAll("\\|{2,}", "|");
-                    input = input.replaceAll("!{2,}", "!");
-                    input = input.replaceAll("\\^{2,}", "^");
-                    input = input.replaceAll(" {2,}", " ");
+                    input = DOUBLE_WILDCARD.matcher(input).replaceAll("*");
+                    input = DOUBLE_AND.matcher(input).replaceAll("&");
+                    input = DOUBLE_OR.matcher(input).replaceAll("|");
+                    input = DOUBLE_NOT.matcher(input).replaceAll("!");
+                    input = DOUBLE_XOR.matcher(input).replaceAll("^");
+                    input = DOUBLE_SPACE.matcher(input).replaceAll(" ");
                     // move ( and ) so it doesn't create invalid expressions f.e. xxx (& yyy) => xxx & (yyy)
                     // append or prepend ( and ) if the amount is not equal
                     StringBuilder builder = new StringBuilder();
@@ -81,7 +88,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                             unclosed--;
                             if (last == '&' || last == '|' || last == '^') {
                                 int l = builder.lastIndexOf(" " + last);
-                                int l2 = builder.lastIndexOf("" + last);
+                                int l2 = builder.lastIndexOf(String.valueOf(last));
                                 builder.insert(l == l2 - 1 ? l : l2, ")");
                                 continue;
                             }

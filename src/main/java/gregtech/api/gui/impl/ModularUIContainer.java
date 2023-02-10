@@ -6,10 +6,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
-import gregtech.core.network.packets.PacketUIClientAction;
-import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickIntCounter;
+import gregtech.core.network.packets.PacketUIClientAction;
+import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,7 +58,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
                 .collect(Collectors.toList());
 
         Set<INativeWidget> removedWidgets = new HashSet<>(slotMap.values());
-        removedWidgets.removeAll(nativeWidgets);
+        nativeWidgets.forEach(removedWidgets::remove);
         if (!removedWidgets.isEmpty()) {
             for (INativeWidget removedWidget : removedWidgets) {
                 Slot slotHandle = removedWidget.getHandle();

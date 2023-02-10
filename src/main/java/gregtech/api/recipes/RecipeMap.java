@@ -367,8 +367,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 continue;
             }
             if (index > 0) {
-                for (int i = 0; i < uniqueItems.length; i++) {
-                    ItemStack unique = uniqueItems[i];
+                for (ItemStack unique : uniqueItems) {
                     if (unique == null) break;
                     else if (input.isItemEqual(unique) && ItemStack.areItemStackTagsEqual(input, unique)) {
                         continue main;

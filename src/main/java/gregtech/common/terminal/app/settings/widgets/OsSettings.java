@@ -36,7 +36,7 @@ public class OsSettings extends AbstractWidgetGroup {
     }
     final TerminalOSWidget os;
 
-    public void saveConfig() {
+    public static void saveConfig() {
         if (FMLCommonHandler.instance().getSide().isClient()) {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setBoolean("double_check", DOUBLE_CHECK);

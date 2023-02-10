@@ -53,13 +53,9 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         this.frozen = false;
     }
 
-    private boolean checkActiveModContainerIsGregtech() {
+    private static boolean checkActiveModContainerIsGregtech() {
         ModContainer container = Loader.instance().activeModContainer();
-        if (container != null && container.getModId().equals(GTValues.MODID)) {
-            return true;
-        }
-
-        return false;
+        return container != null && container.getModId().equals(GTValues.MODID);
     }
 
     public void register(int id, K key, V value) {

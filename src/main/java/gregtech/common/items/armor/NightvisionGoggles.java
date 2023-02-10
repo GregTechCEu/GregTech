@@ -73,16 +73,11 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         player.inventoryContainer.detectAndSendChanges();
     }
 
-    public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+    public static void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
             if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);
         }
-    }
-
-    @Override
-    public double getDamageAbsorption() {
-        return 0;
     }
 
     @Override

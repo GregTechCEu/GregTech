@@ -53,6 +53,14 @@ public class CoverDetectorFluid extends CoverBehavior implements ITickable {
         return EnumActionResult.SUCCESS;
     }
 
+    protected boolean isInverted(){
+        return this.isInverted;
+    }
+
+    protected void setInverted(boolean b){
+        this.isInverted = b;
+    }
+
     private void setInverted() {
         this.isInverted = !this.isInverted;
         if (!this.coverHolder.getWorld().isRemote) {
