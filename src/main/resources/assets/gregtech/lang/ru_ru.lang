@@ -3240,6 +3240,7 @@ gregtech.machine.rotor_holder.tooltip2=Удерживает ротор на ме
 gregtech.recipe.explosive=Взрывчатка: %s
 gregtech.gui.overclock.description=Кнопка Ускорения/n§7Рецепты могут разгонять до установленного уровня
 gregtech.gui.overclock.off=X
+gregtech.gui.overclock.batch=B
 gregtech.gui.fluid_auto_output.tooltip.enabled=Авто. вывод жидкости включен
 gregtech.gui.fluid_auto_output.tooltip.disabled=Авто. вывод жидкости отключен
 gregtech.gui.item_auto_output.tooltip.enabled=Авто. вывод предметов включен

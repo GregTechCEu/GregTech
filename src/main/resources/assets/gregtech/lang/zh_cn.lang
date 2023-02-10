@@ -4732,6 +4732,7 @@ gregtech.gui.overclock.enabled=超频启用。/n点击禁用
 gregtech.gui.overclock.disabled=超频禁用。/n点击启用
 gregtech.gui.overclock.description=配方可以超限到这一等级。/nX 表示没有超频。
 gregtech.gui.overclock.off=X
+gregtech.gui.overclock.batch=批
 gregtech.gui.sort=整理
 gregtech.gui.fluid_auto_output.tooltip.enabled=流体自动-输出§a启用
 gregtech.gui.fluid_auto_output.tooltip.disabled=流体自动-输出§c禁用

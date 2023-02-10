@@ -4766,6 +4766,7 @@ gregtech.gui.overclock.enabled=オーバークロックが有効。/nクリッ�
 gregtech.gui.overclock.disabled=オーバークロックが無効。/nクリックで有効化
 gregtech.gui.overclock.description=この機械はこの電圧までオーバークロックされる。/nXはオーバークロックがされていない。
 gregtech.gui.overclock.off=X
+gregtech.gui.overclock.batch=B
 gregtech.gui.sort=ソート
 gregtech.gui.fluid_auto_output.tooltip.enabled=液体自動搬出が有効
 gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出が無効
