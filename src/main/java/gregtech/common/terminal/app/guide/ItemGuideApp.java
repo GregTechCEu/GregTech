@@ -50,7 +50,7 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
         }
 
         public GuideItem(ItemStack stack) {
-            this(stack, stack.getItem().getRegistryName().toString() + ":" + stack.getMetadata());
+            this(stack, Objects.requireNonNull(stack.getItem().getRegistryName()) + ":" + stack.getMetadata());
         }
 
         public GuideItem(MetaItem<?>.MetaValueItem item) {

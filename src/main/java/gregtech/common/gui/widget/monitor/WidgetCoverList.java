@@ -29,8 +29,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public class WidgetCoverList extends ScrollableListWidget {
+
+    private static final Pattern PARENTHESIS_PATTERN = Pattern.compile("[,() ]");
+
     private WidgetGroup selected;
     private final Map<WidgetGroup, CoverDigitalInterface> widgetMap;
     public Consumer<CoverDigitalInterface> onSelected;
@@ -89,7 +93,7 @@ public class WidgetCoverList extends ScrollableListWidget {
                 if (children.get(0).isMouseOverElement(mouseX, mouseY)) {
                     try {
                         String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class, (LabelWidget) children.get(1), "text");
-                        String[] posSplit = posString.split("[,() ]");
+                        String[] posSplit = PARENTHESIS_PATTERN.split(posString);
                         BlockPosHighlightRenderer.renderBlockBoxHighLight(
                                 new BlockPos(Integer.parseInt(posSplit[1]), Integer.parseInt(posSplit[3])
                                         , Integer.parseInt(posSplit[5])), 5000);

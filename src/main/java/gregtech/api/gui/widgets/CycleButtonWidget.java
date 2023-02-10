@@ -25,12 +25,13 @@ import java.util.function.*;
 
 public class CycleButtonWidget extends Widget {
 
+    private static final int RIGHT_MOUSE = 1;
+
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
     private final String[] optionNames;
     private int textColor = 0xFFFFFF;
     private final IntSupplier currentOptionSupplier;
     private final IntConsumer setOptionExecutor;
-    private final int RIGHT_MOUSE = 1;
     protected int currentOption;
     protected String tooltipHoverString;
 
@@ -86,14 +87,14 @@ public class CycleButtonWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = I18n.format(optionNames[currentOption]);
         fontRenderer.drawStringWithShadow(text,
-                pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
-                pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
+                pos.x + size.width / 2F - fontRenderer.getStringWidth(text) / 2F,
+                pos.y + size.height / 2F - fontRenderer.FONT_HEIGHT / 2F + 1, textColor);
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (isMouseOverElement(mouseX, mouseY) && tooltipHoverString != null) {
-            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString).split("/n"));
+            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipHoverString)));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

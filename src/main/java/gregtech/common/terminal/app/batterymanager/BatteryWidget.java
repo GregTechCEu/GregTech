@@ -5,9 +5,9 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ShaderTexture;
-import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.client.shader.Shaders;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -45,7 +45,7 @@ public class BatteryWidget extends Widget {
                 uniformCache.glUniform1F("progress", progress);
                 uniformCache.glUniform3F("c_ring", .55f, .7f, .7f);
                 uniformCache.glUniform3F("c_sector", (color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F, (color & 255) / 255.0F);
-                uniformCache.glUniform3F("c_water", 1f * (1 - progress), progress, 0f);
+                uniformCache.glUniform3F("c_water", (1 - progress), progress, 0f);
             });
         } else {
             int b_color = (int)(255 * (1 - left)) << 16 | (int)(255 * left) << 8 | 255 << 24;

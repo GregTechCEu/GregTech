@@ -398,7 +398,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
+    private static Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
         return (list) -> {
             ITextComponent tooltip;
             if (multiplier.get() == 1.0) {

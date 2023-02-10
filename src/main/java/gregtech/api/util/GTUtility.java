@@ -31,6 +31,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -93,6 +94,8 @@ public class GTUtility {
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
     private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
+
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
 
     static {
         for (int i = 0; i < V.length; i++) {
@@ -267,8 +270,7 @@ public class GTUtility {
 
     public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
         if (!itemStackList.isEmpty()) {
-            for (int i = 0; i < itemStackList.size(); i++) {
-                ItemStack stackInList = itemStackList.get(i);
+            for (ItemStack stackInList : itemStackList) {
                 if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
                     if (stackInList.getCount() < stackInList.getMaxStackSize()) {
                         int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
@@ -338,7 +340,10 @@ public class GTUtility {
             playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
         } else {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.getConnection().sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+            NetHandlerPlayClient connection = mc.getConnection();
+            if (connection != null) {
+                connection.sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+            }
         }
         return wasRemovedByPlayer;
     }
@@ -1087,6 +1092,11 @@ public class GTUtility {
     @Nonnull
     public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
         return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
+    }
+
+    @Nonnull
+    public static Pattern getForwardNewLineRegex() {
+        return NEW_LINE_PATTERN;
     }
 
     /**

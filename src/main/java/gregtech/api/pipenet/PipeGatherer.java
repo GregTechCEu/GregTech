@@ -61,6 +61,6 @@ public class PipeGatherer extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return (!returnAfterFirst || pipes.size() <= 0) && pipePredicate.test(neighbourPipe);
+        return (!returnAfterFirst || pipes.size() == 0) && pipePredicate.test(neighbourPipe);
     }
 }

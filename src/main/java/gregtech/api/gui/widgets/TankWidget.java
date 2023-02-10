@@ -142,7 +142,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidInTank.amount, 4) + "L";
 
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
@@ -296,9 +296,11 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 performedFill = true;
             }
             if (performedFill) {
-                SoundEvent soundevent = initialFluid.getFluid().getFillSound(initialFluid);
-                player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
-                        soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (initialFluid != null) {
+                    SoundEvent soundevent = initialFluid.getFluid().getFillSound(initialFluid);
+                    player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
+                            soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                }
                 gui.entityPlayer.inventory.setItemStack(currentStack);
                 return currentStack.getCount();
             }

@@ -140,7 +140,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         ArrayList<BlockPos> resultAirBlocks = new ArrayList<>();
         observedSet.add(centerPos);
         resultAirBlocks.add(centerPos);
-        Stack<EnumFacing> moveStack = new Stack<>();
+        Deque<EnumFacing> moveStack = new ArrayDeque<>();
         MutableBlockPos currentPos = new MutableBlockPos(centerPos);
         main:
         while (true) {
@@ -171,7 +171,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         observedSet.add(centerPos);
         resultFrameBlocks.add(centerPos);
         IBlockState frameState = null;
-        Stack<EnumFacing> moveStack = new Stack<>();
+        Deque<EnumFacing> moveStack = new ArrayDeque<>();
         MutableBlockPos currentPos = new MutableBlockPos(centerPos);
         main:
         while (true) {

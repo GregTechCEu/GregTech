@@ -548,47 +548,49 @@ public final class MetaItems {
 
     public static MetaOreDictItem CT_OREDICT_ITEM;
 
-    private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
-        add(OrePrefix.dust);
-        add(OrePrefix.dustSmall);
-        add(OrePrefix.dustTiny);
-        add(OrePrefix.dustImpure);
-        add(OrePrefix.dustPure);
-        add(OrePrefix.crushed);
-        add(OrePrefix.crushedPurified);
-        add(OrePrefix.crushedCentrifuged);
-        add(OrePrefix.gem);
-        add(OrePrefix.gemChipped);
-        add(OrePrefix.gemFlawed);
-        add(OrePrefix.gemFlawless);
-        add(OrePrefix.gemExquisite);
-        add(OrePrefix.ingot);
-        add(OrePrefix.ingotHot);
-        add(OrePrefix.plate);
-        add(OrePrefix.plateDouble);
-        add(OrePrefix.plateDense);
-        add(OrePrefix.foil);
-        add(OrePrefix.stick);
-        add(OrePrefix.stickLong);
-        add(OrePrefix.bolt);
-        add(OrePrefix.screw);
-        add(OrePrefix.ring);
-        add(OrePrefix.nugget);
-        add(OrePrefix.round);
-        add(OrePrefix.spring);
-        add(OrePrefix.springSmall);
-        add(OrePrefix.gear);
-        add(OrePrefix.gearSmall);
-        add(OrePrefix.wireFine);
-        add(OrePrefix.rotor);
-        add(OrePrefix.lens);
-        add(OrePrefix.turbineBlade);
-        add(OrePrefix.toolHeadDrill);
-        add(OrePrefix.toolHeadChainsaw);
-        add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadBuzzSaw);
-        add(OrePrefix.toolHeadScrewdriver);
-    }};
+    private static final List<OrePrefix> orePrefixes = new ArrayList<>();
+
+    static {
+        orePrefixes.add(OrePrefix.dust);
+        orePrefixes.add(OrePrefix.dustSmall);
+        orePrefixes.add(OrePrefix.dustTiny);
+        orePrefixes.add(OrePrefix.dustImpure);
+        orePrefixes.add(OrePrefix.dustPure);
+        orePrefixes.add(OrePrefix.crushed);
+        orePrefixes.add(OrePrefix.crushedPurified);
+        orePrefixes.add(OrePrefix.crushedCentrifuged);
+        orePrefixes.add(OrePrefix.gem);
+        orePrefixes.add(OrePrefix.gemChipped);
+        orePrefixes.add(OrePrefix.gemFlawed);
+        orePrefixes.add(OrePrefix.gemFlawless);
+        orePrefixes.add(OrePrefix.gemExquisite);
+        orePrefixes.add(OrePrefix.ingot);
+        orePrefixes.add(OrePrefix.ingotHot);
+        orePrefixes.add(OrePrefix.plate);
+        orePrefixes.add(OrePrefix.plateDouble);
+        orePrefixes.add(OrePrefix.plateDense);
+        orePrefixes.add(OrePrefix.foil);
+        orePrefixes.add(OrePrefix.stick);
+        orePrefixes.add(OrePrefix.stickLong);
+        orePrefixes.add(OrePrefix.bolt);
+        orePrefixes.add(OrePrefix.screw);
+        orePrefixes.add(OrePrefix.ring);
+        orePrefixes.add(OrePrefix.nugget);
+        orePrefixes.add(OrePrefix.round);
+        orePrefixes.add(OrePrefix.spring);
+        orePrefixes.add(OrePrefix.springSmall);
+        orePrefixes.add(OrePrefix.gear);
+        orePrefixes.add(OrePrefix.gearSmall);
+        orePrefixes.add(OrePrefix.wireFine);
+        orePrefixes.add(OrePrefix.rotor);
+        orePrefixes.add(OrePrefix.lens);
+        orePrefixes.add(OrePrefix.turbineBlade);
+        orePrefixes.add(OrePrefix.toolHeadDrill);
+        orePrefixes.add(OrePrefix.toolHeadChainsaw);
+        orePrefixes.add(OrePrefix.toolHeadWrench);
+        orePrefixes.add(OrePrefix.toolHeadBuzzSaw);
+        orePrefixes.add(OrePrefix.toolHeadScrewdriver);
+    }
 
     public static void init() {
         MetaItem1 first = new MetaItem1();

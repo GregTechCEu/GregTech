@@ -226,7 +226,7 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Optional.Method(modid = GTValues.MODID_CT)
-    private void runEarlyCraftTweakerScripts() {
+    private static void runEarlyCraftTweakerScripts() {
         CraftTweakerAPI.tweaker.loadScript(false, "gregtech");
     }
 

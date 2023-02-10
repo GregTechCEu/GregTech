@@ -147,7 +147,7 @@ public class ClientProxy extends CommonProxy {
         FacadeRenderer.init();
     }
 
-    public void registerColors() {
+    public static void registerColors() {
         MetaBlocks.registerColors();
         MetaItems.registerColors();
         ToolItems.registerColors();

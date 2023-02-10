@@ -8,6 +8,4 @@ public interface IUIHolder extends IDirtyNotifiable {
 
     boolean isRemote();
 
-    void markAsDirty();
-
 }

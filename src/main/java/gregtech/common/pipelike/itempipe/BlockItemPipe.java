@@ -92,11 +92,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public ItemPipeType getItemPipeType(ItemStack itemStack) {
-        return super.getItemPipeType(itemStack);
-    }
-
-    @Override
     public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
         return selfTile instanceof TileEntityItemPipe && sideTile instanceof TileEntityItemPipe;
     }

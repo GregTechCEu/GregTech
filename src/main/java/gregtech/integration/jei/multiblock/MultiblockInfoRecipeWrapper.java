@@ -65,12 +65,13 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
+
     private static final int MAX_PARTS = 18;
     private static final int PARTS_HEIGHT = 36;
-    private final int SLOT_SIZE = 18;
-    private final int SLOTS_PER_ROW = 9;
-    private final int ICON_SIZE = 20;
-    private final int RIGHT_PADDING = 5;
+    private static final int SLOT_SIZE = 18;
+    private static final int SLOTS_PER_ROW = 9;
+    private static final int ICON_SIZE = 20;
+    private static final int RIGHT_PADDING = 5;
 
     private static class MBPattern {
         final WorldSceneRenderer sceneRenderer;
@@ -483,7 +484,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Nonnull
-    private Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
+    private static Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
         Map<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
             BlockPos pos = entry.getKey();
@@ -594,7 +595,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @SideOnly(Side.CLIENT)
-    private void renderBlockOverLay(BlockPos pos, int r, int g, int b) {
+    private static void renderBlockOverLay(BlockPos pos, int r, int g, int b) {
         if (pos == null) return;
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
