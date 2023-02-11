@@ -10,7 +10,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerSwitchShim implements IItemHandler {
+public class ItemContainerSwitchShim implements IItemHandlerModifiable {
 
     IItemHandlerModifiable container;
 
@@ -23,7 +23,6 @@ public class ItemContainerSwitchShim implements IItemHandler {
             throw new IllegalArgumentException("Shim container must be an IItemHandler!");
         }
         this.container = (IItemHandlerModifiable) container;
-        GTLog.logger.warn("container switch shim has changed!");
     }
 
     @Override
@@ -54,13 +53,8 @@ public class ItemContainerSwitchShim implements IItemHandler {
         return this.container.getSlotLimit(slot);
     }
 
-    public IItemHandler GetContainer(){
-        return this.container;
-    }
-    /*
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
-        this.container.setStackInSlot(slot, itemStack);
+    public void setStackInSlot(int i, @Nonnull ItemStack itemStack) {
+        this.container.setStackInSlot(i, itemStack);
     }
-*/
 }
