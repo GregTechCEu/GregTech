@@ -85,36 +85,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
 
-        this.filterWrapper.initUI(y + 15, widgetGroup);
-        this.filterWrapper.blacklistUI(y + 15, widgetGroup, () -> true);
-/*
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::showGlobalTransferLimitSlider);
-        stackSizeGroup.addWidget(new ImageWidget(139, 70, 35, 20, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, this::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, this::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 75, 31, 20, () -> String.valueOf(transferStackSize), val -> {
-                    if (val != null && !val.isEmpty())
-                        setTransferStackSize(Integer.parseInt(val));
-                })
-                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                        .setMaxLength(4)
-                        .setValidator(getTextFieldValidator(() -> Integer.MAX_VALUE))
-                        .setScale(0.9f)
-        );
-
-
-        widgetGroup.accept(stackSizeGroup);
-
-        this.filterWrapper.initUI(y + 15, widgetGroup);
-*/
+        this.filterWrapper.initUI(y + 38, widgetGroup);
+        this.filterWrapper.blacklistUI(y + 38, widgetGroup, () -> true);
     }
 
     protected void onFilterSlotChange(boolean notify) {
