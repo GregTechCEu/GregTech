@@ -205,9 +205,9 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
         WidgetGroup containerGroup = new WidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
         int slot = 0;
-        for (int row = 0; row < 9; row++) {
+        for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                containerGroup.addWidget(new SlotWidget(this.linkedContainer.GetContainer(), slot++, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+                containerGroup.addWidget(new SlotWidget(this.linkedContainer, slot++, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
             }
         }
         return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
@@ -240,11 +240,10 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     public void updateContainerLink() {
         linkedContainer.changeInventory(VirtualContainerRegistry.getContainerCreate(makeContainerName(), getContainerUUID()));
         coverHolder.markDirty();
-        GTLog.logger.warn("cover: " + coverHolder.getPos() + " container link updated to: " + makeContainerName() + " and uuid: " + getContainerUUID());
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("Frequency", color);
         tagCompound.setInteger("PumpMode", conveyorMode.ordinal());
@@ -253,6 +252,8 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         tagCompound.setBoolean("Private", isPrivate);
         tagCompound.setString("PlacedUUID", playerUUID.toString());
         tagCompound.setTag("Filter", itemFilter.serializeNBT());
+
+        return tagCompound;
     }
 
     @Override
