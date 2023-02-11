@@ -186,9 +186,7 @@ public class EventHandlers {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() && !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
             ItemStack feetEquip = event.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            if (lastFeetEquip.getItem().equals(feetEquip.getItem())) {
-                return;
-            } else {
+            if (!lastFeetEquip.getItem().equals(feetEquip.getItem())) {
                 if ((lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) && ((ArmorMetaItem<?>) lastFeetEquip.getItem()).getItem(lastFeetEquip).getArmorLogic() instanceof IStepAssist)
                     event.player.stepHeight = 0.6f;
 

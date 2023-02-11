@@ -170,7 +170,7 @@ public class OverclockingTest {
         assertThat(oc[1], is(recipeDuration / ((int) Math.pow(2, 2))));
     }
 
-    private int[] testOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage) {
+    private static int[] testOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage) {
         int numberOfOCs = machineTier - recipeTier;
         if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 
@@ -186,8 +186,8 @@ public class OverclockingTest {
                 OverclockingLogic.STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
     }
 
-    private int[] testHeatingOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage,
-                                int recipeTemperature, int machineTemperature) {
+    private static int[] testHeatingOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage,
+                                       int recipeTemperature, int machineTemperature) {
         int numberOfOCs = machineTier - recipeTier;
         if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 
@@ -203,7 +203,7 @@ public class OverclockingTest {
                 recipeTemperature);
     }
 
-    private int[] testFusionOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage) {
+    private static int[] testFusionOC(int recipeDuration, int recipeTier, int recipeVoltage, int machineTier, int maxVoltage) {
         int numberOfOCs = machineTier - recipeTier;
         if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 

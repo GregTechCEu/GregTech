@@ -210,9 +210,9 @@ public class CoverFluidRegulator extends CoverPump {
         return fs2;
     }
 
-    private Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
-                                                           Predicate<IFluidTankProperties> tankTypeFilter,
-                                                           Predicate<FluidStack> fluidTypeFilter) {
+    private static Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
+                                                                  Predicate<IFluidTankProperties> tankTypeFilter,
+                                                                  Predicate<FluidStack> fluidTypeFilter) {
 
         final Map<FluidStack, Integer> summedFluids = new Object2IntOpenHashMap<>();
         Arrays.stream(handler.getTankProperties())

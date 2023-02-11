@@ -111,6 +111,7 @@ public class Textures {
     public static final OrientedOverlayRenderer LARGE_MINER_OVERLAY_ADVANCED_2 = new OrientedOverlayRenderer("multiblock/large_miner_advanced_2");
     public static final OrientedOverlayRenderer CLEANROOM_OVERLAY = new OrientedOverlayRenderer("multiblock/cleanroom");
     public static final OrientedOverlayRenderer MULTIBLOCK_TANK_OVERLAY = new OrientedOverlayRenderer("multiblock/multiblock_tank");
+    public static final OrientedOverlayRenderer CHARCOAL_PILE_OVERLAY = new OrientedOverlayRenderer("multiblock/charcoal_pile_igniter");
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer("machines/alloy_smelter");
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace");
     public static final OrientedOverlayRenderer ELECTRIC_FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/electric_furnace");
@@ -164,7 +165,9 @@ public class Textures {
     public static final SimpleOverlayRenderer DETECTOR_ENERGY = new SimpleOverlayRenderer("cover/overlay_energy_detector");
     public static final SimpleOverlayRenderer DETECTOR_ENERGY_ADVANCED = new SimpleOverlayRenderer("cover/overlay_energy_detector_advanced");
     public static final SimpleOverlayRenderer DETECTOR_FLUID = new SimpleOverlayRenderer("cover/overlay_fluid_detector");
+    public static final SimpleOverlayRenderer DETECTOR_FLUID_ADVANCED = new SimpleOverlayRenderer("cover/overlay_fluid_detector_advanced");
     public static final SimpleOverlayRenderer DETECTOR_ITEM = new SimpleOverlayRenderer("cover/overlay_item_detector");
+    public static final SimpleOverlayRenderer DETECTOR_ITEM_ADVANCED = new SimpleOverlayRenderer("cover/overlay_item_detector_advanced");
     public static final SimpleOverlayRenderer DETECTOR_ACTIVITY = new SimpleOverlayRenderer("cover/overlay_activity_detector");
     public static final SimpleOverlayRenderer DETECTOR_ACTIVITY_ADVANCED = new SimpleOverlayRenderer("cover/overlay_activity_detector_advanced");
     public static final SimpleOverlayRenderer CRAFTING = new SimpleOverlayRenderer("cover/overlay_crafting");

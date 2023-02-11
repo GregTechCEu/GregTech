@@ -36,11 +36,12 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     protected final IGTToolDefinition toolStats;
     protected final Set<String> toolClasses;
     protected final String oreDict;
+    protected final List<String> secondaryOreDicts;
     protected final SoundEvent sound;
     protected final boolean playSoundOnBlockDestroy;
     protected final Supplier<ItemStack> markerItem;
 
-    protected ItemGTAxe(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
+    protected ItemGTAxe(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, List<String> secondaryOreDicts, Supplier<ItemStack> markerItem) {
         super(ToolMaterial.STONE, 0F, 0F);
         this.domain = domain;
         this.id = id;
@@ -50,6 +51,7 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
         this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oreDict = oreDict;
+        this.secondaryOreDicts = secondaryOreDicts;
         this.markerItem = markerItem;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
@@ -96,6 +98,12 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     @Override
     public String getOreDictName() {
         return oreDict;
+    }
+
+    @Nonnull
+    @Override
+    public List<String> getSecondaryOreDicts() {
+        return this.secondaryOreDicts;
     }
 
     @Nullable
@@ -286,7 +294,7 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
 
         @Override
         public Supplier<ItemGTAxe> supply() {
-            return () -> new ItemGTAxe(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
+            return () -> new ItemGTAxe(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, secondaryOreDicts, markerItem);
         }
     }
 }

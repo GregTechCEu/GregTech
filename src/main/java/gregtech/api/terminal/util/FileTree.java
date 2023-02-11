@@ -29,16 +29,19 @@ public class FileTree extends TreeNode<File, File> {
     public List<TreeNode<File, File>> getChildren() {
         if (children == null && !isLeaf()) {
             children = new ArrayList<>();
-            Arrays.stream(key.listFiles()).sorted((a, b)->{
-                if (a.isFile() && b.isFile()) {
-                    return a.compareTo(b);
-                } else if (a.isDirectory() && b.isDirectory()) {
-                    return a.compareTo(b);
-                } else if(a.isDirectory()) {
-                    return -1;
-                }
-                return 1;
-            }).forEach(file -> children.add(new FileTree(dimension + 1, file)));
+            File[] listFiles = key.listFiles();
+            if (listFiles != null) {
+                Arrays.stream(listFiles).sorted((a, b) -> {
+                    if (a.isFile() && b.isFile()) {
+                        return a.compareTo(b);
+                    } else if (a.isDirectory() && b.isDirectory()) {
+                        return a.compareTo(b);
+                    } else if (a.isDirectory()) {
+                        return -1;
+                    }
+                    return 1;
+                }).forEach(file -> children.add(new FileTree(dimension + 1, file)));
+            }
         }
         return super.getChildren();
     }

@@ -21,6 +21,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -485,11 +486,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 oldStack.hasTagCompound() && newStack.hasTagCompound()) {
             oldStack = oldStack.copy();
             newStack = newStack.copy();
-            oldStack.getTagCompound().removeTag("Charge");
-            newStack.getTagCompound().removeTag("Charge");
-            if (oldStack.getTagCompound().hasKey("terminal")) {
-                oldStack.getTagCompound().getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
-                newStack.getTagCompound().getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+            NBTTagCompound oldTag = oldStack.getTagCompound();
+            NBTTagCompound newTag = newStack.getTagCompound();
+            if (oldTag != null && newTag != null) {
+                oldTag.removeTag("Charge");
+                newTag.removeTag("Charge");
+                if (oldTag.hasKey("terminal")) {
+                    oldTag.getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+                    newTag.getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+                }
             }
         }
         return !ItemStack.areItemStacksEqual(oldStack, newStack);
@@ -533,7 +538,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (item == null) return;
         String unlocalizedTooltip = "metaitem." + item.unlocalizedName + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip)) {
-            lines.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
+            lines.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
         }
 
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);

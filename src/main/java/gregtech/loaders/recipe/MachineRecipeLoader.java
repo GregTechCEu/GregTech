@@ -477,6 +477,22 @@ public class MachineRecipeLoader {
                     .outputs(COVER_ITEM_DETECTOR.getStackForm())
                     .EUt(16).duration(100)
                     .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(COVER_FLUID_DETECTOR)
+                    .input(SENSOR_HV)
+                    .fluidInputs(solder)
+                    .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
+                    .EUt(16).duration(100)
+                    .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(COVER_ITEM_DETECTOR)
+                    .input(SENSOR_HV)
+                    .fluidInputs(solder)
+                    .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
+                    .EUt(16).duration(100)
+                    .buildAndRegister();
         }
 
         ASSEMBLER_RECIPES.recipeBuilder()

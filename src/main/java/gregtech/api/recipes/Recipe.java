@@ -14,12 +14,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -122,13 +122,11 @@ public class Recipe {
      * @param fluidTrimLimit The Limit to which fluid outputs should be trimmed to, -1 for no trimming
      * @return A new Recipe whose outputs have been trimmed.
      */
-    public Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
-
+    public static Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
         // Fast return early if no trimming desired
         if (itemTrimLimit == -1 && fluidTrimLimit == -1) {
             return currentRecipe;
         }
-
 
         currentRecipe = currentRecipe.copy();
         RecipeBuilder<?> builder = new RecipeBuilder<>(currentRecipe, recipeMap);
@@ -217,8 +215,7 @@ public class Recipe {
         int indexed = 0;
 
         List<GTRecipeInput> gtRecipeInputs = this.inputs;
-        for (int i = 0; i < gtRecipeInputs.size(); i++) {
-            GTRecipeInput ingredient = gtRecipeInputs.get(i);
+        for (GTRecipeInput ingredient : gtRecipeInputs) {
             int ingredientAmount = ingredient.getAmount();
             for (int j = 0; j < inputs.size(); j++) {
                 ItemStack inputStack = inputs.get(j);
@@ -249,8 +246,7 @@ public class Recipe {
         int indexed = 0;
 
         List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
-        for (int i = 0; i < gtRecipeInputs.size(); i++) {
-            GTRecipeInput fluid = gtRecipeInputs.get(i);
+        for (GTRecipeInput fluid : gtRecipeInputs) {
             int fluidAmount = fluid.getAmount();
             for (int j = 0; j < fluidInputs.size(); j++) {
                 FluidStack tankFluid = fluidInputs.get(j);
@@ -325,7 +321,7 @@ public class Recipe {
         return otherRecipe.matchesItems(thisStackList).getLeft();
     }
 
-    public int hashFluidList(List<GTRecipeInput> fluids) {
+    public static int hashFluidList(@Nonnull List<GTRecipeInput> fluids) {
         int hash = 0;
         for (GTRecipeInput fluidInput : fluids) {
             hash = 31 * hash + fluidInput.hashCode();

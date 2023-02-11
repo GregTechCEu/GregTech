@@ -255,11 +255,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
-    public long addEnergy(long energyToAdd) {
-        return IEnergyContainer.super.addEnergy(energyToAdd);
-    }
-
-    @Override
     public long getInputAmperage() {
         return source ? 0 : amps;
     }
@@ -294,7 +289,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         }
     }
 
-    public Function<String, String> getTextFieldValidator() {
+    public static Function<String, String> getTextFieldValidator() {
         return val -> {
             if (val.isEmpty()) {
                 return "0";

@@ -1,4 +1,4 @@
-package gregtech.integration.jei.recipe.primitive;
+package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;

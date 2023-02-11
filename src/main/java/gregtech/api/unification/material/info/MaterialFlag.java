@@ -3,6 +3,7 @@ package gregtech.api.unification.material.info;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTLog;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,14 +25,6 @@ public class MaterialFlag {
         this.requiredFlags = requiredFlags;
         this.requiredProperties = requiredProperties;
         FLAG_REGISTRY.add(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof MaterialFlag) {
-            return ((MaterialFlag) o).name.equals(this.name);
-        }
-        return false;
     }
 
     protected Set<MaterialFlag> verifyFlag(Material material) {
@@ -59,12 +52,25 @@ public class MaterialFlag {
         return FLAG_REGISTRY.stream().filter(f -> f.toString().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MaterialFlag that = (MaterialFlag) o;
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
     public static class Builder {
 
         final String name;
 
-        final Set<MaterialFlag> requiredFlags = new HashSet<>();
-        final Set<PropertyKey<?>> requiredProperties = new HashSet<>();
+        final Set<MaterialFlag> requiredFlags = new ObjectOpenHashSet<>();
+        final Set<PropertyKey<?>> requiredProperties = new ObjectOpenHashSet<>();
 
         public Builder(String name) {
             this.name = name;

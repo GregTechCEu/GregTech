@@ -883,8 +883,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         int amountOfTraits = buf.readShort();
         for (int i = 0; i < amountOfTraits; i++) {
             int traitNetworkId = buf.readVarInt();
-            MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
-            trait.receiveInitialData(buf);
+            mteTraits.stream()
+                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
+                    .findAny()
+                    .ifPresent(trait -> trait.receiveInitialData(buf));
         }
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             int coverId = buf.readVarInt();
@@ -924,9 +926,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
-            MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
-            int internalId = buf.readVarInt();
-            trait.receiveCustomData(internalId, buf);
+            mteTraits.stream()
+                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
+                    .findAny()
+                    .ifPresent(trait -> trait.receiveCustomData(buf.readVarInt(), buf));
         } else if (dataId == COVER_ATTACHED_MTE) {
             //cover placement event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
@@ -1405,9 +1408,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public RecipeMap<?> getRecipeMap() {
-        for (int i = 0; i < mteTraits.size(); i++) {
-            if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
-                return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
+        for (MTETrait mteTrait : mteTraits) {
+            if (mteTrait.getName().equals("RecipeMapWorkable")) {
+                return ((AbstractRecipeLogic) mteTrait).getRecipeMap();
             }
         }
         return null;

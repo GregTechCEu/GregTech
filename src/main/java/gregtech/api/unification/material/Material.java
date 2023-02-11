@@ -268,7 +268,7 @@ public class Material implements Comparable<Material> {
     public long getMass() {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
-        if (materialInfo.componentList.size() <= 0)
+        if (materialInfo.componentList.size() == 0)
             return Elements.Tc.getMass();
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {

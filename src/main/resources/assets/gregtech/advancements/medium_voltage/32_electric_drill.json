@@ -17,7 +17,7 @@
         "items": [
           {
             "type": "forge:ore_dict",
-            "ore": "craftingToolDrill"
+            "ore": "toolDrill"
           }
         ]
       }

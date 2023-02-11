@@ -258,7 +258,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         return container.getCharge() > 0;
     }
 
-    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 

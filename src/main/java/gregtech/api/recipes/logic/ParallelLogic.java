@@ -1,6 +1,11 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.recipes.FluidKey;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.Recipe;
@@ -32,7 +37,7 @@ public abstract class ParallelLogic {
      */
 
     public static int getMaxRecipeMultiplier(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable inputs, @Nonnull IMultipleTankHandler fluidInputs, int parallelAmount) {
-        /* Find all the items in the combined Item Input inventories and create oversized ItemStacks */
+        // Find all the items in the combined Item Input inventories and create oversized ItemStacks
         Map<ItemStackKey, Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
@@ -523,7 +528,7 @@ public abstract class ParallelLogic {
 
 
             // Trim the recipe outputs here if required
-            matchingRecipe = matchingRecipe.trimRecipeOutputs(matchingRecipe, recipeMap, voidable.getItemOutputLimit(), voidable.getFluidOutputLimit());
+            matchingRecipe = Recipe.trimRecipeOutputs(matchingRecipe, recipeMap, voidable.getItemOutputLimit(), voidable.getFluidOutputLimit());
 
 
             //equivalent of getting the max ratio from the inputs from Parallel logic

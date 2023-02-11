@@ -1,4 +1,4 @@
-package gregtech.integration.jei.recipe.primitive;
+package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
@@ -11,8 +11,8 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MaterialTree implements IRecipeWrapper {
     private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
