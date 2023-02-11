@@ -60,9 +60,9 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
         for (CubeSide cubeSide : CubeSide.VALUES) {
             String fullPath = String.format("blocks/%s/%s", basePath, cubeSide.name().toLowerCase());
             this.sprites.put(cubeSide, textureMap.registerSprite(new ResourceLocation(modID, fullPath)));
-            ResourceLocation emissiveLocation = new ResourceLocation(modID, fullPath + "_emissive");
-            if (ResourceHelper.isTextureExist(emissiveLocation)) {
-                this.spritesEmissive.put(cubeSide, textureMap.registerSprite(emissiveLocation));
+            String emissive = fullPath + EMISSIVE;
+            if (ResourceHelper.doResourcepacksHaveTexture(modID, emissive, true)) {
+                this.spritesEmissive.put(cubeSide, textureMap.registerSprite(new ResourceLocation(modID, emissive)));
             }
         }
     }

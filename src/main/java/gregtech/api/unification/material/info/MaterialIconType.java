@@ -5,13 +5,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import gregtech.api.GTValues;
+import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,13 +119,12 @@ public class MaterialIconType {
         //noinspection ConstantConditions
         if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
                 Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
-            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+
             while (!iconSet.isRootIconset) {
-                try {
-                    // check if the texture file exists
-                    manager.getResource(new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name)));
+                ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name));
+                if (ResourceHelper.doResourcepacksHaveTexture(location)) {
                     break;
-                } catch (IOException ignored) {
+                } else {
                     iconSet = iconSet.parentIconset;
                 }
             }
@@ -147,13 +145,12 @@ public class MaterialIconType {
         //noinspection ConstantConditions
         if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
                 Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
-            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+
             while (!iconSet.isRootIconset) {
-                try {
-                    // check if the model file exists
-                    manager.getResource(new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name)));
+                ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name));
+                if (ResourceHelper.doResourcepacksHaveTexture(location)) {
                     break;
-                } catch (IOException ignored) {
+                } else {
                     iconSet = iconSet.parentIconset;
                 }
             }

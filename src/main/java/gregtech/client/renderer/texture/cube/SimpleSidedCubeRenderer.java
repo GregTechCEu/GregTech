@@ -70,9 +70,9 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
             ResourceLocation resourceLocation = new ResourceLocation(modID, String.format("blocks/%s/%s", basePath, faceName));
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
 
-            ResourceLocation emissiveLocation = new ResourceLocation(modID, String.format("blocks/%s/%s_emissive", basePath, faceName));
-            if (ResourceHelper.isTextureExist(emissiveLocation)) {
-                spritesEmissive.put(overlayFace, textureMap.registerSprite(emissiveLocation));
+            String emissive = String.format("blocks/%s/%s_emissive", basePath, faceName);
+            if (ResourceHelper.doResourcepacksHaveTexture(modID, emissive, true)) {
+                spritesEmissive.put(overlayFace, textureMap.registerSprite(new ResourceLocation(modID, emissive)));
             }
         }
     }
