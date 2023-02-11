@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.CoverConveyor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class VirtualContainerRegistry extends WorldSavedData{
-    private static final int DEFAULT_SIZE = 27; // 27 slots
+    private static final int DEFAULT_SIZE = 9; // 9 slots
     private static final String DATA_ID = GTValues.MODID + ".vcontainer_data";
 
     protected static Map<UUID, Map<String, IItemHandler>> containerMap = new HashMap<>();
@@ -95,7 +96,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
         } else if (!containerMap.containsKey(uuid)) {
             containerMap.put(uuid, new HashMap<>());
         }
-        containerMap.get(uuid).put(key, new ItemStackHandler(new VirtualContainer(size).getItems()));
+        containerMap.get(uuid).put(key, new VirtualContainer(size));
     }
 
     /**
@@ -146,8 +147,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
             NBTTagCompound publicContainers = nbt.getCompoundTag("Public");
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
-                GTUtility.readItems(getContainerCreate(key, null, containerCompound.getInteger("Size")), "Slots", containerCompound);
-                GTLog.logger.warn("public container: " + key + " read from NBT");
+                GTUtility.readItems(VirtualContainerRegistry.getContainer(key, null), "Slots", containerCompound);
             }
         }
         if (nbt.hasKey("Private")) {
@@ -157,8 +157,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-                    GTUtility.readItems(getContainerCreate(key, uuid, containerCompound.getInteger("Size")), "Slots", containerCompound);
-                    GTLog.logger.warn("private container: " + key + " read from NBT");
+                    GTUtility.readItems(VirtualContainerRegistry.getContainer(key, uuid), "Slots", containerCompound);
                 }
             }
         }
@@ -172,9 +171,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, container) -> {
                 NBTTagCompound containerCompound = new NBTTagCompound();
-                containerCompound.setInteger("Size", container.getSlots());
                 GTUtility.writeItems(container, "Slots", containerCompound);
-                GTLog.logger.warn("container: " + key + " written to NBT");
                 mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
@@ -209,13 +206,13 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
     protected static class VirtualContainer implements IItemHandlerModifiable {
 
-        protected int size;
-        protected NonNullList<ItemStack> items;
+        private int size;
+        private NonNullList<ItemStack> items;
 
         public VirtualContainer(int size){
             this.size = size;
-            items = NonNullList.withSize(this.size, ItemStack.EMPTY);
-            GTLog.logger.warn("Virtual Container of size: " + size + " (" + items.size() + ") " + " has been constructed");
+            this.items = NonNullList.withSize(this.size, ItemStack.EMPTY);
+            GTLog.logger.warn("Virtual Container of size: {} ({}) has been constructed", size, this.items.size());
         }
 
         @Override
@@ -223,6 +220,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
             return items.size();
         }
 
+        @Nonnull
         @Override
         public ItemStack getStackInSlot(int i) {
             return items.get(i);
@@ -290,21 +288,9 @@ public class VirtualContainerRegistry extends WorldSavedData{
             return items.get(slot).getMaxStackSize();
         }
 
-        public boolean isEmpty(){
-            for (ItemStack item : items) {
-                if (!item.isEmpty())
-                    return false;
-            }
-            return true;
-        }
-
         @Override
         public void setStackInSlot(int i, @Nonnull ItemStack itemStack) {
-            items.set(i, itemStack);
-        }
-
-        public NonNullList<ItemStack> getItems() {
-            return items;
+            this.items.set(i, itemStack);
         }
     }
 }
