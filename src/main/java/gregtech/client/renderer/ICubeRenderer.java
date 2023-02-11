@@ -64,6 +64,7 @@ public interface ICubeRenderer extends IIconRegister {
     }
 
     @Nullable
+    @SideOnly(Side.CLIENT)
     static TextureAtlasSprite getResource(@Nonnull TextureMap textureMap, @Nonnull String modid, @Nonnull String name) {
         if (ResourceHelper.doResourcepacksHaveTexture(modid, name, true)) {
             return textureMap.registerSprite(new ResourceLocation(modid, name));

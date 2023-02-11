@@ -6,7 +6,6 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -116,13 +115,10 @@ public class MaterialIconType {
         }
 
         MaterialIconSet iconSet = materialIconSet;
-        //noinspection ConstantConditions
-        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
-                Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
-
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             while (!iconSet.isRootIconset) {
                 ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name));
-                if (ResourceHelper.doResourcepacksHaveTexture(location)) {
+                if (ResourceHelper.doResourcepacksHaveResource(location)) {
                     break;
                 } else {
                     iconSet = iconSet.parentIconset;
@@ -143,12 +139,10 @@ public class MaterialIconType {
 
         MaterialIconSet iconSet = materialIconSet;
         //noinspection ConstantConditions
-        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
-                Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
-
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             while (!iconSet.isRootIconset) {
                 ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name));
-                if (ResourceHelper.doResourcepacksHaveTexture(location)) {
+                if (ResourceHelper.doResourcepacksHaveResource(location)) {
                     break;
                 } else {
                     iconSet = iconSet.parentIconset;

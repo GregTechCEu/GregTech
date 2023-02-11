@@ -4,7 +4,8 @@ import gregtech.api.GTValues;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -64,32 +65,35 @@ public final class ResourceHelper {
      * @param format          if the location should be formatted to include "textures/" and ".png"
      * @return if the resource exists
      */
+    @SideOnly(Side.CLIENT)
     public static boolean doResourcepacksHaveTexture(@Nonnull String modid, @Nonnull String textureResource, boolean format) {
         if (format) textureResource = String.format(DIR_FORMAT, textureResource);
-        return doResourcepacksHaveTexture(modid, textureResource);
+        return doResourcepacksHaveResource(modid, textureResource);
     }
 
     /**
-     * @param modid           the modid of the texture, formatted with "textures/" and ".png"
-     * @param textureResource the location of the texture
+     * @param modid           the modid of the texture, formatted with the root dir and file extension
+     * @param resource the location of the resource
      * @return if the resource exists
      */
-    public static boolean doResourcepacksHaveTexture(@Nonnull String modid, @Nonnull String textureResource) {
-        return doResourcepacksHaveTexture(new ResourceLocation(modid, textureResource));
+    @SideOnly(Side.CLIENT)
+    public static boolean doResourcepacksHaveResource(@Nonnull String modid, @Nonnull String resource) {
+        return doResourcepacksHaveResource(new ResourceLocation(modid, resource));
     }
 
     /**
-     * @param textureResource the location of the texture, formatted with "textures/" and ".png"
+     * @param resource the location of the resource, formatted with the root dir and file extension
      * @return if the resource exists
      */
-    public static boolean doResourcepacksHaveTexture(@Nonnull ResourceLocation textureResource) {
+    @SideOnly(Side.CLIENT)
+    public static boolean doResourcepacksHaveResource(@Nonnull ResourceLocation resource) {
         // check minecraft for null for CI environments
         //noinspection ConstantValue
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && Minecraft.getMinecraft() != null) {
+        if (Minecraft.getMinecraft() != null) {
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
             try {
                 // check if the texture file exists
-                manager.getResource(textureResource);
+                manager.getResource(resource);
                 return true;
             } catch (IOException ignored) {
                 return false;
