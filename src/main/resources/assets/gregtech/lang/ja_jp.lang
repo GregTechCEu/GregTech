@@ -4828,8 +4828,9 @@ gregtech.gui.multiblock_no_voiding=消去モード/n§7何も消去しない
 ore.spawnlocation.name=鉱脈情報
 gregtech.jei.ore.surface_rock_1=地表にある小石は鉱脈の生成位置を示します。
 gregtech.jei.ore.surface_rock_2=破壊すると極小の粉を3個入手できる。また、幸運エンチャントが適用される。
-gregtech.jei.ore.biome_weighting=%s 生成頻度: %d
-gregtech.jei.ore.biome_weighting_no_spawn=%s 生成頻度: 生成されない
+gregtech.jei.ore.biome_weighting_title=§dバイオーム修飾による生成頻度:
+gregtech.jei.ore.biome_weighting=§d%sの生成頻度: §3%d
+gregtech.jei.ore.biome_weighting_no_spawn=§d%sの生成頻度: §c生成されない
 gregtech.jei.ore.ore_weight=鉱脈内での割合: %d%%
 gregtech.jei.ore.primary_1=上層の鉱石
 gregtech.jei.ore.primary_2=鉱脈の上側%d層に生成される
@@ -4839,6 +4840,22 @@ gregtech.jei.ore.between_1=中層の鉱石
 gregtech.jei.ore.between_2=鉱脈の中間%d層に生成される
 gregtech.jei.ore.sporadic_1=点在する鉱石
 gregtech.jei.ore.sporadic_2=鉱脈内に点在するように生成される
+
+fluid.spawnlocation.name=液体脈情報
+gregtech.jei.fluid.vein_weight=生成頻度: %d
+gregtech.jei.fluid.min_yield=最小収量: %d
+gregtech.jei.fluid.max_yield=最大収量: %d
+gregtech.jei.fluid.depletion_chance=枯渇率: %d%%
+gregtech.jei.fluid.depletion_amount=枯渇量: %d
+gregtech.jei.fluid.depleted_rate=枯渇時収量: %d
+gregtech.jei.fluid.dimension=ディメンション:
+gregtech.jei.fluid.weight_hover=液体脈の生成頻度。液体をマウスオーバーすることでバイオーム修飾の影響を確認できる。
+gregtech.jei.fluid.min_hover=任意のこの液体脈の最小収量
+gregtech.jei.fluid.max_hover=任意のこの液体脈の最大収量
+gregtech.jei.fluid.dep_chance_hover=採掘による液体脈の枯渇確率 [%]
+gregtech.jei.fluid.dep_amount_hover=鉱脈の枯渇する量
+gregtech.jei.fluid.dep_yield_hover=液体脈が枯渇した時の最大収量
+
 
 gregtech.jei.materials.average_mass=平均質量数: %,d
 gregtech.jei.materials.average_protons=平均陽子数: %,d
