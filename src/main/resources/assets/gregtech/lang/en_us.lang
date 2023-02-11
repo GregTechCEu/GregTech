@@ -4760,6 +4760,7 @@ gregtech.gui.overclock.enabled=Overclocking Enabled./nClick to Disable
 gregtech.gui.overclock.disabled=Overclocking Disabled./nClick to Enable
 gregtech.gui.overclock.description=Overclock Button/n§7Recipes can overclock up to the set tier
 gregtech.gui.overclock.off=X
+gregtech.gui.overclock.batch=B
 gregtech.gui.sort=Sort
 gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled

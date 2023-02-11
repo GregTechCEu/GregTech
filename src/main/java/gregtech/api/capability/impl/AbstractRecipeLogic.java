@@ -9,7 +9,9 @@ import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
@@ -41,6 +43,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
+    private static final String BATCH_MODE = "BatchMode";
 
     private final RecipeMap<?> recipeMap;
 
@@ -48,6 +51,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
+
+    private boolean batchMode = false;
     private int[] overclockResults;
 
     protected boolean canRecipeProgress = true;
@@ -114,7 +119,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected abstract long getMaxVoltage();
 
     /**
-     *
      * @return the maximum voltage the machine can use/handle for parallel recipe creation
      */
     protected long getMaxParallelVoltage() {
@@ -460,6 +464,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Set the parallel limit
+     *
      * @param amount the amount to set
      */
     public void setParallelLimit(int amount) {
@@ -491,8 +496,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Find a recipe using inputs
-     * @param maxVoltage the maximum voltage the recipe can have
-     * @param inputs the item inputs used to search for the recipe
+     *
+     * @param maxVoltage  the maximum voltage the recipe can have
+     * @param inputs      the item inputs used to search for the recipe
      * @param fluidInputs the fluid inputs used to search for the recipe
      * @return the recipe if found, otherwise null
      */
@@ -503,7 +509,72 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return null;
         }
 
-        return map.findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()));
+        Recipe recipe = map.findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()));
+        if (recipe == null) {
+            return null;
+        }
+        Recipe batchRecipe = batchRecipe(recipe);
+        if (!batchRecipe.matches(false, inputs, fluidInputs)) {
+            return null;
+        }
+        return batchRecipe;
+    }
+
+    private Recipe batchRecipe(Recipe recipe) {
+        if (!this.batchMode) {
+            return recipe;
+        }
+
+        int multiplier = calcMultiplier(recipe);
+
+        // rebuild recipe
+        RecipeBuilder<?> recipeBuilder = getRecipeMap().recipeBuilder();
+        return recipeBuilder.append(recipe, multiplier, true).build().getResult();
+    }
+
+    private int calcMultiplier(Recipe recipe) {
+        int multipler = Integer.MAX_VALUE;
+
+        // batch input
+        if (recipe.getInputs() != null && recipe.getInputs().size() > 0) {
+            List<GTRecipeInput> itemInputs = recipe.getInputs();
+            for (GTRecipeInput item : itemInputs) {
+                if (item.isNonConsumable()) {
+                    continue;
+                }
+                for (ItemStack itemStack : item.getInputStacks()) {
+                    multipler = Math.min(itemStack.getMaxStackSize() / item.getAmount(), multipler);
+                }
+            }
+        }
+        if (recipe.getFluidInputs() != null && recipe.getFluidInputs().size() > 0) {
+            List<GTRecipeInput> itemInputs = recipe.getFluidInputs();
+            for (GTRecipeInput item : itemInputs) {
+                FluidStack fluidStack = item.getInputFluidStack();
+                multipler = Math.min(8000 / fluidStack.amount, multipler);
+            }
+        }
+
+        if (recipe.getOutputs() != null && recipe.getOutputs().size() > 0) {
+            List<ItemStack> itemOutputs = recipe.getOutputs();
+            for (ItemStack item : itemOutputs) {
+                multipler = Math.min(item.getMaxStackSize() / 2 / item.getCount(), multipler);
+            }
+        }
+        if (recipe.getFluidOutputs() != null && recipe.getFluidOutputs().size() > 0) {
+            for (FluidStack fluidStack : recipe.getFluidOutputs()) {
+                multipler = Math.min(32000 / 2 / fluidStack.amount, multipler);
+            }
+        }
+
+        if (recipe.getChancedOutputs() != null && recipe.getChancedOutputs().size() > 0) {
+            List<Recipe.ChanceEntry> itemOutputs = recipe.getChancedOutputs();
+            for (Recipe.ChanceEntry item : itemOutputs) {
+                multipler = Math.min(item.getItemStack().getMaxStackSize() / 2 / item.getItemStack().getCount(), multipler);
+            }
+        }
+
+        return multipler;
     }
 
     /**
@@ -738,9 +809,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public String[] getAvailableOverclockingTiers() {
         final int maxTier = getOverclockForTier(getMaxVoltage());
-        final String[] result = new String[maxTier + 1];
-        result[0] = "gregtech.gui.overclock.off";
-        if (maxTier >= 0) System.arraycopy(GTValues.VNF, 1, result, 1, maxTier);
+        final String[] result = new String[maxTier + 2];
+        result[0] = "gregtech.gui.overclock.batch";
+        result[1] = "gregtech.gui.overclock.off";
+        if (maxTier >= 0) System.arraycopy(GTValues.VNF, 1, result, 2, maxTier);
         return result;
     }
 
@@ -897,6 +969,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.overclockVoltage = overclockVoltage;
         // Overclocking is not allowed if the passed voltage is ULV
         this.allowOverclocking = (overclockVoltage != GTValues.V[GTValues.ULV]);
+        this.batchMode = false;
+        this.previousRecipe = null;
+        metaTileEntity.markDirty();
+    }
+
+    public void setBatchMode(final boolean mode) {
+        this.overclockVoltage = this.getMaxVoltage();
+        this.batchMode = mode;
+        this.allowOverclocking = true;
+        this.previousRecipe = null;
         metaTileEntity.markDirty();
     }
 
@@ -914,12 +996,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public int getOverclockTier() {
         // If we do not allow overclocking, return ULV tier
+        if (this.batchMode) {
+            return 0;
+        }
+
         if (!isAllowOverclocking()) {
-            return GTValues.ULV;
+            return GTValues.ULV + 1;
         }
 
         // This will automatically handle ULV, and return 0
-        return getOverclockForTier(this.overclockVoltage);
+        return getOverclockForTier(this.overclockVoltage) + 1;
     }
 
     /**
@@ -930,7 +1016,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param tier The maximum tier the multiblock/machine can overclock to
      */
     public void setOverclockTier(final int tier) {
-        setMaximumOverclockVoltage(GTValues.V[tier]);
+        if (tier == 0) {
+            setBatchMode(true);
+            return;
+        }
+        setMaximumOverclockVoltage(GTValues.V[tier - 1]);
     }
 
     @Override
@@ -963,6 +1053,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         compound.setBoolean("CanRecipeProgress", canRecipeProgress);
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
         compound.setLong(OVERCLOCK_VOLTAGE, this.overclockVoltage);
+        compound.setBoolean(BATCH_MODE, this.batchMode);
         if (progressTime > 0) {
             compound.setInteger("Progress", progressTime);
             compound.setInteger("MaxProgress", maxProgressTime);
@@ -988,6 +1079,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.progressTime = compound.getInteger("Progress");
         this.allowOverclocking = compound.getBoolean(ALLOW_OVERCLOCKING);
         this.overclockVoltage = compound.getLong(OVERCLOCK_VOLTAGE);
+        this.batchMode = compound.getBoolean(BATCH_MODE);
         this.isActive = false;
         if (progressTime > 0) {
             this.isActive = true;
