@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.IdleTracker;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraft.client.resources.I18n;
@@ -37,6 +38,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     private boolean workingEnabled;
 
+    protected IdleTracker idle = new IdleTracker(5, 40, 1);
+
     public MetaTileEntityItemBus(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
@@ -51,14 +54,23 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+        idle.update();
+
+        int itemTransferred = 0;
+        if (!getWorld().isRemote && idle.canAction()) {
             if (workingEnabled) {
                 if (isExportHatch) {
-                    pushItemsIntoNearbyHandlers(getFrontFacing());
+                    itemTransferred = pushItemsIntoNearbyHandlers(getFrontFacing());
                 } else {
-                    pullItemsFromNearbyHandlers(getFrontFacing());
+                    itemTransferred = pullItemsFromNearbyHandlers(getFrontFacing());
                 }
             }
+        }
+
+        if (itemTransferred != 0) {
+            idle.dec();
+        } else {
+            idle.inc();
         }
     }
 

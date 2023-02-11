@@ -18,6 +18,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.IdleTracker;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -31,7 +32,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -58,6 +58,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected boolean isWorkingAllowed = true;
     protected FluidFilterContainer fluidFilter;
     protected BucketMode bucketMode;
+
+    protected IdleTracker idle = new IdleTracker(1, 40, 1);
+
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
         super(coverHolder, attachedSide);
@@ -126,9 +129,19 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     @Override
     public void update() {
         long timer = coverHolder.getOffsetTimer();
-        if (isWorkingAllowed && fluidLeftToTransferLastSecond > 0) {
-            this.fluidLeftToTransferLastSecond -= doTransferFluids(fluidLeftToTransferLastSecond);
+        int fluidBeTransferred = 0;
+        if (isWorkingAllowed && fluidLeftToTransferLastSecond > 0 && idle.canAction(timer)) {
+            fluidBeTransferred = doTransferFluids(fluidLeftToTransferLastSecond);
+            this.fluidLeftToTransferLastSecond -= fluidBeTransferred;
         }
+
+        idle.update();
+        if (fluidBeTransferred != 0) {
+            idle.dec();
+        } else {
+            idle.inc();
+        }
+
         if (timer % 20 == 0) {
             this.fluidLeftToTransferLastSecond = transferRate;
         }

@@ -19,6 +19,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.IdleTracker;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -59,6 +60,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
+
+    protected IdleTracker idle = new IdleTracker(5, 40, 1);
 
     public CoverConveyor(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(coverable, attachedSide);
@@ -132,15 +135,24 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public void update() {
         long timer = coverHolder.getOffsetTimer();
-        if (timer % 5 == 0 && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
+        int totalTransferred = 0;
+        if (idle.canAction(timer) && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
             TileEntity tileEntity = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
             IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide.getOpposite());
             IItemHandler myItemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
             if (itemHandler != null && myItemHandler != null) {
-                int totalTransferred = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
+                totalTransferred = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
                 this.itemsLeftToTransferLastSecond -= totalTransferred;
             }
         }
+
+        idle.update();
+        if (totalTransferred != 0) {
+            idle.dec();
+        } else {
+            idle.inc();
+        }
+
         if (timer % 20 == 0) {
             this.itemsLeftToTransferLastSecond = transferRate;
         }

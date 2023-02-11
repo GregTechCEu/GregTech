@@ -78,7 +78,8 @@ public class GTTransferUtils {
         return false;
     }
 
-    public static void moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory) {
+    public static int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory) {
+        int totalTransferred = 0;
         for (int srcIndex = 0; srcIndex < sourceInventory.getSlots(); srcIndex++) {
             ItemStack sourceStack = sourceInventory.extractItem(srcIndex, Integer.MAX_VALUE, true);
             if (sourceStack.isEmpty()) {
@@ -90,7 +91,9 @@ public class GTTransferUtils {
                 sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
                 insertItem(targetInventory, sourceStack, false);
             }
+            totalTransferred += amountToInsert;
         }
+        return totalTransferred;
     }
 
     /**

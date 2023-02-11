@@ -20,6 +20,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.IdleTracker;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
@@ -48,6 +49,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     // only holding this for convenience
     private final FluidTank fluidTank;
     private boolean workingEnabled;
+
+    protected IdleTracker idle = new IdleTracker(1, 40, 1);
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
@@ -82,16 +85,25 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     public void update() {
         super.update();
+        idle.update();
+
+        int fluidTransferred = 0;
         if (!getWorld().isRemote) {
             if (workingEnabled) {
-                fillContainerFromInternalTank(fluidTank);
+                fluidTransferred += fillContainerFromInternalTank(fluidTank);
                 if (isExportHatch) {
-                    pushFluidsIntoNearbyHandlers(getFrontFacing());
+                    fluidTransferred += pushFluidsIntoNearbyHandlers(getFrontFacing());
                 } else {
-                    fillInternalTankFromFluidContainer(fluidTank);
-                    pullFluidsFromNearbyHandlers(getFrontFacing());
+                    fluidTransferred += fillInternalTankFromFluidContainer(fluidTank);
+                    fluidTransferred += pullFluidsFromNearbyHandlers(getFrontFacing());
                 }
             }
+        }
+
+        if (fluidTransferred != 0) {
+            idle.dec();
+        } else {
+            idle.inc();
         }
     }
 

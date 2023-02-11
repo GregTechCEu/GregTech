@@ -73,7 +73,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -1011,7 +1013,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         fillInternalTankFromFluidContainer(importFluids);
     }
 
-    public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
+    public int fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
+        int totalTransferred = 0;
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
             FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, false);
@@ -1024,15 +1027,18 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                 FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
+                totalTransferred += 1;
             }
         }
+        return totalTransferred;
     }
 
     public void fillContainerFromInternalTank() {
         fillContainerFromInternalTank(exportFluids);
     }
 
-    public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
+    public int fillContainerFromInternalTank(IFluidHandler fluidHandler) {
+        int totalTransferred = 0;
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
             FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, false);
@@ -1043,28 +1049,31 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                 FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
+                totalTransferred += 1;
             }
         }
+        return totalTransferred;
     }
 
-    public void pushFluidsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, GTTransferUtils::transferFluids, allowedFaces);
+    public int pushFluidsIntoNearbyHandlers(EnumFacing... allowedFaces) {
+        return transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, GTTransferUtils::transferFluids, allowedFaces);
     }
 
-    public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.transferFluids(otherCap, thisCap), allowedFaces);
+    public int pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
+        return transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.transferFluids(otherCap, thisCap), allowedFaces);
     }
 
-    public void pushItemsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, GTTransferUtils::moveInventoryItems, allowedFaces);
+    public int pushItemsIntoNearbyHandlers(EnumFacing... allowedFaces) {
+        return transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, GTTransferUtils::moveInventoryItems, allowedFaces);
     }
 
-    public void pullItemsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.moveInventoryItems(otherCap, thisCap), allowedFaces);
+    public int pullItemsFromNearbyHandlers(EnumFacing... allowedFaces) {
+        return transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.moveInventoryItems(otherCap, thisCap), allowedFaces);
     }
 
-    private <T> void transferToNearby(Capability<T> capability, BiConsumer<T, T> transfer, EnumFacing... allowedFaces) {
+    private <T> int transferToNearby(Capability<T> capability, BiFunction<T, T, Integer> transfer, EnumFacing... allowedFaces) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
+        int totalTransferred = 0;
         for (EnumFacing nearbyFacing : allowedFaces) {
             blockPos.setPos(getPos()).move(nearbyFacing);
             TileEntity tileEntity = getWorld().getTileEntity(blockPos);
@@ -1077,9 +1086,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (otherCap == null || thisCap == null) {
                 continue;
             }
-            transfer.accept(thisCap, otherCap);
+            totalTransferred += transfer.apply(thisCap, otherCap);
         }
         blockPos.release();
+        return totalTransferred;
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {

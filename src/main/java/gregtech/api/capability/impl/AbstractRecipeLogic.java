@@ -563,7 +563,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         if (recipe.getFluidOutputs() != null && recipe.getFluidOutputs().size() > 0) {
             for (FluidStack fluidStack : recipe.getFluidOutputs()) {
-                multipler = Math.min(32000 / 2 / fluidStack.amount, multipler);
+                multipler = Math.min(8000 / 2 / fluidStack.amount, multipler);
             }
         }
 

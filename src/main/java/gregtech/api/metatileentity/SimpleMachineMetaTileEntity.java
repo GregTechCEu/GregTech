@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.IdleTracker;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
@@ -67,6 +68,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
     protected IItemHandlerModifiable importItemsWithCircuit;
+
+    protected IdleTracker idle = new IdleTracker(5, 40, 1);
 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
@@ -167,17 +170,27 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public void update() {
         super.update();
+        idle.update();
+
         if (!getWorld().isRemote) {
             ((EnergyContainerHandler) this.energyContainer).dischargeOrRechargeEnergyContainers(chargerInventory, 0);
 
-            if (getOffsetTimer() % 5 == 0) {
+            int totalTransferred = 0;
+            if (idle.canAction()) {
                 if (isAutoOutputFluids()) {
-                    pushFluidsIntoNearbyHandlers(getOutputFacingFluids());
+                    totalTransferred += pushFluidsIntoNearbyHandlers(getOutputFacingFluids());
                 }
                 if (isAutoOutputItems()) {
-                    pushItemsIntoNearbyHandlers(getOutputFacingItems());
+                    totalTransferred += pushItemsIntoNearbyHandlers(getOutputFacingItems());
                 }
             }
+
+            if (totalTransferred != 0) {
+                idle.dec();
+            } else {
+                idle.inc();
+            }
+
         }
     }
 
