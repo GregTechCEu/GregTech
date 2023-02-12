@@ -84,11 +84,10 @@ public class GTTransferUtils {
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            ItemStack remainder = insertItem(targetInventory, sourceStack, true);
+            ItemStack remainder = insertItem(targetInventory, sourceStack, false);
             int amountToInsert = sourceStack.getCount() - remainder.getCount();
             if (amountToInsert > 0) {
-                sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
-                insertItem(targetInventory, sourceStack, false);
+                sourceInventory.extractItem(srcIndex, amountToInsert, false);
             }
         }
     }
