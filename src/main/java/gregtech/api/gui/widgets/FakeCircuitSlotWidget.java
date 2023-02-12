@@ -9,11 +9,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 
 /**
- * Like a phantom slot, but for real fake items like circuits (and maybe molds later?)
+ * Used for setting a "ghost" IC for a machine
  */
-public class GhostCircuitSlotWidget extends SlotWidget {
+public class FakeCircuitSlotWidget extends SlotWidget {
 
-    public GhostCircuitSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
+    public FakeCircuitSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
         super(itemHandler, slotIndex, xPosition, yPosition, false, false, false);
     }
 
@@ -69,6 +69,7 @@ public class GhostCircuitSlotWidget extends SlotWidget {
 
         if (IntCircuitIngredient.isIntegratedCircuit(stackHeld)){
             ItemStack ic = stackHeld.copy();
+            ic.setCount(1);
             slotReference.putStack(ic);
             return ic;
         }
