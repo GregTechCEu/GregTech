@@ -813,15 +813,15 @@ metaitem.cover.activity.detector_advanced.tooltip=レッドストーン信号と
 metaitem.cover.fluid.detector.name=液体検出器
 metaitem.cover.fluid.detector.tooltip=レッドストーン信号として§f液量§7を検出する§fカバー§7
 metaitem.cover.fluid.detector.advanced.name=発展型液体検出器
-metaitem.cover.fluid.detector.advanced.tooltip=§f液体保管量§7に基づいた§fRSラッチ§7を与える§fカバー§7
+metaitem.cover.fluid.detector.advanced.tooltip=§fSRラッチ§7で制御された§f液体保管量§7をレッドストーン信号として与える§fカバー§7
 metaitem.cover.item.detector.name=アイテム検出器
 metaitem.cover.item.detector.tooltip=レッドストーン信号として§fアイテム量§7を検出する§fカバー§7
 metaitem.cover.item.detector.advanced.name=発展型アイテム検出器
-metaitem.cover.item.detector.advanced.tooltip=§fアイテム保管量§7に基づいた§fRSラッチ§7を与える§fカバー§7
+metaitem.cover.item.detector.advanced.tooltip=§fSRラッチ§7で制御された§fアイテム保管量§7をレッドストーン信号として与える§fカバー§7
 metaitem.cover.energy.detector.name=エネルギー検出器
 metaitem.cover.energy.detector.tooltip=レッドストーン信号として§fエネルギー量§7を検出する§fカバー§7
 metaitem.cover.energy.detector.advanced.name=発展型エネルギー検出器
-metaitem.cover.energy.detector.advanced.tooltip=§fエネルギー量§7に基づいた§fRSラッチ§7を与える§fカバー§7
+metaitem.cover.energy.detector.advanced.tooltip=§fSRラッチ§7で制御された§fエネルギー量§7をレッドストーン信号として与える§fカバー§7
 metaitem.cover.fluid.voiding.name=液体消去カバー
 metaitem.cover.fluid.voiding.tooltip=§f液体§7を消去する§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
 metaitem.cover.fluid.voiding.advanced.name=発展型液体消去カバー
@@ -1156,7 +1156,7 @@ cover.item.voiding.title=アイテム消去設定
 cover.item.voiding.advanced.title=発展型アイテム消去設定
 cover.voiding.label.disabled=無効
 cover.voiding.label.enabled=有効
-cover.voiding.tooltip=§c警告!§7 これを"有効"にするということは液体やアイテムが消去されることを意味します。
+cover.voiding.tooltip=§c警告!§7 これを"有効"にすると搬入された液体やアイテムが全て消去されます。
 cover.voiding.message.disabled=消去カバーを無効化
 cover.voiding.message.enabled=消去カバーを有効化
 
@@ -4441,11 +4441,11 @@ gregtech.multiblock.cleanroom.dirty_state=状態: §4清潔でない
 gregtech.multiblock.cleanroom.clean_amount=清潔度: §a%s%%
 
 gregtech.machine.charcoal_pile.name=炭窯
-gregtech.machine.charcoal_pile.tooltip.1=§c点火されている§7時、原木を§a木炭§7に変化させる。
+gregtech.machine.charcoal_pile.tooltip.1=§c点火される§7と、時間をかけて原木を§a木炭§7に変化させる。
 gregtech.machine.charcoal_pile.tooltip.2=着火具で右クリックすることで点火できる。
 gregtech.machine.charcoal_pile.tooltip.3=炭焼きはこのブロック下最大§b9x4x9§7の空間で行われる。
 gregtech.machine.charcoal_pile.tooltip.4=原木は§e空気§7に接してはならない!
-gregtech.multiblock.charcoal_pile.description=最大9×4×9の範囲の原木を脆い木炭に変える。\n\n窯の床はレンガブロックでなければならないが、壁や屋根には地盤に関連するあらゆるブロックが使用できる。窯内に空気があってはならない。\n\n大きな窯は原木の変換により時間がかかるがより効率的である。
+gregtech.multiblock.charcoal_pile.description=最大9×4×9の範囲の原木を脆い木炭に変える。\n\n窯の床はレンガブロックでなければならないが、壁や屋根には地面に関連するあらゆるブロックが使用できる。窯内に空気があってはならない。\n\n大きな窯を作ると原木の変換により時間がかかるようになるが、より効率的である。
 
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
@@ -4511,7 +4511,7 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=世界が石油で埋まる前に
 gregtech.machine.fluid_drilling_rig.hv.tooltip=地面は砕かない
 gregtech.machine.fluid_drilling_rig.ev.tooltip=井戸の破壊者
 gregtech.machine.cleanroom.tooltip=これ以上花粉に暴れさせてたまるか
-gregtech.machine.charcoal_pile.tooltip=地下の燃料屋さん
+gregtech.machine.charcoal_pile.tooltip=アングラな燃料工場
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=マルチブロックへの搬入
@@ -4544,7 +4544,7 @@ gregtech.machine.item_bus.export.uhv.name=UHV搬出バス
 
 gregtech.bus.collapse_true=バス内でアイテムを整頓を行う
 gregtech.bus.collapse_false=バス内でアイテムを整頓を行わない
-gregtech.bus.collapse.error=第一にバスはマルチブロックを一部分でなければならない
+gregtech.bus.collapse.error=バスをマルチブロックに接続してください
 
 gregtech.machine.fluid_hatch.import.tooltip=マルチブロックへの液体搬入
 
@@ -4828,7 +4828,7 @@ gregtech.gui.multiblock_no_voiding=消去モード/n§7何も消去しない
 ore.spawnlocation.name=鉱脈情報
 gregtech.jei.ore.surface_rock_1=地表にある小石は鉱脈の生成位置を示します。
 gregtech.jei.ore.surface_rock_2=破壊すると極小の粉を3個入手できる。また、幸運エンチャントが適用される。
-gregtech.jei.ore.biome_weighting_title=§dバイオーム修飾による生成頻度:
+gregtech.jei.ore.biome_weighting_title=§dバイオームによる倍率がかかった生成頻度の合計：
 gregtech.jei.ore.biome_weighting=§d%sの生成頻度: §3%d
 gregtech.jei.ore.biome_weighting_no_spawn=§d%sの生成頻度: §c生成されない
 gregtech.jei.ore.ore_weight=鉱脈内での割合: %d%%
@@ -4849,7 +4849,7 @@ gregtech.jei.fluid.depletion_chance=枯渇率: %d%%
 gregtech.jei.fluid.depletion_amount=枯渇量: %d
 gregtech.jei.fluid.depleted_rate=枯渇時収量: %d
 gregtech.jei.fluid.dimension=ディメンション:
-gregtech.jei.fluid.weight_hover=液体脈の生成頻度。液体をマウスオーバーすることでバイオーム修飾の影響を確認できる。
+gregtech.jei.fluid.weight_hover=液体脈の生成頻度。液体をマウスオーバーすることでバイオームによる倍率の影響を確認できる。
 gregtech.jei.fluid.min_hover=任意のこの液体脈の最小収量
 gregtech.jei.fluid.max_hover=任意のこの液体脈の最大収量
 gregtech.jei.fluid.dep_chance_hover=採掘による液体脈の枯渇確率 [%]
@@ -5215,7 +5215,7 @@ terminal.battery.hover=%s: %d EU/s使用
 terminal.battery.low_energy=電源不足! ターミナルを充電してください。
 
 terminal.store.description=アプリストア。購入履歴を確認しますか? アプリのインストールとアップグレードに。
-terminal.store.match=インベントリで必要なアイテムが検出されました。アプリをインストール/アップグレードを行いますか？
+terminal.store.match=インベントリで必要なアイテムが検出されました。アプリのインストール/アップグレードを行いますか？
 terminal.store.miss=要求 %s (%d)
 
 terminal.ar.open=ARを開く
