@@ -1,6 +1,7 @@
 package gregtech.api.worldgen.generator;
 
 import com.google.common.collect.ImmutableSet;
+import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.common.worldgen.WorldGenRubberTree;
 import net.minecraft.init.Biomes;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
 
+@Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class WorldGeneratorImpl implements IWorldGenerator {
 
     public static final WorldGeneratorImpl INSTANCE = new WorldGeneratorImpl();
@@ -34,7 +37,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     private WorldGeneratorImpl() { }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void onOreGenerate(OreGenEvent.GenerateMinable event) {
+    public void onOreGenerate(OreGenEvent.GenerateMinable event) {
         EventType eventType = event.getType();
         if (ConfigHolder.worldgen.disableVanillaOres && ORE_EVENT_TYPES.contains(eventType)) {
             event.setResult(Result.DENY);
