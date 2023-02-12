@@ -36,6 +36,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
 
     private WorldGeneratorImpl() { }
 
+    // Must be a non-static method, as this class is put on the event bus as a method.
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onOreGenerate(OreGenEvent.GenerateMinable event) {
         EventType eventType = event.getType();
