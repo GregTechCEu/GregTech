@@ -64,6 +64,15 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
                     return false;
                 }
             }
+
+            // No matchers, just return early comparing items
+            if (this.matcher == null && other.matcher == null) {
+                return ItemStack.areItemsEqual(stack, other.stack);
+            }
+            // One input has matchers, the other does not. No match
+            else if (this.matcher == null || other.matcher == null) {
+                return false;
+            }
             //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
             //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
             return ItemStack.areItemsEqual(stack, other.stack) && other.matcher.evaluate(this.stack, other.condition);
