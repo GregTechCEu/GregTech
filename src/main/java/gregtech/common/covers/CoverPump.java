@@ -217,7 +217,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return buildUI(builder, player);
     }
 
-    public Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
+    public static Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
         int min = 1;
         return val -> {
             if (val.isEmpty()) {

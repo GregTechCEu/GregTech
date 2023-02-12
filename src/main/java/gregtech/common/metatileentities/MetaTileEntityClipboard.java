@@ -23,6 +23,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
+import gregtech.client.renderer.texture.custom.ClipboardRenderer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehavior;
 import gregtech.core.network.packets.PacketClipboardNBTUpdate;
@@ -96,13 +97,13 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+        ClipboardRenderer.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.getClipboard() != null)
-            CLIPBOARD_RENDERER.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
+            ClipboardRenderer.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
     }
 
     public AxisAlignedBB getRenderBoundingBox() {
@@ -135,7 +136,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(new GregFakePlayer(entityPlayer.world), EnumHand.MAIN_HAND); // We can't have this actually set the player's hand
                 holder.setCustomValidityCheck(this::isValid).setCurrentItem(this.getClipboard());
                 if (entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
-                    return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
+                    return ClipboardBehavior.createMTEUI(holder, entityPlayer);
                 } else {
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(holder, entityPlayer);
                 }
@@ -297,7 +298,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         return null;
     }
 
-    private double[] handleRayTraceResult(CuboidRayTraceResult rayTraceResult, EnumFacing spin) {
+    private static double[] handleRayTraceResult(CuboidRayTraceResult rayTraceResult, EnumFacing spin) {
         double x, y;
         double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()

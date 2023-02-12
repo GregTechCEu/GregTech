@@ -429,7 +429,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe was successfully prepared, else false
      */
     protected boolean prepareRecipe(Recipe recipe) {
-        recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
@@ -478,7 +478,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param tanks the tanks to check
      * @return the minimum fluid capacity of the tanks
      */
-    protected int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
+    protected static int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
         if (tanks.getTanks() == 0) {
             return 0;
         }

@@ -32,7 +32,7 @@ public class ItemListSlotWidget extends Widget {
         this.index = index;
     }
 
-    public String formatItemAmount(int itemAmount) {
+    public static String formatItemAmount(int itemAmount) {
         return Integer.toString(itemAmount);
     }
 
@@ -77,7 +77,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private int getAmountToTake(ItemStack itemStack, int maxAmount, int button) {
+    private static int getAmountToTake(ItemStack itemStack, int maxAmount, int button) {
         int maxStackSize = Math.min(itemStack.getMaxStackSize(), maxAmount);
         return button == 0 ? maxStackSize : (maxStackSize >= 2 ? maxStackSize / 2 : 1);
     }

@@ -44,11 +44,13 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     private final OrePrefix prefix;
 
-    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
-        put(OrePrefix.crushed, OrePrefix.crushedPurified);
-        put(OrePrefix.dustImpure, OrePrefix.dust);
-        put(OrePrefix.dustPure, OrePrefix.dust);
-    }};
+    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<>();
+
+    static {
+        purifyMap.put(OrePrefix.crushed, OrePrefix.crushedPurified);
+        purifyMap.put(OrePrefix.dustImpure, OrePrefix.dust);
+        purifyMap.put(OrePrefix.dustPure, OrePrefix.dust);
+    }
 
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
@@ -74,7 +76,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         }
     }
 
-    private void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
+    private static void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
         if (prefix.getAlternativeOreName() != null) {
             OreDictUnifier.registerOre(item, prefix.getAlternativeOreName(), material);
         }
@@ -88,7 +90,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         }
     }
 
-    protected boolean canGenerate(OrePrefix orePrefix, Material material) {
+    protected static boolean canGenerate(OrePrefix orePrefix, Material material) {
         return orePrefix.doGenerateItem(material);
     }
 
@@ -192,7 +194,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         addMaterialTooltip(lines, itemStack);
     }
 
-    public Material getMaterial(ItemStack itemStack) {
+    public static Material getMaterial(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
         return GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
     }
@@ -253,7 +255,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     protected void addMaterialTooltip(List<String> lines, ItemStack itemStack) {
         if (this.prefix.tooltipFunc != null) {
-            lines.addAll(this.prefix.tooltipFunc.apply(this.getMaterial(itemStack)));
+            lines.addAll(this.prefix.tooltipFunc.apply(MetaPrefixItem.getMaterial(itemStack)));
         }
     }
 }

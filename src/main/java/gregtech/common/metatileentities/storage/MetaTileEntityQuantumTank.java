@@ -53,7 +53,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     // This field (ranging from 1 to 99) is the percentage filled
     // at which the Partial Void feature will start voiding Fluids.
-    private final int VOID_PERCENT = 95;
+    private static final int VOID_PERCENT = 95;
 
     private final int tier;
     private final int maxFluidCapacity;

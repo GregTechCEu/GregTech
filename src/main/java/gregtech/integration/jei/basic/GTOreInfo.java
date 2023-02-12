@@ -1,8 +1,10 @@
-package gregtech.integration.jei;
+package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.FileUtility;
+import gregtech.api.util.GTJEIUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -30,11 +32,13 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.MODID_CC;
@@ -72,7 +76,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Get the Name and trim unneeded information
         if (definition.getAssignedName() == null) {
-            this.name = makePrettyName(definition.getDepositName());
+            this.name = FileUtility.trimFileName(definition.getDepositName());
         } else {
             this.name = definition.getAssignedName();
         }
@@ -154,7 +158,7 @@ public class GTOreInfo implements IRecipeWrapper {
         return containedBlocksAsItemStacks;
     }
 
-    private Collection<IBlockState> getPossibleStates(FillerEntry entry, Collection<IBlockState> collection) {
+    private static Collection<IBlockState> getPossibleStates(FillerEntry entry, Collection<IBlockState> collection) {
         for (IBlockState state : entry.getPossibleResults()) {
             if (state.getBlock() instanceof BlockOre) {
                 if (!state.getValue(((BlockOre) state.getBlock()).STONE_TYPE).shouldBeDroppedAsItem) {
@@ -166,7 +170,7 @@ public class GTOreInfo implements IRecipeWrapper {
         return collection;
     }
 
-    private List<ItemStack> getStacksFromStates(Collection<IBlockState> states, List<ItemStack> list) {
+    private static List<ItemStack> getStacksFromStates(Collection<IBlockState> states, List<ItemStack> list) {
         for (IBlockState state : states) {
             list.add(GTUtility.toItem(state));
         }
@@ -218,7 +222,7 @@ public class GTOreInfo implements IRecipeWrapper {
     }
 
     // Finds the generated surface block or material. In the case of Fluid generation, finds a bucket of the fluid.
-    public ItemStack findSurfaceBlock(IVeinPopulator veinPopulator) {
+    public static ItemStack findSurfaceBlock(IVeinPopulator veinPopulator) {
 
         Material mat;
         IBlockState state;
@@ -253,33 +257,12 @@ public class GTOreInfo implements IRecipeWrapper {
         return stack;
     }
 
-
-    public String makePrettyName(String name) {
-        FileSystem fs = FileSystems.getDefault();
-        String separator = fs.getSeparator();
-
-        //Remove the leading "folderName\"
-        String[] tempName = name.split(Matcher.quoteReplacement(separator));
-        //Take the last entry in case of nested folders
-        String newName = tempName[tempName.length - 1];
-        //Remove the ".json"
-        tempName = newName.split("\\.");
-        //Take the first entry
-        newName = tempName[0];
-        //Replace all "_" with a space
-        newName = newName.replaceAll("_", " ");
-        //Capitalize the first letter
-        newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
-
-        return newName;
-    }
-
     //Creates a tooltip based on the specific slots
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
 
         //Only add the Biome Information to the selected Ore
         if (slotIndex == 0) {
-            tooltip.addAll(createBiomeTooltip());
+            tooltip.addAll(GTJEIUtility.createSpawnPageBiomeTooltip(biomeFunction, weight));
             if (description != null) {
                 tooltip.add(description);
             }
@@ -298,44 +281,6 @@ public class GTOreInfo implements IRecipeWrapper {
                 tooltip.addAll(createOreWeightingTooltip(slotIndex));
             }
         }
-    }
-
-    //Creates a tooltip showing the Biome weighting of the ore vein
-    public List<String> createBiomeTooltip() {
-
-        Iterator<Biome> biomeIterator = Biome.REGISTRY.iterator();
-        int biomeWeight;
-        Map<Biome, Integer> modifiedBiomeMap = new HashMap<>();
-        List<String> tooltip = new ArrayList<>();
-
-        //Tests biomes against all registered biomes to find which biomes have had their weights modified
-        while (biomeIterator.hasNext()) {
-
-            Biome biome = biomeIterator.next();
-
-            //Gives the Biome Weight
-            biomeWeight = biomeFunction.apply(biome);
-            //Check if the biomeWeight is modified
-            if (biomeWeight != weight) {
-                modifiedBiomeMap.put(biome, weight + biomeWeight);
-            }
-        }
-
-        for (Map.Entry<Biome, Integer> entry : modifiedBiomeMap.entrySet()) {
-
-            //Don't show non changed weights, to save room
-            if (!(entry.getValue() == weight)) {
-                //Cannot Spawn
-                if (entry.getValue() <= 0) {
-                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
-                } else {
-                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
-                }
-            }
-        }
-
-
-        return tooltip;
     }
 
     //Creates a tooltip show the weighting of the individual ores in the ore vein

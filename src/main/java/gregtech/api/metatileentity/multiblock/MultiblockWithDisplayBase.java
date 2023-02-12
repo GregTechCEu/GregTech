@@ -19,7 +19,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,10 +40,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
@@ -52,6 +48,9 @@ import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
 public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
 
+    private static final String NBT_VOIDING_MODE = "VoidingMode";
+    private static final String NBT_VOIDING_ITEMS = "VoidingItems";
+    private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -60,9 +59,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * Items to recover in a muffler hatch
      */
-    protected final List<ItemStack> recoveryItems = new ArrayList<ItemStack>() {{
-        add(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash));
-    }};
+    protected final List<ItemStack> recoveryItems = new ArrayList<>(Collections.singleton(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash)));
 
     private int timeActive;
     private static final int minimumMaintenanceTime = 3456000; // 48 real-life hours = 3456000 ticks
@@ -76,10 +73,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     // Used for data preservation with Maintenance Hatch
     private boolean storedTaped = false;
-
-    private final String NBT_VOIDING_MODE = "VoidingMode";
-    private final String NBT_VOIDING_ITEMS = "VoidingItems";
-    private final String NBT_VOIDING_FLUIDS = "VoidingFluids";
 
     protected List<BlockPos> variantActiveBlocks;
     protected boolean lastActive;
@@ -411,7 +404,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if(shouldShowVoidingModeButton()) {
             builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(this::getVoidingModeTooltip));
+                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
         }
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
@@ -441,7 +434,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         markDirty();
     }
 
-    private String getVoidingModeTooltip(int mode) {
+    private static String getVoidingModeTooltip(int mode) {
         return VoidingMode.VALUES[mode].getName();
     }
 

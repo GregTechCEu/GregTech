@@ -26,13 +26,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class CompressedBlockBakedModel implements IBakedModel {
 
-    private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
+    private final Map<MaterialIconSet, EnumMap<EnumFacing, BakedQuad>> materialFaces;
     private final ThreadLocal<TextureAtlasSprite> particle;
 
     public CompressedBlockBakedModel() {
@@ -47,23 +48,21 @@ public class CompressedBlockBakedModel implements IBakedModel {
         if (side == null) return quads;
         if (state != null) {
             Material material = state.getValue(((BlockCompressed) state.getBlock()).variantProperty);
-            Map<EnumFacing, BakedQuad> materialFace = materialFaces.get(material.getMaterialIconSet());
-            if (materialFace == null) {
-                materialFaces.put(material.getMaterialIconSet(), materialFace = new Object2ObjectOpenHashMap<>());
-            }
+            materialFaces.putIfAbsent(material.getMaterialIconSet(), new EnumMap<>(EnumFacing.class));
+            EnumMap<EnumFacing, BakedQuad> materialFace = materialFaces.get(material.getMaterialIconSet());
+
+            materialFace.putIfAbsent(side, ModelFactory.getBakery().makeBakedQuad(
+                    new Vector3f(0F, 0F, 0F),
+                    new Vector3f(16F, 16F, 16F),
+                    new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
+                    ModelLoader.defaultTextureGetter().apply(MaterialIconType.block.getBlockTexturePath(material.getMaterialIconSet())),
+                    side,
+                    ModelRotation.X0_Y0,
+                    null,
+                    true,
+                    true));
+
             BakedQuad materialFaceQuad = materialFace.get(side);
-            if (materialFaceQuad == null) {
-                materialFace.put(side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
-                        new Vector3f(0F, 0F, 0F),
-                        new Vector3f(16F, 16F, 16F),
-                        new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
-                        ModelLoader.defaultTextureGetter().apply(MaterialIconType.block.getBlockTexturePath(material.getMaterialIconSet())),
-                        side,
-                        ModelRotation.X0_Y0,
-                        null,
-                        true,
-                        true));
-            }
             quads.add(materialFaceQuad);
             particle.set(materialFaceQuad.getSprite());
         } else {

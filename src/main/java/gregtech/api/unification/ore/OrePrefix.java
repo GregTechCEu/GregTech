@@ -588,8 +588,15 @@ public class OrePrefix {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof OrePrefix &&
-                ((OrePrefix) o).name.equals(this.name);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrePrefix orePrefix = (OrePrefix) o;
+        return name.equals(orePrefix.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     public static Collection<OrePrefix> values() {

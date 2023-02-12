@@ -495,7 +495,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
-                    } else if(content != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents()))) {
+                    } else if (content != null && (fluids[i] != null && fluids[i].getContents() != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents())))) {
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
@@ -963,7 +963,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 endAlpha = (int) (510 - 255 / 0.4375 * offset);
             }
             RenderUtil.renderRect(-7f / 16, -7f / 16, progress * 14f / (maxProgress * 16), 3f / 16, 0.002f, 0XFFFF5F44);
-            RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(progress * 100 / maxProgress, MODE.MACHINE), true);
+            RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(progress * 100L / maxProgress, MODE.MACHINE), true);
             RenderUtil.renderGradientRect(start, -4f / 16, width, 1f / 16, 0.002f, (color & 0X00FFFFFF) | (startAlpha << 24), (color & 0X00FFFFFF) | (endAlpha << 24), true);
         } else {
             RenderUtil.renderRect(-7f / 16, -4f / 16, 14f / 16, 1f / 16, 0.002f, color);
@@ -1033,7 +1033,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     };
 
     @SideOnly(Side.CLIENT)
-    private String readAmountOrCountOrEnergy(long number, MODE mode) {
+    private static String readAmountOrCountOrEnergy(long number, MODE mode) {
         int unit = mode == MODE.FLUID ? 1 : mode == MODE.ITEM ? 2 : mode == MODE.ENERGY ? 3 : 0;
         if (mode == MODE.MACHINE) {
             return number + "%";

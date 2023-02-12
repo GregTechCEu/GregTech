@@ -43,7 +43,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
 
     public static CraftingHelper.ShapedPrimer parseShaped(boolean isClearing, Object... recipe) {
         CraftingHelper.ShapedPrimer ret = new CraftingHelper.ShapedPrimer();
-        String shape = "";
+        StringBuilder shape = new StringBuilder();
         int idx = 0;
 
         if (recipe[idx] instanceof Boolean) {
@@ -57,25 +57,25 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
 
             for (String s : parts) {
                 ret.width = s.length();
-                shape += s;
+                shape.append(s);
             }
 
             ret.height = parts.length;
         } else {
             while (recipe[idx] instanceof String) {
                 String s = (String) recipe[idx++];
-                shape += s;
+                shape.append(s);
                 ret.width = s.length();
                 ret.height++;
             }
         }
 
         if (ret.width * ret.height != shape.length() || shape.length() == 0) {
-            String err = "Invalid shaped recipe: ";
+            StringBuilder err = new StringBuilder("Invalid shaped recipe: ");
             for (Object tmp : recipe) {
-                err += tmp + ", ";
+                err.append(tmp).append(", ");
             }
-            throw new RuntimeException(err);
+            throw new RuntimeException(err.toString());
         }
 
         HashMap<Character, Ingredient> itemMap = Maps.newHashMap();
@@ -86,16 +86,16 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
             Object in = recipe[idx + 1];
             Ingredient ing = getIngredient(isClearing, in);
 
-            if (' ' == chr.charValue()) throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
+            if (' ' == chr) throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
 
             if (ing != null) {
                 itemMap.put(chr, ing);
             } else {
-                String err = "Invalid shaped ore recipe: ";
+                StringBuilder err = new StringBuilder("Invalid shaped ore recipe: ");
                 for (Object tmp : recipe) {
-                    err += tmp + ", ";
+                    err.append(tmp).append(", ");
                 }
-                throw new RuntimeException(err);
+                throw new RuntimeException(err.toString());
             }
         }
 
@@ -105,16 +105,18 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         keys.remove(' ');
 
         int x = 0;
-        for (char chr : shape.toCharArray()) {
+        for (char chr : shape.toString().toCharArray()) {
             Ingredient ing = itemMap.get(chr);
-            if (ing == null)
+            if (ing == null) {
                 throw new IllegalArgumentException("Pattern references symbol '" + chr + "' but it's not defined in the key");
+            }
             ret.input.set(x++, ing);
             keys.remove(chr);
         }
 
-        if (!keys.isEmpty())
+        if (!keys.isEmpty()) {
             throw new IllegalArgumentException("Key defines symbols that aren't used in pattern: " + keys);
+        }
 
         return ret;
     }

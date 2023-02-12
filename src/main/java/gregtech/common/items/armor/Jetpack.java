@@ -90,7 +90,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
         return container.getCharge() > 0;
     }
 
-    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 
@@ -132,11 +132,6 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
             }
             lines.add(I18n.format("metaarmor.hud.hover_mode", status));
         }
-    }
-
-    @Override
-    public double getVerticalHoverSpeed() {
-        return 0.18D;
     }
 
     @Override

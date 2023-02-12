@@ -281,12 +281,12 @@ public class TricorderBehavior implements IItemBehaviour {
             if (player.isCreative()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount",
                         new TextComponentTranslation(fluid.getLocalizedName(stack)).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation("" + BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16)).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation("" + fluidPercent).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                        new TextComponentTranslation(String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16))).setStyle(new Style().setColor(TextFormatting.GOLD)),
+                        new TextComponentTranslation(String.valueOf(fluidPercent)).setStyle(new Style().setColor(TextFormatting.YELLOW))
                 ));
             } else {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount_unknown",
-                        new TextComponentTranslation("" + fluidPercent).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                        new TextComponentTranslation(String.valueOf(fluidPercent)).setStyle(new Style().setColor(TextFormatting.YELLOW))
                 ));
             }
         } else {

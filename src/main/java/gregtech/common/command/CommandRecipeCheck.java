@@ -30,7 +30,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CommandRecipeCheck extends CommandBase {
@@ -223,13 +226,13 @@ public class CommandRecipeCheck extends CommandBase {
         return output.toString();
     }
 
-    public String prettyPrintItemStack(ItemStack stack) {
+    public static String prettyPrintItemStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
                 if (metaItem instanceof MetaPrefixItem) {
-                    Material material = ((MetaPrefixItem) metaItem).getMaterial(stack);
+                    Material material = MetaPrefixItem.getMaterial(stack);
                     OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
@@ -255,7 +258,7 @@ public class CommandRecipeCheck extends CommandBase {
             } else if (block instanceof BlockFrame) {
                 id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
             } else if (block instanceof BlockMaterialPipe) {
-                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stack).toCamelCaseString();
+                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
 
             if (id != null) {

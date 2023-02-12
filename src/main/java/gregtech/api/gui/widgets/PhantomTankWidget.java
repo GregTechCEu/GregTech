@@ -5,8 +5,8 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -129,7 +129,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         return false;
     }
 
-    private FluidStack drainFrom(Object ingredient) {
+    private static FluidStack drainFrom(Object ingredient) {
         if (ingredient instanceof ItemStack) {
             ItemStack itemStack = (ItemStack) ingredient;
             IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
