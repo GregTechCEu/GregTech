@@ -23,7 +23,7 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
         return property == null ? -1 : 800 * (int) Math.pow(property.getDurability(), 0.65);
     }
 
-    public int getRotorEfficiency(ItemStack stack) {
+    public static int getRotorEfficiency(ItemStack stack) {
         Material material = getPartMaterial(stack);
         RotorProperty property = material.getProperty(PropertyKey.ROTOR);
         return property == null ? -1 : ((int) ((60 + property.getSpeed() * 8)) / 5 * 5);
@@ -43,7 +43,7 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
         }
     }
 
-    public int getRotorPower(ItemStack stack) {
+    public static int getRotorPower(ItemStack stack) {
         Material material = getPartMaterial(stack);
         RotorProperty property = material.getProperty(PropertyKey.ROTOR);
         return property == null ? -1 : (int) (40 + property.getDamage() * 30);

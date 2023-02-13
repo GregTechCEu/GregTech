@@ -131,7 +131,7 @@ public class CustomTextureModel implements IModel {
     @Override
     @Nonnull
     public IModel uvlock(boolean value) {
-        if (uvLock == null || uvLock.booleanValue() != value) {
+        if (uvLock == null || uvLock != value) {
             IModel newParent = getVanillaParent().uvlock(value);
             if (newParent != getVanillaParent()) {
                 IModel ret = deepCopyOrMissing(newParent, null, null);

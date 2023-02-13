@@ -37,7 +37,7 @@ public class URLTexture implements IGuiTexture{
         if (texture != null && texture.hasTexture()) {
             texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
         } else {
-            if (failed || url == null || this.url.equals("")) {
+            if (failed || url == null || this.url.isEmpty()) {
                 Minecraft.getMinecraft().fontRenderer.drawString(I18n.format("texture.url_texture.fail"), (int)x + 2, (int)(y + height / 2.0 - 4), 0xffff0000);
             } else {
                 this.loadTexture();

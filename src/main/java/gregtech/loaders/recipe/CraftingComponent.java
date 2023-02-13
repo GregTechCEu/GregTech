@@ -15,7 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,13 +66,15 @@ public class CraftingComponent {
     public static Component VOLTAGE_COIL;
     public static Component SPRING;
 
-    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new HashMap<BlastProperty.GasTier, FluidStack>() {{
-        put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
-        put(BlastProperty.GasTier.MID, Materials.Helium.getFluid(100));
-        put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(50));
-        put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(25));
-        put(BlastProperty.GasTier.HIGHEST, Materials.Krypton.getFluid(10));
-    }};
+    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new EnumMap<>(BlastProperty.GasTier.class);
+
+    static {
+        EBF_GASES.put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
+        EBF_GASES.put(BlastProperty.GasTier.MID, Materials.Helium.getFluid(100));
+        EBF_GASES.put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(50));
+        EBF_GASES.put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(25));
+        EBF_GASES.put(BlastProperty.GasTier.HIGHEST, Materials.Krypton.getFluid(10));
+    }
 
     public static void initializeComponents() {
 

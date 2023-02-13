@@ -104,7 +104,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     }
 
     @SuppressWarnings("unchecked, rawtypes")
-    private boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block, EnumFacing side) {
+    private static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block, EnumFacing side) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());

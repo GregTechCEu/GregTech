@@ -291,7 +291,7 @@ public class ObfMapping extends Remapper {
             return FMLDeobfuscatingRemapper.INSTANCE.unmap(typeName);
         }
 
-        public String unmap(String typeName) {
+        public static String unmap(String typeName) {
             return FMLDeobfuscatingRemapper.INSTANCE.map(typeName);
         }
 

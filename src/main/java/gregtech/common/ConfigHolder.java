@@ -59,6 +59,12 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable World Accelerators, which accelerate ticks for surrounding Tile Entities, Crops, etc.", "Default: true"})
         public boolean enableWorldAccelerators = true;
 
+        @Config.Comment({"List of TileEntities that the World Accelerator should not accelerate.",
+                "GregTech TileEntities are always blocked.",
+                "Entries must be in a fully qualified format. For example: appeng.tile.networking.TileController",
+                "Default: none"})
+        public String[] worldAcceleratorBlacklist = new String[0];
+
         @Config.Comment({"Whether to use GT6-style pipe and cable connections, meaning they will not auto-connect " +
                 "unless placed directly onto another pipe or cable.", "Default: true"})
         public boolean gt6StylePipesCables = true;
@@ -315,11 +321,29 @@ public class ConfigHolder {
 
         @Config.Comment({"The default color to overlay onto machines.", "16777215 (0xFFFFFF in decimal) is no coloring (like GTCE).",
                 "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
         public int defaultPaintingColor = 0xD2DCFF;
 
         @Config.Comment({"The default color to overlay onto Machine (and other) UIs.", "16777215 (0xFFFFFF) is no coloring (like GTCE).",
                 "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
         public int defaultUIColor = 0xD2DCFF;
+
+        // requires mc restart, color is set upon jei plugin registration
+        @Config.Comment({"The color to use as a background for the Multiblock Preview JEI Page.",
+                "Default: 13027014 (0xC6C6C6), which is JEI's background color."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
+        @Config.RequiresMcRestart
+        public int multiblockPreviewColor = 0xC6C6C6;
+
+        // does not require mc restart, drawn dynamically
+        @Config.Comment({"The color to use for the text in the Multiblock Preview JEI Page.",
+                "Default: 3355443 (0x333333), which is minecraft's dark gray color."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
+        public int multiblockPreviewFontColor = 0x333333;
+
+        @Config.Comment("Prevent tooltips from blinking for better visibility")
+        public boolean preventBlinkingTooltips = false;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})

@@ -40,9 +40,12 @@ public class ItemGTSword extends ItemSword implements IGTTool {
 
     private final boolean playSoundOnBlockDestroy;
     private final String oredict;
+    private final List<String> secondaryOreDicts;
     private final Supplier<ItemStack> markerItem;
 
-    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, Supplier<ItemStack> markerItem) {
+    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound,
+                          boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict,
+                          List<String> secondaryOreDicts, Supplier<ItemStack> markerItem) {
         super(ToolMaterial.STONE);
         this.domain = domain;
         this.id = id;
@@ -52,6 +55,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
         this.playSoundOnBlockDestroy = playSoundOnBlockDestroy;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oredict = oreDict;
+        this.secondaryOreDicts = secondaryOreDicts;
         this.markerItem = markerItem;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
@@ -105,6 +109,12 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     @Override
     public String getOreDictName() {
         return oredict;
+    }
+
+    @Nonnull
+    @Override
+    public List<String> getSecondaryOreDicts() {
+        return this.secondaryOreDicts;
     }
 
     @Nullable
@@ -289,7 +299,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
 
         @Override
         public Supplier<ItemGTSword> supply() {
-            return () -> new ItemGTSword(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, markerItem);
+            return () -> new ItemGTSword(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, secondaryOreDicts, markerItem);
         }
     }
 }

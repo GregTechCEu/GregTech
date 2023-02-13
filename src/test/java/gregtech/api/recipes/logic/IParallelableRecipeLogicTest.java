@@ -57,10 +57,8 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         return new ResourceLocation(GTValues.MODID, name);
     }
 
-    private MetaTileEntityElectricBlastFurnace initEBF(int id) {
-
+    private static MetaTileEntityElectricBlastFurnace initEBF(int id) {
         World world = DummyWorld.INSTANCE;
-
 
         mbt = MetaTileEntities.registerMetaTileEntity(id,
                 new MetaTileEntityElectricBlastFurnace(

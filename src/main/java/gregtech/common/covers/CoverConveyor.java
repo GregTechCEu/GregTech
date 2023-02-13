@@ -195,7 +195,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return false;
     }
 
-    protected boolean moveInventoryItemsExact(IItemHandler sourceInventory, IItemHandler targetInventory, TypeItemInfo itemInfo) {
+    protected static boolean moveInventoryItemsExact(IItemHandler sourceInventory, IItemHandler targetInventory, TypeItemInfo itemInfo) {
         //first, compute how much can we extract in reality from the machine,
         //because totalCount is based on what getStackInSlot returns, which may differ from what
         //extractItem() will return

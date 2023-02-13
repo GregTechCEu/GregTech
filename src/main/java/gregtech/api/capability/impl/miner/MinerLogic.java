@@ -92,8 +92,7 @@ public class MinerLogic {
         this.PIPE_TEXTURE = pipeTexture;
     }
 
-    private IBlockState findMiningReplacementBlock() {
-
+    private static IBlockState findMiningReplacementBlock() {
         String[] blockDescription = StringUtils.split(ConfigHolder.machines.replaceMinedBlocksWith, ":");
         Block replacementBlock;
 

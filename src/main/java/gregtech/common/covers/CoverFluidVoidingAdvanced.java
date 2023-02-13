@@ -1,5 +1,6 @@
 package gregtech.common.covers;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -7,19 +8,23 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
@@ -132,28 +137,44 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
-        primaryGroup.addWidget(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, 15)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
-        this.fluidFilter.getFilterWrapper().initUI(20, primaryGroup::addWidget);
-        this.fluidFilter.getFilterWrapper().blacklistUI(32, primaryGroup::addWidget, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
-
-        primaryGroup.addWidget(new CycleButtonWidget(92, 14, 75, 18,
+        primaryGroup.addWidget(new CycleButtonWidget(92, 15, 75, 18,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                 .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
+        this.initFilterUI(20, primaryGroup::addWidget);
+
+        primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
+                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
+                .setTooltipHoverString("cover.voiding.tooltip"));
+
+        primaryGroup.addWidget(new CycleButtonWidget(10, 112, 116, 18,
+                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16 + 24)
+                .widget(primaryGroup)
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16 + 24);
+        return buildUI(builder, player);
+    }
+
+    public void initFilterUI(int y, Consumer<Widget> widgetGroup){
+        widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
+        widgetGroup.accept(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, y + 15)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(110, 72, 38, 18, GuiTextures.DISPLAY));
+        stackSizeGroup.addWidget(new ImageWidget(110, 34, 38, 18, GuiTextures.DISPLAY));
 
-        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 72, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
+        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 34, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 72, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
+        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 34, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(111, 78, 36, 11, this::getTransferAmountString, val -> {
+        stackSizeGroup.addWidget(new TextFieldWidget2(111, 39, 37, 11, this::getTransferAmountString, val -> {
             if (val != null && !val.isEmpty()) {
                 int amount = Integer.parseInt(val);
                 if (this.bucketMode == BucketMode.BUCKET) {
@@ -167,20 +188,19 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .setMaxLength(10)
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new CycleButtonWidget(115, 35, 30, 20,
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 47, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+
+        stackSizeGroup.addWidget(new CycleButtonWidget(114, 53, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {
             if (mode != bucketMode) {
                 setBucketMode(mode);
             }
         }));
 
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 86, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+        widgetGroup.accept(stackSizeGroup);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82)
-                .widget(primaryGroup)
-                .widget(stackSizeGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100);
-        return buildUI(builder, player);
+        this.fluidFilter.getFilterWrapper().initUI(y + 15, widgetGroup);
+        this.fluidFilter.getFilterWrapper().blacklistUI(y + 15, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 
     @Override

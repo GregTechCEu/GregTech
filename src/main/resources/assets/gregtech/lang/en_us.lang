@@ -125,6 +125,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold SHIFT for more info
+gregtech.tooltip.hold_ctrl=Hold CTRL for more info
 gregtech.tooltip.fluid_pipe_hold_shift=Hold SHIFT to show Fluid Containment Info
 gregtech.tooltip.tool_fluid_hold_shift=Hold SHIFT to show Fluid Containment and Tool Info
 
@@ -806,8 +807,12 @@ metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
 metaitem.cover.activity.detector_advanced.tooltip=Gives out §fMachine Progress§7 as Redstone as §fCover§7.
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out §fFluid Amount§7 as Redstone as §fCover§7.
+metaitem.cover.fluid.detector.advanced.name=Advanced Fluid Detector
+metaitem.cover.fluid.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fFluid Storage Status§7 as Redstone as §fCover§7.
 metaitem.cover.item.detector.name=Item Detector
 metaitem.cover.item.detector.tooltip=Gives out §fItem Amount§7 as Redstone as §fCover§7.
+metaitem.cover.item.detector.advanced.name=Advanced Item Detector
+metaitem.cover.item.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fItem Storage Status§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out §fEnergy Amount§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector
@@ -1144,6 +1149,11 @@ cover.fluid.voiding.title=Fluid Voiding Settings
 cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
 cover.item.voiding.title=Item Voiding Settings
 cover.item.voiding.advanced.title=Advanced Item Voiding Settings
+cover.voiding.label.disabled=Disabled
+cover.voiding.label.enabled=Enabled
+cover.voiding.tooltip=§cWARNING!§7 Setting this to "Enabled" means that fluids or items WILL be voided.
+cover.voiding.message.disabled=Voiding Cover Disabled
+cover.voiding.message.enabled=Voiding Cover Enabled
 
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
@@ -1212,6 +1222,15 @@ cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logi
 cover.advanced_energy_detector.invert_label=Inverted:
 cover.advanced_energy_detector.normal=Normal
 cover.advanced_energy_detector.inverted=Inverted
+
+cover.advanced_fluid_detector.label=Advanced Fluid Detector
+cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
+cover.advanced_fluid_detector.max=Maximum Fluid:
+cover.advanced_fluid_detector.min=Minimum Fluid:
+cover.advanced_item_detector.label=Advanced Item Detector
+cover.advanced_item_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum amount of items, and starts emitting when greater than the min amount of items up to the set maximum
+cover.advanced_item_detector.max=Maximum Items:
+cover.advanced_item_detector.min=Minimum Items:
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -2190,6 +2209,10 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
+
+tile.brittle_charcoal.name=Brittle Charcoal
+tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
+tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -4410,6 +4433,13 @@ gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
 gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
 gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
 
+gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
+gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
+gregtech.machine.charcoal_pile.tooltip.2=Right Click with fire-starting items to start.
+gregtech.machine.charcoal_pile.tooltip.3=Pyrolysis occurs in up to a §b9x4x9§7 space beneath.
+gregtech.machine.charcoal_pile.tooltip.4=Logs must be not be exposed to §eAir§7!
+gregtech.multiblock.charcoal_pile.description=Converts logs into Brittle Charcoal in a 9x4x9 area beneath it.\n\nThe floor of the pit must be made from bricks, and any ground-related block can be used for the walls and roof. No air can be inside the pit.\n\nLarger pits take more time to process logs, but are more efficient.
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4474,6 +4504,7 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
 gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
 gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
+gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
@@ -4503,6 +4534,10 @@ gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
+
+gregtech.bus.collapse_true=Bus will collapse Items
+gregtech.bus.collapse_false=Bus will not collapse Items
+gregtech.bus.collapse.error=Bus must be attached to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -4731,6 +4766,7 @@ gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
 gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle Modes or access Covers
 gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
+gregtech.tool_action.screwdriver.auto_collapse=§8Use Screwdriver to toggle Item collapsing
 gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-Output
 gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
@@ -4785,8 +4821,9 @@ gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
 gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust, with Fortune giving a bonus.
-gregtech.jei.ore.biome_weighting=%s Weight: %d
-gregtech.jei.ore.biome_weighting_no_spawn=%s Weight: Cannot Spawn
+gregtech.jei.ore.biome_weighting_title=§dModified Biome Total Weights:
+gregtech.jei.ore.biome_weighting=§d%s Weight: §3%d
+gregtech.jei.ore.biome_weighting_no_spawn=§d%s Weight: §cCannot Spawn
 gregtech.jei.ore.ore_weight=Weight in vein: %d%%
 gregtech.jei.ore.primary_1=Top Ore
 gregtech.jei.ore.primary_2=Spawns in the top %d layers of the vein
@@ -4796,6 +4833,21 @@ gregtech.jei.ore.between_1=Between Ore
 gregtech.jei.ore.between_2=Spawns in the middle %d layers of the vein, with other ores
 gregtech.jei.ore.sporadic_1=Sporadic Ore
 gregtech.jei.ore.sporadic_2=Spawns anywhere in the vein
+
+fluid.spawnlocation.name=Fluid Vein Information
+gregtech.jei.fluid.vein_weight=Vein Weight: %d
+gregtech.jei.fluid.min_yield=Minimum Yield: %d
+gregtech.jei.fluid.max_yield=Maximum Yield: %d
+gregtech.jei.fluid.depletion_chance=Depletion Chance: %d%%
+gregtech.jei.fluid.depletion_amount=Depletion Amount: %d
+gregtech.jei.fluid.depleted_rate=Depleted Yield: %d
+gregtech.jei.fluid.dimension=Dimensions:
+gregtech.jei.fluid.weight_hover=The Weight of the vein. Hover over the fluid to see any possible biome modifications
+gregtech.jei.fluid.min_hover=The minimum yield that any fluid vein of this fluid can have
+gregtech.jei.fluid.max_hover=The maximum yield that any fluid vein of this fluid can have
+gregtech.jei.fluid.dep_chance_hover=The percentage chance for the vein to be depleted upon harvest
+gregtech.jei.fluid.dep_amount_hover=The amount the vein will be depleted by
+gregtech.jei.fluid.dep_yield_hover=The maximum yield of the vein when it is fully depleted
 
 gregtech.jei.materials.average_mass=Average mass: %,d
 gregtech.jei.materials.average_protons=Average protons: %,d

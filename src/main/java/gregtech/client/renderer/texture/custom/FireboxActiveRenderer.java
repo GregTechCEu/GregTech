@@ -19,8 +19,8 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class FireboxActiveRenderer extends SidedCubeRenderer {
 
-    public FireboxActiveRenderer(String basePath, OrientedOverlayRenderer.OverlayFace... faces) {
-        super(basePath, faces);
+    public FireboxActiveRenderer(String basePath) {
+        super(basePath);
     }
 
     @Override

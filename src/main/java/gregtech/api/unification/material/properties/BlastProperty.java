@@ -105,8 +105,9 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
         else if ("HIGHER".equalsIgnoreCase(gasTierName)) return GasTier.HIGHER;
         else if ("HIGHEST".equalsIgnoreCase(gasTierName)) return GasTier.HIGHEST;
         else {
-            CraftTweakerAPI.logError("Gas Tier must be either \"LOW\", \"MID\", \"HIGH\", \"HIGHER\", or \"HIGHEST\"");
-            throw new IllegalArgumentException("Could not find valid gas tier for name: " + gasTierName);
+            String message = "Gas Tier must be either \"LOW\", \"MID\", \"HIGH\", \"HIGHER\", or \"HIGHEST\"";
+            CraftTweakerAPI.logError(message);
+            throw new IllegalArgumentException("Could not find valid gas tier for name: " + gasTierName + ". " + message);
         }
     }
 

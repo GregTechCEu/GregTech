@@ -178,7 +178,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private boolean inRange(BlockPos playerPos, BlockPos controllerPos) {
+    private static boolean inRange(BlockPos playerPos, BlockPos controllerPos) {
         return Math.abs(playerPos.getX() - controllerPos.getX()) < 30 &&
                 Math.abs(playerPos.getY() - controllerPos.getY()) < 30 &&
                 Math.abs(playerPos.getZ() - controllerPos.getZ()) < 30;

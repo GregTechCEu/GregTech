@@ -172,7 +172,7 @@ public class MetaFluids {
      * @param fluidType the type of the fluid
      */
     public static void setMaterialFluidTexture(@Nonnull Material material, @Nonnull FluidType fluidType) {
-        String path = "blocks/fluids/fluid." + material.toString();
+        String path = "blocks/fluids/fluid." + material;
         if (fluidType.equals(FluidTypes.PLASMA))
             path += ".plasma";
         ResourceLocation resourceLocation = new ResourceLocation(GTValues.MODID, path);

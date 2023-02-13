@@ -1,4 +1,4 @@
-package gregtech.integration.jei.recipe.primitive;
+package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
@@ -37,7 +37,6 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
 
     protected final IDrawable slot;
     protected final IDrawable icon;
-    protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 
     protected List<Boolean> itemExists = new ArrayList<>();
     protected List<Boolean> fluidExists = new ArrayList<>();
@@ -285,12 +284,11 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     // a couple wrappers to make the code look less terrible
-    private void registerArrow(IGuiHelper guiHelper, String name, int width, int height) {
+    private static void registerArrow(IGuiHelper guiHelper, String name, int width, int height) {
         DrawableRegistry.initDrawable(guiHelper, GTValues.MODID + ":textures/gui/arrows/" + name + ".png", width, height, name);
     }
 
-    private void drawArrow(Minecraft minecraft, String name, int x, int y, boolean shown) {
-        if (shown)
-            DrawableRegistry.drawDrawable(minecraft, name, x, y);
+    private static void drawArrow(Minecraft minecraft, String name, int x, int y, boolean shown) {
+        if (shown) DrawableRegistry.drawDrawable(minecraft, name, x, y);
     }
 }
