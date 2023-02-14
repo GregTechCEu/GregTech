@@ -130,6 +130,17 @@ public class MaterialRecipeHandler {
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
             }
+
+            // Some Ores with Direct Smelting Results have neither ingot nor gem properties
+            if (oreProperty != null) {
+                Material smeltingResult = oreProperty.getDirectSmeltResult();
+                if (smeltingResult != null) {
+                    ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
+                    if (!ingotStack.isEmpty()) {
+                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
+                    }
+                }
+            }
         }
     }
 
