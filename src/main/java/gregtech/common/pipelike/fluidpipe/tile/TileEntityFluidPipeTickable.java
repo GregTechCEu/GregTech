@@ -7,6 +7,8 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.common.covers.CoverPump;
+import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -127,6 +129,18 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 if (capability == null) {
                     continue;
                 }
+
+                // if there's a cover on this side, check if the manual i/o mode allows us to export fluid
+                if (cover instanceof CoverPump){
+                    ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
+                    if (mode == ManualImportExportMode.DISABLED)
+                        continue;
+
+                    if (mode == ManualImportExportMode.FILTERED)
+                        continue;
+
+                }
+
                 pipeTank = capability;
 
             }
