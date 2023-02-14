@@ -18,11 +18,11 @@ public class ItemContainerSwitchShim implements IItemHandlerModifiable {
         changeInventory(container);
     }
 
-    public void changeInventory(IItemHandler container) {
+    public void changeInventory(IItemHandlerModifiable container) {
         if (container == null) {
             throw new IllegalArgumentException("Shim container must be an IItemHandler!");
         }
-        this.container = (IItemHandlerModifiable) container;
+        this.container = container;
     }
 
     @Override
