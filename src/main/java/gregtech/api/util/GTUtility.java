@@ -1115,6 +1115,21 @@ public class GTUtility {
     }
 
     /**
+     * Tries to parse a string into an int, returning a default value if it fails.
+     * @param val string to parse
+     * @param defaultValue default value to return
+     * @return returns an int from the parsed string, otherwise the default value
+     */
+    public static long tryParseLong(String val, long defaultValue){
+        try {
+            return Long.parseLong(val);
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+        }
+        return defaultValue;
+    }
+
+    /**
      * Compares a value against a min and max, with an option to invert the logic
      * @param value value to be compared
      * @param maxValue the max that the value can be
