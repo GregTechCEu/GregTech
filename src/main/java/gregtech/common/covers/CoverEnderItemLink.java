@@ -82,8 +82,8 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        // TODO update to ender item link instead of using ender fluid link
-        Textures.ENDER_FLUID_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        // TODO update texture to be unique
+        Textures.ENDER_ITEM_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
