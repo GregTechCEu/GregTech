@@ -204,12 +204,12 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         this.itemFilter.initUI(65, widgetGroup::addWidget);
 
         WidgetGroup containerGroup = new WidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
-        /*int slot = 0;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                containerGroup.addWidget(new SlotWidget(this.linkedContainer, slot++, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+                containerGroup.addWidget(new SlotWidget(this.linkedContainer, row + col, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
             }
-        }*/
+        }
+
         return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
                 .widget(widgetGroup)
                 .widget(containerGroup)
