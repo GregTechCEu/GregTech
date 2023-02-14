@@ -133,10 +133,11 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 // if there's a cover on this side, check if the manual i/o mode allows us to export fluid
                 if (cover instanceof CoverPump){
                     ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
-                    if (mode == ManualImportExportMode.DISABLED)
-                        continue;
 
-                    if (mode == ManualImportExportMode.FILTERED)
+                    if (((CoverPump) cover).getTransferRate() > getNodeData().getThroughput())
+                        ((CoverPump) cover).setTransferRate(getNodeData().getThroughput());
+
+                    if (mode == ManualImportExportMode.DISABLED)
                         continue;
 
                 }
