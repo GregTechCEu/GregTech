@@ -130,20 +130,17 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     continue;
                 }
 
-                // if there's a cover on this side, check if the manual i/o mode allows us to export fluid
+                // if there's a pump or regulator on this side, check if the manual i/o mode allows us to export fluid
                 if (cover instanceof CoverPump){
-                    ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
-
                     if (((CoverPump) cover).getTransferRate() > getNodeData().getThroughput())
                         ((CoverPump) cover).setTransferRate(getNodeData().getThroughput());
 
+                    ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
                     if (mode == ManualImportExportMode.DISABLED)
                         continue;
-
                 }
 
                 pipeTank = capability;
-
             }
 
             FluidStack drainable = pipeTank.drain(maxFluid, false);
