@@ -1,6 +1,8 @@
 package gregtech.api.block.machines;
 
+import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -8,15 +10,18 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -31,8 +36,34 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class MachineItemBlock extends ItemBlock {
+
+    private static final Set<CreativeTabs> ADDITIONAL_CREATIVE_TABS = new ObjectArraySet<>();
+
+    /**
+     * Adds another creative tab for the machine item. Additional tabs added by this method are checked along with
+     * default tabs ({@link GregTechAPI#MACHINE} and {@link CreativeTabs#SEARCH}) during
+     * {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList) Item#getSubItems()} operation.<br>
+     * Note that, for machines to be properly registered on the creative tab, a matching implementation of
+     * {@link MetaTileEntity#isInCreativeTab(CreativeTabs)} should be provided as well.
+     *
+     * @param creativeTab Creative tab to be checked during {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList)}
+     * @throws NullPointerException     If {@code creativeTab == null}
+     * @throws IllegalArgumentException If {@code creativeTab == GregTechAPI.TAB_GREGTECH || creativeTab == CreativeTabs.SEARCH}
+     *
+     * @see MetaTileEntity#isInCreativeTab(CreativeTabs)
+     */
+    public static void addCreativeTab(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTab == GregTechAPI.TAB_GREGTECH) {
+            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH.tabLabel + " as additional creative tab is redundant.");
+        } else if (creativeTab == CreativeTabs.SEARCH) {
+            throw new IllegalArgumentException("Adding " + CreativeTabs.SEARCH.tabLabel + " as additional creative tab is redundant.");
+        }
+        ADDITIONAL_CREATIVE_TABS.add(creativeTab);
+    }
 
     public MachineItemBlock(BlockMachine block) {
         super(block);
@@ -146,5 +177,12 @@ public class MachineItemBlock extends ItemBlock {
         if (ConfigHolder.misc.debug) {
             tooltip.add(String.format("MetaTileEntity Id: %s", metaTileEntity.metaTileEntityId.toString()));
         }
+    }
+
+    @Override
+    public CreativeTabs[] getCreativeTabs() {
+        CreativeTabs[] tabs = ADDITIONAL_CREATIVE_TABS.toArray(new CreativeTabs[ADDITIONAL_CREATIVE_TABS.size() + 1]);
+        tabs[tabs.length - 1] = getCreativeTab();
+        return tabs;
     }
 }
