@@ -16,6 +16,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +31,10 @@ import java.util.regex.Pattern;
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
-    private static final Pattern ALLOWED_CHARS = Pattern.compile(".[0-9]*");
+    private static final int PADDING = 5;
+    private static final int SIZE = 18;
+    private static final long DEFAULT_MIN = 0;
+    private static final long DEFAULT_MAX = 2048;
 
     public long minEU, maxEU;
     private int outputAmount;
@@ -90,40 +94,38 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        int PADDING = 5;
-        int SIZE = 18;
 
         WidgetGroup group = new WidgetGroup();
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_energy_detector.label"));
 
-        // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + SIZE + PADDING, "cover.advanced_energy_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(72, 5 + SIZE, 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
+        // get/set min EU
+        group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_energy_detector.min"));
+        group.addWidget(new ImageWidget(72, (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
+        group.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE,
+                this::getMinValue, this::setMinValue)
+                .setMaxLength(19)
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setPostFix(" EU")
         );
 
         // get/set max EU
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
-        group.addWidget(new ImageWidget(68, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(72, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
+        group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
+        group.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
                     .setMaxLength(19)
-                    .setAllowedChars(ALLOWED_CHARS)
+                    .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
                     .setPostFix(" EU")
         );
 
-        // get/set min EU
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.min"));
-        group.addWidget(new ImageWidget(68, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(72, 5 + 3 * (SIZE + PADDING), 4 * SIZE, SIZE,
-                this::getMinValue, this::setMinValue)
-                    .setMaxLength(19)
-                    .setAllowedChars(ALLOWED_CHARS)
-                    .setPostFix(" EU")
+        // invert logic button
+        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
+        group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
+                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
         );
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 108)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108)
                 .widget(group)
                 .build(this, player);
     }
@@ -137,23 +139,13 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     private void setMinValue(String val){
-        try {
-            long c = Long.parseLong(val);
-            this.minEU = Math.min(maxEU - 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.minEU = Math.max(maxEU - 1, 0);
-        }
+        long parsedValue = GTUtility.tryParseLong(val, DEFAULT_MIN);
+        this.minEU = Math.min(this.maxEU - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val){
-        try {
-            long c = Long.parseLong(val);
-            maxEU = Math.max(minEU + 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.maxEU = Math.max(minEU + 1, 2048);
-        }
+        long parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX);
+        this.maxEU = Math.max(this.minEU + 1, parsedValue);
     }
 
     private boolean isInverted(){
