@@ -1,10 +1,12 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.CoverPump;
@@ -123,26 +125,31 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
             IFluidHandler pipeTank = tank;
             CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
-            if (cover != null) {
+
+            if (cover == null)
+                cover = getOtherCoverAt(facing, oppositeSide);
+            else {
                 IFluidHandler capability = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
                 // Shutter covers return null capability when active, so check here to prevent NPE
                 if (capability == null) {
                     continue;
                 }
-
-                // if there's a pump or regulator on this side, check if the manual i/o mode allows us to export fluid
-                if (cover instanceof CoverPump){
-                    int pipeThroughput = getNodeData().getThroughput() * 20;
-                    if (((CoverPump) cover).getTransferRate() > pipeThroughput)
-                        ((CoverPump) cover).setTransferRate(pipeThroughput);
-
-                    ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
-                    if (mode == ManualImportExportMode.DISABLED)
-                        continue;
-                }
-
                 pipeTank = capability;
             }
+
+            if (cover instanceof CoverPump) {
+
+                int pipeThroughput = getNodeData().getThroughput() * 20;
+                if (((CoverPump) cover).getTransferRate() > pipeThroughput) {
+                    ((CoverPump) cover).setTransferRate(pipeThroughput);
+                }
+
+                ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
+                if (mode == ManualImportExportMode.DISABLED) {
+                    continue;
+                }
+            }
+
 
             FluidStack drainable = pipeTank.drain(maxFluid, false);
             if (drainable == null || drainable.amount <= 0) {
@@ -309,6 +316,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             return null;
         }
         return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
+    }
+
+    private CoverBehavior getOtherCoverAt(EnumFacing facing, EnumFacing oppositeSide) {
+        MetaTileEntity tile = GTUtility.getMetaTileEntity(world, pos.offset(facing));
+        if (tile == null) {
+            return null;
+        }
+        return tile.getCoverAtSide(oppositeSide);
     }
 
     public void receivedFrom(EnumFacing facing) {
