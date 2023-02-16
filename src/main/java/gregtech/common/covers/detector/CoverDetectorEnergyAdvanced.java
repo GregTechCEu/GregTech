@@ -14,6 +14,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -40,7 +41,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     private long maxValueUpperLimit;
     private int outputAmount;
     private boolean inverted, isEnabled, usePercent;
-    private final List<TextFieldWidget2> widgetsToUpdate;
+    private final WidgetGroup widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -50,7 +51,9 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.inverted = false;
         this.isEnabled = true;
         this.usePercent = false;
-        this.widgetsToUpdate = new ArrayList<>(2);
+
+        // surely this is a good idea :clueless:
+        this.widgetsToUpdate = constructWidgetsToUpdate();
     }
 
     @Override
@@ -77,7 +80,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
+            if (usePercent) {
+                compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+            } else {
+                compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
+            }
             setRedstoneSignalOutput(outputAmount);
         }
     }
@@ -95,6 +102,14 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         }
     }
 
+    private void compareValue(float value, long maxValue, long minValue) {
+        if (value >= maxValue) {
+            this.outputAmount = inverted ? 15 : 0;
+        } else if (value <= minValue) {
+            this.outputAmount = inverted ? 0 : 15;
+        }
+    }
+
     @Override
     public ModularUI createUI(EntityPlayer player) {
 
@@ -104,27 +119,18 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         // get/set min EU
         group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_energy_detector.min"));
         group.addWidget(new ImageWidget(72, (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
-        widgetsToUpdate.add(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
-                .setMaxLength(19)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setPostFix(this.getPostFix()));
 
         // get/set max EU
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
         group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
-        widgetsToUpdate.add(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
-                .setMaxLength(19)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setPostFix(this.getPostFix()));
 
-        for (TextFieldWidget2 widget : widgetsToUpdate)
-            group.addWidget(widget);
+        updateSyncedWidgets(); // update widgets on UI creation
 
         // change modes between percent and discrete EU
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.change_modes_label"));
+        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.modes_label"));
         group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
-                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
+                "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
+                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip")
         );
 
         // invert logic button
@@ -136,7 +142,21 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
                 .widget(group)
+                .widget(widgetsToUpdate) // add synced widgets
                 .build(this, player);
+    }
+
+    private WidgetGroup constructWidgetsToUpdate() {
+        WidgetGroup sync = new WidgetGroup();
+        sync.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
+                .setMaxLength(19)
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setPostFix(this.getPostFix()));
+        sync.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
+                .setMaxLength(19)
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setPostFix(this.getPostFix()));
+        return sync;
     }
 
     private String getMinValue() {
@@ -199,10 +219,26 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
             length = 19;
         }
 
-        for (TextFieldWidget2 widget : widgetsToUpdate) {
-            widget.setPostFix(null); // clear postfix
-            widget.setPostFix(this.getPostFix());
-            widget.setMaxLength(length);
+        // update widgets
+        updateSyncedWidgets(length);
+    }
+
+    private void updateSyncedWidgets(int length) {
+        for (Widget widget : this.widgetsToUpdate.widgets) {
+            if (widget instanceof TextFieldWidget2) {
+                ((TextFieldWidget2) widget).setPostFix(null); // clear postfix
+                ((TextFieldWidget2) widget).setPostFix(this.getPostFix());
+                ((TextFieldWidget2) widget).setMaxLength(length);
+            }
+        }
+    }
+
+    private void updateSyncedWidgets() {
+        for (Widget widget : this.widgetsToUpdate.widgets) {
+            if (widget instanceof TextFieldWidget2) {
+                ((TextFieldWidget2) widget).setPostFix(null); // clear postfix
+                ((TextFieldWidget2) widget).setPostFix(this.getPostFix());
+            }
         }
     }
 
