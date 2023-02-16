@@ -15,7 +15,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,28 +25,32 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
-    private static final int PADDING = 5;
-    private static final int SIZE = 18;
-    private static final long DEFAULT_MIN = 0;
-    private static final long DEFAULT_MAX = 2048;
+    private static final int PADDING = 5, SIZE = 18;
 
-    public long minEU, maxEU;
+    private static final long DEFAULT_MIN_EU = 0, DEFAULT_MAX_EU = 2048;
+    private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
+
+    public long minValue, maxValue;
+    private long maxValueUpperLimit;
     private int outputAmount;
-    private boolean inverted;
-    private boolean isEnabled;
+    private boolean inverted, isEnabled, usePercent;
+    private final List<TextFieldWidget2> widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.minEU = 0;
-        this.maxEU = 32;
+        this.minValue = DEFAULT_MIN_EU;
+        this.maxValue = DEFAULT_MAX_EU;
         this.outputAmount = 0;
         this.inverted = false;
         this.isEnabled = true;
+        this.usePercent = false;
+        this.widgetsToUpdate = new ArrayList<>(2);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            compareValue(energyContainer.getEnergyStored(), maxEU, minEU);
+            compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
             setRedstoneSignalOutput(outputAmount);
         }
     }
@@ -101,51 +104,71 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         // get/set min EU
         group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_energy_detector.min"));
         group.addWidget(new ImageWidget(72, (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE,
-                this::getMinValue, this::setMinValue)
+        widgetsToUpdate.add(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
                 .setMaxLength(19)
                 .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setPostFix(" EU")
-        );
+                .setPostFix(this.getPostFix()));
 
         // get/set max EU
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
         group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE,
-                this::getMaxValue, this::setMaxValue)
-                    .setMaxLength(19)
-                    .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                    .setPostFix(" EU")
-        );
+        widgetsToUpdate.add(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
+                .setMaxLength(19)
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setPostFix(this.getPostFix()));
 
-        // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+        for (TextFieldWidget2 widget : widgetsToUpdate)
+            group.addWidget(widget);
+
+        // change modes between percent and discrete EU
+        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.change_modes_label"));
+        group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
                 "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                 .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
         );
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108)
+        // invert logic button
+        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
+        group.addWidget(new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
+                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
+        );
+
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
                 .widget(group)
                 .build(this, player);
     }
 
     private String getMinValue() {
-        return String.valueOf(minEU);
+        return String.valueOf(minValue);
     }
 
     private String getMaxValue() {
-        return String.valueOf(maxEU);
+        return String.valueOf(maxValue);
     }
 
     private void setMinValue(String val){
-        long parsedValue = GTUtility.tryParseLong(val, DEFAULT_MIN);
-        this.minEU = Math.min(this.maxEU - 1, Math.max(0, parsedValue));
+        long parsedValue;
+
+        if (usePercent) {
+            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MIN_PERCENT);
+        } else {
+            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MIN_EU);
+        }
+
+        this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val){
-        long parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX);
-        this.maxEU = Math.max(this.minEU + 1, parsedValue);
+        long parsedValue;
+
+        if (usePercent) {
+            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX_PERCENT);
+        } else {
+            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX_EU);
+        }
+
+        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, this.maxValueUpperLimit));
     }
 
     private boolean isInverted(){
@@ -154,6 +177,37 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     private void setInverted(boolean b){
         this.inverted = b;
+    }
+
+    private boolean isUsePercent(){
+        return this.usePercent;
+    }
+
+    private void setUsePercent(boolean b){
+        this.usePercent =  b;
+        int length;
+
+        if (this.usePercent){ // using percent
+            this.minValue = DEFAULT_MIN_PERCENT;
+            this.maxValue = DEFAULT_MAX_PERCENT;
+            this.maxValueUpperLimit = 100;
+            length = 3;
+        } else { // using discrete EU
+            this.minValue = DEFAULT_MIN_EU;
+            this.maxValue = DEFAULT_MAX_EU;
+            this.maxValueUpperLimit = Long.MAX_VALUE;
+            length = 19;
+        }
+
+        for (TextFieldWidget2 widget : widgetsToUpdate) {
+            widget.setPostFix(null); // clear postfix
+            widget.setPostFix(this.getPostFix());
+            widget.setMaxLength(length);
+        }
+    }
+
+    private String getPostFix(){
+        return this.usePercent ? " %" : " EU";
     }
 
     @Override
@@ -165,40 +219,44 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setLong("maxEU", this.maxEU);
-        tagCompound.setLong("minEU", this.minEU);
+        tagCompound.setLong("maxEU", this.maxValue);
+        tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
         tagCompound.setBoolean("inverted", this.inverted);
         tagCompound.setBoolean("isEnabled", this.isEnabled);
+        tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
     }
 
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.minEU = tagCompound.getLong("minEU");
-        this.maxEU = tagCompound.getLong("maxEU");
+        this.minValue = tagCompound.getLong("minEU");
+        this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
         this.inverted = tagCompound.getBoolean("inverted");
         this.isEnabled = tagCompound.getBoolean("isEnabled");
+        this.usePercent = tagCompound.getBoolean("usePercent");
     }
 
     @Override
     public void writeInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
-        packetBuffer.writeLong(this.minEU);
-        packetBuffer.writeLong(this.maxEU);
+        packetBuffer.writeLong(this.minValue);
+        packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
         packetBuffer.writeBoolean(this.inverted);
         packetBuffer.writeBoolean(this.isEnabled);
+        packetBuffer.writeBoolean(this.usePercent);
     }
 
     @Override
     public void readInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
-        this.minEU = packetBuffer.readLong();
-        this.maxEU = packetBuffer.readLong();
+        this.minValue = packetBuffer.readLong();
+        this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
         this.inverted = packetBuffer.readBoolean();
         this.isEnabled = packetBuffer.readBoolean();
+        this.usePercent = packetBuffer.readBoolean();
     }
 
     @Override
