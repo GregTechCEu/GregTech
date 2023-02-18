@@ -3,11 +3,11 @@ package gregtech.client.model.modelfactories;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import gregtech.client.model.ModelFactory;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.client.model.ModelFactory;
 import gregtech.client.model.customtexture.CustomTexture;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.BlockOre;
@@ -32,7 +32,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
@@ -71,7 +74,7 @@ public class OreBakedModel implements IBakedModel {
             BakedQuad[] bakedQuads =  cacheTop.get(materialIconSet, side);
             if (bakedQuads == null) {
                 bakedQuads = new BakedQuad[2];
-                bakedQuads[0] = new BakedQuadRetextured(model.getQuads(state, side, rand).get(1), ModelLoader.defaultTextureGetter().apply(MaterialIconType.ore.getBlockPath(materialIconSet)));
+                bakedQuads[0] = new BakedQuadRetextured(model.getQuads(state, side, rand).get(1), ModelLoader.defaultTextureGetter().apply(MaterialIconType.ore.getBlockTexturePath(materialIconSet)));
                 bakedQuads[1] = CustomTexture.rebake(15, 15, bakedQuads[0]);
                 cacheTop.put(materialIconSet, side, bakedQuads);
             }

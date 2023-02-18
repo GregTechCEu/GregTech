@@ -62,6 +62,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.updates.putAll(((TileEntityPipeBase<?, ?>) tileEntity).updates);
         }
         tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
+        setFrameMaterial(tileEntity.getFrameMaterial());
     }
 
     public abstract Class<PipeType> getPipeTypeClass();

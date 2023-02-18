@@ -17,12 +17,13 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // no overclocking happens other than parallelization,
         // so return the recipe's values, with EUt made positive for it to be made negative later
         return new int[]{recipeEUt * -1, recipeDuration};
     }
 
+    @Nonnull
     @Override
     public Enum<ParallelLogicType> getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS

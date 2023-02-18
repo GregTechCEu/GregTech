@@ -7,6 +7,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
@@ -14,17 +15,18 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.CPacketClipboardNBTUpdate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
+import gregtech.client.renderer.texture.custom.ClipboardRenderer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehavior;
+import gregtech.core.network.packets.PacketClipboardNBTUpdate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -95,13 +97,13 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+        ClipboardRenderer.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.getClipboard() != null)
-            CLIPBOARD_RENDERER.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
+            ClipboardRenderer.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
     }
 
     public AxisAlignedBB getRenderBoundingBox() {
@@ -134,7 +136,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(new GregFakePlayer(entityPlayer.world), EnumHand.MAIN_HAND); // We can't have this actually set the player's hand
                 holder.setCustomValidityCheck(this::isValid).setCurrentItem(this.getClipboard());
                 if (entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
-                    return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
+                    return ClipboardBehavior.createMTEUI(holder, entityPlayer);
                 } else {
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(holder, entityPlayer);
                 }
@@ -262,7 +264,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public String getHarvestTool() {
-        return "axe";
+        return ToolClasses.AXE;
     }
 
     @Override
@@ -296,7 +298,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         return null;
     }
 
-    private double[] handleRayTraceResult(CuboidRayTraceResult rayTraceResult, EnumFacing spin) {
+    private static double[] handleRayTraceResult(CuboidRayTraceResult rayTraceResult, EnumFacing spin) {
         double x, y;
         double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
@@ -385,7 +387,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 this.setClipboard(clipboard);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not initialize Clipboard from InitialSyncData buffer", e);
         }
     }
 
@@ -419,7 +421,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                     this.setClipboard(clipboard);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                GTLog.logger.error("Could not read Clipboard Init NBT from CustomData buffer", e);
             }
         }
     }
@@ -427,17 +429,10 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     private void sendNBTToServer() {
         PacketBuffer packetBuffer = new PacketBuffer(Unpooled.buffer());
         packetBuffer.writeCompoundTag(this.getClipboard().getTagCompound());
-        NetworkHandler.channel.sendToServer(new CPacketClipboardNBTUpdate(
+        GregTechAPI.networkHandler.sendToServer(new PacketClipboardNBTUpdate(
                 this.getWorld().provider.getDimension(),
                 this.getPos(),
-                1, packetBuffer).toFMLPacket());
-    }
-
-    @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (data.length != 0 && data[0] instanceof ItemStack)
-            this.setClipboard((ItemStack) data[0]);
+                1, packetBuffer));
     }
 
     @Override
@@ -480,6 +475,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public boolean canRenderMachineGrid() {
+        return false;
+    }
+
+    @Override
+    public boolean showToolUsages() {
         return false;
     }
 

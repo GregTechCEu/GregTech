@@ -52,6 +52,10 @@ repositories {
         name = "CurseMaven"
         setUrl("https://www.cursemaven.com")
     }
+    maven { //JEI
+        name = "Progwml6 maven"
+        setUrl("http://dvs1.progwml6.com/files/maven/")
+    }
     maven {
         setUrl("https://maven.cleanroommc.com")
     }
@@ -62,16 +66,17 @@ dependencies {
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
 
-    "compile"("curse.maven:crafttweaker-239197:3935788")
+    "deobfCompile"("mezz.jei:jei_1.12.2:4.16.1.302")
 
-    "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
+    "compile"("curse.maven:crafttweaker-239197:3935788")
     "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
-    "compile"(files("etc/groovyscript-0.0.1.jar"))
+    "compile"(files("etc/groovyscript-0.1.0.jar"))
 
     "deobfCompile"("zone.rong:mixinbooter:4.2")
 
-    "testImplementation"("junit:junit:4.13.1")
+    "testImplementation"("org.junit.jupiter:junit-jupiter:5.9.1")
+    "testImplementation"("org.hamcrest:hamcrest:2.2")
     "implementation"("org.projectlombok:lombok:1.18.16")
 }
 
@@ -105,7 +110,7 @@ val jar: Jar by tasks
 jar.apply {
     manifest {
         attributes(mapOf("FMLAT" to "gregtech_at.cfg",
-            "FMLCorePlugin" to "gregtech.core.GregTechLoadingPlugin",
+            "FMLCorePlugin" to "gregtech.asm.GregTechLoadingPlugin",
             "FMLCorePluginContainsFMLMod" to "true"))
     }
 }
@@ -119,6 +124,7 @@ tasks.withType<Test>() {
         showCauses = true
         showStandardStreams = false
     }
+    useJUnitPlatform()
 }
 
 val sourceTask: Jar = tasks.create("source", Jar::class.java) {

@@ -3,8 +3,9 @@ package gregtech.client.model.customtexture;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.*;
-import gregtech.core.hooks.BlockHooks;
-import gregtech.core.hooks.CTMHooks;
+import gregtech.api.util.GTLog;
+import gregtech.asm.hooks.BlockHooks;
+import gregtech.asm.hooks.CTMHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -149,7 +150,7 @@ public class CustomTextureBakedModel implements IBakedModel {
             }
             return CTMHooks.getQuadsWithOptiFine(ret, layer, this, state, side, rand);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not retrieve BakedModel from cache", e);
         }
 
         return Collections.emptyList();

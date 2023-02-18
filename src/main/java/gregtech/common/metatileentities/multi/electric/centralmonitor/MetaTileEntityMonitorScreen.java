@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi.electric.centralmonitor;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
@@ -10,12 +9,15 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.WidgetARGB;
@@ -36,7 +38,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -331,7 +336,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 plugin.receiveInitialSyncData(buf);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not initialize Monitor Screen from InitialSyncData buffer", e);
         }
     }
 
@@ -355,7 +360,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     loadPlugin(behavior);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                GTLog.logger.error("Could not initialize Monitor Screen from CustomData buffer", e);
             }
         }
     }
@@ -430,7 +435,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public boolean shouldRenderOverlay() {
         MultiblockControllerBase controller = this.getController();
-        return controller instanceof MetaTileEntityCentralMonitor && ((MetaTileEntityCentralMonitor) controller).isActive();
+        return controller instanceof MetaTileEntityCentralMonitor && controller.isActive();
     }
 
     @Override
@@ -465,7 +470,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         MultiblockControllerBase controller = this.getController();
-        if (controller instanceof MetaTileEntityCentralMonitor && ((MetaTileEntityCentralMonitor) controller).isActive()) {
+        if (controller instanceof MetaTileEntityCentralMonitor && controller.isActive()) {
             int width = 330;
             int height = 260;
             ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
@@ -554,7 +559,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     .widget(new WidgetMonitorScreen(330, 0, 150, this))
                     .widget(new LabelWidget(15, 13, "gregtech.machine.monitor_screen.name", 0XFFFFFFFF))
                     .widget(new ClickButtonWidget(15, 25, 40, 20, "monitor.gui.title.back", data -> {
-                        if (mainGroup.isVisible() && ((MetaTileEntityCentralMonitor) controller).isActive() && controller.isValid()) {
+                        if (mainGroup.isVisible() && controller.isActive() && controller.isValid()) {
                             MetaTileEntityUIFactory.INSTANCE.openUI(controller.getHolder(), (EntityPlayerMP) entityPlayer);
                         } else if (!mainGroup.isVisible()) {
                             pluginWidget.removePluginWidget();
@@ -628,7 +633,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return false;
     }
 
-    private double[] handleRayTraceResult(RayTraceResult rayTraceResult) {
+    private static double[] handleRayTraceResult(RayTraceResult rayTraceResult) {
         double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.x - rayTraceResult.getBlockPos().getX();
@@ -701,8 +706,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!(!playerIn.isSneaking() && playerIn.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null))
-                && !MetaTileEntities.MONITOR_SCREEN.getStackForm().isItemEqual(playerIn.getHeldItemMainhand())) {
+        if (!(!playerIn.isSneaking() && ToolHelper.isTool(playerIn.getHeldItem(hand), ToolClasses.SCREWDRIVER))
+                && !MetaTileEntities.MONITOR_SCREEN.getStackForm().isItemEqual(playerIn.getHeldItem(hand))) {
             if (playerIn.world.getTotalWorldTime() - lastClickTime < 2 &&
                     playerIn.getPersistentID().equals(lastClickUUID)) {
                 return true;
@@ -712,7 +717,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
             MultiblockControllerBase controller = this.getController();
             if (controller instanceof MetaTileEntityCentralMonitor &&
-                    ((MetaTileEntityCentralMonitor) controller).isActive() && controller.getFrontFacing() == facing) {
+                    controller.isActive() && controller.getFrontFacing() == facing) {
                 return handleHitResultWithScale(playerIn, hand, facing, true, hitResult);
             }
         }
@@ -753,5 +758,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(null, -1);
+    }
+
+    @Override
+    public boolean showToolUsages() {
+        return false;
     }
 }

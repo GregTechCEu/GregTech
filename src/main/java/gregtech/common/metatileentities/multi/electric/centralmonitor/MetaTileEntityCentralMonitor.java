@@ -361,11 +361,6 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void update() {
-        super.update();
-    }
-
-    @Override
     protected void updateFormedValid() {
         if (this.getOffsetTimer() % 20 ==0) {
             setActive(inputEnergy.changeEnergy(ENERGY_COST * this.getMultiblockParts().size()) == ENERGY_COST * this.getMultiblockParts().size());
@@ -596,6 +591,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));
         tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.3"));
         tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.4", -ENERGY_COST));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
     }
 
     @Override

@@ -3,6 +3,7 @@ package gregtech.api.util;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.KeySharedStack;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -10,12 +11,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static gregtech.api.util.Predicates.not;
 
 public class GTHashMaps {
     /**
@@ -25,15 +21,15 @@ public class GTHashMaps {
      * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
     public static Map<ItemStackKey, Integer> fromItemHandler(IItemHandler inputs) {
-        final Map<ItemStackKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
+        final Object2IntMap<ItemStackKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
 
         for (int i = 0; i < inputs.getSlots(); i++) {
             ItemStack stack = inputs.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                map.computeIfPresent(KeySharedStack.getRegisteredStack(stack), (k, v) -> v + stack.getCount());
-                map.computeIfAbsent(KeySharedStack.getRegisteredStack(stack), (v) -> stack.getCount());
+                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
+                map.put(key, map.getInt(key) + stack.getCount());
             }
         }
 
@@ -46,15 +42,15 @@ public class GTHashMaps {
      * @param inputs The inventory handler of the inventory
      * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
-    public static Map<ItemStackKey, Integer> fromItemStackCollection(Collection<ItemStack> inputs) {
-        final Map<ItemStackKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
+    public static Map<ItemStackKey, Integer> fromItemStackCollection(Iterable<ItemStack> inputs) {
+        final Object2IntMap<ItemStackKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
 
         for (ItemStack stack : inputs) {
             if (!stack.isEmpty()) {
-                map.computeIfPresent(KeySharedStack.getRegisteredStack(stack), (k, v) -> v + stack.getCount());
-                map.computeIfAbsent(KeySharedStack.getRegisteredStack(stack), (v) -> stack.getCount());
+                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
+                map.put(key, map.getInt(key) + stack.getCount());
             }
         }
 
@@ -68,15 +64,15 @@ public class GTHashMaps {
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
     public static Map<FluidKey, Integer> fromFluidHandler(IFluidHandler fluidInputs) {
-        final Map<FluidKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
+        final Object2IntMap<FluidKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
 
         for (int i = 0; i < fluidInputs.getTankProperties().length; i++) {
             FluidStack fluidStack = fluidInputs.getTankProperties()[i].getContents();
             if (fluidStack != null && fluidStack.amount > 0) {
-                map.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidStack.amount);
-                map.computeIfAbsent(new FluidKey(fluidStack), (v) -> fluidStack.amount);
+                FluidKey key = new FluidKey(fluidStack);
+                map.put(key, map.getInt(key) + fluidStack.amount);
             }
         }
 
@@ -90,14 +86,14 @@ public class GTHashMaps {
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
     public static Map<FluidKey, Integer> fromFluidCollection(Collection<FluidStack> fluidInputs) {
-        final Map<FluidKey, Integer> map = new Object2IntLinkedOpenHashMap<>();
+        final Object2IntMap<FluidKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
 
         for (FluidStack fluidStack : fluidInputs) {
             if (fluidStack != null && fluidStack.amount > 0) {
-                map.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidStack.amount);
-                map.computeIfAbsent(new FluidKey(fluidStack), (v) -> fluidStack.amount);
+                FluidKey key = new FluidKey(fluidStack);
+                map.put(key, map.getInt(key) + fluidStack.amount);
             }
         }
 

@@ -3,9 +3,10 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.tool.ICutterItem;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -13,11 +14,10 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import gregtech.common.tools.DamageValues;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -28,7 +28,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -51,7 +50,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     public BlockCable(Insulation cableType) {
         super(cableType);
-        setHarvestLevel("cutter", 1);
+        setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 
     public void addCableMaterial(Material material, WireProperties wireProperties) {
@@ -95,21 +94,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
-        ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
-        if (cutterItem != null) {
-            if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
-                if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnected(coverSide);
-                    pipeTile.setConnection(coverSide, !isOpen, false);
-                    cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
-                    IToolStats.onOtherUse(stack, world, pos);
-                }
-                return EnumActionResult.SUCCESS;
-            }
-            return EnumActionResult.FAIL;
-        }
-        return EnumActionResult.PASS;
+    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
     @Override
@@ -159,6 +145,13 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
+    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
+        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
+                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
+                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
+    }
+
+    @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
@@ -172,16 +165,11 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                     float damageAmount = (float) ((GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4);
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
                     if (entityLiving instanceof EntityPlayerMP) {
-                        GTTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);
+                        AdvancementTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);
                     }
                 }
             }
         }
-    }
-
-    @Override
-    protected boolean doDrawGrid(ItemStack stack) {
-        return stack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
     }
 
     @Nonnull

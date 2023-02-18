@@ -100,8 +100,9 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
         }
         if (access.keySet().containsAll(cacheServer.keySet()) && access.size() == cacheServer.size()) {
             List<Pair<UUID, String>> toUpdated = new LinkedList<>();
-            for (Pair<UUID, String> pair : access.keySet()) {
-                FluidStack fluidStackNew = access.get(pair);
+            for (Map.Entry<Pair<UUID, String>, FluidStack> entry : access.entrySet()) {
+                Pair<UUID, String> pair = entry.getKey();
+                FluidStack fluidStackNew = entry.getValue();
                 FluidStack fluidStackOld = cacheServer.get(pair);
                 if (fluidStackNew == null && fluidStackOld == null) {
                     continue;

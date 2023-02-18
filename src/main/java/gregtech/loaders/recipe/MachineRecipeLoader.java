@@ -110,6 +110,7 @@ public class MachineRecipeLoader {
         }
 
         for (MetaItem<?>.MetaValueItem shapeExtruder : SHAPE_EXTRUDERS) {
+            if (shapeExtruder == null) continue;
             FORMING_PRESS_RECIPES.recipeBuilder()
                     .duration(120).EUt(22)
                     .notConsumable(shapeExtruder.getStackForm())
@@ -476,6 +477,22 @@ public class MachineRecipeLoader {
                     .outputs(COVER_ITEM_DETECTOR.getStackForm())
                     .EUt(16).duration(100)
                     .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(COVER_FLUID_DETECTOR)
+                    .input(SENSOR_HV)
+                    .fluidInputs(solder)
+                    .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
+                    .EUt(16).duration(100)
+                    .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(COVER_ITEM_DETECTOR)
+                    .input(SENSOR_HV)
+                    .fluidInputs(solder)
+                    .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
+                    .EUt(16).duration(100)
+                    .buildAndRegister();
         }
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -574,7 +591,7 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plank, Wood, 4).input(screw, Iron, 4).outputs(WOODEN_CRATE.getStackForm()).duration(100).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plank, Wood, 4).input(screw, Iron, 4).outputs(WOODEN_CRATE.getStackForm()).duration(100).circuitMeta(5).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Bronze, 4).input(plate, Bronze, 4).outputs(BRONZE_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Steel, 4).input(plate, Steel, 4).outputs(STEEL_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Aluminium, 4).input(plate, Aluminium, 4).outputs(ALUMINIUM_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
@@ -955,6 +972,7 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_stainless_steel", MetaItems.FLUID_CELL_LARGE_STAINLESS_STEEL.getStackForm(), MetaItems.FLUID_CELL_LARGE_STAINLESS_STEEL.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_titanium", MetaItems.FLUID_CELL_LARGE_TITANIUM.getStackForm(), MetaItems.FLUID_CELL_LARGE_TITANIUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_tungstensteel", MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm(), MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("cell_vial_nbt", MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm(), MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm());
 
 
         //Jetpacks

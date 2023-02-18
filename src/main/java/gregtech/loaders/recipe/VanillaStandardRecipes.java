@@ -184,7 +184,7 @@ public class VanillaStandardRecipes {
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
             if (ConfigHolder.recipes.hardGlassRecipes) {
-                ModHandler.removeRecipes(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
+                ModHandler.removeRecipeByOutput(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
             }
 
             ModHandler.addShapedRecipe("stained_glass_pane_" + i, new ItemStack(Blocks.STAINED_GLASS_PANE, 2, i), "sG", 'G', new ItemStack(Blocks.STAINED_GLASS, 1, i));
@@ -196,7 +196,7 @@ public class VanillaStandardRecipes {
         }
 
         if (ConfigHolder.recipes.hardGlassRecipes)
-            ModHandler.removeRecipes(new ItemStack(Blocks.GLASS_PANE, 16));
+            ModHandler.removeRecipeByOutput(new ItemStack(Blocks.GLASS_PANE, 16));
 
         ModHandler.addShapedRecipe("glass_pane", new ItemStack(Blocks.GLASS_PANE, 2), "sG", 'G', new ItemStack(Blocks.GLASS));
 
@@ -906,12 +906,29 @@ public class VanillaStandardRecipes {
                 'P', new UnificationEntry(OrePrefix.ring, Materials.Iron)
         );
 
-        if (!ConfigHolder.recipes.hardIronRecipes)
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.plate, Materials.Iron, 4)
-                    .circuitMeta(4)
-                    .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
-                    .duration(100).EUt(16).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 7)
+                .outputs(new ItemStack(Items.CAULDRON, 1))
+                .circuitMeta(7)
+                .duration(700).EUt(4).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.stick, Materials.Iron, 3)
+                .outputs(new ItemStack(Blocks.IRON_BARS, 4))
+                .circuitMeta(3)
+                .duration(300).EUt(4).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 4)
+                .circuitMeta(4)
+                .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
+                .duration(100).EUt(16).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 6)
+                .circuitMeta(6)
+                .outputs(new ItemStack(Items.IRON_DOOR))
+                .duration(100).EUt(16).buildAndRegister();
     }
 
     /**
@@ -1081,7 +1098,7 @@ public class VanillaStandardRecipes {
                 .input(OrePrefix.stick, Iron, 12)
                 .input(stick, Wood)
                 .input(dust, Redstone)
-                .circuitMeta(4)
+                .circuitMeta(5)
                 .outputs(new ItemStack(Blocks.DETECTOR_RAIL, 12))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
@@ -1089,7 +1106,7 @@ public class VanillaStandardRecipes {
                 .input(stick, Iron, 12)
                 .input(stick, Wood, 2)
                 .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                .circuitMeta(4)
+                .circuitMeta(5)
                 .outputs(new ItemStack(Blocks.ACTIVATOR_RAIL, 12))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
@@ -1132,6 +1149,12 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Items.CLAY_BALL))
                 .duration(600).EUt(24).buildAndRegister();
 
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Clay)
+                .fluidInputs(Materials.DistilledWater.getFluid(250))
+                .outputs(new ItemStack(Items.CLAY_BALL))
+                .duration(300).EUt(24).buildAndRegister();
+
         COMPRESSOR_RECIPES.recipeBuilder()
                 .input(dust, Redstone, 9)
                 .output(block, Redstone)
@@ -1156,6 +1179,32 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Items.SLIME_BALL, 9))
                 .outputs(new ItemStack(Blocks.SLIME_BLOCK))
                 .duration(300).EUt(2).buildAndRegister();
+
+        if (ConfigHolder.recipes.harderRods) {
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.COBBLESTONE))
+                    .output(OrePrefix.stick, Materials.Stone, 1)
+                    .output(dustSmall, Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE))
+                    .output(OrePrefix.stick, Materials.Stone, 1)
+                    .output(dustSmall, Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+        } else {
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.COBBLESTONE))
+                    .output(OrePrefix.stick, Materials.Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+            LATHE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE))
+                    .output(OrePrefix.stick, Materials.Stone, 2)
+                    .duration(20).EUt(VA[ULV])
+                    .buildAndRegister();
+        }
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.NETHER_WART, 9))

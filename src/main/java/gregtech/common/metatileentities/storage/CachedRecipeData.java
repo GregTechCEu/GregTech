@@ -85,29 +85,35 @@ public class CachedRecipeData {
 
         //iterate stored items to find equivalent
         for (ItemStackKey itemStackKey : itemSources.getStoredItems()) {
+            boolean matchedPreviously = false;
             if (map.containsKey(itemStackKey)) {
                 if (!map.get(itemStackKey)) {
                     continue;
                 } else {
-                    return true;
+                    //cant return here before checking if:
+                    // The item is available for extraction
+                    // The recipe output is still the same, as depending on the ingredient, the output NBT may change
+                    matchedPreviously = true;
                 }
             }
 
             ItemStack itemStack = itemStackKey.getItemStack();
 
-            boolean matched = false;
-            //Matching shapeless recipes actually is very bad for performance, as it checks the entire
-            //recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
-            //take the stack
-            for (Ingredient in : recipe.getIngredients()) {
-                if (in.apply(itemStack)) {
-                    matched = true;
-                    break;
+            if (!matchedPreviously) {
+                boolean matched = false;
+                //Matching shapeless recipes actually is very bad for performance, as it checks the entire
+                //recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
+                //take the stack
+                for (Ingredient in : recipe.getIngredients()) {
+                    if (in.apply(itemStack)) {
+                        matched = true;
+                        break;
+                    }
                 }
-            }
-            if (!matched) {
-                map.put(itemStackKey, false);
-                continue;
+                if (!matched) {
+                    map.put(itemStackKey, false);
+                    continue;
+                }
             }
 
             //update item in slot, and check that recipe matches and output item is equal to the expected one

@@ -12,17 +12,23 @@ import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 
-public class GTStringUtils {
+import javax.annotation.Nonnull;
 
-    public static String prettyPrintItemStack(ItemStack stack) {
+public final class GTStringUtils {
+
+    private GTStringUtils() {/**/}
+
+    @Nonnull
+    public static String prettyPrintItemStack(@Nonnull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
-            MetaItem.MetaValueItem metaValueItem = metaItem.getItem(stack);
+            MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
                 if (metaItem instanceof MetaPrefixItem) {
-                    Material material = ((MetaPrefixItem) metaItem).getMaterial(stack);
+                    Material material = MetaPrefixItem.getMaterial(stack);
                     OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
@@ -48,7 +54,7 @@ public class GTStringUtils {
             } else if (block instanceof BlockFrame) {
                 id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
             } else if (block instanceof BlockMaterialPipe) {
-                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stack).toCamelCaseString();
+                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
 
             if (id != null) {
@@ -57,5 +63,42 @@ public class GTStringUtils {
         }
         //noinspection ConstantConditions
         return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
+    }
+
+    /**
+     * Copied and pasted from {@link net.minecraft.util.StringUtils#ticksToElapsedTime(int)} in order to be accessible
+     * Server-Side
+     *
+     * @param ticks the amount of ticks to convert
+     * @return the time elapsed for the given number of ticks, in "mm:ss" format.
+     */
+    @Nonnull
+    public static String ticksToElapsedTime(int ticks) {
+        int seconds = ticks / 20;
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        //noinspection StringConcatenationMissingWhitespace
+        return seconds < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
+    }
+
+    /**
+     * Draws a String centered within a given width.
+     * If the String exceeds the given width, it is cutoff
+     *
+     * @param stringToDraw The String to draw
+     * @param fontRenderer An instance of the MC FontRenderer
+     * @param maxLength The maximum width of the String
+     */
+    public static void drawCenteredStringWithCutoff(String stringToDraw, FontRenderer fontRenderer, int maxLength) {
+
+        //Account for really long names
+        if (fontRenderer.getStringWidth(stringToDraw) > maxLength) {
+            stringToDraw = fontRenderer.trimStringToWidth(stringToDraw, maxLength - 3, false) + "...";
+        }
+
+        //Ensure that the string is centered
+        int startPosition = (maxLength - fontRenderer.getStringWidth(stringToDraw)) / 2;
+
+        fontRenderer.drawString(stringToDraw, startPosition, 1, 0x111111);
     }
 }

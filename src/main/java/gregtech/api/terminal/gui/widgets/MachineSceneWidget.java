@@ -9,10 +9,10 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
-import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockPosFace;
+import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
+import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -97,7 +97,7 @@ public class MachineSceneWidget extends WidgetGroup {
         return around;
     }
 
-    public FBOWorldSceneRenderer getWorldSceneRenderer() {
+    public static FBOWorldSceneRenderer getWorldSceneRenderer() {
         return worldSceneRenderer;
     }
 
@@ -118,7 +118,7 @@ public class MachineSceneWidget extends WidgetGroup {
             int resolutionHeight = worldSceneRenderer.getResolutionHeight();
             int mouseX = resolutionWidth * (currentMouseX - x) / width;
             int mouseY = (int) (resolutionHeight * (1 - (currentMouseY - y) / (float) height));
-            Vector3f hitPos = renderer.unProject(mouseX, mouseY);
+            Vector3f hitPos = WorldSceneRenderer.unProject(mouseX, mouseY);
             World world = renderer.world;
             Vec3d eyePos = new Vec3d(renderer.getEyePos().x, renderer.getEyePos().y, renderer.getEyePos().z);
             hitPos.scale(2); // Double view range to ensure pos can be seen.
@@ -157,7 +157,7 @@ public class MachineSceneWidget extends WidgetGroup {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
     }
 
-    private void drawFacingBorder(BlockPosFace posFace, int color) {
+    private static void drawFacingBorder(BlockPosFace posFace, int color) {
         GlStateManager.pushMatrix();
         RenderUtil.moveToFace(posFace.pos.getX(), posFace.pos.getY(), posFace.pos.getZ(), posFace.facing);
         RenderUtil.rotateToFace(posFace.facing, null);
@@ -195,7 +195,7 @@ public class MachineSceneWidget extends WidgetGroup {
         cores = new HashSet<>();
         around = new HashSet<>();
         cores.add(pos);
-        if (mte instanceof MultiblockControllerBase) {
+        if (mte instanceof MultiblockControllerBase && ((MultiblockControllerBase) mte).isStructureFormed()) {
             PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
             if (context != null) {
                 List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());

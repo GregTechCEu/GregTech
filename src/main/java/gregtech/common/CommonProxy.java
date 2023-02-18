@@ -4,9 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.enchants.EnchantmentEnderDamage;
-import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -21,30 +20,28 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.advancement.GTTrigger;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.ItemBlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
@@ -53,7 +50,6 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -61,8 +57,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -157,6 +151,7 @@ public class CommonProxy {
         registry.register(RUBBER_LEAVES);
         registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
+        registry.register(BRITTLE_CHARCOAL);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
@@ -208,6 +203,11 @@ public class CommonProxy {
             registry.register(item);
             item.registerSubItems();
         }
+
+        for (IGTTool tool : ToolItems.getAllTools()) {
+            registry.register(tool.get());
+        }
+
         GTRecipeManager.preLoad();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
@@ -246,6 +246,7 @@ public class CommonProxy {
         registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
         registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
+        registry.register(createItemBlock(BRITTLE_CHARCOAL, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
@@ -281,6 +282,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering ore dictionary...");
 
         MetaItems.registerOreDict();
+        ToolItems.registerOreDict();
         MetaBlocks.registerOreDict();
         OreDictionaryLoader.init();
         MaterialInfoLoader.init();
@@ -313,12 +315,9 @@ public class CommonProxy {
         if (Loader.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
         }
-    }
-
-    @SubscribeEvent
-    public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
-        EnchantmentEnderDamage.INSTANCE.register(event);
-        EnchantmentHardHammer.INSTANCE.register(event);
+        if (GroovyScriptCompat.isLoaded()) {
+            GroovyScriptCompat.loadMetaItemBracketHandler();
+        }
     }
 
     @SubscribeEvent
@@ -354,7 +353,11 @@ public class CommonProxy {
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {
         ItemBlock itemBlock = producer.apply(block);
-        itemBlock.setRegistryName(block.getRegistryName());
+        ResourceLocation registryName = block.getRegistryName();
+        if (registryName == null) {
+            throw new IllegalArgumentException("Block " + block.getTranslationKey() + " has no registry name.");
+        }
+        itemBlock.setRegistryName(registryName);
         return itemBlock;
     }
 
@@ -362,16 +365,6 @@ public class CommonProxy {
     }
 
     public void onLoad() {
-        Method triggerRegistry = ObfuscationReflectionHelper.findMethod(CriteriaTriggers.class, "func_192118_a", ICriterionTrigger.class, ICriterionTrigger.class);
-        triggerRegistry.setAccessible(true);
-        for (GTTrigger<?> trigger : GTTriggers.GT_TRIGGERS) {
-            try {
-                triggerRegistry.invoke(null, trigger);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                GTLog.logger.error("Failed to register Advancement trigger: {}", trigger.getId());
-                GTLog.logger.error("Stacktrace:", e);
-            }
-        }
     }
 
     public void onPostLoad() {

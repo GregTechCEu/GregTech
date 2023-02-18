@@ -95,7 +95,8 @@ public class MaterialRecipeHandler {
                 if (blastTemp <= 0) {
                     // smelting magnetic dusts is handled elsewhere
                     if (!mat.hasFlag(IS_MAGNETIC)) {
-                        ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, mat), ingotStack);
+                        // do not register inputs by ore dict here. Let other mods register their own dust -> ingots
+                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
                     }
                 } else {
                     IngotProperty ingotProperty = mat.getProperty(PropertyKey.INGOT);
@@ -219,18 +220,6 @@ public class MaterialRecipeHandler {
         if (material.hasFlag(MORTAR_GRINDABLE)) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
                     OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X', new UnificationEntry(ingotPrefix, material));
-        }
-
-        if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            if (ConfigHolder.recipes.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "PhP", "PPP", " P ", 'P', new UnificationEntry(OrePrefix.plate, material));
-            } else {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
-            }
         }
 
         if (material.hasFlag(GENERATE_ROD)) {

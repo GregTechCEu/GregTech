@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
@@ -104,7 +105,7 @@ public class ImageWidget extends Widget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (this.isVisible && tooltipText != null && area != null && isMouseOverElement(mouseX, mouseY)) {
-            List<String> hoverList = Arrays.asList(I18n.format(tooltipText).split("/n"));
+            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipText)));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

@@ -53,7 +53,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     // This field (ranging from 1 to 99) is the percentage filled
     // at which the Partial Void feature will start voiding Fluids.
-    private final int VOID_PERCENT = 95;
+    private static final int VOID_PERCENT = 95;
 
     private final int tier;
     private final int maxFluidCapacity;
@@ -183,6 +183,21 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         if (itemStack.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
             fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.getCompoundTag(FLUID_NBT_KEY)));
         }
+        if (itemStack.hasKey("IsVoiding")) {
+            setVoiding(true);
+        }
+        else if (itemStack.hasKey("IsPartialVoiding")) {
+            setPartialVoid(true);
+        }
+
+        if (itemStack.hasKey("LockedFluid")) {
+            setLocked(true);
+
+            // Additional check here because locked fluid and void all mode will not properly update locked fluid, due to there being no fluid
+            if (this.lockedFluid.getFluid() == null) {
+                lockedFluid.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.getCompoundTag("LockedFluid")));
+            }
+        }
     }
 
     @Override
@@ -191,6 +206,17 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         FluidStack stack = fluidTank.getFluid();
         if (stack != null && stack.amount > 0) {
             itemStack.setTag(FLUID_NBT_KEY, stack.writeToNBT(new NBTTagCompound()));
+        }
+
+        if (this.isVoiding) {
+            itemStack.setBoolean("IsVoiding", this.isVoiding);
+        }
+        else if (this.isPartialVoiding) {
+            itemStack.setBoolean("IsPartialVoiding", this.isPartialVoiding);
+        }
+
+        if (this.isLocked && this.lockedFluid != null) {
+            itemStack.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
         }
     }
 
@@ -241,15 +267,21 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity", maxFluidCapacity));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", maxFluidCapacity));
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FLUID_NBT_KEY));
             if (fluidStack != null) {
-                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.name", fluidStack.getLocalizedName()));
-                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.count", fluidStack.amount));
+                tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_stored", fluidStack.getLocalizedName(), fluidStack.amount));
             }
         }
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

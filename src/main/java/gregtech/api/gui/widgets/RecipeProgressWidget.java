@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTLog;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
 import net.minecraft.client.Minecraft;
@@ -48,6 +49,10 @@ public class RecipeProgressWidget extends ProgressWidget {
             }
             else {
                 categoryID.add(RecipeMapCategory.getCategoryMap().get(recipeMap).getUid());
+            }
+            if (GTJeiPlugin.jeiRuntime == null) {
+                GTLog.logger.error("GTCEu JEI integration has crashed, this is not a good thing");
+                return false;
             }
             GTJeiPlugin.jeiRuntime.getRecipesGui().showCategories(categoryID);
             return true;

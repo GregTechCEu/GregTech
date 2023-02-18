@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
+
     boolean isClearing;
     public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class, ItemStack.class);
 
@@ -34,14 +35,14 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
             Ingredient ing = getIngredient(isClearing, in);
             if (ing != null) {
                 input.add(ing);
-                this.isSimple &= ing.isSimple();
+                this.isSimple = this.isSimple && ing.isSimple();
             } else {
-                String ret = "Invalid shapeless ore recipe: ";
+                StringBuilder ret = new StringBuilder("Invalid shapeless ore recipe: ");
                 for (Object tmp : recipe) {
-                    ret += tmp + ", ";
+                    ret.append(tmp).append(", ");
                 }
-                ret += output;
-                throw new RuntimeException(ret);
+                ret.append(output);
+                throw new RuntimeException(ret.toString());
             }
         }
     }

@@ -34,7 +34,9 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
     private Map<CubeSide, TextureAtlasSprite> spritesEmissive;
 
     private enum CubeSide {
-        FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
+        FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM;
+
+        public static final CubeSide[] VALUES = values();
     }
 
     public SimpleOrientedCubeRenderer(String basePath) {
@@ -55,7 +57,7 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
         }
         this.sprites = new EnumMap<>(CubeSide.class);
         this.spritesEmissive = new EnumMap<>(CubeSide.class);
-        for (CubeSide cubeSide : CubeSide.values()) {
+        for (CubeSide cubeSide : CubeSide.VALUES) {
             String fullPath = String.format("blocks/%s/%s", basePath, cubeSide.name().toLowerCase());
             this.sprites.put(cubeSide, textureMap.registerSprite(new ResourceLocation(modID, fullPath)));
             ResourceLocation emissiveLocation = new ResourceLocation(modID, fullPath + "_emissive");

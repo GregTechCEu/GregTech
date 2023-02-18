@@ -12,9 +12,11 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,28 +32,33 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         this.particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite());
     }
 
+    @Nonnull
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads;
         if (side == null || state == null) return Collections.emptyList();
         ModelResourceLocation mrl;
-        /*
-        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
-            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                    "active=true," + statePropertiesToString(state.getProperties()));
+        boolean activeState;
+        //Some mods like to call this without getting the extendedBlockState leading to a NPE crash since the
+        //unlisted ACTIVE property is null.
+        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE) == null) {
+            activeState = false;
         } else {
-            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                    "active=false," + statePropertiesToString(state.getProperties()));
+            activeState = ((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE);
         }
-        */
-        if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
-            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
-                    "active=true,variant="+ state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
+
+        ResourceLocation registryName = state.getBlock().getRegistryName();
+        if (registryName == null) {
+            throw new IllegalArgumentException("Block " + state.getBlock().getTranslationKey() + " has null registry name");
+        }
+        if (activeState) {
+            mrl = new ModelResourceLocation(registryName,
+                    "active=true,variant=" + state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
                         IProperty<?> p = e.getKey();
                         return getPropertyName(p, e.getValue());
                     }).collect(Collectors.joining()));
         } else {
-            mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+            mrl = new ModelResourceLocation(registryName,
                     "active=false,variant=" + state.getProperties().entrySet().stream().filter(p -> p.getKey().getName().equals("variant")).map(e -> {
                         IProperty<?> p = e.getKey();
                         return getPropertyName(p, e.getValue());
@@ -88,17 +95,24 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
     }
 
     @Override
-    public boolean isAmbientOcclusion(IBlockState state) {
+    public boolean isAmbientOcclusion(@Nonnull IBlockState state) {
         if (Minecraft.getMinecraft().world != null ) {
+            ResourceLocation registryName = state.getBlock().getRegistryName();
+            if (registryName == null) {
+                throw new IllegalArgumentException("Block " + state.getBlock().getTranslationKey() +
+                        " has null registry name");
+            }
+
             ModelResourceLocation mrl;
             if (((IExtendedBlockState) state).getValue(VariantActiveBlock.ACTIVE)) {
-                mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                mrl = new ModelResourceLocation(registryName,
                         "active=true," + statePropertiesToString(state.getProperties()));
             } else {
-                mrl = new ModelResourceLocation(state.getBlock().getRegistryName(),
+                mrl = new ModelResourceLocation(registryName,
                         "active=false," + statePropertiesToString(state.getProperties()));
             }
-            IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes().getModelManager().getModel(mrl);
+            IBakedModel m = Minecraft.getMinecraft().blockRenderDispatcher.getBlockModelShapes()
+                    .getModelManager().getModel(mrl);
             return m.isAmbientOcclusion();
         }
         return true;
@@ -114,11 +128,13 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         return false;
     }
 
+    @Nonnull
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return this.particle.get();
     }
 
+    @Nonnull
     @Override
     public ItemOverrideList getOverrides() {
         return ItemOverrideList.NONE;

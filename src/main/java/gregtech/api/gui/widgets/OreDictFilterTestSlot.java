@@ -5,6 +5,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.client.Minecraft;
@@ -112,7 +113,7 @@ public class OreDictFilterTestSlot extends Widget implements IGhostIngredientTar
                 this.drawHoveringText(testStack, getItemToolTip(testStack), 300, mouseX, mouseY);
                 GuiUtils.postItemToolTip();
             } else {
-                drawHoveringText(ItemStack.EMPTY, Arrays.asList(I18n.format("cover.ore_dictionary_filter.test_slot.info").split("/n")), 300, mouseX, mouseY);
+                drawHoveringText(ItemStack.EMPTY, Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format("cover.ore_dictionary_filter.test_slot.info"))), 300, mouseX, mouseY);
             }
         }
     }

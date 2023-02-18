@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "gregtech:items/material_sets/fine/cell_plasma",
-    "layer1": "gregtech:items/material_sets/fine/cell_plasma_overlay"
-  }
-}

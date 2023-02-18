@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/tool_head_chainsaw",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/tool_head_chainsaw",
-    "layer1": "gregtech:items/material_sets/magnetic/tool_head_chainsaw_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

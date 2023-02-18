@@ -15,6 +15,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -71,16 +73,11 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         player.inventoryContainer.detectAndSendChanges();
     }
 
-    public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+    public static void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
             if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);
         }
-    }
-
-    @Override
-    public double getDamageAbsorption() {
-        return 0;
     }
 
     @Override
@@ -100,5 +97,11 @@ public class NightvisionGoggles extends ArmorLogicSuite {
                 lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean shouldDrawHUD() {
+        return false;
     }
 }

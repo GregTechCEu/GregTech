@@ -317,7 +317,7 @@ public class RecyclingRecipes {
         long duration = 0;
         for (ItemStack is : materials) {
             MaterialStack ms = OreDictUnifier.getMaterial(is);
-            if (ms != null) duration += ms.amount * ms.material.getMass();
+            if (ms != null) duration += ms.amount * ms.material.getMass() * is.getCount();
         }
         return (int) Math.max(1L, duration / M);
     }

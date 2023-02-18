@@ -5,13 +5,13 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IFuelInfo;
 import gregtech.api.capability.IFuelable;
 import gregtech.api.capability.impl.ItemFuelInfo;
+import gregtech.api.util.GTStringUtils;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
@@ -54,7 +54,7 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
 
             int fuelMinConsumed = fuelInfo.getFuelMinConsumed();
             if (fuelRemaining < fuelMinConsumed) probeInfo.text(TextStyleClass.INFOIMP + "{*gregtech.top.fuel_min_consume*} " + fuelMinConsumed);
-            else probeInfo.text(TextStyleClass.INFO + StringUtils.ticksToElapsedTime((int) fuelInfo.getFuelBurnTimeLong()));
+            else probeInfo.text(TextStyleClass.INFO + GTStringUtils.ticksToElapsedTime((int) fuelInfo.getFuelBurnTimeLong()));
         }
     }
 }

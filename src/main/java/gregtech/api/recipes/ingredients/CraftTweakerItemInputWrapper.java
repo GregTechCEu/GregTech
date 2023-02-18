@@ -59,17 +59,22 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
             return false;
         }
 
-        IItemStack[] itemArray = this.ingredient.getItemArray();
-        if (itemArray.length == 0) return true;
-
-        return ingredient.getItems().stream().anyMatch(ii -> {
-            if (ii.getAmount() > itemStack.getCount()) {
-                final ItemStack is = itemStack.copy();
-                is.setCount(ii.getAmount());
-                return ii.matches(CraftTweakerMC.getIItemStackForMatching(is, ii.getMetadata() == GTValues.W));
+        for (IItemStack iiStack : this.ingredient.getItems()) {
+            if (iiStack.getAmount() > itemStack.getCount()) {
+                final int oldCount = itemStack.getCount();
+                itemStack.setCount(iiStack.getAmount());
+                if (iiStack.matches(CraftTweakerMC.getIItemStackForMatching(itemStack, iiStack.getMetadata() == GTValues.W))) {
+                    itemStack.setCount(oldCount);
+                    return true;
+                }
+                itemStack.setCount(oldCount);
+                return false;
             }
-            return ii.matches(CraftTweakerMC.getIItemStackForMatching(itemStack, ii.getMetadata() == GTValues.W));
-        });
+            if (iiStack.matches(CraftTweakerMC.getIItemStackForMatching(itemStack, iiStack.getMetadata() == GTValues.W))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -95,7 +100,7 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
         for (ItemStack stack : getInputStacks()) {
             hash = 31 * hash + stack.getItem().hashCode();
             hash = 31 * hash + stack.getMetadata();
-            if (stack.hasTagCompound() && this.nbtMatcher == null) {
+            if (stack.hasTagCompound() && stack.getTagCompound() != null && this.nbtMatcher == null) {
                 hash = 31 * hash + stack.getTagCompound().hashCode();
             }
         }
