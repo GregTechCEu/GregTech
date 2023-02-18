@@ -69,8 +69,7 @@ minecraft {
     mappings channel: 'stable', version: '39-1.12'
 
     if (project.has_access_transformer.toBoolean()) {
-        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-        // accessTransformer = file('src/main/resources/gregtech_at.cfg')
+        accessTransformer = file('src/main/resources/META-INF/gregtech_at.cfg')
     }
 
     runs {
@@ -142,7 +141,6 @@ dependencies {
     implementation fg.deobf('curse.maven:top-245211:2667280')
     implementation fg.deobf('curse.maven:ctm-267602:2915363')
     implementation fg.deobf('curse.maven:groovyscript-687577:4329872')
-
 
     //implementation (files("etc/jei_1.12.2-4.16.1.301.jar"))
     //implementation (files("etc/theoneprobe-1.12-1.4.28.jar"))
@@ -248,6 +246,12 @@ jar {
         }
         attributes(attribute_map)
     }
+
+    exclude 'buildcraft'
+    exclude 'cofh'
+    exclude 'com'
+    exclude 'crazypants'
+    exclude 'forestry'
 }
 
 artifacts {

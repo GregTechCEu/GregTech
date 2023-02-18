@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.util.DyeUtil;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
@@ -221,9 +222,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean recolorBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, @Nonnull EnumDyeColor color) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if (metaTileEntity == null || metaTileEntity.getPaintingColor() == color.colorValue)
+        if (metaTileEntity == null || metaTileEntity.getPaintingColor() == DyeUtil.DYE_COLOR_VALUES[color.ordinal()])
             return false;
-        metaTileEntity.setPaintingColor(color.colorValue);
+        metaTileEntity.setPaintingColor(DyeUtil.DYE_COLOR_VALUES[color.ordinal()]);
         return true;
     }
 
