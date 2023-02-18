@@ -114,6 +114,10 @@ repositories {
     maven {
         url = 'https://repo.spongepowered.org/maven'
     }
+    maven { //JEI
+        name = "Progwml6 Maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
     maven {
         name = 'Curse Maven'
         url = 'https://www.cursemaven.com'
@@ -134,7 +138,7 @@ dependencies {
 
     implementation 'curse.maven:crafttweaker-239197:3935788'
 
-    implementation fg.deobf('curse.maven:jei-238222:4364085')
+    implementation fg.deobf('mezz.jei:jei_1.12.2:4.16.1.302')
     implementation fg.deobf('curse.maven:top-245211:2667280')
     implementation fg.deobf('curse.maven:ctm-267602:2915363')
     implementation fg.deobf('curse.maven:groovyscript-687577:4329872')
@@ -258,7 +262,9 @@ artifacts {
     }
 }
 
-jar.finalizedBy('reobfJar')
+// It is important to NOT re-obfuscate jars for the deobfuscated environment.
+// Therefore, we do not finalize the 'jar' task with the 'reobfJar' task.
+// The Forge FG5 example buildscript states otherwise, however it creates broken builds in deobfuscated environments.
 
 processResources {
     // required to allow file expansion later
