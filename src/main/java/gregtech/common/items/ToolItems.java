@@ -263,7 +263,7 @@ public final class ToolItems {
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDict.toolWrench)
-                .oreDict("craftingToolWrench")
+                .secondaryOreDicts("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.LV));
         WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
@@ -274,7 +274,7 @@ public final class ToolItems {
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDict.toolWrench)
-                .oreDict("craftingToolWrench")
+                .secondaryOreDicts("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.HV));
         WRENCH_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_iv")
@@ -285,7 +285,7 @@ public final class ToolItems {
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV))
                 .sound(GTSoundEvents.WRENCH_TOOL, true)
                 .oreDict(ToolOreDict.toolWrench)
-                .oreDict("craftingToolWrench")
+                .secondaryOreDicts("craftingToolWrench")
                 .toolClasses(ToolClasses.WRENCH)
                 .electric(GTValues.IV));
         BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")

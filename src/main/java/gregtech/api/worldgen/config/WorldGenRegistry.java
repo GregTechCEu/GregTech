@@ -109,7 +109,7 @@ public class WorldGenRegistry {
         registerVeinPopulator("surface_block", SurfaceBlockPopulator::new);
 
         GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
-        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.INSTANCE);
+        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.class);
         try {
             reinitializeRegisteredVeins();
         } catch (IOException | RuntimeException exception) {
