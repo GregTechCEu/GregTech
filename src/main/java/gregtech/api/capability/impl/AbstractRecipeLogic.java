@@ -574,6 +574,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
         }
 
+        if (multipler == 0) {
+            return 1;
+        }
+
         return multipler;
     }
 
@@ -971,6 +975,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.allowOverclocking = (overclockVoltage != GTValues.V[GTValues.ULV]);
         this.batchMode = false;
         this.previousRecipe = null;
+        this.invalidInputsForRecipes = false;
         metaTileEntity.markDirty();
     }
 
@@ -979,6 +984,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.batchMode = mode;
         this.allowOverclocking = true;
         this.previousRecipe = null;
+        this.invalidInputsForRecipes = false;
         metaTileEntity.markDirty();
     }
 
