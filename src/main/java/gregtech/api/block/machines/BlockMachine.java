@@ -11,7 +11,6 @@ import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -158,11 +157,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return metaTileEntity == null ? 1.0f : metaTileEntity.getBlockResistance();
     }
 
-    private List<IndexedCuboid6> getCollisionBox(IBlockAccess blockAccess, BlockPos pos) {
+    private static List<IndexedCuboid6> getCollisionBox(IBlockAccess blockAccess, BlockPos pos) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(blockAccess, pos);
-        if (metaTileEntity == null)
-            return EMPTY_COLLISION_BOX;
-        ArrayList<IndexedCuboid6> collisionList = new ArrayList<>();
+        if (metaTileEntity == null) return EMPTY_COLLISION_BOX;
+        List<IndexedCuboid6> collisionList = new ArrayList<>();
         metaTileEntity.addCollisionBoundingBox(collisionList);
         metaTileEntity.addCoverCollisionBoundingBox(collisionList);
         return collisionList;
@@ -324,9 +322,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         Set<String> toolClasses = itemStack.getItem().getToolClasses(itemStack);
         if (!toolClasses.isEmpty() && metaTileEntity.onToolClick(playerIn, toolClasses, hand, rayTraceResult)) {
             ToolHelper.damageItem(itemStack, playerIn);
-            if (itemStack.getItem() instanceof IGTTool) {
-                ((IGTTool) itemStack.getItem()).playSound(playerIn);
-            }
+            ToolHelper.playToolSound(itemStack, playerIn);
             return true;
         }
 
@@ -481,7 +477,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return MetaTileEntityRenderer.INSTANCE.getParticleTexture(world, blockPos);
+        return MetaTileEntityRenderer.getParticleTexture(world, blockPos);
     }
 
     @Override

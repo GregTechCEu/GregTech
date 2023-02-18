@@ -45,10 +45,10 @@ jobs:
         with:
           game_versions: "Minecraft 1.12:1.12.2,Java 8,Forge"
           game_endpoint: "minecraft"
-          release_type: "release"
+          release_type: "beta"
           changelog: "Changelog is available [here](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.get_version_no_extra.outputs.version }})."
           changelog_type: "markdown"
           relations: "codechicken-lib-1-8:requiredDependency,gregtechce:incompatible,gregtech-chill-edition:incompatible"
-          file_path: "gregtech-${{ steps.get_current_version.outputs.version }}.jar"
+          file_path: "gregtech-1.12.2-${{ steps.get_current_version.outputs.version }}.jar"
           project_id: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
           token: "${{ secrets.CURSEFORGE_API_KEY }}"

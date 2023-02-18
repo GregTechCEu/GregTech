@@ -7,14 +7,14 @@ import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
-import gregtech.client.utils.DepthTextureUtil;
-import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.client.shader.Shaders;
+import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.items.MetaItems;
@@ -237,7 +237,7 @@ public class WorldProspectorARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private List<BlockPos> bresenhamCircle(int xc , int zc , int r) {
+    private static List<BlockPos> bresenhamCircle(int xc, int zc, int r) {
         List<BlockPos> blockPos = new ArrayList<>();
         int x, z, d;
         x = 0;
@@ -258,7 +258,7 @@ public class WorldProspectorARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private void circlePlot(List<BlockPos> blockPos, int xc, int zc, int x, int z) {
+    private static void circlePlot(List<BlockPos> blockPos, int xc, int zc, int x, int z) {
         blockPos.add(new BlockPos(xc + x, 0, zc + z));
         blockPos.add(new BlockPos(xc - x, 0, zc + z));
         blockPos.add(new BlockPos(xc + x, 0, zc - z));
@@ -270,7 +270,7 @@ public class WorldProspectorARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private void addCluster(BlockPos pos, Map<AxisAlignedBB, Set<BlockPos>> found) {
+    private static void addCluster(BlockPos pos, Map<AxisAlignedBB, Set<BlockPos>> found) {
         final BlockPos min = pos.add(-1, -1, -1);
         final BlockPos max = pos.add(1, 1, 1);
 
@@ -362,7 +362,7 @@ public class WorldProspectorARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private void renderAxisAlignedBB(float partialTicks) {
+    private static void renderAxisAlignedBB(float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         Entity entity = mc.getRenderViewEntity();
         if (entity == null) return;
@@ -407,7 +407,7 @@ public class WorldProspectorARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private void renderScan(float getPartialTicks) {
+    private static void renderScan(float getPartialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         World world = mc.world;
         Entity viewer = mc.getRenderViewEntity();

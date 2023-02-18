@@ -40,8 +40,7 @@ public interface IGuideWidget {
                 } else {
                     updateOrCreateStreamWidget(0,0,0,null);
                 }
-            } catch (Exception e) {
-            }
+            } catch (Exception ignored) {}
         }
     }
 

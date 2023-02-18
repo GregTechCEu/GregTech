@@ -50,8 +50,8 @@ public class PacketFluidVeinList implements IPacket, IClientExecutor {
     @Override
     public void executeClient(NetHandlerPlayClient handler) {
         BedrockFluidVeinHandler.veinList.clear();
-        for (BedrockFluidVeinHandler.FluidVeinWorldEntry min : map.keySet()) {
-            BedrockFluidVeinHandler.veinList.put(min.getDefinition(), map.get(min));
+        for (Map.Entry<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> entry : map.entrySet()) {
+            BedrockFluidVeinHandler.veinList.put(entry.getKey().getDefinition(), entry.getValue());
         }
     }
 }

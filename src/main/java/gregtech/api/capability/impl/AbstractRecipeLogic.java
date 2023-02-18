@@ -9,9 +9,7 @@ import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
@@ -433,7 +431,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe was successfully prepared, else false
      */
     protected boolean prepareRecipe(Recipe recipe) {
-        recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
@@ -464,7 +462,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Set the parallel limit
-     *
      * @param amount the amount to set
      */
     public void setParallelLimit(int amount) {
@@ -483,7 +480,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param tanks the tanks to check
      * @return the minimum fluid capacity of the tanks
      */
-    protected int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
+    protected static int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
         if (tanks.getTanks() == 0) {
             return 0;
         }
@@ -1007,11 +1004,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         if (!isAllowOverclocking()) {
-            return GTValues.ULV + 1;
+            return GTValues.ULV;
         }
 
         // This will automatically handle ULV, and return 0
-        return getOverclockForTier(this.overclockVoltage) + 1;
+        return getOverclockForTier(this.overclockVoltage);
     }
 
     /**
@@ -1059,7 +1056,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         compound.setBoolean("CanRecipeProgress", canRecipeProgress);
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
         compound.setLong(OVERCLOCK_VOLTAGE, this.overclockVoltage);
-        compound.setBoolean(BATCH_MODE, this.batchMode);
         if (progressTime > 0) {
             compound.setInteger("Progress", progressTime);
             compound.setInteger("MaxProgress", maxProgressTime);

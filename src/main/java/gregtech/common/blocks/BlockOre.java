@@ -119,7 +119,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
         return STONE_TYPE.getAllowedValues().indexOf(state.getValue(STONE_TYPE));
     }
 
-    public ItemStack getItem(IBlockState blockState) {
+    public static ItemStack getItem(IBlockState blockState) {
         return GTUtility.toItem(blockState);
     }
 

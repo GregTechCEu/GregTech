@@ -75,7 +75,7 @@ public class BlockSurfaceRock extends DelayedStateBlock {
         return new BlockStateContainer(this, variantProperty);
     }
 
-    public ItemStack getItem(IBlockState blockState) {
+    public static ItemStack getItem(IBlockState blockState) {
         return GTUtility.toItem(blockState);
     }
 

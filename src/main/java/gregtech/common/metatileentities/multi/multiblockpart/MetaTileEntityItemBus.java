@@ -31,12 +31,16 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
 
     private boolean workingEnabled;
+    private boolean autoCollapse;
 
     protected IdleTracker idle = new IdleTracker(5, 40, 1);
 
@@ -63,6 +67,13 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                     itemTransferred = pushItemsIntoNearbyHandlers(getFrontFacing());
                 } else {
                     itemTransferred = pullItemsFromNearbyHandlers(getFrontFacing());
+                }
+            }
+            // Only attempt to auto collapse the inventory contents once the bus has been notified
+            if (isAutoCollapse()) {
+                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
+                if  (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
+                    collapseInventorySlotContents(inventory);
                 }
             }
         }
@@ -131,18 +142,21 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(workingEnabled);
+        buf.writeBoolean(autoCollapse);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.workingEnabled = buf.readBoolean();
+        this.autoCollapse = buf.readBoolean();
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("workingEnabled", workingEnabled);
+        data.setBoolean("autoCollapse", autoCollapse);
         return data;
     }
 
@@ -151,6 +165,17 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super.readFromNBT(data);
         if (data.hasKey("workingEnabled")) {
             this.workingEnabled = data.getBoolean("workingEnabled");
+        }
+        if (data.hasKey("autoCollapse")) {
+            this.autoCollapse = data.getBoolean("autoCollapse");
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS) {
+            this.autoCollapse = buf.readBoolean();
         }
     }
 
@@ -182,8 +207,75 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
     }
 
+    private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
+
+        // Gather a snapshot of the provided inventory
+        Map<ItemStackKey, Integer> inventoryContents = GTHashMaps.fromItemHandler(inventory);
+
+        List<ItemStack> inventoryItemContents = new ArrayList<>();
+
+        // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
+        for(Map.Entry<ItemStackKey, Integer> slot : inventoryContents.entrySet()) {
+            ItemStack stack = slot.getKey().getItemStack();
+            stack.setCount(slot.getValue());
+            inventoryItemContents.addAll(InventoryUtils.apportionStack(stack, stack.getMaxStackSize()));
+        }
+
+        for(int i = 0; i < inventory.getSlots(); i++) {
+            ItemStack stackToMove;
+            // Ensure that we are not exceeding the List size when attempting to populate items
+            if(i >= inventoryItemContents.size()) {
+                stackToMove = ItemStack.EMPTY;
+            }
+            else {
+                stackToMove = inventoryItemContents.get(i);
+            }
+
+            // Populate the slots
+            inventory.setStackInSlot(i, stackToMove);
+        }
+
+    }
+
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+
+        boolean isAttached = false;
+        if (this.isAttachedToMultiBlock()){
+            setAutoCollapse(!this.autoCollapse);
+            isAttached = true;
+        }
+
+        if(!getWorld().isRemote) {
+            if (isAttached) {
+                if(this.autoCollapse) {
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_true"));
+                }
+                else {
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_false"));
+                }
+            } else {
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse.error"));
+            }
+        }
+        return true;
+    }
+
+    public boolean isAutoCollapse() {
+        return autoCollapse;
+    }
+
+    public void setAutoCollapse(boolean inverted) {
+        autoCollapse = inverted;
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS, packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
+            notifyBlockUpdate();
+            markDirty();
+        }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         if (this.isExportHatch)
             tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
         else
@@ -195,6 +287,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_collapse"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }

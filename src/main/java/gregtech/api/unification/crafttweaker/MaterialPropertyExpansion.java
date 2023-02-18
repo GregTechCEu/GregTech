@@ -88,6 +88,23 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
+    public static void addBlastProperty(Material m, int blastTemp, @Optional String gasTier, @Optional int durationOverride, @Optional int eutOverride) {
+        if (checkFrozen("add blast property")) return;
+        if (m.hasProperty(PropertyKey.BLAST)) {
+            BlastProperty property = m.getProperty(PropertyKey.BLAST);
+            property.setBlastTemperature(blastTemp);
+            if (gasTier != null) property.setGasTier(BlastProperty.validateGasTier(gasTier));
+            if (durationOverride != 0) property.setDurationOverride(durationOverride);
+            if (eutOverride != 0) property.setEutOverride(eutOverride);
+        } else {
+            m.setProperty(PropertyKey.BLAST, new BlastProperty(blastTemp,
+                    gasTier == null ? BlastProperty.GasTier.LOW : BlastProperty.validateGasTier(gasTier),
+                    durationOverride == 0 ? -1 : durationOverride,
+                    eutOverride == 0 ? -1 : eutOverride));
+        }
+    }
+
+    @ZenMethod
     public static void addDust(Material m, @Optional int harvestLevel, @Optional int burnTime) {
         if (checkFrozen("add a dust to a material")) return;
         if (harvestLevel == 0) harvestLevel = 2;
@@ -187,9 +204,10 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability) {
+    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability, @Optional int durabilityMultiplier) {
         if (checkFrozen("add Tools to a material")) return;
         if (toolEnchantability == 0) toolEnchantability = 10;
+        if (durabilityMultiplier <= 0) durabilityMultiplier = 1;
         if (m.hasProperty(PropertyKey.TOOL)) {
             m.getProperty(PropertyKey.TOOL).setToolSpeed(toolSpeed);
             m.getProperty(PropertyKey.TOOL).setToolAttackDamage(toolAttackDamage);
@@ -197,8 +215,9 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolDurability(toolDurability);
             m.getProperty(PropertyKey.TOOL).setToolHarvestLevel(toolHarvestLevel);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
+            m.getProperty(PropertyKey.TOOL).setDurabilityMultiplier(durabilityMultiplier);
         } else m.setProperty(PropertyKey.TOOL, ToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
-                .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability).build());
+                .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability).durabilityMultiplier(durabilityMultiplier).build());
     }
 
     @ZenMethod

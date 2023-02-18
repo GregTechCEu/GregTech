@@ -63,7 +63,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.setTagCompound(NBTUtil.createPosTag(pos));
             NBTTagCompound tag = itemStack.getTagCompound();
-            if(!tag.hasKey("dimension")) {
+            if (tag != null && !tag.hasKey("dimension")) {
                 tag.setInteger("dimension", world.provider.getDimension());
             }
             return EnumActionResult.SUCCESS;

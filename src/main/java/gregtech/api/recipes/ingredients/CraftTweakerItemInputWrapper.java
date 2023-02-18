@@ -100,7 +100,7 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
         for (ItemStack stack : getInputStacks()) {
             hash = 31 * hash + stack.getItem().hashCode();
             hash = 31 * hash + stack.getMetadata();
-            if (stack.hasTagCompound() && this.nbtMatcher == null) {
+            if (stack.hasTagCompound() && stack.getTagCompound() != null && this.nbtMatcher == null) {
                 hash = 31 * hash + stack.getTagCompound().hashCode();
             }
         }

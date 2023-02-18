@@ -26,7 +26,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -115,6 +114,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     String getOreDictName();
 
+    @Nonnull
+    List<String> getSecondaryOreDicts();
+
     @Nullable
     Supplier<ItemStack> getMarkerItem();
 
@@ -136,6 +138,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         stackCompound.setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
 
         NBTTagCompound toolTag = getToolTag(stack);
+        IGTToolDefinition toolStats = getToolStats();
 
         // don't show the normal vanilla damage and attack speed tooltips,
         // we handle those ourselves
@@ -144,9 +147,25 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         // Set Material
         toolTag.setString(MATERIAL_KEY, material.toString());
 
+        // Grab the definition here because we cannot use getMaxAoEDefinition as it is not initialized yet
+        AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
+
         // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-        toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability());
+
+        // Durability formula we are working with:
+        // Final Durability = (material durability * material durability multiplier) + (tool definition durability * definition durability multiplier)
+
+        int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
+
+        // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So apply the multiplier to the material durability if that would happen
+        if (toolStats.getBaseDurability(stack) == 0) {
+            durability *= toolStats.getDurabilityMultiplier(stack);
+        } else {
+            durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
+        }
+
+        toolTag.setInteger(MAX_DURABILITY_KEY, durability);
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
@@ -163,7 +182,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         NBTTagCompound behaviourTag = getBehaviorsTag(stack);
         getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
 
-        AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         if (aoeDefinition != AoESymmetrical.none()) {
             behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
@@ -202,7 +220,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         String string = toolTag.getString(MATERIAL_KEY);
         Material material = GregTechAPI.MaterialRegistry.get(string);
         if (material == null) {
-            toolTag.setString(MATERIAL_KEY, (material = Materials.Neutronium).toString());
+            toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
         }
         return material;
     }
@@ -234,7 +252,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default int getMaterialDurability(ItemStack stack) {
         ToolProperty toolProperty = getToolProperty(stack);
-        return toolProperty == null ? 0 : toolProperty.getToolDurability();
+        return toolProperty == null ? 0 : toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
     }
 
     default int getMaterialEnchantability(ItemStack stack) {
@@ -307,7 +325,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (toolTag.hasKey(MAX_DURABILITY_KEY, Constants.NBT.TAG_INT)) {
             return toolTag.getInteger(MAX_DURABILITY_KEY);
         }
-        int maxDurability = getMaterialDurability(stack) + getToolStats().getBaseDurability(stack);
+
+        IGTToolDefinition toolStats = getToolStats();
+        int maxDurability = getMaterialDurability(stack);
+        int builderDurability = (int) (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack));
+
+        // If there is no durability set in the tool builder, multiply the builder AOE multiplier to the material durability
+        maxDurability = builderDurability == 0 ? (int) (maxDurability * toolStats.getDurabilityMultiplier(stack)) : maxDurability + builderDurability;
+
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
         return maxDurability;
     }
@@ -518,6 +543,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default int definition$getDamage(ItemStack stack) {
+        // bypass the Forge OreDictionary using ItemStack#getItemDamage instead of ItemStack#getMetadata
+        // this will allow tools to retain their oredicts when durability changes.
+        // No normal tool ItemStack a player has should ever have a metadata value other than 0
+        // so this should not cause unexpected behavior for them
+        if (stack.getMetadata() == GTValues.W) {
+            return GTValues.W;
+        }
+
         NBTTagCompound toolTag = getToolTag(stack);
         if (toolTag.hasKey(DURABILITY_KEY, Constants.NBT.TAG_INT)) {
             return toolTag.getInteger(DURABILITY_KEY);

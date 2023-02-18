@@ -103,9 +103,9 @@ public class WorldConfigUtils {
                 }
                 return biome -> {
                     int totalModifier = 0;
-                    for (Type type : backedMap.keySet()) {
-                        if (BiomeDictionary.hasType(biome, type)) {
-                            totalModifier += backedMap.get(type);
+                    for (Entry<Type, Integer> entry : backedMap.entrySet()) {
+                        if (BiomeDictionary.hasType(biome, entry.getKey())) {
+                            totalModifier += entry.getValue();
                         }
                     }
                     return totalModifier;

@@ -97,6 +97,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
+    @Nonnull
     protected abstract BlockPattern createStructurePattern();
 
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);

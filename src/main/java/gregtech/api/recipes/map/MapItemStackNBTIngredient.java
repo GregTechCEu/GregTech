@@ -29,7 +29,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
     public static Collection<AbstractMapIngredient> from(GTRecipeInput r) {
         ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
         for (ItemStack s : r.getInputStacks()) {
-            list.add(new MapItemStackNBTIngredient(s,r));
+            list.add(new MapItemStackNBTIngredient(s, r));
         }
         return list;
     }
@@ -48,7 +48,34 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         }
         if (obj instanceof MapItemStackNBTIngredient) {
             MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
-            return other.gtRecipeInput.acceptsStack(this.stack);
+            if (this.stack.getItem() != other.stack.getItem()) {
+                return false;
+            }
+            if (this.meta != other.meta) {
+                return false;
+            }
+            if (this.matcher != null && other.matcher != null) {
+                if (!this.matcher.equals(other.matcher)) {
+                    return false;
+                }
+            }
+            if (this.condition != null && other.condition != null) {
+                if (!this.condition.equals(other.condition)) {
+                    return false;
+                }
+            }
+
+            // No matchers, just return early comparing items
+            if (this.matcher == null && other.matcher == null) {
+                return ItemStack.areItemsEqual(stack, other.stack);
+            }
+            // One input has matchers, the other does not. No match
+            else if (this.matcher == null || other.matcher == null) {
+                return false;
+            }
+            //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
+            //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
+            return ItemStack.areItemsEqual(stack, other.stack) && other.matcher != null && other.matcher.evaluate(this.stack, other.condition);
         }
         return false;
     }

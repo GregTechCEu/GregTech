@@ -205,7 +205,7 @@ public final class ToolHelper {
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
         } else {
-            if (OreDictUnifier.getOreDictionaryNames(stack).stream().anyMatch(s -> s.startsWith("craftingTool"))) {
+            if (OreDictUnifier.getOreDictionaryNames(stack).stream().anyMatch(s -> s.startsWith("tool") || s.startsWith("craftingTool"))) {
                 damage = 1;
             }
         }
@@ -712,5 +712,12 @@ public final class ToolHelper {
         } catch (Throwable ignored) {
             return ItemStack.EMPTY;
         }
+    }
+
+    public static void playToolSound(ItemStack stack, EntityPlayer player) {
+        if (stack.getItem() instanceof IGTTool) {
+            ((IGTTool) stack.getItem()).playSound(player);
+        }
+
     }
 }

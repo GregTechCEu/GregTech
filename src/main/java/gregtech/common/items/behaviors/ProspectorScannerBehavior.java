@@ -9,6 +9,7 @@ import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.util.GTUtility;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
@@ -71,7 +72,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
-    private int getMode(ItemStack stack) {
+    private static int getMode(ItemStack stack) {
         if (stack == ItemStack.EMPTY) {
             return 0;
         }
@@ -85,26 +86,22 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return 0;
     }
 
-    private int getNextMode(int mode) {
+    private static int getNextMode(int mode) {
         return mode == WidgetProspectingMap.ORE_PROSPECTING_MODE ? 1 : 0;
     }
 
-    private void setMode(ItemStack stack, int mode) {
-        if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
-        }
-        //noinspection ConstantConditions
-        stack.getTagCompound().setInteger("Mode", mode);
+    private static void setMode(ItemStack stack, int mode) {
+        NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
+        tagCompound.setInteger("Mode", mode);
     }
 
     private boolean checkCanUseScanner(ItemStack stack, @Nonnull EntityPlayer player, boolean simulate) {
         return player.isCreative() || drainEnergy(stack, GTValues.V[tier] / VOLTAGE_FACTOR, simulate);
     }
 
-    private boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
+    private static boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem == null)
-            return false;
+        if (electricItem == null) return false;
 
         return electricItem.discharge(amount, Integer.MAX_VALUE, true, false, simulate) >= amount;
     }

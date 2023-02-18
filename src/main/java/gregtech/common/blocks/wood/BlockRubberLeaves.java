@@ -102,7 +102,7 @@ public class BlockRubberLeaves extends BlockLeaves {
         return true;
     }
 
-    private boolean fancyLeaves() {
+    private static boolean fancyLeaves() {
         return CoreModule.proxy.isFancyGraphics();
     }
 }

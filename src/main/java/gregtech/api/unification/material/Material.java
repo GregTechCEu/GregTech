@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 @ZenClass("mods.gregtech.material.Material")
@@ -135,6 +136,15 @@ public class Material implements Comparable<Material> {
 
     public boolean hasFlag(MaterialFlag flag) {
         return flags.hasFlag(flag);
+    }
+
+    public boolean isElement() {
+        return materialInfo.element != null;
+    }
+
+    @Nullable
+    public Element getElement() {
+        return materialInfo.element;
     }
 
     public boolean hasFlags(MaterialFlag... flags) {
@@ -258,7 +268,7 @@ public class Material implements Comparable<Material> {
     public long getMass() {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
-        if (materialInfo.componentList.size() <= 0)
+        if (materialInfo.componentList.size() == 0)
             return Elements.Tc.getMass();
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
@@ -310,8 +320,9 @@ public class Material implements Comparable<Material> {
         return materialInfo.metaItemSubId;
     }
 
+    // must be named multiply for GroovyScript to allow `mat * quantity -> MaterialStack`
     @ZenOperator(OperatorType.MUL)
-    public MaterialStack createMaterialStack(long amount) {
+    public MaterialStack multiply(long amount) {
         return new MaterialStack(this, amount);
     }
 
@@ -681,6 +692,11 @@ public class Material implements Comparable<Material> {
                         (Integer) components[i + 1]
                 ));
             }
+            return this;
+        }
+
+        public Builder components(MaterialStack... components) {
+            composition = Arrays.asList(components);
             return this;
         }
 
