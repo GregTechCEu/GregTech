@@ -30,7 +30,7 @@ tasks.register('getVersionFromJava') {
 
 version = getVersionFromJava() //project.mod_version
 group = project.maven_group
-archivesBaseName = project.archives_base_name
+archivesBaseName = "${project.archives_base_name}-${project.minecraft_version}"
 
 //replace('@VERSION', version)
 //replaceIn('GregTechVersion.java')
