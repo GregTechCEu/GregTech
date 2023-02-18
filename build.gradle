@@ -7,33 +7,32 @@ buildscript {
             name 'Forge'
             url 'https://maven.minecraftforge.net'
         }
-        maven {
-            name 'MixinGradle'
-            url 'https://repo.spongepowered.org/repository/maven-public'
+        if (project.use_mixins.toBoolean()) {
+            maven {
+                name 'MixinGradle'
+                url 'https://repo.spongepowered.org/repository/maven-public'
+            }
         }
     }
     dependencies {
         if (project.use_mixins.toBoolean()) {
-            classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+            classpath "org.spongepowered:mixingradle:${mixingradle_version}"
         }
     }
 }
 
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1.+'
-    id 'wtf.gofancy.fancygradle' version '1.1.+'
+    id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
+    id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
 }
 
 tasks.register('getVersionFromJava') {
     return getVersionFromJava()
 }
 
-version = getVersionFromJava() //project.mod_version
+version = getVersionFromJava()
 group = project.maven_group
 archivesBaseName = "${project.archives_base_name}-${project.minecraft_version}"
-
-//replace('@VERSION', version)
-//replaceIn('GregTechVersion.java')
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
@@ -66,7 +65,7 @@ if (project.use_eclipse.toBoolean()) {
 }
 
 minecraft {
-    mappings channel: 'stable', version: '39-1.12'
+    mappings channel: "${mcp_mappings_channel}", version: "${mcp_mappings_version}"
 
     if (project.has_access_transformer.toBoolean()) {
         accessTransformer = file('src/main/resources/META-INF/gregtech_at.cfg')
@@ -108,14 +107,16 @@ minecraft {
 
 repositories {
     maven {
+        name = 'Cleanroom Maven'
         url = 'https://maven.cleanroommc.com'
     }
     maven {
+        name = 'Sponge Maven'
         url = 'https://repo.spongepowered.org/maven'
     }
     maven { //JEI
-        name = "Progwml6 Maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        name = 'Progwml6 Maven'
+        url = 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
         name = 'Curse Maven'
@@ -127,40 +128,39 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // CCL
-    implementation fg.deobf('curse.maven:codechicken-lib-1-8-242818:2779848')
+    // Hard Dependencies
+    implementation fg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
 
-    // PAE
-    implementation fg.deobf('curse.maven:ae2-extended-life-570458:3649419')
+    // Soft Dependencies
+    implementation fg.deobf("mezz.jei:jei_1.12.2:${project.jei_version}")
+    implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
+    implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
+    implementation fg.deobf("curse.maven:groovyscript-${groovyscript_pid}:${groovyscript_fid}")
+    implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
-    implementation 'curse.maven:crafttweaker-239197:3935788'
+    // this dependency cannot be deobfuscated by ForgeGradle
+    implementation "curse.maven:crafttweaker-${crt_pid}:${crt_fid}"
 
-    implementation fg.deobf('mezz.jei:jei_1.12.2:4.16.1.302')
-    implementation fg.deobf('curse.maven:top-245211:2667280')
-    implementation fg.deobf('curse.maven:ctm-267602:2915363')
-    implementation fg.deobf('curse.maven:groovyscript-687577:4329872')
+    // Tests
+    testImplementation("org.junit.jupiter:junit-jupiter:${junit_version}")
+    testImplementation("org.hamcrest:hamcrest:${hamcrest_version}")
 
-    //implementation (files("etc/jei_1.12.2-4.16.1.301.jar"))
-    //implementation (files("etc/theoneprobe-1.12-1.4.28.jar"))
-    //implementation (files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
-   // implementation fg.deobf(files("etc/groovyscript-0.1.0.jar"))
-
-    testImplementation('org.junit.jupiter:junit-jupiter:5.9.1')
-    testImplementation('org.hamcrest:hamcrest:2.2')
-    compileOnly 'org.projectlombok:lombok:1.18.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    // Compile-Time Dependencies
+    compileOnly "org.projectlombok:lombok:${lombok_version}"
+    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 
     if (project.use_mixins.toBoolean()) {
-        compileOnly 'zone.rong:mixinbooter:7.0'
-        runtimeOnly 'zone.rong:mixinbooter:7.0'
+        compileOnly "zone.rong:mixinbooter:${mixinbooter_version}"
+        runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
 
-        annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+        annotationProcessor "org.spongepowered:mixin:${mixin_annotations_version}:processor"
     }
 
-    // groovyscript dependency
-    runtimeOnly 'zone.rong:mixinbooter:7.0'
+    // GroovyScript dependency
+    // remove this if project.use_mixins is true
+    runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
 }
 
 fancyGradle {
@@ -247,11 +247,11 @@ jar {
         attributes(attribute_map)
     }
 
-    exclude 'buildcraft'
-    exclude 'cofh'
-    exclude 'com'
-    exclude 'crazypants'
-    exclude 'forestry'
+    // exclude all files in src/api from being shipped in the jar
+    // this prevents crashes in obfuscated environments
+    file("src/api/").eachDirRecurse { dir ->
+        exclude dir.name
+    }
 }
 
 artifacts {
@@ -286,7 +286,7 @@ processResources {
         expand(['version': version, 'mcversion': minecraft_version])
     }
 
-    // copy everything else except the mcmod.info
+    // copy everything else except mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
