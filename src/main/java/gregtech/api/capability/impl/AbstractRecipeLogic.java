@@ -1006,11 +1006,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         if (!isAllowOverclocking()) {
-            return GTValues.ULV;
+            return GTValues.ULV + 1;
         }
 
         // This will automatically handle ULV, and return 0
-        return getOverclockForTier(this.overclockVoltage);
+        return getOverclockForTier(this.overclockVoltage) + 1;
     }
 
     /**
