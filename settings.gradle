@@ -2,11 +2,11 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            name 'FancyGradle'
+            name 'FancyGradle Maven'
             url 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
         }
         maven {
-            name 'ForgeGradle 5'
+            name 'ForgeGradle Maven'
             url 'https://maven.minecraftforge.net'
         }
     }

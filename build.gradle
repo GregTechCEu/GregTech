@@ -3,13 +3,11 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 buildscript {
     repositories {
-        maven {
-            name 'Forge'
-            url 'https://maven.minecraftforge.net'
-        }
+        mavenCentral()
+        mavenLocal()
         if (project.use_mixins.toBoolean()) {
             maven {
-                name 'MixinGradle'
+                name 'MixinGradle Maven'
                 url 'https://repo.spongepowered.org/repository/maven-public'
             }
         }
@@ -107,20 +105,26 @@ minecraft {
 
 repositories {
     maven {
-        name = 'Cleanroom Maven'
-        url = 'https://maven.cleanroommc.com'
+        name 'Cleanroom Maven'
+        url 'https://maven.cleanroommc.com'
+    }
+    maven { // JEI
+        name 'Progwml6 Maven'
+        url 'https://dvs1.progwml6.com/files/maven/'
+    }
+    maven { // CraftTweaker and JEI Backup
+        name 'BlameJared Maven'
+        url 'https://maven.blamejared.com'
+    }
+    if (project.use_mixins.toBoolean()) {
+        maven {
+            name 'Sponge Maven'
+            url 'https://repo.spongepowered.org/maven'
+        }
     }
     maven {
-        name = 'Sponge Maven'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-    maven { //JEI
-        name = 'Progwml6 Maven'
-        url = 'https://dvs1.progwml6.com/files/maven/'
-    }
-    maven {
-        name = 'Curse Maven'
-        url = 'https://www.cursemaven.com'
+        name 'Curse Maven'
+        url 'https://www.cursemaven.com'
         content {
             includeGroup 'curse.maven'
         }
@@ -131,17 +135,15 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // Hard Dependencies
-    implementation fg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
+    implementation "curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}-deobf-${ccl_deobf_fid}"
 
     // Soft Dependencies
-    implementation fg.deobf("mezz.jei:jei_1.12.2:${project.jei_version}")
+    implementation "mezz.jei:jei_1.12.2:${project.jei_version}"
+    implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
     implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
     implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
     implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
-
-    // this dependency cannot be deobfuscated by ForgeGradle
-    implementation "curse.maven:crafttweaker-${crt_pid}:${crt_fid}"
 
     // Tests
     testImplementation("org.junit.jupiter:junit-jupiter:${junit_version}")
