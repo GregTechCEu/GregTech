@@ -128,7 +128,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
             if (cover == null)
                 cover = getOtherCoverAt(facing, oppositeSide);
-            else {
+
+            if (cover != null){
                 IFluidHandler capability = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
                 // Shutter covers return null capability when active, so check here to prevent NPE
                 if (capability == null) {
