@@ -51,6 +51,7 @@ public class MaterialRecipeHandler {
 
     public static void processDust(OrePrefix dustPrefix, Material mat, DustProperty property) {
         ItemStack dustStack = OreDictUnifier.get(dustPrefix, mat);
+        OreProperty oreProperty = mat.hasProperty(PropertyKey.ORE) ? mat.getProperty(PropertyKey.ORE): null;
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
             ItemStack smallDarkAshStack = OreDictUnifier.get(OrePrefix.dustSmall, Materials.DarkAsh);
@@ -85,11 +86,24 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             }
 
+            if (oreProperty != null) {
+                Material smeltingResult = oreProperty.getDirectSmeltResult();
+                if (smeltingResult != null) {
+                    ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), OreDictUnifier.get(OrePrefix.ingot, smeltingResult));
+                }
+            }
+
         } else if (mat.hasProperty(PropertyKey.INGOT)) {
             if (!mat.hasAnyOfFlags(FLAMMABLE, NO_SMELTING)) {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(mat);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, mat);
+                if (ingotStack.isEmpty() && oreProperty != null) {
+                    Material smeltingResult = oreProperty.getDirectSmeltResult();
+                    if (smeltingResult != null) {
+                        ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
+                    }
+                }
                 int blastTemp = mat.getBlastTemperature();
 
                 if (blastTemp <= 0) {
@@ -115,6 +129,17 @@ public class MaterialRecipeHandler {
                         .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
+            }
+
+            // Some Ores with Direct Smelting Results have neither ingot nor gem properties
+            if (oreProperty != null) {
+                Material smeltingResult = oreProperty.getDirectSmeltResult();
+                if (smeltingResult != null) {
+                    ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
+                    if (!ingotStack.isEmpty()) {
+                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
+                    }
+                }
             }
         }
     }
