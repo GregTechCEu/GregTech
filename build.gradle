@@ -137,7 +137,7 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei_1.12.2:${project.jei_version}")
     implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
-    implementation fg.deobf("curse.maven:groovyscript-${groovyscript_pid}:${groovyscript_fid}")
+    implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
     implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // this dependency cannot be deobfuscated by ForgeGradle
@@ -175,7 +175,7 @@ fancyGradle {
 if (project.build_deobfJar.toBoolean()) {
     // Create deobf dev jars
     tasks.register('deobfJar') {
-        archiveClassifier.set("deobf")
+        archiveClassifier.set 'deobf'
         from sourceSets.main.output
     }
 }
@@ -183,20 +183,21 @@ if (project.build_deobfJar.toBoolean()) {
 if (project.build_apiJar.toBoolean()) {
     // Create API library jar
     tasks.register('apiZip') {
-        archiveClassifier.set("api")
+        archiveClassifier.set 'api'
         from(sourceSets.main.java) {
-            include "gregtech/api/**"
+            include 'gregtech/api/**'
         }
+
         from(sourceSets.main.output) {
-            include "gregtech/api/**"
+            include 'gregtech/api/**'
         }
     }
 }
 
 if (project.build_sourceJar.toBoolean()) {
     // Create source jar
-    tasks.register('sourcesJar') {
-        archiveClassifier.set("sources")
+    tasks.register('sourcesJar', Jar) {
+        archiveClassifier.set 'sources'
         from sourceSets.main.allJava
     }
 }
@@ -209,20 +210,20 @@ sourceSets {
         }
 
         java {
-            srcDirs = ["src/main/java", "src/api/java"]
+            srcDirs = ['src/main/java', 'src/api/java']
         }
 
         resources {
-            srcDirs = ["src/main/resources"]
+            srcDirs = ['src/main/resources']
         }
     }
 
     test {
         java {
-            srcDirs = ["src/test/java"]
+            srcDirs = ['src/test/java']
         }
         resources {
-            srcDirs = ["src/test/resources"]
+            srcDirs = ['src/test/resources']
         }
     }
 
@@ -249,7 +250,7 @@ jar {
 
     // exclude all files in src/api from being shipped in the jar
     // this prevents crashes in obfuscated environments
-    file("src/api/").eachDirRecurse { dir ->
+    file('src/api/').eachDirRecurse { dir ->
         exclude dir.name
     }
 }
@@ -294,13 +295,12 @@ processResources {
 
 test {
     testLogging {
-        var testContainer = getTestLogging()
-        testContainer.events(TestLogEvent.FAILED)
-        testContainer.exceptionFormat(TestExceptionFormat.FULL)
-        testContainer.showExceptions(true)
-        testContainer.showStackTraces(true)
-        testContainer.showCauses(true)
-        testContainer.showStandardStreams(true)
+        events TestLogEvent.STARTED, TestLogEvent.PASSED, TestLogEvent.FAILED
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showStackTraces true
+        showCauses true
+        showStandardStreams true
     }
 
     useJUnitPlatform()
@@ -319,33 +319,33 @@ private String getVersionFromJava() {
         String s = line.trim()
         if (s.startsWith(prefix)) {
             s = s.substring(prefix.size(), s.size() - 1)
-            s = s.replace("=", " ").replace(" +", " ").trim()
-            String[] pts = s.split(" ")
+            s = s.replace('=', ' ').replace(' +', ' ').trim()
+            String[] pts = s.split(' ')
 
             // Switch on the variable name
             switch (pts[0]) {
-                case "MAJOR" :
+                case 'MAJOR' :
                     major = pts[pts.size() - 1]
                     break
-                case "MINOR" :
+                case 'MINOR' :
                     minor = pts[pts.size() - 1]
                     break
-                case "REVISION" :
+                case 'REVISION' :
                     revision = pts[pts.size() - 1]
                     break
             }
         } else if (s.startsWith(extraPrefix)) {
             s = s.substring(extraPrefix.size(), s.size() - 2)
-            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
-            String[] pts = s.split(" ")
-            if (pts[0] == "EXTRA") {
+            s = s.replace('=', ' ').replace(' +', ' ').replace('\"', ' ').trim()
+            String[] pts = s.split(' ')
+            if (pts[0] == 'EXTRA') {
                 extra = pts[pts.size() - 1]
             }
         }
         return
     }
 
-    if (extra != "") {
+    if (extra != '') {
         return major + '.' + minor + '.' + revision + '-' + extra
     } else {
         return major + '.' + minor + '.' + revision
