@@ -43,6 +43,13 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     }
 
     @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return getState(state) == CasingType.TEMPERED_GLASS ?
+                BlockRenderLayer.TRANSLUCENT == layer :
+                BlockRenderLayer.CUTOUT == layer;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(IBlockState state) {
