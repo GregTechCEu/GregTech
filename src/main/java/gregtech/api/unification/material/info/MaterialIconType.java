@@ -5,13 +5,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import gregtech.api.GTValues;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResourceManager;
+import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,6 +98,12 @@ public class MaterialIconType {
     private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable.create();
     private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_TEXTURE_CACHE = HashBasedTable.create();
 
+    private static final String BLOCK_TEXTURE_PATH_FULL = "textures/blocks/material_sets/%s/%s.png";
+    private static final String BLOCK_TEXTURE_PATH = "blocks/material_sets/%s/%s";
+
+    private static final String ITEM_MODEL_PATH_FULL = "models/item/material_sets/%s/%s.json";
+    private static final String ITEM_MODEL_PATH = "material_sets/%s/%s";
+
     public final String name;
     public final int id;
 
@@ -112,55 +116,45 @@ public class MaterialIconType {
 
     @Nonnull
     public ResourceLocation getBlockTexturePath(@Nonnull MaterialIconSet materialIconSet) {
-        if (BLOCK_TEXTURE_CACHE.contains(this, materialIconSet)) {
-            return BLOCK_TEXTURE_CACHE.get(this, materialIconSet);
-        }
-
-        MaterialIconSet iconSet = materialIconSet;
-        //noinspection ConstantConditions
-        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
-                Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
-            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-            while (!iconSet.isRootIconset) {
-                try {
-                    // check if the texture file exists
-                    manager.getResource(new ResourceLocation(GTValues.MODID, String.format("textures/blocks/material_sets/%s/%s.png", iconSet.name, this.name)));
-                    break;
-                } catch (IOException ignored) {
-                    iconSet = iconSet.parentIconset;
-                }
-            }
-        }
-        ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("blocks/material_sets/%s/%s", iconSet.name, this.name));
-        BLOCK_TEXTURE_CACHE.put(this, materialIconSet, location);
-
-        return location;
+        return recurseIconsetPath(materialIconSet, BLOCK_TEXTURE_CACHE, BLOCK_TEXTURE_PATH_FULL, BLOCK_TEXTURE_PATH);
     }
 
     @Nonnull
     public ResourceLocation getItemModelPath(@Nonnull MaterialIconSet materialIconSet) {
-        if (ITEM_MODEL_CACHE.contains(this, materialIconSet)) {
-            return ITEM_MODEL_CACHE.get(this, materialIconSet);
+        return recurseIconsetPath(materialIconSet, ITEM_MODEL_CACHE, ITEM_MODEL_PATH_FULL, ITEM_MODEL_PATH);
+    }
+
+    /**
+     * Find the location of the asset associated with the iconset or its parents as a fallback
+     *
+     * @param materialIconSet the starting IconSet to get the location for
+     * @param cache           the cache to store the value in
+     * @param fullPath        the full path to the asset with formatting (%s) for IconSet and IconType names
+     * @param path            the abbreviated path to the asset with formatting (%s) for IconSet and IconType names
+     * @return the location of the asset
+     */
+    @Nonnull
+    public ResourceLocation recurseIconsetPath(@Nonnull MaterialIconSet materialIconSet,
+                                               @Nonnull Table<MaterialIconType, MaterialIconSet, ResourceLocation> cache,
+                                               @Nonnull String fullPath, @Nonnull String path) {
+        if (cache.contains(this, materialIconSet)) {
+            return cache.get(this, materialIconSet);
         }
 
         MaterialIconSet iconSet = materialIconSet;
-        //noinspection ConstantConditions
-        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient() &&
-                Minecraft.getMinecraft() != null) { // check minecraft for null for CI environments
-            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             while (!iconSet.isRootIconset) {
-                try {
-                    // check if the model file exists
-                    manager.getResource(new ResourceLocation(GTValues.MODID, String.format("models/item/material_sets/%s/%s.json", iconSet.name, this.name)));
+                ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format(fullPath, iconSet.name, this.name));
+                if (ResourceHelper.doResourcepacksHaveResource(location)) {
                     break;
-                } catch (IOException ignored) {
+                } else {
                     iconSet = iconSet.parentIconset;
                 }
             }
         }
 
-        ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format("material_sets/%s/%s", iconSet.name, this.name));
-        ITEM_MODEL_CACHE.put(this, materialIconSet, location);
+        ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format(path, iconSet.name, this.name));
+        cache.put(this, iconSet, location);
 
         return location;
     }
