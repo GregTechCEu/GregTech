@@ -11,7 +11,9 @@ public final class GregTechVersion {
     //This String is for additional info on the release version if needed (like alpha, beta, rc). Comment out when unused
     public static final String EXTRA = "beta";
     //This is the String formatted version, used in builds
-    public static final String VERSION = "@VERSION@";
+    public static final String FULL_VERSION = MAJOR + "." + MINOR + "." + REVISION + "-" + EXTRA;
+    //This is the String formatted version, minus extra information, used for dependencies
+    public static final String DEP_VERSION = MAJOR + "." + MINOR + "." + REVISION;
 
     private GregTechVersion() {
     }
