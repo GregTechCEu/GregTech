@@ -19,7 +19,6 @@ import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.DyeUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
@@ -505,8 +504,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> tileEntityPipe = (IPipeTile<PipeType, NodeDataType>) world.getTileEntity(pos);
         if (tileEntityPipe != null && tileEntityPipe.getPipeType() != null &&
                 tileEntityPipe.getPipeType().isPaintable() &&
-                tileEntityPipe.getPaintingColor() != DyeUtil.DYE_COLOR_VALUES[color.ordinal()]) {
-            tileEntityPipe.setPaintingColor(DyeUtil.DYE_COLOR_VALUES[color.ordinal()]);
+                tileEntityPipe.getPaintingColor() != color.colorValue) {
+            tileEntityPipe.setPaintingColor(color.colorValue);
             return true;
         }
         return false;

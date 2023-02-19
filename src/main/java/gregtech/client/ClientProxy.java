@@ -10,7 +10,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.DyeUtil;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
 import gregtech.api.util.ModCompatibility;
@@ -100,7 +99,7 @@ public class ClientProxy extends CommonProxy {
             tintIndex == 1 ? ((BlockOre) ((ItemBlock) stack.getItem()).getBlock()).material.getMaterialRGB() : 0xFFFFFF;
 
     public static final IBlockColor FOAM_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            DyeUtil.DYE_COLOR_VALUES[state.getValue(BlockColored.COLOR).ordinal()];
+            state.getValue(BlockColored.COLOR).colorValue;
 
     public static final IBlockColor SURFACE_ROCK_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             tintIndex == 1 ? state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB() : -1;

@@ -7,7 +7,6 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.util.DyeUtil;
 import gregtech.api.util.GradientUtil;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
@@ -41,10 +40,10 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
         super(totalUses);
         this.empty = empty;
-        this.color = color >= DyeUtil.VALUES.length || color < 0 ? null : DyeUtil.VALUES[color];
-
+        EnumDyeColor[] colors = EnumDyeColor.values();
+        this.color = color >= colors.length || color < 0 ? null : colors[color];
         // default to a gray color if this.color is null (like for solvent spray)
-        int colorValue = this.color == null ? 0x969696 : DyeUtil.DYE_COLOR_VALUES[color];
+        int colorValue = this.color == null ? 0x969696 : this.color.colorValue;
         this.durabilityBarColors = GradientUtil.getGradient(colorValue, 10);
     }
 
