@@ -83,7 +83,7 @@ minecraft {
             }
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            environment 'MC_VERSION', '1.12.2'
+            environment 'MC_VERSION', minecraft_version.toString()
         }
 
         server {
@@ -98,7 +98,7 @@ minecraft {
             }
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            environment 'MC_VERSION', '1.12.2'
+            environment 'MC_VERSION', minecraft_version.toString()
         }
     }
 }
@@ -135,7 +135,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // Hard Dependencies
-    implementation "curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}-deobf-${ccl_deobf_fid}"
+    // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
+    // therefore we manually deobf the regular jar
+    implementation fg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
 
     // Soft Dependencies
     implementation "mezz.jei:jei_1.12.2:${project.jei_version}"
@@ -311,48 +313,33 @@ test {
     useJUnitPlatform()
 }
 
+@SuppressWarnings('GroovyAssignabilityCheck')
 private String getVersionFromJava() {
-    String major = '0'
-    String minor = '0'
-    String revision = '0'
-    String extra = ''
-    File sourceFile = files('src/main/java/gregtech/GregTechVersion.java').getSingleFile()
+    def major = '0'
+    def minor = '0'
+    def revision = '0'
+    def extra = ''
 
-    String prefix = 'public static final int'
-    String extraPrefix = 'public static final String'
-    sourceFile.eachLine { line ->
-        String s = line.trim()
-        if (s.startsWith(prefix)) {
-            s = s.substring(prefix.size(), s.size() - 1)
-            s = s.replace('=', ' ').replace(' +', ' ').trim()
-            String[] pts = s.split(' ')
-
-            // Switch on the variable name
-            switch (pts[0]) {
-                case 'MAJOR' :
-                    major = pts[pts.size() - 1]
-                    break
-                case 'MINOR' :
-                    minor = pts[pts.size() - 1]
-                    break
-                case 'REVISION' :
-                    revision = pts[pts.size() - 1]
-                    break
-            }
-        } else if (s.startsWith(extraPrefix)) {
-            s = s.substring(extraPrefix.size(), s.size() - 2)
-            s = s.replace('=', ' ').replace(' +', ' ').replace('\"', ' ').trim()
-            String[] pts = s.split(' ')
-            if (pts[0] == 'EXTRA') {
-                extra = pts[pts.size() - 1]
-            }
+    file('src/main/java/gregtech/GregTechVersion.java').readLines().each { line ->
+        if (line.contains('MAJOR')) {
+            def matcher = line =~ /MAJOR\s*=\s*(\d+)/
+            if (matcher) major = matcher[0][1]
+        } else if (line.contains('MINOR')) {
+            def matcher = line =~ /MINOR\s*=\s*(\d+)/
+            if (matcher) minor = matcher[0][1]
+        } else if (line.contains('REVISION')) {
+            def matcher = line =~ /REVISION\s*=\s*(\d+)/
+            if (matcher) revision = matcher[0][1]
+        } else if (line.contains('EXTRA')) {
+            def matcher = line =~ /EXTRA\s*=\s*"(\w+)"/
+            if (matcher) extra = matcher[0][1]
+            return
         }
-        return
     }
 
-    if (extra != '') {
-        return major + '.' + minor + '.' + revision + '-' + extra
+    if (extra) {
+        return "${major}.${minor}.${revision}-${extra}"
     } else {
-        return major + '.' + minor + '.' + revision
+        return "${major}.${minor}.${revision}"
     }
 }
