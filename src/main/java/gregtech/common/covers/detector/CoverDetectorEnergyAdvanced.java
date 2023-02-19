@@ -51,6 +51,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.inverted = false;
         this.isEnabled = true;
         this.usePercent = false;
+        // this.maxValueUpperLimit = Long.MAX_VALUE;
 
         // surely this is a good idea :clueless:
         this.widgetsToUpdate = constructWidgetsToUpdate();
@@ -79,9 +80,14 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         if (coverHolder.getOffsetTimer() % 20 != 0 || !isEnabled) return;
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+        if (energyContainer != null) {
             if (usePercent) {
-                compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+                if (energyContainer.getEnergyCapacity() > 0) {
+                    compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+                } else {
+                    setRedstoneSignalOutput(inverted ? 0 : 15);
+                    return;
+                }
             } else {
                 compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
             }
@@ -90,7 +96,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     /**
-     * Compares the value to min and max, and sets the output value accordingly.
+     * Compares the discrete value to min and max, and sets the output value accordingly.
      * <p>
      * Behaves like an SR Latch.
      */
@@ -102,6 +108,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         }
     }
 
+    /**
+     * Compares the ratio value to min and max, and sets the output value accordingly.
+     * <p>
+     * Behaves like an SR Latch.
+     */
     private void compareValue(float value, long maxValue, long minValue) {
         if (value >= maxValue) {
             this.outputAmount = inverted ? 15 : 0;
@@ -181,14 +192,17 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     private void setMaxValue(String val){
         long parsedValue;
+        long maxUpperLimit;
 
         if (usePercent) {
             parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX_PERCENT);
+            maxUpperLimit = 100;
         } else {
             parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX_EU);
+            maxUpperLimit = Long.MAX_VALUE;
         }
 
-        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, this.maxValueUpperLimit));
+        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));
     }
 
     private boolean isInverted(){
@@ -210,12 +224,10 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         if (this.usePercent){ // using percent
             this.minValue = DEFAULT_MIN_PERCENT;
             this.maxValue = DEFAULT_MAX_PERCENT;
-            this.maxValueUpperLimit = 100;
             length = 3;
         } else { // using discrete EU
             this.minValue = DEFAULT_MIN_EU;
             this.maxValue = DEFAULT_MAX_EU;
-            this.maxValueUpperLimit = Long.MAX_VALUE;
             length = 19;
         }
 
