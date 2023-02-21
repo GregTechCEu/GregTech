@@ -33,7 +33,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     public long minValue, maxValue;
     private int outputAmount;
     private boolean usePercent;
-    private final WidgetGroup widgetsToUpdate;
+    private WidgetGroup widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -41,9 +41,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.maxValue = DEFAULT_MAX_EU;
         this.outputAmount = 0;
         this.usePercent = false;
-
-        // surely this is a good idea :clueless:
-        this.widgetsToUpdate = constructWidgetsToUpdate();
     }
 
     @Override
@@ -118,7 +115,8 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
         group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
 
-        updateSyncedWidgets(); // update widgets on UI creation
+        // surely this is a good idea :clueless:
+        this.widgetsToUpdate = constructWidgetsToUpdate();
 
         // change modes between percent and discrete EU
         group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.modes_label"));
@@ -142,13 +140,14 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     private WidgetGroup constructWidgetsToUpdate() {
         WidgetGroup sync = new WidgetGroup();
+
         sync.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
-                .setMaxLength(19)
                 .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setMaxLength(this.getLength())
                 .setPostFix(this.getPostFix()));
         sync.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
-                .setMaxLength(19)
                 .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setMaxLength(this.getLength())
                 .setPostFix(this.getPostFix()));
         return sync;
     }
@@ -188,43 +187,32 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     private void setUsePercent(boolean b){
         this.usePercent =  b;
-        int length;
 
         if (this.usePercent){ // using percent
             this.minValue = DEFAULT_MIN_PERCENT;
             this.maxValue = DEFAULT_MAX_PERCENT;
-            length = 3;
         } else { // using discrete EU
             this.minValue = DEFAULT_MIN_EU;
             this.maxValue = DEFAULT_MAX_EU;
-            length = 19;
         }
 
         // update widgets
-        updateSyncedWidgets(length);
-    }
-
-    private void updateSyncedWidgets(int length) {
-        for (Widget widget : this.widgetsToUpdate.widgets) {
-            if (widget instanceof TextFieldWidget2) {
-                ((TextFieldWidget2) widget).setPostFix(null); // clear postfix
-                ((TextFieldWidget2) widget).setPostFix(this.getPostFix());
-                ((TextFieldWidget2) widget).setMaxLength(length);
-            }
-        }
+        updateSyncedWidgets();
     }
 
     private void updateSyncedWidgets() {
-        for (Widget widget : this.widgetsToUpdate.widgets) {
-            if (widget instanceof TextFieldWidget2) {
-                ((TextFieldWidget2) widget).setPostFix(null); // clear postfix
-                ((TextFieldWidget2) widget).setPostFix(this.getPostFix());
-            }
+        for (Widget widget : widgetsToUpdate.widgets) {
+            ((TextFieldWidget2) widget).setPostFix(getPostFix());
+            ((TextFieldWidget2) widget).setMaxLength(getLength());
         }
     }
 
     private String getPostFix(){
-        return this.usePercent ? " %" : " EU";
+        return usePercent ? " %" : " EU";
+    }
+
+    private int getLength() {
+        return usePercent ? 3 : 19;
     }
 
     @Nonnull
