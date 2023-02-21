@@ -26,11 +26,8 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
-
-public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
+public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI, IControllable {
 
     private static final int PADDING = 5, SIZE = 18;
 
@@ -38,9 +35,8 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
 
     public long minValue, maxValue;
-    private long maxValueUpperLimit;
     private int outputAmount;
-    private boolean inverted, isEnabled, usePercent;
+    private boolean isEnabled, usePercent;
     private final WidgetGroup widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
@@ -48,18 +44,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.minValue = DEFAULT_MIN_EU;
         this.maxValue = DEFAULT_MAX_EU;
         this.outputAmount = 0;
-        this.inverted = false;
         this.isEnabled = true;
         this.usePercent = false;
-        // this.maxValueUpperLimit = Long.MAX_VALUE;
 
         // surely this is a good idea :clueless:
         this.widgetsToUpdate = constructWidgetsToUpdate();
-    }
-
-    @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null;
     }
 
     @Override
@@ -85,7 +74,7 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
                 if (energyContainer.getEnergyCapacity() > 0) {
                     compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
                 } else {
-                    setRedstoneSignalOutput(inverted ? 0 : 15);
+                    setRedstoneSignalOutput(isInverted ? 0 : 15);
                     return;
                 }
             } else {
@@ -102,9 +91,9 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
      */
     private void compareValue(long value, long maxValue, long minValue) {
         if (value >= maxValue) {
-            this.outputAmount = inverted ? 15 : 0;
+            this.outputAmount = isInverted ? 15 : 0;
         } else if (value <= minValue) {
-            this.outputAmount = inverted ? 0 : 15;
+            this.outputAmount = isInverted ? 0 : 15;
         }
     }
 
@@ -115,9 +104,9 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
      */
     private void compareValue(float value, long maxValue, long minValue) {
         if (value >= maxValue) {
-            this.outputAmount = inverted ? 15 : 0;
+            this.outputAmount = isInverted ? 15 : 0;
         } else if (value <= minValue) {
-            this.outputAmount = inverted ? 0 : 15;
+            this.outputAmount = isInverted ? 0 : 15;
         }
     }
 
@@ -206,11 +195,11 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
     }
 
     private boolean isInverted(){
-        return this.inverted;
+        return this.isInverted;
     }
 
     private void setInverted(boolean b){
-        this.inverted = b;
+        this.isInverted = b;
     }
 
     private boolean isUsePercent(){
@@ -258,11 +247,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         return this.usePercent ? " %" : " EU";
     }
 
-    @Override
-    public boolean canConnectRedstone() {
-        return true;
-    }
-
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tagCompound) {
@@ -270,7 +254,6 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
-        tagCompound.setBoolean("inverted", this.inverted);
         tagCompound.setBoolean("isEnabled", this.isEnabled);
         tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
@@ -282,27 +265,26 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
-        this.inverted = tagCompound.getBoolean("inverted");
         this.isEnabled = tagCompound.getBoolean("isEnabled");
         this.usePercent = tagCompound.getBoolean("usePercent");
     }
 
     @Override
     public void writeInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
-        packetBuffer.writeBoolean(this.inverted);
         packetBuffer.writeBoolean(this.isEnabled);
         packetBuffer.writeBoolean(this.usePercent);
     }
 
     @Override
     public void readInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
-        this.inverted = packetBuffer.readBoolean();
         this.isEnabled = packetBuffer.readBoolean();
         this.usePercent = packetBuffer.readBoolean();
     }
