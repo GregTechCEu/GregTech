@@ -205,7 +205,15 @@ public class MaterialExpansion {
     }
 
     @ZenMethod
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability, @Optional int toolHarvestLevel, @Optional int enchantability, @Optional boolean shouldIngoreCraftingTools) {
+    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+                                    @Optional int enchantability, @Optional boolean shouldIngoreCraftingTools) {
+        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, shouldIngoreCraftingTools);
+    }
+
+    @ZenMethod
+    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+                                    @Optional int enchantability, @Optional int toolHarvestLevel,
+                                    @Optional boolean shouldIngoreCraftingTools) {
         if (checkFrozen("set tool stats")) return;
         ToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
