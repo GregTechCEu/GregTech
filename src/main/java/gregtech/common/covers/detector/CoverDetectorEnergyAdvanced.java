@@ -64,41 +64,19 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         if (energyContainer != null) {
             if (usePercent) {
                 if (energyContainer.getEnergyCapacity() > 0) {
-                    compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+                    float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
+                    this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, this.isInverted, this.outputAmount);
+                    // compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
                 } else {
                     this.outputAmount = isInverted ? 0 : 15;
                 }
             } else {
-                compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
+                this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
+                        this.maxValue, this.minValue, this.isInverted, this.outputAmount);
+                // compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
             }
-            setRedstoneSignalOutput(outputAmount);
         }
-    }
-
-    /**
-     * Compares the discrete value to min and max, and sets the output value accordingly.
-     * <p>
-     * Behaves like an SR Latch.
-     */
-    private void compareValue(long value, long maxValue, long minValue) {
-        if (value >= maxValue) {
-            this.outputAmount = isInverted ? 15 : 0;
-        } else if (value <= minValue) {
-            this.outputAmount = isInverted ? 0 : 15;
-        }
-    }
-
-    /**
-     * Compares the ratio value to min and max, and sets the output value accordingly.
-     * <p>
-     * Behaves like an SR Latch.
-     */
-    private void compareValue(float value, long maxValue, long minValue) {
-        if (value >= maxValue) {
-            this.outputAmount = isInverted ? 15 : 0;
-        } else if (value <= minValue) {
-            this.outputAmount = isInverted ? 0 : 15;
-        }
+        setRedstoneSignalOutput(outputAmount);
     }
 
     @Override

@@ -1155,6 +1155,23 @@ public class GTUtility {
     }
 
     /**
+     * Compares a value against a min and max, with an option to invert the logic. Has latching functionality.
+     * @param value value to be compared
+     * @param maxValue the max that the value can be
+     * @param minValue the min that the value can be
+     * @param isInverted whether to invert the logic of this method
+     * @param output the output value the function modifies
+     */
+    public static int computeLatchedRedstoneBetweenValues(float value, float maxValue, float minValue, boolean isInverted, int output) {
+        if (value >= maxValue) {
+            output = isInverted ? 15 : 0; // value above maxValue should normally be 0, otherwise 15
+        } else if (value <= minValue) {
+            output = isInverted ? 0 : 15; // value below minValue should normally be 15, otherwise 0
+        }
+        return output;
+    }
+
+    /**
      * @param fluidHandler the handler to drain from
      * @param doDrain      if the handler should be actually drained
      * @return a valid boiler fluid from a container, with amount=1
