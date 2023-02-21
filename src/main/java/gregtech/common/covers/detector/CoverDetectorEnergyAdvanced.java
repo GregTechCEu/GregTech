@@ -162,28 +162,14 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private void setMinValue(String val){
-        long parsedValue;
-
-        if (usePercent) {
-            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MIN_PERCENT);
-        } else {
-            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MIN_EU);
-        }
+        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
 
         this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val){
-        long parsedValue;
-        long maxUpperLimit;
-
-        if (usePercent) {
-            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX_PERCENT);
-            maxUpperLimit = 100;
-        } else {
-            parsedValue = GTUtility.tryParseLong(val, DEFAULT_MAX_EU);
-            maxUpperLimit = Long.MAX_VALUE;
-        }
+        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
+        long maxUpperLimit = usePercent ? 100 : Long.MAX_VALUE;
 
         this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));
     }
