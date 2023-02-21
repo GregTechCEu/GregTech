@@ -26,7 +26,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 
-public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI, IControllable {
+public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
 
     private static final int PADDING = 5, SIZE = 18;
 
@@ -35,7 +35,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     public long minValue, maxValue;
     private int outputAmount;
-    private boolean isEnabled, usePercent;
+    private boolean usePercent;
     private final WidgetGroup widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
@@ -43,7 +43,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = DEFAULT_MIN_EU;
         this.maxValue = DEFAULT_MAX_EU;
         this.outputAmount = 0;
-        this.isEnabled = true;
+        // this.isEnabled = true;
         this.usePercent = false;
 
         // surely this is a good idea :clueless:
@@ -65,7 +65,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0 || !isEnabled) return;
+        if (coverHolder.getOffsetTimer() % 20 != 0) return;
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null) {
@@ -253,7 +253,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
-        tagCompound.setBoolean("isEnabled", this.isEnabled);
+        // tagCompound.setBoolean("isEnabled", this.isEnabled);
         tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
     }
@@ -264,7 +264,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
-        this.isEnabled = tagCompound.getBoolean("isEnabled");
+        // this.isEnabled = tagCompound.getBoolean("isEnabled");
         this.usePercent = tagCompound.getBoolean("usePercent");
     }
 
@@ -274,7 +274,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
-        packetBuffer.writeBoolean(this.isEnabled);
+        // packetBuffer.writeBoolean(this.isEnabled);
         packetBuffer.writeBoolean(this.usePercent);
     }
 
@@ -284,27 +284,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
-        this.isEnabled = packetBuffer.readBoolean();
+        // this.isEnabled = packetBuffer.readBoolean();
         this.usePercent = packetBuffer.readBoolean();
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return this.isEnabled;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean isActivationAllowed) {
-        this.isEnabled = isActivationAllowed;
-        setRedstoneSignalOutput(0);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        }
-
-        return defaultValue;
     }
 }
