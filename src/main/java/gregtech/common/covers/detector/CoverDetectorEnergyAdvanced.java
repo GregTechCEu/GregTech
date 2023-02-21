@@ -234,6 +234,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
+        tagCompound.setBoolean("isInverted", this.isInverted);
         tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
     }
@@ -244,6 +245,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
+        this.isInverted = tagCompound.getBoolean("inverted");
         this.usePercent = tagCompound.getBoolean("usePercent");
     }
 
@@ -253,6 +255,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
+        packetBuffer.writeBoolean(this.isInverted);
         packetBuffer.writeBoolean(this.usePercent);
     }
 
@@ -262,6 +265,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
+        this.isInverted = packetBuffer.readBoolean();
         this.usePercent = packetBuffer.readBoolean();
     }
 }
