@@ -69,8 +69,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                 if (energyContainer.getEnergyCapacity() > 0) {
                     compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
                 } else {
-                    setRedstoneSignalOutput(isInverted ? 0 : 15);
-                    return;
+                    this.outputAmount = isInverted ? 0 : 15;
                 }
             } else {
                 compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
