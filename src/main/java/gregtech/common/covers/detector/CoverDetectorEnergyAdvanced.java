@@ -6,8 +6,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
@@ -22,7 +20,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
-import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 
@@ -43,7 +40,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = DEFAULT_MIN_EU;
         this.maxValue = DEFAULT_MAX_EU;
         this.outputAmount = 0;
-        // this.isEnabled = true;
         this.usePercent = false;
 
         // surely this is a good idea :clueless:
@@ -253,7 +249,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
-        // tagCompound.setBoolean("isEnabled", this.isEnabled);
         tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
     }
@@ -264,7 +259,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
-        // this.isEnabled = tagCompound.getBoolean("isEnabled");
         this.usePercent = tagCompound.getBoolean("usePercent");
     }
 
@@ -274,7 +268,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
-        // packetBuffer.writeBoolean(this.isEnabled);
         packetBuffer.writeBoolean(this.usePercent);
     }
 
@@ -284,7 +277,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
-        // this.isEnabled = packetBuffer.readBoolean();
         this.usePercent = packetBuffer.readBoolean();
     }
 }
