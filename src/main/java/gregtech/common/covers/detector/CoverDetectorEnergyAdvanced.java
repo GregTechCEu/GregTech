@@ -94,6 +94,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
 
         // surely this is a good idea :clueless:
+        // construct widgets that need to be updated
         this.widgetsToUpdate = constructWidgetsToUpdate();
 
         // change modes between percent and discrete EU
