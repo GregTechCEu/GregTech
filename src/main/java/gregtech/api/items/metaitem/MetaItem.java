@@ -669,6 +669,13 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
+    protected boolean isInCreativeTab(CreativeTabs tab) {
+        return tab==CreativeTabs.SEARCH||
+                ArrayUtils.contains(defaultCreativeTabs, tab)||
+                additionalCreativeTabs.contains(tab);
+    }
+
+    @Override
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
         if (!isInCreativeTab(tab)) return;
         for (T item : metaItems.values()) {
