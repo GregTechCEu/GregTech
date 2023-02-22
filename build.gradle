@@ -178,7 +178,7 @@ fancyGradle {
 
 if (project.build_deobfJar.toBoolean()) {
     // Create deobf dev jars
-    tasks.register('deobfJar') {
+    tasks.register('deobfJar', Jar) {
         archiveClassifier.set 'deobf'
         from sourceSets.main.output
     }
@@ -186,7 +186,7 @@ if (project.build_deobfJar.toBoolean()) {
 
 if (project.build_apiJar.toBoolean()) {
     // Create API library jar
-    tasks.register('apiZip') {
+    tasks.register('apiJar', Jar) {
         archiveClassifier.set 'api'
         from(sourceSets.main.java) {
             include 'gregtech/api/**'
@@ -267,7 +267,7 @@ artifacts {
         archives deobfJar
     }
     if (project.build_apiJar.toBoolean()) {
-        archives apiZip
+        archives apiJar
     }
     if (project.build_sourceJar.toBoolean()) {
         archives sourcesJar
