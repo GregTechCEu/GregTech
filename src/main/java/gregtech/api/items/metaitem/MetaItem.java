@@ -27,6 +27,7 @@ import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
@@ -61,6 +62,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -69,7 +71,6 @@ import javax.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.List;
 
 /**
  * MetaItem is item that can have up to Short.MAX_VALUE items inside one id.
@@ -99,6 +100,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     protected static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
+
+    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[]{GregTechAPI.TAB_GREGTECH};
+    private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
 
     public MetaItem(short metaItemOffset) {
         setTranslationKey("meta_item");
@@ -338,7 +342,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
     }
 
-    @Nullable
     @Override
     public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player) {
         if (player instanceof EntityPlayer) {
@@ -639,20 +642,38 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @Nonnull
     @Override
     public CreativeTabs[] getCreativeTabs() {
-        return new CreativeTabs[]{GregTechAPI.TAB_GREGTECH, GregTechAPI.TAB_GREGTECH_MATERIALS};
+        if (additionalCreativeTabs.isEmpty()) return defaultCreativeTabs; // short circuit
+        Set<CreativeTabs> tabs = new ObjectArraySet<>();
+        tabs.addAll(Arrays.asList(defaultCreativeTabs));
+        tabs.addAll(additionalCreativeTabs);
+        return tabs.toArray(new CreativeTabs[0]);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
-        if (tab != GregTechAPI.TAB_GREGTECH && tab != CreativeTabs.SEARCH) {
-            return;
+    public MetaItem<T> setCreativeTab(CreativeTabs tab) {
+        this.defaultCreativeTabs = new CreativeTabs[]{tab};
+        return this;
+    }
+
+    public MetaItem<T> setCreativeTabs(CreativeTabs... tabs) {
+        this.defaultCreativeTabs = tabs;
+        return this;
+    }
+
+    public void addAdditionalCreativeTabs(CreativeTabs... tabs) {
+        for (CreativeTabs tab : tabs) {
+            if (!ArrayUtils.contains(defaultCreativeTabs, tab) && tab != CreativeTabs.SEARCH) {
+                additionalCreativeTabs.add(tab);
+            }
         }
-        for (T enabledItem : metaItems.values()) {
-            if (!enabledItem.isVisible())
-                continue;
-            ItemStack itemStack = enabledItem.getStackForm();
-            enabledItem.getSubItemHandler().getSubItems(itemStack, tab, subItems);
+    }
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab)) return;
+        for (T item : metaItems.values()) {
+            if (!item.isInCreativeTab(tab)) continue;
+            item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
         }
     }
 
@@ -694,9 +715,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private EnumRarity rarity;
 
         private int burnValue = 0;
-        private boolean visible = true;
         private int maxStackSize = 64;
         private int modelAmount = 1;
+
+        @Nullable
+        private CreativeTabs[] creativeTabsOverride;
 
         protected MetaValueItem(int metaValue, String unlocalizedName) {
             this.metaValue = metaValue;
@@ -735,13 +758,27 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return this;
         }
 
+        public MetaValueItem setCreativeTabs(CreativeTabs... tabs) {
+            this.creativeTabsOverride = tabs;
+            MetaItem.this.addAdditionalCreativeTabs(tabs);
+            return this;
+        }
+
+        /**
+         * @deprecated Use {@link MetaValueItem#setInvisibleIf(boolean)} instead
+         */
+        @Deprecated
         public MetaValueItem setInvisible(boolean isVisible) {
-            this.visible = isVisible;
+            return setInvisibleIf(!isVisible);
+        }
+
+        public MetaValueItem setInvisibleIf(boolean hide) {
+            if (hide) this.creativeTabsOverride = new CreativeTabs[0];
             return this;
         }
 
         public MetaValueItem setInvisible() {
-            this.visible = false;
+            this.creativeTabsOverride = new CreativeTabs[0];
             return this;
         }
 
@@ -884,7 +921,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         public boolean isVisible() {
-            return visible;
+            return creativeTabsOverride == null || creativeTabsOverride.length > 0;
         }
 
         public int getModelAmount() {
@@ -969,6 +1006,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return itemStack;
         }
 
+        public boolean isInCreativeTab(CreativeTabs tab) {
+            return tab == CreativeTabs.SEARCH || ArrayUtils.contains(creativeTabsOverride != null ? creativeTabsOverride : MetaItem.this.defaultCreativeTabs, tab);
+        }
+
         @Override
         public String toString() {
             return new ToStringBuilder(this)
@@ -977,5 +1018,4 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     .toString();
         }
     }
-
 }
