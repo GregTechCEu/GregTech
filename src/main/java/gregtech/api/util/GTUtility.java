@@ -1115,10 +1115,10 @@ public class GTUtility {
     }
 
     /**
-     * Tries to parse a string into an int, returning a default value if it fails.
+     * Tries to parse a string into a long, returning a default value if it fails.
      * @param val string to parse
      * @param defaultValue default value to return
-     * @return returns an int from the parsed string, otherwise the default value
+     * @return returns a long from the parsed string, otherwise the default value
      */
     public static long tryParseLong(String val, long defaultValue){
         try {
