@@ -13,15 +13,19 @@ import java.util.Set;
 public class PacketProspecting {
     public int chunkX;
     public int chunkZ;
+    public int playerChunkX;
+    public int playerChunkZ;
     public int posX;
     public int posZ;
     public int mode;
     public HashMap<Byte, String>[][] map;
     public Set<String> ores;
 
-    public PacketProspecting(int chunkX, int chunkZ, int posX, int posZ, int mode) {
+    public PacketProspecting(int chunkX, int chunkZ, int playerChunkX, int playerChunkZ, int posX, int posZ, int mode) {
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
+        this.playerChunkX = playerChunkX;
+        this.playerChunkZ = playerChunkZ;
         this.posX = posX;
         this.posZ = posZ;
         this.mode = mode;
@@ -34,7 +38,7 @@ public class PacketProspecting {
     }
 
     public static PacketProspecting readPacketData(PacketBuffer buffer) {
-        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
+        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
         int aSize = 0;
         if (packet.mode == 0)
             aSize = 16;
@@ -82,6 +86,8 @@ public class PacketProspecting {
     public void writePacketData(PacketBuffer buffer) {
         buffer.writeInt(chunkX);
         buffer.writeInt(chunkZ);
+        buffer.writeInt(playerChunkX);
+        buffer.writeInt(playerChunkZ);
         buffer.writeInt(posX);
         buffer.writeInt(posZ);
         buffer.writeInt(mode);
