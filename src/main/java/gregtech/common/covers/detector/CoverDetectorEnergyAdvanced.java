@@ -201,7 +201,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
-        tagCompound.setBoolean("isInverted", this.isInverted);
+        tagCompound.setBoolean("inverted", this.isInverted);
         tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
     }
