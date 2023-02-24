@@ -2222,7 +2222,6 @@ metaitem.prospector.mode.fluid=§bFluid Prospection Mode
 metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
 metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 behavior.prospector.not_enough_energy=Not Enough Energy!
-behavior.prospector.added_waypoint=Waypoint added!
 
 metaitem.tricorder_scanner.name=Portable Scanner
 metaitem.tricorder_scanner.tooltip=Tricorder
@@ -5162,7 +5161,6 @@ terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore Data
 terminal.prospector.fluid=Fluid Deposit Data
 terminal.prospector.fluid.info=%s %s - %s%%
-terminal.prospector.waypoint.add=[Double §7Left click§r] to add waypoint
 
 terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
 terminal.ore_prospector.tier.0=radius size 1

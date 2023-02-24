@@ -25,11 +25,6 @@ public class ChunkPosDimension extends ChunkPos {
         return this.dimension == coordinatePair.dimension && this.x == coordinatePair.x && this.z == coordinatePair.z;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode() ^ (31 + dimension);
-    }
-
     @Nonnull
     @Override
     public String toString() {
