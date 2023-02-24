@@ -304,7 +304,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
                 if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
             }
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
-            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode"));
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
         } else {
             tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
