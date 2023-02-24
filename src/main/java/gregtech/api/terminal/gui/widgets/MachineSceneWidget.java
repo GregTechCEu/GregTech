@@ -10,7 +10,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
@@ -60,8 +60,8 @@ public class MachineSceneWidget extends WidgetGroup {
     private boolean blendColor = true;
     private Set<BlockPos> cores;
     private Set<BlockPos> around;
-    private BlockPosFace hoverPosFace;
-    private BlockPosFace selectedPosFace;
+    private FacingPos hoverPosFace;
+    private FacingPos selectedPosFace;
     private BiConsumer<BlockPos, EnumFacing> onSelected;
 
     protected MetaTileEntity mte;
@@ -134,7 +134,7 @@ public class MachineSceneWidget extends WidgetGroup {
                     double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
                     if (dist < min) {
                         min = dist;
-                        hoverPosFace = new BlockPosFace(hit.getBlockPos(), hit.sideHit);
+                        hoverPosFace = new FacingPos(hit.getBlockPos(), hit.sideHit);
                     }
                 }
             }
@@ -157,10 +157,10 @@ public class MachineSceneWidget extends WidgetGroup {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
     }
 
-    private static void drawFacingBorder(BlockPosFace posFace, int color) {
+    private static void drawFacingBorder(FacingPos posFace, int color) {
         GlStateManager.pushMatrix();
-        RenderUtil.moveToFace(posFace.pos.getX(), posFace.pos.getY(), posFace.pos.getZ(), posFace.facing);
-        RenderUtil.rotateToFace(posFace.facing, null);
+        RenderUtil.moveToFace(posFace.getPos().getX(), posFace.getPos().getY(), posFace.getPos().getZ(), posFace.getFacing());
+        RenderUtil.rotateToFace(posFace.getFacing(), null);
         GlStateManager.scale(1f / 16, 1f / 16, 0);
         GlStateManager.translate(-8, -8, 0);
         Widget.drawBorder(1, 1, 14, 14, color, 1);
@@ -268,7 +268,7 @@ public class MachineSceneWidget extends WidgetGroup {
             if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
                 selectedPosFace = hoverPosFace;
                 if (onSelected != null) {
-                    onSelected.accept(selectedPosFace.pos, selectedPosFace.facing);
+                    onSelected.accept(selectedPosFace.getPos(), selectedPosFace.getFacing());
                 }
             }
             return true;
