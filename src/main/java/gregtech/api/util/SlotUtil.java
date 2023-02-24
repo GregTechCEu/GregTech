@@ -1,12 +1,10 @@
-package gregtech.api.gui.widgets;
+package gregtech.api.util;
 
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public final class PhantomSlotUtil {
-
-    private PhantomSlotUtil() {/**/}
+public class SlotUtil {
 
     public static ItemStack slotClickPhantom(Slot slot, int mouseButton, ClickType clickTypeIn, ItemStack stackHeld) {
         ItemStack stack = ItemStack.EMPTY;

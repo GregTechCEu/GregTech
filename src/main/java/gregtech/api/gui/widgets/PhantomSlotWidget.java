@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import com.google.common.collect.Lists;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
+import gregtech.api.util.SlotUtil;
 import gregtech.client.utils.TooltipHelper;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,7 +67,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
     @Override
     public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
         ItemStack stackHeld = player.inventory.getItemStack();
-        return PhantomSlotUtil.slotClickPhantom(slotReference, dragType, clickTypeIn, stackHeld);
+        return SlotUtil.slotClickPhantom(slotReference, dragType, clickTypeIn, stackHeld);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
                     int mouseButton = Mouse.getEventButton();
                     boolean shiftDown = TooltipHelper.isShiftDown();
                     ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
-                    PhantomSlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, (ItemStack) ingredient);
+                    SlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, (ItemStack) ingredient);
                     writeClientAction(1, buffer -> {
                         buffer.writeItemStack((ItemStack) ingredient);
                         buffer.writeVarInt(mouseButton);
@@ -116,7 +117,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
             int mouseButton = buffer.readVarInt();
             boolean shiftKeyDown = buffer.readBoolean();
             ClickType clickType = shiftKeyDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
-            PhantomSlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, stackHeld);
+            SlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, stackHeld);
         } else if (id == 2) {
             slotReference.putStack(ItemStack.EMPTY);
         }
