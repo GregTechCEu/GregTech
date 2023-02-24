@@ -184,6 +184,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
+        lines.add(I18n.format("behaviour.paintspray.offhand"));
     }
 
     @Override

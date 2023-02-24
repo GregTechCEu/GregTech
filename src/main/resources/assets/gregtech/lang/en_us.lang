@@ -4341,6 +4341,7 @@ behaviour.paintspray.green.tooltip=Can paint things in Green
 behaviour.paintspray.red.tooltip=Can paint things in Red
 behaviour.paintspray.black.tooltip=Can paint things in Black
 behaviour.paintspray.uses=Remaining Uses: %,d
+behaviour.paintspray.offhand=Hold in offhand to color while placing blocks
 behaviour.prospecting=Usable for Prospecting
 
 # Multiblock machine controllers
