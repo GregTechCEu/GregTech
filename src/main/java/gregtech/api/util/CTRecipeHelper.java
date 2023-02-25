@@ -191,18 +191,6 @@ public class CTRecipeHelper {
         return builder.toString();
     }
 
-    public static String getFirstOutputString(Recipe recipe) {
-        String output = "";
-        if (!recipe.getOutputs().isEmpty()) {
-            ItemStack item = recipe.getOutputs().get(0);
-            output = item.getDisplayName() + " * " + item.getCount();
-        } else if (!recipe.getFluidOutputs().isEmpty()) {
-            FluidStack fluid = recipe.getFluidOutputs().get(0);
-            output = fluid.getLocalizedName() + " * " + fluid.amount;
-        }
-        return output;
-    }
-
     public static String getCtItemString(GTRecipeInput recipeInput) {
         StringBuilder builder = new StringBuilder();
         ItemStack itemStack = null;

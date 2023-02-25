@@ -136,7 +136,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && Loader.isModLoaded(GTValues.MODID_CT);
+        // do not add the X button if no tweaker mod is present
+        if (!Loader.isModLoaded(GTValues.MODID_CT) && !GroovyScriptCompat.isLoaded()) return;
+
+        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative();
         final String mod = GroovyScriptCompat.isLoaded() ? "GroovyScript" : "CraftTweaker";
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
@@ -145,7 +148,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     String recipeLine = GroovyScriptCompat.isLoaded() ?
                             GroovyScriptCompat.getRecipeRemoveLine(recipeMap, recipe) :
                             CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
-                    String output = CTRecipeHelper.getFirstOutputString(recipe);
+                    String output = GTUtility.getFirstOutputString(recipe);
                     if (!output.isEmpty()) {
                         output = "// " + output + "\n";
                     }
