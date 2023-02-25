@@ -14,6 +14,7 @@ import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
 import mezz.jei.api.ingredients.IIngredients;
@@ -148,7 +149,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     String recipeLine = GroovyScriptCompat.isLoaded() ?
                             GroovyScriptCompat.getRecipeRemoveLine(recipeMap, recipe) :
                             CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
-                    String output = GTUtility.getFirstOutputString(recipe);
+                    String output = RecipeCompatUtil.getFirstOutputString(recipe);
                     if (!output.isEmpty()) {
                         output = "// " + output + "\n";
                     }

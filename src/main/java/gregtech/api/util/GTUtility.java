@@ -17,7 +17,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -1210,22 +1209,4 @@ public class GTUtility {
     public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
         return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
-
-    /**
-     * @param recipe the recipe to retrieve from
-     * @return the first output in a human-readable form
-     */
-    @Nonnull
-    public static String getFirstOutputString(@Nonnull Recipe recipe) {
-        String output = "";
-        if (!recipe.getOutputs().isEmpty()) {
-            ItemStack item = recipe.getOutputs().get(0);
-            output = item.getDisplayName() + " * " + item.getCount();
-        } else if (!recipe.getFluidOutputs().isEmpty()) {
-            FluidStack fluid = recipe.getFluidOutputs().get(0);
-            output = fluid.getLocalizedName() + " * " + fluid.amount;
-        }
-        return output;
-    }
-
 }
