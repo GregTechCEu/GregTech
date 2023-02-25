@@ -6,16 +6,12 @@ import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
-import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
@@ -43,20 +39,6 @@ public class GregTechMod {
 
     @EventHandler
     public void onConstruction(FMLConstructionEvent event) {
-        //TODO is setting this needed?
-        try {
-            Field field = LaunchClassLoader.class.getDeclaredField("DEBUG");
-            field.setAccessible(true);
-
-            Field modifiers = Field.class.getDeclaredField("modifiers");
-            modifiers.setAccessible(true);
-            modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-            field.setBoolean(null, true);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
         moduleManager.registerContainer(new GregTechModules());
