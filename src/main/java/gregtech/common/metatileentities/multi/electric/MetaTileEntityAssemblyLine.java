@@ -1,9 +1,9 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import codechicken.lib.vec.Vector3;
-import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -32,9 +33,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -48,6 +49,10 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     private static final ResourceLocation LASER_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser.png");
     private static final ResourceLocation LASER_HEAD_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser_start.png");
 
+    @SideOnly(Side.CLIENT)
+    private GTLaserBeamParticle[][] beamParticles;
+    private int beamCount;
+
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
     }
@@ -57,49 +62,70 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         return new MetaTileEntityAssemblyLine(metaTileEntityId);
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(FRONT, UP, RIGHT)
+        FactoryBlockPattern pattern = FactoryBlockPattern.start(FRONT, UP, RIGHT)
                 .aisle("FIF", "RTR", "SAG", " Y ")
                 .aisle("FIF", "RTR", "DAG", " Y ").setRepeatable(3, 15)
                 .aisle("FOF", "RTR", "GAG", " Y ")
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
                         .or(autoAbilities(false, true, false, false, false, false, false))
-
-                        // if ordered fluids are enabled, ban multi fluid hatches, otherwise allow all types
-                        .or(ConfigHolder.machines.enableResearch && ConfigHolder.machines.orderedAssembly && ConfigHolder.machines.orderedFluidAssembly ?
-                                metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
-                                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch)).toArray(MetaTileEntity[]::new)).setMaxGlobalLimited(4) :
-                                abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(4)))
-
-                .where('O', abilities(MultiblockAbility.EXPORT_ITEMS).addTooltips("gregtech.multiblock.pattern.location_end"))
-                .where('Y', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
-                .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[0]))
-                .where('G', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING)))
+                        .or(orderedFluidPredicate()))
+                .where('O', abilities(MultiblockAbility.EXPORT_ITEMS)
+                        .addTooltips("gregtech.multiblock.pattern.location_end"))
+                .where('Y', states(getCasingState())
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY)
+                                .setMinGlobalLimited(1)
+                                .setMaxGlobalLimited(3)))
+                .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV]))
+                .where('G', states(getGrateState()))
                 .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
                 .where('R', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS)))
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
+                .where('D', dataHatchPredicate())
+                .where(' ', any());
+        return pattern.build();
+    }
 
-                // if research is enabled, require the data hatch, otherwise use a grate instead
-                .where('D', ConfigHolder.machines.enableResearch ? abilities(MultiblockAbility.DATA_ACCESS_HATCH)
-                        .setMinGlobalLimited(1).setMaxGlobalLimited(2).or(states(getGrateState())) :
-                        states(getGrateState()))
-                .where(' ', any())
-                .build();
+    @Nonnull
+    protected static IBlockState getCasingState() {
+        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+    }
+
+    @Nonnull
+    protected static IBlockState getGrateState() {
+        return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING);
+    }
+
+    @Nonnull
+    protected static TraceabilityPredicate orderedFluidPredicate() {
+        // if ordered fluids are enabled, ban multi fluid hatches, otherwise allow all types
+        if (ConfigHolder.machines.enableResearch && ConfigHolder.machines.orderedAssembly && ConfigHolder.machines.orderedFluidAssembly) {
+            return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
+                    .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
+                    .toArray(MetaTileEntity[]::new))
+                    .setMaxGlobalLimited(4);
+        }
+        return abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(4);
+    }
+
+    @Nonnull
+    protected static TraceabilityPredicate dataHatchPredicate() {
+        // if research is enabled, require the data hatch, otherwise use a grate instead
+        if (ConfigHolder.machines.enableResearch) {
+            return abilities(MultiblockAbility.DATA_ACCESS_HATCH)
+                    .setMinGlobalLimited(1)
+                    .setMaxGlobalLimited(2)
+                    .or(states(getGrateState()));
+        }
+        return states(getGrateState());
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.SOLID_STEEL_CASING;
-    }
-
-    protected IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
-    }
-
-    protected IBlockState getGrateState() {
-        return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING);
     }
 
     @Override
@@ -112,10 +138,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         if (frontFacing == EnumFacing.WEST) return BlockPos::getZ;
         return BlockPos::hashCode;
     }
-
-    private int beamCount;
-    @SideOnly(Side.CLIENT)
-    private GTLaserBeamParticle[][] beamParticles;
 
     @Override
     public void update() {
@@ -177,11 +199,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    private void writeParticles(PacketBuffer buf) {
+    private void writeParticles(@Nonnull PacketBuffer buf) {
         buf.writeVarInt(beamCount);
     }
 
-    private void readParticles(PacketBuffer buf) {
+    private void readParticles(@Nonnull PacketBuffer buf) {
         beamCount = buf.readVarInt();
         if (beamParticles == null) {
             beamParticles = new GTLaserBeamParticle[17][2];
@@ -217,6 +239,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
+    @Nonnull
     private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
         GTLaserBeamParticle particle = new GTLaserBeamParticle(world, startPos, endPos)
                 .setBody(LASER_LOCATION)
@@ -238,10 +261,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
-        if (!ConfigHolder.machines.enableResearch) return true;
+        if (!ConfigHolder.machines.enableResearch) {
+            return super.checkRecipe(recipe, consumeIfSuccess);
+        }
 
-        List<IDataAccessHatch> dataHatches = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH);
-        for (IDataAccessHatch hatch : dataHatches) {
+        for (IDataAccessHatch hatch : getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
 
