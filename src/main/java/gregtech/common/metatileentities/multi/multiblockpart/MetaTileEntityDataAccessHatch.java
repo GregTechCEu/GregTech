@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -18,10 +19,13 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.I18n;
@@ -29,6 +33,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -37,36 +42,56 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch, IDataInfoProvider {
 
-    private final Set<Recipe> recipes = new ObjectOpenHashSet<>();
+    private final Set<Recipe> recipes;
+    private final boolean isCreative;
 
-    public MetaTileEntityDataAccessHatch(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityDataAccessHatch(ResourceLocation metaTileEntityId, int tier, boolean isCreative) {
         super(metaTileEntityId, tier, false);
+        this.isCreative = isCreative;
+        this.recipes = isCreative ? Collections.emptySet() : new ObjectOpenHashSet<>();
         rebuildData();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier());
+        return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier(), this.isCreative);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
+        if (getController() instanceof MetaTileEntityAssemblyLine && getController().isStructureFormed()) {
+            IVertexOperation colourMultiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                // render grate texture on the top and bottom
+                if (facing.getAxis() == EnumFacing.Axis.Y) {
+                    Textures.GRATE_CASING.renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
+                } else {
+                    getBaseTexture().renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
+                }
+            }
+        } else {
+            super.renderMetaTileEntity(renderState, translation, pipeline);
+        }
         if (shouldRenderOverlay()) {
-            Textures.DATA_ACCESS_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            (isCreative ? Textures.CREATIVE_DATA_ACCESS_HATCH : Textures.DATA_ACCESS_HATCH).renderSided(
+                    getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
+        if (isCreative) return super.createImportItemHandler();
         return new ItemStackHandler(getInventorySize()) {
             @Override
             protected void onContentsChanged(int slot) {
@@ -103,6 +128,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
+        if (isCreative) return null;
         int rowSize = (int) Math.sqrt(getInventorySize());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 * rowSize + 94)
                 .label(6, 6, getMetaFullName());
@@ -119,7 +145,13 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                 .build(getHolder(), entityPlayer);
     }
 
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return !this.isCreative;
+    }
+
     private void rebuildData() {
+        if (isCreative) return;
         recipes.clear();
         for (int i = 0; i < this.importItems.getSlots(); i++) {
             ItemStack stack = this.importItems.getStackInSlot(i);
@@ -139,6 +171,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
+    public boolean isCreative() {
+        return this.isCreative;
+    }
+
+    @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         if (ConfigHolder.machines.enableResearch) {
             super.getSubItems(creativeTab, subItems);
@@ -146,21 +183,27 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
+        if (isCreative) {
+            tooltip.add(I18n.format("gregtech.creative_tooltip.1")
+                    + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
+                    + I18n.format("gregtech.creative_tooltip.3"));
+        } else {
+            tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
+        }
     }
 
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
+        if (recipes.isEmpty()) return Collections.emptyList();
         List<ITextComponent> list = new ObjectArrayList<>();
-        if (recipes.isEmpty()) return list;
 
         list.add(new TextComponentTranslation("behavior.data_item.assemblyline.title"));
         list.add(new TextComponentString(""));
-        Set<GTRecipeInput> itemsAdded = new ObjectOpenHashSet<>();
+        Collection<GTRecipeInput> itemsAdded = new ObjectOpenHashSet<>();
         for (Recipe recipe : recipes) {
             ItemStack stack = recipe.getOutputs().get(0);
             GTRecipeInput gtRecipeInput = GTRecipeItemInput.getOrCreate(stack);

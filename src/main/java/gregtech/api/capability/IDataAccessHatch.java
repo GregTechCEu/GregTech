@@ -18,7 +18,5 @@ public interface IDataAccessHatch {
      *
      * @return true if this Data Access Hatch is creative or not
      */
-    default boolean isCreative() {
-        return false;
-    }
+    boolean isCreative();
 }
