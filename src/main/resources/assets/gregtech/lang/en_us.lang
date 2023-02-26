@@ -4341,6 +4341,7 @@ behaviour.paintspray.green.tooltip=Can paint things in Green
 behaviour.paintspray.red.tooltip=Can paint things in Red
 behaviour.paintspray.black.tooltip=Can paint things in Black
 behaviour.paintspray.uses=Remaining Uses: %,d
+behaviour.paintspray.offhand=Hold in offhand to color while placing blocks
 behaviour.prospecting=Usable for Prospecting
 
 # Multiblock machine controllers
@@ -4768,6 +4769,7 @@ gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle
 gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
 gregtech.tool_action.screwdriver.auto_collapse=§8Use Screwdriver to toggle Item collapsing
 gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-Output
+gregtech.tool_action.screwdriver.auto_output_down=§8Use Screwdriver to toggle Auto-Output from the Bottom
 gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
 gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections, sneak to block Connections

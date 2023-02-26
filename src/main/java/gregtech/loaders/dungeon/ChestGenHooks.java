@@ -29,13 +29,11 @@ public class ChestGenHooks {
 
     private static final LootCondition[] NO_CONDITIONS = new LootCondition[0];
 
-    private static final ChestGenHooks instance = new ChestGenHooks();
-
     private ChestGenHooks() {
     }
 
     public static void init() {
-        MinecraftForge.EVENT_BUS.register(instance);
+        MinecraftForge.EVENT_BUS.register(ChestGenHooks.class);
     }
 
     @SubscribeEvent
@@ -45,7 +43,7 @@ public class ChestGenHooks {
             List<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
             for (LootEntryItem entry : entryItems) {
                 try {
-                    if(ConfigHolder.misc.debug) {
+                    if (ConfigHolder.misc.debug) {
                         GTLog.logger.info("adding {} to lootTable", entry.getEntryName());
                     }
                     mainPool.addEntry(entry);

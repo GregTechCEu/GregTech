@@ -129,7 +129,6 @@ public class CoreModule implements IGregTechModule {
         if (Loader.isModLoaded(GTValues.MODID_CT)) {
             logger.info("Running early CraftTweaker initialization scripts...");
             runEarlyCraftTweakerScripts();
-            MinecraftForge.EVENT_BUS.register(this);
         }
 
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
