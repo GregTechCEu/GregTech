@@ -100,9 +100,6 @@ gregtech.multiblock.advanced_processing_array.description=处理阵列可将最�
 item.invalid.name=无效物品
 fluid.empty=空
 
-gregtech.tooltip.hold_shift=按住 §aShift§7 以查看详情
-gregtech.tooltip.fluid_pipe_hold_shift=按住 §aShift§7 以查看流体容器详情
-
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - %s级
 metaitem.electric.discharge_mode.enabled=§e释能模式已启用
@@ -979,7 +976,7 @@ metaitem.behavior.mode_switch.tooltip=潜行右击以切换模式
 metaitem.behavior.mode_switch.mode_switched=§e模式设置为：%s
 metaitem.behavior.mode_switch.current_mode=模式：%s
 
-metaitem.tool.tooltip.primary_material=§f材料：§e%s（%s级）
+metaitem.tool.tooltip.primary_material=§f材料：§e%s
 metaitem.tool.tooltip.attack_damage=§f攻击伤害：§9%,.1f
 metaitem.tool.tooltip.mining_speed=§f采掘速度：§6%,.1f
 metaitem.tool.tooltip.durability=§f耐久度：§a%,d / %,d
@@ -2333,6 +2330,7 @@ tile.casing.ev=EV机器外壳
 tile.casing.iv=IV机器外壳
 
 # Wire coil blocks
+tile.wire_coil.tooltip_extended_info=§8按住 SHIFT 获得更多信息
 tile.wire_coil.tooltip_heat=基础炉温：§e%,dK
 tile.wire_coil.tooltip_smelter=§a多重冶炼炉§7：
 tile.wire_coil.tooltip_parallel_smelter=  最大并行处理配方数：§e%s§7
