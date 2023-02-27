@@ -111,9 +111,10 @@ public class EnergyNetHandler implements IEnergyContainer {
                 }
             }
 
-            net.addEnergyFluxPerSec(amperesUsed * voltage);
             if (amperage == amperesUsed) break;
         }
+
+        net.addEnergyFluxPerSec(amperesUsed * voltage);
         return amperesUsed;
     }
 
