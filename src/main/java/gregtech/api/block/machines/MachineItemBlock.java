@@ -6,6 +6,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -114,7 +116,7 @@ public class MachineItemBlock extends ItemBlock {
         //item specific tooltip like: gregtech.machine.lathe.lv.tooltip
         String tooltipLocale = metaTileEntity.getMetaName() + ".tooltip";
         if (I18n.hasKey(tooltipLocale)) {
-            String[] lines = I18n.format(tooltipLocale).split("/n");
+            String[] lines = GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipLocale));
             tooltip.addAll(Arrays.asList(lines));
         }
 
@@ -124,13 +126,24 @@ public class MachineItemBlock extends ItemBlock {
             //only add tierless tooltip if it's key is not equal to normal tooltip key (i.e if machine name has dot in it's name)
             //case when it's not true would be any machine extending from TieredMetaTileEntity but having only one tier
             if (!tooltipLocale.equals(tierlessTooltipLocale) && I18n.hasKey(tierlessTooltipLocale)) {
-                String[] lines = I18n.format(tierlessTooltipLocale).split("/n");
+                String[] lines = GTUtility.getForwardNewLineRegex().split(I18n.format(tierlessTooltipLocale));
                 tooltip.addAll(Arrays.asList(lines));
             }
         }
+
+        // additional tooltips that the MTE provides
         metaTileEntity.addInformation(stack, worldIn, tooltip, flagIn.isAdvanced());
 
-        if (flagIn.isAdvanced()) {
+        // tool usages tooltips
+        if (metaTileEntity.showToolUsages()) {
+            if (TooltipHelper.isShiftDown()) {
+                metaTileEntity.addToolUsages(stack, worldIn, tooltip, flagIn.isAdvanced());
+            } else {
+                tooltip.add(I18n.format("gregtech.tool_action.show_tooltips"));
+            }
+        }
+
+        if (ConfigHolder.misc.debug) {
             tooltip.add(String.format("MetaTileEntity Id: %s", metaTileEntity.metaTileEntityId.toString()));
         }
     }

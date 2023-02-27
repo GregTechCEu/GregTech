@@ -1,7 +1,9 @@
 package gregtech.common.blocks.wood;
 
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nonnull;
@@ -9,12 +11,12 @@ import javax.annotation.Nonnull;
 public class BlockGregPlanks extends VariantBlock<BlockGregPlanks.BlockType> {
 
     public BlockGregPlanks() {
-        super(net.minecraft.block.material.Material.IRON);
+        super(Material.WOOD);
         setTranslationKey("planks");
         setHardness(2.0F);
         setResistance(5.0F);
         setSoundType(SoundType.WOOD);
-        setHarvestLevel("axe", 0);
+        setHarvestLevel(ToolClasses.AXE, 0);
         setDefaultState(getState(BlockType.RUBBER_PLANK));
     }
 

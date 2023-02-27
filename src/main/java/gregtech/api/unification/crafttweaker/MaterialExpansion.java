@@ -175,6 +175,15 @@ public class MaterialExpansion {
         return 0;
     }
 
+    @ZenGetter("toolHarvestLevel")
+    public static int toolHarvestLevel(Material m) {
+        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        if (prop != null) {
+            return prop.getToolHarvestLevel();
+        } else logError(m, "get the tool harvest level", "Tool");
+        return 0;
+    }
+
     @ZenGetter("toolEnchantability")
     public static int toolEnchant(Material m) {
         ToolProperty prop = m.getProperty(PropertyKey.TOOL);
@@ -196,13 +205,22 @@ public class MaterialExpansion {
     }
 
     @ZenMethod
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability, @Optional int enchantability, @Optional boolean shouldIngoreCraftingTools) {
+    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+                                    @Optional int enchantability, @Optional boolean shouldIngoreCraftingTools) {
+        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, shouldIngoreCraftingTools);
+    }
+
+    @ZenMethod
+    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+                                    @Optional int enchantability, @Optional int toolHarvestLevel,
+                                    @Optional boolean shouldIngoreCraftingTools) {
         if (checkFrozen("set tool stats")) return;
         ToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             prop.setToolSpeed(toolSpeed);
             prop.setToolAttackDamage(toolAttackDamage);
             prop.setToolDurability(toolDurability);
+            prop.setToolHarvestLevel(toolHarvestLevel == 0 ? 2 : toolHarvestLevel);
             prop.setToolEnchantability(enchantability == 0 ? 10 : enchantability);
             prop.setShouldIgnoreCraftingTools(shouldIngoreCraftingTools);
         } else logError(m, "change tool stats", "Tool");

@@ -60,10 +60,9 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(false, MetaTileEntities.HULL, "PLP", "CHC", 'P', HULL_PLATE, 'L', PLATE, 'C', CABLE, 'H', CASING);
 
         if (ConfigHolder.recipes.harderBrickRecipes) {
-            ModHandler.addShapedRecipe("bucket_of_concrete", FluidUtil.getFilledBucket(Materials.Concrete.getFluid(1000)),
-                    "CBS", "CWQ", " L ",
+            ModHandler.addFluidReplaceRecipe("bucket_of_concrete", FluidUtil.getFilledBucket(Materials.Concrete.getFluid(1000)),
+                    "C S", "CWQ", " L ",
                     'C', new UnificationEntry(OrePrefix.dust, Materials.Calcite),
-                    'B', new ItemStack(Items.BUCKET),
                     'S', new UnificationEntry(OrePrefix.dust, Materials.Stone),
                     'W', new ItemStack(Items.WATER_BUCKET),
                     'Q', new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
@@ -78,7 +77,7 @@ public class MetaTileEntityLoader {
             ModHandler.addShapedRecipe("casing_primitive_bricks", MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS, 1), "XX", "XX", 'X', MetaItems.FIRECLAY_BRICK);
         }
 
-        ModHandler.addShapedRecipe("casing_coke_bricks", MetaBlocks.METAL_CASING.getItemVariant(COKE_BRICKS, 1), "XX", "XX", 'X', MetaItems.COKE_OVEN_BRICK);
+        ModHandler.addShapedRecipe(true, "casing_coke_bricks", MetaBlocks.METAL_CASING.getItemVariant(COKE_BRICKS, 1), "XX", "XX", 'X', MetaItems.COKE_OVEN_BRICK);
         ModHandler.addShapedRecipe(true, "casing_bronze_bricks", MetaBlocks.METAL_CASING.getItemVariant(BRONZE_BRICKS, 2), "PhP", "PBP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B', new ItemStack(Blocks.BRICK_BLOCK, 1));
         ModHandler.addShapedRecipe(true, "casing_steel_solid", MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID, 2), "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.Steel));
         ModHandler.addShapedRecipe(true, "casing_titanium_stable", MetaBlocks.METAL_CASING.getItemVariant(TITANIUM_STABLE, 2), "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.Titanium));
@@ -176,6 +175,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "passthrough_hatch_item", MetaTileEntities.PASSTHROUGH_HATCH_ITEM.getStackForm(), " C ", "GHG", " S ", 'C', MetaItems.CONVEYOR_MODULE_HV.getStackForm(), 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Steel), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'S', OreDictNames.chestWood);
         ModHandler.addShapedRecipe(true, "passthrough_hatch_fluid", MetaTileEntities.PASSTHROUGH_HATCH_FLUID.getStackForm(), " C ", "GHG", " S ", 'C', MetaItems.ELECTRIC_PUMP_HV.getStackForm(), 'G', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Steel), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'S', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS));
 
+        ModHandler.addShapedRecipe(true, "charcoal_pile_igniter", MetaTileEntities.CHARCOAL_PILE_IGNITER.getStackForm(), "ERE", "EHE", "FFF", 'E', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.rotor, Materials.Iron), 'H', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'F', new ItemStack(Items.FLINT));
+
         // STEAM MACHINES
         ModHandler.addShapedRecipe(true, "bronze_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), "PPP", "PhP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze));
         ModHandler.addShapedRecipe(true, "bronze_bricks_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), "PPP", "PhP", "BBB", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B', new ItemStack(Blocks.BRICK_BLOCK));
@@ -208,9 +209,9 @@ public class MetaTileEntityLoader {
         // MULTI BLOCK CONTROLLERS
         ModHandler.addShapedRecipe(true, "bronze_primitive_blast_furnace", MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), "hRS", "PBR", "dRS", 'R', new UnificationEntry(OrePrefix.stick, Materials.Iron), 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron), 'B', MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS));
         ModHandler.addShapedRecipe(true, "coke_oven", MetaTileEntities.COKE_OVEN.getStackForm(), "PIP", "IwI", "PIP", 'P', MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.COKE_BRICKS), 'I', new UnificationEntry(OrePrefix.plate, Materials.Iron));
-        ModHandler.addShapelessRecipe("coke_oven_hatch", MetaTileEntities.COKE_OVEN_HATCH.getStackForm(), MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.COKE_BRICKS), MetaTileEntities.WOODEN_DRUM.getStackForm());
+        ModHandler.addShapedRecipe(true, "coke_oven_hatch", MetaTileEntities.COKE_OVEN_HATCH.getStackForm(), "CD", 'C', MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.COKE_BRICKS), 'D', MetaTileEntities.WOODEN_DRUM.getStackForm());
         ModHandler.addShapedRecipe(true, "vacuum_freezer", MetaTileEntities.VACUUM_FREEZER.getStackForm(), "PPP", "CMC", "WCW", 'M', MetaBlocks.METAL_CASING.getItemVariant(ALUMINIUM_FROSTPROOF), 'P', MetaItems.ELECTRIC_PUMP_HV, 'C', new UnificationEntry(OrePrefix.circuit, Tier.EV), 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold));
-        ModHandler.addShapedRecipe(true, "implosion_compressor", MetaTileEntities.IMPLOSION_COMPRESSOR.getStackForm(), "OOO", "CMC", "WCW", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'O', new UnificationEntry(OrePrefix.block, Materials.Obsidian), 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium));
+        ModHandler.addShapedRecipe(true, "implosion_compressor", MetaTileEntities.IMPLOSION_COMPRESSOR.getStackForm(), "OOO", "CMC", "WCW", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'O', new UnificationEntry(OrePrefix.block, Materials.Obsidian), 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold));
         ModHandler.addShapedRecipe(true, "distillation_tower", MetaTileEntities.DISTILLATION_TOWER.getStackForm(), "CBC", "FMF", "CBC", 'M', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'B', new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.StainlessSteel), 'C', new UnificationEntry(OrePrefix.circuit, Tier.EV), 'F', MetaItems.ELECTRIC_PUMP_HV);
         ModHandler.addShapedRecipe(true, "cracking_unit", MetaTileEntities.CRACKER.getStackForm(), "CEC", "PHP", "CEC", 'C', MetaBlocks.WIRE_COIL.getItemVariant(CUPRONICKEL), 'E', MetaItems.ELECTRIC_PUMP_HV, 'P', new UnificationEntry(OrePrefix.circuit, Tier.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
 
@@ -219,7 +220,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "extreme_combustion_engine", MetaTileEntities.EXTREME_COMBUSTION_ENGINE.getStackForm(), "PCP", "EME", "GWG", 'M', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'P', MetaItems.ELECTRIC_PISTON_IV.getStackForm(), 'E', MetaItems.ELECTRIC_MOTOR_IV.getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV), 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.HSSG), 'G', new UnificationEntry(OrePrefix.gear, Materials.TungstenSteel));
         ModHandler.addShapedRecipe(true, "engine_intake_casing", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(MultiblockCasingType.ENGINE_INTAKE_CASING, 2), "PhP", "RFR", "PwP", 'R', new UnificationEntry(OrePrefix.rotor, Materials.Titanium), 'F', MetaBlocks.METAL_CASING.getItemVariant(TITANIUM_STABLE), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Titanium));
         ModHandler.addShapedRecipe(true, "extreme_engine_intake_casing", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING, 2), "PhP", "RFR", "PwP", 'R', new UnificationEntry(OrePrefix.rotor, Materials.TungstenSteel), 'F', MetaBlocks.METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.TungstenSteel));
-        ModHandler.addShapedRecipe(true, "multi_furnace", MetaTileEntities.MULTI_FURNACE.getStackForm(), "PPP", "ASA", "CAC", 'P', Blocks.FURNACE, 'A', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'S', MetaBlocks.METAL_CASING.getItemVariant(INVAR_HEATPROOF), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.AnnealedCopper));
+        ModHandler.addShapedRecipe(true, "multi_furnace", MetaTileEntities.MULTI_FURNACE.getStackForm(), "PPP", "ASA", "CAC", 'P', Blocks.FURNACE, 'A', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'S', MetaBlocks.METAL_CASING.getItemVariant(INVAR_HEATPROOF), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper));
 
         ModHandler.addShapedRecipe(true, "large_steam_turbine", MetaTileEntities.LARGE_STEAM_TURBINE.getStackForm(), "PSP", "SAS", "CSC", 'S', new UnificationEntry(OrePrefix.gear, Materials.Steel), 'P', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'A', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'C', new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Steel));
         ModHandler.addShapedRecipe(true, "large_gas_turbine", MetaTileEntities.LARGE_GAS_TURBINE.getStackForm(), "PSP", "SAS", "CSC", 'S', new UnificationEntry(OrePrefix.gear, Materials.StainlessSteel), 'P', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.EV), 'A', MetaTileEntities.HULL[GTValues.EV].getStackForm(), 'C', new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.StainlessSteel));

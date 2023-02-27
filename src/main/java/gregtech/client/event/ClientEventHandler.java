@@ -2,36 +2,58 @@ package gregtech.client.event;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import gregtech.api.GTValues;
+import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemHUDProvider;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.handler.TerminalARRenderer;
-import gregtech.client.renderer.handler.ToolOverlayRenderer;
 import gregtech.client.utils.DepthTextureUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
+
+import static gregtech.api.GTValues.CLIENT_TIME;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientEventHandler {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
-        ToolOverlayRenderer.onDrawBlockHighlight(event);
+        if (event.getTarget().getBlockPos() == null) {
+            return;
+        }
+        TileEntity tileEntity = event.getPlayer().world.getTileEntity(event.getTarget().getBlockPos());
+        if (tileEntity instanceof MetaTileEntityHolder) {
+            if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                event.setCanceled(true);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -43,6 +65,8 @@ public class ClientEventHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         GTParticleManager.clientTick(event);
         TerminalARRenderer.onClientTick(event);
+        TooltipHelper.onClientTick(event);
+        CLIENT_TIME++;
     }
 
     @SubscribeEvent
@@ -91,6 +115,39 @@ public class ClientEventHandler {
     public static void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
         if (GTValues.MODID.equals(event.getModID()) && event.isWorldRunning()) {
             Minecraft.getMinecraft().renderGlobal.loadRenderers();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderArmorHUD(TickEvent.RenderTickEvent event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.inGameHasFocus && mc.world != null && !mc.gameSettings.showDebugInfo && Minecraft.isGuiEnabled()) {
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.HEAD.getIndex()));
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex()));
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.LEGS.getIndex()));
+            renderHUDMetaArmor(mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.FEET.getIndex()));
+            renderHUDMetaItem(mc.player.getHeldItem(EnumHand.MAIN_HAND));
+            renderHUDMetaItem(mc.player.getHeldItem(EnumHand.OFF_HAND));
+        }
+    }
+
+    private static void renderHUDMetaArmor(@Nonnull ItemStack stack) {
+        if (stack.getItem() instanceof ArmorMetaItem) {
+            ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
+            if (valueItem.getArmorLogic() instanceof IItemHUDProvider) {
+                IItemHUDProvider.tryDrawHud((IItemHUDProvider) valueItem.getArmorLogic(), stack);
+            }
+        }
+    }
+
+    private static void renderHUDMetaItem(@Nonnull ItemStack stack) {
+        if (stack.getItem() instanceof MetaItem<?>) {
+            MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+            for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                if (behaviour instanceof IItemHUDProvider) {
+                    IItemHUDProvider.tryDrawHud((IItemHUDProvider) behaviour, stack);
+                }
+            }
         }
     }
 }

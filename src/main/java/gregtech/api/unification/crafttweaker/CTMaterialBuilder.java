@@ -10,6 +10,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.enchantment.Enchantment;
 import stanhebben.zenscript.annotations.Optional;
@@ -145,11 +146,14 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder toolStats(float speed, float damage, int durability, @Optional int enchantability) {
-        if (enchantability == 0) {
-            enchantability = 21; // Lowest enchantability by default
-        }
-        backingBuilder.toolStats(speed, damage, durability, enchantability);
+    public CTMaterialBuilder toolStats(float speed, float damage, int durability, int harvestLevel, @Optional int enchantability) {
+        if (enchantability == 0) enchantability = 10;
+        backingBuilder.toolStats(ToolProperty.Builder.of(speed, damage, durability, harvestLevel).enchantability(enchantability).build());
+        return this;
+    }
+    @ZenMethod
+    public CTMaterialBuilder rotorStats(float speed, float damage, int durability) {
+        backingBuilder.rotorStats(speed, damage, durability);
         return this;
     }
 
@@ -234,6 +238,12 @@ public class CTMaterialBuilder {
     @ZenMethod
     public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
         backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof);
+        return this;
+    }
+
+    @ZenMethod
+    public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+        backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof);
         return this;
     }
 

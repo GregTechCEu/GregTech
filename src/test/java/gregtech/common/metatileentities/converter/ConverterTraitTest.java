@@ -10,10 +10,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class ConverterTraitTest {
 
@@ -22,7 +24,7 @@ public class ConverterTraitTest {
     private static ConverterTestWrapper converter_8A;
     private static ConverterTestWrapper converter_16A;
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
         converter_1A = new ConverterTestWrapper(GTValues.LV, 1);
@@ -33,10 +35,10 @@ public class ConverterTraitTest {
 
     @Test
     public void Test_Converters_Valid() {
-        assertNotNull(converter_1A);
-        assertNotNull(converter_4A);
-        assertNotNull(converter_8A);
-        assertNotNull(converter_16A);
+        MatcherAssert.assertThat(converter_1A, notNullValue());
+        MatcherAssert.assertThat(converter_4A, notNullValue());
+        MatcherAssert.assertThat(converter_8A, notNullValue());
+        MatcherAssert.assertThat(converter_16A, notNullValue());
     }
 
     @Test
@@ -46,21 +48,21 @@ public class ConverterTraitTest {
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
         IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
-        assertNotNull(storage);
-        assertNotNull(container);
+        MatcherAssert.assertThat(storage, notNullValue());
+        MatcherAssert.assertThat(container, notNullValue());
 
         // Add FE
         storage.receiveEnergy(128, false); // 1A LV, in FE
-        assertEquals(128, storage.getEnergyStored());
-        assertEquals(32, container.getEnergyStored());
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(128));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(32L));
 
         // Push to EU
         ConverterTrait trait = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null);
-        assertNotNull(trait);
+        MatcherAssert.assertThat(trait, notNullValue());
         trait.pushEnergy();
-        assertEquals(32, EUStorage.getEnergyStored());
-        assertEquals(0, container.getEnergyStored());
-        assertEquals(0, storage.getEnergyStored());
+        MatcherAssert.assertThat(EUStorage.getEnergyStored(), is(32L));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(0L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(0));
     }
 
     @Test
@@ -70,14 +72,14 @@ public class ConverterTraitTest {
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
         IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
-        assertNotNull(storage);
-        assertNotNull(container);
+        MatcherAssert.assertThat(storage, notNullValue());
+        MatcherAssert.assertThat(container, notNullValue());
 
         // Add weird amount of FE
         int accepted = storage.receiveEnergy(130, false); // 1A LV + a little extra, in FE
-        assertEquals(128, accepted);
-        assertEquals(128, storage.getEnergyStored());
-        assertEquals(32, container.getEnergyStored());
+        MatcherAssert.assertThat(accepted, is(128));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(128));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(32L));
     }
 
     /**
@@ -94,14 +96,14 @@ public class ConverterTraitTest {
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
         IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
-        assertNotNull(storage);
-        assertNotNull(container);
+        MatcherAssert.assertThat(storage, notNullValue());
+        MatcherAssert.assertThat(container, notNullValue());
 
         // Demonstrate that less than 4 FE cannot be accepted
         int accepted = storage.receiveEnergy(3, false);
-        assertEquals(0, accepted);
-        assertEquals(0, storage.getEnergyStored());
-        assertEquals(0, container.getEnergyStored());
+        MatcherAssert.assertThat(accepted, is(0));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(0));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(0L));
     }
 
     @Test
@@ -111,21 +113,21 @@ public class ConverterTraitTest {
 
         IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.SOUTH);
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.NORTH);
-        assertNotNull(container);
-        assertNotNull(storage);
+        MatcherAssert.assertThat(container, notNullValue());
+        MatcherAssert.assertThat(storage, notNullValue());
 
         // Add EU
         container.addEnergy(32); // 1A LV
-        assertEquals(32, container.getEnergyStored());
-        assertEquals(128, storage.getEnergyStored());
+        MatcherAssert.assertThat(container.getEnergyStored(), is(32L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(128));
 
         // Push to FE
         ConverterTrait trait = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null);
-        assertNotNull(trait);
+        MatcherAssert.assertThat(trait, notNullValue());
         trait.pushEnergy();
-        assertEquals(128, FEStorage.getEnergyStored());
-        assertEquals(0, container.getEnergyStored());
-        assertEquals(0, storage.getEnergyStored());
+        MatcherAssert.assertThat(FEStorage.getEnergyStored(), is(128));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(0L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(0));
     }
 
     @Test
@@ -135,42 +137,42 @@ public class ConverterTraitTest {
 
         IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.SOUTH);
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.NORTH);
-        assertNotNull(container);
-        assertNotNull(storage);
+        MatcherAssert.assertThat(container, notNullValue());
+        MatcherAssert.assertThat(storage, notNullValue());
 
         // Add EU
         container.addEnergy(32); // 1A LV
-        assertEquals(32, container.getEnergyStored());
-        assertEquals(128, storage.getEnergyStored());
+        MatcherAssert.assertThat(container.getEnergyStored(), is(32L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(128));
 
         // Mostly fill dummy FE Storage
         FEStorage.receiveEnergy(995, false);
-        assertEquals(995, FEStorage.getEnergyStored());
+        MatcherAssert.assertThat(FEStorage.getEnergyStored(), is(995));
 
         // Drain a little bit of energy
         // Storage can hold 5 FE, but converter can only output 4 due to not voiding EU
         ConverterTrait trait = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null);
-        assertNotNull(trait);
+        MatcherAssert.assertThat(trait, notNullValue());
         trait.pushEnergy();
-        assertEquals(999, FEStorage.getEnergyStored());
-        assertEquals(31, container.getEnergyStored());
-        assertEquals(124, storage.getEnergyStored());
+        MatcherAssert.assertThat(FEStorage.getEnergyStored(), is(999));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(31L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(124));
 
         // Another push should not send anything
         trait.pushEnergy();
-        assertEquals(999, FEStorage.getEnergyStored());
-        assertEquals(31, container.getEnergyStored());
-        assertEquals(124, storage.getEnergyStored());
+        MatcherAssert.assertThat(FEStorage.getEnergyStored(), is(999));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(31L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(124));
 
         // Remove a little bit of energy
         FEStorage.extractEnergy(3, false);
-        assertEquals(996, FEStorage.getEnergyStored());
+        MatcherAssert.assertThat(FEStorage.getEnergyStored(), is(996));
 
         // Push again
         trait.pushEnergy();
-        assertEquals(1000, FEStorage.getEnergyStored());
-        assertEquals(30, container.getEnergyStored());
-        assertEquals(120, storage.getEnergyStored());
+        MatcherAssert.assertThat(FEStorage.getEnergyStored(), is(1000));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(30L));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(120));
     }
 
     @Test
@@ -184,21 +186,21 @@ public class ConverterTraitTest {
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
         IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
-        assertNotNull(storage);
-        assertNotNull(container);
+        MatcherAssert.assertThat(storage, notNullValue());
+        MatcherAssert.assertThat(container, notNullValue());
 
         // No changes should be observed
         int accepted = storage.receiveEnergy(128, false);
-        assertEquals(128, accepted);
-        assertEquals(128, storage.getEnergyStored());
-        assertEquals(32, container.getEnergyStored());
+        MatcherAssert.assertThat(accepted, is(128));
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(128));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(32L));
 
         converter_1A.setFeToEu(false);
 
         // When flipped to EU -> FE, stored EU is expected to be same, while FE is expected to become eq to stored EU
         // according to config value.
-        assertEquals(32, storage.getEnergyStored());
-        assertEquals(32, container.getEnergyStored());
+        MatcherAssert.assertThat(storage.getEnergyStored(), is(32));
+        MatcherAssert.assertThat(container.getEnergyStored(), is(32L));
 
         ConfigHolder.compat.energy.feToEuRatio = 4;
         ConfigHolder.compat.energy.euToFeRatio = 4;
@@ -295,7 +297,7 @@ public class ConverterTraitTest {
 
         @Override
         public long changeEnergy(long differenceAmount) {
-            assertTrue(differenceAmount >= 0);
+            MatcherAssert.assertThat(differenceAmount >= 0, is(true));
             return addEnergy(differenceAmount);
         }
 

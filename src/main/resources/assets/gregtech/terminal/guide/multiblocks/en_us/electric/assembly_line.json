@@ -1,7 +1,14 @@
 {
   "section": "Electric",
   "title": "Assembly Line",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oNo. The Assembly Line is not just a big Assembler, it\u0027s a lot more than that!\nYou can also call it the Assline. Do not feel guilty.§r\n\nMaking §dLuV§r Components will require more work.\nThe §3Assembly Line§r is an entry point towards late game.\n\nThis Multiblock has a §cvariable size§r. Each §3ULV Input Bus§r accepts a different stack of items.\nYou will want to build this with a size of §d10§r to get started, or of a size of §d14§r to accept all possible recipes.\n\nRecipes require §aFluids§r, so it is a good idea to keep the §3Input Hatches§r permanently filled with §dSoldering Alloy§r, §dLubricant§r and §dStyrene-Butadienne Rubber§r.\n\nMy recommendation of Assembly Line §4automation§r goes as follows:\nHave your Interface face an §3Item P2P§r. Set two output P2Ps, into the first §3Input Bus§r, and into §3Item Pipes§r. Make your Item Pipes connect to all Input Buses including the first.\nDo not forget §dBlocking Mode§r, and you have got yourself an easy automation! This will also work flawlessly once we inevitably add ordered item inputs.\n\n\n§bLots of Lore:§r GT5\u0027s Assembly Line is a massive project to work towards, even more so than here. You are required to scan items to put their construction data into a Data Stick. That Data Stick is then required to fit into a Data Hatch which has limited slots on the Assembly Line.\n\nThe recipe could only be viewed by printing a book with the Data Stick! It was then made to display in NEI once you acquire the item.\nTecTech made a nice machine which acts as a recipe viewer for the Data Stick (this mod is so great...).\n\nFurthermore, Item and Fluid inputs are required to be ordered the same way as the recipe indicates it. This makes automation of the Assembly Line a nice challenge which can be solved using other mods, redstone, GT item pipes... you pick it.\n\nWe are planning to port some of the GT5 features, as the Assembly Line §lshould be a challenge§r for the player."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "assembly_line"
 }

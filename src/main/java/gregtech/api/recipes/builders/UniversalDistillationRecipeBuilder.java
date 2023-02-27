@@ -83,7 +83,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         super.buildAndRegister();
     }
 
-    private int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {
+    private static int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {
         int[] divisors = new int[]{2, 5, 10, 25, 50};
         int ratio = -1;
 
@@ -104,7 +104,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         return Math.max(1, ratio);
     }
 
-    private boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
+    private static boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
         return GTUtility.isFluidStackAmountDivisible(fluidStack, divisor) && fluidStack.amount / divisor >= 25;
     }
 

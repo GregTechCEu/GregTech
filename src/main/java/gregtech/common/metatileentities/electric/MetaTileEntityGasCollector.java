@@ -15,8 +15,6 @@ import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 

@@ -153,7 +153,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", getMachineLimit()));
     }
 
     @Override
@@ -198,9 +198,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          * @return {@code true} if the provided recipeMap is valid for use
          */
         @Override
-        public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
-            if (recipeMap == null || GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist()))
+        public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
+            if (GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist())) {
                 return false;
+            }
 
             return GTUtility.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
         }
@@ -224,6 +225,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             return (!currentMachineStack.isEmpty() && this.activeRecipeMap != null);
         }
 
+        @Nullable
         @Override
         public RecipeMap<?> getRecipeMap() {
             return activeRecipeMap;
@@ -250,6 +252,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             this.machineVoltage = GTValues.V[this.machineTier];
 
             this.currentMachineStack = machine;
+        }
+
+        @Override
+        protected int getOverclockForTier(long voltage) {
+            return super.getOverclockForTier(Math.min(machineVoltage, getMaximumOverclockVoltage()));
         }
 
         @Override

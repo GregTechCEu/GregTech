@@ -11,21 +11,31 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
+
+    private static final int MAX_PARALLELS = 8;
+
+    private boolean isActive;
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
         this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
-        this.recipeMapWorkable.setParallelLimit(8);
+        this.recipeMapWorkable.setParallelLimit(MAX_PARALLELS);
     }
 
     @Override
@@ -94,5 +104,13 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     @Override
     public int getItemOutputLimit() {
         return 1;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.multiblock.steam_.duration_modifier"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", MAX_PARALLELS));
+        tooltip.add(TooltipHelper.BLINKING_ORANGE + I18n.format("gregtech.multiblock.require_steam_parts"));
     }
 }

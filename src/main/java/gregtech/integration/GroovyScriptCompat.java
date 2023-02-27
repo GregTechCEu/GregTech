@@ -1,19 +1,37 @@
 package gregtech.integration;
 
 import com.cleanroommc.groovyscript.GroovyScript;
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModSupport;
+import com.cleanroommc.groovyscript.helper.ingredient.IngredientHelper;
+import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CTRecipeHelper;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.pipelike.cable.BlockCable;
+import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
+import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 import static gregtech.api.GregTechAPI.MATERIAL_REGISTRY;
 
@@ -25,6 +43,7 @@ public class GroovyScriptCompat {
     private static boolean loaded = false;
 
     private static ModSupport.Container<Container> modSupportContainer;
+    private static final Map<String, ItemStack> metaItems = new Object2ObjectOpenHashMap<>();
 
     private GroovyScriptCompat() {
     }
@@ -33,10 +52,18 @@ public class GroovyScriptCompat {
         loaded = Loader.isModLoaded(GTValues.MODID_GROOVYSCRIPT);
         if (!loaded) return;
 
+        MinecraftForge.EVENT_BUS.register(GroovyHandCommand.class);
+
         BracketHandlerManager.registerBracketHandler("recipemap", RecipeMap::getByName);
-        BracketHandlerManager.registerBracketHandler("material", MATERIAL_REGISTRY::getObject);
+        BracketHandlerManager.registerBracketHandler("material", s -> {
+            Material material = MATERIAL_REGISTRY.getObject(s);
+            if (material == null) {
+                GroovyLog.get().errorMC("Could not resolve material('{}')", s);
+            }
+            return material;
+        });
         BracketHandlerManager.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
-        BracketHandlerManager.registerBracketHandler("metaitem", MetaItemBracketHandler::getMetaItem);
+        BracketHandlerManager.registerBracketHandler("metaitem", GroovyScriptCompat::getMetaItem);
 
         modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", Container::new, "gt");
     }
@@ -51,6 +78,73 @@ public class GroovyScriptCompat {
 
     public static Container getInstance() {
         return modSupportContainer.get();
+    }
+
+    public static ItemStack getMetaItem(String name) {
+        ItemStack item;
+        if ((item = metaItems.get(name)) != null) {
+            return item.copy();
+        }
+        if ((item = getMetaTileEntityItem(name)) != null) {
+            return item.copy();
+        }
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
+            GroovyLog.get().error("Could not resolve metaitem('{}')", name);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Nullable
+    public static ItemStack getMetaTileEntityItem(String name) {
+        String[] resultName = splitObjectName(name);
+        MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(resultName[0], resultName[1]));
+        return metaTileEntity == null ? null : metaTileEntity.getStackForm();
+    }
+
+    public static String[] splitObjectName(String toSplit) {
+        String[] resultSplit = new String[]{GTValues.MODID, toSplit};
+        int i = toSplit.indexOf(':');
+        if (i >= 0) {
+            resultSplit[1] = toSplit.substring(i + 1);
+            if (i > 1) {
+                resultSplit[0] = toSplit.substring(0, i);
+            }
+        }
+        return resultSplit;
+    }
+
+    public static void loadMetaItemBracketHandler() {
+        metaItems.clear();
+        for (Map.Entry<Material, BlockCompressed> entry : MetaBlocks.COMPRESSED.entrySet()) {
+            metaItems.put("block" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
+        }
+        for (Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
+            metaItems.put("frame" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
+        }
+
+        for (BlockCable cable : MetaBlocks.CABLES) {
+            for (Material material : cable.getEnabledMaterials()) {
+                metaItems.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+            }
+        }
+        for (BlockItemPipe cable : MetaBlocks.ITEM_PIPES) {
+            for (Material material : cable.getEnabledMaterials()) {
+                metaItems.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+            }
+        }
+        for (BlockFluidPipe cable : MetaBlocks.FLUID_PIPES) {
+            for (Material material : cable.getEnabledMaterials()) {
+                metaItems.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+            }
+        }
+
+        for (MetaItem<?> item : MetaItem.getMetaItems()) {
+            for (MetaItem<?>.MetaValueItem entry : item.getAllItems()) {
+                if (!entry.unlocalizedName.equals("meta_item")) {
+                    metaItems.put(entry.unlocalizedName, entry.getStackForm());
+                }
+            }
+        }
     }
 
     public static String getRecipeRemoveLine(RecipeMap<?> recipeMap, Recipe recipe) {
@@ -76,11 +170,7 @@ public class GroovyScriptCompat {
         if (recipe.getFluidInputs().size() > 0) {
             builder.append("[");
             for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
-                // TODO update grs since the current version results in a crash when mekanism is not installed
-                //builder.append(IngredientHelper.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
-                builder.append("fluid('")
-                        .append(fluidIngredient.getInputFluidStack().getFluid().getName())
-                        .append("')");
+                builder.append(IngredientHelper.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
 
                 if (fluidIngredient.getAmount() > 1) {
                     builder.append(" * ")
@@ -118,24 +208,14 @@ public class GroovyScriptCompat {
         }
         if (itemStack != null) {
             if (itemId == null) {
-                // TODO update grs since the current version results in a crash when mekanism is not installed
-                //builder.append(IngredientHelper.asGroovyCode(itemStack, false, false));
-                builder.append("item('")
-                        .append(itemStack.getItem().getRegistryName())
-                        .append("'");
-                if (itemStack.getMetadata() != 0) {
-                    builder.append(", ")
-                            .append(itemStack.getMetadata());
-                }
-                builder.append(")");
+                builder.append(IngredientHelper.asGroovyCode(itemStack, false));
             }
 
-            /*if (itemStack.serializeNBT().hasKey("tag")) {
-                String nbt = NBTConverter.from(itemStack.serializeNBT().getCompoundTag("tag"), false).toString();
-                if (nbt.length() > 0) {
-                    builder.append(".withTag(").append(nbt).append(")");
-                }
-            }*/
+            if (itemStack.getTagCompound() != null) {
+                builder.append(".withNbt(")
+                        .append(NbtHelper.toGroovyCode(itemStack.getTagCompound(), false, false))
+                        .append(")");
+            }
         }
 
         if (recipeInput.getAmount() > 1) {

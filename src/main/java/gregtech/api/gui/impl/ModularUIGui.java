@@ -169,6 +169,8 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
                 itemStack = itemStack.copy();
                 itemStack.setCount(this.dragSplittingRemnant);
             }
+            // This null is eventually nullable, 2 calls deep
+            //noinspection DataFlowIssue
             this.drawItemStack(itemStack, mouseX - guiLeft - 8, mouseY - guiTop - dragOffset, null);
         }
     }

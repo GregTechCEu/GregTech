@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class ChestGenHooks {
@@ -28,28 +29,26 @@ public class ChestGenHooks {
 
     private static final LootCondition[] NO_CONDITIONS = new LootCondition[0];
 
-    private static final ChestGenHooks instance = new ChestGenHooks();
-
     private ChestGenHooks() {
     }
 
     public static void init() {
-        MinecraftForge.EVENT_BUS.register(instance);
+        MinecraftForge.EVENT_BUS.register(ChestGenHooks.class);
     }
 
     @SubscribeEvent
-    public void onWorldLoad(LootTableLoadEvent event) {
+    public static void onWorldLoad(LootTableLoadEvent event) {
         LootPool mainPool = event.getTable().getPool("main");
         if (mainPool != null && lootEntryItems.containsKey(event.getName())) {
-            ArrayList<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
+            List<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
             for (LootEntryItem entry : entryItems) {
                 try {
-                    if(ConfigHolder.misc.debug) {
-                        GTLog.logger.info("adding " + entry.getEntryName() + " to lootTable");
+                    if (ConfigHolder.misc.debug) {
+                        GTLog.logger.info("adding {} to lootTable", entry.getEntryName());
                     }
                     mainPool.addEntry(entry);
                 } catch (java.lang.RuntimeException e) {
-                    GTLog.logger.error("Couldn't add " + entry.getEntryName() + " to lootTable");
+                    GTLog.logger.error("Couldn't add {} to lootTable", entry.getEntryName());
                 }
             }
         }

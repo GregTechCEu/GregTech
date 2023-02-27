@@ -1,13 +1,11 @@
 package gregtech.tools.enchants;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.toolitem.ToolMetaItem;
-import gregtech.common.tools.ToolPickaxe;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -38,31 +36,15 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     @Override
-    public boolean canApply(@Nonnull ItemStack stack) {
-        return this.canApplyAtEnchantingTable(stack);
-    }
-
-    @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack) {
-        boolean isPick = false;
-
-        if(stack.getItem() instanceof ItemPickaxe) {
-            isPick = true;
-        }
-        else if(stack.getItem() instanceof ToolMetaItem) {
-            ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) stack.getItem();
-            ToolMetaItem<?>.MetaToolValueItem toolValueItem = toolMetaItem.getItem(stack);
-            if(toolValueItem.getToolStats() instanceof ToolPickaxe) {
-                isPick = true;
-            }
-        }
-
-        return isPick && stack.getItem().canApplyAtEnchantingTable(stack, this);
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
+        return super.canApplyAtEnchantingTable(stack)
+                && stack.getItem().getToolClasses(stack).contains(ToolClasses.PICKAXE)
+                && !stack.getItem().getToolClasses(stack).contains(ToolClasses.HARD_HAMMER);
     }
 
     @Override
     protected boolean canApplyTogether(@Nonnull Enchantment ench) {
-            return ench != Enchantments.SILK_TOUCH && super.canApplyTogether(ench);
+        return super.canApplyTogether(ench) && ench != Enchantments.SILK_TOUCH && ench != Enchantments.FORTUNE;
     }
 }
 

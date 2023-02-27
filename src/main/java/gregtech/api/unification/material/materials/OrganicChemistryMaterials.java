@@ -25,7 +25,6 @@ public class OrganicChemistryMaterials {
                 .color(0x704936)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 5, Nitrogen, 1, Oxygen, 2)
-                .fluidTemp(293)
                 .build();
 
         RawRubber = new Material.Builder(1002, "raw_rubber")
@@ -56,7 +55,6 @@ public class OrganicChemistryMaterials {
                 .color(0xFF9955)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 6, Oxygen, 2)
-                .fluidTemp(293)
                 .build();
 
         ReinforcedEpoxyResin = new Material.Builder(1006, "reinforced_epoxy_resin")
@@ -88,7 +86,6 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .flags(FLAMMABLE, EXPLOSIVE)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
-                .fluidTemp(293)
                 .build();
 
         Polybenzimidazole = new Material.Builder(1010, "polybenzimidazole")
@@ -166,7 +163,6 @@ public class OrganicChemistryMaterials {
                 .fluid(FluidTypes.GAS)
                 .color(0x3F9F80)
                 .components(Nitrogen, 1, Hydrogen, 2, Chlorine, 1)
-                .fluidTemp(293)
                 .build();
 
         Chloroform = new Material.Builder(1021, "chloroform")
@@ -408,7 +404,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         PhthalicAcid = new Material.Builder(1057, "phthalic_acid")
-                .fluid(FluidTypes.ACID, true)
+                .fluid(FluidTypes.ACID)
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)

@@ -27,7 +27,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -62,11 +65,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMiner(metaTileEntityId, getTier(), this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(), this.minerLogic.getFortune());
-    }
-
-    @Override
-    protected void reinitializeEnergyContainer() {
-        super.reinitializeEnergyContainer();
     }
 
     @Override
@@ -154,10 +152,22 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        int currentArea = getWorkingArea(minerLogic.getCurrentRadius());
+        tooltip.add(I18n.format("gregtech.machine.miner.tooltip", currentArea, currentArea));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick)
+                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.usage", getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20, this.energyPerTick));
+        int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area_max", maxArea, maxArea));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -202,7 +212,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             else
                 this.minerLogic.setCurrentRadius(Math.max(1, currentRadius - 1));
 
-            this.minerLogic.checkBlocksToMine();
+            this.minerLogic.resetArea();
 
             playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
         } else {

@@ -1,16 +1,14 @@
 package gregtech.api.items.armor;
 
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.metaitem.ElectricStats;
+import gregtech.api.items.metaitem.stats.IItemHUDProvider;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -23,33 +21,22 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
+public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDProvider {
 
     protected final int energyPerUse;
     protected final int tier;
     protected final long maxCapacity;
     protected final EntityEquipmentSlot SLOT;
-    @SideOnly(Side.CLIENT)
-    protected ArmorUtils.ModularHUD HUD;
 
     protected ArmorLogicSuite(int energyPerUse, long maxCapacity, int tier, EntityEquipmentSlot slot) {
         this.energyPerUse = energyPerUse;
         this.maxCapacity = maxCapacity;
         this.tier = tier;
         this.SLOT = slot;
-        if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
-            //noinspection NewExpressionSideOnly
-            HUD = new ArmorUtils.ModularHUD();
-        }
     }
 
     @Override
     public abstract void onArmorTick(World world, EntityPlayer player, ItemStack itemStack);
-
-    @Override
-    public int getArmorLayersAmount(ItemStack itemStack) {
-        return 1;
-    }
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
@@ -110,17 +97,8 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
-    }
-
-    @Override
     public EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack) {
         return SLOT;
-    }
-
-    @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        return ImmutableMultimap.of();
     }
 
     @Override
@@ -133,24 +111,12 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void drawHUD(ItemStack stack) {
-        this.addCapacityHUD(stack);
-        this.HUD.draw();
-        this.HUD.reset();
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected void addCapacityHUD(ItemStack stack) {
+    protected static void addCapacityHUD(ItemStack stack, ArmorUtils.ModularHUD hud) {
         IElectricItem cont = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) return;
         if (cont.getCharge() == 0) return;
         float energyMultiplier = cont.getCharge() * 100.0F / cont.getMaxCharge();
-        this.HUD.newString(I18n.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
+        hud.newString(I18n.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
     }
 
     public int getEnergyPerUse() {
@@ -160,13 +126,12 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     protected float getAbsorption(ItemStack itemStack) {
         switch (this.getEquipmentSlot(itemStack)) {
             case HEAD:
+            case FEET:
                 return 0.15F;
             case CHEST:
                 return 0.4F;
             case LEGS:
                 return 0.3F;
-            case FEET:
-                return 0.15F;
             default:
                 return 0.0F;
         }

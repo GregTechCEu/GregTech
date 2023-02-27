@@ -1,0 +1,14 @@
+{
+  "section": "Hatches",
+  "title": "Energy Hatch",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oTo power Multiblocks with energy, you need Energy Hatches.§r\n\nMultiblocks do not look at Voltage of recipes, instead they simply check if they have the Power requirement.\nFor example, The EBF needs at least §4120EU/t§r power input to run its recipes. It is achieved with §3two LV Energy Hatches§r. Each one takes 2 Amps of LV, so that\u0027s 4 Amps of LV for 128EU/t maximum power.\n\n\n§9Note:§r Be wary of Cable §closses§r bringing the actual power input below the recipe requirement! I §lhighly§r recommend placing your §3Battery Buffer§r next to the §3Energy Hatches§r for the minimum cable length."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "energy_hatch.input.lv"
+}

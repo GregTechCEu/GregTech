@@ -5,12 +5,12 @@ import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.ColorConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.NumberConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.StringConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.TextListConfigurator;
-import gregtech.api.util.Position;
-import gregtech.api.util.Size;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -37,8 +37,6 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     public GuideWidget(){
         super(Position.ORIGIN, Size.ZERO);
     }
-
-    public abstract String getRegistryName();
 
     @Override
     public JsonObject getConfig() {

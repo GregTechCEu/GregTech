@@ -13,6 +13,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
@@ -297,7 +298,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             try {
                 nbt = buffer.readCompoundTag();
             } catch (IOException e) {
-                e.printStackTrace();
+                GTLog.logger.error("TerminalOSWidget Shutdown could not read NBT tag from buffer", e);
             }
             for (AbstractApplication openedApp : openedApps) {
                 String appName = openedApp.getRegistryName();
@@ -315,7 +316,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             try {
                 nbt = buffer.readCompoundTag();
             } catch (IOException e) {
-                e.printStackTrace();
+                GTLog.logger.error("TerminalOSWidget CloseApp could not read NBT tag from buffer", e);
             }
             if (nbt != null) {
                 tabletNBT.setTag(appName, nbt);

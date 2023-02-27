@@ -4,10 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
+import gregtech.client.utils.BloomEffectUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -15,48 +15,36 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 import static gregtech.common.blocks.MetaBlocks.statePropertiesToString;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "active_blocks"), "inventory");
     public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
-    private static final List<VariantActiveBlock<?>> INSTANCES = new ArrayList<>();
-    public static final Object2ObjectOpenHashMap<Block, ObjectOpenHashSet<BlockRenderLayer>> block2blockRenderLayerMap = new Object2ObjectOpenHashMap<>();
     public static final PropertyBool ACTIVE_DEPRECATED = PropertyBool.create("active");
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
-        INSTANCES.add(this);
     }
 
     @Override
@@ -72,7 +60,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return block2blockRenderLayerMap.containsKey(state.getBlock()) && block2blockRenderLayerMap.get(state.getBlock()).contains(layer);
+        return layer == BlockRenderLayer.CUTOUT || layer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @Nonnull
@@ -129,29 +117,6 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
             //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=true," + statePropertiesToString(state.getProperties())));
             //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), "active=false," + statePropertiesToString(state.getProperties())));
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), new ModelResourceLocation(this.getRegistryName(), statePropertiesToString(state.getProperties())));
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST) // low priority to capture all event-registered models
-    public static void onModelBake(ModelBakeEvent event) {
-        block2blockRenderLayerMap.clear();
-        //Go over all VariantActiveBlock instances, then going over their model, and if they have a quad
-        //to render on that render layer, add it to the map.
-        for (Block b : INSTANCES) {
-            for (IBlockState state : b.getBlockState().getValidStates()) {
-                IBakedModel bakedModel = event.getModelRegistry().getObject(new ModelResourceLocation(b.getRegistryName(), statePropertiesToString(state.getProperties())));
-                if (bakedModel != null) {
-                    for (BlockRenderLayer layer : BlockRenderLayer.values()) {
-                        for (EnumFacing facing : EnumFacing.VALUES) {
-                            if (bakedModel.getQuads(state, facing, 0).size() > 0) {
-                                block2blockRenderLayerMap.putIfAbsent(b, new ObjectOpenHashSet<>());
-                                block2blockRenderLayerMap.get(b).add(layer);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

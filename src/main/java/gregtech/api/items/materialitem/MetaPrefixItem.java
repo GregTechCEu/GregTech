@@ -1,6 +1,5 @@
 package gregtech.api.items.materialitem;
 
-import gnu.trove.map.hash.TShortObjectHashMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
@@ -13,8 +12,10 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -43,11 +44,13 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     private final OrePrefix prefix;
 
-    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
-        put(OrePrefix.crushed, OrePrefix.crushedPurified);
-        put(OrePrefix.dustImpure, OrePrefix.dust);
-        put(OrePrefix.dustPure, OrePrefix.dust);
-    }};
+    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<>();
+
+    static {
+        purifyMap.put(OrePrefix.crushed, OrePrefix.crushedPurified);
+        purifyMap.put(OrePrefix.dustImpure, OrePrefix.dust);
+        purifyMap.put(OrePrefix.dustPure, OrePrefix.dust);
+    }
 
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
@@ -73,7 +76,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         }
     }
 
-    private void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
+    private static void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
         if (prefix.getAlternativeOreName() != null) {
             OreDictUnifier.registerOre(item, prefix.getAlternativeOreName(), material);
         }
@@ -87,7 +90,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         }
     }
 
-    protected boolean canGenerate(OrePrefix orePrefix, Material material) {
+    protected static boolean canGenerate(OrePrefix orePrefix, Material material) {
         return orePrefix.doGenerateItem(material);
     }
 
@@ -115,7 +118,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("ConstantConditions")
     public void registerModels() {
-        TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
+        Map<Short, ModelResourceLocation> alreadyRegistered = new Short2ObjectOpenHashMap<>();
         for (short metaItem : metaItems.keySet()) {
             MaterialIconSet materialIconSet = GregTechAPI.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
 
@@ -129,7 +132,7 @@ public class MetaPrefixItem extends StandardMetaItem {
             metaItemsModels.put(metaItem, resourceLocation);
         }
 
-        // Make some default model for meta prefix items without any materials associated
+        // Make some default models for meta prefix items without any materials associated
         if (metaItems.keySet().isEmpty()) {
             MaterialIconSet defaultIcon = MaterialIconSet.DULL;
             ResourceLocation defaultLocation = OrePrefix.ingot.materialIconType.getItemModelPath(defaultIcon);
@@ -139,8 +142,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     public int getItemStackLimit(@Nonnull ItemStack stack) {
-        if (prefix == null)
-            return 64;
+        if (prefix == null) return 64;
         return prefix.maxStackSize;
     }
 
@@ -149,8 +151,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
         if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
             for (MetaItem<?>.MetaValueItem enabledItem : metaItems.values()) {
-                if (!enabledItem.isVisible())
-                    continue;
+                if (!enabledItem.isVisible()) continue;
                 ItemStack itemStack = enabledItem.getStackForm();
                 enabledItem.getSubItemHandler().getSubItems(itemStack, tab, subItems);
             }
@@ -193,7 +194,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         addMaterialTooltip(lines, itemStack);
     }
 
-    public Material getMaterial(ItemStack itemStack) {
+    public static Material getMaterial(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
         return GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
     }
@@ -217,11 +218,9 @@ public class MetaPrefixItem extends StandardMetaItem {
         int damage = stack.getMetadata();
 
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
-        if (this.prefix != null && material != null) {
-            boolean isSolidState = this.prefix == OrePrefix.ingot || this.prefix == OrePrefix.gem;
-            DustProperty property = material.getProperty(PropertyKey.DUST);
-            boolean isMaterialTiered = property != null && property.getHarvestLevel() >= 2;
-            return isSolidState && isMaterialTiered;
+        if (material != null && this.prefix != OrePrefix.ingot && this.prefix != OrePrefix.gem) {
+            ToolProperty property = material.getProperty(PropertyKey.TOOL);
+            return property != null && property.getToolHarvestLevel() >= 2;
         }
         return false;
     }
@@ -256,7 +255,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     protected void addMaterialTooltip(List<String> lines, ItemStack itemStack) {
         if (this.prefix.tooltipFunc != null) {
-            lines.addAll(this.prefix.tooltipFunc.apply(this.getMaterial(itemStack)));
+            lines.addAll(this.prefix.tooltipFunc.apply(MetaPrefixItem.getMaterial(itemStack)));
         }
     }
 }

@@ -16,9 +16,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
-import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.common.gui.widget.WidgetScrollBar;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
@@ -120,7 +120,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         if (lastMouse != null) {
             int mouseX = (int) (RESOLUTION * lastMouse[0]);
             int mouseY = (int) (RESOLUTION * (1 - (lastMouse[1])));
-            Vector3f hitPos = renderer.unProject(mouseX, mouseY);
+            Vector3f hitPos = WorldSceneRenderer.unProject(mouseX, mouseY);
             Vec3d eyePos = new Vec3d(renderer.getEyePos().x, renderer.getEyePos().y, renderer.getEyePos().z);
             hitPos.scale(2); // Double view range to ensure pos can be seen.
             Vec3d endPos = new Vec3d((hitPos.x - eyePos.x), (hitPos.y - eyePos.y), (hitPos.z - eyePos.z));
@@ -145,9 +145,10 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             }
         }
         if (connect && connections != null) {
-            for (BlockPos pos : connections.keySet()) {
-                Vector3f winPos = worldSceneRenderer.project(pos);
-                connections.get(pos).setValue(winPos);
+            for (Map.Entry<BlockPos, Pair<List<MetaTileEntityMonitorScreen>, Vector3f>> entry : connections.entrySet()) {
+                BlockPos pos = entry.getKey();
+                Vector3f winPos = WorldSceneRenderer.project(pos);
+                entry.getValue().setValue(winPos);
                 if (winPos != null) {
                     renderBlockOverLay(pos);
                 }

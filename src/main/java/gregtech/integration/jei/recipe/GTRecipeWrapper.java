@@ -12,7 +12,9 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
 import mezz.jei.api.ingredients.IIngredients;
@@ -103,9 +105,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
             double boost = entry.getBoostPerTier() / 100.0;
-            tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
+            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
-            tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
     }
 
@@ -113,7 +115,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         boolean notConsumed = input && isNotConsumedFluid(slotIndex);
 
         if (notConsumed) {
-            tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
     }
 
@@ -135,7 +137,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && Loader.isModLoaded(GTValues.MODID_CT);
+        // do not add the X button if no tweaker mod is present
+        if (!Loader.isModLoaded(GTValues.MODID_CT) && !GroovyScriptCompat.isLoaded()) return;
+
+        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative();
         final String mod = GroovyScriptCompat.isLoaded() ? "GroovyScript" : "CraftTweaker";
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
@@ -144,7 +149,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     String recipeLine = GroovyScriptCompat.isLoaded() ?
                             GroovyScriptCompat.getRecipeRemoveLine(recipeMap, recipe) :
                             CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
-                    String output = CTRecipeHelper.getFirstOutputString(recipe);
+                    String output = RecipeCompatUtil.getFirstOutputString(recipe);
                     if (!output.isEmpty()) {
                         output = "// " + output + "\n";
                     }

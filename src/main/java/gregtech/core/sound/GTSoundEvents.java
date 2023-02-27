@@ -1,6 +1,5 @@
 package gregtech.core.sound;
 
-import gregtech.api.GregTechAPI;
 import net.minecraft.util.SoundEvent;
 
 import static gregtech.api.GregTechAPI.soundManager;
@@ -42,7 +41,7 @@ public class GTSoundEvents {
     public static SoundEvent TRICORDER_TOOL;
     public static SoundEvent WRENCH_TOOL;
     public static SoundEvent MORTAR_TOOL;
-    public static SoundEvent SOFT_HAMMER_TOOL;
+    public static SoundEvent SOFT_MALLET_TOOL;
 
     // Record Sounds
     public static SoundEvent SUS_RECORD;
@@ -74,7 +73,7 @@ public class GTSoundEvents {
         MINER = soundManager.registerSound("tick.miner");
         SCIENCE = soundManager.registerSound("tick.science");
         WRENCH_TOOL = soundManager.registerSound("use.wrench");
-        SOFT_HAMMER_TOOL = soundManager.registerSound("use.soft_hammer");
+        SOFT_MALLET_TOOL = soundManager.registerSound("use.soft_hammer");
         DRILL_TOOL = soundManager.registerSound("use.drill");
         PLUNGER_TOOL = soundManager.registerSound("use.plunger");
         FILE_TOOL = soundManager.registerSound("use.file");
