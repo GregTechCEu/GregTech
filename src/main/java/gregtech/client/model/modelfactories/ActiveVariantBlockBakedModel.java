@@ -24,14 +24,17 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class ActiveVariantBlockBakedModel implements IBakedModel {
 
     private static final Map<ModelResourceLocation, ActiveVariantBlockBakedModel> INSTANCES = new Object2ObjectOpenHashMap<>();
+    private static final String BLOOM_TEXTURE = "bloom";
 
     private final ModelResourceLocation inactiveModelLocation;
     private final ModelResourceLocation activeModelLocation;
@@ -80,24 +83,30 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         // If bloom is disabled (either by model specific bloom config or the presence of O**ifine shaders)
         // it is rendered on CUTOUT layer instead.
         if (getBloomConfig()) {
-            return MinecraftForgeClient.getRenderLayer() != BloomEffectUtil.BLOOM ?
-                    m.getQuads(state, side, rand) :
-                    m.getQuads(state, side, rand).stream()
-                            .filter(q -> q.getSprite().getIconName().contains("bloom"))
-                            .collect(Collectors.toList());
+            return MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM ?
+                    getBloomQuads(m, state, side, rand) :
+                    m.getQuads(state, side, rand);
         } else {
             if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
                 return Collections.emptyList();
             } else if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT) {
                 List<BakedQuad> quads = new ArrayList<>(m.getQuads(state, side, rand));
                 ForgeHooksClient.setRenderLayer(BloomEffectUtil.BLOOM);
-                m.getQuads(state, side, rand).stream()
-                        .filter(q -> q.getSprite().getIconName().contains("bloom"))
-                        .forEach(quads::add);
+                quads.addAll(getBloomQuads(m, state, side, rand));
                 ForgeHooksClient.setRenderLayer(BlockRenderLayer.CUTOUT);
                 return quads;
             } else return m.getQuads(state, side, rand);
         }
+    }
+
+    private static List<BakedQuad> getBloomQuads(IBakedModel model, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        List<BakedQuad> list = new ArrayList<>();
+        for (BakedQuad q : model.getQuads(state, side, rand)) {
+            if (q.getSprite().getIconName().contains(BLOOM_TEXTURE)) {
+                list.add(q);
+            }
+        }
+        return list;
     }
 
     @Override
