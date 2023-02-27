@@ -484,7 +484,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Nonnull
-    private static Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
+    private Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
         Map<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
             BlockPos pos = entry.getKey();
