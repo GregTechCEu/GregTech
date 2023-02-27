@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import java.util.List;
 import java.util.Objects;
 
 public class EnergyNetHandler implements IEnergyContainer {
@@ -59,68 +58,62 @@ public class EnergyNetHandler implements IEnergyContainer {
         }
 
         long amperesUsed = 0L;
-        List<RoutePath> paths = net.getNetData(cable.getPos());
-        outer:
-        for (RoutePath path : paths) {
-            if (path.getMaxLoss() >= voltage)
-                continue;
-            if (GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
-                //Do not insert into source handler
+        for (RoutePath path : net.getNetData(cable.getPos())) {
+            if (path.getMaxLoss() >= voltage) {
+                // Will lose all the energy with this path, so don't use it
                 continue;
             }
-            IEnergyContainer dest = path.getHandler(cable.getWorld());
-            EnumFacing facing = path.getFaceToHandler().getOpposite();
-            if (dest == null || !dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
-            long v = voltage - path.getMaxLoss();
-            if (v <= 0)
-                continue;
 
+            if (GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
+                // Do not insert into source handler
+                continue;
+            }
+
+            IEnergyContainer dest = path.getHandler(cable.getWorld());
+            if (dest == null) continue;
+
+            EnumFacing facing = path.getFaceToHandler().getOpposite();
+            if (!dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
+
+            long pathVoltage = voltage - path.getMaxLoss();
+            boolean cableBroken = false;
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage) {
                     int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 45 + 36.5);
-                    boolean cableBroken = false;
-                    for (TileEntityCable cable1 : path.getPath()) {
-                        cable1.applyHeat(heat);
-                        cableBroken |= cable1.isInvalid();
-                    }
+                    cable.applyHeat(heat);
+
+                    cableBroken = cable.isInvalid();
                     if (cableBroken) {
                         // a cable burned away (or insulation melted)
-                        break outer;
+                        break;
                     }
-                    v = Math.min(cable.getMaxVoltage(), v); // limit transfer to cables max and void rest
+
+                    // limit transfer to cables max and void rest
+                    pathVoltage = Math.min(cable.getMaxVoltage(), pathVoltage);
                 }
             }
 
-            transfer = true;
-            long amps = dest.acceptEnergyFromNetwork(facing, v, amperage - amperesUsed);
-            transfer = false;
-            if(amps == 0)
-                continue;
-            amperesUsed += amps;
+            if (cableBroken) continue;
 
+            transfer = true;
+            long amps = dest.acceptEnergyFromNetwork(facing, pathVoltage, amperage - amperesUsed);
+            transfer = false;
+            if (amps == 0) continue;
+
+            amperesUsed += amps;
             long voltageTraveled = voltage;
-            boolean cableBroken = false;
             for (TileEntityCable cable : path.getPath()) {
                 voltageTraveled -= cable.getNodeData().getLossPerBlock();
-                if (voltageTraveled <= 0)
-                    break;
-                if (cable.isInvalid()) {
-                    cableBroken = true;
-                } else {
+                if (voltageTraveled <= 0) break;
+
+                if (!cable.isInvalid()) {
                     cable.incrementAmperage(amps, voltageTraveled);
                 }
             }
 
-            if (cableBroken) {
-                // a cable burned away (or insulation melted)
-                // recompute net data
-                break;
-            }
-
-            if (amperage == amperesUsed)
-                break;
+            net.addEnergyFluxPerSec(amperesUsed * voltage);
+            if (amperage == amperesUsed) break;
         }
-        net.addEnergyFluxPerSec(amperesUsed * voltage);
         return amperesUsed;
     }
 
