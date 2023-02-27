@@ -1731,6 +1731,7 @@ material.amethyst=紫水晶
 material.redstone=红石
 material.lapis=青金石
 material.blaze=烈焰
+material.prismarine=海晶石
 material.ender_pearl=末影珍珠
 material.ender_eye=末影之眼
 material.flint=燧石
@@ -1852,6 +1853,7 @@ material.gelatin_mixture=胶状诱变剂
 material.collagen=胶原蛋白
 material.gelatin=凝胶
 material.agar=琼脂
+material.purpur=紫珀
 
 material.uranium_hexafluoride=六氟化铀
 material.enriched_uranium_hexafluoride=浓缩六氟化铀

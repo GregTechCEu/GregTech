@@ -639,6 +639,7 @@ public class Materials {
     public static Material Collagen;
     public static Material Gelatin;
     public static Material Agar;
+    public static Material Purpur;
     public static Material Andesite;
     public static Material Milk;
     public static Material Cocoa;
@@ -690,6 +691,7 @@ public class Materials {
     public static Material Amethyst;
     public static Material Lapis;
     public static Material Blaze;
+    public static Material Prismarine;
     public static Material Apatite;
     public static Material BlackSteel;
     public static Material DamascusSteel;

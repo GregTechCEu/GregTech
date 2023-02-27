@@ -214,6 +214,34 @@ public class SeparationRecipes {
                 .chancedOutput(dustSmall, Tantalite, 500, 130)
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(100).EUt(80)
+                .inputs(new ItemStack(Blocks.MAGMA))
+                .chancedOutput(dust, SiliconDioxide, 9500, 150)
+                .chancedOutput(dustSmall, Obsidian, 6000, 150)
+                .chancedOutput(dustSmall, GarnetYellow, 5000, 130)
+                .chancedOutput(dustSmall, Pyrochlore, 500, 130)
+                .chancedOutput(dustTiny, Barite, 750, 50)
+                .chancedOutput(nugget, Gold, 250, 80)
+                .fluidOutputs(Lava.getFluid(250))
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
+                .input(dust, Prismarine)
+                .chancedOutput(dustSmall, Pyrolusite, 7500, 500)
+                .chancedOutput(dustSmall, BrownLimonite, 7500, 500)
+                .chancedOutput(dustSmall, CobaltOxide, 500, 100)
+                .chancedOutput(dustSmall, Garnierite, 500, 100)
+                .fluidOutputs(Water.getFluid(250))
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(VA[HV])
+                .input(dust, Purpur)
+                .chancedOutput(dustSmall, Asbestos, 9500, 150)
+                .chancedOutput(dustSmall, Endstone, 3000, 125)
+                .chancedOutput(dustSmall, EnderPearl, 2000, 110)
+                .chancedOutput(dustTiny, Vanadium, 2000, 110)
+                .buildAndRegister();
+
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
                 .input(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
