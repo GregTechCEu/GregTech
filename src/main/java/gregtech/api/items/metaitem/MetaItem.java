@@ -643,9 +643,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @Override
     public CreativeTabs[] getCreativeTabs() {
         if (additionalCreativeTabs.isEmpty()) return defaultCreativeTabs; // short circuit
-        Set<CreativeTabs> tabs = new ObjectArraySet<>();
+        Set<CreativeTabs> tabs = new ObjectArraySet<>(additionalCreativeTabs);
         tabs.addAll(Arrays.asList(defaultCreativeTabs));
-        tabs.addAll(additionalCreativeTabs);
         return tabs.toArray(new CreativeTabs[0]);
     }
 
@@ -670,8 +669,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Override
     protected boolean isInCreativeTab(CreativeTabs tab) {
-        return tab==CreativeTabs.SEARCH||
-                ArrayUtils.contains(defaultCreativeTabs, tab)||
+        return tab == CreativeTabs.SEARCH ||
+                ArrayUtils.contains(defaultCreativeTabs, tab) ||
                 additionalCreativeTabs.contains(tab);
     }
 
