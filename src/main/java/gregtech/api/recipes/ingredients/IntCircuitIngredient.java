@@ -1,14 +1,17 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.items.gui.PlayerInventoryHolder;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
-public class IntCircuitIngredient extends GTRecipeItemInput {
+public class IntCircuitIngredient extends GTRecipeInput {
 
     public static final int CIRCUIT_MIN = 0;
     public static final int CIRCUIT_MAX = 32;
@@ -28,14 +31,20 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
         return ingredient;
     }
 
-    private final int matchingConfigurations;
-
     /**
      * @deprecated Calling this function is unnecessary. Use the ingredient directly.
      */
     @Deprecated
     public static IntCircuitIngredient getOrCreate(IntCircuitIngredient ri) {
         return ri;
+    }
+
+    private final int matchingConfigurations;
+    private ItemStack[] inputStacks;
+
+    public IntCircuitIngredient(int matchingConfigurations) {
+        this.amount = 1;
+        this.matchingConfigurations = matchingConfigurations;
     }
 
     @Override
@@ -47,9 +56,54 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
         return copy;
     }
 
-    public IntCircuitIngredient(int matchingConfigurations) {
-        super(getIntegratedCircuit(matchingConfigurations));
-        this.matchingConfigurations = matchingConfigurations;
+    @Override
+    public GTRecipeInput copyWithAmount(int amount) {
+        return copy(); // Amount of IntCircuitIngredient is always 1
+    }
+
+    @Override
+    public GTRecipeInput setNBTMatchingCondition(NBTMatcher nbtMatcher, NBTCondition nbtCondition) {
+        return this; // IntCircuitIngredient ignores nbt conditions
+    }
+
+    @Override
+    public int getAmount() {
+        return 1;
+    }
+
+    @Override
+    public ItemStack[] getInputStacks() {
+        if (this.inputStacks == null) {
+            this.inputStacks = new ItemStack[]{getIntegratedCircuit(this.matchingConfigurations)};
+        }
+        return this.inputStacks;
+    }
+
+    @Override
+    public boolean acceptsStack(@Nullable ItemStack itemStack) {
+        return itemStack != null && MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack) &&
+                matchingConfigurations == getCircuitConfiguration(itemStack);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(matchingConfigurations, isConsumable);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof IntCircuitIngredient)) return false;
+        IntCircuitIngredient other = (IntCircuitIngredient) obj;
+        return this.isConsumable == other.isConsumable && this.matchingConfigurations == other.matchingConfigurations;
+    }
+
+    @Override
+    public boolean equalIgnoreAmount(GTRecipeInput input) {
+        if (this == input) return true;
+        if (!(input instanceof IntCircuitIngredient)) return false;
+        IntCircuitIngredient other = (IntCircuitIngredient) input;
+        return this.matchingConfigurations == other.matchingConfigurations;
     }
 
     public static ItemStack getIntegratedCircuit(int configuration) {
@@ -102,11 +156,4 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
         configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
         IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
     }
-
-    @Override
-    public boolean acceptsStack(@Nullable ItemStack itemStack) {
-        return itemStack != null && MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack) &&
-                matchingConfigurations == getCircuitConfiguration(itemStack);
-    }
-
 }
