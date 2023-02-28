@@ -4348,6 +4348,7 @@ behaviour.paintspray.green.tooltip=様々なものを緑色に着色できる
 behaviour.paintspray.red.tooltip=様々なものを赤色に着色できる
 behaviour.paintspray.black.tooltip=様々なものを黒色に着色できる
 behaviour.paintspray.uses=残り使用回数: %,d
+behaviour.paintspray.offhand=オフハンドに持つと設置と同時に着色できる
 behaviour.prospecting=鉱石探知に
 
 # Multiblock machine controllers
