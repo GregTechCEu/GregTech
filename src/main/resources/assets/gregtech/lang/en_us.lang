@@ -1216,12 +1216,16 @@ cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 cover.advanced_energy_detector.label=Advanced Energy Detector
-cover.advanced_energy_detector.min=Minimum EU
-cover.advanced_energy_detector.max=Maximum EU
+cover.advanced_energy_detector.min=Minimum:
+cover.advanced_energy_detector.max=Maximum:
 cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
 cover.advanced_energy_detector.invert_label=Inverted:
 cover.advanced_energy_detector.normal=Normal
 cover.advanced_energy_detector.inverted=Inverted
+cover.advanced_energy_detector.modes_tooltip=Change between using discrete EU values or percentages for comparing min/max against an attached energy storage.
+cover.advanced_energy_detector.modes_label=Mode:
+cover.advanced_energy_detector.mode_eu=Discrete EU
+cover.advanced_energy_detector.mode_percent=Percentage
 
 cover.advanced_fluid_detector.label=Advanced Fluid Detector
 cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
@@ -4341,6 +4345,7 @@ behaviour.paintspray.green.tooltip=Can paint things in Green
 behaviour.paintspray.red.tooltip=Can paint things in Red
 behaviour.paintspray.black.tooltip=Can paint things in Black
 behaviour.paintspray.uses=Remaining Uses: %,d
+behaviour.paintspray.offhand=Hold in offhand to color while placing blocks
 behaviour.prospecting=Usable for Prospecting
 
 # Multiblock machine controllers
@@ -4768,6 +4773,7 @@ gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle
 gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
 gregtech.tool_action.screwdriver.auto_collapse=§8Use Screwdriver to toggle Item collapsing
 gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-Output
+gregtech.tool_action.screwdriver.auto_output_down=§8Use Screwdriver to toggle Auto-Output from the Bottom
 gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
 gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections, sneak to block Connections
