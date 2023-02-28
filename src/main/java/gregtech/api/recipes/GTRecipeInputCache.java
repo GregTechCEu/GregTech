@@ -1,7 +1,9 @@
 package gregtech.api.recipes;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.ArrayList;
@@ -10,8 +12,8 @@ import java.util.List;
 
 public class GTRecipeInputCache {
 
-    public static int EXPECTED_CACHE_SIZE = 15072;
-    public static ObjectOpenHashSet<GTRecipeInput> INSTANCES;
+    private static final int EXPECTED_CACHE_SIZE = 16384;
+    private static ObjectOpenHashSet<GTRecipeInput> INSTANCES;
 
     public static boolean isCacheEnabled() {
         return INSTANCES != null;
@@ -19,14 +21,16 @@ public class GTRecipeInputCache {
 
     public static void enableCache() {
         if (INSTANCES == null) {
-            INSTANCES = new ObjectOpenHashSet<>(EXPECTED_CACHE_SIZE);
-            GTLog.logger.info("GTRecipeInput cache enabled");
+            INSTANCES = new ObjectOpenHashSet<>(EXPECTED_CACHE_SIZE, 1);
+            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment())
+                GTLog.logger.info("GTRecipeInput cache enabled");
         }
     }
 
     public static void disableCache() {
         if (INSTANCES != null) {
-            GTLog.logger.info("GTRecipeInput cache disabled; releasing {} unique instances", INSTANCES.size());
+            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment())
+                GTLog.logger.info("GTRecipeInput cache disabled; releasing {} unique instances", INSTANCES.size());
             INSTANCES = null;
         }
     }
