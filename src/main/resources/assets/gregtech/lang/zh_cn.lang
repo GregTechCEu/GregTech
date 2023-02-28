@@ -1216,12 +1216,16 @@ cover.ender_fluid_link.private.tooltip.enabled=切换至公共储罐模式
 cover.ender_fluid_link.incomplete_hex=输入的颜色不正确！/n输入正确的八位十六进制颜色码方可应用/n此时关闭界面将导致编辑被清除！
 
 cover.advanced_energy_detector.label=进阶能量探测覆盖板
-cover.advanced_energy_detector.min=最小 EU
-cover.advanced_energy_detector.max=最大 EU
+cover.advanced_energy_detector.min=最小：
+cover.advanced_energy_detector.max=最大：
 cover.advanced_energy_detector.invert_tooltip=启用反相以反转红石逻辑/n默认情况下，能量小于所设定的最小 EU 时覆盖板将发出红石信号，大于最大 EU 时则停止发出红石信号
 cover.advanced_energy_detector.invert_label=反相：
 cover.advanced_energy_detector.normal=普通
 cover.advanced_energy_detector.inverted=反相
+cover.advanced_energy_detector.modes_tooltip=使用 EU 的离散值或百分比来比较所附着的能量存储中能量的最大/最小值。
+cover.advanced_energy_detector.modes_label=模式：
+cover.advanced_energy_detector.mode_eu=EU 离散值
+cover.advanced_energy_detector.mode_percent=百分比
 
 cover.advanced_fluid_detector.label=进阶流体探测器
 cover.advanced_fluid_detector.invert_tooltip=启用反相以反转红石逻辑/n默认情况下，流体量处于所设定的最小值和最大值之间时覆盖板将发出红石信号，小于最小值时则停止发出红石信号
