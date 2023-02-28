@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 public class CoverDetectorEnergy extends CoverBehavior implements ITickable {
 
-    private boolean isInverted;
+    protected boolean isInverted;
 
     public CoverDetectorEnergy(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
