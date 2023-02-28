@@ -91,15 +91,12 @@ public class RecipeMaps {
      * Example:
      * <pre>
      *      RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-     *               .circuit(2)
+     *               .circuitMeta(2)
      *               .inputs(new ItemStack(Items.COAL, 1, GTValues.W))
      *               .input(OrePrefix.stick, Materials.Wood, 1)
      *               .outputs(new ItemStack(Blocks.TORCH, 4))
      *               .duration(100).EUt(1).buildAndRegister();
      * </pre>
-     *
-     * Since the Assembler is an <I>SimpleRecipeBuilder</I>, it has access to the <B>circuit()</B> builder entry.
-     * This entry adds an integrated circuit into a recipe, with configuration numbers 0 - 32 allowed
      */
     @ZenProperty
     public static final RecipeMap<AssemblerRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder(), false)
@@ -154,7 +151,7 @@ public class RecipeMaps {
      * <pre>
      * 		RecipeMap.BENDER_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.plate, Materials.Tin, 12)
-     * 			    .circuit(4)
+     * 			    .circuitMeta(4)
      * 				.outputs(MetaItems.FLUID_CELL.getStackForm(4))
      * 				.duration(1200)
      * 				.EUt(8)
@@ -515,7 +512,7 @@ public class RecipeMaps {
      * Example:
      * <pre>
      * 	 	RecipeMap.DISTILLERY_RECIPES.recipeBuilder()
-     * 	 			.circuit(1)
+     * 	 			.circuitMeta(1)
      * 	 			.fluidInputs(Materials.Toluene.getFluid(30))
      * 	 			.fluidOutputs(Materials.LightFuel.getFluid(30))
      * 	 			.duration(160)
@@ -633,7 +630,7 @@ public class RecipeMaps {
      * Example:
      * <pre>
      * 		RecipeMap.FLUID_HEATER_RECIPES.recipeBuilder()
-     * 				.circuit(1)
+     * 				.circuitMeta(1)
      * 				.fluidInputs(Materials.Water.getFluid(6))
      * 				.fluidOutputs(Materials.Steam.getFluid(960))
      * 				.duration(30)
@@ -997,7 +994,7 @@ public class RecipeMaps {
      * <pre>
      *      RecipeMap.PYROLYSE_RECIPES.recipeBuilder()
      *     			.input(OrePrefix.log, Materials.Wood, 16)
-     *     			.circuit(2)
+     *     			.circuitMeta(2)
      *     			.fluidInputs(Materials.Nitrogen.getFluid(1000))
      *     			.outputs(new ItemStack(Items.COAL, 20, 1))
      *     			.fluidOutputs(Materials.Creosote.getFluid(4000))
