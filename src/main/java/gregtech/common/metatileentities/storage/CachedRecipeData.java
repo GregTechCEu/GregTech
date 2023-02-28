@@ -2,7 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.ShapedOreEnergyTransferRecipe;
+import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;

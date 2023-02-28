@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 public class IntCircuitIngredient extends GTRecipeItemInput {
 
+    public static final int CIRCUIT_MIN = 0;
     public static final int CIRCUIT_MAX = 32;
     private final int matchingConfigurations;
 

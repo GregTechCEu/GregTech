@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
@@ -94,14 +93,14 @@ public class VanillaStandardRecipes {
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.WHEAT, 9))
-                .notConsumable(new IntCircuitIngredient(9))
+                .circuitMeta(9)
                 .outputs(new ItemStack(Blocks.HAY_BLOCK))
                 .duration(200).EUt(2)
                 .buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.MELON, 9))
-                .notConsumable(new IntCircuitIngredient(9))
+                .circuitMeta(9)
                 .outputs(new ItemStack(Blocks.MELON_BLOCK))
                 .duration(200).EUt(2)
                 .buildAndRegister();
@@ -1004,7 +1003,7 @@ public class VanillaStandardRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.STRING, 4))
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(new ItemStack(Blocks.WOOL, 1, 0))
                 .duration(100).EUt(4).buildAndRegister();
 
@@ -1208,19 +1207,19 @@ public class VanillaStandardRecipes {
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.NETHER_WART, 9))
-                .notConsumable(new IntCircuitIngredient(9))
+                .circuitMeta(9)
                 .outputs(new ItemStack(Blocks.NETHER_WART_BLOCK))
                 .duration(200).EUt(2).buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.PRISMARINE_SHARD, 4))
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(new ItemStack(Blocks.PRISMARINE))
                 .duration(100).EUt(2).buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.PRISMARINE_SHARD, 9))
-                .notConsumable(new IntCircuitIngredient(9))
+                .circuitMeta(9)
                 .outputs(new ItemStack(Blocks.PRISMARINE, 1, 1))
                 .duration(200).EUt(2).buildAndRegister();
 
