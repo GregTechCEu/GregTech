@@ -69,23 +69,6 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof GTRecipeFluidInput)) {
-            return false;
-        }
-        GTRecipeFluidInput other = (GTRecipeFluidInput) obj;
-        if (this.amount != other.amount) return false;
-        if (this.isConsumable != other.isConsumable) return false;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
-        if (inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName())) {
-            return FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
-        }
-        return false;
-    }
-
-    @Override
     public int hashCode() {
         if (nbtMatcher == null) {
             //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
@@ -95,18 +78,35 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof GTRecipeFluidInput)) {
+            return false;
+        }
+        GTRecipeFluidInput other = (GTRecipeFluidInput) obj;
+
+        if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
+
+        //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
+        return inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName()) &&
+                FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
+    }
+
+    @Override
     public boolean equalIgnoreAmount(GTRecipeInput input) {
         if (this == input) return true;
         if (!(input instanceof GTRecipeFluidInput)) {
             return false;
         }
         GTRecipeFluidInput other = (GTRecipeFluidInput) input;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
+
         //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
-        if (inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName())) {
-            return FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
-        }
-        return false;
+        return inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName()) &&
+                FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
     }
 }

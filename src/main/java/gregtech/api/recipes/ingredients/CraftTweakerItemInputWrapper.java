@@ -78,19 +78,7 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     }
 
     @Override
-    public boolean equalIgnoreAmount(GTRecipeInput input) {
-        if (this == input) return true;
-        if (!(input instanceof CraftTweakerItemInputWrapper)) return false;
-
-        CraftTweakerItemInputWrapper other = (CraftTweakerItemInputWrapper) input;
-
-        if (this.isConsumable != other.isConsumable) return false;
-
-        if (this.ingredient.getItems().size() != other.ingredient.getItems().size()) return false;
-        for (int i = 0; i < this.ingredient.getItems().size(); i++) {
-            if (!this.ingredient.getItems().get(i).matches(other.ingredient.getItems().get(i))) return false;
-        }
-
+    public boolean hasNBTMatchingCondition() {
         return true;
     }
 
@@ -118,8 +106,7 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
 
         CraftTweakerItemInputWrapper other = (CraftTweakerItemInputWrapper) obj;
 
-        if (this.amount != other.amount) return false;
-        if (this.isConsumable != other.isConsumable) return false;
+        if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
 
         if (this.ingredient.getItems().size() != other.ingredient.getItems().size()) return false;
         for (int i = 0; i < this.ingredient.getItems().size(); i++) {
@@ -130,7 +117,17 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     }
 
     @Override
-    public boolean hasNBTMatchingCondition() {
+    public boolean equalIgnoreAmount(GTRecipeInput input) {
+        if (this == input) return true;
+        if (!(input instanceof CraftTweakerItemInputWrapper)) return false;
+
+        CraftTweakerItemInputWrapper other = (CraftTweakerItemInputWrapper) input;
+
+        if (this.ingredient.getItems().size() != other.ingredient.getItems().size()) return false;
+        for (int i = 0; i < this.ingredient.getItems().size(); i++) {
+            if (!this.ingredient.getItems().get(i).matches(other.ingredient.getItems().get(i))) return false;
+        }
+
         return true;
     }
 }

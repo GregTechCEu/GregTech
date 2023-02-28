@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
 import java.util.List;
+import java.util.Objects;
 
 public class GTRecipeItemInput extends GTRecipeInput {
 
@@ -157,10 +158,9 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (!(obj instanceof GTRecipeItemInput)) return false;
         GTRecipeItemInput other = (GTRecipeItemInput) obj;
 
-        if (this.amount != other.amount) return false;
-        if (this.isConsumable != other.isConsumable) return false;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
 
         if (this.inputStacks.length != other.inputStacks.length) return false;
         for (int i = 0; i < this.inputStacks.length; i++) {
@@ -175,8 +175,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (!(input instanceof GTRecipeItemInput)) return false;
         GTRecipeItemInput other = (GTRecipeItemInput) input;
 
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
 
         if (this.inputStacks.length != other.inputStacks.length) return false;
         for (int i = 0; i < this.inputStacks.length; i++) {

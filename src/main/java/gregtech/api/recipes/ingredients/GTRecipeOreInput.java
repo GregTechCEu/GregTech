@@ -107,10 +107,10 @@ public class GTRecipeOreInput extends GTRecipeInput {
             return false;
         }
         GTRecipeOreInput other = (GTRecipeOreInput) obj;
-        if (this.amount != other.amount) return false;
-        if (this.isConsumable != other.isConsumable) return false;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+
+        if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
         return ore == other.ore;
     }
 
@@ -121,8 +121,9 @@ public class GTRecipeOreInput extends GTRecipeInput {
             return false;
         }
         GTRecipeOreInput other = (GTRecipeOreInput) input;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
         return ore == other.ore;
     }
 
