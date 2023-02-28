@@ -414,21 +414,6 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        DENSE_PLATE = new Component(Stream.of(new Object[][]{
-
-                {0, new UnificationEntry(OrePrefix.plateDense, Materials.WroughtIron)},
-                {1, new UnificationEntry(OrePrefix.plateDense, Materials.Steel)},
-                {2, new UnificationEntry(OrePrefix.plateDense, Materials.Aluminium)},
-                {3, new UnificationEntry(OrePrefix.plateDense, Materials.StainlessSteel)},
-                {4, new UnificationEntry(OrePrefix.plateDense, Materials.Titanium)},
-                {5, new UnificationEntry(OrePrefix.plateDense, Materials.TungstenSteel)},
-                {6, new UnificationEntry(OrePrefix.plateDense, Materials.RhodiumPlatedPalladium)},
-                {7, new UnificationEntry(OrePrefix.plateDense, Materials.NaquadahAlloy)},
-                {8, new UnificationEntry(OrePrefix.plateDense, Materials.Darmstadtium)},
-                {9, new UnificationEntry(OrePrefix.plateDense, Materials.Neutronium)},
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
         HULL_PLATE = new Component(Stream.of(new Object[][]{
 
                 {0, new UnificationEntry(OrePrefix.plate, Materials.Wood)},
