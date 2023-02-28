@@ -7,8 +7,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GTRecipeItemInput extends GTRecipeInput {
 
@@ -184,5 +186,23 @@ public class GTRecipeItemInput extends GTRecipeInput {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        switch (this.inputStacks.length) {
+            case 0:
+                return amount + "x[]";
+            case 1:
+                return amount + "x" + toStringWithoutQuantity(this.inputStacks[0]);
+            default:
+                return amount + "x[" + Arrays.stream(this.inputStacks)
+                        .map(GTRecipeItemInput::toStringWithoutQuantity)
+                        .collect(Collectors.joining("|")) + "]";
+        }
+    }
+
+    private static String toStringWithoutQuantity(ItemStack stack) {
+        return stack.getItem().getTranslationKey() + "@" + stack.getItemDamage();
     }
 }

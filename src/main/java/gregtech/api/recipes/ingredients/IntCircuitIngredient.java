@@ -156,4 +156,9 @@ public class IntCircuitIngredient extends GTRecipeInput {
         configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
         IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
     }
+
+    @Override
+    public String toString() {
+        return "1xcircuit(" + matchingConfigurations + ")";
+    }
 }

@@ -109,4 +109,9 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         return inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName()) &&
                 FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
     }
+
+    @Override
+    public String toString() {
+        return amount + "x" + inputStack.getUnlocalizedName();
+    }
 }
