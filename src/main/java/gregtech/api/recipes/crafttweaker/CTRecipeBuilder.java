@@ -78,7 +78,7 @@ public class CTRecipeBuilder {
                 this.backingBuilder.input(
                         GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
             } else {
-                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient, ingredient.getAmount()));
+                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient));
             }
         }
         return this;
@@ -91,12 +91,10 @@ public class CTRecipeBuilder {
             checkIfExists(ingredient, oreDict);
 
             if (oreDict != null) {
-                this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
-                                .setNonConsumable());
+                this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
+                        .setNonConsumable());
             } else {
-                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(
-                                ingredient, ingredient.getAmount())
+                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient)
                         .setNonConsumable());
             }
         }

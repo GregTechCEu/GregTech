@@ -6,9 +6,9 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
@@ -35,7 +35,6 @@ import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -77,7 +76,7 @@ public class CommonProxy {
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
 
-           if (material.hasProperty(PropertyKey.ORE)) {
+            if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
             }
 
@@ -89,21 +88,21 @@ public class CommonProxy {
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
                     }
                 }
             }
             if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                 for (BlockItemPipe pipe : ITEM_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
                     }
                 }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
+            if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
                     !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
                 pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(340, 5, false, false, false, false));
                 pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(340, 10, false, false, false, false));
@@ -266,6 +265,7 @@ public class CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
+        GTRecipeInputCache.enableCache();
         CraftingComponent.initializeComponents();
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponent.class));
     }
@@ -318,6 +318,7 @@ public class CommonProxy {
         if (GroovyScriptCompat.isLoaded()) {
             GroovyScriptCompat.loadMetaItemBracketHandler();
         }
+        GTRecipeInputCache.disableCache();
     }
 
     @SubscribeEvent
@@ -371,16 +372,15 @@ public class CommonProxy {
         GTRecipeManager.postLoad();
         TerminalRegistry.init();
 
-        if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
+        if (ConfigHolder.compat.removeSmeltingForEBFMetals) {
             ModHandler.removeSmeltingEBFMetals();
         }
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if(Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
+        if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
-        GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
     }
 
     public boolean isFancyGraphics() {
