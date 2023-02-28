@@ -75,7 +75,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             if (fuelStack == null || ModHandler.isWater(fuelStack)) continue;
 
             Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE);
+                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (dieselRecipe != null && fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
                 fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
@@ -86,7 +86,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             }
 
             Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE);
+                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (denseFuelRecipe != null && fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
                 fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);

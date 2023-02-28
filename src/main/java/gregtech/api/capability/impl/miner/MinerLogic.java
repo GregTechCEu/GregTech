@@ -402,7 +402,7 @@ public class MinerLogic {
      */
     protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
         ItemStack itemStack = GTUtility.toItem(blockState);
-        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
+        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList());
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
             for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), tier, map)) {

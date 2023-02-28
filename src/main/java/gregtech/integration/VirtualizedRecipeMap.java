@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
 
@@ -62,7 +61,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public Recipe find(long voltage, List<ItemStack> items, List<FluidStack> fluids) {
         if (items == null || items.isEmpty()) items = Collections.emptyList();
         if (fluids == null || fluids.isEmpty()) fluids = Collections.emptyList();
-        return this.recipeMap.findRecipe(voltage, items, fluids, Integer.MAX_VALUE, true);
+        return this.recipeMap.findRecipe(voltage, items, fluids, true);
     }
 
     public boolean removeByInput(long voltage, List<ItemStack> items, List<FluidStack> fluids) {

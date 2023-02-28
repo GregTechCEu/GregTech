@@ -77,11 +77,11 @@ public class RecipeMapTest {
     public void findRecipe() {
         MatcherAssert.assertThat(map.getRecipeList().size(), is(3));
 
-        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0);
+        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null));
         MatcherAssert.assertThat(r, notNullValue());
 
         // This test is failing for me locally -dan
-        Recipe r2 = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.STONE)), Collections.singletonList(new FluidStack(FluidRegistry.WATER, 1)), 0);
+        Recipe r2 = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.STONE)), Collections.singletonList(new FluidStack(FluidRegistry.WATER, 1)));
         MatcherAssert.assertThat(r2, notNullValue());
     }
 
@@ -93,8 +93,8 @@ public class RecipeMapTest {
                 Arrays.asList(
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
-                        NitrogenDioxide.getFluid(1000)),
-                64000);
+                        NitrogenDioxide.getFluid(1000))
+        );
         MatcherAssert.assertThat(r, notNullValue());
     }
 
@@ -105,8 +105,8 @@ public class RecipeMapTest {
                 Arrays.asList(
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
-                        NitrogenDioxide.getFluid(1000)),
-                64000);
+                        NitrogenDioxide.getFluid(1000))
+        );
         MatcherAssert.assertThat(r, notNullValue());
         assert map.removeRecipe(r);
         MatcherAssert.assertThat(map.findRecipe(30,
@@ -114,8 +114,8 @@ public class RecipeMapTest {
                 Arrays.asList(
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
-                        NitrogenDioxide.getFluid(1000)),
-                64000), nullValue());
+                        NitrogenDioxide.getFluid(1000))
+        ), nullValue());
         MatcherAssert.assertThat(map.getRecipeList().size(), is(2));
     }
 }

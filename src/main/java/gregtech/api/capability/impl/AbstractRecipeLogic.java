@@ -503,7 +503,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return null;
         }
 
-        return map.findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()));
+        return map.findRecipe(maxVoltage, inputs, fluidInputs);
     }
 
     /**

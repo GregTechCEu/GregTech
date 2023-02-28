@@ -29,8 +29,8 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
     @Override
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
-        Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, exactVoltage);
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+        Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, exactVoltage);
 
         // Item Mold renaming - min of 2 inputs required
         if (recipe == null && inputs.size() > 1) {
