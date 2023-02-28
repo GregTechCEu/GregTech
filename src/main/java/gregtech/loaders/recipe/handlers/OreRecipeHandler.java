@@ -5,7 +5,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -150,7 +149,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(crushedPurifiedOre)
                 .duration(8).EUt(4).buildAndRegister();
@@ -158,7 +157,7 @@ public class OreRecipeHandler {
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.Water.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .outputs(crushedPurifiedOre,
                         OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3),
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
@@ -317,7 +316,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(dustPrefix, material)
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
@@ -364,7 +363,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(purePrefix, material)
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();

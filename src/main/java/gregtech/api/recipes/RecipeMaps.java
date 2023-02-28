@@ -8,8 +8,8 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.*;
-import gregtech.core.sound.GTSoundEvents;
 import gregtech.api.unification.material.Materials;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.init.SoundEvents;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
@@ -91,18 +91,18 @@ public class RecipeMaps {
      * Example:
      * <pre>
      *      RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-     *               .circuitMeta(2)
+     *               .circuit(2)
      *               .inputs(new ItemStack(Items.COAL, 1, GTValues.W))
      *               .input(OrePrefix.stick, Materials.Wood, 1)
      *               .outputs(new ItemStack(Blocks.TORCH, 4))
      *               .duration(100).EUt(1).buildAndRegister();
      * </pre>
      *
-     * Since the Assembler is an <I>IntCircuitRecipeBuilder</I>, it has access to the <B>circuitMeta()</B> builder entry.
+     * Since the Assembler is an <I>SimpleRecipeBuilder</I>, it has access to the <B>circuit()</B> builder entry.
      * This entry adds an integrated circuit into a recipe, with configuration numbers 0 - 32 allowed
      */
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder(), false)
+    public static final RecipeMap<AssemblerRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ASSEMBLER);
@@ -154,17 +154,17 @@ public class RecipeMaps {
      * <pre>
      * 		RecipeMap.BENDER_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.plate, Materials.Tin, 12)
-     * 			    .circuitMeta(4)
+     * 			    .circuit(4)
      * 				.outputs(MetaItems.FLUID_CELL.getStackForm(4))
      * 				.duration(1200)
      * 				.EUt(8)
      * 				.buildAndRegister();
      * </pre>
      *
-     * Just like other IntCircuitRecipeBuilder RecipeMaps, <B>circuitMeta</B> can be used to easily set a circuit
+     * Just like other SimpleRecipeBuilder RecipeMaps, <B>circuit</B> can be used to easily set a circuit
      */
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> BENDER_RECIPES = new RecipeMap<>("bender", 2, 2, 1, 1, 0, 0, 0, 0, new IntCircuitRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> BENDER_RECIPES = new RecipeMap<>("bender", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, false, GuiTextures.BENDER_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.INT_CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, MoveType.HORIZONTAL)
@@ -289,7 +289,7 @@ public class RecipeMaps {
      * Example:
      * <pre>
      *      RecipeMap.CHEMICAL_RECIPES.recipeBuilder()
-     * 				.notConsumable(new IntCircuitIngredient(1))
+     * 				.circuitMeta(1))
      * 				.fluidInputs(Materials.NitrogenDioxide.getFluid(3000))
      * 			    .fluidInputs(Materials.Water.getFluid(1000))
      * 				.fluidOutputs(Materials.NitricAcid.getFluid(2000))
@@ -416,7 +416,7 @@ public class RecipeMaps {
      * Example:
      * <pre>
      *      RecipeMap.CRACKING_RECIPES.recipeBuilder()
-     *              .notConsumable(new IntCircuitIngredient(1))
+     *              .circuitMeta(1))
      *         		.fluidInputs(Materials.HeavyFuel.getFluid(1000))
      *         	    .fluidInputs(Hydrogen.getFluid(2000))
      *         		.fluidOutputs(LightlyHydroCrackedHeavyFuel.getFluid(1000))
@@ -515,7 +515,7 @@ public class RecipeMaps {
      * Example:
      * <pre>
      * 	 	RecipeMap.DISTILLERY_RECIPES.recipeBuilder()
-     * 	 			.circuitMeta(1)
+     * 	 			.circuit(1)
      * 	 			.fluidInputs(Materials.Toluene.getFluid(30))
      * 	 			.fluidOutputs(Materials.LightFuel.getFluid(30))
      * 	 			.duration(160)
@@ -524,7 +524,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> DISTILLERY_RECIPES = new RecipeMap<>("distillery", 1, 1, 0, 1, 1, 1, 1, 1, new IntCircuitRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> DISTILLERY_RECIPES = new RecipeMap<>("distillery", 1, 1, 0, 1, 1, 1, 1, 1, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.BEAKER_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.BEAKER_OVERLAY_4)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
@@ -633,7 +633,7 @@ public class RecipeMaps {
      * Example:
      * <pre>
      * 		RecipeMap.FLUID_HEATER_RECIPES.recipeBuilder()
-     * 				.circuitMeta(1)
+     * 				.circuit(1)
      * 				.fluidInputs(Materials.Water.getFluid(6))
      * 				.fluidOutputs(Materials.Steam.getFluid(960))
      * 				.duration(30)
@@ -642,7 +642,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> FLUID_HEATER_RECIPES = new RecipeMap<>("fluid_heater", 1, 1, 0, 0, 1, 1, 1, 1, new IntCircuitRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> FLUID_HEATER_RECIPES = new RecipeMap<>("fluid_heater", 1, 1, 0, 0, 1, 1, 1, 1, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.HEATING_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.HEATING_OVERLAY_2)
             .setSlotOverlay(false, false, GuiTextures.INT_CIRCUIT_OVERLAY)
@@ -903,7 +903,7 @@ public class RecipeMaps {
      * 		RecipeMap.MIXER_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.dust, Materials.Redstone, 5)
      * 				.input(OrePrefix.dust, Materials.Ruby, 4)
-     * 				.notConsumable(new IntCircuitIngredient(1))
+     * 				.circuitMeta(1))
      * 				.output(MetaItems.ENERGIUM_DUST, 9)
      * 				.duration(600).EUt(GTValues.VA[GTValues.MV])
      * 				.buildAndRegister();
@@ -921,7 +921,7 @@ public class RecipeMaps {
      * <pre>
      * 		RecipeMap.ORE_WASHER_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.crushed, Materials.Aluminum)
-     * 				.notConsumable(new IntCircuitIngredient(2))
+     * 				.circuitMeta(2))
      * 				.fluidInputs(Materials.Water.getFluid(100))
      * 				.output(OrePrefix.crushedPurified, Materials.Aluminum)
      * 				.duration(8).EUt(4).buildAndRegister();
@@ -942,7 +942,7 @@ public class RecipeMaps {
      * <pre>
      * 		RecipeMap.PACKER_RECIPES.recipeBuilder()
      * 				.inputs(new ItemStack(Items.WHEAT, 9))
-     * 				.notConsumable(new IntCircuitIngredient(9))
+     * 				.circuitMeta(9))
      * 				.outputs(new ItemStack(Blocks.HAY_BLOCK))
      * 				.duration(200).EUt(2)
      * 				.buildAndRegister();
@@ -997,7 +997,7 @@ public class RecipeMaps {
      * <pre>
      *      RecipeMap.PYROLYSE_RECIPES.recipeBuilder()
      *     			.input(OrePrefix.log, Materials.Wood, 16)
-     *     			.circuitMeta(2)
+     *     			.circuit(2)
      *     			.fluidInputs(Materials.Nitrogen.getFluid(1000))
      *     			.outputs(new ItemStack(Items.COAL, 20, 1))
      *     			.fluidOutputs(Materials.Creosote.getFluid(4000))
@@ -1007,7 +1007,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> PYROLYSE_RECIPES = new RecipeMap<>("pyrolyse_oven", 2, 2, 0, 1, 0, 1, 0, 1, new IntCircuitRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> PYROLYSE_RECIPES = new RecipeMap<>("pyrolyse_oven", 2, 2, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder(), false)
             .setSound(GTSoundEvents.FIRE);
 
     /**
