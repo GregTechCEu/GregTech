@@ -3,7 +3,6 @@ package gregtech.loaders.recipe.handlers;
 import com.google.common.base.CaseFormat;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -199,7 +198,7 @@ public class PipeRecipeHandler {
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copyAmount(4, smallPipe))
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(quadPipe)
                 .duration(30)
                 .EUt(VA[ULV])
@@ -215,7 +214,7 @@ public class PipeRecipeHandler {
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copyAmount(9, smallPipe))
-                .notConsumable(new IntCircuitIngredient(9))
+                .circuitMeta(9)
                 .outputs(nonuplePipe)
                 .duration(40)
                 .EUt(VA[ULV])
