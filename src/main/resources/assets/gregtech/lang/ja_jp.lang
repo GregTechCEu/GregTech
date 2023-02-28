@@ -4775,6 +4775,7 @@ gregtech.tool_action.screwdriver.toggle_mode_covers=§8スクリュードライ�
 gregtech.tool_action.screwdriver.access_covers=§8スクリュードライバーでカバーにアクセスできます。
 gregtech.tool_action.screwdriver.auto_collapse=§8スクリュードライバーでバス内の整頓を切替できます。
 gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバーで自動搬出を切替できます。
+gregtech.tool_action.screwdriver.auto_output_down=§8スクリュードライバーで下面からの自動搬出を切替できます。
 gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます。
 gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます。
 gregtech.tool_action.wrench.connect=§8レンチで接続を設定でき、スニークで接続をブロックできます。
