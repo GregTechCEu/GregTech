@@ -48,6 +48,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -318,7 +319,10 @@ public class CommonProxy {
         if (GroovyScriptCompat.isLoaded()) {
             GroovyScriptCompat.loadMetaItemBracketHandler();
         }
-        GTRecipeInputCache.disableCache();
+        // On initial load we need to postpone cache flushing until FMLPostInitializationEvent
+        // to account for WoodMachineRecipes#postInit().
+        if (Loader.instance().hasReachedState(LoaderState.AVAILABLE))
+            GTRecipeInputCache.disableCache();
     }
 
     @SubscribeEvent
@@ -381,6 +385,7 @@ public class CommonProxy {
         if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
+        GTRecipeInputCache.disableCache();
     }
 
     public boolean isFancyGraphics() {
