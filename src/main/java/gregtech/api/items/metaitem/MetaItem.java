@@ -223,14 +223,17 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return Collections.unmodifiableCollection(metaItems.values());
     }
 
+    @Nullable
     public final T getItem(short metaValue) {
         return metaItems.get(formatRawItemDamage(metaValue));
     }
 
+    @Nullable
     public final T getItem(String valueName) {
         return names.get(valueName);
     }
 
+    @Nullable
     public final T getItem(ItemStack itemStack) {
         return getItem((short) (itemStack.getItemDamage() - metaItemOffset));
     }
