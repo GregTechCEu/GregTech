@@ -43,7 +43,6 @@ public class CraftingComponent {
     public static Component GLASS;
     public static Component PLATE;
     public static Component DOUBLE_PLATE;
-    public static Component DENSE_PLATE;
     public static Component HULL_PLATE;
     public static Component MOTOR;
     public static Component ROTOR;
