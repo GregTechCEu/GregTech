@@ -21,15 +21,15 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     public static GTRecipeInput getOrCreate(FluidStack fluidStack, int amount) {
-        return getFromCache(new GTRecipeFluidInput(fluidStack, amount));
+        return new GTRecipeFluidInput(fluidStack, amount);
     }
 
     public static GTRecipeInput getOrCreate(Fluid fluid, int amount) {
-        return getFromCache(new GTRecipeFluidInput(new FluidStack(fluid, amount)));
+        return new GTRecipeFluidInput(new FluidStack(fluid, amount));
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return getFromCache(new GTRecipeFluidInput(ri.getInputFluidStack(), i));
+        return new GTRecipeFluidInput(ri.getInputFluidStack(), i);
     }
 
     @Override

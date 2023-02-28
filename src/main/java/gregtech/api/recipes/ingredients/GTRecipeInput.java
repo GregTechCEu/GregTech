@@ -41,10 +41,10 @@ public abstract class GTRecipeInput {
 
     private boolean cached;
 
-    static GTRecipeInput getFromCache(GTRecipeInput realIngredient) {
-        return realIngredient;
-    }
-
+    /**
+     * @deprecated Calling this function is unnecessary. Use the ingredient directly.
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(GTRecipeInput gtRecipeIngredient) {
         return gtRecipeIngredient;
     }

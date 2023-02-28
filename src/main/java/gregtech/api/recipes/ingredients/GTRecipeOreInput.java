@@ -24,11 +24,11 @@ public class GTRecipeOreInput extends GTRecipeInput {
     }
 
     public static GTRecipeInput getOrCreate(String ore, int amount) {
-        return getFromCache(new GTRecipeOreInput(ore, amount));
+        return new GTRecipeOreInput(ore, amount);
     }
 
     public static GTRecipeInput getOrCreate(String ore) {
-        return getFromCache(new GTRecipeOreInput(ore, 1));
+        return new GTRecipeOreInput(ore, 1);
     }
 
     public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material, int amount) {

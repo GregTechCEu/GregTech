@@ -19,7 +19,7 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     }
 
     public static CraftTweakerItemInputWrapper getOrCreate(IIngredient ingredient) {
-        return (CraftTweakerItemInputWrapper) getFromCache(new CraftTweakerItemInputWrapper(ingredient));
+        return new CraftTweakerItemInputWrapper(ingredient);
     }
 
     @Override

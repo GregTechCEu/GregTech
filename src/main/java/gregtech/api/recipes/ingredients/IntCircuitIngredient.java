@@ -15,7 +15,7 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
     private final int matchingConfigurations;
 
     public static IntCircuitIngredient getOrCreate(IntCircuitIngredient ri) {
-        return (IntCircuitIngredient) getFromCache(new IntCircuitIngredient(ri.matchingConfigurations));
+        return new IntCircuitIngredient(ri.matchingConfigurations);
     }
 
     @Override

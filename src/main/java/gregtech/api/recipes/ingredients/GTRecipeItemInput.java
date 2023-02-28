@@ -64,19 +64,19 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
-        return getFromCache(new GTRecipeItemInput(stack, amount));
+        return new GTRecipeItemInput(stack, amount);
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return getFromCache(new GTRecipeItemInput(ri.getInputStacks(), i));
+        return new GTRecipeItemInput(ri.getInputStacks(), i);
     }
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri) {
-        return getFromCache(new GTRecipeItemInput(ri.getInputStacks()));
+        return new GTRecipeItemInput(ri.getInputStacks());
     }
 
     public static GTRecipeInput getOrCreate(ItemStack ri) {
-        return getFromCache(new GTRecipeItemInput(ri));
+        return new GTRecipeItemInput(ri);
     }
 
     @Override

@@ -359,18 +359,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(GTRecipeInput gtRecipeIngredient) {
-        return inputs(GTRecipeInput.getOrCreate(gtRecipeIngredient)
-                .setNonConsumable());
+        return input(gtRecipeIngredient.setNonConsumable());
     }
 
     public R notConsumable(ItemStack itemStack) {
-        return inputs(GTRecipeItemInput.getOrCreate(itemStack, itemStack.getCount())
-                .setNonConsumable());
+        return input(GTRecipeItemInput.getOrCreate(itemStack, itemStack.getCount()).setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material, int amount) {
-        return inputs(GTRecipeOreInput.getOrCreate(prefix, material, amount)
-                .setNonConsumable());
+        return input(GTRecipeOreInput.getOrCreate(prefix, material, amount).setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material) {
@@ -378,8 +375,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(GTRecipeItemInput.getOrCreate(item.getStackForm(), 1)
-                .setNonConsumable());
+        return input(GTRecipeItemInput.getOrCreate(item.getStackForm(), 1).setNonConsumable());
     }
 
     public R notConsumable(Fluid fluid, int amount) {
