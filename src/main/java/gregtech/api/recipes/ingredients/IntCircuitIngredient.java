@@ -12,10 +12,30 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
 
     public static final int CIRCUIT_MIN = 0;
     public static final int CIRCUIT_MAX = 32;
+
+    private static final IntCircuitIngredient[] INGREDIENTS = new IntCircuitIngredient[CIRCUIT_MAX + 1];
+
+    public static IntCircuitIngredient circuitInput(int meta) {
+        if (meta < CIRCUIT_MIN || meta > CIRCUIT_MAX) {
+            throw new IndexOutOfBoundsException("Circuit meta " + meta + " is out of range");
+        }
+        IntCircuitIngredient ingredient = INGREDIENTS[meta];
+        if (ingredient == null) {
+            INGREDIENTS[meta] = ingredient = new IntCircuitIngredient(meta);
+            ingredient.isConsumable = false;
+            ingredient.setCached();
+        }
+        return ingredient;
+    }
+
     private final int matchingConfigurations;
 
+    /**
+     * @deprecated Calling this function is unnecessary. Use the ingredient directly.
+     */
+    @Deprecated
     public static IntCircuitIngredient getOrCreate(IntCircuitIngredient ri) {
-        return new IntCircuitIngredient(ri.matchingConfigurations);
+        return ri;
     }
 
     @Override

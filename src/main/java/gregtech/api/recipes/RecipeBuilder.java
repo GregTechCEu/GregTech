@@ -396,8 +396,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                     IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));
             recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
         }
-        return notConsumable(new IntCircuitIngredient(circuitNumber));
+        return input(IntCircuitIngredient.circuitInput(circuitNumber));
     }
 
     public R output(OrePrefix orePrefix, Material material) {
