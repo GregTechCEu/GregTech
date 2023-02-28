@@ -10,8 +10,25 @@ import net.minecraft.util.NonNullList;
 import java.util.List;
 
 public class GTRecipeItemInput extends GTRecipeInput {
-    ItemStack[] inputStacks;
-    List<ItemToMetaList> itemList = new ObjectArrayList<>();
+
+    public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
+        return new GTRecipeItemInput(stack, amount);
+    }
+
+    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
+        return new GTRecipeItemInput(ri.getInputStacks(), i);
+    }
+
+    public static GTRecipeInput getOrCreate(GTRecipeInput ri) {
+        return new GTRecipeItemInput(ri.getInputStacks());
+    }
+
+    public static GTRecipeInput getOrCreate(ItemStack ri) {
+        return new GTRecipeItemInput(ri);
+    }
+
+    private final ItemStack[] inputStacks;
+    private final List<ItemToMetaList> itemList = new ObjectArrayList<>();
 
     protected GTRecipeItemInput(ItemStack stack, int amount) {
         this(new ItemStack[]{stack}, amount);
@@ -61,22 +78,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     protected GTRecipeItemInput(ItemStack... stack) {
         this(stack, stack[0].getCount());
-    }
-
-    public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
-        return new GTRecipeItemInput(stack, amount);
-    }
-
-    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return new GTRecipeItemInput(ri.getInputStacks(), i);
-    }
-
-    public static GTRecipeInput getOrCreate(GTRecipeInput ri) {
-        return new GTRecipeItemInput(ri.getInputStacks());
-    }
-
-    public static GTRecipeInput getOrCreate(ItemStack ri) {
-        return new GTRecipeItemInput(ri);
     }
 
     @Override

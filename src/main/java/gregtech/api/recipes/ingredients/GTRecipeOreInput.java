@@ -10,18 +10,6 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class GTRecipeOreInput extends GTRecipeInput {
-    int ore;
-    ItemStack[] inputStacks;
-
-    protected GTRecipeOreInput(String ore, int amount) {
-        this.ore = OreDictionary.getOreID(ore);
-        this.amount = amount;
-    }
-
-    protected GTRecipeOreInput(int ore, int amount) {
-        this.ore = ore;
-        this.amount = amount;
-    }
 
     public static GTRecipeInput getOrCreate(String ore, int amount) {
         return new GTRecipeOreInput(ore, amount);
@@ -37,6 +25,19 @@ public class GTRecipeOreInput extends GTRecipeInput {
 
     public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material) {
         return getOrCreate(new UnificationEntry(prefix, material).toString(), 1);
+    }
+
+    private final int ore;
+    private ItemStack[] inputStacks;
+
+    protected GTRecipeOreInput(String ore, int amount) {
+        this.ore = OreDictionary.getOreID(ore);
+        this.amount = amount;
+    }
+
+    protected GTRecipeOreInput(int ore, int amount) {
+        this.ore = ore;
+        this.amount = amount;
     }
 
     @Override

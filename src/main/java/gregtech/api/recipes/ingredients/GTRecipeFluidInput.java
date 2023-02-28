@@ -7,18 +7,6 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class GTRecipeFluidInput extends GTRecipeInput {
-    FluidStack inputStack;
-
-    public GTRecipeFluidInput(FluidStack inputStack) {
-        this.inputStack = inputStack;
-        this.amount = inputStack.amount;
-    }
-
-    public GTRecipeFluidInput(FluidStack inputStack, int amount) {
-        this.inputStack = inputStack.copy();
-        this.inputStack.amount = amount;
-        this.amount = amount;
-    }
 
     public static GTRecipeInput getOrCreate(FluidStack fluidStack, int amount) {
         return new GTRecipeFluidInput(fluidStack, amount);
@@ -30,6 +18,19 @@ public class GTRecipeFluidInput extends GTRecipeInput {
 
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
         return new GTRecipeFluidInput(ri.getInputFluidStack(), i);
+    }
+
+    private final FluidStack inputStack;
+
+    public GTRecipeFluidInput(FluidStack inputStack) {
+        this.inputStack = inputStack;
+        this.amount = inputStack.amount;
+    }
+
+    public GTRecipeFluidInput(FluidStack inputStack, int amount) {
+        this.inputStack = inputStack.copy();
+        this.inputStack.amount = amount;
+        this.amount = amount;
     }
 
     @Override

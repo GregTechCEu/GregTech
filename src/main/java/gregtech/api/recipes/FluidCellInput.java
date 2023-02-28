@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 
 public class FluidCellInput extends GTRecipeItemInput {
 
-    final Fluid fluid;
+    private final Fluid fluid;
 
     public FluidCellInput(Fluid fluid) {
         super(getFilledCell(fluid));
