@@ -60,8 +60,8 @@ public class MachineSceneWidget extends WidgetGroup {
     private boolean blendColor = true;
     private Set<BlockPos> cores;
     private Set<BlockPos> around;
-    private FacingPos hoverPosFace;
-    private FacingPos selectedPosFace;
+    private FacingPos hoveredFacingPos;
+    private FacingPos selectedFacingPos;
     private BiConsumer<BlockPos, EnumFacing> onSelected;
 
     protected MetaTileEntity mte;
@@ -108,7 +108,7 @@ public class MachineSceneWidget extends WidgetGroup {
 
     @SideOnly(Side.CLIENT)
     private void renderBlockOverLay(WorldSceneRenderer renderer) {
-        hoverPosFace = null;
+        hoveredFacingPos = null;
         if (isMouseOverElement(currentMouseX, currentMouseY)) {
             int x = getPosition().x;
             int y = getPosition().y;
@@ -134,20 +134,20 @@ public class MachineSceneWidget extends WidgetGroup {
                     double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
                     if (dist < min) {
                         min = dist;
-                        hoverPosFace = new FacingPos(hit.getBlockPos(), hit.sideHit);
+                        hoveredFacingPos = new FacingPos(hit.getBlockPos(), hit.sideHit);
                     }
                 }
             }
         }
-        if (selectedPosFace != null || hoverPosFace != null) {
+        if (selectedFacingPos != null || hoveredFacingPos != null) {
             GlStateManager.pushMatrix();
             RenderUtil.useLightMap(240, 240, () -> {
                 GlStateManager.disableDepth();
-                if (selectedPosFace != null) {
-                    drawFacingBorder(selectedPosFace, 0xff00ff00);
+                if (selectedFacingPos != null) {
+                    drawFacingBorder(selectedFacingPos, 0xff00ff00);
                 }
-                if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
-                    drawFacingBorder(hoverPosFace, 0xffffffff);
+                if (hoveredFacingPos != null && !hoveredFacingPos.equals(selectedFacingPos)) {
+                    drawFacingBorder(hoveredFacingPos, 0xffffffff);
                 }
                 GlStateManager.enableDepth();
             });
@@ -265,10 +265,10 @@ public class MachineSceneWidget extends WidgetGroup {
             dragging = true;
             lastMouseX = mouseX;
             lastMouseY = mouseY;
-            if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
-                selectedPosFace = hoverPosFace;
+            if (hoveredFacingPos != null && !hoveredFacingPos.equals(selectedFacingPos)) {
+                selectedFacingPos = hoveredFacingPos;
                 if (onSelected != null) {
-                    onSelected.accept(selectedPosFace.getPos(), selectedPosFace.getFacing());
+                    onSelected.accept(selectedFacingPos.getPos(), selectedFacingPos.getFacing());
                 }
             }
             return true;

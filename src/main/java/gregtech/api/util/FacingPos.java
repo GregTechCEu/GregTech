@@ -30,7 +30,7 @@ public class FacingPos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FacingPos facingPos = (FacingPos) o;
-        return GTUtility.arePosEqual(facingPos.getPos(), pos) && facing == facingPos.getFacing();
+        return GTUtility.arePosEqual(pos, facingPos.getPos()) && facing == facingPos.getFacing();
     }
 
     @Override
