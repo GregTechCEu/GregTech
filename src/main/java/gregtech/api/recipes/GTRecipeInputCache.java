@@ -60,8 +60,6 @@ public class GTRecipeInputCache {
         if (!isCacheEnabled() || recipeInput.isCached()) {
             return recipeInput;
         }
-        // If there's one, the ref of the variable `cached` will be the instance already present in the cache.
-        // If there's none, `recipeInput` will be put into the cache and returned subsequently.
         GTRecipeInput cached = INSTANCES.addOrGet(recipeInput);
         if (cached == recipeInput) { // If recipeInput is cached just now...
             cached.setCached();
