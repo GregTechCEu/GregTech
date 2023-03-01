@@ -1,4 +1,4 @@
-package gregtech.api.util;
+package gregtech.common.crafting;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;

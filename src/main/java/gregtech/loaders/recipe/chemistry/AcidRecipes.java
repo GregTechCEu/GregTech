@@ -1,7 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
@@ -20,14 +18,14 @@ public class AcidRecipes {
     private static void sulfuricAcidRecipes() {
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .input(dust, Sulfur)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .duration(60).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(Oxygen.getFluid(3000))
                 .fluidInputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
@@ -47,14 +45,14 @@ public class AcidRecipes {
                 .duration(160).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(HydrogenSulfide.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(4000))
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .duration(320).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
+                .circuitMeta(24)
                 .input(dust, Sulfur)
                 .fluidInputs(Water.getFluid(4000))
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
@@ -66,14 +64,14 @@ public class AcidRecipes {
     private static void nitricAcidRecipes() {
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(Hydrogen.getFluid(3000))
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .fluidOutputs(Ammonia.getFluid(1000))
                 .duration(320).EUt(384).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(Oxygen.getFluid(5000))
                 .fluidInputs(Ammonia.getFluid(2000))
                 .fluidOutputs(NitricOxide.getFluid(2000))
@@ -81,21 +79,21 @@ public class AcidRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidInputs(NitricOxide.getFluid(1000))
                 .fluidOutputs(NitrogenDioxide.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(3))
+                .circuitMeta(3)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(2000))
                 .fluidOutputs(NitrogenDioxide.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(NitrogenDioxide.getFluid(3000))
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(NitricAcid.getFluid(2000))
@@ -103,7 +101,7 @@ public class AcidRecipes {
                 .duration(240).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(3))
+                .circuitMeta(3)
                 .fluidInputs(Water.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidInputs(NitrogenDioxide.getFluid(2000))
@@ -111,7 +109,7 @@ public class AcidRecipes {
                 .duration(240).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
+                .circuitMeta(24)
                 .fluidInputs(Oxygen.getFluid(4000))
                 .fluidInputs(Ammonia.getFluid(1000))
                 .fluidOutputs(NitricAcid.getFluid(1000))
@@ -119,7 +117,7 @@ public class AcidRecipes {
                 .duration(320).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
+                .circuitMeta(24)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(3000))
                 .fluidInputs(Oxygen.getFluid(4000))
@@ -131,7 +129,7 @@ public class AcidRecipes {
     private static void phosphoricAcidRecipes() {
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .input(dust, Phosphorus, 4)
                 .fluidInputs(Oxygen.getFluid(10000))
                 .output(dust, PhosphorusPentoxide, 14)
@@ -153,7 +151,7 @@ public class AcidRecipes {
                 .duration(320).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
+                .circuitMeta(24)
                 .input(dust, Phosphorus, 2)
                 .fluidInputs(Water.getFluid(3000))
                 .fluidInputs(Oxygen.getFluid(5000))
