@@ -219,7 +219,8 @@ public final class OreGlobParser {
         OreGlobNode root;
 
         if (inverted && advanceIf(LPAR)) {
-            root = or();
+            root = OreGlobNodes.not(or());
+            inverted = false;
             Token peek = peek();
             switch (peek.type) {
                 case RPAR:
