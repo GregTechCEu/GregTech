@@ -83,7 +83,7 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     }
 
     @Override
-    public int hashCode() {
+    protected int computeHash() {
         int hash = 1;
         for (ItemStack stack : getInputStacks()) {
             hash = 31 * hash + stack.getItem().hashCode();

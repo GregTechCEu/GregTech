@@ -83,6 +83,7 @@ public abstract class GTRecipeInput {
             return copyWithAmount(amount);
         } else {
             this.amount = amount;
+            this.hashCached = false;
             return this;
         }
     }
@@ -91,6 +92,7 @@ public abstract class GTRecipeInput {
         if (!isConsumable) return this;
         GTRecipeInput recipeInput = cached ? copy() : this;
         recipeInput.isConsumable = false;
+        recipeInput.hashCached = false;
         return recipeInput;
     }
 
@@ -98,6 +100,7 @@ public abstract class GTRecipeInput {
         GTRecipeInput recipeInput = cached ? copy() : this;
         recipeInput.nbtMatcher = nbtMatcher;
         recipeInput.nbtCondition = nbtCondition;
+        recipeInput.hashCached = false;
         return recipeInput;
     }
 
@@ -140,6 +143,24 @@ public abstract class GTRecipeInput {
     public boolean acceptsFluid(@Nullable FluidStack input) {
         return false;
     }
+
+
+    private int hash;
+    protected boolean hashCached;
+
+    @Override
+    public int hashCode() {
+        if (!this.hashCached) {
+            this.hash = computeHash();
+            this.hashCached = true;
+        }
+        return this.hash;
+    }
+
+    protected abstract int computeHash();
+
+    @Override
+    public abstract boolean equals(Object obj);
 
     /**
      * @return true if the input matches another input, while ignoring its amount field and

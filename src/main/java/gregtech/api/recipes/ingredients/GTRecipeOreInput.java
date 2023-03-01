@@ -96,7 +96,7 @@ public class GTRecipeOreInput extends GTRecipeInput {
     }
 
     @Override
-    public int hashCode() {
+    protected int computeHash() {
         return Objects.hash(amount, ore, isConsumable, nbtMatcher, nbtCondition);
     }
 

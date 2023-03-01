@@ -138,7 +138,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     @Override
-    public int hashCode() {
+    protected int computeHash() {
         int hash = 1;
         for (ItemStack stack : inputStacks) {
             hash = 31 * hash + stack.getItem().hashCode();

@@ -69,7 +69,7 @@ public class GTRecipeFluidInput extends GTRecipeInput {
     }
 
     @Override
-    public int hashCode() {
+    protected int computeHash() {
         if (nbtMatcher == null) {
             //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
             return Objects.hash(inputStack.getFluid().getName(), this.amount, this.nbtMatcher, this.nbtCondition, inputStack.tag);

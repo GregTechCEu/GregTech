@@ -86,7 +86,7 @@ public class IntCircuitIngredient extends GTRecipeInput {
     }
 
     @Override
-    public int hashCode() {
+    protected int computeHash() {
         return Objects.hash(matchingConfigurations, isConsumable);
     }
 
