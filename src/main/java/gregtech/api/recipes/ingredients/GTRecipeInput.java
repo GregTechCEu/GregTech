@@ -41,6 +41,9 @@ public abstract class GTRecipeInput {
 
     private boolean cached;
 
+    private int hash;
+    protected boolean hashCached;
+
     /**
      * @deprecated Calling this function is unnecessary. Use the ingredient directly.
      */
@@ -143,10 +146,6 @@ public abstract class GTRecipeInput {
     public boolean acceptsFluid(@Nullable FluidStack input) {
         return false;
     }
-
-
-    private int hash;
-    protected boolean hashCached;
 
     @Override
     public int hashCode() {
