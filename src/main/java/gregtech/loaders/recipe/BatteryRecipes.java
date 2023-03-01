@@ -311,7 +311,7 @@ public class BatteryRecipes {
 
         // Lapotronic Energy Orb
         LASER_ENGRAVER_RECIPES.recipeBuilder()
-                .input(LAPOTRON_CRYSTAL)
+                .inputNBT(LAPOTRON_CRYSTAL, NBTMatcher.ANY, NBTCondition.ANY)
                 .notConsumable(craftingLens, Color.Blue)
                 .output(ENGRAVED_LAPOTRON_CHIP, 3)
                 .cleanroom(CleanroomType.CLEANROOM)
