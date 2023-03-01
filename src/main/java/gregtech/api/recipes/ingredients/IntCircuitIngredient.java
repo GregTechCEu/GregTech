@@ -51,8 +51,6 @@ public class IntCircuitIngredient extends GTRecipeInput {
     protected IntCircuitIngredient copy() {
         IntCircuitIngredient copy = new IntCircuitIngredient(this.matchingConfigurations);
         copy.isConsumable = this.isConsumable;
-        copy.nbtMatcher = this.nbtMatcher;
-        copy.nbtCondition = this.nbtCondition;
         return copy;
     }
 

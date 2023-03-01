@@ -4,6 +4,8 @@ import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -26,8 +28,6 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     protected CraftTweakerItemInputWrapper copy() {
         CraftTweakerItemInputWrapper copy = new CraftTweakerItemInputWrapper(this.ingredient.amount(this.amount));
         copy.isConsumable = this.isConsumable;
-        copy.nbtMatcher = this.nbtMatcher;
-        copy.nbtCondition = this.nbtCondition;
         return copy;
     }
 
@@ -35,8 +35,6 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     public CraftTweakerItemInputWrapper copyWithAmount(int amount) {
         CraftTweakerItemInputWrapper copy = new CraftTweakerItemInputWrapper(this.ingredient.amount(amount));
         copy.isConsumable = this.isConsumable;
-        copy.nbtMatcher = this.nbtMatcher;
-        copy.nbtCondition = this.nbtCondition;
         return copy;
     }
 
@@ -78,6 +76,11 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
     }
 
     @Override
+    public GTRecipeInput setNBTMatchingCondition(NBTMatcher nbtMatcher, NBTCondition nbtCondition) {
+        return this; // CraftTweakerItemInputWrapper ignores nbt conditions
+    }
+
+    @Override
     public boolean hasNBTMatchingCondition() {
         return true;
     }
@@ -94,8 +97,6 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
         }
         hash = 31 * hash + this.amount;
         hash = 31 * hash + (this.isConsumable ? 1 : 0);
-        hash = 31 * hash + (this.nbtMatcher != null ? this.nbtMatcher.hashCode() : 0);
-        hash = 31 * hash + (this.nbtCondition != null ? this.nbtCondition.hashCode() : 0);
         return hash;
     }
 
