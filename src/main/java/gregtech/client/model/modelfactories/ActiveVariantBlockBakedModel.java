@@ -11,12 +11,15 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -34,7 +37,7 @@ import java.util.function.BooleanSupplier;
 public class ActiveVariantBlockBakedModel implements IBakedModel {
 
     private static final Map<ModelResourceLocation, ActiveVariantBlockBakedModel> INSTANCES = new Object2ObjectOpenHashMap<>();
-    private static final String BLOOM_TEXTURE = "bloom";
+    private static final String[] BLOOM_TEXTURE_SUFFIX = {"_bloom", "_emissive", "_bloom_ctm", "_emissive_ctm"};
 
     private final ModelResourceLocation inactiveModelLocation;
     private final ModelResourceLocation activeModelLocation;
@@ -102,11 +105,32 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
     private static List<BakedQuad> getBloomQuads(IBakedModel model, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> list = new ArrayList<>();
         for (BakedQuad q : model.getQuads(state, side, rand)) {
-            if (q.getSprite().getIconName().contains(BLOOM_TEXTURE)) {
-                list.add(q);
+            for (String bloomTextureSuffix : BLOOM_TEXTURE_SUFFIX) {
+                if (q.getSprite().getIconName().endsWith(bloomTextureSuffix)) {
+                    list.add(transform(q));
+                    break;
+                }
             }
         }
         return list;
+    }
+
+    private static BakedQuad transform(BakedQuad quad) {
+        VertexFormat format = quad.getFormat();
+        if (!format.getElements().contains(DefaultVertexFormats.TEX_2S)) {
+            format = new VertexFormat(quad.getFormat());
+            format.addElement(DefaultVertexFormats.TEX_2S);
+        }
+        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format) {
+            @Override
+            public void put(int element, float... data) {
+                if (this.getVertexFormat().getElement(element) == DefaultVertexFormats.TEX_2S)
+                    super.put(element, 480.0f / 0xFFFF, 480.0f / 0xFFFF);
+                else super.put(element, data);
+            }
+        };
+        quad.pipe(builder);
+        return builder.build();
     }
 
     @Override
