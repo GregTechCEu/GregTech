@@ -20,7 +20,7 @@ public class GTValues {
     /**
      * Version String for use in addon mods' @Mod(dependencies = "...") block.
      */
-    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.VERSION + ",);";
+    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.DEP_VERSION + ",);";
 
     /**
      * <p/>

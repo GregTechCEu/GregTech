@@ -1,0 +1,345 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        if (project.use_mixins.toBoolean()) {
+            maven {
+                name 'MixinGradle Maven'
+                url 'https://repo.spongepowered.org/repository/maven-public'
+            }
+        }
+    }
+    dependencies {
+        if (project.use_mixins.toBoolean()) {
+            classpath "org.spongepowered:mixingradle:${mixingradle_version}"
+        }
+    }
+}
+
+plugins {
+    id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
+    id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
+}
+
+tasks.register('getVersionFromJava') {
+    return getVersionFromJava()
+}
+
+version = getVersionFromJava()
+group = project.maven_group
+archivesBaseName = "${project.archives_base_name}-${project.minecraft_version}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+if (project.use_intellij_idea.toBoolean()) {
+    apply {
+        plugin 'java'
+        plugin 'idea'
+    }
+
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+}
+
+if (project.use_eclipse.toBoolean()) {
+    apply {
+        plugin 'java'
+        plugin 'eclipse'
+    }
+
+    eclipse {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+}
+
+minecraft {
+    mappings channel: "${mcp_mappings_channel}", version: "${mcp_mappings_version}"
+
+    if (project.has_access_transformer.toBoolean()) {
+        accessTransformer = file('src/main/resources/META-INF/gregtech_at.cfg')
+    }
+
+    runs {
+        client {
+            //noinspection GroovyAssignabilityCheck
+            workingDirectory project.file('run')
+            if (project.use_coremod.toBoolean()) {
+                jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
+            }
+            if (project.use_mixins.toBoolean()) {
+                jvmArg '-Dmixin.hotSwap=true'
+                jvmArg '-Dmixin.checks.interfaces=true'
+                jvmArg '-Dmixin.debug=true'
+            }
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            environment 'MC_VERSION', minecraft_version.toString()
+        }
+
+        server {
+            //noinspection GroovyAssignabilityCheck
+            workingDirectory project.file('run')
+            if (project.use_coremod.toBoolean()) {
+                jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
+            }
+            if (project.use_mixins.toBoolean()) {
+                jvmArg '-Dmixin.hotSwap=true'
+                jvmArg '-Dmixin.checks.interfaces=true'
+            }
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            environment 'MC_VERSION', minecraft_version.toString()
+        }
+    }
+}
+
+repositories {
+    maven {
+        name 'Cleanroom Maven'
+        url 'https://maven.cleanroommc.com'
+    }
+    maven { // JEI
+        name 'Progwml6 Maven'
+        url 'https://dvs1.progwml6.com/files/maven/'
+    }
+    maven { // CraftTweaker and JEI Backup
+        name 'BlameJared Maven'
+        url 'https://maven.blamejared.com'
+    }
+    if (project.use_mixins.toBoolean()) {
+        maven {
+            name 'Sponge Maven'
+            url 'https://repo.spongepowered.org/maven'
+        }
+    }
+    maven {
+        name 'Curse Maven'
+        url 'https://www.cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Hard Dependencies
+    // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
+    // therefore we manually deobf the regular jar
+    implementation fg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
+
+    // Soft Dependencies
+    implementation "mezz.jei:jei_1.12.2:${project.jei_version}"
+    implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
+    implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
+    implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
+    implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
+    implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
+
+    // Tests
+    testImplementation("org.junit.jupiter:junit-jupiter:${junit_version}")
+    testImplementation("org.hamcrest:hamcrest:${hamcrest_version}")
+
+    // Compile-Time Dependencies
+    compileOnly "org.projectlombok:lombok:${lombok_version}"
+    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+
+    if (project.use_mixins.toBoolean()) {
+        compileOnly "zone.rong:mixinbooter:${mixinbooter_version}"
+        runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
+
+        annotationProcessor "org.spongepowered:mixin:${mixin_annotations_version}:processor"
+    }
+
+    // GroovyScript dependency
+    // remove this if project.use_mixins is true
+    runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
+}
+
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
+        codeChickenLib
+    }
+}
+
+if (project.build_deobfJar.toBoolean()) {
+    // Create deobf dev jars
+    tasks.register('deobfJar', Jar) {
+        archiveClassifier.set 'deobf'
+        from sourceSets.main.output
+    }
+}
+
+if (project.build_apiJar.toBoolean()) {
+    // Create API library jar
+    tasks.register('apiJar', Jar) {
+        archiveClassifier.set 'api'
+        from(sourceSets.main.java) {
+            include 'gregtech/api/**'
+        }
+
+        from(sourceSets.main.output) {
+            include 'gregtech/api/**'
+        }
+    }
+}
+
+if (project.build_sourceJar.toBoolean()) {
+    // Create source jar
+    tasks.register('sourcesJar', Jar) {
+        archiveClassifier.set 'sources'
+        from sourceSets.main.allJava
+    }
+}
+
+// Loading resources, works even on IDE client runs
+sourceSets {
+    main {
+        if (project.use_mixins.toBoolean()) {
+            ext.refMap = 'mixins.' + archives_base_name + '.refmap.json'
+        }
+
+        java {
+            srcDirs = ['src/main/java', 'src/api/java']
+        }
+
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+
+    // at compile time, put resources in same directories as classes
+    main.output.setResourcesDir(main.java.classesDirectory)
+}
+
+jar {
+    manifest {
+        // noinspection GroovyAssignabilityCheck
+        def attribute_map = [:]
+        if (project.use_coremod.toBoolean()) {
+            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+            if (project.include_mod.toBoolean()) {
+                attribute_map['FMLCorePluginContainsFMLMod'] = true
+                attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
+            }
+        }
+        if (project.use_mixins.toBoolean()) {
+            attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
+        }
+        if (project.has_access_transformer.toBoolean()) {
+            attribute_map['FMLAT'] = 'gregtech_at.cfg'
+        }
+        attributes(attribute_map)
+    }
+
+    // exclude all files in src/api from being shipped in the jar
+    // this prevents crashes in obfuscated environments
+    file('src/api/').eachDirRecurse { dir ->
+        exclude dir.name
+    }
+}
+
+artifacts {
+    if (project.build_deobfJar.toBoolean()) {
+        archives deobfJar
+    }
+    if (project.build_apiJar.toBoolean()) {
+        archives apiJar
+    }
+    if (project.build_sourceJar.toBoolean()) {
+        archives sourcesJar
+    }
+}
+
+// It is important to NOT re-obfuscate jars for the deobfuscated environment.
+// Therefore, we do not finalize the 'jar' task with the 'reobfJar' task.
+// The Forge FG5 example buildscript states otherwise, however it creates broken builds in deobfuscated environments.
+
+processResources {
+    // required to allow file expansion later
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    // this will ensure that this task is redone when the versions change.
+    inputs.property 'version', version
+    inputs.property 'mcversion', minecraft_version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand(['version': version, 'mcversion': minecraft_version])
+    }
+
+    // copy everything else except mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+test {
+    testLogging {
+        events TestLogEvent.STARTED, TestLogEvent.PASSED, TestLogEvent.FAILED
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showStackTraces true
+        showCauses true
+        showStandardStreams true
+    }
+
+    useJUnitPlatform()
+}
+
+@SuppressWarnings('GroovyAssignabilityCheck')
+private String getVersionFromJava() {
+    def major = '0'
+    def minor = '0'
+    def revision = '0'
+    def extra = ''
+
+    file('src/main/java/gregtech/GregTechVersion.java').readLines().each { line ->
+        if (line.contains('MAJOR')) {
+            def matcher = line =~ /MAJOR\s*=\s*(\d+)/
+            if (matcher) major = matcher[0][1]
+        } else if (line.contains('MINOR')) {
+            def matcher = line =~ /MINOR\s*=\s*(\d+)/
+            if (matcher) minor = matcher[0][1]
+        } else if (line.contains('REVISION')) {
+            def matcher = line =~ /REVISION\s*=\s*(\d+)/
+            if (matcher) revision = matcher[0][1]
+        } else if (line.contains('EXTRA')) {
+            def matcher = line =~ /EXTRA\s*=\s*"(\w+)"/
+            if (matcher) extra = matcher[0][1]
+            return
+        }
+    }
+
+    if (extra) {
+        return "${major}.${minor}.${revision}-${extra}"
+    } else {
+        return "${major}.${minor}.${revision}"
+    }
+}

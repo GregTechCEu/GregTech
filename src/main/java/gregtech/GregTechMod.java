@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.event.*;
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
         acceptedMinecraftVersions = "[1.12.2,1.13)",
+        version = GregTechVersion.VERSION,
         dependencies = "required:forge@[14.23.5.2847,);"
                 + "required-after:codechickenlib@[3.2.3,);"
                 + "after:forestry;"
