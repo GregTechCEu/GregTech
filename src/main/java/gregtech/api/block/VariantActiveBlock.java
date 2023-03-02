@@ -102,7 +102,6 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         } else {
             ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
             ext = ext.withProperty(ACTIVE, ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos));
-            ext = ext.withProperty(ACTIVE, pos.getY()%2==0);
         }
         if (Loader.isModLoaded(GTValues.MODID_CTM)) {
             //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
