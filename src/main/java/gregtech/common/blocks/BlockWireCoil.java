@@ -76,7 +76,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @Override
     protected boolean isBloomEnabled(CoilType value) {
-        return ConfigHolder.client.casingsActiveEmissiveTextures;
+        return ConfigHolder.client.coilsActiveEmissiveTextures;
     }
 
     public enum CoilType implements IStringSerializable, IHeatingCoilBlockStats {
