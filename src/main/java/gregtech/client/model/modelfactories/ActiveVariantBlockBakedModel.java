@@ -21,6 +21,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -116,6 +117,7 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
     }
 
     private static BakedQuad transform(BakedQuad quad) {
+        if (FMLClientHandler.instance().hasOptifine()) return quad;
         VertexFormat format = quad.getFormat();
         if (!format.getElements().contains(DefaultVertexFormats.TEX_2S)) {
             format = new VertexFormat(quad.getFormat());
