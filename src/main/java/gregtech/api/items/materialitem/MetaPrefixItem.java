@@ -172,7 +172,8 @@ public class MetaPrefixItem extends StandardMetaItem {
                 float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
                 ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                    heatDamage *= ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().getHeatResistance();
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                    if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
                 }
 
                 if (heatDamage > 0.0) {

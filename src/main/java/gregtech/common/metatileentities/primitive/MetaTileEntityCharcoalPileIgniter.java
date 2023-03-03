@@ -199,7 +199,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         // slice is finished after center, so we can re-use it a bit more
         slice[slice.length - 1] = wallBuilder.toString();
 
-            return FactoryBlockPattern.start()
+        return FactoryBlockPattern.start()
                 .aisle(wall)
                 .aisle(slice).setRepeatable(0, 4)
                 .aisle(center)
@@ -513,10 +513,9 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                 } else if (stack.getItem() instanceof MetaItem) {
                     // lighters
                     MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
-                    for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                        if (behaviour instanceof LighterBehaviour) {
-                            if (((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
-
+                    if (valueItem != null) {
+                        for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                            if (behaviour instanceof LighterBehaviour && ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
                                 // lighter sound does not get played when handled like this
                                 event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
