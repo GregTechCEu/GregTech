@@ -277,15 +277,15 @@ public final class OreGlobParser {
     private OreGlobNode primary() {
         switch (tokenType) {
             case LITERAL:
-                OreGlobNode result;
                 if (tokenLiteralValue != null) {
-                    result = OreGlobNodes.match(tokenLiteralValue);
+                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue);
+                    advance();
+                    return result;
                 } else { // likely caused by program error, not user issue
                     error("Literal token without value");
-                    result = OreGlobNodes.error();
+                    advance();
+                    return OreGlobNodes.error();
                 }
-                advance();
-                return result;
             case LPAR:
                 advance();
                 switch (tokenType) {
@@ -299,8 +299,7 @@ public final class OreGlobParser {
                         //    ( ore* | ingot*
                         return OreGlobNodes.nothing();
                     default:
-                        result = or();
-                        advance();
+                        OreGlobNode result = or();
                         advanceIf(RPAR); // optional enclosing parenthesis
                         return result;
                 }
