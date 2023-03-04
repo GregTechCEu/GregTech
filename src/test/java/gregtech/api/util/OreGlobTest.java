@@ -25,6 +25,13 @@ public class OreGlobTest {
         compile("(?)(??)(??*)(??**)");
         compile("wdym this is impossible??????? !*");
         compile("!(*) when the impossible is impossible \uD83D\uDE24");
+
+        compile("");
+
+        compile("!a b c");
+        compile("!(a b c)");
+        compile("!(a b) c");
+        compile("(!a b) c");
     }
 
     @Test
@@ -71,6 +78,43 @@ public class OreGlobTest {
         expr = compile("$\\c caseSensitiveMatch");
         assertMatch(expr, "casesensitivematch", false);
         assertMatch(expr, "caseSensitiveMatch", true);
+
+        expr = compile("!*");
+        assertMatch(expr, "anything", false);
+        assertMatch(expr, "a", false);
+        assertMatch(expr, "", false);
+
+        expr = compile("a???e");
+        assertMatch(expr, "abcde", true);
+        assertMatch(expr, "a123e", true);
+        assertMatch(expr, "a   e", true);
+        assertMatch(expr, "a1234e", false);
+        assertMatch(expr, "ae", false);
+        assertMatch(expr, "", false);
+
+        expr = compile("a!(???)e");
+        assertMatch(expr, "abcde", false);
+        assertMatch(expr, "a123e", false);
+        assertMatch(expr, "a   e", false);
+        assertMatch(expr, "a1234e", true);
+        assertMatch(expr, "ae", true);
+        assertMatch(expr, "", false);
+
+        expr = compile("???*");
+        assertMatch(expr, "", false);
+        assertMatch(expr, "1", false);
+        assertMatch(expr, "12", false);
+        assertMatch(expr, "123", true);
+        assertMatch(expr, "1234", true);
+        assertMatch(expr, "12345", true);
+
+        expr = compile("!???*");
+        assertMatch(expr, "", true);
+        assertMatch(expr, "1", true);
+        assertMatch(expr, "12", true);
+        assertMatch(expr, "123", false);
+        assertMatch(expr, "1234", false);
+        assertMatch(expr, "12345", false);
     }
 
     @Test
@@ -79,6 +123,7 @@ public class OreGlobTest {
         assertCompileError("$asdf Tags at middle of expression $12345");
         assertCompileError("End of file after escape character ('\\'): $123\\");
         assertCompileError(")");
+        assertCompileError("a | b | c | ");
     }
 
     private static OreGlob compile(String expression) {

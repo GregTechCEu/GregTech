@@ -114,7 +114,7 @@ public final class OreGlobParser {
                         break;
                     }
                 case ' ': case '\t': case '\n': case '\r': case '(': case ')':
-                case '|': case '&': case '!': case '^': case '*':
+                case '|': case '&': case '!': case '^': case '*': case '?': case '$':
                 case CHAR_EOF:
                     this.i = i;
                     return stb.toString();
@@ -170,7 +170,7 @@ public final class OreGlobParser {
             return new OreGlobCompileResult(
                     new OreGlob(new OreGlobVisualizer(OreGlobNodes.nothing()), String::isEmpty),
                     this.reports.toArray(new Report[0]));
-        }else{
+        } else {
             OreGlobNode expr = or();
             token = peek();
             if (token.type != EOF) { // likely caused by program error, not user issue
