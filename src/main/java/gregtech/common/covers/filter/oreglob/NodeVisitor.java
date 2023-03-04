@@ -10,7 +10,7 @@ public interface NodeVisitor {
     void chars(int amount, boolean inverted);
     void charsOrMore(int amount, boolean inverted);
 
-    void not(OreGlobNode node);
+    void group(OreGlobNode node, boolean inverted);
 
     void branch(BranchType type, List<OreGlobNode> nodes, boolean inverted);
 

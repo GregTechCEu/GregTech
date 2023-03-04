@@ -140,9 +140,9 @@ class OreGlobInterpreter implements Predicate<String> {
         }
 
         @Override
-        public void not(OreGlobNode node) {
+        public void group(OreGlobNode node, boolean inverted) {
             evaluate(node);
-            invert();
+            if(inverted) invert();
         }
 
         @Override

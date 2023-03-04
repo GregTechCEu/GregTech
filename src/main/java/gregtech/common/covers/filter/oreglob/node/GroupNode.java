@@ -4,18 +4,18 @@ import gregtech.common.covers.filter.oreglob.NodeVisitor;
 
 import javax.annotation.Nullable;
 
-public class NotNode extends OreGlobNode {
+public class GroupNode extends OreGlobNode {
 
     final OreGlobNode node;
 
-    public NotNode(OreGlobNode node) {
+    public GroupNode(OreGlobNode node) {
         this.node = node;
     }
 
     @Nullable
     @Override
     public OreGlobNode visit(NodeVisitor visitor) {
-        visitor.not(node);
+        visitor.group(node, inverted);
         return next;
     }
 }

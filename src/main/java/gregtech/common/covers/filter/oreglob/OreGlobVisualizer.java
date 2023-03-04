@@ -84,11 +84,15 @@ public class OreGlobVisualizer implements Consumer<OreGlob.Visualizer> {
         }
 
         @Override
-        public void not(OreGlobNode node) {
-            visualizer.text("not", LOGIC_INVERSION);
-            visualizer.text(":", NODE);
-            visualizer.newLine(indents + 1);
-            new Visitor(visualizer, indents + 1).visit(node);
+        public void group(OreGlobNode node, boolean inverted) {
+            if (inverted) {
+                visualizer.text("not", LOGIC_INVERSION);
+                visualizer.text(":", NODE);
+                visualizer.newLine(indents + 1);
+                new Visitor(visualizer, indents + 1).visit(node);
+            } else {
+                visit(node);
+            }
         }
 
         @Override

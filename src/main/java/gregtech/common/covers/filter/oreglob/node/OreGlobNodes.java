@@ -17,8 +17,8 @@ public class OreGlobNodes {
         return new AnyCharNode(amount, more);
     }
 
-    public static OreGlobNode not(OreGlobNode node) {
-        return new NotNode(node);
+    public static OreGlobNode group(OreGlobNode node) {
+        return new GroupNode(node);
     }
 
     public static OreGlobNode nothing() {
@@ -43,8 +43,15 @@ public class OreGlobNodes {
         return new ErrorNode();
     }
 
-    public static void invert(OreGlobNode node) {
-        node.inverted = !node.inverted;
+    public static OreGlobNode invert(OreGlobNode node) {
+        if (node.next != null) {
+            GroupNode newNode = new GroupNode(node);
+            newNode.inverted = true;
+            return newNode;
+        } else {
+            node.inverted = !node.inverted;
+            return node;
+        }
     }
 
     public static OreGlobNode setNext(OreGlobNode node, OreGlobNode next) {
@@ -57,18 +64,33 @@ public class OreGlobNodes {
                 return newNode;
             }
         } else if (node instanceof AnyCharNode) {
-            if (!node.inverted && !next.inverted && next instanceof AnyCharNode) {
+            AnyCharNode n1 = (AnyCharNode) node;
+            if (isImpossibleToMatch(n1)) return node; // Concatenating impossible case
+            if (isNothing(n1)) return next; // Nothing does nothing, literally
+            if (!node.inverted && next instanceof AnyCharNode && !next.inverted) {
+                AnyCharNode n2 = (AnyCharNode) next;
                 // two consecutive, non-inverted char nodes can be concatenated
                 // uh maybe inverted nodes too?? I can't think right now fuck
-                AnyCharNode n1 = (AnyCharNode) node;
-                AnyCharNode n2 = (AnyCharNode) next;
                 AnyCharNode newNode = new AnyCharNode(n1.amount + n2.amount, n1.more || n2.more);
                 newNode.next = next.next;
                 return newNode;
             }
         }
+        if (next instanceof AnyCharNode) {
+            AnyCharNode n2 = (AnyCharNode) next;
+            if (isImpossibleToMatch(n2)) return next; // Concatenating impossible case
+            if (isNothing(n2)) return node; // Nothing does nothing, literally
+        }
 
         node.next = next;
         return node;
+    }
+
+    private static boolean isImpossibleToMatch(AnyCharNode node) {
+        return node.inverted && node.more && node.amount == 0;
+    }
+
+    private static boolean isNothing(AnyCharNode node) {
+        return node.inverted && node.more && node.amount == 1;
     }
 }

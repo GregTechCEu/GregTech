@@ -17,7 +17,7 @@ import static gregtech.common.covers.filter.oreglob.OreGlobParser.TokenType.*;
 /**
  * Top-down parser for oreGlob expression.
  * <pre>
- * oreGlob = [ FLAG ], or, EOF
+ * oreGlob = [ FLAG ], [ or ], EOF
  *
  * or  = and, { '|', { '|' }, and }
  * and = xor, { '&', { '&' }, xor }
@@ -139,6 +139,7 @@ public final class OreGlobParser {
                         break;
                     }
                 case ' ': case '\t': case '\n': case '\r':
+                case CHAR_EOF:
                     return;
                 default:
                     this.flags.add(c);
@@ -164,11 +165,21 @@ public final class OreGlobParser {
     }
 
     public OreGlobCompileResult compile() {
-        OreGlobNode expr = or();
         Token token = peek();
-        if (token.type != EOF)
-            error("Unexpected token " + token.section(this.input) + " after end of expression", token);
-        return new OreGlobCompileResult(new OreGlob(new OreGlobVisualizer(expr), new OreGlobInterpreter(expr, !flags.contains('c'))), reports.toArray(new Report[0]));
+        if (token.type == EOF) {
+            return new OreGlobCompileResult(
+                    new OreGlob(new OreGlobVisualizer(OreGlobNodes.nothing()), String::isEmpty),
+                    this.reports.toArray(new Report[0]));
+        }else{
+            OreGlobNode expr = or();
+            token = peek();
+            if (token.type != EOF) { // likely caused by program error, not user issue
+                error("Unexpected token " + token.section(this.input) + " after end of expression", token);
+            }
+            return new OreGlobCompileResult(
+                    new OreGlob(new OreGlobVisualizer(expr), new OreGlobInterpreter(expr, !flags.contains('c'))),
+                    this.reports.toArray(new Report[0]));
+        }
     }
 
     private OreGlobNode or() {
@@ -219,7 +230,7 @@ public final class OreGlobParser {
         OreGlobNode root;
 
         if (inverted && advanceIf(LPAR)) {
-            root = OreGlobNodes.not(or());
+            root = OreGlobNodes.invert(or());
             inverted = false;
             Token peek = peek();
             switch (peek.type) {
@@ -227,7 +238,7 @@ public final class OreGlobParser {
                     advance();
                 case EOF:
                     break;
-                default:
+                default: // likely caused by program error, not user issue
                     error("Unexpected token " + peek.section(this.input) + " after end of expression", peek);
             }
         } else {
@@ -237,10 +248,8 @@ public final class OreGlobParser {
         switch (peek().type) {
             case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
                 root = OreGlobNodes.setNext(root, not());
-                return inverted ? OreGlobNodes.not(root) : root;
             default:
-                if (inverted) OreGlobNodes.invert(root);
-                return root;
+                return inverted ? OreGlobNodes.invert(root) : root;
         }
     }
 
@@ -250,7 +259,7 @@ public final class OreGlobParser {
             case LITERAL:
                 if (token.literalValue != null) {
                     return OreGlobNodes.match(token.literalValue);
-                } else {
+                } else { // likely caused by program error, not user issue
                     error("Literal token without value", token);
                     return OreGlobNodes.error();
                 }
@@ -284,7 +293,8 @@ public final class OreGlobParser {
     }
 
     private OreGlobNode nOrMore(int n, boolean more) {
-        for (Token token = peek(); ; token = advance()) {
+        while (true) {
+            Token token = peek();
             switch (token.type) {
                 case ANY_CHAR:
                     n++;
@@ -295,6 +305,7 @@ public final class OreGlobParser {
                 default:
                     return OreGlobNodes.chars(n, more);
             }
+            advance();
         }
     }
 

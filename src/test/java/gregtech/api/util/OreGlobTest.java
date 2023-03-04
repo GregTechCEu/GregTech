@@ -19,6 +19,12 @@ public class OreGlobTest {
         compile("dust*Gold | (plate* & !*Double*)");
 
         compile("1^2^3^4^5^!(1^2^3)");
+
+        // TODO implement proper eq function to nodes...
+        compile("(??***)(?*?*?****?*???*?)()()()");
+        compile("(?)(??)(??*)(??**)");
+        compile("wdym this is impossible??????? !*");
+        compile("!(*) when the impossible is impossible \uD83D\uDE24");
     }
 
     @Test
@@ -57,6 +63,35 @@ public class OreGlobTest {
         assertMatch(expr, "plateDoubleSomething", false);
         assertMatch(expr, "anyDoubleSomething", false);
         assertMatch(expr, "shouldn't match!", false);
+
+        expr = compile("$c caseSensitiveMatch");
+        assertMatch(expr, "casesensitivematch", false);
+        assertMatch(expr, "caseSensitiveMatch", true);
+
+        expr = compile("$\\c caseSensitiveMatch");
+        assertMatch(expr, "casesensitivematch", false);
+        assertMatch(expr, "caseSensitiveMatch", true);
+    }
+
+    @Test
+    public void errorTest() {
+        assertCompileError("End of file after escape character ('\\'): \\");
+        assertCompileError("$asdf Tags at middle of expression $12345");
+        assertCompileError("End of file after escape character ('\\'): $123\\");
+        assertCompileError(")");
+    }
+
+    private static OreGlob compile(String expression) {
+        long t = System.nanoTime();
+        OreGlobCompileResult result = new OreGlobParser(expression).compile();
+        assertThat(result.hasError(), is(false));
+
+        System.out.println("Compiled expression in " + ((System.nanoTime() - t) / 1_000_000_000.0) + " sec");
+        System.out.println("Input: " + expression);
+        System.out.println("Output: ");
+        System.out.println(result.getInstance());
+        System.out.println();
+        return result.getInstance();
     }
 
     private static void assertMatch(OreGlob expr, String input, boolean expectedResult) {
@@ -83,16 +118,29 @@ public class OreGlobTest {
         });
     }
 
-    private static OreGlob compile(String expression) {
-        long t = System.nanoTime();
+    private static void assertCompileError(String expression) {
         OreGlobCompileResult result = new OreGlobParser(expression).compile();
-        assertThat(result.hasError(), is(false));
+        assertThat(result, new TypeSafeMatcher<OreGlobCompileResult>(OreGlobCompileResult.class) {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(expression);
+            }
 
-        System.out.println("Compiled expression in " + ((System.nanoTime() - t) / 1_000_000_000.0) + " sec");
-        System.out.println("Input: " + expression);
-        System.out.println("Output: ");
-        System.out.println(result.getInstance());
+            @Override
+            protected void describeMismatchSafely(OreGlobCompileResult item, Description mismatchDescription) {
+                mismatchDescription.appendText("Compiling expression '")
+                        .appendText(expression).appendText("' was supposed to fail.....................");
+            }
+
+            @Override
+            protected boolean matchesSafely(OreGlobCompileResult item) {
+                return item.hasError();
+            }
+        });
+        System.out.println("Compilation errors for expression '" + expression + "':");
+        for (OreGlobCompileResult.Report report : result.getReports()) {
+            System.out.println(report);
+        }
         System.out.println();
-        return result.getInstance();
     }
 }
