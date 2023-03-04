@@ -32,6 +32,8 @@ public class OreGlobTest {
         compile("!(a b c)");
         compile("!(a b) c");
         compile("(!a b) c");
+
+        compile("!()");
     }
 
     @Test
@@ -115,6 +117,12 @@ public class OreGlobTest {
         assertMatch(expr, "123", false);
         assertMatch(expr, "1234", false);
         assertMatch(expr, "12345", false);
+
+        expr = compile("!() iron");
+        assertMatch(expr, "iron", false);
+        assertMatch(expr, "ingotIron", true);
+        assertMatch(expr, "ingot", false);
+        assertMatch(expr, "", false);
     }
 
     @Test

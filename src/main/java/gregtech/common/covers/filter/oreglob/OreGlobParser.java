@@ -230,16 +230,20 @@ public final class OreGlobParser {
         OreGlobNode root;
 
         if (inverted && advanceIf(LPAR)) {
-            root = OreGlobNodes.invert(or());
             inverted = false;
-            Token peek = peek();
-            switch (peek.type) {
-                case RPAR:
-                    advance();
-                case EOF:
-                    break;
-                default: // likely caused by program error, not user issue
-                    error("Unexpected token " + peek.section(this.input) + " after end of expression", peek);
+            if (advanceIf(RPAR)) { // negated empty, i.e. something
+                root = OreGlobNodes.invert(OreGlobNodes.nothing());
+            } else {
+                root = OreGlobNodes.invert(or());
+                Token peek = peek();
+                switch (peek.type) {
+                    case RPAR:
+                        advance();
+                    case EOF:
+                        break;
+                    default: // likely caused by program error, not user issue
+                        error("Unexpected token " + peek.section(this.input) + " after end of expression", peek);
+                }
             }
         } else {
             root = primary();
