@@ -106,7 +106,17 @@ public class OreGlobVisualizer implements Consumer<OreGlob.Visualizer> {
                     } else {
                         visualizer.text("one of...", NODE);
                     }
-                    break;
+                    for (int i = 0; i < nodes.size(); i++) {
+                        OreGlobNode node = nodes.get(i);
+                        visualizer.newLine(indents);
+                        if (i == 0) {
+                            visualizer.text("> ", LABEL);
+                        } else {
+                            visualizer.text("> or ", LABEL);
+                        }
+                        new Visitor(visualizer, indents + 1).visit(node);
+                    }
+                    return;
                 case AND:
                     if (inverted) {
                         visualizer.text("anything that ", NODE);
@@ -115,7 +125,17 @@ public class OreGlobVisualizer implements Consumer<OreGlob.Visualizer> {
                     } else {
                         visualizer.text("anything that is...", NODE);
                     }
-                    break;
+                    for (int i = 0; i < nodes.size(); i++) {
+                        OreGlobNode node = nodes.get(i);
+                        visualizer.newLine(indents);
+                        if (i == 0) {
+                            visualizer.text("> ", LABEL);
+                        } else {
+                            visualizer.text("> and ", LABEL);
+                        }
+                        new Visitor(visualizer, indents + 1).visit(node);
+                    }
+                    return;
                 case XOR:
                     // TODO no idea if this visualization is logically correct
                     //  does ! ( a ^ b ^ c ) equal to ( a eq b eq c )?
@@ -145,11 +165,6 @@ public class OreGlobVisualizer implements Consumer<OreGlob.Visualizer> {
                     return;
                 default:
                     throw new IllegalStateException("Unknown BranchType '" + type + "'");
-            }
-            for (OreGlobNode node : nodes) {
-                visualizer.newLine(indents);
-                visualizer.text("> ", LABEL);
-                new Visitor(visualizer, indents + 1).visit(node);
             }
         }
 
