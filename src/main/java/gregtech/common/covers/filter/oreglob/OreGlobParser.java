@@ -43,9 +43,12 @@ public final class OreGlobParser {
 
     private final IntSet flags = new IntOpenHashSet();
 
-    private int i;
+    private int inputIndex;
+
+    private TokenType tokenType;
+    private int tokenStart, tokenLength;
     @Nullable
-    private Token currentToken;
+    private String tokenLiteralValue;
 
     public OreGlobParser(String input) {
         this.input = input;
@@ -53,35 +56,43 @@ public final class OreGlobParser {
 
     // Get codepoint at current position and incr index
     private int readNextChar() {
-        if (input.length() <= this.i) return CHAR_EOF;
-        int i = this.i;
-        this.i += Character.isSurrogate(input.charAt(i)) ? 2 : 1;
+        if (input.length() <= this.inputIndex) return CHAR_EOF;
+        int i = this.inputIndex;
+        this.inputIndex += Character.isSurrogate(input.charAt(i)) ? 2 : 1;
         return input.codePointAt(i);
     }
 
-    private Token readNextToken() {
-        boolean first = this.i == 0;
+    private void advance() {
+        boolean first = this.inputIndex == 0;
         while (true) {
-            int start = this.i;
+            int start = this.inputIndex;
             switch (readNextChar()) {
                 case ' ': case '\t': case '\n': case '\r':
                     continue;
                 case '(':
-                    return new Token(LPAR, start, 1);
+                    setCurrentToken(LPAR, start, 1);
+                    return;
                 case ')':
-                    return new Token(RPAR, start, 1);
+                    setCurrentToken(RPAR, start, 1);
+                    return;
                 case '|':
-                    return new Token(OR, start, 1);
+                    setCurrentToken(OR, start, 1);
+                    return;
                 case '&':
-                    return new Token(AND, start, 1);
+                    setCurrentToken(AND, start, 1);
+                    return;
                 case '!':
-                    return new Token(NOT, start, 1);
+                    setCurrentToken(NOT, start, 1);
+                    return;
                 case '^':
-                    return new Token(XOR, start, 1);
+                    setCurrentToken(XOR, start, 1);
+                    return;
                 case '*':
-                    return new Token(ANY, start, 1);
+                    setCurrentToken(ANY, start, 1);
+                    return;
                 case '?':
-                    return new Token(ANY_CHAR, start, 1);
+                    setCurrentToken(ANY_CHAR, start, 1);
+                    return;
                 case '$':
                     if (!first) {
                         error("Tags at middle of expression", start, 1);
@@ -89,19 +100,38 @@ public final class OreGlobParser {
                     gatherTags();
                     continue;
                 case CHAR_EOF:
-                    return new Token(EOF, input.length(), 0);
+                    setCurrentToken(EOF, input.length(), 0);
+                    return;
                 default:
-                    this.i = start;
+                    this.inputIndex = start;
                     String literalValue = gatherLiteralValue();
-                    return new Token(LITERAL, start, i - start, literalValue);
+                    setCurrentToken(LITERAL, start, inputIndex - start, literalValue);
+                    return;
             }
         }
+    }
+
+    private void setCurrentToken(TokenType type, int start, int len) {
+        setCurrentToken(type, start, len, null);
+    }
+
+    private void setCurrentToken(TokenType type, int start, int len, @Nullable String literalValue) {
+        this.tokenType = type;
+        this.tokenStart = start;
+        this.tokenLength = len;
+        this.tokenLiteralValue = literalValue;
+    }
+
+    private String getTokenSection() {
+        return tokenType == EOF ?
+                "** End of line **" :
+                this.input.substring(this.tokenStart, this.tokenStart + this.tokenLength);
     }
 
     private String gatherLiteralValue() {
         StringBuilder stb = new StringBuilder();
         while (true) {
-            int i = this.i;
+            int i = this.inputIndex;
             int c = readNextChar();
             switch (c) {
                 case '\\':
@@ -116,7 +146,7 @@ public final class OreGlobParser {
                 case ' ': case '\t': case '\n': case '\r': case '(': case ')':
                 case '|': case '&': case '!': case '^': case '*': case '?': case '$':
                 case CHAR_EOF:
-                    this.i = i;
+                    this.inputIndex = i;
                     return stb.toString();
                 default:
                     stb.appendCodePoint(c);
@@ -126,7 +156,7 @@ public final class OreGlobParser {
 
     private void gatherTags() {
         while (true) {
-            int i = this.i;
+            int i = this.inputIndex;
             int c = readNextChar();
             switch (c) {
                 case '\\':
@@ -147,34 +177,22 @@ public final class OreGlobParser {
         }
     }
 
-    private Token advance() {
-        Token token = peek();
-        this.currentToken = readNextToken();
-        return token;
-    }
-
     private boolean advanceIf(TokenType type) {
-        if (peek().type != type) return false;
-        this.currentToken = readNextToken();
+        if (tokenType != type) return false;
+        advance();
         return true;
     }
 
-    private Token peek() {
-        if (this.currentToken == null) this.currentToken = readNextToken();
-        return this.currentToken;
-    }
-
     public OreGlobCompileResult compile() {
-        Token token = peek();
-        if (token.type == EOF) {
+        advance();
+        if (tokenType == EOF) {
             return new OreGlobCompileResult(
                     new OreGlob(new OreGlobVisualizer(OreGlobNodes.nothing()), String::isEmpty),
                     this.reports.toArray(new Report[0]));
         } else {
             OreGlobNode expr = or();
-            token = peek();
-            if (token.type != EOF) { // likely caused by program error, not user issue
-                error("Unexpected token " + token.section(this.input) + " after end of expression", token);
+            if (tokenType != EOF) { // likely caused by program error, not user issue
+                error("Unexpected token " + getTokenSection() + " after end of expression");
             }
             return new OreGlobCompileResult(
                     new OreGlob(new OreGlobVisualizer(expr), new OreGlobInterpreter(expr, !flags.contains('c'))),
@@ -235,21 +253,20 @@ public final class OreGlobParser {
                 root = OreGlobNodes.invert(OreGlobNodes.nothing());
             } else {
                 root = OreGlobNodes.invert(or());
-                Token peek = peek();
-                switch (peek.type) {
+                switch (tokenType) {
                     case RPAR:
                         advance();
                     case EOF:
                         break;
                     default: // likely caused by program error, not user issue
-                        error("Unexpected token " + peek.section(this.input) + " after end of expression", peek);
+                        error("Unexpected token " + getTokenSection() + " after end of expression");
                 }
             }
         } else {
             root = primary();
         }
 
-        switch (peek().type) {
+        switch (tokenType) {
             case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
                 root = OreGlobNodes.setNext(root, not());
             default:
@@ -258,18 +275,21 @@ public final class OreGlobParser {
     }
 
     private OreGlobNode primary() {
-        Token token = advance();
-        switch (token.type) {
+        switch (tokenType) {
             case LITERAL:
-                if (token.literalValue != null) {
-                    return OreGlobNodes.match(token.literalValue);
+                OreGlobNode result;
+                if (tokenLiteralValue != null) {
+                    result = OreGlobNodes.match(tokenLiteralValue);
                 } else { // likely caused by program error, not user issue
-                    error("Literal token without value", token);
-                    return OreGlobNodes.error();
+                    error("Literal token without value");
+                    result = OreGlobNodes.error();
                 }
+                advance();
+                return result;
             case LPAR:
-                switch (peek().type) {
-                    case RPAR:
+                advance();
+                switch (tokenType) {
+                    case RPAR: // Empty group, i.e. nothing
                         advance();
                     case EOF:
                         // To preserve consistency between grouped expression below, enclosing parenthesis of nothing match is also optional
@@ -279,27 +299,29 @@ public final class OreGlobParser {
                         //    ( ore* | ingot*
                         return OreGlobNodes.nothing();
                     default:
-                        OreGlobNode inner = or();
+                        result = or();
+                        advance();
                         advanceIf(RPAR); // optional enclosing parenthesis
-                        return inner;
+                        return result;
                 }
             case ANY:
                 return nOrMore(0, true);
             case ANY_CHAR:
                 return nOrMore(1, false);
             case EOF:
-                error("Unexpected end of expression", token);
+                error("Unexpected end of expression");
                 return OreGlobNodes.error();
             default:
-                error("Unexpected token '" + token.section(this.input) + "'", token);
+                error("Unexpected token '" + getTokenSection() + "'");
+                advance();
                 return OreGlobNodes.error();
         }
     }
 
     private OreGlobNode nOrMore(int n, boolean more) {
         while (true) {
-            Token token = peek();
-            switch (token.type) {
+            advance();
+            switch (tokenType) {
                 case ANY_CHAR:
                     n++;
                     break;
@@ -309,57 +331,23 @@ public final class OreGlobParser {
                 default:
                     return OreGlobNodes.chars(n, more);
             }
-            advance();
         }
     }
 
-    private void error(String message, Token token) {
-        error(message, token.start, token.len);
+    private void error(String message) {
+        error(message, tokenStart, tokenLength);
     }
 
     private void error(String message, int start, int len) {
         this.reports.add(new Report(message, true, start, len));
     }
 
-    private void warn(String message, Token token) {
-        warn(message, token.start, token.len);
+    private void warn(String message) {
+        warn(message, tokenStart, tokenLength);
     }
 
     private void warn(String message, int start, int len) {
         this.reports.add(new Report(message, false, start, len));
-    }
-
-    static final class Token {
-
-        final TokenType type;
-        final int start, len;
-        @Nullable
-        final String literalValue;
-
-        Token(TokenType type, int start, int len) {
-            this(type, start, len, null);
-        }
-
-        Token(TokenType type, int start, int len, @Nullable String literalValue) {
-            this.type = type;
-            this.start = start;
-            this.len = len;
-            this.literalValue = literalValue;
-        }
-
-        String section(String wholeInput) {
-            return isEOF() ? "** End of line **" : wholeInput.substring(start, start + len);
-        }
-
-        boolean isEOF() {
-            return type == EOF;
-        }
-
-        @Override
-        public String toString() {
-            return start + ":" + type;
-        }
-
     }
 
     enum TokenType {
