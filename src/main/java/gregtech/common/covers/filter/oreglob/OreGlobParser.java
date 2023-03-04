@@ -23,7 +23,7 @@ import static gregtech.common.covers.filter.oreglob.OreGlobParser.TokenType.*;
  * and = xor, { '&', { '&' }, xor }
  * xor = not, { '^', not }
  *
- * not = '!', '(', [ or ], [ ')', [ not ] ]
+ * not = '!', { '!' }, '(', [ or ], [ ')', [ not ] ]
  *     | { '!' }, primary, [ not ]
  *
  * primary = LITERAL
