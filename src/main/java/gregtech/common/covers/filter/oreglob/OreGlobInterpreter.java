@@ -1,11 +1,11 @@
 package gregtech.common.covers.filter.oreglob;
 
-import gregtech.api.util.oreglob.OreEvaluator;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import it.unimi.dsi.fastutil.ints.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 /**
  * Node-based, state based evaluator for oreGlob.
@@ -25,11 +25,12 @@ import java.util.NoSuchElementException;
  *     4  =>  [ ]    (no match; "t" does not match the string match node "i")
  *     5  =>  [ 6 ]  (the "I" matches the string match node "i"; oreglob is by default case insensitive.)
  * </pre>
- * When the next node is evaluated, the input state will be {@code [ 1, 6 ]}, the output state of previous match.
+ * When the next node is evaluated, the input state will be {@code [ 1, 6 ]} which is the output state of previous match.
  * <p>
- * All matches start with '0'
+ * All matches start with {@code [ 0 ]} as input state, and match is considered success
+ * if output state contains length of the input string after evaluating all possible branch of the expression.
  */
-class OreGlobInterpreter implements OreEvaluator {
+class OreGlobInterpreter implements Predicate<String> {
 
     private final OreGlobNode root;
     private final boolean ignoreCase;
@@ -40,8 +41,8 @@ class OreGlobInterpreter implements OreEvaluator {
     }
 
     @Override
-    public boolean matches(String oreInput) {
-        return new Calc(oreInput, ignoreCase).evaluate(root).isMatch();
+    public boolean test(String input) {
+        return new Calc(input, ignoreCase).evaluate(root).isMatch();
     }
 
     private static final class Calc implements NodeVisitor {

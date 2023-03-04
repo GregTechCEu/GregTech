@@ -2,11 +2,12 @@ package gregtech.api.util.oreglob;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Representation of ore filter expression.
  */
-public final class OreGlob implements OreEvaluator {
+public final class OreGlob {
 
     private static Function<String, OreGlobCompileResult> compiler;
 
@@ -20,9 +21,9 @@ public final class OreGlob implements OreEvaluator {
     }
 
     private final Consumer<Visualizer> visualRepresentation;
-    private final OreEvaluator evaluator;
+    private final Predicate<String> evaluator;
 
-    public OreGlob(Consumer<Visualizer> visualRepresentation, OreEvaluator evaluator) {
+    public OreGlob(Consumer<Visualizer> visualRepresentation, Predicate<String> evaluator) {
         this.visualRepresentation = visualRepresentation;
         this.evaluator = evaluator;
     }
@@ -32,9 +33,8 @@ public final class OreGlob implements OreEvaluator {
         return visualizer;
     }
 
-    @Override
     public boolean matches(String input) {
-        return evaluator.matches(input);
+        return evaluator.test(input);
     }
 
     @Override
