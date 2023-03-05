@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -21,13 +20,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -55,6 +52,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
         this.prefix = orePrefix;
+        this.setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
     }
 
     @Override
@@ -144,18 +142,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     public int getItemStackLimit(@Nonnull ItemStack stack) {
         if (prefix == null) return 64;
         return prefix.maxStackSize;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
-        if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
-            for (MetaItem<?>.MetaValueItem enabledItem : metaItems.values()) {
-                if (!enabledItem.isVisible()) continue;
-                ItemStack itemStack = enabledItem.getStackForm();
-                enabledItem.getSubItemHandler().getSubItems(itemStack, tab, subItems);
-            }
-        }
     }
 
     @Override
