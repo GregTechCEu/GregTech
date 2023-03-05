@@ -225,6 +225,7 @@ public class ConverterTraitTest {
             return new ConverterTraitTestWrapper(this, amps, true);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T> T getCapability(Capability<T> capability, EnumFacing side) {
             if (side == null) return (T) converterTrait;
@@ -342,6 +343,7 @@ public class ConverterTraitTest {
             super(mte, amps, feToEu);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected <T> T getCapabilityAtFront(Capability<T> capability) {
             return (T) (isFeToEu() ? EUStorage : FEStorage);
