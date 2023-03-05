@@ -176,12 +176,15 @@ fancyGradle {
     }
 }
 
+processJarTask jar
+
 if (project.build_deobfJar.toBoolean()) {
     // Create deobf dev jars
     tasks.register('deobfJar', Jar) {
         archiveClassifier.set 'deobf'
         from sourceSets.main.output
     }
+    processJarTask deobfJar
 }
 
 if (project.build_apiJar.toBoolean()) {
@@ -235,33 +238,6 @@ sourceSets {
     main.output.setResourcesDir(main.java.classesDirectory)
 }
 
-jar {
-    manifest {
-        // noinspection GroovyAssignabilityCheck
-        def attribute_map = [:]
-        if (project.use_coremod.toBoolean()) {
-            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
-            if (project.include_mod.toBoolean()) {
-                attribute_map['FMLCorePluginContainsFMLMod'] = true
-                attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
-            }
-        }
-        if (project.use_mixins.toBoolean()) {
-            attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
-        }
-        if (project.has_access_transformer.toBoolean()) {
-            attribute_map['FMLAT'] = 'gregtech_at.cfg'
-        }
-        attributes(attribute_map)
-    }
-
-    // exclude all files in src/api from being shipped in the jar
-    // this prevents crashes in obfuscated environments
-    file('src/api/').eachDirRecurse { dir ->
-        exclude dir.name
-    }
-}
-
 artifacts {
     if (project.build_deobfJar.toBoolean()) {
         archives deobfJar
@@ -313,6 +289,42 @@ test {
     useJUnitPlatform()
 }
 
+/**
+ * Applies required processing to jar tasks
+ * @param task the task to process
+ */
+private void processJarTask(task) {
+    task.configure {
+        manifest {
+            // noinspection GroovyAssignabilityCheck
+            def attribute_map = [:]
+            if (project.use_coremod.toBoolean()) {
+                attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+                if (project.include_mod.toBoolean()) {
+                    attribute_map['FMLCorePluginContainsFMLMod'] = true
+                    attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
+                }
+            }
+            if (project.use_mixins.toBoolean()) {
+                attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
+            }
+            if (project.has_access_transformer.toBoolean()) {
+                attribute_map['FMLAT'] = 'gregtech_at.cfg'
+            }
+            attributes(attribute_map)
+        }
+
+        // exclude all files in src/api from being shipped in the jar
+        // this prevents crashes in obfuscated environments
+        file('src/api/').eachDirRecurse { dir ->
+            exclude dir.name
+        }
+    }
+}
+
+/**
+ * @return the current project version, parsed from the version file
+ */
 @SuppressWarnings('GroovyAssignabilityCheck')
 private String getVersionFromJava() {
     def major = '0'
