@@ -48,7 +48,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
-    private int[] overclockResults;
+    protected int[] overclockResults;
 
     protected boolean canRecipeProgress = true;
 

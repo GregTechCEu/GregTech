@@ -1115,6 +1115,21 @@ public class GTUtility {
     }
 
     /**
+     * Tries to parse a string into a long, returning a default value if it fails.
+     * @param val string to parse
+     * @param defaultValue default value to return
+     * @return returns a long from the parsed string, otherwise the default value
+     */
+    public static long tryParseLong(String val, long defaultValue){
+        try {
+            return Long.parseLong(val);
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+        }
+        return defaultValue;
+    }
+
+    /**
      * Compares a value against a min and max, with an option to invert the logic
      * @param value value to be compared
      * @param maxValue the max that the value can be
@@ -1137,6 +1152,23 @@ public class GTUtility {
         }
 
         return Math.round(ratio);
+    }
+
+    /**
+     * Compares a value against a min and max, with an option to invert the logic. Has latching functionality.
+     * @param value value to be compared
+     * @param maxValue the max that the value can be
+     * @param minValue the min that the value can be
+     * @param output the output value the function modifies
+     * @return returns the modified output value
+     */
+    public static int computeLatchedRedstoneBetweenValues(float value, float maxValue, float minValue, boolean isInverted, int output) {
+        if (value >= maxValue) {
+            output = !isInverted ? 0 : 15; // value above maxValue should normally be 0, otherwise 15
+        } else if (value <= minValue) {
+            output = !isInverted ? 15 : 0; // value below minValue should normally be 15, otherwise 0
+        }
+        return output;
     }
 
     /**

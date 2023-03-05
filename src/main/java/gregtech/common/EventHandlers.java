@@ -148,13 +148,19 @@ public class EventHandlers {
                 return;
 
             if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().damageArmor(player, armor, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
-                player.fallDistance = 0;
-                event.setCanceled(true);
+                ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                if (valueItem != null) {
+                    valueItem.getArmorLogic().damageArmor(player, armor, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                    player.fallDistance = 0;
+                    event.setCanceled(true);
+                }
             } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> && GTUtility.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
-                ((ArmorMetaItem<?>) jet.getItem()).getItem(jet).getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
-                player.fallDistance = 0;
-                event.setCanceled(true);
+                ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
+                if (valueItem != null) {
+                    valueItem.getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                    player.fallDistance = 0;
+                    event.setCanceled(true);
+                }
             }
         }
     }
@@ -169,14 +175,15 @@ public class EventHandlers {
         if (!(stack.getItem() instanceof ArmorMetaItem) || stack.getItem().equals(event.getTo().getItem()))
             return;
 
-        ArmorMetaItem<?> armorMetaItem = (ArmorMetaItem<?>) stack.getItem();
-        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
-                armorMetaItem.getItem(stack).isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
-                armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
+        ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
+        if (valueItem == null) return;
+        if (valueItem.isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
+                valueItem.isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
+                valueItem.isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
             event.getEntityLiving().removePotionEffect(MobEffects.NIGHT_VISION);
         }
-        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
-                armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
+        if (valueItem.isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
+                valueItem.isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
             event.getEntity().isImmuneToFire = false;
         }
     }
@@ -187,8 +194,12 @@ public class EventHandlers {
         if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() && !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
             ItemStack feetEquip = event.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (!lastFeetEquip.getItem().equals(feetEquip.getItem())) {
-                if ((lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) && ((ArmorMetaItem<?>) lastFeetEquip.getItem()).getItem(lastFeetEquip).getArmorLogic() instanceof IStepAssist)
-                    event.player.stepHeight = 0.6f;
+                if (lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) {
+                    ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) lastFeetEquip.getItem()).getItem(lastFeetEquip);
+                    if (valueItem != null && valueItem.getArmorLogic() instanceof IStepAssist) {
+                        event.player.stepHeight = 0.6f;
+                    }
+                }
 
                 lastFeetEquip = feetEquip.copy();
             }

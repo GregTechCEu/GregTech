@@ -1,8 +1,26 @@
 package gregtech.api.recipes.builders;
 
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Materials;
 
-public class AssemblerRecipeBuilder extends IntCircuitRecipeBuilder {
+public class AssemblerRecipeBuilder extends RecipeBuilder<AssemblerRecipeBuilder> {
+
+    public AssemblerRecipeBuilder() {/**/}
+
+    public AssemblerRecipeBuilder(Recipe recipe, RecipeMap<AssemblerRecipeBuilder> recipeMap) {
+        super(recipe, recipeMap);
+    }
+
+    public AssemblerRecipeBuilder(AssemblerRecipeBuilder recipeBuilder) {
+        super(recipeBuilder);
+    }
+
+    @Override
+    public AssemblerRecipeBuilder copy() {
+        return new AssemblerRecipeBuilder(this);
+    }
 
     @Override
     public void buildAndRegister() {
@@ -16,5 +34,4 @@ public class AssemblerRecipeBuilder extends IntCircuitRecipeBuilder {
             recipeMap.addRecipe(build());
         }
     }
-
 }

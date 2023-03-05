@@ -258,21 +258,35 @@ public class Textures {
     public static final ResourceLocation RED_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/redcape.png");
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/yellowcape.png");
     public static final ResourceLocation GREEN_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/greencape.png");
-  
+
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_TINY;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SMALL;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_NORMAL;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_LARGE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_HUGE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_QUADRUPLE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_NONUPLE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SIDE;
 
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SMALL_WOOD;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_NORMAL_WOOD;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_LARGE_WOOD;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SIDE_WOOD;
 
     @SideOnly(Side.CLIENT)
