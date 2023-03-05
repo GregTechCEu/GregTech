@@ -3,6 +3,7 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
+import gregtech.api.worldgen.generator.WorldGeneratorImpl;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
@@ -43,6 +44,7 @@ public class GregTechMod {
         GregTechAPI.moduleManager = moduleManager;
         moduleManager.registerContainer(new GregTechModules());
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
+        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.INSTANCE);
     }
 
     @EventHandler
