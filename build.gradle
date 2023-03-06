@@ -23,6 +23,10 @@ plugins {
     id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
     id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
 }
+if (project.use_mixins.toBoolean()) {
+    apply plugin: 'org.spongepowered.mixin'
+}
+
 
 tasks.register('getVersionFromJava') {
     return getVersionFromJava()
@@ -144,7 +148,8 @@ dependencies {
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
     implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
-    implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
+    //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
+    implementation files("libs/groovyscript-0.4.0.jar")
     implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Tests
@@ -261,6 +266,8 @@ jar {
         exclude dir.name
     }
 }
+
+//jar.finalizedBy('reobfJar')
 
 artifacts {
     if (project.build_deobfJar.toBoolean()) {

@@ -1,5 +1,6 @@
 package gregtech.integration;
 
+import com.cleanroommc.groovyscript.command.TextCopyable;
 import com.cleanroommc.groovyscript.event.GsHandEvent;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
@@ -22,10 +23,9 @@ public class GroovyHandCommand {
 
         String id = CTRecipeHelper.getMetaItemId(stackInHand);
         if (id != null) {
-            String ctId = "metaitem('" + id + "')";
-            ClipboardUtil.copyToClipboard((EntityPlayerMP) event.player, ctId);
-            event.messages.add(new TextComponentTranslation("gregtech.command.hand.meta_item", id).appendSibling(new TextComponentString(" " + id).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                    .setStyle(getCopyStyle(ctId, true)));
+            String copyText = "metaitem('" + id + "')";
+            ClipboardUtil.copyToClipboard((EntityPlayerMP) event.player, copyText);
+            event.messages.add(TextCopyable.translation(copyText, "gregtech.command.hand.meta_item").build().appendSibling(new TextComponentString(" " + id).setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
 
         // tool info
@@ -37,16 +37,14 @@ public class GroovyHandCommand {
         // material info
         MaterialStack material = OreDictUnifier.getMaterial(stackInHand);
         if (material != null) {
-            event.messages.add(new TextComponentTranslation("gregtech.command.hand.material").appendSibling(new TextComponentString(" " + material.material).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                    .setStyle(getCopyStyle("material('" + material.material + "')", false)));
+            String copyText = "material('" + material.material + "')";
+            event.messages.add(TextCopyable.translation(copyText, "gregtech.command.hand.material").build().appendSibling(new TextComponentString(" " + material.material).setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
         // ore prefix info
         OrePrefix orePrefix = OreDictUnifier.getPrefix(stackInHand);
         if (orePrefix != null) {
-            String ctId = "oreprefix('" + orePrefix.name + "')";
-            ClipboardUtil.copyToClipboard((EntityPlayerMP) event.player, ctId);
-            event.messages.add(new TextComponentTranslation("gregtech.command.hand.ore_prefix").appendSibling(new TextComponentString(" " + orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                    .setStyle(getCopyStyle(ctId, false)));
+            String copyText = "oreprefix('" + orePrefix.name + "')";
+            event.messages.add(TextCopyable.translation(copyText, "gregtech.command.hand.ore_prefix", id).build().appendSibling(new TextComponentString(" " + orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
     }
 

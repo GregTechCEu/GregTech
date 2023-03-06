@@ -98,9 +98,6 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.soundManager = SoundManager.getInstance();
         GTSoundEvents.register();
 
-        /* init GroovyScript compat */
-        GroovyScriptCompat.init();
-
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
         logger.info("Registering GTCEu UI Factories");

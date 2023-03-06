@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
 
@@ -70,7 +69,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
         if (recipe == null) {
             if (GroovyScriptCompat.isCurrentlyRunning()) {
                 GroovyLog.msg("Error removing GregTech " + getName() + " recipe")
-                        .add("could not find recipe for: voltage %s, items %s, fluids %s", voltage, items, fluids)
+                        .add("could not find recipe for: voltage {}, items {}, fluids {}", voltage, items, fluids)
                         .error()
                         .post();
             }

@@ -1,13 +1,13 @@
 package gregtech.integration;
 
 import com.cleanroommc.groovyscript.GroovyScript;
-import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModSupport;
 import com.cleanroommc.groovyscript.helper.ingredient.IngredientHelper;
 import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
+import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -15,6 +15,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.unification.crafttweaker.MaterialExpansion;
+import gregtech.api.unification.crafttweaker.MaterialPropertyExpansion;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CTRecipeHelper;
@@ -54,17 +56,6 @@ public class GroovyScriptCompat {
 
         MinecraftForge.EVENT_BUS.register(GroovyHandCommand.class);
 
-        BracketHandlerManager.registerBracketHandler("recipemap", RecipeMap::getByName);
-        BracketHandlerManager.registerBracketHandler("material", s -> {
-            Material material = MATERIAL_REGISTRY.getObject(s);
-            if (material == null) {
-                GroovyLog.get().errorMC("Could not resolve material('{}')", s);
-            }
-            return material;
-        });
-        BracketHandlerManager.registerBracketHandler("oreprefix", OrePrefix::getPrefix);
-        BracketHandlerManager.registerBracketHandler("metaitem", GroovyScriptCompat::getMetaItem);
-
         modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", Container::new, "gt");
     }
 
@@ -88,10 +79,7 @@ public class GroovyScriptCompat {
         if ((item = getMetaTileEntityItem(name)) != null) {
             return item.copy();
         }
-        if (GroovyScriptCompat.isCurrentlyRunning()) {
-            GroovyLog.get().error("Could not resolve metaitem('{}')", name);
-        }
-        return ItemStack.EMPTY;
+        return null;
     }
 
     @Nullable
@@ -237,6 +225,17 @@ public class GroovyScriptCompat {
         @Override
         protected void addRegistry(VirtualizedRegistry<?> registry) {
             super.addRegistry(registry);
+        }
+
+        @Override
+        public void initialize() {
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "recipemap", RecipeMap::getByName);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", MATERIAL_REGISTRY::getObject);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "oreprefix", OrePrefix::getPrefix);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptCompat::getMetaItem, ItemStack.EMPTY);
+
+            ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
+            ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
         }
     }
 }
