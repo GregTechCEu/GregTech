@@ -46,7 +46,7 @@ public class OreGlobVisualizer implements Consumer<OreGlob.Visualizer> {
         }
 
         @Override
-        public void match(String match, boolean inverted) {
+        public void match(String match, boolean ignoreCase, boolean inverted) {
             if (inverted) visualizer.text("not ", LOGIC_INVERSION);
             visualizer.text("'", NODE);
             visualizer.text(match, VALUE);

@@ -195,7 +195,7 @@ public final class OreGlobParser {
                 error("Unexpected token " + getTokenSection() + " after end of expression");
             }
             return new OreGlobCompileResult(
-                    new OreGlob(new OreGlobVisualizer(expr), new OreGlobInterpreter(expr, !flags.contains('c'))),
+                    new OreGlob(new OreGlobVisualizer(expr), new OreGlobInterpreter(expr)),
                     this.reports.toArray(new Report[0]));
         }
     }
@@ -278,7 +278,7 @@ public final class OreGlobParser {
         switch (tokenType) {
             case LITERAL:
                 if (tokenLiteralValue != null) {
-                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue);
+                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue, !flags.contains('c'));
                     advance();
                     return result;
                 } else { // likely caused by program error, not user issue

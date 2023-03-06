@@ -33,34 +33,29 @@ import java.util.function.Predicate;
 class OreGlobInterpreter implements Predicate<String> {
 
     private final OreGlobNode root;
-    private final boolean ignoreCase;
 
-    OreGlobInterpreter(OreGlobNode root, boolean ignoreCase) {
+    OreGlobInterpreter(OreGlobNode root) {
         this.root = root;
-        this.ignoreCase = ignoreCase;
     }
 
     @Override
     public boolean test(String input) {
-        return new Calc(input, ignoreCase).evaluate(root).isMatch();
+        return new Calc(input).evaluate(root).isMatch();
     }
 
     private static final class Calc implements NodeVisitor {
         private final String input;
-        private final boolean ignoreCase;
         private IntSet inputStates;
         private IntSet outputStates = new IntLinkedOpenHashSet();
 
-        Calc(String input, boolean ignoreCase) {
+        Calc(String input) {
             this.input = input;
-            this.ignoreCase = ignoreCase;
             this.inputStates = new IntLinkedOpenHashSet();
             this.inputStates.add(0);
         }
 
-        private Calc(String input, boolean ignoreCase, IntCollection inputStates) {
+        private Calc(String input, IntCollection inputStates) {
             this.input = input;
-            this.ignoreCase = ignoreCase;
             this.inputStates = new IntLinkedOpenHashSet(inputStates);
         }
 
@@ -89,11 +84,11 @@ class OreGlobInterpreter implements Predicate<String> {
         }
 
         @Override
-        public void match(String match, boolean inverted) {
+        public void match(String match, boolean ignoreCase, boolean inverted) {
             IntIterator it = this.inputStates.iterator();
             while (it.hasNext()) {
                 int state = it.nextInt();
-                if (this.input.regionMatches(this.ignoreCase, state, match, 0, match.length())) {
+                if (this.input.regionMatches(ignoreCase, state, match, 0, match.length())) {
                     this.outputStates.add(state + match.length());
                 }
             }
@@ -142,7 +137,7 @@ class OreGlobInterpreter implements Predicate<String> {
         @Override
         public void group(OreGlobNode node, boolean inverted) {
             evaluate(node);
-            if(inverted) invert();
+            if (inverted) invert();
         }
 
         @Override
@@ -156,16 +151,21 @@ class OreGlobInterpreter implements Predicate<String> {
                     // But such case is rare and not accounting for that case only breaks short circuiting behavior, which is inconsequential
                     int maxPossibleBranches = this.input.length() - computeMinInputState() + 1;
                     for (OreGlobNode node : nodes) {
-                        Calc branchState = new Calc(this.input, this.ignoreCase, this.inputStates).evaluate(node);
+                        Calc branchState = new Calc(this.input, this.inputStates).evaluate(node);
                         this.outputStates.addAll(branchState.outputStates);
                         if (this.outputStates.size() >= maxPossibleBranches) break; // Already max
                     }
                     break;
                 }
                 case AND: {
+                    if (nodes.isEmpty()) {
+                        IntIterator it = new PossibleStateIterator(computeMinInputState());
+                        while (it.hasNext()) this.outputStates.add(it.nextInt());
+                        return;
+                    }
                     boolean first = true;
                     for (OreGlobNode node : nodes) {
-                        Calc branchState = new Calc(this.input, this.ignoreCase, this.inputStates).evaluate(node);
+                        Calc branchState = new Calc(this.input, this.inputStates).evaluate(node);
                         if (first) {
                             this.outputStates.addAll(branchState.outputStates);
                             first = false;
@@ -178,7 +178,7 @@ class OreGlobInterpreter implements Predicate<String> {
                 }
                 case XOR:
                     for (OreGlobNode node : nodes) {
-                        Calc branchState = new Calc(this.input, this.ignoreCase, this.inputStates).evaluate(node);
+                        Calc branchState = new Calc(this.input, this.inputStates).evaluate(node);
 
                         IntSet out2 = new IntOpenHashSet(branchState.outputStates);
                         out2.removeAll(this.outputStates); // out2 = { x in out2 AND x !in out }
