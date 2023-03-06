@@ -1,4 +1,4 @@
-package gregtech.common.covers.filter.oreglob;
+package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlob;
 

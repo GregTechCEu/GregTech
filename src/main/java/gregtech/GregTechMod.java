@@ -5,7 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.common.covers.filter.oreglob.OreGlobParser;
+import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;

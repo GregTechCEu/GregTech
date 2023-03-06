@@ -1,8 +1,7 @@
-package gregtech.common.covers.filter.oreglob;
+package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
-import gregtech.common.covers.filter.oreglob.node.NodeOreGlob;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -12,7 +11,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.common.covers.filter.oreglob.OreGlobParser.TokenType.*;
+import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType.*;
 
 /**
  * Top-down parser for oreGlob expression.

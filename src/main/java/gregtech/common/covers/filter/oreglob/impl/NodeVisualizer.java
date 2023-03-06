@@ -1,6 +1,9 @@
-package gregtech.common.covers.filter.oreglob.node;
+package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlob;
+import gregtech.common.covers.filter.oreglob.node.BranchType;
+import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
+import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 
 import java.util.List;
 

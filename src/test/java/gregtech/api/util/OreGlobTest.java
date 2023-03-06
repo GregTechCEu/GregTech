@@ -2,9 +2,9 @@ package gregtech.api.util;
 
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
-import gregtech.common.covers.filter.oreglob.EmptyOreGlob;
-import gregtech.common.covers.filter.oreglob.OreGlobParser;
-import gregtech.common.covers.filter.oreglob.node.NodeOreGlob;
+import gregtech.common.covers.filter.oreglob.impl.EmptyOreGlob;
+import gregtech.common.covers.filter.oreglob.impl.NodeOreGlob;
+import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 import org.hamcrest.Description;
