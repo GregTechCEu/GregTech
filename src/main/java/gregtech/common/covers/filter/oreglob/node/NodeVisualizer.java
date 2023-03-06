@@ -48,24 +48,13 @@ class NodeVisualizer implements NodeVisitor {
 
     @Override
     public void charsOrMore(int amount, boolean inverted) {
-        switch (amount) {
-            case 0:
-                if (inverted) visualizer.text("(impossible to match)", LOGIC_INVERSION);
-                else visualizer.text("anything", NODE);
-                break;
-            case 1:
-                if (inverted) visualizer.text("nothing", LOGIC_INVERSION);
-                else visualizer.text("something", NODE);
-                break;
-            default:
-                if (inverted) {
-                    visualizer.text("less than ", NODE);
-                    visualizer.number(amount);
-                    visualizer.text(" characters", NODE);
-                } else {
-                    visualizer.number(amount);
-                    visualizer.text(" or more characters", NODE);
-                }
+        if (inverted) {
+            visualizer.text("less than ", NODE);
+            visualizer.number(amount);
+            visualizer.text(" characters", NODE);
+        } else {
+            visualizer.number(amount);
+            visualizer.text(" or more characters", NODE);
         }
     }
 
@@ -152,6 +141,26 @@ class NodeVisualizer implements NodeVisitor {
             default:
                 throw new IllegalStateException("Unknown BranchType '" + type + "'");
         }
+    }
+
+    @Override
+    public void everything() {
+        visualizer.text("anything", NODE);
+    }
+
+    @Override
+    public void impossible() {
+        visualizer.text("(impossible to match)", LOGIC_INVERSION);
+    }
+
+    @Override
+    public void something() {
+        visualizer.text("something", NODE);
+    }
+
+    @Override
+    public void nothing() {
+        visualizer.text("nothing", LOGIC_INVERSION);
     }
 
     @Override

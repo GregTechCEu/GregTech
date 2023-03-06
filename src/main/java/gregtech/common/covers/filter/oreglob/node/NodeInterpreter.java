@@ -97,10 +97,7 @@ class NodeInterpreter implements NodeVisitor {
     @Override
     public void charsOrMore(int amount, boolean inverted) {
         if (inverted) {
-            if (amount == 1) {
-                // matches 0 chars; match every input state as-is
-                this.outputStates.addAll(this.inputStates);
-            } else if (amount > 0) { // inversion of 'zero or more' is impossible
+            if (amount > 0) { // inversion of 'zero or more' is impossible
                 // less than n chars
                 IntIterator it = this.inputStates.iterator();
                 while (it.hasNext()) {
@@ -175,6 +172,27 @@ class NodeInterpreter implements NodeVisitor {
                 throw new IllegalStateException("Unknown BranchType '" + type + "'");
         }
         if (inverted) invert();
+    }
+
+    @Override
+    public void everything() {
+        charsOrMore(0, false);
+    }
+
+    @Override
+    public void impossible() {
+        // Do not match anything!
+    }
+
+    @Override
+    public void something() {
+        charsOrMore(1, false);
+    }
+
+    @Override
+    public void nothing() {
+        // matches 0 chars; match every input state as-is
+        this.outputStates.addAll(this.inputStates);
     }
 
     @Override

@@ -28,7 +28,27 @@ public abstract class OreGlobNode {
      * @return Next node, if exists
      */
     @Nullable
-    public abstract OreGlobNode visit(NodeVisitor visitor);
+    public final OreGlobNode visit(NodeVisitor visitor) {
+        switch (this.getMatchDescription()) {
+            case EVERYTHING:
+                visitor.everything();
+                break;
+            case IMPOSSIBLE:
+                visitor.impossible();
+                break;
+            case SOMETHING:
+                visitor.something();
+                break;
+            case NOTHING:
+                visitor.nothing();
+                break;
+            default:
+                visitInternal(visitor);
+        }
+        return this.next;
+    }
+
+    protected abstract void visitInternal(NodeVisitor visitor);
 
     /**
      * Whether this node shares same structure and content with given node.

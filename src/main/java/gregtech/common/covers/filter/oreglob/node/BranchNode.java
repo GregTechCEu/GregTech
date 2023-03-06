@@ -14,20 +14,13 @@ class BranchNode extends OreGlobNode {
         this.expressions = expressions;
     }
 
-    @Nullable
     @Override
-    public OreGlobNode visit(NodeVisitor visitor) {
-        switch (expressions.size()) {
-            case 0:
-                visitor.charsOrMore(0, inverted == (this.type == BranchType.AND));
-                break;
-            case 1:
-                visitor.group(expressions.get(0), inverted);
-                break;
-            default:
-                visitor.branch(type, expressions, inverted);
+    protected void visitInternal(NodeVisitor visitor) {
+        if (expressions.size() == 1) {
+            visitor.group(expressions.get(0), inverted);
+        } else {
+            visitor.branch(type, expressions, inverted);
         }
-        return next;
     }
 
     @Override

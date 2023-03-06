@@ -14,5 +14,13 @@ public interface NodeVisitor {
 
     void branch(BranchType type, List<OreGlobNode> nodes, boolean inverted);
 
+    void everything();
+
+    void impossible();
+
+    void something();
+
+    void nothing();
+
     void error();
 }

@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class GroupNode extends OreGlobNode {
 
@@ -11,11 +10,9 @@ public class GroupNode extends OreGlobNode {
         this.node = node;
     }
 
-    @Nullable
     @Override
-    public OreGlobNode visit(NodeVisitor visitor) {
+    protected void visitInternal(NodeVisitor visitor) {
         visitor.group(node, inverted);
-        return next;
     }
 
     @Override

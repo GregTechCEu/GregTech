@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 class AnyCharNode extends OreGlobNode {
 
@@ -13,15 +12,13 @@ class AnyCharNode extends OreGlobNode {
         this.more = more;
     }
 
-    @Nullable
     @Override
-    public OreGlobNode visit(NodeVisitor visitor) {
+    protected void visitInternal(NodeVisitor visitor) {
         if (more) {
             visitor.charsOrMore(amount, inverted);
         } else {
             visitor.chars(amount, inverted);
         }
-        return next;
     }
 
     @Override

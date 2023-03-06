@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 class MatchNode extends OreGlobNode {
 
@@ -13,11 +12,9 @@ class MatchNode extends OreGlobNode {
         this.ignoreCase = ignoreCase;
     }
 
-    @Nullable
     @Override
-    public OreGlobNode visit(NodeVisitor visitor) {
+    protected void visitInternal(NodeVisitor visitor) {
         visitor.match(match, ignoreCase, inverted);
-        return next;
     }
 
     @Override
