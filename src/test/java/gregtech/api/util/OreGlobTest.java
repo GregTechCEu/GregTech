@@ -2,11 +2,16 @@ package gregtech.api.util;
 
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
+import gregtech.common.covers.filter.oreglob.EmptyOreGlob;
 import gregtech.common.covers.filter.oreglob.OreGlobParser;
+import gregtech.common.covers.filter.oreglob.node.NodeOreGlob;
+import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
+import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
 
+import static gregtech.common.covers.filter.oreglob.node.OreGlobNodes.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -16,22 +21,87 @@ public class OreGlobTest {
     @Test
     public void compileTest() {
         // "Will match all gold dusts of all sizes or all plates, but not double plates"
-        compile("dust*Gold | (plate* & !*Double*)");
+        assertCompile("dust*Gold | (plate* & !*Double*)",
+                or(
+                        append(
+                                match("dust"),
+                                everything(),
+                                match("Gold")
+                        ),
+                        and(
+                                append(
+                                        match("plate"),
+                                        everything()
+                                ),
+                                not(
+                                        append(
+                                                everything(),
+                                                match("Double"),
+                                                everything()
+                                        )
+                                )
+                        )
+                ));
 
-        compile("1^2^3^4^5^!(1^2^3)");
+        assertCompile("1^2^3^4^5^!(1^2^3)",
+                xor(
+                        match("1"),
+                        match("2"),
+                        match("3"),
+                        match("4"),
+                        match("5"),
+                        not(
+                                xor(
+                                        match("1"),
+                                        match("2"),
+                                        match("3")
+                                )
+                        )
+                ));
 
-        // TODO implement proper eq function to nodes...
-        compile("(??***)(?*?*?****?*???*?)()()()");
-        compile("(?)(??)(??*)(??**)");
-        compile("wdym this is impossible??????? !*");
-        compile("!(*) when the impossible is impossible \uD83D\uDE24");
+        assertCompile("(??***)(?*?*?****?*???*?)()()()", chars(10, true));
+        assertCompile("(?)(??)(??*)(??**)", chars(7, true));
+        assertCompile("wdym this is impossible??????? !*", impossible());
+        assertCompile("!(*) when the impossible is impossible \uD83D\uDE24", impossible());
 
-        compile("");
+        assertCompile("", nothing());
 
-        compile("!a b c");
-        compile("!(a b c)");
-        compile("!(a b) c");
-        compile("(!a b) c");
+        assertCompile("!a b c",
+                not(
+                        append(
+                                match("a"),
+                                match("b"),
+                                match("c")
+                        )
+                ));
+        assertCompile("!(a b c)",
+                not(
+                        append(
+                                match("a"),
+                                match("b"),
+                                match("c")
+                        )
+                ));
+        assertCompile("!(a b) c",
+                append(
+                        not(
+                                append(
+                                        match("a"),
+                                        match("b")
+                                )
+                        ),
+                        match("c")
+                ));
+        assertCompile("(!a b) c",
+                append(
+                        not(
+                                append(
+                                        match("a"),
+                                        match("b")
+                                )
+                        ),
+                        match("c")
+                ));
 
         compile("!()");
     }
@@ -149,6 +219,7 @@ public class OreGlobTest {
 
     private static void assertMatch(OreGlob expr, String input, boolean expectedResult) {
         assertThat(input, new TypeSafeMatcher<String>(String.class) {
+
             @Override
             public void describeTo(Description description) {
                 description.appendText("input '")
@@ -171,9 +242,33 @@ public class OreGlobTest {
         });
     }
 
+    private static void assertCompile(String expression, OreGlobNode result) {
+        OreGlob glob = compile(expression);
+        assertThat(glob, new TypeSafeMatcher<OreGlob>(OreGlob.class) {
+
+            @Override
+            public void describeTo(Description description) {
+            }
+
+            @Override
+            protected void describeMismatchSafely(OreGlob item, Description mismatchDescription) {
+                mismatchDescription.appendText("Compilation result does not equal to:\n")
+                        .appendText(new NodeOreGlob(result).toString());
+            }
+
+            @Override
+            protected boolean matchesSafely(OreGlob item) {
+                if (item instanceof EmptyOreGlob) return OreGlobNodes.nothing().isStructurallyEqualTo(result);
+                if (item instanceof NodeOreGlob) return ((NodeOreGlob) item).getRoot().isStructurallyEqualTo(result);
+                return false;
+            }
+        });
+    }
+
     private static void assertCompileError(String expression) {
         OreGlobCompileResult result = new OreGlobParser(expression).compile();
         assertThat(result, new TypeSafeMatcher<OreGlobCompileResult>(OreGlobCompileResult.class) {
+
             @Override
             public void describeTo(Description description) {
                 description.appendText(expression);

@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import gregtech.common.covers.filter.oreglob.NodeVisitor;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

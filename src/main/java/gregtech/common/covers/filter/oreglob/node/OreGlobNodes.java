@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import gregtech.common.covers.filter.oreglob.BranchType;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -8,6 +8,10 @@ import java.util.List;
  * Entry point for accessing all oreGlobNode instances outside package. Thanks to Java for the superior visibility system.
  */
 public class OreGlobNodes {
+
+    public static OreGlobNode match(String match) {
+        return match(match, true);
+    }
 
     public static OreGlobNode match(String match, boolean ignoreCase) {
         if (match.isEmpty()) return nothing();
@@ -33,7 +37,11 @@ public class OreGlobNodes {
     }
 
     public static OreGlobNode impossible() {
-        return invert(everything());
+        return not(everything());
+    }
+
+    public static OreGlobNode or(OreGlobNode... expressions) {
+        return or(Lists.newArrayList(expressions));
     }
 
     public static OreGlobNode or(List<OreGlobNode> expressions) {
@@ -63,6 +71,10 @@ public class OreGlobNodes {
         return new BranchNode(BranchType.OR, expressions);
     }
 
+    public static OreGlobNode and(OreGlobNode... expressions) {
+        return and(Lists.newArrayList(expressions));
+    }
+
     public static OreGlobNode and(List<OreGlobNode> expressions) {
         MatchDescription intersection = MatchDescription.EVERYTHING;
         for (int i = 0; i < expressions.size(); i++) {
@@ -88,6 +100,10 @@ public class OreGlobNodes {
                 return expressions.get(0);
         }
         return new BranchNode(BranchType.AND, expressions);
+    }
+
+    public static OreGlobNode xor(OreGlobNode... expressions) {
+        return xor(Lists.newArrayList(expressions));
     }
 
     public static OreGlobNode xor(List<OreGlobNode> expressions) {
@@ -122,11 +138,11 @@ public class OreGlobNodes {
                 return inverted ? everything() : impossible();
             case 1:
                 OreGlobNode node = expressions.get(0);
-                if (inverted) invert(node);
+                if (inverted) not(node);
                 return node;
         }
         BranchNode node = new BranchNode(BranchType.XOR, expressions);
-        if (inverted) invert(node);
+        if (inverted) not(node);
         return node;
     }
 
@@ -147,7 +163,7 @@ public class OreGlobNodes {
         return new ErrorNode();
     }
 
-    public static OreGlobNode invert(OreGlobNode node) {
+    public static OreGlobNode not(OreGlobNode node) {
         if (node.next != null) {
             GroupNode newNode = new GroupNode(node);
             newNode.inverted = true;
@@ -159,7 +175,7 @@ public class OreGlobNodes {
         }
     }
 
-    public static OreGlobNode setNext(OreGlobNode node, OreGlobNode next) {
+    public static OreGlobNode append(OreGlobNode node, OreGlobNode next) {
         if (node.isImpossibleToMatch() || next.isNothing()) return node;
         if (next.isImpossibleToMatch() || node.isNothing()) return next;
 
@@ -210,5 +226,13 @@ public class OreGlobNodes {
         node.next = next;
         node.clearMatchDescriptionCache();
         return node;
+    }
+
+    public static OreGlobNode append(OreGlobNode... nodes) {
+        if (nodes.length == 0) throw new IllegalArgumentException("No nodes provided");
+        for (int i = nodes.length - 2; i >= 0; i--) {
+            nodes[i] = append(nodes[i], nodes[i + 1]);
+        }
+        return nodes[0];
     }
 }

@@ -1,8 +1,8 @@
 package gregtech.common.covers.filter.oreglob;
 
-import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
+import gregtech.common.covers.filter.oreglob.node.NodeOreGlob;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -186,16 +186,13 @@ public final class OreGlobParser {
     public OreGlobCompileResult compile() {
         advance();
         if (tokenType == EOF) {
-            return new OreGlobCompileResult(
-                    new OreGlob(new OreGlobVisualizer(OreGlobNodes.nothing()), String::isEmpty),
-                    this.reports.toArray(new Report[0]));
+            return new OreGlobCompileResult(EmptyOreGlob.getInstance(), this.reports.toArray(new Report[0]));
         } else {
             OreGlobNode expr = or();
             if (tokenType != EOF) { // likely caused by program error, not user issue
                 error("Unexpected token " + getTokenSection() + " after end of expression");
             }
-            return new OreGlobCompileResult(
-                    new OreGlob(new OreGlobVisualizer(expr), new OreGlobInterpreter(expr)),
+            return new OreGlobCompileResult(new NodeOreGlob(expr),
                     this.reports.toArray(new Report[0]));
         }
     }
@@ -250,9 +247,9 @@ public final class OreGlobParser {
         if (inverted && advanceIf(LPAR)) {
             inverted = false;
             if (advanceIf(RPAR)) { // negated empty, i.e. something
-                root = OreGlobNodes.invert(OreGlobNodes.nothing());
+                root = OreGlobNodes.not(OreGlobNodes.nothing());
             } else {
-                root = OreGlobNodes.invert(or());
+                root = OreGlobNodes.not(or());
                 switch (tokenType) {
                     case RPAR:
                         advance();
@@ -268,9 +265,9 @@ public final class OreGlobParser {
 
         switch (tokenType) {
             case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
-                root = OreGlobNodes.setNext(root, not());
+                root = OreGlobNodes.append(root, not());
             default:
-                return inverted ? OreGlobNodes.invert(root) : root;
+                return inverted ? OreGlobNodes.not(root) : root;
         }
     }
 

@@ -1,13 +1,12 @@
 package gregtech.api.util.oreglob;
 
-import java.util.function.Consumer;
+import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Representation of ore filter expression.
  */
-public final class OreGlob {
+public abstract class OreGlob {
 
     private static Function<String, OreGlobCompileResult> compiler;
 
@@ -20,25 +19,20 @@ public final class OreGlob {
         OreGlob.compiler = compiler;
     }
 
-    private final Consumer<Visualizer> visualRepresentation;
-    private final Predicate<String> evaluator;
+    public abstract <V extends Visualizer> V visualize(V visualizer);
 
-    public OreGlob(Consumer<Visualizer> visualRepresentation, Predicate<String> evaluator) {
-        this.visualRepresentation = visualRepresentation;
-        this.evaluator = evaluator;
+    public abstract boolean matches(String input);
+
+    public final List<String> toFormattedString() {
+        return toFormattedString("  ");
     }
 
-    public <V extends Visualizer> V visualize(V visualizer) {
-        this.visualRepresentation.accept(visualizer);
-        return visualizer;
-    }
-
-    public boolean matches(String input) {
-        return evaluator.test(input);
+    public final List<String> toFormattedString(String indent) {
+        return visualize(new OreGlobFormattedStringVisualizer(indent)).getLines();
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return visualize(new OreGlobStringVisualizer()).toString();
     }
 

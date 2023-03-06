@@ -1,6 +1,4 @@
-package gregtech.common.covers.filter.oreglob;
-
-import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
+package gregtech.common.covers.filter.oreglob.node;
 
 import java.util.List;
 
