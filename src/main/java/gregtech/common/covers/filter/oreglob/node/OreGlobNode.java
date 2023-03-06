@@ -113,9 +113,7 @@ public abstract class OreGlobNode {
     /**
      * @return Match type of this specific node, without considering inverted flag.
      */
-    protected MatchDescription getIndividualNodeMatchDescription() {
-        return MatchDescription.OTHER_EXCLUDING_NOTHING;
-    }
+    protected abstract MatchDescription getIndividualNodeMatchDescription();
 
     final void clearMatchDescriptionCache() {
         this.descriptionCache = null;
