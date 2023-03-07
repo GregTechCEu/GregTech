@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -21,13 +20,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -55,6 +52,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
         this.prefix = orePrefix;
+        this.setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
     }
 
     @Override
@@ -147,18 +145,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
-        if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
-            for (MetaItem<?>.MetaValueItem enabledItem : metaItems.values()) {
-                if (!enabledItem.isVisible()) continue;
-                ItemStack itemStack = enabledItem.getStackForm();
-                enabledItem.getSubItemHandler().getSubItems(itemStack, tab, subItems);
-            }
-        }
-    }
-
-    @Override
     public void onUpdate(@Nonnull ItemStack itemStack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase) {
@@ -172,7 +158,8 @@ public class MetaPrefixItem extends StandardMetaItem {
                 float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
                 ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                    heatDamage *= ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().getHeatResistance();
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                    if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
                 }
 
                 if (heatDamage > 0.0) {

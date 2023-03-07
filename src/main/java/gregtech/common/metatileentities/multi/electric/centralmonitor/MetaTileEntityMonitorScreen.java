@@ -16,7 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
@@ -67,7 +67,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private UUID lastClickUUID;
     public MonitorPluginBaseBehavior plugin;
     // persistent data
-    public BlockPosFace coverPos;
+    public FacingPos coverPos;
     public CoverDigitalInterface.MODE mode = CoverDigitalInterface.MODE.FLUID;
     public int slot = 0;
     public float scale = 1;
@@ -78,7 +78,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         super(metaTileEntityId, 1);
     }
 
-    public void setMode(BlockPosFace cover, CoverDigitalInterface.MODE mode) {
+    public void setMode(FacingPos cover, CoverDigitalInterface.MODE mode) {
         CoverDigitalInterface last_cover = this.getCoverFromPosSide(coverPos);
         CoverDigitalInterface now_cover = this.getCoverFromPosSide(cover);
         if (this.mode == mode) {
@@ -99,7 +99,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         this.markDirty();
     }
 
-    public void setMode(BlockPosFace cover) {
+    public void setMode(FacingPos cover) {
         setMode(cover, this.mode);
     }
 
@@ -117,12 +117,12 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         markDirty();
     }
 
-    public CoverDigitalInterface getCoverFromPosSide(BlockPosFace posFacing) {
+    public CoverDigitalInterface getCoverFromPosSide(FacingPos posFacing) {
         if (posFacing == null) return null;
         ICoverable mte = null;
-        IGregTechTileEntity holder = getHolderFromPos(posFacing.pos);
+        IGregTechTileEntity holder = getHolderFromPos(posFacing.getPos());
         if (holder == null) {
-            TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.pos);
+            TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.getPos());
             if (te instanceof TileEntityPipeBase) {
                 mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
             }
@@ -130,7 +130,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             mte = holder.getMetaTileEntity();
         }
         if (mte != null) {
-            CoverBehavior cover = mte.getCoverAtSide(posFacing.facing);
+            CoverBehavior cover = mte.getCoverAtSide(posFacing.getFacing());
             if (cover instanceof CoverDigitalInterface) {
                 return (CoverDigitalInterface) cover;
             }
@@ -146,7 +146,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return null;
     }
 
-    public void updateCoverValid(Set<BlockPosFace> covers) {
+    public void updateCoverValid(Set<FacingPos> covers) {
         if (this.coverPos != null) {
             if (!covers.contains(this.coverPos)) {
                 setMode(null, CoverDigitalInterface.MODE.PROXY);
@@ -157,8 +157,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void writeSync(PacketBuffer buf) {
         buf.writeBoolean(this.coverPos != null);
         if (this.coverPos != null) {
-            buf.writeBlockPos(coverPos.pos);
-            buf.writeByte(coverPos.facing.getIndex());
+            buf.writeBlockPos(coverPos.getPos());
+            buf.writeByte(coverPos.getFacing().getIndex());
         }
         buf.writeByte(this.mode.ordinal());
         buf.writeVarInt(this.slot);
@@ -170,7 +170,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (buf.readBoolean()) {
             BlockPos pos = buf.readBlockPos();
             EnumFacing side = EnumFacing.byIndex(buf.readByte());
-            BlockPosFace pair = new BlockPosFace(pos, side);
+            FacingPos pair = new FacingPos(pos, side);
             if (!pair.equals(this.coverPos)) {
                 this.coverTMP = null;
                 this.coverPos = pair;
@@ -189,7 +189,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void updateProxyPlugin() {
         if (this.plugin instanceof ProxyHolderPluginBehavior) {
             if (this.mode == CoverDigitalInterface.MODE.PROXY && coverPos != null) {
-                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos.pos);
+                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos.getPos());
             } else {
                 ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(null);
             }
@@ -368,8 +368,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         if (this.coverPos != null) {
-            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.pos));
-            data.setByte("coverSide", (byte) this.coverPos.facing.getIndex());
+            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.getPos()));
+            data.setByte("coverSide", (byte) this.coverPos.getFacing().getIndex());
         }
         data.setByte("mode", (byte) this.mode.ordinal());
         data.setFloat("scale", this.scale);
@@ -390,7 +390,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (data.hasKey("coverPos") && data.hasKey("coverSide")) {
             BlockPos pos = NBTUtil.getPosFromTag(data.getCompoundTag("coverPos"));
             EnumFacing side = EnumFacing.byIndex(data.getByte("coverSide"));
-            this.coverPos = new BlockPosFace(pos, side);
+            this.coverPos = new FacingPos(pos, side);
         } else {
             this.coverPos = null;
         }
@@ -542,7 +542,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         if (coverPos == null) {
                             this.setMode(null, this.mode);
                         } else {
-                            this.setMode(new BlockPosFace(coverPos.coverHolder.getPos(), coverPos.attachedSide));
+                            this.setMode(new FacingPos(coverPos.coverHolder.getPos(), coverPos.attachedSide));
                         }
                     }))
 

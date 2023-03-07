@@ -440,7 +440,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         for (MetaTileEntity metaTileEntity : GregTechAPI.MTE_REGISTRY) {
-            metaTileEntity.getSubItems(tab, items);
+            if (metaTileEntity.isInCreativeTab(tab)) {
+                metaTileEntity.getSubItems(tab, items);
+            }
         }
     }
 
