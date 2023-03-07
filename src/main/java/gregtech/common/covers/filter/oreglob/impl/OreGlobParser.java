@@ -279,7 +279,7 @@ public final class OreGlobParser {
                 }
             }
         } else {
-            if (insideInversion) {
+            if (inverted && insideInversion) {
                 warn("Nested inversions can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
             }
             root = primary();
@@ -291,7 +291,8 @@ public final class OreGlobParser {
                 OreGlobNode node = not(insideInversion || inverted);
                 if (root instanceof MatchNode && root.isInverted() &&
                         node instanceof MatchNode && node.isInverted()) {
-                    warn("Consecutive inversions can be unintuitive. Please check if the evaluation result is desirable.", tokenStart, this.tokenStart+this.tokenLength-tokenStart);
+                    warn("Consecutive inversions can be unintuitive. Please check if the evaluation result is desirable.",
+                            tokenStart, this.tokenStart + this.tokenLength - tokenStart);
                 }
                 root = OreGlobNodes.append(root, node);
             default:
