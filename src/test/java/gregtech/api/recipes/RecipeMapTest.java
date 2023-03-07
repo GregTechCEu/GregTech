@@ -2,11 +2,10 @@ package gregtech.api.recipes;
 
 import gregtech.Bootstrap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.map.MapFluidIngredient;
 import gregtech.api.recipes.map.MapItemStackIngredient;
 import gregtech.api.recipes.map.MapOreDictIngredient;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static gregtech.api.items.OreDictNames.cobblestone;
 import static gregtech.api.unification.material.Materials.*;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -133,7 +131,7 @@ public class RecipeMapTest {
                 new ItemStack(Blocks.COBBLESTONE), 0, null
         );
 
-        RecipeBuilder r = new RecipeBuilder()
+        RecipeBuilder r = new RecipeBuilder<>()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .outputs(new ItemStack(Blocks.STONE))
@@ -155,7 +153,7 @@ public class RecipeMapTest {
                 new FluidStack(FluidRegistry.getFluid("water"), 1000)
         );
 
-        RecipeBuilder r = new RecipeBuilder()
+        RecipeBuilder r = new RecipeBuilder<>()
                 .fluidInputs(new FluidStack(FluidRegistry.getFluid("water"), 1000))
                 .fluidInputs(new FluidStack(FluidRegistry.getFluid("water"), 1001))
                 .outputs(new ItemStack(Blocks.STONE))
@@ -173,20 +171,20 @@ public class RecipeMapTest {
 
     @Test
     public void GTRecipeInputEquals() {
-        RecipeBuilder r = new RecipeBuilder()
+        RecipeBuilder r = new RecipeBuilder<>()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .input("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1);
 
-        MatcherAssert.assertThat(r.inputs.get(0), new IsNot(equalTo(r.inputs.get(1))));
-        MatcherAssert.assertThat(r.inputs.get(1), new IsNot(equalTo(r.inputs.get(2))));
+        MatcherAssert.assertThat(r.inputs.get(0), new IsNot<>(equalTo(r.inputs.get(1))));
+        MatcherAssert.assertThat(r.inputs.get(1), new IsNot<>(equalTo(r.inputs.get(2))));
     }
 
     @Test
     public void MapIngredientEquals() {
-        RecipeBuilder r = new RecipeBuilder()
+        RecipeBuilder r = new RecipeBuilder<>()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .input("cobblestone", 2)
@@ -197,14 +195,43 @@ public class RecipeMapTest {
         MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0));
         MapOreDictIngredient ing1FromGTRecipeInput = new MapOreDictIngredient(OreDictionary.getOreID("cobblestone"));
 
-        MatcherAssert.assertThat(ing0FromGTRecipeInput, new IsNot(equalTo(ing1FromGTRecipeInput)));
-        MatcherAssert.assertThat(ing1FromGTRecipeInput, new IsNot(equalTo(ing0FromGTRecipeInput)));
+        MatcherAssert.assertThat(ing0FromGTRecipeInput, new IsNot<>(equalTo(ing1FromGTRecipeInput)));
+        MatcherAssert.assertThat(ing1FromGTRecipeInput, new IsNot<>(equalTo(ing0FromGTRecipeInput)));
 
         MatcherAssert.assertThat(rec.getInputs().get(0).acceptsStack(new ItemStack(Blocks.COBBLESTONE)), is(true));
         MatcherAssert.assertThat(rec.getInputs().get(1).acceptsStack(new ItemStack(Blocks.COBBLESTONE)), is(true));
-
-
     }
 
+    @Test
+    public void MapHashCollision() {
+        RecipeBuilder r = new RecipeBuilder<>()
+                .inputs(new ItemStack(Blocks.COBBLESTONE))
+                .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
+                .input("cobblestone", 2)
+                .outputs(new ItemStack(Blocks.STONE))
+                .EUt(1).duration(1);
 
+        Recipe rec = (Recipe) r.build().getResult();
+
+        MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0)) {
+            @Override
+            protected int hash() {
+                return 1;
+            }
+        };
+
+        MapItemStackIngredient ing1FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(1).getInputStacks()[0], rec.getInputs().get(0)) {
+            @Override
+            protected int hash() {
+                return 1;
+            }
+        };
+
+        Object2ObjectOpenHashMap<MapItemStackIngredient, Object> map = new Object2ObjectOpenHashMap();
+        map.put(ing0FromGTRecipeInput, ing0FromGTRecipeInput);
+        map.put(ing1FromGTRecipeInput, ing1FromGTRecipeInput);
+
+        MatcherAssert.assertThat(map.keySet().size(), is(2));
+
+    }
 }
