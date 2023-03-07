@@ -28,7 +28,12 @@ import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType
  *         | '(', [ or ], [ ')' ]
  *         | ( '*' | '?' ), { '*' | '?' }
  *
- * FLAG = '$', ? every character except whitespaces ?
+ * FLAG = '$', CHARACTER - WHITESPACE, { CHARACTER - WHITESPACE }
+ * LITERAL = CHARACTER - WHITESPACE, { CHARACTER - WHITESPACE }
+ *
+ * WHITESPACE = ' ' | '\t' | '\n' | '\r'
+ *
+ * CHARACTER = ? every character under codepoint of <= 0xFFFF ?
  *
  * </pre>
  */
