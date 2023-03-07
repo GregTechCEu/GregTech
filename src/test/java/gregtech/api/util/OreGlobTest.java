@@ -62,7 +62,7 @@ public class OreGlobTest {
         assertCompile("(??***)(?*?*?****?*???*?)()()()", chars(10, true));
         assertCompile("(?)(??)(??*)(??**)", chars(7, true));
         assertCompile("wdym this is impossible??????? !*", impossible());
-        assertCompile("!(*) when the impossible is impossible \uD83D\uDE24", impossible());
+        assertCompile("!(*) when the impossible is impossible", impossible());
 
         assertCompile("", impossible());
 
@@ -206,6 +206,8 @@ public class OreGlobTest {
         assertReport(")", true);
         assertReport("a | b | c | ", true);
         assertReport(")))))))", true);
+
+        assertReport("when the impossible is impossible \uD83D\uDE24", true);
 
         assertReport("!logical !inversions !are !confusing !as !hell", false);
         assertReport("!(logical) !(inversions) !(are) !(confusing) !(as) !(hell)", false);

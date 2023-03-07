@@ -137,18 +137,18 @@ public final class OreGlobParser {
                     if (c == CHAR_EOF) {
                         error("End of file after escape character ('\\')", i, 1);
                         return stb.toString();
-                    } else {
-                        stb.appendCodePoint(c);
-                        break;
-                    }
+                    } else break;
                 case ' ': case '\t': case '\n': case '\r': case '(': case ')':
                 case '|': case '&': case '!': case '^': case '*': case '?': case '$':
                 case CHAR_EOF:
                     this.inputIndex = i;
                     return stb.toString();
-                default:
-                    stb.appendCodePoint(c);
             }
+            if (c > 0xFFFF) {
+                error("Characters above 0xFFFF can't be used", i, 1);
+                c = '?';
+            }
+            stb.appendCodePoint(c);
         }
     }
 
@@ -291,8 +291,7 @@ public final class OreGlobParser {
                 OreGlobNode node = not(insideInversion || inverted);
                 if (root instanceof MatchNode && root.isInverted() &&
                         node instanceof MatchNode && node.isInverted()) {
-                    warn("Consecutive inversions can be unintuitive. Please check if the evaluation result is desirable.",
-                            tokenStart, this.tokenStart + this.tokenLength - tokenStart);
+                    warn("Consecutive inversions can be unintuitive. Please check if the evaluation result is desirable.", tokenStart, this.tokenStart + this.tokenLength - tokenStart);
                 }
                 root = OreGlobNodes.append(root, node);
             default:
