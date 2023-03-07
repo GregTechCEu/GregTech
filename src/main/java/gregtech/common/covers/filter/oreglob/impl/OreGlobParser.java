@@ -2,6 +2,7 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
+import gregtech.common.covers.filter.oreglob.node.MatchNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
@@ -92,7 +93,7 @@ public final class OreGlobParser {
                     return;
                 case '$':
                     if (!first) {
-                        error("Compilation flags at middle of expression", start, 1);
+                        error("Compilation flags in the middle of expression", start, 1);
                     }
                     gatherFlags(first);
                     continue;
@@ -177,11 +178,11 @@ public final class OreGlobParser {
     }
 
     private void addFlag(int flag, int index) {
-        switch(flag){
+        switch (flag) {
             case 'c': case 'C':
-                if(this.caseSensitive) {
+                if (this.caseSensitive) {
                     warn("Compilation flag 'c' written twice", index, 1);
-                }else {
+                } else {
                     this.caseSensitive = true;
                 }
                 break;
@@ -199,15 +200,15 @@ public final class OreGlobParser {
     public OreGlobCompileResult compile() {
         advance();
         if (tokenType == EOF) {
-            return new OreGlobCompileResult( ImpossibleOreGlob.getInstance(),
-                    this.reports.toArray(new Report[0]));
+            return new OreGlobCompileResult(ImpossibleOreGlob.getInstance(),
+                    this.reports);
         } else {
             OreGlobNode expr = or();
             if (tokenType != EOF) { // likely caused by program error, not user issue
                 error("Unexpected token " + getTokenSection() + " after end of expression");
             }
             return new OreGlobCompileResult(new NodeOreGlob(expr),
-                    this.reports.toArray(new Report[0]));
+                    this.reports);
         }
     }
 
@@ -279,14 +280,20 @@ public final class OreGlobParser {
             }
         } else {
             if (insideInversion) {
-                warn("Consecutive inversions can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
+                warn("Nested inversions can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
             }
             root = primary();
         }
 
         switch (tokenType) {
             case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
-                root = OreGlobNodes.append(root, not(insideInversion || inverted));
+                int tokenStart = this.tokenStart;
+                OreGlobNode node = not(insideInversion || inverted);
+                if (root instanceof MatchNode && root.isInverted() &&
+                        node instanceof MatchNode && node.isInverted()) {
+                    warn("Consecutive inversions can be unintuitive. Please check if the evaluation result is desirable.", tokenStart, this.tokenStart+this.tokenLength-tokenStart);
+                }
+                root = OreGlobNodes.append(root, node);
             default:
                 return inverted ? OreGlobNodes.not(root) : root;
         }

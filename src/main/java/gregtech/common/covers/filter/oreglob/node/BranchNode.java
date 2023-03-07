@@ -3,7 +3,7 @@ package gregtech.common.covers.filter.oreglob.node;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-class BranchNode extends OreGlobNode {
+public class BranchNode extends OreGlobNode {
 
     final BranchType type;
     final List<OreGlobNode> expressions;

@@ -208,6 +208,10 @@ public class OreGlobTest {
         assertReport(")))))))", true);
 
         assertReport("!logical !inversions !are !confusing !as !hell", false);
+        assertReport("!(logical) !(inversions) !(are) !(confusing) !(as) !(hell)", false);
+
+        assertReport("dust !impure !iron", false);
+        assertReport("dust !(impure) !(iron)", false);
     }
 
     private static OreGlob compile(String expression) {

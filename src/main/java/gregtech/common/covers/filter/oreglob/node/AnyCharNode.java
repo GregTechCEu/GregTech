@@ -2,7 +2,7 @@ package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
 
-class AnyCharNode extends OreGlobNode {
+public class AnyCharNode extends OreGlobNode {
 
     int amount;
     boolean more;

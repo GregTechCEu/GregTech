@@ -1,18 +1,19 @@
 package gregtech.api.util.oreglob;
 
+import java.util.Collection;
+
 /**
  * Compilation result for oreGlob.
  * <p>
- *
  */
 public final class OreGlobCompileResult {
 
     private final OreGlob instance;
     private final Report[] reports;
 
-    public OreGlobCompileResult(OreGlob instance, Report[] reports) {
+    public OreGlobCompileResult(OreGlob instance, Collection<Report> reports) {
         this.instance = instance;
-        this.reports = reports;
+        this.reports = reports.stream().sorted().toArray(Report[]::new);
     }
 
     public OreGlob getInstance() {
@@ -30,7 +31,7 @@ public final class OreGlobCompileResult {
         return false;
     }
 
-    public static final class Report {
+    public static final class Report implements Comparable<Report> {
         private final String message;
         private final boolean error;
         private final int start;
@@ -65,7 +66,15 @@ public final class OreGlobCompileResult {
 
         @Override
         public String toString() {
-            return start < 0 ? message : "[" + start + "] " + message;
+            StringBuilder stb = new StringBuilder().append(error ? "[!] " : "[?] ");
+            if (start >= 0) stb.append("[").append(start + 1).append("] ");
+            return stb.append(message).toString();
+        }
+
+        @Override
+        public int compareTo(Report o) {
+            int i = Boolean.compare(o.error, this.error);
+            return i != 0 ? i : Integer.compare(this.start, o.start);
         }
     }
 }

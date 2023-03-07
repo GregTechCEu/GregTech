@@ -2,7 +2,7 @@ package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
 
-class MatchNode extends OreGlobNode {
+public class MatchNode extends OreGlobNode {
 
     String match;
     boolean ignoreCase;
