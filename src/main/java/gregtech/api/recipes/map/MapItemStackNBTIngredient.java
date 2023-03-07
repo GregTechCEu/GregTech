@@ -49,7 +49,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
             }
             if (this.gtRecipeInput != null) {
                 if (other.gtRecipeInput != null) {
-                    return gtRecipeInput.equals(other.gtRecipeInput);
+                    return gtRecipeInput.equalIgnoreAmount(other.gtRecipeInput);
                 }
             } else if (other.gtRecipeInput != null) {
                 return other.gtRecipeInput.acceptsStack(this.stack);
