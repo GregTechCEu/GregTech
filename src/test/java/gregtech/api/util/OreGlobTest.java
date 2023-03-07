@@ -104,6 +104,9 @@ public class OreGlobTest {
                 ));
 
         assertCompile("!()", something());
+        assertCompile("!(logical) !(inversions) !(are) !(confusing) !(as) !(hell)", everything());
+        assertCompile("!(x) !(x)", not(match("x")));
+        assertCompile("!(x) !(y)", or(not(match("x")), not(match("y"))));
     }
 
     @Test
@@ -197,11 +200,14 @@ public class OreGlobTest {
 
     @Test
     public void errorTest() {
-        assertCompileError("End of file after escape character ('\\'): \\");
-        assertCompileError("$asdf Tags at middle of expression $12345");
-        assertCompileError("End of file after escape character ('\\'): $123\\");
-        assertCompileError(")");
-        assertCompileError("a | b | c | ");
+        assertReport("End of file after escape character ('\\'): \\", true);
+        assertReport("$asdf Tags at middle of expression $12345", true);
+        assertReport("End of file after escape character ('\\'): $123\\", true);
+        assertReport(")", true);
+        assertReport("a | b | c | ", true);
+        assertReport(")))))))", true);
+
+        assertReport("!logical !inversions !are !confusing !as !hell", false);
     }
 
     private static OreGlob compile(String expression) {
@@ -265,7 +271,7 @@ public class OreGlobTest {
         });
     }
 
-    private static void assertCompileError(String expression) {
+    private static void assertReport(String expression, boolean error) {
         OreGlobCompileResult result = new OreGlobParser(expression).compile();
         assertThat(result, new TypeSafeMatcher<OreGlobCompileResult>(OreGlobCompileResult.class) {
 
@@ -282,7 +288,7 @@ public class OreGlobTest {
 
             @Override
             protected boolean matchesSafely(OreGlobCompileResult item) {
-                return item.hasError();
+                return error ? item.hasError() : item.getReports().length > 0;
             }
         });
         System.out.println("Compilation errors for expression '" + expression + "':");

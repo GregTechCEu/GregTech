@@ -203,12 +203,14 @@ public class OreGlobNodes {
                             return everything();
                         }
                         if (n1.isMatchEquals(n2)) {
-                            n1.setNext(n2);
+                            n1.setNext(n2.getNext());
                             return n1; // (!x) (!x) is equivalent to !x if x is a single char
                         }
                         // turns out (!x) (!y), when both x and y are a single char each, is eq to (!x | !y)
                         OreGlobNode newNode = or(n1, n2);
                         newNode.setNext(n2.getNext());
+                        n1.setNext(null);
+                        n2.setNext(null);
                         return newNode;
                     }
                 }
@@ -226,8 +228,8 @@ public class OreGlobNodes {
                 n1.amount++;
                 if (!n1.more) {
                     n1.more = true;
-                    n1.clearMatchDescriptionCache();
                 }
+                n1.clearMatchDescriptionCache();
                 n1.setNext(null);
                 return n1;
             }
