@@ -15,9 +15,9 @@ class AnyCharNode extends OreGlobNode {
     @Override
     protected void visitInternal(NodeVisitor visitor) {
         if (more) {
-            visitor.charsOrMore(amount, inverted);
+            visitor.charsOrMore(amount, isInverted());
         } else {
-            visitor.chars(amount, inverted);
+            visitor.chars(amount, isInverted());
         }
     }
 

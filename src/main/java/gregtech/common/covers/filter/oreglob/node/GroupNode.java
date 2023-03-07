@@ -12,7 +12,7 @@ public class GroupNode extends OreGlobNode {
 
     @Override
     protected void visitInternal(NodeVisitor visitor) {
-        visitor.group(node, inverted);
+        visitor.group(node, isInverted());
     }
 
     @Override

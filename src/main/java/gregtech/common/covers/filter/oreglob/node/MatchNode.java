@@ -14,7 +14,7 @@ class MatchNode extends OreGlobNode {
 
     @Override
     protected void visitInternal(NodeVisitor visitor) {
-        visitor.match(match, ignoreCase, inverted);
+        visitor.match(match, ignoreCase, isInverted());
     }
 
     @Override

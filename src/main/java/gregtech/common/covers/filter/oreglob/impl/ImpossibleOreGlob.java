@@ -5,19 +5,19 @@ import gregtech.api.util.oreglob.OreGlob;
 import static gregtech.api.util.oreglob.OreGlob.VisualizationHint.LOGIC_INVERSION;
 
 /**
- * 'Empty' implementation of oreglob. This instance only matches empty string.
+ * 'Empty' implementation of oreglob. This instance doesn't match anything.
  */
-public final class EmptyOreGlob extends OreGlob {
+public final class ImpossibleOreGlob extends OreGlob {
 
-    private static final EmptyOreGlob INSTANCE = new EmptyOreGlob();
+    private static final ImpossibleOreGlob INSTANCE = new ImpossibleOreGlob();
 
-    public static EmptyOreGlob getInstance() {
+    public static ImpossibleOreGlob getInstance() {
         return INSTANCE;
     }
 
     @Override
     public <V extends Visualizer> V visualize(V visualizer) {
-        visualizer.text("nothing", LOGIC_INVERSION);
+        visualizer.text("(impossible to match)", LOGIC_INVERSION);
         return visualizer;
     }
 

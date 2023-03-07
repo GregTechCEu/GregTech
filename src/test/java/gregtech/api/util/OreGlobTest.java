@@ -2,7 +2,7 @@ package gregtech.api.util;
 
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
-import gregtech.common.covers.filter.oreglob.impl.EmptyOreGlob;
+import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.covers.filter.oreglob.impl.NodeOreGlob;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
@@ -64,7 +64,7 @@ public class OreGlobTest {
         assertCompile("wdym this is impossible??????? !*", impossible());
         assertCompile("!(*) when the impossible is impossible \uD83D\uDE24", impossible());
 
-        assertCompile("", nothing());
+        assertCompile("", impossible());
 
         assertCompile("!a b c",
                 not(
@@ -103,7 +103,7 @@ public class OreGlobTest {
                         match("c")
                 ));
 
-        compile("!()");
+        assertCompile("!()", something());
     }
 
     @Test
@@ -258,7 +258,7 @@ public class OreGlobTest {
 
             @Override
             protected boolean matchesSafely(OreGlob item) {
-                if (item instanceof EmptyOreGlob) return OreGlobNodes.nothing().isStructurallyEqualTo(result);
+                if (item instanceof ImpossibleOreGlob) return OreGlobNodes.impossible().isStructurallyEqualTo(result);
                 if (item instanceof NodeOreGlob) return ((NodeOreGlob) item).getRoot().isStructurallyEqualTo(result);
                 return false;
             }

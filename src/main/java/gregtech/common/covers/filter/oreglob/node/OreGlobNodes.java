@@ -26,18 +26,20 @@ public class OreGlobNodes {
         return new GroupNode(node);
     }
 
-    public static OreGlobNode nothing() {
-        OreGlobNode node = chars(1, true);
-        node.inverted = true;
-        return node;
-    }
-
     public static OreGlobNode everything() {
         return chars(0, true);
     }
 
     public static OreGlobNode impossible() {
         return not(everything());
+    }
+
+    public static OreGlobNode something() {
+        return chars(1, true);
+    }
+
+    public static OreGlobNode nothing() {
+        return not(something());
     }
 
     public static OreGlobNode or(OreGlobNode... expressions) {
@@ -164,12 +166,12 @@ public class OreGlobNodes {
     }
 
     public static OreGlobNode not(OreGlobNode node) {
-        if (node.next != null) {
+        if (node.hasNext()) {
             GroupNode newNode = new GroupNode(node);
-            newNode.inverted = true;
+            newNode.setInverted(true);
             return newNode;
         } else {
-            node.inverted = !node.inverted;
+            node.setInverted(!node.isInverted());
             node.clearMatchDescriptionCache();
             return node;
         }
@@ -183,15 +185,17 @@ public class OreGlobNodes {
             if (next instanceof MatchNode) {
                 MatchNode n1 = (MatchNode) node;
                 MatchNode n2 = (MatchNode) next;
-                if (!node.inverted && !next.inverted) {
+                if (!node.isInverted() && !next.isInverted()) {
                     if (n1.ignoreCase == n2.ignoreCase) {
                         // two consecutive, non-inverted match nodes can be concatenated
-                        n1.match += n2.match;
-                        n1.next = n2.next;
-                        n1.clearMatchDescriptionCache();
+                        if (!n2.match.isEmpty()) {
+                            n1.match += n2.match;
+                            n1.clearMatchDescriptionCache();
+                        }
+                        n1.setNext(n2.getNext());
                         return n1;
                     }
-                } else if (node.inverted && next.inverted) {
+                } else if (node.isInverted() && next.isInverted()) {
                     if (!n1.match.isEmpty() && !n2.match.isEmpty()) {
                         if (n1.getMatchLength() > 1 || n2.getMatchLength() > 1) {
                             // two consecutive inverted matches with more than 1 chars match everything
@@ -199,47 +203,47 @@ public class OreGlobNodes {
                             return everything();
                         }
                         if (n1.isMatchEquals(n2)) {
+                            n1.setNext(n2);
                             return n1; // (!x) (!x) is equivalent to !x if x is a single char
                         }
                         // turns out (!x) (!y), when both x and y are a single char each, is eq to (!x | !y)
-                        return or(n1, n2);
+                        OreGlobNode newNode = or(n1, n2);
+                        newNode.setNext(n2.getNext());
+                        return newNode;
                     }
                 }
             }
-        } else if (node instanceof AnyCharNode && !node.inverted) {
+        } else if (node instanceof AnyCharNode && !node.isInverted()) {
             AnyCharNode n1 = (AnyCharNode) node;
             if (next.isEverything()) {
                 if (!n1.more) {
                     n1.more = true;
                     n1.clearMatchDescriptionCache();
                 }
-                if (n1.next != null) {
-                    n1.next = null;
-                    n1.clearMatchDescriptionCache();
-                }
+                n1.setNext(null);
                 return n1;
             } else if (next.isSomething()) {
+                n1.amount++;
                 if (!n1.more) {
                     n1.more = true;
-                    n1.next = null;
                     n1.clearMatchDescriptionCache();
                 }
+                n1.setNext(null);
                 return n1;
             }
 
-            if (next instanceof AnyCharNode && !next.inverted) {
+            if (next instanceof AnyCharNode && !next.isInverted()) {
                 AnyCharNode n2 = (AnyCharNode) next;
                 // two consecutive, non-inverted char nodes can be concatenated
                 n1.amount += n2.amount;
                 n1.more |= n2.more;
-                n1.next = n2.next;
+                n1.setNext(n2.getNext());
                 n1.clearMatchDescriptionCache();
                 return n1;
             }
         }
 
-        node.next = next;
-        node.clearMatchDescriptionCache();
+        node.setNext(next);
         return node;
     }
 

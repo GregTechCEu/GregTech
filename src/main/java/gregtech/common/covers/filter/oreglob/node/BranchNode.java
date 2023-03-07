@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 class BranchNode extends OreGlobNode {
@@ -17,9 +16,9 @@ class BranchNode extends OreGlobNode {
     @Override
     protected void visitInternal(NodeVisitor visitor) {
         if (expressions.size() == 1) {
-            visitor.group(expressions.get(0), inverted);
+            visitor.group(expressions.get(0), isInverted());
         } else {
-            visitor.branch(type, expressions, inverted);
+            visitor.branch(type, expressions, isInverted());
         }
     }
 

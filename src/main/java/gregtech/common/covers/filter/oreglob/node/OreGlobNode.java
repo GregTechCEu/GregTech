@@ -9,8 +9,8 @@ import javax.annotation.Nullable;
 public abstract class OreGlobNode {
 
     @Nullable
-    OreGlobNode next;
-    boolean inverted;
+    private OreGlobNode next;
+    private boolean inverted;
 
     @Nullable
     private MatchDescription descriptionCache;
@@ -19,6 +19,33 @@ public abstract class OreGlobNode {
 
     // package-private constructor to prevent inheritance from outside
     OreGlobNode() {
+    }
+
+    @Nullable
+    public final OreGlobNode getNext() {
+        return next;
+    }
+
+    public final boolean hasNext() {
+        return next != null;
+    }
+
+    final void setNext(@Nullable OreGlobNode next) {
+        if (this.next != next) {
+            this.next = next;
+            clearMatchDescriptionCache();
+        }
+    }
+
+    public final boolean isInverted() {
+        return inverted;
+    }
+
+    final void setInverted(boolean inverted) {
+        if (this.inverted != inverted) {
+            this.inverted = inverted;
+            clearMatchDescriptionCache();
+        }
     }
 
     /**
@@ -45,7 +72,7 @@ public abstract class OreGlobNode {
             default:
                 visitInternal(visitor);
         }
-        return this.next;
+        return this.getNext();
     }
 
     protected abstract void visitInternal(NodeVisitor visitor);
@@ -62,15 +89,15 @@ public abstract class OreGlobNode {
      */
     public boolean isStructurallyEqualTo(@Nonnull OreGlobNode node) {
         if (this == node) return true;
-        if (this.inverted != node.inverted) return false;
-        return isPropertyEqualTo(node) && isStructurallyEqualTo(this.next, node.next);
+        if (this.isInverted() != node.isInverted()) return false;
+        return isPropertyEqualTo(node) && isStructurallyEqualTo(this.getNext(), node.getNext());
     }
 
     public final MatchDescription getMatchDescription() {
         if (this.descriptionCache == null) {
             MatchDescription t = getSelfMatchDescription();
-            if (t != MatchDescription.IMPOSSIBLE && this.next != null)
-                t = t.append(this.next.getMatchDescription());
+            if (t != MatchDescription.IMPOSSIBLE && this.getNext() != null)
+                t = t.append(this.getNext().getMatchDescription());
             return this.descriptionCache = t;
         }
         return this.descriptionCache;
@@ -79,7 +106,7 @@ public abstract class OreGlobNode {
     public final MatchDescription getSelfMatchDescription() {
         if (this.selfDescriptionCache == null) {
             MatchDescription t = getIndividualNodeMatchDescription();
-            if (this.inverted && !(this instanceof ErrorNode)) t = t.inverse();
+            if (this.isInverted() && !(this instanceof ErrorNode)) t = t.inverse();
             return this.selfDescriptionCache = t;
         }
         return this.selfDescriptionCache;

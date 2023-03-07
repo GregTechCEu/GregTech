@@ -11,7 +11,7 @@ class ErrorNode extends OreGlobNode {
 
     @Override
     public boolean isStructurallyEqualTo(@Nonnull OreGlobNode node) { // removed inverted flag check
-        return this == node || node instanceof ErrorNode && isStructurallyEqualTo(this.next, node.next);
+        return this == node || node instanceof ErrorNode && isStructurallyEqualTo(this.getNext(), node.getNext());
     }
 
     @Override

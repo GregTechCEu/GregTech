@@ -4,8 +4,6 @@ import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -40,7 +38,7 @@ public final class OreGlobParser {
     private final String input;
     private final List<Report> reports = new ArrayList<>();
 
-    private final IntSet flags = new IntOpenHashSet();
+    private boolean caseSensitive;
 
     private int inputIndex;
 
@@ -94,9 +92,9 @@ public final class OreGlobParser {
                     return;
                 case '$':
                     if (!first) {
-                        error("Tags at middle of expression", start, 1);
+                        error("Compilation flags at middle of expression", start, 1);
                     }
-                    gatherTags();
+                    gatherFlags(first);
                     continue;
                 case CHAR_EOF:
                     setCurrentToken(EOF, input.length(), 0);
@@ -153,7 +151,7 @@ public final class OreGlobParser {
         }
     }
 
-    private void gatherTags() {
+    private void gatherFlags(boolean add) {
         while (true) {
             int i = this.inputIndex;
             int c = readNextChar();
@@ -163,16 +161,32 @@ public final class OreGlobParser {
                     if (c == CHAR_EOF) {
                         error("End of file after escape character ('\\')", i, 1);
                         return;
-                    } else {
-                        this.flags.add(c);
-                        break;
+                    } else if (add) {
+                        addFlag(c, i);
                     }
+                    break;
                 case ' ': case '\t': case '\n': case '\r':
                 case CHAR_EOF:
                     return;
                 default:
-                    this.flags.add(c);
+                    if (add) {
+                        addFlag(c, i);
+                    }
             }
+        }
+    }
+
+    private void addFlag(int flag, int index) {
+        switch(flag){
+            case 'c': case 'C':
+                if(this.caseSensitive) {
+                    warn("Compilation flag 'c' written twice", index, 1);
+                }else {
+                    this.caseSensitive = true;
+                }
+                break;
+            default:
+                warn(new StringBuilder("Unknown compilation flag '").appendCodePoint(flag).append('\'').toString(), index, 1);
         }
     }
 
@@ -185,7 +199,8 @@ public final class OreGlobParser {
     public OreGlobCompileResult compile() {
         advance();
         if (tokenType == EOF) {
-            return new OreGlobCompileResult(EmptyOreGlob.getInstance(), this.reports.toArray(new Report[0]));
+            return new OreGlobCompileResult( ImpossibleOreGlob.getInstance(),
+                    this.reports.toArray(new Report[0]));
         } else {
             OreGlobNode expr = or();
             if (tokenType != EOF) { // likely caused by program error, not user issue
@@ -239,6 +254,10 @@ public final class OreGlobParser {
     }
 
     private OreGlobNode not() {
+        return not(false);
+    }
+
+    private OreGlobNode not(boolean insideInversion) {
         boolean inverted = false;
         while (advanceIf(NOT)) inverted = !inverted;
         OreGlobNode root;
@@ -259,12 +278,15 @@ public final class OreGlobParser {
                 }
             }
         } else {
+            if (insideInversion) {
+                warn("Consecutive inversions can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
+            }
             root = primary();
         }
 
         switch (tokenType) {
             case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
-                root = OreGlobNodes.append(root, not());
+                root = OreGlobNodes.append(root, not(insideInversion || inverted));
             default:
                 return inverted ? OreGlobNodes.not(root) : root;
         }
@@ -274,7 +296,7 @@ public final class OreGlobParser {
         switch (tokenType) {
             case LITERAL:
                 if (tokenLiteralValue != null) {
-                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue, !flags.contains('c'));
+                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue, !this.caseSensitive);
                     advance();
                     return result;
                 } else { // likely caused by program error, not user issue
