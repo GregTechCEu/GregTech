@@ -15,8 +15,9 @@ import static gregtech.common.covers.filter.oreglob.node.OreGlobNodes.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-// TODO needs more for 100% coverage
 public class OreGlobTest {
+
+    private static final boolean LOG = false;
 
     @Test
     public void compileTest() {
@@ -33,13 +34,11 @@ public class OreGlobTest {
                                         match("plate"),
                                         everything()
                                 ),
-                                not(
-                                        append(
-                                                everything(),
-                                                match("Double"),
-                                                everything()
-                                        )
-                                )
+                                not(append(
+                                        everything(),
+                                        match("Double"),
+                                        everything()
+                                ))
                         )
                 ));
 
@@ -50,13 +49,11 @@ public class OreGlobTest {
                         match("3"),
                         match("4"),
                         match("5"),
-                        not(
-                                xor(
-                                        match("1"),
-                                        match("2"),
-                                        match("3")
-                                )
-                        )
+                        not(xor(
+                                match("1"),
+                                match("2"),
+                                match("3")
+                        ))
                 ));
 
         assertCompile("(??***)(?*?*?****?*???*?)()()()", chars(10, true));
@@ -67,46 +64,104 @@ public class OreGlobTest {
         assertCompile("", impossible());
 
         assertCompile("!a b c",
-                not(
-                        append(
-                                match("a"),
-                                match("b"),
-                                match("c")
-                        )
-                ));
+                not(append(
+                        match("a"),
+                        match("b"),
+                        match("c")
+                )));
         assertCompile("!(a b c)",
-                not(
-                        append(
-                                match("a"),
-                                match("b"),
-                                match("c")
-                        )
-                ));
+                not(append(
+                        match("a"),
+                        match("b"),
+                        match("c")
+                )));
         assertCompile("!(a b) c",
                 append(
-                        not(
-                                append(
-                                        match("a"),
-                                        match("b")
-                                )
-                        ),
+                        not(append(
+                                match("a"),
+                                match("b")
+                        )),
                         match("c")
                 ));
         assertCompile("(!a b) c",
                 append(
-                        not(
-                                append(
-                                        match("a"),
-                                        match("b")
-                                )
-                        ),
+                        not(append(
+                                match("a"),
+                                match("b")
+                        )),
                         match("c")
                 ));
 
         assertCompile("!()", something());
         assertCompile("!(logical) !(inversions) !(are) !(confusing) !(as) !(hell)", everything());
         assertCompile("!(x) !(x)", not(match("x")));
-        assertCompile("!(x) !(y)", or(not(match("x")), not(match("y"))));
+        assertCompile("!(x) !(y)",
+                or(
+                        not(match("x")),
+                        not(match("y"))
+                ));
+
+        assertCompile("(a | b | !*)",
+                or(
+                        match("a"),
+                        match("b")
+                ));
+
+        assertCompile("(() | () | abc)",
+                or(
+                        nothing(),
+                        match("abc")
+                ));
+
+        assertCompile("((a | ()) | b | ())",
+                or(
+                        or(
+                                match("a"),
+                                nothing()
+                        ),
+                        match("b")
+                ));
+
+        assertCompile("(() | !())", everything());
+
+        assertCompile("(a | b | c | d | e | f | g | *)", everything());
+        assertCompile("(a | b | c | d | e | f | g | !())", something());
+
+        assertCompile("((a | ()) | ())",
+                or(
+                        match("a"),
+                        nothing()
+                ));
+
+        assertCompile("(a & b & *)",
+                and(
+                        match("a"),
+                        match("b")
+                ));
+
+        assertCompile("(a & b & !())",
+                and(
+                        match("a"),
+                        match("b")
+                ));
+
+        assertCompile("(a & b & !*)", impossible());
+        assertCompile("(() & ?)", impossible());
+        assertCompile("((a | ()) & ())", nothing());
+        assertCompile("(a & ())", impossible());
+
+        assertCompile("(() ^ ())", impossible());
+        assertCompile("(!* ^ *)", everything());
+        assertCompile("(!* ^ asdf)", match("asdf"));
+        assertCompile("(* ^ asdf)", not(match("asdf")));
+        assertCompile("(() ^ () ^ asdf)", match("asdf"));
+        assertCompile("(() ^ asdf ^ !())", not(match("asdf")));
+
+        assertCompile("?? (*)", chars(2, true));
+        assertCompile("?? !()", chars(3, true));
+
+        assertCompile("??* (*)", chars(2, true));
+        assertCompile("??* !()", chars(3, true));
     }
 
     @Test
@@ -196,6 +251,10 @@ public class OreGlobTest {
         assertMatch(expr, "ingotIron", true);
         assertMatch(expr, "ingot", false);
         assertMatch(expr, "", false);
+
+        expr = compile("!()");
+        assertMatch(expr, "a", true);
+        assertMatch(expr, "", false);
     }
 
     @Test
@@ -222,11 +281,13 @@ public class OreGlobTest {
         OreGlobCompileResult result = new OreGlobParser(expression).compile();
         assertThat(result.hasError(), is(false));
 
-        System.out.println("Compiled expression in " + ((System.nanoTime() - t) / 1_000_000_000.0) + " sec");
-        System.out.println("Input: " + expression);
-        System.out.println("Output: ");
-        System.out.println(result.getInstance());
-        System.out.println();
+        if (LOG) {
+            System.out.println("Compiled expression in " + ((System.nanoTime() - t) / 1_000_000_000.0) + " sec");
+            System.out.println("Input: " + expression);
+            System.out.println("Output: ");
+            System.out.println(result.getInstance());
+            System.out.println();
+        }
         return result.getInstance();
     }
 
@@ -261,12 +322,16 @@ public class OreGlobTest {
 
             @Override
             public void describeTo(Description description) {
+                description.appendText("Compilation result of expression '")
+                        .appendText(expression)
+                        .appendText("' is equal to:\n")
+                        .appendText(new NodeOreGlob(result).toString());
             }
 
             @Override
             protected void describeMismatchSafely(OreGlob item, Description mismatchDescription) {
-                mismatchDescription.appendText("Compilation result does not equal to:\n")
-                        .appendText(new NodeOreGlob(result).toString());
+                mismatchDescription.appendText("It was:\n")
+                        .appendText(item.toString());
             }
 
             @Override
@@ -298,6 +363,7 @@ public class OreGlobTest {
                 return error ? item.hasError() : item.getReports().length > 0;
             }
         });
+        if (!LOG) return;
         System.out.println("Compilation errors for expression '" + expression + "':");
         for (OreGlobCompileResult.Report report : result.getReports()) {
             System.out.println(report);

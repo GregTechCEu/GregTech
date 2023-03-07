@@ -49,8 +49,21 @@ public enum MatchDescription {
         return this == OTHER_EXCLUDING_NOTHING || this == OTHER_INCLUDING_NOTHING;
     }
 
-    public boolean covers(MatchDescription description) {
-        return isComplete() && this.or(description) == this;
+    public boolean covers(MatchDescription desc) {
+        switch (this) {
+            case EVERYTHING:
+                return true;
+            case IMPOSSIBLE:
+            case OTHER_EXCLUDING_NOTHING:
+                return desc == IMPOSSIBLE;
+            case SOMETHING:
+                return !desc.canMatchNothing();
+            case NOTHING:
+            case OTHER_INCLUDING_NOTHING:
+                return !desc.canMatchNonEmpty();
+            default:
+                throw new IllegalStateException("Unreachable");
+        }
     }
 
     public MatchDescription append(MatchDescription another) {
@@ -106,10 +119,14 @@ public enum MatchDescription {
                         return desc;
                 }
             case OTHER_EXCLUDING_NOTHING:
-                if (desc == MatchDescription.NOTHING) {
-                    return OTHER_INCLUDING_NOTHING;
+                switch (desc) {
+                    case SOMETHING:
+                        return SOMETHING;
+                    case OTHER_EXCLUDING_NOTHING:
+                        return OTHER_EXCLUDING_NOTHING;
+                    default:
+                        return OTHER_INCLUDING_NOTHING;
                 }
-                return desc;
             case OTHER_INCLUDING_NOTHING:
                 if (desc == MatchDescription.SOMETHING) {
                     return EVERYTHING;
