@@ -180,15 +180,30 @@ public class OreGlobNodes {
         if (next.isImpossibleToMatch() || node.isNothing()) return next;
 
         if (node instanceof MatchNode) {
-            if (!node.inverted && !next.inverted && next instanceof MatchNode) {
+            if (next instanceof MatchNode) {
                 MatchNode n1 = (MatchNode) node;
                 MatchNode n2 = (MatchNode) next;
-                if (n1.ignoreCase == n2.ignoreCase) {
-                    // two consecutive, non-inverted match nodes can be concatenated
-                    n1.match += n2.match;
-                    n1.next = n2.next;
-                    n1.clearMatchDescriptionCache();
-                    return n1;
+                if (!node.inverted && !next.inverted) {
+                    if (n1.ignoreCase == n2.ignoreCase) {
+                        // two consecutive, non-inverted match nodes can be concatenated
+                        n1.match += n2.match;
+                        n1.next = n2.next;
+                        n1.clearMatchDescriptionCache();
+                        return n1;
+                    }
+                } else if (node.inverted && next.inverted) {
+                    if (!n1.match.isEmpty() && !n2.match.isEmpty()) {
+                        if (n1.getMatchLength() > 1 || n2.getMatchLength() > 1) {
+                            // two consecutive inverted matches with more than 1 chars match everything
+                            // because logical inversions don't care about your feelings
+                            return everything();
+                        }
+                        if (n1.isMatchEquals(n2)) {
+                            return n1; // (!x) (!x) is equivalent to !x if x is a single char
+                        }
+                        // turns out (!x) (!y), when both x and y are a single char each, is eq to (!x | !y)
+                        return or(n1, n2);
+                    }
                 }
             }
         } else if (node instanceof AnyCharNode && !node.inverted) {

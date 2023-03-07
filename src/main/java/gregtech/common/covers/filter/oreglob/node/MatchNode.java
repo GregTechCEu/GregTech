@@ -28,4 +28,12 @@ class MatchNode extends OreGlobNode {
     protected MatchDescription getIndividualNodeMatchDescription() {
         return this.match.isEmpty() ? MatchDescription.NOTHING : MatchDescription.OTHER_EXCLUDING_NOTHING;
     }
+
+    public boolean isMatchEquals(MatchNode other) {
+        return this.ignoreCase ? this.match.equalsIgnoreCase(other.match) : this.match.equals(other.match);
+    }
+
+    public int getMatchLength() {
+        return this.match.codePointCount(0, this.match.length());
+    }
 }
