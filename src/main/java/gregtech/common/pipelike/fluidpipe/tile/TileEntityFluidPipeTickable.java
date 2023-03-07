@@ -126,6 +126,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             IFluidHandler pipeTank = tank;
             CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
 
+            // pipeTank should only be determined by the cover attached to the actual pipe
             if (cover != null){
                 IFluidHandler capability = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
                 // Shutter covers return null capability when active, so check here to prevent NPE
@@ -133,10 +134,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     continue;
                 }
                 pipeTank = capability;
-            }
-
-            if (cover == null)
+            } else {
                 cover = getOtherCoverAt(facing, oppositeSide);
+            }
 
             if (cover instanceof CoverPump) {
 
