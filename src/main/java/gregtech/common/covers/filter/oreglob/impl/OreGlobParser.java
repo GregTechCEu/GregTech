@@ -33,7 +33,7 @@ import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType
  *
  * WHITESPACE = ' ' | '\t' | '\n' | '\r'
  *
- * CHARACTER = ? every character under codepoint of <= 0xFFFF ?
+ * CHARACTER = ? every character with codepoint of <= 0xFFFF ?
  *
  * </pre>
  */
