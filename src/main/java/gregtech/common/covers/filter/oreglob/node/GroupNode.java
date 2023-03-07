@@ -6,7 +6,7 @@ public class GroupNode extends OreGlobNode {
 
     final OreGlobNode node;
 
-    public GroupNode(OreGlobNode node) {
+    GroupNode(OreGlobNode node) {
         this.node = node;
     }
 

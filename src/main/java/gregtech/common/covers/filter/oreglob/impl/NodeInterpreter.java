@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter.oreglob.impl;
 
-import gregtech.common.covers.filter.oreglob.node.BranchType;
+import gregtech.common.covers.filter.oreglob.node.BranchNode.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import it.unimi.dsi.fastutil.ints.*;

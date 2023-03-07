@@ -1,6 +1,7 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import com.google.common.collect.Lists;
+import gregtech.common.covers.filter.oreglob.node.BranchNode.BranchType;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@ public class AnyCharNode extends OreGlobNode {
     int amount;
     boolean more;
 
-    public AnyCharNode(int amount, boolean more) {
+    AnyCharNode(int amount, boolean more) {
         this.amount = amount;
         this.more = more;
     }

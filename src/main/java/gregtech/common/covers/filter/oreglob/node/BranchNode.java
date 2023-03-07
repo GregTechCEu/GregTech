@@ -92,4 +92,8 @@ public class BranchNode extends OreGlobNode {
         }
         return true;
     }
+
+    public enum BranchType {
+        OR, AND, XOR
+    }
 }

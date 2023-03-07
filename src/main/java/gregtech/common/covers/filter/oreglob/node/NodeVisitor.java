@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter.oreglob.node;
 
+import gregtech.common.covers.filter.oreglob.node.BranchNode.BranchType;
+
 import java.util.List;
 
 public interface NodeVisitor {
