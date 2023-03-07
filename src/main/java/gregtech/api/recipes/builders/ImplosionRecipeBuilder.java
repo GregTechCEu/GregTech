@@ -78,7 +78,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     public ValidationResult<Recipe> build() {
         ItemStack explosivesType = getExplosivesType();
         if (!explosivesType.isEmpty()) {
-            this.inputs.add(GTRecipeItemInput.getOrCreate(explosivesType));
+            this.inputs.add(new GTRecipeItemInput(explosivesType));
         } else {
             this.recipePropertyStorageErrored = true;
         }

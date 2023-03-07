@@ -53,7 +53,7 @@ public class CTRecipeBuilder {
             return ((IOreDictEntry) ingredient.getInternal()).getName();
         return null;
     }
-    
+
     private static void checkIfExists(IIngredient ingredient, String oreDict) {
         if (ingredient == null) {
             throw new IllegalArgumentException("Invalid ingredient: is null");
@@ -75,10 +75,9 @@ public class CTRecipeBuilder {
             checkIfExists(ingredient, oreDict);
 
             if (oreDict != null) {
-                this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
+                this.backingBuilder.input(new GTRecipeOreInput(oreDict, ingredient.getAmount()));
             } else {
-                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient));
+                this.backingBuilder.input(new CraftTweakerItemInputWrapper(ingredient));
             }
         }
         return this;
@@ -91,10 +90,10 @@ public class CTRecipeBuilder {
             checkIfExists(ingredient, oreDict);
 
             if (oreDict != null) {
-                this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
+                this.backingBuilder.input(new GTRecipeOreInput(oreDict, ingredient.getAmount())
                         .setNonConsumable());
             } else {
-                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient)
+                this.backingBuilder.input(new CraftTweakerItemInputWrapper(ingredient)
                         .setNonConsumable());
             }
         }
@@ -117,7 +116,9 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
-                .map(CraftTweakerMC::getLiquidStack).map(fluidStack -> GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount)).collect(Collectors.toList()));
+                .map(CraftTweakerMC::getLiquidStack)
+                .map(GTRecipeFluidInput::new)
+                .collect(Collectors.toList()));
         return this;
     }
 

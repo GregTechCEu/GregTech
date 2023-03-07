@@ -8,19 +8,11 @@ import java.util.Objects;
 
 public class GTRecipeFluidInput extends GTRecipeInput {
 
-    public static GTRecipeInput getOrCreate(FluidStack fluidStack, int amount) {
-        return new GTRecipeFluidInput(fluidStack, amount);
-    }
-
-    public static GTRecipeInput getOrCreate(Fluid fluid, int amount) {
-        return new GTRecipeFluidInput(new FluidStack(fluid, amount));
-    }
-
-    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return new GTRecipeFluidInput(ri.getInputFluidStack(), i);
-    }
-
     private final FluidStack inputStack;
+
+    public GTRecipeFluidInput(Fluid fluid, int amount) {
+        this(new FluidStack(fluid, amount), amount);
+    }
 
     public GTRecipeFluidInput(FluidStack inputStack) {
         this.inputStack = inputStack;
@@ -31,6 +23,30 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         this.inputStack = inputStack.copy();
         this.inputStack.amount = amount;
         this.amount = amount;
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(FluidStack fluidStack, int amount) {
+        return new GTRecipeFluidInput(fluidStack, amount);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(Fluid fluid, int amount) {
+        return new GTRecipeFluidInput(fluid, amount);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
+        return new GTRecipeFluidInput(ri.getInputFluidStack(), i);
     }
 
     @Override

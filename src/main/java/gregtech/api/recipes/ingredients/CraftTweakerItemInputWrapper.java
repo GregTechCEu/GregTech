@@ -20,6 +20,10 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
         this.amount = ingredient.getAmount();
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static CraftTweakerItemInputWrapper getOrCreate(IIngredient ingredient) {
         return new CraftTweakerItemInputWrapper(ingredient);
     }

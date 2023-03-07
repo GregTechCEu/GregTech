@@ -14,27 +14,23 @@ import java.util.stream.Collectors;
 
 public class GTRecipeItemInput extends GTRecipeInput {
 
-    public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
-        return new GTRecipeItemInput(stack, amount);
-    }
-
-    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return new GTRecipeItemInput(ri.getInputStacks(), i);
-    }
-
-    public static GTRecipeInput getOrCreate(GTRecipeInput ri) {
-        return new GTRecipeItemInput(ri.getInputStacks());
-    }
-
-    public static GTRecipeInput getOrCreate(ItemStack ri) {
-        return new GTRecipeItemInput(ri);
-    }
-
     private final ItemStack[] inputStacks;
     private final List<ItemToMetaList> itemList = new ObjectArrayList<>();
 
-    protected GTRecipeItemInput(ItemStack stack, int amount) {
+    public GTRecipeItemInput(ItemStack stack) {
+        this(new ItemStack[]{stack}, stack.getCount());
+    }
+
+    public GTRecipeItemInput(ItemStack stack, int amount) {
         this(new ItemStack[]{stack}, amount);
+    }
+
+    public GTRecipeItemInput(GTRecipeInput input) {
+        this(input.getInputStacks());
+    }
+
+    public GTRecipeItemInput(GTRecipeInput input, int amount) {
+        this(input.getInputStacks(), amount);
     }
 
     protected GTRecipeItemInput(ItemStack[] stack, int amount) {
@@ -81,6 +77,38 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     protected GTRecipeItemInput(ItemStack... stack) {
         this(stack, stack[0].getCount());
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
+        return new GTRecipeItemInput(stack, amount);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
+        return new GTRecipeItemInput(ri, i);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(GTRecipeInput input) {
+        return new GTRecipeItemInput(input);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(ItemStack stack) {
+        return new GTRecipeItemInput(stack);
     }
 
     @Override

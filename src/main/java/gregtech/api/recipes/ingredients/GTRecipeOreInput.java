@@ -11,33 +11,61 @@ import java.util.Objects;
 
 public class GTRecipeOreInput extends GTRecipeInput {
 
-    public static GTRecipeInput getOrCreate(String ore, int amount) {
-        return new GTRecipeOreInput(ore, amount);
-    }
-
-    public static GTRecipeInput getOrCreate(String ore) {
-        return new GTRecipeOreInput(ore, 1);
-    }
-
-    public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material, int amount) {
-        return getOrCreate(new UnificationEntry(prefix, material).toString(), amount);
-    }
-
-    public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material) {
-        return getOrCreate(new UnificationEntry(prefix, material).toString(), 1);
-    }
-
     private final int ore;
     private ItemStack[] inputStacks;
 
-    protected GTRecipeOreInput(String ore, int amount) {
+    public GTRecipeOreInput(String ore) {
+        this(ore, 1);
+    }
+
+    public GTRecipeOreInput(String ore, int amount) {
         this.ore = OreDictionary.getOreID(ore);
         this.amount = amount;
+    }
+
+    public GTRecipeOreInput(OrePrefix prefix, Material material) {
+        this(new UnificationEntry(prefix, material).toString(), 1);
+    }
+
+    public GTRecipeOreInput(OrePrefix prefix, Material material, int amount) {
+        this(new UnificationEntry(prefix, material).toString(), amount);
     }
 
     protected GTRecipeOreInput(int ore, int amount) {
         this.ore = ore;
         this.amount = amount;
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(String ore, int amount) {
+        return new GTRecipeOreInput(ore, amount);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(String ore) {
+        return new GTRecipeOreInput(ore);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material, int amount) {
+        return new GTRecipeOreInput(prefix, material, amount);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(OrePrefix prefix, Material material) {
+        return new GTRecipeOreInput(prefix, material);
     }
 
     @Override
