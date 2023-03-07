@@ -5,16 +5,17 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
-import gregtech.common.tools.DamageValues;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,16 +24,20 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
 
-public class MetaTileEntityDiode extends TieredMetaTileEntity {
+public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+
+    protected IEnergyContainer energyContainer;
 
     private static final String AMP_NBT_KEY = "amp_mode";
     private int amps;
@@ -46,6 +51,14 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityDiode(metaTileEntityId, getTier());
+    }
+
+    @Override
+    public int getActualComparatorValue() {
+        long energyStored = energyContainer.getEnergyStored();
+        long energyCapacity = energyContainer.getEnergyCapacity();
+        float f = energyCapacity == 0L ? 0.0f : energyStored / (energyCapacity * 1.0f);
+        return MathHelper.floor(f * 14.0f) + (energyStored > 0 ? 1 : 0);
     }
 
     @Override
@@ -83,7 +96,7 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
     }
 
     private void setAmpMode() {
-        amps = amps == 16 ? 1 : amps << 1;
+        amps = amps == getMaxAmperage() ? 1 : amps << 1;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
             writeCustomData(AMP_INDEX, b -> b.writeInt(amps));
@@ -92,10 +105,14 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
         }
     }
 
-    @Override
+    /** Change this value (or override) to make the Diode able to handle more amps. Must be a power of 2 */
+    protected int getMaxAmperage() {
+        return 16;
+    }
+
     protected void reinitializeEnergyContainer() {
         long tierVoltage = GTValues.V[getTier()];
-        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8, tierVoltage, amps, tierVoltage, amps);
+        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 16, tierVoltage, amps, tierVoltage, amps);
         ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
         ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
     }
@@ -114,24 +131,14 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if(!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
-            ISoftHammerItem softHammerItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
-
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-            if(!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false)) {
-                return false;
-            }
-
-            setAmpMode();
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
+            scheduleRenderUpdate();
             return true;
         }
-        return false;
+        setAmpMode();
+        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+        return true;
     }
 
     @Override
@@ -145,10 +152,34 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.diode.tooltip_general"));
-        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
-                energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_starts_at"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in_out", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_out_till", getMaxAmperage()));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.toggle_mode"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+        abilityList.add(this);
+    }
+
+    @Nonnull
+    @Override
+    public Class<?> getPassthroughType() {
+        return IEnergyContainer.class;
     }
 }

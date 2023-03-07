@@ -7,8 +7,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.BlockPosFace;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,11 +35,13 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         if (this.remote != null) {
             tagCompound.setTag("cdiRemote", NBTUtil.createPosTag(this.remote));
         }
+
+        return tagCompound;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
     }
 
     @Override
-    public void onAttached(ItemStack itemStack) {
+    public void onAttached(ItemStack itemStack, EntityPlayer player) {
         remote = CoverDigitalInterfaceWirelessPlaceBehaviour.getRemotePos(itemStack);
     }
 
@@ -76,7 +78,7 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
         if (remote != null && !isRemote() && coverHolder.getOffsetTimer() % 20 == 0) {
             TileEntity te = coverHolder.getWorld().getTileEntity(remote);
             if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
-                ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) te).getMetaTileEntity()).addRemoteCover(new BlockPosFace(coverHolder.getPos(), attachedSide));
+                ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) te).getMetaTileEntity()).addRemoteCover(new FacingPos(coverHolder.getPos(), attachedSide));
             }
         }
     }

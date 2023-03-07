@@ -1,7 +1,9 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -215,24 +217,24 @@ public class BatteryRecipes {
 
 
         // Battery Recycling Recipes
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_CADMIUM).output(BATTERY_HULL_LV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_LITHIUM).output(BATTERY_HULL_LV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LV_SODIUM).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_CADMIUM).output(BATTERY_HULL_MV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_LITHIUM).output(BATTERY_HULL_MV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_MV_SODIUM).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_MV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_MV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_MV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_CADMIUM).output(BATTERY_HULL_HV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_LITHIUM).output(BATTERY_HULL_HV).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_HV_SODIUM).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_HV_CADMIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_HV_LITHIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_HV_SODIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_HV).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_EV_VANADIUM).output(BATTERY_HULL_SMALL_VANADIUM).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_IV_VANADIUM).output(BATTERY_HULL_MEDIUM_VANADIUM).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_LUV_VANADIUM).output(BATTERY_HULL_LARGE_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_EV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_SMALL_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_IV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MEDIUM_VANADIUM).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_LUV_VANADIUM, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LARGE_VANADIUM).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_ZPM_NAQUADRIA).output(BATTERY_HULL_MEDIUM_NAQUADRIA).buildAndRegister();
-        EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_UV_NAQUADRIA).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_ZPM_NAQUADRIA, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_MEDIUM_NAQUADRIA).buildAndRegister();
+        EXTRACTOR_RECIPES.recipeBuilder().inputNBT(BATTERY_UV_NAQUADRIA, NBTMatcher.ANY, NBTCondition.ANY).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
     }
 
     private static void gemBatteries() {
@@ -241,7 +243,7 @@ public class BatteryRecipes {
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[MV])
                 .input(dust, Redstone, 5)
                 .input(dust, Ruby, 4)
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .output(ENERGIUM_DUST, 9)
                 .buildAndRegister();
 
@@ -273,7 +275,7 @@ public class BatteryRecipes {
         MIXER_RECIPES.recipeBuilder()
                 .input(ENERGIUM_DUST, 3)
                 .input(dust, Lapis, 2)
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .output(dust, Lapotron, 5)
                 .duration(200).EUt(VA[HV]).buildAndRegister();
 
@@ -309,9 +311,10 @@ public class BatteryRecipes {
 
         // Lapotronic Energy Orb
         LASER_ENGRAVER_RECIPES.recipeBuilder()
-                .input(LAPOTRON_CRYSTAL)
+                .inputNBT(LAPOTRON_CRYSTAL, NBTMatcher.ANY, NBTCondition.ANY)
                 .notConsumable(craftingLens, Color.Blue)
                 .output(ENGRAVED_LAPOTRON_CHIP, 3)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .duration(256).EUt(VA[HV]).buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(512).EUt(1024)
@@ -323,6 +326,7 @@ public class BatteryRecipes {
                 .input(plate, Platinum, 8)
                 .output(ENERGY_LAPOTRONIC_ORB)
                 .solderMultiplier(2)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Lapotronic Energy Cluster
@@ -399,7 +403,7 @@ public class BatteryRecipes {
                 .input(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 64)
                 .input(bolt, Neutronium, 64)
                 .fluidInputs(SolderingAlloy.getFluid(L * 40))
-                .fluidInputs(Polybenzimidazole.getFluid(2000))
+                .fluidInputs(Polybenzimidazole.getFluid(2304))
                 .fluidInputs(Naquadria.getFluid(L * 18))
                 .output(ULTIMATE_BATTERY)
                 .buildAndRegister();

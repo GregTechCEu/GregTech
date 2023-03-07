@@ -26,8 +26,15 @@ import java.util.List;
 
 public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
+    @SideOnly(Side.CLIENT)
+    protected ArmorUtils.ModularHUD HUD;
+
     public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
+        if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
+            //noinspection NewExpressionSideOnly
+            HUD = new ArmorUtils.ModularHUD();
+        }
     }
 
     @Override
@@ -83,7 +90,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
         return container.getCharge() > 0;
     }
 
-    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 
@@ -99,14 +106,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean isNeedDrawHUD() {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
             if (data.hasKey("hover")) {
@@ -131,11 +132,6 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
             }
             lines.add(I18n.format("metaarmor.hud.hover_mode", status));
         }
-    }
-
-    @Override
-    public double getVerticalHoverSpeed() {
-        return 0.18D;
     }
 
     @Override

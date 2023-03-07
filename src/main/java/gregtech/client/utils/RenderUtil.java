@@ -26,16 +26,13 @@ import org.lwjgl.opengl.GL30;
 
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
 
-    private static final Stack<int[]> scissorFrameStack = new Stack<>();
+    private static final Deque<int[]> scissorFrameStack = new ArrayDeque<>();
 
     public static void useScissor(int x, int y, int width, int height, Runnable codeBlock) {
         pushScissorFrame(x, y, width, height);
@@ -251,24 +248,24 @@ public class RenderUtil {
      */
     public static Matrix4 adjustTrans(Matrix4 translation, EnumFacing side, int layer) {
         Matrix4 trans = translation.copy();
-        switch (side){
+        switch (side) {
             case DOWN:
-                trans.translate(0 , -0.001D * layer,0);
+                trans.translate(0 , -0.0005D * layer,0);
                 break;
             case UP:
-                trans.translate(0 , 0.001D * layer,0);
+                trans.translate(0 , 0.0005D * layer,0);
                 break;
             case NORTH:
-                trans.translate(0 , 0,-0.001D * layer);
+                trans.translate(0 , 0,-0.0005D * layer);
                 break;
             case SOUTH:
-                trans.translate(0 , 0,0.001D * layer);
+                trans.translate(0 , 0,0.0005D * layer);
                 break;
             case EAST:
-                trans.translate(0.001D * layer, 0,0);
+                trans.translate(0.0005D * layer, 0,0);
                 break;
             case WEST:
-                trans.translate(-0.001D * layer, 0,0);
+                trans.translate(-0.0005D * layer, 0,0);
                 break;
         }
         return trans;
@@ -336,15 +333,13 @@ public class RenderUtil {
             buffer.pos(x + width, y, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
             buffer.pos(x, y, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y + height, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-            buffer.pos(x + width, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            tessellator.draw();
         } else {
             buffer.pos(x + width, y, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            buffer.pos(x + width, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            tessellator.draw();
         }
+        buffer.pos(x + width, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();

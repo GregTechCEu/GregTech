@@ -1,10 +1,8 @@
 package gregtech.loaders.recipe.handlers;
 
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
@@ -52,6 +50,7 @@ public class MaterialRecipeHandler {
 
     public static void processDust(OrePrefix dustPrefix, Material mat, DustProperty property) {
         ItemStack dustStack = OreDictUnifier.get(dustPrefix, mat);
+        OreProperty oreProperty = mat.hasProperty(PropertyKey.ORE) ? mat.getProperty(PropertyKey.ORE): null;
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
             ItemStack smallDarkAshStack = OreDictUnifier.get(OrePrefix.dustSmall, Materials.DarkAsh);
@@ -86,17 +85,41 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             }
 
+            if (oreProperty != null) {
+                Material smeltingResult = oreProperty.getDirectSmeltResult();
+                if (smeltingResult != null) {
+                    ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), OreDictUnifier.get(OrePrefix.ingot, smeltingResult));
+                }
+            }
+
         } else if (mat.hasProperty(PropertyKey.INGOT)) {
             if (!mat.hasAnyOfFlags(FLAMMABLE, NO_SMELTING)) {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(mat);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, mat);
+                if (ingotStack.isEmpty() && oreProperty != null) {
+                    Material smeltingResult = oreProperty.getDirectSmeltResult();
+                    if (smeltingResult != null) {
+                        ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
+                    }
+                }
                 int blastTemp = mat.getBlastTemperature();
 
                 if (blastTemp <= 0) {
-                    ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, mat), ingotStack);
+                    // smelting magnetic dusts is handled elsewhere
+                    if (!mat.hasFlag(IS_MAGNETIC)) {
+                        // do not register inputs by ore dict here. Let other mods register their own dust -> ingots
+                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
+                    }
                 } else {
-                    processEBFRecipe(mat, mat.getProperty(PropertyKey.BLAST), ingotStack);
+                    IngotProperty ingotProperty = mat.getProperty(PropertyKey.INGOT);
+                    BlastProperty blastProperty = mat.getProperty(PropertyKey.BLAST);
+
+                    processEBFRecipe(mat, blastProperty, ingotStack);
+
+                    if (ingotProperty.getMagneticMaterial() != null) {
+                        processEBFRecipe(ingotProperty.getMagneticMaterial(), blastProperty, ingotStack);
+                    }
                 }
             }
         } else {
@@ -105,6 +128,17 @@ public class MaterialRecipeHandler {
                         .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
+            }
+
+            // Some Ores with Direct Smelting Results have neither ingot nor gem properties
+            if (oreProperty != null) {
+                Material smeltingResult = oreProperty.getDirectSmeltResult();
+                if (smeltingResult != null) {
+                    ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
+                    if (!ingotStack.isEmpty()) {
+                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
+                    }
+                }
             }
         }
     }
@@ -129,30 +163,40 @@ public class MaterialRecipeHandler {
             FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
 
             blastBuilder.copy()
-                    .notConsumable(new IntCircuitIngredient(1))
+                    .circuitMeta(1)
                     .duration(duration)
                     .buildAndRegister();
 
             blastBuilder.copy()
-                    .notConsumable(new IntCircuitIngredient(2))
+                    .circuitMeta(2)
                     .fluidInputs(gas)
                     .duration((int) (duration * 0.67))
                     .buildAndRegister();
         } else {
             blastBuilder.duration(duration);
             if (material == Materials.Silicon) {
-                blastBuilder.notConsumable(new IntCircuitIngredient(1));
+                blastBuilder.circuitMeta(1);
             }
             blastBuilder.buildAndRegister();
         }
 
         // Add Vacuum Freezer recipe if required.
         if (ingotHot.doGenerateItem(material)) {
-            RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                    .input(ingotHot, material)
-                    .output(ingot, material)
-                    .duration((int) material.getMass() * 3)
-                    .buildAndRegister();
+            if(blastTemp < 5000) {
+                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                        .input(ingotHot, material)
+                        .output(ingot, material)
+                        .duration((int) material.getMass() * 3)
+                        .buildAndRegister();
+            } else {
+                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                        .input(ingotHot, material)
+                        .fluidInputs(Materials.LiquidHelium.getFluid(500))
+                        .output(ingot, material)
+                        .fluidOutputs(Materials.Helium.getFluid(250))
+                        .duration((int) material.getMass() * 3)
+                        .buildAndRegister();
+            }
         }
     }
 
@@ -166,12 +210,12 @@ public class MaterialRecipeHandler {
                 dustStack, "XX", "XX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 4)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+                .circuitMeta(1)
                 .outputs(dustStack)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(2), 0))
+                .circuitMeta(2)
                 .outputs(GTUtility.copyAmount(4, smallDustStack))
                 .buildAndRegister();
     }
@@ -186,12 +230,12 @@ public class MaterialRecipeHandler {
                 dustStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+                .circuitMeta(1)
                 .outputs(dustStack)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+                .circuitMeta(1)
                 .outputs(GTUtility.copyAmount(9, tinyDustStack))
                 .buildAndRegister();
     }
@@ -200,18 +244,6 @@ public class MaterialRecipeHandler {
         if (material.hasFlag(MORTAR_GRINDABLE)) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
                     OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X', new UnificationEntry(ingotPrefix, material));
-        }
-
-        if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            if (ConfigHolder.recipes.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "PhP", "PPP", " P ", 'P', new UnificationEntry(OrePrefix.plate, material));
-            } else {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
-            }
         }
 
         if (material.hasFlag(GENERATE_ROD)) {

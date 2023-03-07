@@ -5,21 +5,29 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
+import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static gregtech.api.recipes.logic.ParallelLogic.doParallelRecipes;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class ParallelLogicTest {
 
@@ -29,7 +37,7 @@ public class ParallelLogicTest {
     MetaTileEntityFluidHatch secondImportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false);
     MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, true);
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
     }
@@ -70,7 +78,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.getMaxRecipeMultiplier(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), parallelLimit);
 
-        assertEquals(3, itemRatio);
+        assertThat(itemRatio, is(3));
 
     }
 
@@ -106,7 +114,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.getMaxRecipeMultiplier(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), parallelLimit);
 
-        assertEquals(2, itemRatio);
+        assertThat(itemRatio, is(2));
 
     }
 
@@ -142,7 +150,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.getMaxRecipeMultiplier(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), parallelLimit);
 
-        assertEquals(0, itemRatio);
+        assertThat(itemRatio, is(0));
 
     }
 
@@ -178,7 +186,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.getMaxRecipeMultiplier(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), parallelLimit);
 
-        assertEquals(0, itemRatio);
+        assertThat(itemRatio, is(0));
 
     }
 
@@ -214,7 +222,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.getMaxRecipeMultiplier(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), parallelLimit);
 
-        assertEquals(0, itemRatio);
+        assertThat(itemRatio, is(0));
 
     }
 
@@ -250,7 +258,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByItems(recipe, new OverlayedItemHandler(exportItemBus.getExportItems()), parallelLimit);
 
-        assertEquals(4, itemRatio);
+        assertThat(itemRatio, is(4));
 
     }
 
@@ -291,7 +299,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByItems(recipe, new OverlayedItemHandler(exportItemBus.getExportItems()), parallelLimit);
 
-        assertEquals(2, itemRatio);
+        assertThat(itemRatio, is(2));
 
     }
 
@@ -332,7 +340,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByItems(recipe, new OverlayedItemHandler(exportItemBus.getExportItems()), parallelLimit);
 
-        assertEquals(4, itemRatio);
+        assertThat(itemRatio, is(4));
 
     }
 
@@ -374,7 +382,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByItems(recipe, new OverlayedItemHandler(exportItemBus.getExportItems()), parallelLimit);
 
-        assertEquals(0, itemRatio);
+        assertThat(itemRatio, is(0));
 
     }
 
@@ -409,7 +417,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe, new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
 
-        assertEquals(4, itemRatio);
+        assertThat(itemRatio, is(4));
 
     }
 
@@ -445,7 +453,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe, new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
 
-        assertEquals(2, itemRatio);
+        assertThat(itemRatio, is(2));
 
     }
 
@@ -481,7 +489,7 @@ public class ParallelLogicTest {
 
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe, new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
 
-        assertEquals(0, itemRatio);
+        assertThat(itemRatio, is(0));
 
     }
 
@@ -517,7 +525,7 @@ public class ParallelLogicTest {
         int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(2, itemRatio);
+        assertThat(itemRatio, is(2));
 
         // Test = max limit
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
@@ -525,7 +533,7 @@ public class ParallelLogicTest {
         int secondItemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondItemRatio);
+        assertThat(secondItemRatio, is(parallelLimit));
 
         // Test > max limit
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
@@ -533,7 +541,7 @@ public class ParallelLogicTest {
         int thirdItemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, thirdItemRatio);
+        assertThat(thirdItemRatio, is(parallelLimit));
 
     }
 
@@ -570,7 +578,7 @@ public class ParallelLogicTest {
         int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(4, itemRatio);
+        assertThat(itemRatio, is(4));
 
     }
 
@@ -605,7 +613,7 @@ public class ParallelLogicTest {
         int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, itemRatio);
+        assertThat(itemRatio, is(parallelLimit));
 
     }
 
@@ -640,7 +648,7 @@ public class ParallelLogicTest {
         int itemRatioFailure = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(0, itemRatioFailure);
+        assertThat(itemRatioFailure, is(0));
 
         // Test Parallel Limit by Non-consumed item amounts
         // Add one more stone to meet the recipe NC amount
@@ -649,7 +657,7 @@ public class ParallelLogicTest {
         int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, itemRatio);
+        assertThat(itemRatio, is(parallelLimit));
 
         // Test Parallel Limit for > max
         importItemBus.getImportItems().insertItem(1, new ItemStack(Blocks.STONE, 6), false);
@@ -657,7 +665,7 @@ public class ParallelLogicTest {
         int secondItemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondItemRatio);
+        assertThat(secondItemRatio, is(parallelLimit));
 
     }
 
@@ -692,7 +700,7 @@ public class ParallelLogicTest {
         int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(0, fluidRatioFailure);
+        assertThat(fluidRatioFailure, is(0));
 
         // Test Parallel Limit with > min, < max parallels
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
@@ -700,7 +708,7 @@ public class ParallelLogicTest {
         int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(3, fluidRatio);
+        assertThat(fluidRatio, is(3));
 
         // Test Parallel Limit with > max parallels
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
@@ -708,7 +716,7 @@ public class ParallelLogicTest {
         int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondFluidRatio);
+        assertThat(secondFluidRatio, is(parallelLimit));
 
     }
 
@@ -744,7 +752,7 @@ public class ParallelLogicTest {
         int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(0, fluidRatioFailure);
+        assertThat(fluidRatioFailure, is(0));
 
         // Test Parallel Limit with > min, < max parallels
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1501), true);
@@ -752,7 +760,7 @@ public class ParallelLogicTest {
         int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(2, fluidRatio);
+        assertThat(fluidRatio, is(2));
 
         // Test Parallel Limit Exactly equal inputs
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2000), true);
@@ -760,7 +768,7 @@ public class ParallelLogicTest {
         int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, fluidRatioExact);
+        assertThat(fluidRatioExact, is(parallelLimit));
 
         // Test Parallel Limit with > max parallels
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
@@ -768,7 +776,7 @@ public class ParallelLogicTest {
         int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondFluidRatio);
+        assertThat(secondFluidRatio, is(parallelLimit));
 
     }
 
@@ -804,7 +812,7 @@ public class ParallelLogicTest {
         int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(0, fluidRatioFailure);
+        assertThat(fluidRatioFailure, is(0));
 
         // Test Parallel Limit with > min, < max parallels
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1000), true);
@@ -815,7 +823,7 @@ public class ParallelLogicTest {
         int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
                 recipe, parallelLimit);
 
-        assertEquals(2, fluidRatio);
+        assertThat(fluidRatio, is(2));
 
         // Test Parallel Limit Exactly equal inputs
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2000), true);
@@ -823,7 +831,7 @@ public class ParallelLogicTest {
         int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, fluidRatioExact);
+        assertThat(fluidRatioExact, is(parallelLimit));
 
         // Test Parallel Limit with > max parallels
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(2500), true);
@@ -831,7 +839,7 @@ public class ParallelLogicTest {
         int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondFluidRatio);
+        assertThat(secondFluidRatio, is(parallelLimit));
 
     }
 
@@ -866,7 +874,7 @@ public class ParallelLogicTest {
         int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(0, fluidRatioFailure);
+        assertThat(fluidRatioFailure, is(0));
 
 
         // Test Parallel Limit Exactly equal inputs
@@ -875,7 +883,7 @@ public class ParallelLogicTest {
         int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, fluidRatioExact);
+        assertThat(fluidRatioExact, is(parallelLimit));
 
         // Test Parallel Limit with > max parallels
         importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(2500), true);
@@ -884,7 +892,7 @@ public class ParallelLogicTest {
         int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondFluidRatio);
+        assertThat(secondFluidRatio, is(parallelLimit));
 
     }
 
@@ -919,7 +927,7 @@ public class ParallelLogicTest {
         int fluidRatioFailure = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(0, fluidRatioFailure);
+        assertThat(fluidRatioFailure, is(0));
 
 
         // Test Parallel Limit Exactly equal inputs
@@ -928,7 +936,7 @@ public class ParallelLogicTest {
         int fluidRatioExact = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, fluidRatioExact);
+        assertThat(fluidRatioExact, is(parallelLimit));
 
         // Test Parallel Limit with > max parallels
         importFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(2500), true);
@@ -937,7 +945,40 @@ public class ParallelLogicTest {
         int secondFluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(importFluidBus.getImportFluids()),
                 recipe, parallelLimit);
 
-        assertEquals(parallelLimit, secondFluidRatio);
+        assertThat(secondFluidRatio, is(parallelLimit));
+
+    }
+
+    @Test
+    public void doParallelRecipes_ExistingEUValueTest() {
+
+        int parallelAmount = 4;
+
+        // Do not specify the EUt or duration to test how they are taken into account
+        Recipe maceratorRecipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .input(Blocks.STONE)
+                .output(Items.CARROT)
+                .build().getResult();
+
+        MetaTileEntityMacerator macerator = MetaTileEntities.registerMetaTileEntity(1, new MetaTileEntityMacerator(
+                new ResourceLocation(GTValues.MODID, "macerator"),
+                RecipeMaps.MACERATOR_RECIPES,
+                4,
+                null,
+                GTValues.EV));
+
+        macerator.getImportItems().setStackInSlot(0, new ItemStack(Blocks.STONE, 10));
+
+        RecipeBuilder<?> testMaceratorRecipe = doParallelRecipes(maceratorRecipe, RecipeMaps.MACERATOR_RECIPES, macerator.getImportItems(),
+                macerator.getImportFluids(), macerator.getExportItems(), macerator.getExportFluids(), parallelAmount, GTValues.V[GTValues.EV], macerator);
+
+        assertThat(testMaceratorRecipe, notNullValue());
+
+        // 2 is the default EUt value assigned to macerator recipes when not specified
+        assertThat(testMaceratorRecipe.getEUt(), is(2 * parallelAmount));
+
+        // 150 is the default duration value assigned to macerator recipes when not specified
+        assertThat(testMaceratorRecipe.getDuration(), is(150));
 
     }
 }

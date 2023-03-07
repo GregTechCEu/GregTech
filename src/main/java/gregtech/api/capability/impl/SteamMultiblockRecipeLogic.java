@@ -20,6 +20,8 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+
 public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
     private IMultipleTankHandler steamFluidTank;
@@ -114,12 +116,12 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getOverclockVoltage() {
-        return 0;
+    public boolean isAllowOverclocking() {
+        return false;
     }
 
     @Override
-    protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
+    protected boolean setupAndConsumeRecipeInputs(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable importInventory) {
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false) &&
                 super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
@@ -154,14 +156,13 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;
         double posZ = machinePos.getZ() + 0.5 + ventingSide.getZOffset() * 0.6;
 
-        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
-                7 + world.rand.nextInt(3),
+        world.spawnParticle(EnumParticleTypes.CLOUD, posX, posY, posZ,
+                7 + GTValues.RNG.nextInt(3),
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
                 ventingSide.getZOffset() / 2.0, 0.1);
         if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
             world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
         }
-
     }
 }

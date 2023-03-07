@@ -19,8 +19,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
@@ -188,7 +189,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("cdiMode", (byte) this.mode.ordinal());
         tagCompound.setByte("cdiSpin", (byte) this.spin.ordinal());
@@ -197,6 +198,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         tagCompound.setInteger("cdi1", this.proxyMode[1]);
         tagCompound.setInteger("cdi2", this.proxyMode[2]);
         tagCompound.setInteger("cdi3", this.proxyMode[3]);
+
+        return tagCompound;
     }
 
     @Override
@@ -212,7 +215,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public void onAttached(ItemStack itemStack) { // called when cover placed.
+    public void onAttached(ItemStack itemStack, EntityPlayer player) { // called when cover placed.
         if (getFluidCapability() != null) {
             fluids = new FluidTankProperties[getFluidCapability().getTankProperties().length];
             this.mode = MODE.FLUID;
@@ -224,6 +227,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         } else if (getMachineCapability() != null) {
             this.mode = MODE.MACHINE;
         }
+        this.spin = player.getHorizontalFacing();
     }
 
     @Override
@@ -302,6 +306,11 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             lastClickUUID = playerIn.getPersistentID();
             if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
                 if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+                    int maxSlotLimit = Integer.MAX_VALUE;
+                    if(this.coverHolder instanceof MetaTileEntity) {
+                        maxSlotLimit = this.mode == MODE.ITEM ? ((MetaTileEntity) this.coverHolder).getImportItems().getSlots() :
+                                ((MetaTileEntity) this.coverHolder).getImportFluids().getTanks();
+                    }
                     double x = 0;
                     double y = 1 - rayTraceResult.hitVec.y + rayTraceResult.getBlockPos().getY();
                     if (rayTraceResult.sideHit == EnumFacing.EAST) {
@@ -314,10 +323,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         x = 1 - rayTraceResult.hitVec.x + rayTraceResult.getBlockPos().getX();
                     }
                     if (1f / 16 < x && x < 4f / 16 && 1f / 16 < y && y < 4f / 16) {
-                        this.setMode(this.slot - 1);
+                        this.setMode(this.slot - 1 >= 0 ? this.slot - 1 : maxSlotLimit);
                         return EnumActionResult.SUCCESS;
                     } else if (12f / 16 < x && x < 15f / 16 && 1f / 16 < y && y < 4f / 16) {
-                        this.setMode(this.slot + 1);
+                        this.setMode(this.slot + 1 >= maxSlotLimit ? 0 : this.slot + 1);
                         return EnumActionResult.SUCCESS;
                     }
                 }
@@ -486,7 +495,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
-                    } else if(content != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents()))) {
+                    } else if (content != null && (fluids[i] != null && fluids[i].getContents() != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents())))) {
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
@@ -543,6 +552,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         if (this.mode == MODE.ENERGY || (mode == MODE.PROXY && proxyMode[2] > 0)) {
             IEnergyContainer energyContainer = this.getEnergyCapability();
             if (energyContainer != null) {
+                // TODO, figure out what to do when values exceed Long.MAX_VALUE, ie with multiple Ultimate batteries
                 if (energyStored != energyContainer.getEnergyStored() || energyCapability != energyContainer.getEnergyCapacity()) {
                     energyStored = energyContainer.getEnergyStored();
                     energyCapability = energyContainer.getEnergyCapacity();
@@ -635,7 +645,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not read fluids from NBT buffer", e);
         }
     }
 
@@ -668,7 +678,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not read items from NBT buffer", e);
         }
     }
 
@@ -953,7 +963,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 endAlpha = (int) (510 - 255 / 0.4375 * offset);
             }
             RenderUtil.renderRect(-7f / 16, -7f / 16, progress * 14f / (maxProgress * 16), 3f / 16, 0.002f, 0XFFFF5F44);
-            RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(progress * 100 / maxProgress, MODE.MACHINE), true);
+            RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(progress * 100L / maxProgress, MODE.MACHINE), true);
             RenderUtil.renderGradientRect(start, -4f / 16, width, 1f / 16, 0.002f, (color & 0X00FFFFFF) | (startAlpha << 24), (color & 0X00FFFFFF) | (endAlpha << 24), true);
         } else {
             RenderUtil.renderRect(-7f / 16, -4f / 16, 14f / 16, 1f / 16, 0.002f, color);
@@ -981,7 +991,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         RenderUtil.renderLineChart(outputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFFFF2F39);
         RenderUtil.renderText(-5.7f / 16, -2.3f / 16, 0, 1.0f / 270, 0XFF03FF00, "EU I: " + energyInputPerDur + "EU/s", false);
         RenderUtil.renderText(-5.7f / 16, -1.6f / 16, 0, 1.0f / 270, 0XFFFF0000, "EU O: " + energyOutputPerDur + "EU/s", false);
-        RenderUtil.renderRect(-7f / 16, -7f / 16, energyStored * 14f / (energyCapability * 16), 3f / 16, 0.002f, 0XFFFFD817);
+        // Bandaid fix to prevent overflowing renders when dealing with items that cause long overflow, ie Ultimate Battery
+        RenderUtil.renderRect(-7f / 16, -7f / 16, Math.max(0, energyStored * 14f / (energyCapability * 16)), 3f / 16, 0.002f, 0XFFFFD817);
         RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(energyStored, MODE.ENERGY), true);
     }
 
@@ -1022,7 +1033,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     };
 
     @SideOnly(Side.CLIENT)
-    private String readAmountOrCountOrEnergy(long number, MODE mode) {
+    private static String readAmountOrCountOrEnergy(long number, MODE mode) {
         int unit = mode == MODE.FLUID ? 1 : mode == MODE.ITEM ? 2 : mode == MODE.ENERGY ? 3 : 0;
         if (mode == MODE.MACHINE) {
             return number + "%";

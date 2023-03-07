@@ -3,11 +3,10 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IThermalFluidHandlerItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 
-public class ThermalFluidHandlerItemStack extends FluidHandlerItemStack implements IThermalFluidHandlerItemStack {
+public class ThermalFluidHandlerItemStack extends GTFluidHandlerItemStack implements IThermalFluidHandlerItemStack {
 
     private final int maxFluidTemperature;
     private final boolean gasProof;
@@ -29,23 +28,8 @@ public class ThermalFluidHandlerItemStack extends FluidHandlerItemStack implemen
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        FluidStack drained = super.drain(resource, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack drained = super.drain(maxDrain, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    private void removeTagWhenEmpty(Boolean doDrain) {
-        if (doDrain && this.getFluid() == null) {
-            this.container.setTagCompound(null);
-        }
+    public boolean canFillFluidType(FluidStack fluid) {
+        return IThermalFluidHandlerItemStack.super.canFillFluidType(fluid);
     }
 
     @Override

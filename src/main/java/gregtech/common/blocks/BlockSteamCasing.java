@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -38,12 +39,13 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        if (getState(stack).ordinal() == 4) {
-            super.addInformation(stack, player, tooltip, advanced);
-        } else if (getState(stack).ordinal() < 2) {
+        int ordinal = getState(stack).ordinal();
+        if (ordinal < 2) {
             tooltip.add(I18n.format("tile.steam_casing.bronze.tooltip"));
-        } else {
+        } else if (ordinal < 4) {
             tooltip.add(I18n.format("tile.steam_casing.steel.tooltip"));
+        } else {
+            super.addInformation(stack, player, tooltip, advanced);
         }
     }
 
@@ -77,7 +79,7 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
 
         @Override
         public String getHarvestTool(IBlockState state) {
-            return "wrench";
+            return ToolClasses.WRENCH;
         }
     }
 }

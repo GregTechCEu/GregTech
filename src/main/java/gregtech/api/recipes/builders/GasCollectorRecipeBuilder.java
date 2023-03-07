@@ -5,24 +5,21 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
-import gregtech.api.util.EnumValidationResult;
-import gregtech.api.util.ValidationResult;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntLists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeBuilder> {
-
-    private List<Integer> dimensionIDs;
 
     public GasCollectorRecipeBuilder() {
     }
 
     public GasCollectorRecipeBuilder(Recipe recipe, RecipeMap<GasCollectorRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
-        this.dimensionIDs = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<Integer>());
     }
 
     public GasCollectorRecipeBuilder(RecipeBuilder<GasCollectorRecipeBuilder> recipeBuilder) {
@@ -35,15 +32,17 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
             if (value instanceof Integer) {
                 this.dimension((Integer) value);
             } else if (value instanceof List && !((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Integer) {
-                if (this.dimensionIDs == null) {
-                    this.dimensionIDs = new ArrayList<>();
+                IntList dimensionIDs = getDimensionIDs();
+                if (dimensionIDs == IntLists.EMPTY_LIST) {
+                    dimensionIDs = new IntArrayList();
+                    this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
                 }
-                this.dimensionIDs.addAll((Collection<? extends Integer>) value);
+                dimensionIDs.addAll((List<Integer>) value);
             } else {
                 if (isCTRecipe) {
                     CraftTweakerAPI.logError("Dimension for Gas Collector needs to be a Integer");
@@ -53,31 +52,30 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
             }
             return true;
         }
-        return false;
+        return super.applyProperty(key, value);
     }
 
     public GasCollectorRecipeBuilder dimension(int dimensionID) {
-        if (this.dimensionIDs == null)
-            this.dimensionIDs = new ArrayList<>();
-        this.dimensionIDs.add(dimensionID);
+        IntList dimensionIDs = getDimensionIDs();
+        if (dimensionIDs == IntLists.EMPTY_LIST) {
+            dimensionIDs = new IntArrayList();
+            this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
+        }
+        dimensionIDs.add(dimensionID);
         return this;
     }
 
-    public ValidationResult<Recipe> build() {
-        Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden, isCTRecipe);
-        if (!recipe.setProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs)) {
-            return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
-        }
-
-        return ValidationResult.newResult(finalizeAndValidate(), recipe);
+    public IntList getDimensionIDs() {
+        return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
+                this.recipePropertyStorage.getRecipePropertyValue(GasCollectorDimensionProperty.getInstance(),
+                        IntLists.EMPTY_LIST);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append(GasCollectorDimensionProperty.getInstance().getKey(), dimensionIDs.toString())
+                .append(GasCollectorDimensionProperty.getInstance().getKey(), getDimensionIDs().toString())
                 .toString();
     }
 }

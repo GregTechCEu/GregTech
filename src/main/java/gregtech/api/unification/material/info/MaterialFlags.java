@@ -70,6 +70,11 @@ public class MaterialFlags {
      */
     public static final MaterialFlag FLAMMABLE = new MaterialFlag.Builder("flammable").build();
 
+    /**
+     * Add to material if it is some kind of sticky
+     */
+    public static final MaterialFlag STICKY = new MaterialFlag.Builder("sticky").build();
+
     //////////////////
     //     DUST     //
     //////////////////
@@ -230,6 +235,13 @@ public class MaterialFlags {
             .build();
 
     public static final MaterialFlag GENERATE_ROUND = new MaterialFlag.Builder("generate_round")
+            .requireProps(PropertyKey.INGOT)
+            .build();
+
+    /**
+     * Add this to your Material if it is a magnetized form of another Material.
+     */
+    public static final MaterialFlag IS_MAGNETIC = new MaterialFlag.Builder("is_magnetic")
             .requireProps(PropertyKey.INGOT)
             .build();
 

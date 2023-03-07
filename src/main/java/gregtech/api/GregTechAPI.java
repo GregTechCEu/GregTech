@@ -2,10 +2,16 @@ package gregtech.api;
 
 import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.advancement.IAdvancementManager;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.modules.IModuleManager;
+import gregtech.api.network.INetworkHandler;
+import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -16,6 +22,9 @@ import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
@@ -29,6 +38,19 @@ import java.util.Map;
 
 public class GregTechAPI {
 
+    /** Will always be available */
+    public static Object instance;
+    /** Will be available at the Construction stage */
+    public static IModuleManager moduleManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static INetworkHandler networkHandler;
+    /** Will be available at the Server-Starting stage */
+    public static ICommandManager commandManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static IAdvancementManager advancementManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static ISoundManager soundManager;
+
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
@@ -36,13 +58,14 @@ public class GregTechAPI {
 
     public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
+    public static final Object2ObjectOpenHashMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
 
     public static final BaseCreativeTab TAB_GREGTECH =
             new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_MATERIALS =
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
-            new BaseCreativeTab(GTValues.MODID + ".ores", () -> MetaItems.DRILL_MV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".ores", () -> ToolItems.DRILL_MV.get(Materials.Aluminium), true);
 
     public static class RegisterEvent<V> extends GenericEvent<V> {
 

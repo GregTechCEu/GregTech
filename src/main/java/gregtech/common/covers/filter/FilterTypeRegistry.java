@@ -5,15 +5,15 @@ import com.google.common.collect.HashBiMap;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class FilterTypeRegistry {
 
-    private static final Map<ItemAndMetadata, Integer> itemFilterIdByStack = new HashMap<>();
-    private static final Map<ItemAndMetadata, Integer> fluidFilterIdByStack = new HashMap<>();
+    private static final Map<ItemAndMetadata, Integer> itemFilterIdByStack = new Object2IntOpenHashMap<>();
+    private static final Map<ItemAndMetadata, Integer> fluidFilterIdByStack = new Object2IntOpenHashMap<>();
     private static final BiMap<Integer, Class<? extends ItemFilter>> itemFilterById = HashBiMap.create();
     private static final BiMap<Integer, Class<? extends FluidFilter>> fluidFilterById = HashBiMap.create();
 

@@ -49,13 +49,17 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         this.itemFilter.setMaxStackSize(1);
     }
 
-    protected void setFilterMode(ItemFilterMode filterMode) {
+    public void setFilterMode(ItemFilterMode filterMode) {
         this.filterMode = filterMode;
         coverHolder.markDirty();
     }
 
     public ItemFilterMode getFilterMode() {
         return filterMode;
+    }
+
+    public ItemFilterWrapper getItemFilter() {
+        return this.itemFilter;
     }
 
     @Override
@@ -101,13 +105,15 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", filterMode.ordinal());
         tagCompound.setBoolean("IsBlacklist", this.itemFilter.isBlacklistFilter());
         NBTTagCompound filterComponent = new NBTTagCompound();
         this.itemFilter.getItemFilter().writeToNBT(filterComponent);
         tagCompound.setTag("Filter", filterComponent);
+
+        return tagCompound;
     }
 
     @Override
@@ -121,6 +127,9 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
             IItemHandler delegate = (IItemHandler) defaultValue;
             if (itemHandler == null || itemHandler.delegate != delegate) {
                 this.itemHandler = new ItemHandlerFiltered(delegate);

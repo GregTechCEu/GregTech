@@ -1,11 +1,21 @@
 package gregtech.api.recipes;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.api.IIngredient;
+import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.ingredients.*;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -13,19 +23,21 @@ import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
+import gregtech.common.ConfigHolder;
+import gregtech.integration.GroovyScriptCompat;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -37,31 +49,28 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
-    protected final List<CountableIngredient> inputs;
-    protected final NonNullList<ItemStack> outputs;
+    protected final List<GTRecipeInput> inputs;
+    protected final List<ItemStack> outputs;
     protected final List<ChanceEntry> chancedOutputs;
 
-    protected final List<FluidStack> fluidInputs;
+    protected final List<GTRecipeInput> fluidInputs;
     protected final List<FluidStack> fluidOutputs;
 
     protected int duration, EUt;
     protected boolean hidden = false;
-
     protected boolean isCTRecipe = false;
-
     protected int parallel = 0;
-
     protected Consumer<RecipeBuilder<?>> onBuildAction = null;
-
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
+    protected IRecipePropertyStorage recipePropertyStorage = null;
+    protected boolean recipePropertyStorageErrored = false;
 
     protected RecipeBuilder() {
         this.inputs = NonNullList.create();
         this.outputs = NonNullList.create();
         this.chancedOutputs = new ArrayList<>();
-
-        this.fluidInputs = new ArrayList<>(0);
-        this.fluidOutputs = new ArrayList<>(0);
+        this.fluidInputs = new ArrayList<>();
+        this.fluidOutputs = new ArrayList<>();
     }
 
     public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
@@ -71,13 +80,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.outputs = NonNullList.create();
         this.outputs.addAll(GTUtility.copyStackList(recipe.getOutputs()));
         this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs());
-
-        this.fluidInputs = GTUtility.copyFluidList(recipe.getFluidInputs());
+        this.fluidInputs = new ArrayList<>(recipe.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-
         this.duration = recipe.getDuration();
         this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
+        this.recipePropertyStorage = recipe.getRecipePropertyStorage().copy();
+        if (this.recipePropertyStorage != null) {
+            this.recipePropertyStorage.freeze(false);
+        }
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
@@ -88,120 +99,257 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.outputs = NonNullList.create();
         this.outputs.addAll(GTUtility.copyStackList(recipeBuilder.getOutputs()));
         this.chancedOutputs = new ArrayList<>(recipeBuilder.chancedOutputs);
-
-        this.fluidInputs = GTUtility.copyFluidList(recipeBuilder.getFluidInputs());
+        this.fluidInputs = new ArrayList<>(recipeBuilder.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipeBuilder.getFluidOutputs());
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.onBuildAction = recipeBuilder.onBuildAction;
-    }
-
-    public boolean applyProperty(String key, Object value) {
-        return false;
-    }
-
-    public boolean applyProperty(String key, ItemStack item) {
-        return false;
-    }
-
-    public R inputs(ItemStack... inputs) {
-        return inputs(Arrays.asList(inputs));
-    }
-
-    public R inputs(Collection<ItemStack> inputs) {
-        if (GTUtility.iterableContains(inputs, stack -> stack == null || stack.isEmpty())) {
-            GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", inputs);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
-            recipeStatus = EnumValidationResult.INVALID;
+        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
+        if (this.recipePropertyStorage != null) {
+            this.recipePropertyStorage = this.recipePropertyStorage.copy();
         }
-        inputs.forEach(stack -> {
-            if (!(stack == null || stack.isEmpty())) {
-                this.inputs.add(CountableIngredient.from(stack));
-            }
-        });
+    }
+
+    public R cleanroom(@Nullable CleanroomType cleanroom) {
+        if (!ConfigHolder.machines.enableCleanroom) {
+            return (R) this;
+        }
+        this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         return (R) this;
     }
 
+    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
+        if (key.equals(CleanroomProperty.KEY)) {
+            if (value instanceof CleanroomType) {
+                this.cleanroom((CleanroomType) value);
+            } else if (value instanceof String) {
+                this.cleanroom(CleanroomType.getByName((String) value));
+            } else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean applyProperty(@Nonnull RecipeProperty<?> property, @Nullable Object value) {
+        if (value == null) {
+            if (this.recipePropertyStorage != null) {
+                return this.recipePropertyStorage.remove(property);
+            }
+        } else {
+            if (this.recipePropertyStorage == null) {
+                this.recipePropertyStorage = new RecipePropertyStorage();
+            }
+            boolean stored = this.recipePropertyStorage.store(property, value);
+            if (!stored) {
+                this.recipePropertyStorageErrored = true;
+            }
+            return stored;
+        }
+        return true;
+    }
+
+    public R input(GTRecipeInput input) {
+        if (input.getAmount() < 0) {
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+        } else {
+            this.inputs.add(input);
+        }
+        return (R) this;
+    }
+
+    public R input(String oredict) {
+        return input(GTRecipeOreInput.getOrCreate(oredict, 1));
+    }
+
     public R input(String oredict, int count) {
-        return inputs(CountableIngredient.from(oredict, count));
+        return input(GTRecipeOreInput.getOrCreate(oredict, count));
     }
-
-    public R input(Enum<?> oredict, int count) {
-        return inputs(CountableIngredient.from(oredict.name(), count));
-    }
-
 
     public R input(OrePrefix orePrefix, Material material) {
-        return inputs(CountableIngredient.from(orePrefix, material, 1));
+        return input(GTRecipeOreInput.getOrCreate(orePrefix, material, 1));
     }
 
     public R input(OrePrefix orePrefix, Material material, int count) {
-        return inputs(CountableIngredient.from(orePrefix, material, count));
+        return input(GTRecipeOreInput.getOrCreate(orePrefix, material, count));
     }
 
     public R input(Item item) {
-        return input(item, 1);
+        return input(GTRecipeItemInput.getOrCreate(new ItemStack(item)));
     }
 
     public R input(Item item, int count) {
-        return inputs(new ItemStack(item, count));
+        return input(GTRecipeItemInput.getOrCreate(new ItemStack(item), count));
     }
 
     public R input(Item item, int count, int meta) {
-        return inputs(new ItemStack(item, count, meta));
+        return input(GTRecipeItemInput.getOrCreate(new ItemStack(item, count, meta)));
     }
 
-    @SuppressWarnings("unused")
-    public R input(Item item, int count, boolean wild) {
-        return inputs(new ItemStack(item, count, GTValues.W));
+    public R input(Item item, int count, @SuppressWarnings("unused") boolean wild) {
+        return input(GTRecipeItemInput.getOrCreate(new ItemStack(item, count, GTValues.W)));
     }
 
-    public R input(Block item) {
-        return input(item, 1);
+    public R input(Block block) {
+        return input(block, 1);
     }
 
-    public R input(Block item, int count) {
-        return inputs(new ItemStack(item, count));
+    public R input(Block block, int count) {
+        return input(GTRecipeItemInput.getOrCreate(new ItemStack(block, count)));
     }
 
-    @SuppressWarnings("unused")
-    public R input(Block item, int count, boolean wild) {
-        return inputs(new ItemStack(item, count, GTValues.W));
+    public R input(Block block, int count, @SuppressWarnings("unused") boolean wild) {
+        return input(GTRecipeItemInput.getOrCreate(new ItemStack(block, count, GTValues.W)));
     }
 
     public R input(MetaItem<?>.MetaValueItem item, int count) {
-        return inputs(item.getStackForm(count));
+        return input(GTRecipeItemInput.getOrCreate(item.getStackForm(count)));
     }
 
     public R input(MetaItem<?>.MetaValueItem item) {
-        return input(item, 1);
+        return input(GTRecipeItemInput.getOrCreate(item.getStackForm()));
     }
 
     public R input(MetaTileEntity mte) {
-        return input(mte, 1);
+        return input(GTRecipeItemInput.getOrCreate(mte.getStackForm()));
     }
 
     public R input(MetaTileEntity mte, int amount) {
-        return inputs(mte.getStackForm(amount));
+        return input(GTRecipeItemInput.getOrCreate(mte.getStackForm(amount)));
     }
 
-    public R inputs(CountableIngredient... inputs) {
-        List<CountableIngredient> ingredients = new ArrayList<>();
-        for (CountableIngredient input : inputs) {
-            if (input.getCount() < 0) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getCount());
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
-            } else {
-                ingredients.add(input);
-            }
+    public R inputNBT(GTRecipeInput input, NBTMatcher matcher, NBTCondition condition) {
+        if (input.getAmount() < 0) {
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            return (R) this;
         }
-
-        return inputsIngredients(ingredients);
+        if (matcher == null) {
+            GTLog.logger.error("NBTMatcher must not be null");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            return (R) this;
+        }
+        if (condition == null) {
+            GTLog.logger.error("NBTCondition must not be null");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            return (R) this;
+        }
+        this.inputs.add(input.setNBTMatchingCondition(matcher, condition));
+        return (R) this;
     }
 
-    public R inputsIngredients(Collection<CountableIngredient> ingredients) {
-        this.inputs.addAll(ingredients);
+    public R inputNBT(String oredict, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeOreInput.getOrCreate(oredict, 1), matcher, condition);
+    }
+
+    public R inputNBT(String oredict, int count, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeOreInput.getOrCreate(oredict, count), matcher, condition);
+    }
+
+    public R inputNBT(OrePrefix orePrefix, Material material, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeOreInput.getOrCreate(orePrefix, material, 1), matcher, condition);
+    }
+
+    public R inputNBT(OrePrefix orePrefix, Material material, int count, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeOreInput.getOrCreate(orePrefix, material, count), matcher, condition);
+    }
+
+    public R inputNBT(Item item, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(new ItemStack(item)), matcher, condition);
+    }
+
+    public R inputNBT(Item item, int count, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(new ItemStack(item), count), matcher, condition);
+    }
+
+    public R inputNBT(Item item, int count, int meta, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(new ItemStack(item, count, meta)), matcher, condition);
+    }
+
+    public R inputNBT(Item item, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(new ItemStack(item, count, GTValues.W)), matcher, condition);
+    }
+
+    public R inputNBT(Block block, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(block, 1, matcher, condition);
+    }
+
+    public R inputNBT(Block block, int count, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(new ItemStack(block, count)), matcher, condition);
+    }
+
+    public R inputNBT(Block block, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(new ItemStack(block, count, GTValues.W)), matcher, condition);
+    }
+
+    public R inputNBT(MetaItem<?>.MetaValueItem item, int count, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(item.getStackForm(count)), matcher, condition);
+    }
+
+    public R inputNBT(MetaItem<?>.MetaValueItem item, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(item.getStackForm()), matcher, condition);
+    }
+
+    public R inputNBT(MetaTileEntity mte, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(mte.getStackForm()), matcher, condition);
+    }
+
+    public R inputNBT(MetaTileEntity mte, int amount, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(GTRecipeItemInput.getOrCreate(mte.getStackForm(amount)), matcher, condition);
+    }
+
+    public R inputs(ItemStack... inputs) {
+        for (ItemStack input : inputs) {
+            if (input == null || input.isEmpty()) {
+                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                recipeStatus = EnumValidationResult.INVALID;
+                continue;
+            }
+            this.inputs.add(GTRecipeItemInput.getOrCreate(input));
+        }
+        return (R) this;
+    }
+
+    public R inputStacks(Collection<ItemStack> inputs) {
+        for (ItemStack input : inputs) {
+            if (input == null || input.isEmpty()) {
+                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                recipeStatus = EnumValidationResult.INVALID;
+                continue;
+            }
+            this.inputs.add(GTRecipeItemInput.getOrCreate(input));
+        }
+        return (R) this;
+    }
+
+    public R inputs(GTRecipeInput... inputs) {
+        for (GTRecipeInput input : inputs) {
+            if (input.getAmount() < 0) {
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                recipeStatus = EnumValidationResult.INVALID;
+                continue;
+            }
+            this.inputs.add(input);
+        }
+        return (R) this;
+    }
+
+    public R inputIngredients(Collection<GTRecipeInput> inputs) {
+        for (GTRecipeInput input : inputs) {
+            if (input.getAmount() < 0) {
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                recipeStatus = EnumValidationResult.INVALID;
+                continue;
+            }
+            this.inputs.add(input);
+        }
         return (R) this;
     }
 
@@ -210,13 +358,18 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R notConsumable(GTRecipeInput gtRecipeIngredient) {
+        return inputs(GTRecipeInput.getOrCreate(gtRecipeIngredient)
+                .setNonConsumable());
+    }
+
     public R notConsumable(ItemStack itemStack) {
-        return inputs(CountableIngredient.from(itemStack, itemStack.getCount())
+        return inputs(GTRecipeItemInput.getOrCreate(itemStack, itemStack.getCount())
                 .setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material, int amount) {
-        return inputs(CountableIngredient.from(prefix, material, amount)
+        return inputs(GTRecipeOreInput.getOrCreate(prefix, material, amount)
                 .setNonConsumable());
     }
 
@@ -224,33 +377,31 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return notConsumable(prefix, material, 1);
     }
 
-    public R notConsumable(Ingredient ingredient) {
-        return inputs(new CountableIngredient(ingredient, 1)
-                .setNonConsumable());
-    }
-
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(CountableIngredient.from(item.getStackForm(), 1)
+        return inputs(GTRecipeItemInput.getOrCreate(item.getStackForm(), 1)
                 .setNonConsumable());
     }
 
     public R notConsumable(Fluid fluid, int amount) {
-        FluidStack ncf = new FluidStack(fluid, amount, new NBTTagCompound());
-        ncf.tag.setBoolean("nonConsumable", true);
-        return fluidInputs(ncf);
+        return fluidInputs(GTRecipeFluidInput.getOrCreate(fluid, amount).setNonConsumable());
     }
 
     public R notConsumable(Fluid fluid) {
-        return notConsumable(fluid, 1);
+        return fluidInputs(GTRecipeFluidInput.getOrCreate(fluid, 1).setNonConsumable());
     }
 
     public R notConsumable(FluidStack fluidStack) {
-        FluidStack ncf = fluidStack.copy();
-        if (ncf.tag == null) {
-            ncf.tag = new NBTTagCompound();
+        return fluidInputs(GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount).setNonConsumable());
+    }
+
+    public R circuitMeta(int circuitNumber) {
+        if (!GTUtility.isBetweenInclusive(IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, circuitNumber)) {
+            GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
+                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));
+            recipeStatus = EnumValidationResult.INVALID;
         }
-        ncf.tag.setBoolean("nonConsumable", true);
-        return fluidInputs(ncf);
+        return notConsumable(new IntCircuitIngredient(circuitNumber));
     }
 
     public R output(OrePrefix orePrefix, Material material) {
@@ -313,18 +464,29 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R fluidInputs(FluidStack... inputs) {
-        return fluidInputs(Arrays.asList(inputs));
+    public R fluidInputs(Collection<GTRecipeInput> fluidIngredients) {
+        this.fluidInputs.addAll(fluidIngredients);
+        return (R) this;
     }
 
-    public R fluidInputs(Collection<FluidStack> inputs) {
-        if (inputs.contains(null)) {
-            GTLog.logger.error("Fluid input cannot contain null FluidStacks. Inputs: {}", inputs);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
-            recipeStatus = EnumValidationResult.INVALID;
+    public R fluidInputs(GTRecipeInput fluidIngredient) {
+        this.fluidInputs.add(fluidIngredient);
+        return (R) this;
+    }
+
+    public R fluidInputs(FluidStack... fluidStacks) {
+        ArrayList<GTRecipeInput> fluidIngredients = new ArrayList<>();
+        for (FluidStack fluidStack : fluidStacks) {
+            if (fluidStack != null && fluidStack.amount > 0) {
+                fluidIngredients.add(GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount));
+            } else if (fluidStack != null) {
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", fluidStack.amount);
+                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            } else {
+                GTLog.logger.error("FluidStack cannot be null.");
+            }
         }
-        this.fluidInputs.addAll(inputs);
-        this.fluidInputs.removeIf(Objects::isNull);
+        this.fluidInputs.addAll(fluidIngredients);
         return (R) this;
     }
 
@@ -389,6 +551,47 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R inputs(IIngredient ingredient) {
+        return input(ofGroovyIngredient(ingredient));
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R inputs(IIngredient... ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R inputs(Collection<IIngredient> ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    public R notConsumable(IIngredient ingredient) {
+        return notConsumable(ofGroovyIngredient(ingredient));
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
+        if (ingredient instanceof OreDictIngredient) {
+            return GTRecipeOreInput.getOrCreate(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
+        }
+        Object oIngredient = ingredient;
+        if (oIngredient instanceof ItemStack) {
+            return GTRecipeItemInput.getOrCreate((ItemStack) oIngredient);
+        }
+        if (ingredient instanceof FluidStack) {
+            return GTRecipeFluidInput.getOrCreate((FluidStack) ingredient, ingredient.getAmount());
+        }
+        throw new IllegalArgumentException("Could not add groovy ingredient " + ingredient + " to recipe!");
+    }
+
     /**
      * Copies the chanced outputs of a Recipe numberOfOperations times, so every chanced output
      * gets an individual roll, instead of an all or nothing situation
@@ -426,8 +629,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
 
         // Create holders for the various parts of the new multiplied Recipe
-        List<CountableIngredient> newRecipeInputs = new ArrayList<>();
-        List<FluidStack> newFluidInputs = new ArrayList<>();
+        List<GTRecipeInput> newRecipeInputs = new ArrayList<>();
+        List<GTRecipeInput> newFluidInputs = new ArrayList<>();
         List<ItemStack> outputItems = new ArrayList<>();
         List<FluidStack> outputFluids = new ArrayList<>();
 
@@ -435,7 +638,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, multiplier);
 
         // Build the new Recipe with multiplied components
-        this.inputsIngredients(newRecipeInputs);
+        this.inputIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
 
         this.outputs(outputItems);
@@ -450,30 +653,25 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    protected static void multiplyInputsAndOutputs(List<CountableIngredient> newRecipeInputs,
-                                                   List<FluidStack> newFluidInputs,
+    protected static void multiplyInputsAndOutputs(List<GTRecipeInput> newRecipeInputs,
+                                                   List<GTRecipeInput> newFluidInputs,
                                                    List<ItemStack> outputItems,
                                                    List<FluidStack> outputFluids,
                                                    Recipe recipe,
                                                    int numberOfOperations) {
-        recipe.getInputs().forEach(ci -> {
-            if (ci.isNonConsumable()) {
-                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount()).setNonConsumable());
+        recipe.getInputs().forEach(ri -> {
+            if (ri.isNonConsumable()) {
+                newRecipeInputs.add(ri);
             } else {
-                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount() * numberOfOperations));
+                newRecipeInputs.add(ri.copyWithAmount(ri.getAmount() * numberOfOperations));
             }
         });
 
-        recipe.getFluidInputs().forEach(fluidStack -> {
-            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
-                FluidStack fs = new FluidStack(fluidStack.getFluid(), fluidStack.amount, new NBTTagCompound());
-                fs.tag.setBoolean("nonConsumable", true);
-                newFluidInputs.add(fs);
+        recipe.getFluidInputs().forEach(fi -> {
+            if (fi.isNonConsumable()) {
+                newFluidInputs.add(fi);
             } else {
-                newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
-                        fluidStack.amount * (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable") ? 1 : numberOfOperations)));
+                newFluidInputs.add(fi.copyWithAmount(fi.getAmount() * numberOfOperations));
             }
         });
 
@@ -532,25 +730,30 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult finalizeAndValidate() {
-        return validate();
+        return recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
     }
 
     public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
+        return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
+                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage));
     }
 
     protected EnumValidationResult validate() {
+        if (GroovyScriptCompat.isCurrentlyRunning()) {
+            GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
+            validateGroovy(msg);
+            return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
+        }
         if (EUt == 0) {
             GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
-            if(isCTRecipe) {
+            if (isCTRecipe) {
                 CraftTweakerAPI.logError("EU/t cannot be equal to 0", new IllegalArgumentException());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (duration <= 0) {
             GTLog.logger.error("Duration cannot be less or equal to 0", new IllegalArgumentException());
-            if(isCTRecipe) {
+            if (isCTRecipe) {
                 CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
             }
             recipeStatus = EnumValidationResult.INVALID;
@@ -558,7 +761,38 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (recipeStatus == EnumValidationResult.INVALID) {
             GTLog.logger.error("Invalid recipe, read the errors above: {}", this);
         }
+        if (recipePropertyStorage != null) {
+            recipePropertyStorage.freeze(true);
+        }
         return recipeStatus;
+    }
+
+    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    protected void validateGroovy(GroovyLog.Msg errorMsg) {
+        errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
+        errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");
+        int minInput = recipeMap.getMinInputs(), maxInput = recipeMap.getMaxInputs(), minOutput = recipeMap.getMinOutputs(), maxOutput = recipeMap.getMaxOutputs();
+        int minFluidInput = recipeMap.getMinFluidInputs(), maxFluidInput = recipeMap.getMaxFluidInputs(), minFluidOutput = recipeMap.getMinFluidOutputs(), maxFluidOutput = recipeMap.getMaxFluidOutputs();
+        errorMsg.add(inputs.size() < minInput || inputs.size() > maxInput, () -> getRequiredString(minInput, maxInput, " item input") + ", but found " + inputs.size());
+        errorMsg.add(outputs.size() < minOutput || outputs.size() > maxOutput, () -> getRequiredString(minOutput, maxOutput, "item output") + ", but found " + outputs.size());
+        errorMsg.add(fluidInputs.size() < minFluidInput || fluidInputs.size() > maxFluidInput, () -> getRequiredString(minFluidInput, maxFluidInput, "fluid input") + ", but found " + fluidInputs.size());
+        errorMsg.add(fluidOutputs.size() < minFluidOutput || fluidOutputs.size() > maxFluidOutput, () -> getRequiredString(minFluidOutput, maxFluidOutput, "fluid output") + ", but found " + fluidOutputs.size());
+    }
+
+    protected static String getRequiredString(int min, int max, String type) {
+        if (max <= 0) {
+            return "No " + type + "s allowed";
+        }
+        String out = "Must have ";
+        if (min == max) {
+            out += "exactly " + min + " " + type;
+        } else {
+            out += min + " - " + max + " " + type;
+        }
+        if (max != 1) {
+            out += "s";
+        }
+        return out;
     }
 
     protected R onBuild(Consumer<RecipeBuilder<?>> consumer) {
@@ -572,8 +806,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public void buildAndRegister() {
-        if (onBuildAction != null)
+        if (onBuildAction != null) {
             onBuildAction.accept(this);
+        }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }
@@ -582,7 +817,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     //    Getters    //
     ///////////////////
 
-    public List<CountableIngredient> getInputs() {
+    public List<GTRecipeInput> getInputs() {
         return inputs;
     }
 
@@ -602,12 +837,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
-        stacks.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        for (ChanceEntry entry : this.chancedOutputs) {
+            stacks.add(entry.getItemStack());
+        }
 
         return stacks;
     }
 
-    public List<FluidStack> getFluidInputs() {
+    public List<GTRecipeInput> getFluidInputs() {
         return fluidInputs;
     }
 
@@ -623,6 +860,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return duration;
     }
 
+    @Nullable
+    public CleanroomType getCleanroom() {
+        return this.recipePropertyStorage == null ? null :
+                this.recipePropertyStorage.getRecipePropertyValue(CleanroomProperty.getInstance(), null);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -635,6 +878,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("duration", duration)
                 .append("EUt", EUt)
                 .append("hidden", hidden)
+                .append("cleanroom", getCleanroom())
                 .append("recipeStatus", recipeStatus)
                 .toString();
     }

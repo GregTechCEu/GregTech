@@ -7,8 +7,7 @@
       "translate": "gregtech.advancement.medium_voltage.33_chainsaw.name"
     },
     "icon": {
-      "item": "gregtech:meta_tool",
-      "data": 26
+      "item": "gregtech:chainsaw_lv"
     }
   },
   "criteria": {
@@ -17,8 +16,7 @@
       "conditions": {
         "items": [
           {
-            "type": "forge:ore_dict",
-            "ore": "craftingToolChainsaw"
+            "item": "gregtech:chainsaw_lv"
           }
         ]
       }

@@ -13,12 +13,10 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -33,6 +31,8 @@ public class VanillaOverrideRecipes {
             redstoneRecipes();
         if (ConfigHolder.recipes.hardIronRecipes)
             metalRecipes();
+        if (ConfigHolder.recipes.hardAdvancedIronRecipes)
+            metalAdvancedRecipes();
         if (ConfigHolder.recipes.hardMiscRecipes)
             miscRecipes();
         if (ConfigHolder.recipes.hardDyeRecipes)
@@ -46,8 +46,7 @@ public class VanillaOverrideRecipes {
         }
         removeCompressionRecipes();
         toolArmorRecipes();
-
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
+        alwaysRemovedRecipes();
     }
 
     private static void woodRecipes() {
@@ -64,15 +63,13 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:sugar"));
             ModHandler.addShapedRecipe("paper_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Paper, 2), "SSS", " m ", 'S', new ItemStack(Items.REEDS));
             ModHandler.addShapedRecipe("sugar", OreDictUnifier.get(OrePrefix.dust, Materials.Sugar, 1), "Sm ", 'S', new ItemStack(Items.REEDS));
-            ItemStack paperStack = OreDictUnifier.get(OrePrefix.plate, Materials.Paper, 2);
-            Object[] paperRecipeIngredients = ModHandler.finalizeShapedRecipeInput(" C ", "SSS", " C ", 'S', OreDictUnifier.get(OrePrefix.dust, Materials.Paper, 1), 'C', new ItemStack(Blocks.STONE_SLAB));
-            ForgeRegistries.RECIPES.register(new CustomItemReturnShapedOreRecipeRecipe(null, paperStack,
-                    stack -> Block.getBlockFromItem(stack.getItem()) == Blocks.STONE_SLAB, paperRecipeIngredients)
-                    .setMirrored(false).setRegistryName("paper"));
+            ModHandler.addShapedRecipe("paper", new ItemStack(Items.PAPER, 2),
+                    " r ", "SSS", " B ",
+                    'S', OreDictUnifier.get(OrePrefix.dust, Materials.Paper),
+                    'B', new ItemStack(Items.WATER_BUCKET));
         }
 
-        if (!ConfigHolder.recipes.hardWoodRecipes)
-            return;
+        if (!ConfigHolder.recipes.hardWoodRecipes) return;
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ladder"));
         ModHandler.addShapedRecipe("ladder", new ItemStack(Blocks.LADDER, 2), "SrS", "SRS", "ShS", 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood), 'R', new UnificationEntry(OrePrefix.bolt, Materials.Wood));
@@ -237,7 +234,7 @@ public class VanillaOverrideRecipes {
      */
     private static void glassRecipes() {
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
-        ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));
+        ModHandler.removeRecipeByOutput(new ItemStack(Items.GLASS_BOTTLE, 3));
     }
 
     /**
@@ -541,40 +538,19 @@ public class VanillaOverrideRecipes {
     }
 
     /**
-     * Changes vanilla recipes using metals to plates and other components
+     * Changes bucket, cauldron, hopper and iron bars to use plates, rods and gears
      */
     private static void metalRecipes() {
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:iron_door"));
-        ModHandler.addShapedRecipe("iron_door", new ItemStack(Items.IRON_DOOR), "PTh", "PRS", "PPd",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron),
-                'T', new ItemStack(Blocks.IRON_BARS),
-                'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
-                'S', new UnificationEntry(OrePrefix.screw, Materials.Steel)
-        );
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.IRON_BARS))
-                .input(OrePrefix.plate, Materials.Iron, 4)
-                .fluidInputs(Materials.Steel.getFluid(GTValues.L / 9))
-                .outputs(new ItemStack(Items.IRON_DOOR))
-                .duration(400).EUt(VA[ULV]).buildAndRegister();
-
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:cauldron"));
         ModHandler.addShapedRecipe("cauldron", new ItemStack(Items.CAULDRON), "X X", "XhX", "XXX",
                 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron)
         );
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 7)
-                .outputs(new ItemStack(Items.CAULDRON, 1))
-                .circuitMeta(7)
-                .duration(700).EUt(4).buildAndRegister();
-
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:hopper"));
         ModHandler.addShapedRecipe("hopper", new ItemStack(Blocks.HOPPER), "XCX", "XGX", "wXh",
                 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron),
                 'C', "chestWood",
-                'G', new UnificationEntry(OrePrefix.gear, Materials.Iron)
+                'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron)
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:iron_bars"));
@@ -582,11 +558,22 @@ public class VanillaOverrideRecipes {
                 'X', new UnificationEntry(OrePrefix.stick, Materials.Iron)
         );
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Iron, 3)
-                .outputs(new ItemStack(Blocks.IRON_BARS, 4))
-                .circuitMeta(3)
-                .duration(300).EUt(4).buildAndRegister();
+        ModHandler.addShapedRecipe("iron_bucket", new ItemStack(Items.BUCKET), "XhX", " X ", 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron));
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:bucket"));
+
+    }
+
+    /**
+     * Changes other vanilla recipes using metals to plates and other components
+     */
+    private static void metalAdvancedRecipes() {
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:iron_door"));
+        ModHandler.addShapedRecipe("iron_door", new ItemStack(Items.IRON_DOOR), "PTh", "PRS", "PPd",
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron),
+                'T', new ItemStack(Blocks.IRON_BARS),
+                'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
+                'S', new UnificationEntry(OrePrefix.screw, Materials.Steel)
+        );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:anvil"));
         ModHandler.addShapedRecipe("anvil", new ItemStack(Blocks.ANVIL), "BBB", "SBS", "PBP",
@@ -602,20 +589,11 @@ public class VanillaOverrideRecipes {
                 'T', new ItemStack(Blocks.TRAPDOOR)
         );
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 4)
-                .inputs(new ItemStack(Blocks.TRAPDOOR))
-                .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
-                .duration(100).EUt(16).buildAndRegister();
-
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:minecart"));
         ModHandler.addShapedRecipe("minecart", new ItemStack(Items.MINECART), "RhR", "PwP", "RPR",
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron)
         );
-
-        ModHandler.addShapedRecipe("iron_bucket", new ItemStack(Items.BUCKET), "XhX", " X ", 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron));
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:bucket"));
 
     }
 
@@ -727,7 +705,7 @@ public class VanillaOverrideRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .circuitMeta(8)
-                .input(OreDictNames.stoneCobble, 8)
+                .input(OreDictNames.stoneCobble.name(), 8)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputs(new ItemStack(Blocks.FURNACE))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
@@ -872,7 +850,7 @@ public class VanillaOverrideRecipes {
         createPickaxeRecipe("iron_pickaxe", new ItemStack(Items.IRON_PICKAXE), Materials.Iron);
         createAxeRecipe("iron_axe", new ItemStack(Items.IRON_AXE), Materials.Iron);
         createSwordRecipe("iron_sword", new ItemStack(Items.IRON_SWORD), Materials.Iron);
-        createHoerecipe("iron_hoe", new ItemStack(Items.IRON_HOE), Materials.Iron);
+        createHoeRecipe("iron_hoe", new ItemStack(Items.IRON_HOE), Materials.Iron);
         createHelmetRecipe("iron_helmet", new ItemStack(Items.IRON_HELMET), Materials.Iron);
         createChestplateRecipe("iron_chestplate", new ItemStack(Items.IRON_CHESTPLATE), Materials.Iron);
         createLeggingsRecipe("iron_leggings", new ItemStack(Items.IRON_LEGGINGS), Materials.Iron);
@@ -882,7 +860,7 @@ public class VanillaOverrideRecipes {
         createPickaxeRecipe("golden_pickaxe", new ItemStack(Items.GOLDEN_PICKAXE), Materials.Gold);
         createAxeRecipe("golden_axe", new ItemStack(Items.GOLDEN_AXE), Materials.Gold);
         createSwordRecipe("golden_sword", new ItemStack(Items.GOLDEN_SWORD), Materials.Gold);
-        createHoerecipe("golden_hoe", new ItemStack(Items.GOLDEN_HOE), Materials.Gold);
+        createHoeRecipe("golden_hoe", new ItemStack(Items.GOLDEN_HOE), Materials.Gold);
         createHelmetRecipe("golden_helmet", new ItemStack(Items.GOLDEN_HELMET), Materials.Gold);
         createChestplateRecipe("golden_chestplate", new ItemStack(Items.GOLDEN_CHESTPLATE), Materials.Gold);
         createLeggingsRecipe("golden_leggings", new ItemStack(Items.GOLDEN_LEGGINGS), Materials.Gold);
@@ -892,7 +870,7 @@ public class VanillaOverrideRecipes {
         createPickaxeRecipe("diamond_pickaxe", new ItemStack(Items.DIAMOND_PICKAXE), Materials.Diamond);
         createAxeRecipe("diamond_axe", new ItemStack(Items.DIAMOND_AXE), Materials.Diamond);
         createSwordRecipe("diamond_sword", new ItemStack(Items.DIAMOND_SWORD), Materials.Diamond);
-        createHoerecipe("diamond_hoe", new ItemStack(Items.DIAMOND_HOE), Materials.Diamond);
+        createHoeRecipe("diamond_hoe", new ItemStack(Items.DIAMOND_HOE), Materials.Diamond);
         createHelmetRecipe("diamond_helmet", new ItemStack(Items.DIAMOND_HELMET), Materials.Diamond);
         createChestplateRecipe("diamond_chestplate", new ItemStack(Items.DIAMOND_CHESTPLATE), Materials.Diamond);
         createLeggingsRecipe("diamond_leggings", new ItemStack(Items.DIAMOND_LEGGINGS), Materials.Diamond);
@@ -984,7 +962,7 @@ public class VanillaOverrideRecipes {
 
     private static void createShovelRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "fPh", " S ", " S ",
+        ModHandler.addShapedRecipe(regName, output, "hPf", " S ", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'S', new ItemStack(Items.STICK)
         );
@@ -992,7 +970,7 @@ public class VanillaOverrideRecipes {
 
     private static void createPickaxeRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "PII", "fSh", " S ",
+        ModHandler.addShapedRecipe(regName, output, "PII", "hSf", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'I', new UnificationEntry(material.equals(Materials.Diamond) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new ItemStack(Items.STICK)
@@ -1001,7 +979,7 @@ public class VanillaOverrideRecipes {
 
     private static void createAxeRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "PIh", "PS ", "fS ",
+        ModHandler.addShapedRecipe(regName, output, "PIf", "PS ", "hS ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'I', new UnificationEntry(material.equals(Materials.Diamond) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new ItemStack(Items.STICK)
@@ -1010,15 +988,15 @@ public class VanillaOverrideRecipes {
 
     private static void createSwordRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, " P ", "fPh", " S ",
+        ModHandler.addShapedRecipe(regName, output, " P ", "hPf", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'S', new ItemStack(Items.STICK)
         );
     }
 
-    private static void createHoerecipe(String regName, ItemStack output, Material material) {
+    private static void createHoeRecipe(String regName, ItemStack output, Material material) {
         ModHandler.removeRecipeByName(new ResourceLocation(regName));
-        ModHandler.addShapedRecipe(regName, output, "PIh", "fS ", " S ",
+        ModHandler.addShapedRecipe(regName, output, "PIf", "hS ", " S ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
                 'I', new UnificationEntry(material.equals(Materials.Diamond) ? OrePrefix.gem : OrePrefix.ingot, material),
                 'S', new ItemStack(Items.STICK)
@@ -1051,5 +1029,19 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe(regName, output, "P P", "PhP",
                 'P', new UnificationEntry(OrePrefix.plate, material)
         );
+    }
+
+    private static void alwaysRemovedRecipes() {
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
+
+        // always remove these, GT ore processing changes their output
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.COAL_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.IRON_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.GOLD_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.DIAMOND_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.EMERALD_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.LAPIS_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.REDSTONE_ORE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.QUARTZ_ORE));
     }
 }

@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.RecipeLogicSteam;
@@ -13,18 +14,28 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
@@ -93,7 +104,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
         renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
-        Textures.STEAM_VENT_OVERLAY.renderSided(workableHandler.getVentingSide(), renderState, translation, pipeline);
+        Textures.STEAM_VENT_OVERLAY.renderSided(workableHandler.getVentingSide(), renderState, RenderUtil.adjustTrans(translation, workableHandler.getVentingSide(), 2), pipeline);
     }
 
     protected boolean isBrickedCasing() {
@@ -118,5 +129,52 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     @Override
     public SoundEvent getSound() {
         return workableHandler.getRecipeMap().getSound();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (this.isActive()) {
+            final BlockPos pos = getPos();
+            float x = pos.getX() + 0.5F;
+            float z = pos.getZ() + 0.5F;
+
+            final EnumFacing facing = getFrontFacing();
+            final float horizontalOffset = GTValues.RNG.nextFloat() * 0.6F - 0.3F;
+            final float y = pos.getY() + GTValues.RNG.nextFloat() * 0.375F;
+
+            if (facing.getAxis() == EnumFacing.Axis.X) {
+                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) x += 0.52F;
+                else x -= 0.52F;
+                z += horizontalOffset;
+            } else if (facing.getAxis() == EnumFacing.Axis.Z) {
+                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) z += 0.52F;
+                else z -= 0.52F;
+                x += horizontalOffset;
+            }
+            if (ConfigHolder.machines.machineSounds && GTValues.RNG.nextDouble() < 0.1) {
+                getWorld().playSound(x, y, z, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+            }
+            randomDisplayTick(x, y, z, EnumParticleTypes.FLAME, isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
+        getWorld().spawnParticle(smoke, x, y, z, 0, 0, 0);
+        getWorld().spawnParticle(flame, x, y, z, 0, 0, 0);
+    }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

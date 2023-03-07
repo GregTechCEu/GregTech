@@ -11,13 +11,17 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.resources.I18n;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
@@ -37,6 +41,19 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
         if (shouldRenderOverlay()) {
             Textures.MAINTENANCE_OVERLAY_FULL_AUTO.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.universal.disabled"));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -106,6 +123,8 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         if (ConfigHolder.machines.enableMaintenance) {
             super.getSubItems(creativeTab, subItems);
+            // keeps things in order despite IDs being out of order, due to the Cleaning Hatch being added later
+            subItems.add(MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm());
         }
     }
 }

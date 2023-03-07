@@ -3,9 +3,9 @@ package gregtech.common.metatileentities.multi;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.BoilerRecipeLogic;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.*;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -16,17 +16,15 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.common.blocks.BlockFireboxCasing;
-import net.minecraft.block.state.IBlockState;
+import gregtech.client.utils.TooltipHelper;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -36,7 +34,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
@@ -46,7 +45,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     public final BoilerType boilerType;
     protected BoilerRecipeLogic recipeLogic;
-
     private FluidTankList fluidImportInventory;
     private ItemHandlerList itemImportInventory;
     private FluidTankList steamOutputTank;
@@ -77,7 +75,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         resetTileAbilities();
         this.throttlePercentage = 100;
         this.recipeLogic.invalidate();
-        replaceFireboxAsActive(false);
     }
 
     private void initializeAbilities() {
@@ -90,14 +87,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         this.fluidImportInventory = new FluidTankList(true);
         this.itemImportInventory = new ItemHandlerList(Collections.emptyList());
         this.steamOutputTank = new FluidTankList(true);
-    }
-
-    @Override
-    public void onRemoval() {
-        super.onRemoval();
-        if (!getWorld().isRemote && isStructureFormed()) {
-            replaceFireboxAsActive(false);
-        }
     }
 
     @Override
@@ -135,25 +124,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         return super.isActive() && recipeLogic.isActive() && recipeLogic.isWorkingEnabled();
     }
 
-    public void replaceFireboxAsActive(boolean isActive) {
-        BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos blockPos = centerPos.add(x, 0, z);
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                if (blockState.getBlock() instanceof BlockFireboxCasing) {
-                    blockState = blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive);
-                    getWorld().setBlockState(blockPos, blockState);
-                }
-            }
-        }
-    }
-
-    @Override
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return sourcePart == null ? 0 : isActive() ? 15 : 0;
-    }
-
     @Override
     protected BlockPattern createStructurePattern() {
         return boilerType == null ? null : FactoryBlockPattern.start()
@@ -179,9 +149,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip", (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0), boilerType.steamPerTick()));
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20.0));
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
+        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip", (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0)));
+        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_fluid", boilerType.steamPerTick()));
+        tooltip.add(TooltipHelper.BLINKING_RED + I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
     }
 
     @Override
@@ -215,14 +186,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     @Override
     public SoundEvent getSound() {
-        return GTSounds.BOILER;
+        return GTSoundEvents.BOILER;
     }
 
     @Override
     protected void updateFormedValid() {
-        if (isMufflerFaceFree()) {
-            this.recipeLogic.update();
-        }
+        this.recipeLogic.update();
     }
 
     @Override

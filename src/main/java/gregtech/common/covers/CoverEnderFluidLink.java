@@ -32,10 +32,12 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
-    private final int TRANSFER_RATE = 8000; // mB/t
+    public static final int TRANSFER_RATE = 8000; // mB/t
+    private static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");
 
     protected CoverPump.PumpMode pumpMode;
     private int color;
@@ -65,6 +67,14 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     private UUID getTankUUID() {
         return isPrivate ? playerUUID : null;
+    }
+
+    public FluidFilterContainer getFluidFilterContainer() {
+        return this.fluidFilter;
+    }
+
+    public boolean isIOEnabled() {
+        return this.ioEnabled;
     }
 
     @Override
@@ -111,6 +121,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
+        if (fluidHandler == null) return;
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
             GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
@@ -145,7 +156,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                 .drawCheckerboard(4, 4));
         widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
-                .setValidator(str -> str.matches("[0-9a-fA-F]*")));
+                .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
         widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
@@ -165,7 +176,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                 .build(this, player);
     }
 
-    private void updateColor(String str) {
+    public void updateColor(String str) {
         if (str.length() == 8) {
             isColorTemp = false;
             // stupid java not having actual unsigned ints
@@ -181,7 +192,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         }
     }
 
-    private String getColorStr() {
+    public String getColorStr() {
         return isColorTemp ? tempColorStr : Integer.toHexString(this.color).toUpperCase();
     }
 
@@ -191,7 +202,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("Frequency", color);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
@@ -200,6 +211,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         tagCompound.setBoolean("Private", isPrivate);
         tagCompound.setString("PlacedUUID", playerUUID.toString());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+
+        return tagCompound;
     }
 
     @Override

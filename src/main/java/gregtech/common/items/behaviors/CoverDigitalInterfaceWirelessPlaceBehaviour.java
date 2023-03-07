@@ -33,13 +33,23 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         return null;
     }
 
+    public static int getRemoteDim(ItemStack itemStack) {
+        NBTTagCompound tag = itemStack.getTagCompound();
+        if (tag != null) {
+            return tag.getInteger("dimension");
+        }
+
+        return 0;
+    }
+
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
         if (entity.world.isRemote && entity instanceof EntityPlayer) {
             ItemStack held = ((EntityPlayer) entity).getHeldItemMainhand();
             if (held == itemStack) {
                 BlockPos pos = getRemotePos(itemStack);
-                if (pos != null) {
+                int dim = getRemoteDim(itemStack);
+                if (pos != null && entity.world.provider.getDimension() == dim) {
                     BlockPosHighlightRenderer.renderBlockBoxHighLight(pos, 1500);
                 }
             }
@@ -52,6 +62,10 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.setTagCompound(NBTUtil.createPosTag(pos));
+            NBTTagCompound tag = itemStack.getTagCompound();
+            if (tag != null && !tag.hasKey("dimension")) {
+                tag.setInteger("dimension", world.provider.getDimension());
+            }
             return EnumActionResult.SUCCESS;
         }
         return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
@@ -72,6 +86,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         String binding = pos == null ? "---" : String.format("%d, %d, %d", pos.getX(), pos.getY(), pos.getZ());
         lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.1"));
         lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.2"));
-        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3", binding));
+        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3"));
+        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.4", binding));
     }
 }

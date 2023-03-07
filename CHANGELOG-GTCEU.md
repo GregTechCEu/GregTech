@@ -1,4 +1,6 @@
-<h1 align="center">Changes made by GregTech: CE Unofficial</h1>
+<h1 align="center">Changes made by GregTech: CE Unofficial as of v2.0.0</h1>
+
+<h2 align="center">For changes beyond v2.0.0, look here: https://github.com/GregTechCEu/GregTech/blob/master/CHANGELOG.md</h2>
 
 ## Table of Contents
 
@@ -93,6 +95,7 @@ This changelog attempts to gather all meaningful changes made to GregTech CE: Un
 - [#169](https://github.com/GregTechCEu/GregTech/pull/169): Rewrite the JEI Multiblock page, fix many issues and make its controls much more intuitive
 - [#194](https://github.com/GregTechCEu/GregTech/pull/194): Added a generalized Parallel Logic, for use by the Multi-Smelter, Steam Grinder, Steam Oven, and Processing Array (as well as addons or MBT Multiblocks)
 - [1382f97](https://github.com/GregTechCEu/GregTech/commit/1382f97016e12c19bc473c164caca6d31981edd8): Add Config for Boilers to use different fluids in place of Water (useful for mods like TFC)
+- [#396](https://github.com/GregTechCEu/GregTech/pull/396): Allow Fusion Reactor to Overclock (x2 EU/t, 0.5x Duration)
 
 #### [2.3.1 - New Multiblocks](#table-of-contents)
 - [#34](https://github.com/GregTechCEu/GregTech/pull/34): Added the Primitive Water Pump (from IMPACT) for collecting Water in the Steam Era
@@ -105,6 +108,7 @@ This changelog attempts to gather all meaningful changes made to GregTech CE: Un
 - [#196](https://github.com/GregTechCEu/GregTech/pull/196): Added the Central Monitor (think, ComputerCraft), with features from monitoring machines, proxying machine GUIs, displaying images and GIFs, among other things
 - [#318](https://github.com/GregTechCEu/GregTech/pull/318): Added the Processing Array, capable of running 16 machines at once, available at late EV/early IV
 - [#318](https://github.com/GregTechCEu/GregTech/pull/318): Added the Advanced Processing Array, capable of running 64 machines at once, available at late LuV/early ZPM
+- [#392](https://github.com/GregTechCEu/GregTech/pull/392): Added proper Multiblock Tanks, intended for the Early Game (Wood and Steel variants)
 
 #### [2.3.2 - Multiblock Parts](#table-of-contents)
 - [#12](https://github.com/GregTechCEu/GregTech/pull/12): Allow Multiblock Parts to be shared across Multiblocks
@@ -143,7 +147,6 @@ This changelog attempts to gather all meaningful changes made to GregTech CE: Un
 #### [2.6.1 - Standard Machines](#table-of-contents)
 - [87f0feb](https://github.com/GregTechCEu/GregTech/commit/87f0feb02f6d1e0196f825b9468af27c4e8891fc): Added 2 more Input Slots to the Mixer (for a total of 6)
 - [#68](https://github.com/GregTechCEu/GregTech/pull/68): Added Gas Collectors (in place of Air Collectors), which are Dimension-based
-- [664bd32](https://github.com/GregTechCEu/GregTech/commit/664bd32ab946b96a90ed419a4ef86f743522f629): Added the Simple Ore Washer, useful for quickly doing Ore Washer recipes without caring about byproducts
 - [#118](https://github.com/GregTechCEu/GregTech/pull/118): Added the Rock Breaker, used to create Stone, Cobblestone, Andesite, etc
 - [a20d8c9](https://github.com/GregTechCEu/GregTech/commit/a20d8c9334c2045fa03e22b91b6f1d9ebcf1c8f8): Added World Accelerators, which accelerate ticks of adjacent Tile Entities
     - Config Option to completely remove them
@@ -199,6 +202,7 @@ This changelog attempts to gather all meaningful changes made to GregTech CE: Un
 - [3846c2b](https://github.com/GregTechCEu/GregTech/commit/3846c2b2098a37dccbefe5244e7324a6cbc3d162): Redo UI for Machine Controller Cover (more reworks like this to come)
 - [acfeb9b](https://github.com/GregTechCEu/GregTech/commit/acfeb9bf288c5a2450ad4098ba429b0ca2dd7ef7): Reverse animations of some covers when Import/Export is toggled
 - [6bee57e](https://github.com/GregTechCEu/GregTech/commit/6bee57e72b4a256bb6d40356dffb96c52ddce678): Redo most button textures (further reworks to come)
+- [#397](https://github.com/GregTechCEu/GregTech/pull/397): Reworked Surface Rocks slightly, more graphical changes to come
 
 ### [4.1 - Emissive Textures](#table-of-contents)
 - [#127](https://github.com/GregTechCEu/GregTech/pull/127): Add Emissive Textures to GT machines, with a config
@@ -254,6 +258,10 @@ This changelog attempts to gather all meaningful changes made to GregTech CE: Un
 - [1609815](https://github.com/GregTechCEu/GregTech/commit/1609815475c9d9a4c1fef2362a149c6ef2e247ba): Rework Cable Covering recipes
 - [#313](https://github.com/GregTechCEu/GregTech/pull/313): Change some recipes (primarily tools) to be mirrored
 - [#292](https://github.com/GregTechCEu/GregTech/pull/292): Added Arc Furnace recycling for Machines
+- [#388](https://github.com/GregTechCEu/GregTech/pull/388): Add recipes to convert Input <-> Output Hatches and Buses (item/fluid only)
+- [744d321](https://github.com/GregTechCEu/GregTech/commit/744d3218ee76a7a7f35d11bba96d940dc4259b10): Slightly expand Petrochemistry
+- [664bd32](https://github.com/GregTechCEu/GregTech/commit/664bd32ab946b96a90ed419a4ef86f743522f629): Added the Simple Ore Washing recipes, useful for quickly doing Ore Washer recipes without caring about byproducts
+- [#404](ttps://github.com/GregTechCEu/GregTech/pull/404): Redo Tungsten-bearing Ore electrolysis (one extra step, but no longer loses 7H per Tungsten)
 
 ## [6 - Bug Fixes](#table-of-contents)
 - [#1](https://github.com/GregTechCEu/GregTech/pull/1): Fix Electric Tool damage behavior
@@ -318,6 +326,7 @@ This changelog attempts to gather all meaningful changes made to GregTech CE: Un
 - [#356](https://github.com/GregTechCEu/GregTech/pull/356): Fix Cover Grid not showing X's where connections or covers are
 - [e3b4e18](https://github.com/GregTechCEu/GregTech/commit/e3b4e18804357fcff43cd3254658698238fa2b69): Fix PBF not emitting Smoke Particles when running
 - [#366](https://github.com/GregTechCEu/GregTech/pull/366): Fix many issues with slots not respecting normal behavior in GT inventories
+- [#368](https://github.com/GregTechCEu/GregTech/pull/368): Fix many Crafting Station issues
 
 ## [7 - CraftTweaker Changes](#table-of-contents)
 - [fb69975](https://github.com/GregTechCEu/GregTech/commit/fb69975253b023e0911a5223f968df06fe52c8d1): Many new Material-related fields exposed to CraftTweaker

@@ -1,0 +1,14 @@
+{
+  "section": "Generator",
+  "title": "Large Steel Boiler",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "If you\u0027re still running off the §3Large Bronze Boiler§r, you may want to upgrade to the §3Large Steel Boiler§r.\n\nIt is slightly more efficient than the §3LBB§r, and produces §d900 EU/t worth of Steam§r."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "large_boiler.steel"
+}

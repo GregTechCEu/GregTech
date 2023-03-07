@@ -6,19 +6,17 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
+import javax.annotation.Nonnull;
 
-    private long EUToStart;
+public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
     public FusionRecipeBuilder() {
     }
 
     public FusionRecipeBuilder(Recipe recipe, RecipeMap<FusionRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
-        this.EUToStart = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L);
     }
 
     public FusionRecipeBuilder(RecipeBuilder<FusionRecipeBuilder> recipeBuilder) {
@@ -31,12 +29,12 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         if (key.equals(FusionEUToStartProperty.KEY)) {
             this.EUToStart(((Number) value).longValue());
             return true;
         }
-        return false;
+        return super.applyProperty(key, value);
     }
 
     public FusionRecipeBuilder EUToStart(long EUToStart) {
@@ -44,25 +42,20 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
             GTLog.logger.error("EU to start cannot be less than or equal to 0", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
         }
-        this.EUToStart = EUToStart;
+        this.applyProperty(FusionEUToStartProperty.getInstance(), EUToStart);
         return this;
     }
 
-    public ValidationResult<Recipe> build() {
-        Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden, isCTRecipe);
-        if (!recipe.setProperty(FusionEUToStartProperty.getInstance(), EUToStart)) {
-            return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
-        }
-
-        return ValidationResult.newResult(finalizeAndValidate(), recipe);
+    public long getEUToStart() {
+        return this.recipePropertyStorage == null ? 0L :
+                this.recipePropertyStorage.getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append(FusionEUToStartProperty.getInstance().getKey(), EUToStart)
+                .append(FusionEUToStartProperty.getInstance().getKey(), getEUToStart())
                 .toString();
     }
 }

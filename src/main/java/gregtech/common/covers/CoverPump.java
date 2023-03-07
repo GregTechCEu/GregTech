@@ -30,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
@@ -74,9 +75,13 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return false;
     }
 
-    protected void setTransferRate(int transferRate) {
+    public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
+    }
+
+    public int getTransferRate() {
+        return transferRate;
     }
 
     protected void adjustTransferRate(int amount) {
@@ -130,10 +135,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     }
 
     protected int doTransferFluids(int transferLimit) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        blockPos.setPos(coverHolder.getPos()).move(attachedSide);
-        TileEntity tileEntity = coverHolder.getWorld().getTileEntity(blockPos);
-        blockPos.release();
+        BlockPos pos = coverHolder.getPos().offset(attachedSide);
+        TileEntity tileEntity = coverHolder.getWorld().getTileEntity(pos);
         IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide.getOpposite());
         IFluidHandler myFluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
         if (fluidHandler == null || myFluidHandler == null) {
@@ -214,7 +217,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return buildUI(builder, player);
     }
 
-    public Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
+    public static Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
         int min = 1;
         return val -> {
             if (val.isEmpty()) {
@@ -323,7 +326,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
@@ -331,6 +334,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+
+        return tagCompound;
     }
 
     @Override
@@ -350,7 +355,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
-    public enum PumpMode implements IStringSerializable {
+    public enum PumpMode implements IStringSerializable, IIOMode {
         IMPORT("cover.pump.mode.import"),
         EXPORT("cover.pump.mode.export");
 
@@ -364,6 +369,11 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         @Override
         public String getName() {
             return localeName;
+        }
+
+        @Override
+        public boolean isImport() {
+            return this == IMPORT;
         }
     }
 

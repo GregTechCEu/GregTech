@@ -8,12 +8,14 @@ import gregtech.api.capability.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTTransferUtils;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -25,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -68,6 +71,8 @@ public class MinerLogic {
     private boolean isWorkingEnabled = true;
     protected boolean wasActiveAndNeedsUpdate;
 
+    private final IBlockState oreReplacementBlock = findMiningReplacementBlock();
+
     /**
      * Creates the general logic for all in-world ore block miners
      *
@@ -85,6 +90,29 @@ public class MinerLogic {
         this.maximumRadius = maximumRadius;
         this.isDone = false;
         this.PIPE_TEXTURE = pipeTexture;
+    }
+
+    private static IBlockState findMiningReplacementBlock() {
+        String[] blockDescription = StringUtils.split(ConfigHolder.machines.replaceMinedBlocksWith, ":");
+        Block replacementBlock;
+
+        if(blockDescription.length == 2) {
+            replacementBlock = Block.getBlockFromName(ConfigHolder.machines.replaceMinedBlocksWith);
+        }
+        else {
+            replacementBlock = Block.getBlockFromName(String.format("%s:%s", blockDescription[0], blockDescription[1]));
+        }
+        if(replacementBlock == null) {
+            GTLog.logger.error("Miner Config Replacement block was null, replacing with Cobblestone");
+            return Blocks.COBBLESTONE.getDefaultState();
+        }
+
+        // check for meta
+        if(blockDescription.length > 2 && !blockDescription[2].isEmpty()) {
+            return replacementBlock.getDefaultState().getBlock().getStateFromMeta(Integer.parseInt(blockDescription[2]));
+        }
+
+        return replacementBlock.getDefaultState();
     }
 
     /**
@@ -107,7 +135,7 @@ public class MinerLogic {
         // if the inventory is not full, drain energy etc. from the miner
         // the storages have already been checked earlier
         if (!miner.isInventoryFull()) {
-            // actually drain the energy
+            // always drain storages when working, even if blocksToMine ends up being empty
             drainStorages(false);
 
             // since energy is being consumed the miner is now active
@@ -135,21 +163,25 @@ public class MinerLogic {
             NonNullList<ItemStack> blockDrops = NonNullList.create();
             IBlockState blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
 
-            // if the block is not air, harvest it
-            if (blockState != Blocks.AIR.getDefaultState()) {
+            // check to make sure the ore is still there,
+            while(!GTUtility.isOre(GTUtility.toItem(blockState))) {
+                blocksToMine.removeFirst();
+                if (blocksToMine.isEmpty()) break;
+                blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
+            }
+            // When we are here we have an ore to mine! I'm glad we aren't threaded
+            if (!blocksToMine.isEmpty() & GTUtility.isOre(GTUtility.toItem(blockState))) {
                 // get the small ore drops, if a small ore
                 getSmallOreBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // get the block's drops.
                 getRegularBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // try to insert them
                 mineAndInsertItems(blockDrops, world);
-            } else {
-                // the block attempted to mine was air, so remove it from the queue and move on
-                // This can occur because of block destruction when lowering the pipe
-                blocksToMine.removeFirst();
             }
 
-        } else if (blocksToMine.isEmpty()) {
+        }
+
+        if (blocksToMine.isEmpty()) {
             // there were no blocks to mine, so the current position is the previous position
             x.set(mineX.get());
             y.set(mineY.get());
@@ -241,7 +273,7 @@ public class MinerLogic {
         // remove the ore block's position from the mining queue
         if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
             GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
-            world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
+            world.setBlockState(blocksToMine.getFirst(), oreReplacementBlock);
             mineX.set(blocksToMine.getFirst().getX());
             mineZ.set(blocksToMine.getFirst().getZ());
             mineY.set(blocksToMine.getFirst().getY());
@@ -296,6 +328,15 @@ public class MinerLogic {
     }
 
     /**
+     * Recalculates the mining area and refills the block list
+     */
+    public void resetArea() {
+        initPos(metaTileEntity.getPos(), currentRadius);
+        blocksToMine.clear();
+        checkBlocksToMine();
+    }
+
+    /**
      * Gets the blocks to mine
      * @return a {@link LinkedList} of {@link BlockPos} for each ore to mine
      */
@@ -316,20 +357,20 @@ public class MinerLogic {
                     // check every block along the x-axis
                     if (x.get() <= startX.get() + currentRadius * 2) {
                         BlockPos blockPos = new BlockPos(x.get(), y.get(), z.get());
-                        Block block = metaTileEntity.getWorld().getBlockState(blockPos).getBlock();
-                        if (block.blockHardness >= 0 && metaTileEntity.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(block)) {
+                        IBlockState state = metaTileEntity.getWorld().getBlockState(blockPos);
+                        if (state.getBlock().blockHardness >= 0 && metaTileEntity.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(GTUtility.toItem(state))) {
                             blocks.addLast(blockPos);
                         }
                         // move to the next x position
                         x.incrementAndGet();
                     } else {
                         // reset x and move to the next z layer
-                        x.set(x.get() - currentRadius * 2);
+                        x.set(startX.get());
                         z.incrementAndGet();
                     }
                 } else {
                     // reset z and move to the next y layer
-                    z.set(z.get() - currentRadius * 2);
+                    z.set(startZ.get());
                     y.decrementAndGet();
                 }
             } else
@@ -360,11 +401,11 @@ public class MinerLogic {
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
     protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
-        ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+        ItemStack itemStack = GTUtility.toItem(blockState);
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(tier, map)) {
+            for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), tier, map)) {
                 outputStack = outputStack.copy();
                 if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
                     if (fortuneLevel > 0) {

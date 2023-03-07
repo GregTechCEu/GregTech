@@ -110,7 +110,7 @@ public class VirtualTankRegistry extends WorldSavedData {
         if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
             if (removeFluid || tankMap.get(uuid).get(key).getFluidAmount() <= 0) {
                 tankMap.get(uuid).remove(key);
-                if (tankMap.get(uuid).size() <= 0) {
+                if (tankMap.get(uuid).size() == 0) {
                     tankMap.remove(uuid);
                 }
             }

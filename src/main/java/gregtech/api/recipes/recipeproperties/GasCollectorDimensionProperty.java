@@ -1,19 +1,20 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.worldgen.config.WorldGenRegistry;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 import java.util.List;
 import java.util.Map;
 
-public class GasCollectorDimensionProperty extends RecipeProperty<List> {
+public class GasCollectorDimensionProperty extends RecipeProperty<IntList> {
     public static final String KEY = "dimension";
 
     private static GasCollectorDimensionProperty INSTANCE;
 
     private GasCollectorDimensionProperty() {
-        super(KEY, List.class);
+        super(KEY, IntList.class);
     }
 
     public static GasCollectorDimensionProperty getInstance() {
@@ -28,11 +29,11 @@ public class GasCollectorDimensionProperty extends RecipeProperty<List> {
                 getDimensionsForRecipe(castValue(value))), x, y, color);
     }
 
-    private String getDimensionsForRecipe(List<Integer> value) {
+    private static String getDimensionsForRecipe(List<Integer> value) {
         Map<Integer, String> dimNames = WorldGenRegistry.getNamedDimensions();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < value.size(); i++) {
-            builder.append(dimNames.getOrDefault(value.get(i), "" + value.get(i)));
+            builder.append(dimNames.getOrDefault(value.get(i), String.valueOf(value.get(i))));
             if (i != value.size() - 1)
                 builder.append(", ");
         }

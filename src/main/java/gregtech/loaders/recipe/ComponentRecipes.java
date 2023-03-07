@@ -4,9 +4,9 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.init.Items;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static gregtech.api.GTValues.*;
@@ -118,11 +118,10 @@ public class ComponentRecipes {
 
 
         //Conveyors Start-----------------------------------------------------------------------------------------------
-        final Map<String, Material> rubberMaterials = new HashMap<String, Material>() {{
-            put("rubber", Rubber);
-            put("silicone_rubber", SiliconeRubber);
-            put("styrene_butadiene_rubber", StyreneButadieneRubber);
-        }};
+        final Map<String, Material> rubberMaterials = new Object2ObjectOpenHashMap<>();
+        rubberMaterials.put("rubber", Rubber);
+        rubberMaterials.put("silicone_rubber", SiliconeRubber);
+        rubberMaterials.put("styrene_butadiene_rubber", StyreneButadieneRubber);
 
         for (Map.Entry<String, Material> materialEntry : rubberMaterials.entrySet()) {
             Material material = materialEntry.getValue();
@@ -137,32 +136,32 @@ public class ComponentRecipes {
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Tin)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_LV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_LV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Copper)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_MV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_MV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Gold)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_HV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_HV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(cableGtSingle, Aluminium)
-                    .input(plate, materialEntry.getValue(), 6)
                     .inputs(ELECTRIC_MOTOR_EV.getStackForm(2))
+                    .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_EV.getStackForm())
                     .duration(100).EUt(VA[LV]).buildAndRegister();
@@ -170,8 +169,8 @@ public class ComponentRecipes {
             if (!materialEntry.getValue().equals(Rubber))
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .input(cableGtSingle, Tungsten)
-                        .input(plate, materialEntry.getValue(), 6)
                         .inputs(ELECTRIC_MOTOR_IV.getStackForm(2))
+                        .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                         .circuitMeta(1)
                         .outputs(CONVEYOR_MODULE_IV.getStackForm())
                         .duration(100).EUt(VA[LV]).buildAndRegister();

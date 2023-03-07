@@ -32,9 +32,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final RecipeLogicEnergy result = new RockBreakerRecipeLogic(this, RecipeMaps.ROCK_BREAKER_RECIPES, () -> energyContainer);
-        result.enableOverclockVoltage();
-        return result;
+        return new RockBreakerRecipeLogic(this, RecipeMaps.ROCK_BREAKER_RECIPES, () -> energyContainer);
     }
 
     @Override
@@ -44,7 +42,11 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     private void checkAdjacentFluids() {
-        if (getWorld() == null || getWorld().isRemote) {
+        if (getWorld() == null) {
+            hasValidFluids = true;
+            return;
+        }
+        if (getWorld().isRemote) {
             hasValidFluids = false;
             return;
         }
@@ -100,5 +102,10 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
         protected boolean shouldSearchForRecipes() {
             return hasValidFluids && super.shouldSearchForRecipes();
         }
+    }
+
+    @Override
+    public boolean getIsWeatherOrTerrainResistant(){
+        return true;
     }
 }

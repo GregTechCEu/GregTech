@@ -50,9 +50,9 @@ public class SimpleOverlayRenderer implements ICubeRenderer {
             basePath = split[1];
         }
         this.sprite = textureMap.registerSprite(new ResourceLocation(modID, "blocks/" + basePath));
-        ResourceLocation emissiveLocation = new ResourceLocation(modID, "blocks/" + basePath + "_emissive");
-        if (ResourceHelper.isTextureExist(emissiveLocation)) {
-            this.spriteEmissive = textureMap.registerSprite(emissiveLocation);
+        String emissive = "blocks/" + basePath + EMISSIVE;
+        if (ResourceHelper.doResourcepacksHaveTexture(modID, emissive, true)) {
+            this.spriteEmissive = textureMap.registerSprite(new ResourceLocation(modID, emissive));
         }
     }
 

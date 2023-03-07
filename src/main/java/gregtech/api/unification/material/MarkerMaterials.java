@@ -95,11 +95,11 @@ public class MarkerMaterials {
         public static final Material UV = new MarkerMaterial(GTValues.VN[GTValues.UV].toLowerCase());
         public static final Material UHV = new MarkerMaterial(GTValues.VN[GTValues.UHV].toLowerCase());
 
-        public static Material UEV = new MarkerMaterial(GTValues.VN[GTValues.UEV].toLowerCase());
-        public static Material UIV = new MarkerMaterial(GTValues.VN[GTValues.UIV].toLowerCase());
-        public static Material UXV = new MarkerMaterial(GTValues.VN[GTValues.UXV].toLowerCase());
-        public static Material OpV = new MarkerMaterial(GTValues.VN[GTValues.OpV].toLowerCase());
-        public static Material MAX = new MarkerMaterial(GTValues.VN[GTValues.MAX].toLowerCase());
+        public static final Material UEV = new MarkerMaterial(GTValues.VN[GTValues.UEV].toLowerCase());
+        public static final Material UIV = new MarkerMaterial(GTValues.VN[GTValues.UIV].toLowerCase());
+        public static final Material UXV = new MarkerMaterial(GTValues.VN[GTValues.UXV].toLowerCase());
+        public static final Material OpV = new MarkerMaterial(GTValues.VN[GTValues.OpV].toLowerCase());
+        public static final Material MAX = new MarkerMaterial(GTValues.VN[GTValues.MAX].toLowerCase());
     }
 
     public static class Component {

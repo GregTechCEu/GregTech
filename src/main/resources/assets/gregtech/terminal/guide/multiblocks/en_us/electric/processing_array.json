@@ -1,7 +1,14 @@
 {
   "section": "Electric",
   "title": "Processing Array",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Processing Array does nothing... except that it does a lot!§r\n\nThe §3Processing Array§r is a power §6automation tool§r.\nIt combines several single block machines into one single multiblock.\nPlace up to §d16§r Machines into the §3Machine Access Interface§r.\n\nThe §3PA§r will now §asimulate§r all the machines you put inside, as if they were running at the same time.\nThis means recipes can now be performed up to §d16§r at a time, this is called §4parallel§r.\n\nPower cost is based on the current recipe being run, times the number of §4parallel§r being performed.\nAs an §9example§r, §316 LV Distilleries§r will require an §3HV Energy Hatch§r in order to run effectively.\n\n\n§cWhere or why is the Processing Array useful?§r\n§9-§r §4Parallelization is superior§r to oveclocking. Use it for passive setups such as Ore Processing or Oil Distilling.\n§9-§r §6Distinct buses§r: a §3PA§r can accept up to 10 §3Input Buses§r. Use it for your pattern automation with §3Extruder§r, §3Engraver§r, and many other.\n\n\n§9Note:§r With §2Gregicality Multiblocks§r installed, the §3PA§r can be mostly replaced with all the specialized Multiblocks instead. That\u0027s for you if you hate 3x3 blue cubes, or if you hate crafting numerous low tier machines.\n\n\n§bLore:§r In GregTech 5, the Data Orb was used to Matter Replicator to store data of the material you wanted to replicate. There is no replication here, the Orb is just a crafting component."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "processing_array"
 }

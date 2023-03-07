@@ -7,7 +7,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -80,7 +80,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
-        GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
+        AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
     }
 
@@ -167,7 +167,14 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public double getCoverPlateThickness() {
-        return holder.getPipeType().getThickness() >= 1 ? 0 : 1.0 / 16.0;
+        float thickness = holder.getPipeType().getThickness();
+        // no cover plate for pipes >= 1 block thick
+        if (thickness >= 1) return 0;
+
+        // If the available space for the cover is less than the regular cover plate thickness, use that
+
+        // need to divide by 2 because thickness is centered on the block, so the space is half on each side of the pipe
+        return Math.min(1.0 / 16.0, (1.0 - thickness) / 2);
     }
 
     @Override

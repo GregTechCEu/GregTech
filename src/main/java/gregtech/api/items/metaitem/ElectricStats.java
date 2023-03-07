@@ -1,14 +1,14 @@
 package gregtech.api.items.metaitem;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
-import gregtech.api.items.metaitem.stats.IItemComponent;
-import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
+import gregtech.api.items.metaitem.stats.*;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,15 +17,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour {
+public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour, ISubItemHandler {
 
     public static final ElectricStats EMPTY = new ElectricStats(0, 0, false, false);
 
@@ -72,12 +75,23 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
             for (int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
                 ItemStack itemInSlot = inventoryPlayer.getStackInSlot(i);
                 IElectricItem slotElectricItem = itemInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                IEnergyStorage feEnergyItem = itemInSlot.getCapability(CapabilityEnergy.ENERGY, null);
                 if (slotElectricItem != null && !slotElectricItem.canProvideChargeExternally()) {
 
                     long chargedAmount = chargeElectricItem(transferLimit, electricItem, slotElectricItem);
                     if (chargedAmount > 0L) {
                         transferLimit -= chargedAmount;
                         if (transferLimit == 0L) break;
+                    }
+                }
+                else if(ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
+                    if(feEnergyItem.getEnergyStored() < feEnergyItem.getMaxEnergyStored()) {
+                       int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
+                       long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
+                       long energyToTransfer = Math.min(euToCharge, transferLimit);
+                       long maxDischargeAmount = Math.min(energyToTransfer, electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
+                       FeCompat.insertEu(feEnergyItem, maxDischargeAmount);
+                       electricItem.discharge(maxDischargeAmount, electricItem.getTier(), false, true, false);
                     }
                 }
             }
@@ -154,6 +168,23 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
             return defaultValue;
         }
         return 1;
+    }
+
+    @Override
+    public String getItemSubType(ItemStack itemStack) {
+        return "";
+    }
+
+    @Override
+    public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        ItemStack copy = itemStack.copy();
+        IElectricItem electricItem = copy.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            electricItem.charge(electricItem.getMaxCharge(), electricItem.getTier(), true, false);
+            subItems.add(copy);
+        } else {
+            subItems.add(itemStack);
+        }
     }
 
     @Override

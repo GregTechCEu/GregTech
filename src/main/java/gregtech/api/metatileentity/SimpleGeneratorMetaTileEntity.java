@@ -54,9 +54,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
-        result.enableOverclockVoltage();
-        return result;
+        return new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
     }
 
     @Override
@@ -138,6 +136,14 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         if (recipeMap.getMaxFluidInputs() > 0 || recipeMap.getMaxFluidOutputs() > 0)
             tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.getTankScalingFunction().apply(getTier())));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

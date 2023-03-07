@@ -16,11 +16,11 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.CubeRendererState;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
+import gregtech.client.renderer.CubeRendererState;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -162,7 +162,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IBlockAccess world, BlockPos pos) {
+    public static Pair<TextureAtlasSprite, Integer> getParticleTexture(IBlockAccess world, BlockPos pos) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(world, pos);
         if (metaTileEntity == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);

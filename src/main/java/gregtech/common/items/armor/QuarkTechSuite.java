@@ -35,13 +35,21 @@ import java.util.List;
 import java.util.Map;
 
 public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
+
     protected static final Map<Potion, Integer> potionRemovalCost = new IdentityHashMap<>();
     private float charge = 0.0F;
+
+    @SideOnly(Side.CLIENT)
+    protected ArmorUtils.ModularHUD HUD;
 
     public QuarkTechSuite(EntityEquipmentSlot slot, int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, slot);
         potionRemovalCost.put(MobEffects.POISON, 10000);
         potionRemovalCost.put(MobEffects.WITHER, 25000);
+        if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
+            //noinspection NewExpressionSideOnly
+            HUD = new ArmorUtils.ModularHUD();
+        }
     }
 
     @Override
@@ -211,7 +219,7 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         }
     }
 
-    public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+    public static void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
             if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.nightvision.disabled"), true);
@@ -271,14 +279,15 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         return SLOT == EntityEquipmentSlot.CHEST ? 1.2D : 1.0D;
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return true;
+    @Override
+    public float getHeatResistance() {
+        return 0.5f;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
+        addCapacityHUD(item, this.HUD);
         this.HUD.draw();
         this.HUD.reset();
     }

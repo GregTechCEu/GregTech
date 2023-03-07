@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity;
 
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.me.helpers.AENetworkProxy;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
@@ -9,30 +12,33 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -41,6 +47,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -50,6 +57,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -59,9 +67,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -165,7 +176,36 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    }
+
+    /**
+     * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.
+     * ALWAYS CALL SUPER LAST!
+     * Intended ordering:
+     * - Screwdriver
+     * - Wrench
+     * - Wire Cutter
+     * - Soft Hammer
+     * - Hammer
+     * - Crowbar
+     * - Others
+     * <br>
+     * The super method automatically handles Hammer muffling and Crowbar cover removal.
+     * If you have extended usages of these tools in your addon, let us know and we can amend
+     * this default appended tooltip information.
+     */
+    @SideOnly(Side.CLIENT)
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        if (getSound() != null) {
+            tooltip.add(I18n.format("gregtech.tool_action.hammer"));
+        }
+        tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+    }
+
+    /** Override this to completely remove the "Tool Info" tooltip section */
+    public boolean showToolUsages() {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)
@@ -222,6 +262,15 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
+     * Used to display things like particles on random display ticks
+     * This method is typically used by torches or nether portals, as an example use-case
+     */
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick() {
+
+    }
+
+    /**
      * Called from ItemBlock to initialize this MTE with data contained in ItemStack
      *
      * @param itemStack itemstack of itemblock
@@ -243,6 +292,20 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         subItems.add(getStackForm());
+    }
+
+    /**
+     * Check if this MTE belongs in certain creative tab. To add machines in custom creative tab, the creative tab
+     * should be registered via {@link gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs)
+     * MachineItemBlock#addCreativeTab(CreativeTabs)} beforehand.
+     *
+     * @param creativeTab The creative tab to check
+     * @return Whether this MTE belongs in the creative tab or not
+     *
+     * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs) MachineItemBlock#addCreativeTab(CreativeTabs)
+     */
+    public boolean isInCreativeTab(CreativeTabs creativeTab) {
+        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH;
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -346,32 +409,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
-    public final boolean onCoverRightClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
-        CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
-        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                coverBehavior.onRightClick(playerIn, hand, result);
-        if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
-        }
-        return onRightClick(playerIn, hand, result.sideHit, result);
-    }
-
-    public final boolean onCoverScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
-        EnumFacing hitFacing = ICoverable.determineGridSideHit(result);
-        boolean accessingActiveOutputSide = false;
-        if (this.getCapability(GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE, hitFacing) != null) {
-            accessingActiveOutputSide = playerIn.isSneaking();
-        }
-        EnumFacing coverSide = ICoverable.traceCoverSide(result);
-        CoverBehavior coverBehavior = coverSide == null ? null : getCoverAtSide(coverSide);
-        EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                accessingActiveOutputSide ? EnumActionResult.PASS : coverBehavior.onScrewdriverClick(playerIn, hand, result);
-        if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
-        }
-        return onScrewdriverClick(playerIn, hand, result.sideHit, result);
-    }
-
     /**
      * Called when player clicks on specific side of this meta tile entity
      *
@@ -397,12 +434,45 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * Called when player clicks wrench on specific side of this meta tile entity
+     * Called when a player clicks this meta tile entity with a tool
      *
-     * @return true if something happened, so wrench will get damaged and animation will be played
+     * @return true if something happened, so tools will get damaged and animations will be played
+     */
+    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult)  {
+        // the side hit from the machine grid
+        EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
+        CoverBehavior coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
+
+        // Prioritize covers where they apply (Screwdriver, Soft Mallet)
+        if (toolClasses.contains(ToolClasses.SCREWDRIVER)) {
+            if (coverBehavior != null && coverBehavior.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
+            } else return onScrewdriverClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
+            if (coverBehavior != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
+            } else return onSoftMalletClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.WRENCH)) {
+            return onWrenchClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.CROWBAR)) {
+            return onCrowbarClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
+            return onHardHammerClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        return false;
+    }
+
+    /**
+     * Called when player clicks a wrench on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        if (playerIn.isSneaking()) {
+        if (!needsSneakToRotate() || playerIn.isSneaking()) {
             if (wrenchSide == getFrontFacing() || !isValidFrontFacing(wrenchSide) || !hasFrontFacing()) {
                 return false;
             }
@@ -415,15 +485,66 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * Called when player clicks screwdriver on specific side of this meta tile entity
+     * Called when player clicks a screwdriver on specific side of this meta tile entity
      *
-     * @return true if something happened, so screwdriver will get damaged and animation will be played
+     * @return true if something happened, so the tool will get damaged and animation will be played
      */
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return false;
     }
 
+    /**
+     * Called when player clicks a crowbar on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getCoverAtSide(facing) != null) {
+            return removeCover(facing);
+        }
+        return false;
+    }
+
+    /**
+     * Called when player clicks a soft mallet on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        if (controllable != null) {
+            controllable.setWorkingEnabled(!controllable.isWorkingEnabled());
+            if (!getWorld().isRemote) {
+                playerIn.sendMessage(new TextComponentTranslation(controllable.isWorkingEnabled() ?
+                        "behaviour.soft_hammer.enabled" : "behaviour.soft_hammer.disabled"));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called when player clicks a hard hammer on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onHardHammerClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        toggleMuffled();
+        if (!getWorld().isRemote) {
+            playerIn.sendMessage(new TextComponentTranslation(isMuffled() ?
+                    "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"));
+        }
+        return true;
+    }
+
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    }
+
+    /**
+     * @return true if the player must sneak to rotate this metatileentity, otherwise false
+     */
+    public boolean needsSneakToRotate() {
+        return false;
     }
 
     @Nullable
@@ -451,7 +572,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         notifyBlockUpdate();
         markDirty();
         onCoverPlacementUpdate();
-        GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
+        AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
     }
 
@@ -655,10 +776,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (--playSoundCooldown > 0) {
                 return;
             }
-            GTSoundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
+            GregTechAPI.soundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
             playSoundCooldown = 20;
         } else {
-            GTSoundManager.stopTileSound(getPos());
+            GregTechAPI.soundManager.stopTileSound(getPos());
             playSoundCooldown = 0;
         }
     }
@@ -734,7 +855,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return tool required to dismantle this meta tile entity properly
      */
     public String getHarvestTool() {
-        return "wrench";
+        return ToolClasses.WRENCH;
     }
 
     /**
@@ -776,8 +897,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         int amountOfTraits = buf.readShort();
         for (int i = 0; i < amountOfTraits; i++) {
             int traitNetworkId = buf.readVarInt();
-            MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
-            trait.receiveInitialData(buf);
+            mteTraits.stream()
+                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
+                    .findAny()
+                    .ifPresent(trait -> trait.receiveInitialData(buf));
         }
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             int coverId = buf.readVarInt();
@@ -817,9 +940,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
-            MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
-            int internalId = buf.readVarInt();
-            trait.receiveCustomData(internalId, buf);
+            mteTraits.stream()
+                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
+                    .findAny()
+                    .ifPresent(trait -> trait.receiveCustomData(buf.readVarInt(), buf));
         } else if (dataId == COVER_ATTACHED_MTE) {
             //cover placement event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
@@ -850,7 +974,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
             if (muffled) {
-                GTSoundManager.stopTileSound(getPos());
+                GregTechAPI.soundManager.stopTileSound(getPos());
             }
         }
     }
@@ -900,49 +1024,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return capabilityResult;
     }
 
-    public boolean fillInternalTankFromFluidContainer(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot) {
-        ItemStack inputContainerStack = importItems.extractItem(inputSlot, 1, true);
-        FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, false);
-        if (result.isSuccess()) {
-            ItemStack remainingItem = result.getResult();
-            if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
-                return false; //do not fill if item stacks match
-            if (!remainingItem.isEmpty() && !exportItems.insertItem(outputSlot, remainingItem, true).isEmpty())
-                return false; //do not fill if can't put remaining item
-            FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, true);
-            importItems.extractItem(inputSlot, 1, false);
-            exportItems.insertItem(outputSlot, remainingItem, false);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean fillContainerFromInternalTank(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot) {
-        ItemStack emptyContainer = importItems.extractItem(inputSlot, 1, true);
-        FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, false);
-        if (result.isSuccess()) {
-            ItemStack remainingItem = result.getResult();
-            if (!remainingItem.isEmpty() && !exportItems.insertItem(outputSlot, remainingItem, true).isEmpty())
-                return false;
-            FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, true);
-            importItems.extractItem(inputSlot, 1, false);
-            exportItems.insertItem(outputSlot, remainingItem, false);
-            return true;
-        }
-        return false;
-    }
-
     public void fillInternalTankFromFluidContainer() {
+        fillInternalTankFromFluidContainer(importFluids);
+    }
+
+    public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
-            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, false);
+            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, false);
             if (result.isSuccess()) {
                 ItemStack remainingItem = result.getResult();
                 if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
                     continue; //do not fill if item stacks match
                 if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
                     continue; //do not fill if can't put remaining item
-                FluidUtil.tryEmptyContainer(inputContainerStack, importFluids, Integer.MAX_VALUE, null, true);
+                FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
             }
@@ -950,14 +1046,18 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void fillContainerFromInternalTank() {
+        fillContainerFromInternalTank(exportFluids);
+    }
+
+    public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
-            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, false);
+            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, false);
             if (result.isSuccess()) {
                 ItemStack remainingItem = result.getResult();
                 if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
                     continue;
-                FluidUtil.tryFillContainer(emptyContainer, exportFluids, Integer.MAX_VALUE, null, true);
+                FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
             }
@@ -965,63 +1065,22 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void pushFluidsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
-            if (tileEntity == null) {
-                continue;
-            }
-            IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-            //use getCoverCapability so fluid tank index filtering and fluid filtering covers will work properly
-            IFluidHandler myFluidHandler = getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
-            if (fluidHandler == null || myFluidHandler == null) {
-                continue;
-            }
-            GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, Integer.MAX_VALUE);
-        }
-        blockPos.release();
+        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, GTTransferUtils::transferFluids, allowedFaces);
     }
 
     public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
-            if (tileEntity == null) {
-                continue;
-            }
-            IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-            //use getCoverCapability so fluid tank index filtering and fluid filtering covers will work properly
-            IFluidHandler myFluidHandler = getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
-            if (fluidHandler == null || myFluidHandler == null) {
-                continue;
-            }
-            GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, Integer.MAX_VALUE);
-        }
-        blockPos.release();
+        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.transferFluids(otherCap, thisCap), allowedFaces);
     }
 
     public void pushItemsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
-            if (tileEntity == null) {
-                continue;
-            }
-            IItemHandler itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-            //use getCoverCapability so item/ore dictionary filter covers will work properly
-            IItemHandler myItemHandler = getCoverCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing);
-            if (itemHandler == null || myItemHandler == null) {
-                continue;
-            }
-            GTTransferUtils.moveInventoryItems(myItemHandler, itemHandler);
-        }
-        blockPos.release();
+        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, GTTransferUtils::moveInventoryItems, allowedFaces);
     }
 
     public void pullItemsFromNearbyHandlers(EnumFacing... allowedFaces) {
+        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.moveInventoryItems(otherCap, thisCap), allowedFaces);
+    }
+
+    private <T> void transferToNearby(Capability<T> capability, BiConsumer<T, T> transfer, EnumFacing... allowedFaces) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing nearbyFacing : allowedFaces) {
             blockPos.setPos(getPos()).move(nearbyFacing);
@@ -1029,13 +1088,13 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (tileEntity == null) {
                 continue;
             }
-            IItemHandler itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
+            T otherCap = tileEntity.getCapability(capability, nearbyFacing.getOpposite());
             //use getCoverCapability so item/ore dictionary filter covers will work properly
-            IItemHandler myItemHandler = getCoverCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, nearbyFacing);
-            if (itemHandler == null || myItemHandler == null) {
+            T thisCap = getCoverCapability(capability, nearbyFacing);
+            if (otherCap == null || thisCap == null) {
                 continue;
             }
-            GTTransferUtils.moveInventoryItems(itemHandler, myItemHandler);
+            transfer.accept(thisCap, otherCap);
         }
         blockPos.release();
     }
@@ -1113,6 +1172,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean isValidFrontFacing(EnumFacing facing) {
+        if (this.hasFrontFacing() && getFrontFacing() == facing) return false;
         return facing != EnumFacing.UP && facing != EnumFacing.DOWN;
     }
 
@@ -1222,7 +1282,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
+    /**
+     * Deprecated, use {@link MetaTileEntity#onPlacement()} instead
+     */
+    @Deprecated
     public void onAttached(Object... data) {
+    }
+
+    /**
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
+     * <p>
+     * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
+     * this should be manually called immediately afterwards
+     */
+    public void onPlacement() {
+
     }
 
     /**
@@ -1235,7 +1309,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public void invalidate() {
         if (getWorld() != null && getWorld().isRemote) {
-            GTSoundManager.stopTileSound(getPos());
+            GregTechAPI.soundManager.stopTileSound(getPos());
         }
     }
 
@@ -1348,19 +1422,67 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public RecipeMap<?> getRecipeMap() {
-
-        for (int i = 0; i < mteTraits.size(); i++) {
-            if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
-                return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
+        for (MTETrait mteTrait : mteTraits) {
+            if (mteTrait.getName().equals("RecipeMapWorkable")) {
+                return ((AbstractRecipeLogic) mteTrait).getRecipeMap();
             }
         }
         return null;
     }
 
+    public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance, IEnergyContainer energyContainer) {
+        World world = getWorld();
+        if (!world.isRemote && ConfigHolder.machines.doTerrainExplosion && !getIsWeatherOrTerrainResistant() && energyContainer.getEnergyStored() != 0) {
+            if (GTValues.RNG.nextInt(1000) == 0) {
+                for (EnumFacing side : EnumFacing.VALUES) {
+                    Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
+                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                        doExplosion(explosionPower);
+                        return;
+                    }
+                }
+            }
+            if (GTValues.RNG.nextInt(1000) == 0) {
+                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
+                    if (world.isThundering() && GTValues.RNG.nextInt(3) == 0) {
+                        doExplosion(explosionPower);
+                    } else if (GTValues.RNG.nextInt(10) == 0) {
+                        doExplosion(explosionPower);
+                    } else setOnFire(additionalFireChance);
+                }
+            }
+        }
+    }
+
     public void doExplosion(float explosionPower) {
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                explosionPower, ConfigHolder.machines.doExplosions);
+                explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
+    }
+
+    public void setOnFire(double additionalFireChance) {
+        boolean isFirstFireSpawned = false;
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (getWorld().isAirBlock(getPos().offset(side))) {
+                if (!isFirstFireSpawned) {
+                    getWorld().setBlockState(getPos().offset(side), Blocks.FIRE.getDefaultState(), 11);
+                    if (!getWorld().isAirBlock(getPos().offset(side))) {
+                        isFirstFireSpawned = true;
+                    }
+                } else if (additionalFireChance >= GTValues.RNG.nextDouble() * 100) {
+                    getWorld().setBlockState(getPos().offset(side), Blocks.FIRE.getDefaultState(), 11);
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether this tile entity not explode in rain, fire, water or lava
+     *
+     * @return true if tile entity should not explode in these sources
+     */
+    public boolean getIsWeatherOrTerrainResistant() {
+        return false;
     }
 
     public boolean doTickProfileMessage() {
@@ -1375,5 +1497,21 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     @Override
     public boolean canVoidRecipeFluidOutputs() {
         return false;
+    }
+
+    @Nonnull
+    @Method(modid = GTValues.MODID_APPENG)
+    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+        return AECableType.NONE;
+    }
+
+    @Nullable
+    @Method(modid = GTValues.MODID_APPENG)
+    public AENetworkProxy getProxy() {
+        return null;
+    }
+
+    @Method(modid = GTValues.MODID_APPENG)
+    public void gridChanged() {
     }
 }

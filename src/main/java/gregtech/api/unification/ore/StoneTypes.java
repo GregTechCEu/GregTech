@@ -1,13 +1,14 @@
 package gregtech.api.unification.ore;
 
-import gregtech.api.GTValues;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockStoneSmooth;
 import gregtech.common.blocks.MetaBlocks;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockRedSandstone;
+import net.minecraft.block.BlockSandStone;
+import net.minecraft.block.BlockStone;
 import net.minecraft.block.BlockStone.EnumType;
+import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.ResourceLocation;
 
 public class StoneTypes {
 

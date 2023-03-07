@@ -1,9 +1,9 @@
 package gregtech.common.blocks.wood;
 
 import com.google.common.collect.Lists;
-import gregtech.GregTechMod;
 import gregtech.api.GregTechAPI;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.CoreModule;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockPlanks.EnumType;
 import net.minecraft.block.state.BlockStateContainer;
@@ -102,7 +102,7 @@ public class BlockRubberLeaves extends BlockLeaves {
         return true;
     }
 
-    private boolean fancyLeaves() {
-        return GregTechMod.proxy.isFancyGraphics();
+    private static boolean fancyLeaves() {
+        return CoreModule.proxy.isFancyGraphics();
     }
 }

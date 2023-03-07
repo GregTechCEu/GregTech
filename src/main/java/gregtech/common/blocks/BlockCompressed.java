@@ -3,10 +3,12 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.common.blocks.properties.PropertyMaterial;
@@ -57,11 +59,11 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     public String getHarvestTool(IBlockState state) {
         Material material = state.getValue(variantProperty);
         if (material.isSolid()) {
-            return "pickaxe";
+            return ToolClasses.PICKAXE;
         } else if (material.hasProperty(PropertyKey.DUST)) {
-            return "shovel";
+            return ToolClasses.SHOVEL;
         }
-        return "pickaxe";
+        return ToolClasses.PICKAXE;
     }
 
     @Override
@@ -93,8 +95,8 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return new BlockStateContainer(this, variantProperty);
     }
 
-    public ItemStack getItem(IBlockState blockState) {
-        return new ItemStack(this, 1, getMetaFromState(blockState));
+    public static ItemStack getItem(IBlockState blockState) {
+        return GTUtility.toItem(blockState);
     }
 
     public ItemStack getItem(Material material) {
@@ -157,7 +159,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         for (IBlockState state : this.getBlockState().getValidStates()) {
             Material m = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(m.getMaterialIconSet()));
+            event.getMap().registerSprite(MaterialIconType.block.getBlockTexturePath(m.getMaterialIconSet()));
         }
     }
 

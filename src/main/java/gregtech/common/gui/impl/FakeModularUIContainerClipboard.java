@@ -1,11 +1,11 @@
 package gregtech.common.gui.impl;
 
 import com.google.common.collect.Lists;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.CPacketClipboardUIWidgetUpdate;
+import gregtech.core.network.packets.PacketClipboardUIWidgetUpdate;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import io.netty.buffer.Unpooled;
 import net.minecraft.inventory.Slot;
@@ -20,8 +20,6 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_UI;
 
-
-// Note: when porting the central monitor, please make this more generic.
 public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
     private final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
     public final List<Slot> inventorySlots = Lists.newArrayList();
@@ -92,16 +90,15 @@ public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
         packetBuffer.writeVarInt(widgetId);
         packetBuffer.writeVarInt(updateId);
         payloadWriter.accept(packetBuffer);
-        NetworkHandler.channel.sendToServer(new CPacketClipboardUIWidgetUpdate(
+        GregTechAPI.networkHandler.sendToServer(new PacketClipboardUIWidgetUpdate(
                 this.clipboard.getWorld().provider.getDimension(),
                 this.clipboard.getPos(),
-                updateId, packetBuffer
-        ).toFMLPacket());
+                updateId, packetBuffer));
     }
 
     @Override
     public void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-        this.clipboard.writeCustomData(UPDATE_UI, buf -> {
+        this.clipboard.writeCustomData(UPDATE_UI + modularUI.guiWidgets.inverse().get(widget), buf -> {
             buf.writeVarInt(windowId);
             buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
             buf.writeVarInt(updateId);

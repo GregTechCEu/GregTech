@@ -11,8 +11,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.client.resources.I18n;
@@ -56,6 +56,12 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         if (shouldRenderOverlay()) {
             getOverlay().renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
         }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
     @Nonnull
@@ -125,6 +131,13 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
     public boolean canRenderFrontFaceX() {
         return isExportHatch;
     }
@@ -152,6 +165,15 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_OUTPUT_HATCH_16A) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
+        }
+    }
+
+    @Override
+    public void doExplosion(float explosionPower) {
+        if (getController() != null)
+            getController().explodeMultiblock(explosionPower);
+        else {
+            super.doExplosion(explosionPower);
         }
     }
 }

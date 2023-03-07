@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/shiny/bolt",
   "textures": {
-    "layer0": "gregtech:items/material_sets/bright/bolt",
     "layer1": "gregtech:items/material_sets/bright/bolt_overlay"
   }
 }

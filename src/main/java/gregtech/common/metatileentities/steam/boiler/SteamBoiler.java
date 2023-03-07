@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -16,12 +17,14 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.sound.GTSounds;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,9 +33,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,16 +49,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
 public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoProvider {
 
+    private static final Pattern STRING_SUBSTITUTION_PATTERN = Pattern.compile("%s", Pattern.LITERAL);
+
     private static final EnumFacing[] STEAM_PUSH_DIRECTIONS = ArrayUtils.add(EnumFacing.HORIZONTALS, EnumFacing.UP);
 
-    public final TextureArea BRONZE_SLOT_BACKGROUND_TEXTURE;
+    public final TextureArea bronzeSlotBackgroundTexture;
 
-    public final TextureArea SLOT_FURNACE_BACKGROUND;
+    public final TextureArea slotFurnaceBackground;
 
     protected final boolean isHighPressure;
     private final ICubeRenderer renderer;
@@ -75,8 +84,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         super(metaTileEntityId);
         this.renderer = renderer;
         this.isHighPressure = isHighPressure;
-        BRONZE_SLOT_BACKGROUND_TEXTURE = getGuiTexture("slot_%s");
-        SLOT_FURNACE_BACKGROUND = getGuiTexture("slot_%s_furnace_background");
+        this.bronzeSlotBackgroundTexture = getGuiTexture("slot_%s");
+        this.slotFurnaceBackground = getGuiTexture("slot_%s_furnace_background");
         this.containerInventory = new ItemStackHandler(2);
     }
 
@@ -172,7 +181,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 generateSteam();
             }
 
-            fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
+            GTTransferUtils.fillInternalTankFromFluidContainer(importFluids, containerInventory, 0, 1);
 
             if (getOffsetTimer() % 5 == 0) {
                 pushFluidsIntoNearbyHandlers(STEAM_PUSH_DIRECTIONS);
@@ -229,10 +238,23 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 doExplosion(2.0f);
             } else this.hasNoWater = !hasDrainedWater;
             if (filledSteam == 0 && hasDrainedWater) {
-                if (ConfigHolder.machines.machineSounds && !this.isMuffled()){
-                    getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                            SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                final float x = getPos().getX() + 0.5F;
+                final float y = getPos().getY() + 0.5F;
+                final float z = getPos().getZ() + 0.5F;
+
+                ((WorldServer) getWorld()).spawnParticle(EnumParticleTypes.CLOUD,
+                        x + getFrontFacing().getXOffset() * 0.6,
+                        y + getFrontFacing().getYOffset() * 0.6,
+                        z + getFrontFacing().getZOffset() * 0.6,
+                        7 + GTValues.RNG.nextInt(3),
+                        getFrontFacing().getXOffset() / 2.0,
+                        getFrontFacing().getYOffset() / 2.0,
+                        getFrontFacing().getZOffset() / 2.0, 0.1);
+
+                if (ConfigHolder.machines.machineSounds && !this.isMuffled()) {
+                    getWorld().playSound(null, x, y, z, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
+
                 steamFluidTank.drain(4000, true);
             }
         } else this.hasNoWater = false;
@@ -283,7 +305,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     protected TextureArea getGuiTexture(String pathTemplate) {
         String type = isHighPressure ? "steel" : "bronze";
         return TextureArea.fullImage(String.format("textures/gui/steam/%s/%s.png",
-                type, pathTemplate.replace("%s", type)));
+                type, STRING_SUBSTITUTION_PATTERN.matcher(pathTemplate).replaceAll(Matcher.quoteReplacement(type))));
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
@@ -310,12 +332,21 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.steam_boiler.tooltip_produces", getBaseSteamOutput()));
+        tooltip.add(String.format("%s %s",
+                I18n.format("gregtech.universal.tooltip.produces_fluid", getBaseSteamOutput() / 20),
+                Materials.Steam.getLocalizedName()));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
     public SoundEvent getSound() {
-        return GTSounds.BOILER;
+        return GTSoundEvents.BOILER;
     }
 
     @Override
@@ -328,5 +359,40 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount", GTUtility.formatNumbers((int) (this.getTemperaturePercent() * 100))));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (this.isActive()) {
+            final BlockPos pos = getPos();
+            float x = pos.getX() + 0.5F;
+            float z = pos.getZ() + 0.5F;
+
+            if (GTValues.RNG.nextDouble() < 0.1) {
+                getWorld().playSound(x, pos.getY(), z + 0.5F, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+            }
+
+            final EnumFacing facing = getFrontFacing();
+            final float horizontalOffset = GTValues.RNG.nextFloat() * 0.6F - 0.3F;
+            final float y = pos.getY() + GTValues.RNG.nextFloat() * 0.375F;
+
+            if (facing.getAxis() == EnumFacing.Axis.X) {
+                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) x += 0.52F;
+                else x -= 0.52F;
+                z += horizontalOffset;
+            } else if (facing.getAxis() == EnumFacing.Axis.Z) {
+                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) z += 0.52F;
+                else z -= 0.52F;
+                x += horizontalOffset;
+            }
+            randomDisplayTick(x, y, z);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void randomDisplayTick(float x, float y, float z) {
+        getWorld().spawnParticle(isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, x, y, z, 0, 0, 0);
+        getWorld().spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
     }
 }

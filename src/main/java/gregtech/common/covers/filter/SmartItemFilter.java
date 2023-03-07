@@ -2,18 +2,18 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -50,9 +50,9 @@ public class SmartItemFilter extends ItemFilter {
                 filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
             } else {
-                CountableIngredient inputIngredient = recipe.getInputs().iterator().next();
-                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getCount());
-                cachedTransferRateValue = inputIngredient.getCount();
+                GTRecipeInput inputIngredient = recipe.getInputs().iterator().next();
+                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
+                cachedTransferRateValue = inputIngredient.getAmount();
             }
         }
 
@@ -117,7 +117,7 @@ public class SmartItemFilter extends ItemFilter {
         CENTRIFUGE("cover.smart_item_filter.filtering_mode.centrifuge", RecipeMaps.CENTRIFUGE_RECIPES),
         SIFTER("cover.smart_item_filter.filtering_mode.sifter", RecipeMaps.SIFTER_RECIPES);
 
-        private final Map<ItemAndMetadata, Integer> transferStackSizesCache = new HashMap<>();
+        private final Map<ItemAndMetadata, Integer> transferStackSizesCache = new Object2IntOpenHashMap<>();
         public final String localeName;
         public final RecipeMap<?> recipeMap;
 

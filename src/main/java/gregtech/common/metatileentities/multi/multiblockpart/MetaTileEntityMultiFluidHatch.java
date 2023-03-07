@@ -3,6 +3,9 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTankFromList;
@@ -20,8 +23,12 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -29,14 +36,16 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     private static final int TANK_SIZE = 16000;
 
     protected FluidTankList fluidTanks;
+    private boolean workingEnabled;
 
     public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
+        this.workingEnabled = true;
         initializeInventory();
     }
 
@@ -48,7 +57,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     @Override
     protected void initializeInventory() {
         FluidTank[] fluidsHandlers = new FluidTank[(int) Math.pow(this.getTier(), 2)];
-        for (int i = 0; i <fluidsHandlers.length; i++) {
+        for (int i = 0; i < fluidsHandlers.length; i++) {
             fluidsHandlers[i] = new NotifiableFluidTankFromList(TANK_SIZE, this, isExportHatch, i) {
                 @Override
                 public Supplier<IMultipleTankHandler> getFluidTankList() {
@@ -65,11 +74,62 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (isExportHatch) {
-                pushFluidsIntoNearbyHandlers(getFrontFacing());
-            } else {
-                pullFluidsFromNearbyHandlers(getFrontFacing());
+            if (workingEnabled) {
+                if (isExportHatch) {
+                    pushFluidsIntoNearbyHandlers(getFrontFacing());
+                } else {
+                    pullFluidsFromNearbyHandlers(getFrontFacing());
+                }
             }
+        }
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean workingEnabled) {
+        this.workingEnabled = workingEnabled;
+        World world = getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+        }
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(workingEnabled);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.workingEnabled = buf.readBoolean();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("workingEnabled", workingEnabled);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        if (data.hasKey("workingEnabled")) {
+            this.workingEnabled = data.getBoolean("workingEnabled");
         }
     }
 
@@ -99,11 +159,16 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" : "gregtech.machine.fluid_hatch.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.multi_fluid_hatch_universal.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.machine.multi_fluid_hatch_universal.tooltip.2", (int) Math.pow(this.getTier(), 2)));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", (int) Math.pow(this.getTier(), 2), TANK_SIZE));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -113,7 +178,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, fluidTanks);
+        return isExportHatch ? new FluidTankList(false, fluidTanks) : new FluidTankList(false);
     }
 
     @Override
@@ -123,20 +188,20 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
+        abilityList.addAll(fluidTanks.getFluidTanks());
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = getTier();
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
+                        18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new TankWidget(isExportHatch ? exportFluids.getTankAt(index) : importFluids.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
+                builder.widget(new TankWidget(fluidTanks.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
                         .setBackgroundTexture(GuiTextures.FLUID_SLOT)
                         .setContainerClicking(true, !isExportHatch)
                         .setAlwaysShowFull(true));

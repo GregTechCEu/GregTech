@@ -49,13 +49,17 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         this.fluidFilter.setFluidFilter(fluidFilter);
     }
 
-    protected void setFilterMode(FluidFilterMode filterMode) {
+    public void setFilterMode(FluidFilterMode filterMode) {
         this.filterMode = filterMode;
         this.coverHolder.markDirty();
     }
 
     public FluidFilterMode getFilterMode() {
         return filterMode;
+    }
+
+    public FluidFilterWrapper getFluidFilter() {
+        return this.fluidFilter;
     }
 
     public boolean testFluidStack(FluidStack stack) {
@@ -107,13 +111,15 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return defaultValue;
     }
 
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
         tagCompound.setBoolean("IsBlacklist", this.fluidFilter.isBlacklistFilter());
         NBTTagCompound filterComponent = new NBTTagCompound();
         this.fluidFilter.getFluidFilter().writeToNBT(filterComponent);
         tagCompound.setTag("Filter", filterComponent);
+
+        return tagCompound;
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {

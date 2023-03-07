@@ -5,7 +5,6 @@ import codechicken.lib.colour.ColourARGB;
 import codechicken.lib.render.CCQuad;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.item.IItemRenderer;
-import codechicken.lib.util.ResourceUtils;
 import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
@@ -15,6 +14,8 @@ import com.google.common.cache.CacheBuilder;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.util.ModCompatibility;
+import gregtech.client.model.pipeline.VertexLighterFlatSpecial;
+import gregtech.client.model.pipeline.VertexLighterSmoothAoSpecial;
 import gregtech.client.utils.AdvCCRSConsumer;
 import gregtech.client.utils.FacadeBlockAccess;
 import gregtech.common.covers.facade.FacadeHelper;
@@ -30,6 +31,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -37,7 +39,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
-import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -61,13 +62,13 @@ public class FacadeRenderer implements IItemRenderer {
     private final static float FACADE_RENDER_OFFSET = 2.0f / 512.0f;
     private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-    public static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors()));
-    public static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()));
+    public static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlatSpecial(Minecraft.getMinecraft().getBlockColors()));
+    public static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAoSpecial(Minecraft.getMinecraft().getBlockColors()));
 
     public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
 
     public static void init() {
-        ResourceUtils.registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
     }
 
     @Override

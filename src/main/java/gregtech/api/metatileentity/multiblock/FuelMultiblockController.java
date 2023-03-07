@@ -23,8 +23,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     public FuelMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier) {
         super(metaTileEntityId, recipeMap);
         this.recipeMapWorkable = new MultiblockFuelRecipeLogic(this);
-        this.recipeMapWorkable.enableOverclockVoltage();
-        this.recipeMapWorkable.setOverclockTier(tier);
+        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
     }
 
     @Override
@@ -54,7 +53,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VN[GTUtility.getTierByVoltage(maxVoltage)];
+                String voltageName = GTValues.VN[GTUtility.getFloorTierByVoltage(maxVoltage)];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 

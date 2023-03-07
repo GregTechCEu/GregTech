@@ -89,7 +89,7 @@ public class Materials {
          * claimed ranges below this comment. Max value is 32767.
          *
          * - Gregicality: 3000-19999
-         * - FREE RANGE 20000-20999
+         * - Gregification: 20000-20999
          * - HtmlTech: 21000-21499
          * - GregTech Food Option: 21500-21999
          * - PCM's Ore Addon: 22000-23599
@@ -118,7 +118,7 @@ public class Materials {
         STD_METAL.add(GENERATE_PLATE);
 
         EXT_METAL.addAll(STD_METAL);
-        EXT_METAL.addAll(Arrays.asList(GENERATE_ROD));
+        EXT_METAL.add(GENERATE_ROD);
 
         EXT2_METAL.addAll(EXT_METAL);
         EXT2_METAL.addAll(Arrays.asList(GENERATE_LONG_ROD, GENERATE_BOLT_SCREW));
@@ -307,6 +307,7 @@ public class Materials {
     public static Material Invar;
     public static Material Kanthal;
     public static Material Lazurite;
+    public static Material LiquidHelium;
     public static Material Magnalium;
     public static Material Magnesite;
     public static Material Magnetite;

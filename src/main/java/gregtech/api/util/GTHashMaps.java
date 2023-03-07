@@ -3,6 +3,7 @@ package gregtech.api.util;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.KeySharedStack;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -10,12 +11,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static gregtech.api.util.Predicates.not;
 
 public class GTHashMaps {
     /**
@@ -25,17 +21,19 @@ public class GTHashMaps {
      * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
     public static Map<ItemStackKey, Integer> fromItemHandler(IItemHandler inputs) {
-        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Object2IntMap<ItemStackKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return StreamUtils.streamFrom(inputs)
-                // keep only non-empty item stacks
-                .filter(not(ItemStack::isEmpty))
-                // Track the number of identical items
-                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
-                        ItemStack::getCount,
-                        Math::addExact,
-                        mapSupplier));
+
+        for (int i = 0; i < inputs.getSlots(); i++) {
+            ItemStack stack = inputs.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
+                map.put(key, map.getInt(key) + stack.getCount());
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -44,18 +42,19 @@ public class GTHashMaps {
      * @param inputs The inventory handler of the inventory
      * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
-    public static Map<ItemStackKey, Integer> fromItemStackCollection(Collection<ItemStack> inputs) {
-        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+    public static Map<ItemStackKey, Integer> fromItemStackCollection(Iterable<ItemStack> inputs) {
+        final Object2IntMap<ItemStackKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return inputs.stream()
-                // keep only non-empty item stacks
-                .filter(not(ItemStack::isEmpty))
-                // Track the number of identical items
-                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
-                        ItemStack::getCount,
-                        Math::addExact,
-                        mapSupplier));
+
+        for (ItemStack stack : inputs) {
+            if (!stack.isEmpty()) {
+                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
+                map.put(key, map.getInt(key) + stack.getCount());
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -65,17 +64,19 @@ public class GTHashMaps {
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
     public static Map<FluidKey, Integer> fromFluidHandler(IFluidHandler fluidInputs) {
-        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Object2IntMap<FluidKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return StreamUtils.streamFrom(fluidInputs)
-                // keep only non-empty item stacks
-                .filter(Objects::nonNull)
-                // Track the number of identical items
-                .collect(Collectors.toMap(FluidKey::new,
-                        (fluidStack -> fluidStack.amount),
-                        Math::addExact,
-                        mapSupplier));
+
+        for (int i = 0; i < fluidInputs.getTankProperties().length; i++) {
+            FluidStack fluidStack = fluidInputs.getTankProperties()[i].getContents();
+            if (fluidStack != null && fluidStack.amount > 0) {
+                FluidKey key = new FluidKey(fluidStack);
+                map.put(key, map.getInt(key) + fluidStack.amount);
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -85,16 +86,17 @@ public class GTHashMaps {
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
     public static Map<FluidKey, Integer> fromFluidCollection(Collection<FluidStack> fluidInputs) {
-        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
+        final Object2IntMap<FluidKey> map = new Object2IntLinkedOpenHashMap<>();
 
         // Create a single stack of the combined count for each item
-        return fluidInputs.stream()
-                // keep only non-empty item stacks
-                .filter(Objects::nonNull)
-                // Track the number of identical items
-                .collect(Collectors.toMap(FluidKey::new,
-                        (fluidStack -> fluidStack.amount),
-                        Math::addExact,
-                        mapSupplier));
+
+        for (FluidStack fluidStack : fluidInputs) {
+            if (fluidStack != null && fluidStack.amount > 0) {
+                FluidKey key = new FluidKey(fluidStack);
+                map.put(key, map.getInt(key) + fluidStack.amount);
+            }
+        }
+
+        return map;
     }
 }

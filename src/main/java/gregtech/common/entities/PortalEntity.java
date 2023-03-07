@@ -1,8 +1,8 @@
 package gregtech.common.entities;
 
-import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTTeleporter;
 import gregtech.api.util.TeleportHandler;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -63,17 +63,20 @@ public class PortalEntity extends Entity {
         }
 
         if(timeToDespawn == 200){
-            this.playSound(GTSounds.PORTAL_OPENING, 0.7F, 1.F);
+            this.playSound(GTSoundEvents.PORTAL_OPENING, 0.7F, 1.F);
         }else if(timeToDespawn == 10){
-            this.playSound(GTSounds.PORTAL_CLOSING, 0.7F, 1.F);
+            this.playSound(GTSoundEvents.PORTAL_CLOSING, 0.7F, 1.F);
         }
 
         this.onEntityUpdate();
-        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
-        for(Entity entity : list){
-            if (!(entity instanceof PortalEntity)) {
-                GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim), targetX, targetY, targetZ);
-                TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY, targetZ + entity.getLookVec().z);
+
+        if(!this.world.isRemote) {
+            List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
+            for (Entity entity : list) {
+                if (!(entity instanceof PortalEntity)) {
+                    GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim), targetX, targetY, targetZ);
+                    TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY, targetZ + entity.getLookVec().z);
+                }
             }
         }
         --timeToDespawn;

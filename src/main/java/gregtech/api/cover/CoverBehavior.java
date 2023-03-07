@@ -9,8 +9,8 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.gui.IUIHolder;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,10 +76,12 @@ public abstract class CoverBehavior implements IUIHolder {
         return false;
     }
 
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         if (redstoneSignalOutput > 0) {
             tagCompound.setInteger("RedstoneSignal", redstoneSignalOutput);
         }
+
+        return tagCompound;
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
@@ -165,6 +167,10 @@ public abstract class CoverBehavior implements IUIHolder {
     }
 
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        return EnumActionResult.PASS;
+    }
+
+    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 

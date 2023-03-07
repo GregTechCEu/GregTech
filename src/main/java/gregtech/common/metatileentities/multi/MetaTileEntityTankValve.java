@@ -73,7 +73,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
             TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
             if (fluidHandler != null) {
-                GTTransferUtils.transferFluids(fluidInventory, fluidHandler, Integer.MAX_VALUE);
+                GTTransferUtils.transferFluids(fluidInventory, fluidHandler);
             }
         }
     }
@@ -152,5 +152,17 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.tank_valve.tooltip"));
+    }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

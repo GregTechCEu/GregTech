@@ -8,50 +8,91 @@ death.attack.explosion=%s exploded
 death.attack.explosion.player=%s exploded with help of %s
 death.attack.heat.player=%s was boiled alive by %s
 
+death.attack.pickaxe=%s got mined by %s
+death.attack.shovel=%s got dug up by %s
+death.attack.axe=%s has been chopped by %s
+death.attack.hoe=%s had their head tilled by %s
+death.attack.hammer=%s was squashed by %s
+death.attack.mallet=%s got hammered to death by %s
+death.attack.mining_hammer=%s was mistaken for Ore by %s
+death.attack.spade=%s got excavated by %s
+death.attack.wrench=%s gave %s a whack with the Wrench!
+death.attack.file=%s has been filed D for 'Dead' by %s
+death.attack.crowbar=%s lost half a life to %s
+death.attack.screwdriver=%s has screwed with %s for the last time!
+death.attack.mortar=%s was ground to dust by %s
+death.attack.wire_cutter=%s has cut the cable for the Life Support Machine of %s
+death.attack.scythe=%s had their soul taken by %s
+death.attack.knife=%s was gently poked by %s
+death.attack.butchery_knife=%s was butchered by %s
+death.attack.drill_lv=%s was drilled with 32V by %s
+death.attack.drill_mv=%s was drilled with 128V by %s
+death.attack.drill_hv=%s was drilled with 512V by %s
+death.attack.drill_ev=%s was drilled with 2048V by %s
+death.attack.drill_iv=%s was drilled with 8192V by %s
+death.attack.chainsaw_lv=%s was massacred by %s
+death.attack.wrench_lv=%s's pipes were loosened by %s
+death.attack.wrench_hv=%s's pipes were loosened by %s
+death.attack.wrench_iv=%s had a Monkey Wrench thrown into their plans by %s
+death.attack.buzzsaw=%s got buzzed by %s
+death.attack.screwdriver_lv=%s had their screws removed by %s
+
 enchantment.disjunction=Disjunction
 
 gregtech.machine.steam_grinder.name=Steam Grinder
-gregtech.machine.steam_grinder.tooltip=Macerates up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items. Requires §eSteam Hatches and Buses
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s / %s mb
 gregtech.machine.steam_hatch.name=Steam Hatch
-gregtech.machine.steam.steam_hatch.tooltip=Accepted Fluid: §eSteam
+gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
 gregtech.machine.steam_import_bus.name=Input Bus (Steam)
 gregtech.machine.steam_export_bus.name=Output Bus (Steam)
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
 gregtech.machine.steam_oven.name=Steam Oven
-gregtech.machine.steam_oven.tooltip=Smelts up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items. Requires §eSteam Hatches and Buses
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
+gregtech.multiblock.require_steam_parts=Requires Steam Hatches and Buses!
+gregtech.multiblock.steam_.duration_modifier=Takes §f1.5x §7base duration to process, not affected by number of items.
 
-gregtech.top.energy_stored=Energy:
-gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
-gregtech.top.energy_consumption=Usage:
-gregtech.top.energy_production=Output:
+gregtech.top.energy_consumption=Using
+gregtech.top.energy_production=Producing
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
 gregtech.top.transform_output=§9Output:§r
 
-gregtech.top.convert_eu=§eConverting EU§r
-gregtech.top.convert_fe=§cConverting FE§r
+gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
+gregtech.top.convert_fe=Converting §cFE§r -> §eEU§r
 
-gregtech.top.fuel_burn=for
-gregtech.top.fuel_time=secs
-gregtech.top.fuel_min_consume=needs
-gregtech.top.fuel_name=Fuel:
+gregtech.top.fuel_min_consume=Needs
 gregtech.top.fuel_none=No fuel
 
-gregtech.top.invalid_structure=§cStructure Incomplete
-gregtech.top.valid_structure=§aStructure Formed
-gregtech.top.obstructed_structure=§cStructure Obstructed
-gregtech.top.maintenance_fixed=§aMaintenance Fine
-gregtech.top.maintenance_broken=§cNeeds Maintenance
+gregtech.top.invalid_structure=Structure Incomplete
+gregtech.top.valid_structure=Structure Formed
+gregtech.top.obstructed_structure=Structure Obstructed
+
+gregtech.top.maintenance_fixed=Maintenance Fine
+gregtech.top.maintenance_broken=Needs Maintenance
+gregtech.top.maintenance.wrench=Pipe is loose
+gregtech.top.maintenance.screwdriver=Screws are loose
+gregtech.top.maintenance.soft_mallet=Something is stuck
+gregtech.top.maintenance.hard_hammer=Plating is dented
+gregtech.top.maintenance.wire_cutter=Wires burned out
+gregtech.top.maintenance.crowbar=That doesn't belong there
 
 gregtech.top.primitive_pump_production=Production:
+
+gregtech.top.filter.label=Filter:
+gregtech.top.link_cover.color=Color:
+
+gregtech.top.mode.export=Exporting
+gregtech.top.mode.import=Importing
+
+gregtech.top.unit.items=Items
+gregtech.top.unit.fluid_milibuckets=L
+gregtech.top.unit.fluid_buckets=kL
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -76,15 +117,17 @@ gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100%% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
 gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, River: 1000 L/s/n  Swamp: 800 L/s/n  Jungle: 350 L/s/n  Snowy: 300 L/s/n  Plains, Forest: 250 L/s/n  Taiga: 175 L/s/n  Beach: 170 L/s/n  Other: 100 L/s
-gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
+gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x/n/nWhile raining in the Pump's Biome, the total water production will be increased by 50%%.
 gregtech.multiblock.processing_array.description=The Processing Array combines up to 16 single block machine(s) in a single multiblock, effectively easing automation.
 gregtech.multiblock.advanced_processing_array.description=The Processing Array combines up to 64 single block machine(s) in a single multiblock, effectively easing automation.
 
 item.invalid.name=Invalid item
 fluid.empty=Empty
 
-gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
-gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
+gregtech.tooltip.hold_shift=Hold SHIFT for more info
+gregtech.tooltip.hold_ctrl=Hold CTRL for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold SHIFT to show Fluid Containment Info
+gregtech.tooltip.tool_fluid_hold_shift=Hold SHIFT to show Fluid Containment and Tool Info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -155,7 +198,7 @@ metaitem.shape.mold.cylinder.tooltip=Mold for shaping Cylinders
 metaitem.shape.mold.anvil.name=Mold (Anvil)
 metaitem.shape.mold.anvil.tooltip=Mold for shaping Anvils
 metaitem.shape.mold.name.name=Mold (Name)
-metaitem.shape.mold.name.tooltip=Mold for naming Items (rename Mold with Anvil)
+metaitem.shape.mold.name.tooltip=Mold for naming Items in the Forming Press (rename Mold with Anvil)
 metaitem.shape.mold.gear.small.name=Mold (Small Gear)
 metaitem.shape.mold.gear.small.tooltip=Mold for making small Gears
 metaitem.shape.mold.rotor.name=Mold (Rotor)
@@ -351,75 +394,47 @@ metaitem.electric.motor.uxv.name=UXV Electric Motor
 metaitem.electric.motor.opv.name=OpV Electric Motor
 
 metaitem.electric.pump.lv.name=LV Electric Pump
-metaitem.electric.pump.lv.tooltip=1280 L/sec (as Cover)
 metaitem.electric.pump.mv.name=MV Electric Pump
-metaitem.electric.pump.mv.tooltip=5120 L/sec (as Cover)
 metaitem.electric.pump.hv.name=HV Electric Pump
-metaitem.electric.pump.hv.tooltip=20,480 L/sec (as Cover)
 metaitem.electric.pump.ev.name=EV Electric Pump
-metaitem.electric.pump.ev.tooltip=81,920 L/sec (as Cover)
 metaitem.electric.pump.iv.name=IV Electric Pump
-metaitem.electric.pump.iv.tooltip=327,680 L/sec (as Cover)
 metaitem.electric.pump.luv.name=LuV Electric Pump
-metaitem.electric.pump.luv.tooltip=1,310,720 L/sec (as Cover)
 metaitem.electric.pump.zpm.name=ZPM Electric Pump
-metaitem.electric.pump.zpm.tooltip=5,242,880 L/sec (as Cover)
 metaitem.electric.pump.uv.name=UV Electric Pump
-metaitem.electric.pump.uv.tooltip=20,971,520 L/sec (as Cover)
 metaitem.electric.pump.uhv.name=UHV Electric Pump
-metaitem.electric.pump.uhv.tooltip=20,971,520 L/sec (as Cover)
 metaitem.electric.pump.uev.name=UEV Electric Pump
-metaitem.electric.pump.uev.tooltip=20,971,520 L/sec (as Cover)
 metaitem.electric.pump.uiv.name=UIV Electric Pump
-metaitem.electric.pump.uiv.tooltip=20,971,520 L/sec (as Cover)
 metaitem.electric.pump.uxv.name=UXV Electric Pump
-metaitem.electric.pump.uxv.tooltip=20,971,520 L/sec (as Cover)
 metaitem.electric.pump.opv.name=OpV Electric Pump
-metaitem.electric.pump.opv.tooltip=20,971,520 L/sec (as Cover)
+
+metaitem.electric.pump.tooltip=Transfers §fFluids§7 at specific rates as §fCover§7.
 
 metaitem.fluid.regulator.lv.name=LV Fluid Regulator
-metaitem.fluid.regulator.lv.tooltip=1280 L/sec (as Cover)
 metaitem.fluid.regulator.mv.name=MV Fluid Regulator
-metaitem.fluid.regulator.mv.tooltip=5120 L/sec (as Cover)
 metaitem.fluid.regulator.hv.name=HV Fluid Regulator
-metaitem.fluid.regulator.hv.tooltip=20,480 L/sec (as Cover)
 metaitem.fluid.regulator.ev.name=EV Fluid Regulator
-metaitem.fluid.regulator.ev.tooltip=81,920 L/sec (as Cover)
 metaitem.fluid.regulator.iv.name=IV Fluid Regulator
-metaitem.fluid.regulator.iv.tooltip=327,680 L/sec (as Cover)
 metaitem.fluid.regulator.luv.name=LuV Fluid Regulator
-metaitem.fluid.regulator.luv.tooltip=1,310,720 L/sec (as Cover)
 metaitem.fluid.regulator.zpm.name=ZPM Fluid Regulator
-metaitem.fluid.regulator.zpm.tooltip=5,242,880 L/sec (as Cover)
 metaitem.fluid.regulator.uv.name=UV Fluid Regulator
-metaitem.fluid.regulator.uv.tooltip=20,971,520 L/sec (as Cover)
+
+metaitem.fluid.regulator.tooltip=Limits §fFluids§7 to specific quantities as §fCover§7.
 
 metaitem.conveyor.module.lv.name=LV Conveyor Module
-metaitem.conveyor.module.lv.tooltip=8 Items every second (as Cover)
 metaitem.conveyor.module.mv.name=MV Conveyor Module
-metaitem.conveyor.module.mv.tooltip=32 Items every second (as Cover)
 metaitem.conveyor.module.hv.name=HV Conveyor Module
-metaitem.conveyor.module.hv.tooltip=64 Items every second (as Cover)
 metaitem.conveyor.module.ev.name=EV Conveyor Module
-metaitem.conveyor.module.ev.tooltip=3 Stacks every second (as Cover)
 metaitem.conveyor.module.iv.name=IV Conveyor Module
-metaitem.conveyor.module.iv.tooltip=8 Stacks every second (as Cover)
 metaitem.conveyor.module.luv.name=LuV Conveyor Module
-metaitem.conveyor.module.luv.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.zpm.name=ZPM Conveyor Module
-metaitem.conveyor.module.zpm.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.uv.name=UV Conveyor Module
-metaitem.conveyor.module.uv.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.uhv.name=UHV Conveyor Module
-metaitem.conveyor.module.uhv.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.uev.name=UEV Conveyor Module
-metaitem.conveyor.module.uev.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.uiv.name=UIV Conveyor Module
-metaitem.conveyor.module.uiv.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.uxv.name=UXV Conveyor Module
-metaitem.conveyor.module.uxv.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.opv.name=OpV Conveyor Module
-metaitem.conveyor.module.opv.tooltip=16 Stacks every second (as Cover)
+
+metaitem.conveyor.module.tooltip=Transfers §fItems§7 at specific rates as §fCover§7.
 
 metaitem.electric.piston.lv.name=LV Electric Piston
 metaitem.electric.piston.mv.name=MV Electric Piston
@@ -436,31 +451,20 @@ metaitem.electric.piston.uxv.name=UXV Electric Piston
 metaitem.electric.piston.opv.name=OpV Electric Piston
 
 metaitem.robot.arm.lv.name=LV Robot Arm
-metaitem.robot.arm.lv.tooltip=Moves Items at specified rates, up to 8 items/sec (as Cover)
 metaitem.robot.arm.mv.name=MV Robot Arm
-metaitem.robot.arm.mv.tooltip=Moves Items at specified rates, up to 32 items/sec (as Cover)
 metaitem.robot.arm.hv.name=HV Robot Arm
-metaitem.robot.arm.hv.tooltip=Moves Items at specified rates, up to 64 items/sec (as Cover)
 metaitem.robot.arm.ev.name=EV Robot Arm
-metaitem.robot.arm.ev.tooltip=Moves Items at specified rates, up to 3 stacks/sec (as Cover)
 metaitem.robot.arm.iv.name=IV Robot Arm
-metaitem.robot.arm.iv.tooltip=Moves Items at specified rates, up to 8 stacks/sec (as Cover)
 metaitem.robot.arm.luv.name=LuV Robot Arm
-metaitem.robot.arm.luv.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.zpm.name=ZPM Robot Arm
-metaitem.robot.arm.zpm.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.uv.name=UV Robot Arm
-metaitem.robot.arm.uv.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.uhv.name=UHV Robot Arm
-metaitem.robot.arm.uhv.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.uev.name=UEV Robot Arm
-metaitem.robot.arm.uev.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.uiv.name=UIV Robot Arm
-metaitem.robot.arm.uiv.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.uxv.name=UXV Robot Arm
-metaitem.robot.arm.uxv.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
 metaitem.robot.arm.opv.name=OpV Robot Arm
-metaitem.robot.arm.opv.tooltip=Moves Items at specified rates, up to 16 stacks/sec (as Cover)
+
+metaitem.robot.arm.tooltip=Limits §fItems§7 to specific quantities as §fCover§7.
 
 metaitem.field.generator.lv.name=LV Field Generator
 metaitem.field.generator.mv.name=MV Field Generator
@@ -787,73 +791,69 @@ metaitem.gravistar.name=Gravi Star
 metaitem.gravistar.tooltip=Ultimate Nether Star
 
 metaitem.item_filter.name=Item Filter
-metaitem.item_filter.tooltip=Filters item extract and insert (as Cover)/nCan be used as a Conveyor upgrade
+metaitem.item_filter.tooltip=Filters §fItem§7 I/O as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
 metaitem.ore_dictionary_filter.name=Ore Dictionary Filter
-metaitem.ore_dictionary_filter.tooltip=Filters item extract and insert with ore dictionary (as Cover)/nCan be used as a Conveyor upgrade
+metaitem.ore_dictionary_filter.tooltip=Filters §fItem§7 I/O with §fOre Dictionary§7 as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
 metaitem.fluid_filter.name=Fluid Filter
-metaitem.fluid_filter.tooltip=Filters fluid fill and drain (as Cover)/nCan be used as a Pump upgrade
+metaitem.fluid_filter.tooltip=Filters §fFluid§7 I/O as §fCover§7./nCan be used as an §fElectric Pump§7 and §fFluid Regulator§7 upgrade.
 metaitem.smart_item_filter.name=Smart Item Filter
-metaitem.smart_item_filter.tooltip=Filters items basing on specific machine's recipes (as Cover)/nCan be used as a Conveyor upgrade
+metaitem.smart_item_filter.tooltip=Filters §fItem§7 I/O with §fMachine Recipes§7 as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
 
 metaitem.cover.controller.name=Machine Controller
-metaitem.cover.controller.tooltip=Turns Machines ON/OFF (as Cover)
+metaitem.cover.controller.tooltip=Turns Machines §fON/OFF§7 as §fCover§7.
 metaitem.cover.activity.detector.name=Activity Detector
-metaitem.cover.activity.detector.tooltip=Gives out Activity Status as Redstone (as Cover)
+metaitem.cover.activity.detector.tooltip=Gives out §fActivity Status§7 as Redstone as §fCover§7.
 metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
-metaitem.cover.activity.detector_advanced.tooltip=Gives out Progress Status as Redstone (as Cover)
+metaitem.cover.activity.detector_advanced.tooltip=Gives out §fMachine Progress§7 as Redstone as §fCover§7.
 metaitem.cover.fluid.detector.name=Fluid Detector
-metaitem.cover.fluid.detector.tooltip=Gives out Fluid Amount as Redstone (as Cover)
+metaitem.cover.fluid.detector.tooltip=Gives out §fFluid Amount§7 as Redstone as §fCover§7.
+metaitem.cover.fluid.detector.advanced.name=Advanced Fluid Detector
+metaitem.cover.fluid.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fFluid Storage Status§7 as Redstone as §fCover§7.
 metaitem.cover.item.detector.name=Item Detector
-metaitem.cover.item.detector.tooltip=Gives out Item Amount as Redstone (as Cover)
+metaitem.cover.item.detector.tooltip=Gives out §fItem Amount§7 as Redstone as §fCover§7.
+metaitem.cover.item.detector.advanced.name=Advanced Item Detector
+metaitem.cover.item.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fItem Storage Status§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.name=Energy Detector
-metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
-metaitem.cover.player.detector.name=Player Detector
-metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
-metaitem.cover.drain.name=Drain Cover
+metaitem.cover.energy.detector.tooltip=Gives out §fEnergy Amount§7 as Redstone as §fCover§7.
+metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector
+metaitem.cover.energy.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fEnergy Status§7 as Redstone as §fCover§7.
 metaitem.cover.fluid.voiding.name=Fluid Voiding Cover
-metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.fluid.voiding.tooltip=Voids §fFluids§7 as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.fluid.voiding.advanced.name=Advanced Fluid Voiding Cover
-metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids §fFluids§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.item.voiding.name=Item Voiding Cover
-metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.tooltip=Voids §fItems§7 as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
-metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.advanced.tooltip=Voids §fItems§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 
 metaitem.cover.facade.name=%s Facade
-metaitem.cover.facade.tooltip=Decorative outfit
+metaitem.cover.facade.tooltip=Decorative Outfit §fCover§7.
 
 metaitem.cover.screen.name=Computer Monitor
-metaitem.cover.screen.tooltip=Displays Data (as Cover)
+metaitem.cover.screen.tooltip=Displays §fData§7 as §fCover§7.
 metaitem.cover.crafting.name=Crafting Table Cover
-metaitem.cover.crafting.tooltip=Advanced workbench on the machine's side (as Cover)
+metaitem.cover.crafting.tooltip=§fAdvanced Workbench§7 on a Machine as §fCover§7.
 metaitem.cover.shutter.name=Shutter Module
-metaitem.cover.shutter.tooltip=Blocks side of machine from any interactions (as Cover)
+metaitem.cover.shutter.tooltip=§fBlocks Transfer§7 through attached Side as §fCover§7.
 
 metaitem.cover.solar.panel.name=Solar Panel
-metaitem.cover.solar.panel.tooltip=May the Sun be with you
-metaitem.cover.solar.panel.ulv.name=Solar Panel (8V)
-metaitem.cover.solar.panel.ulv.tooltip=8 Volt Solar Panel
-metaitem.cover.solar.panel.lv.name=Solar Panel (LV)
-metaitem.cover.solar.panel.lv.tooltip=Low Voltage Solar Panel
-metaitem.cover.solar.panel.mv.name=Solar Panel (MV)
-metaitem.cover.solar.panel.mv.tooltip=Medium Voltage Solar Panel
-metaitem.cover.solar.panel.hv.name=Solar Panel (HV)
-metaitem.cover.solar.panel.hv.tooltip=High Voltage Solar Panel
-metaitem.cover.solar.panel.ev.name=Solar Panel (EV)
-metaitem.cover.solar.panel.ev.tooltip=Extreme Voltage Solar Panel
-metaitem.cover.solar.panel.iv.name=Solar Panel (IV)
-metaitem.cover.solar.panel.iv.tooltip=Insane Voltage Solar Panel
-metaitem.cover.solar.panel.luv.name=Solar Panel (LuV)
-metaitem.cover.solar.panel.luv.tooltip=Ludicrous Voltage Solar Panel
-metaitem.cover.solar.panel.zpm.name=Solar Panel (ZPM)
-metaitem.cover.solar.panel.zpm.tooltip=Zero Point Module Solar Panel
-metaitem.cover.solar.panel.uv.name=Solar Panel (UV)
-metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
+metaitem.cover.solar.panel.ulv.name=Ultra Low Voltage Solar Panel
+metaitem.cover.solar.panel.lv.name=Low Voltage Solar Panel
+metaitem.cover.solar.panel.mv.name=Medium Voltage Solar Panel
+metaitem.cover.solar.panel.hv.name=High Voltage Solar Panel
+metaitem.cover.solar.panel.ev.name=Extreme Voltage Solar Panel
+metaitem.cover.solar.panel.iv.name=Insane Voltage Solar Panel
+metaitem.cover.solar.panel.luv.name=Ludicrous Voltage Solar Panel
+metaitem.cover.solar.panel.zpm.name=Zero Point Module Solar Panel
+metaitem.cover.solar.panel.uv.name=Ultimate Voltage Solar Panel
+
+metaitem.cover.solar.panel.tooltip.1=May the Sun be with you.
+metaitem.cover.solar.panel.tooltip.2=Produces §fEnergy§7 from the §eSun§7 as §fCover§7.
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
-metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
+metaitem.cover.infinite_water.tooltip.1=Fills attached containers with §9Water§7 as §fCover§7.
 metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
-metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
+metaitem.cover.ender_fluid_link.tooltip=Transports §fFluids§7 with a §fWireless §dEnder§f Connection§7 as §fCover§7.
 
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
@@ -894,75 +894,108 @@ metaitem.brick.coke.name=Coke Oven Brick
 metaitem.wooden_form.empty.name=Empty Wooden Form
 metaitem.wooden_form.brick.name=Brick Wooden Form
 
-metaitem.tool.sword.name=%s Sword
-metaitem.tool.pickaxe.name=%s Pickaxe
-metaitem.tool.shovel.name=%s Shovel
-metaitem.tool.axe.name=%s Axe
-metaitem.tool.hoe.name=%s Hoe
-metaitem.tool.saw.name=%s Saw
-metaitem.tool.saw.tooltip=Can also harvest Ice
-metaitem.tool.hard_hammer.name=%s Hammer
-metaitem.tool.hard_hammer.tooltip=Crushes ores instead of harvesting them
-metaitem.tool.soft_hammer.name=%s Soft Hammer
-metaitem.tool.wrench.name=%s Wrench
-metaitem.tool.wrench.tooltip=Hold left click to dismantle machines
-metaitem.tool.file.name=%s File
-metaitem.tool.crowbar.name=%s Crowbar
-metaitem.tool.crowbar.tooltip=Dismounts covers and rotates rails
-metaitem.tool.screwdriver.name=%s Screwdriver
-metaitem.tool.screwdriver.tooltip=Adjusts Covers and Machines
-metaitem.tool.mortar.name=%s Mortar
-metaitem.tool.wire_cutter.name=%s Wire Cutter
-metaitem.tool.branch_cutter.name=%s Branch Cutter
-metaitem.tool.knife.name=%s Knife
-metaitem.tool.butchery_knife.name=%s Butchery Knife
-metaitem.tool.butchery_knife.tooltip=Has a slow Attack Rate
-metaitem.tool.sense.name=%s Sense
-metaitem.tool.sense.tooltip=Because a Scythe doesn't make Sense
-metaitem.tool.plunger.name=%s Plunger
-metaitem.tool.rolling_pin.name=%s Rolling Pin
-metaitem.tool.drill.lv.name=%s Drill (LV)
-metaitem.tool.drill.mv.name=%s Drill (MV)
-metaitem.tool.drill.hv.name=%s Drill (HV)
-metaitem.tool.drill.ev.name=%s Drill (EV)
-metaitem.tool.drill.iv.name=%s Drill (IV)
-metaitem.tool.mining_hammer.name=%s Mining Hammer
-metaitem.tool.mining_hammer.tooltip=Mines a 3x3 area at once (unless you're crouching)
-metaitem.tool.chainsaw.lv.name=%s Chainsaw (LV)
-metaitem.tool.chainsaw.lv.tooltip=Can also harvest Ice
-metaitem.tool.chainsaw.mv.name=%s Chainsaw (MV)
-metaitem.tool.chainsaw.mv.tooltip=Can also harvest Ice
-metaitem.tool.chainsaw.hv.name=%s Chainsaw (HV)
-metaitem.tool.chainsaw.hv.tooltip=Can also harvest Ice
-metaitem.tool.wrench.lv.name=%s Wrench (LV)
-metaitem.tool.wrench.lv.tooltip=Hold Leftclick to dismantle Machines
-metaitem.tool.wrench.mv.name=%s Wrench (MV)
-metaitem.tool.wrench.mv.tooltip=Hold Leftclick to dismantle Machines
-metaitem.tool.wrench.hv.name=%s Wrench (HV)
-metaitem.tool.wrench.hv.tooltip=Hold Leftclick to dismantle Machines
-metaitem.tool.buzzsaw.name=%s Buzzsaw (LV)
-metaitem.tool.buzzsaw.tooltip=Not suitable for harvesting Blocks
-metaitem.tool.screwdriver.lv.name=%s Screwdriver (LV)
-metaitem.tool.screwdriver.lv.tooltip=Adjusts Covers and Machines
+item.gt.tool.replace_tool_head=Craft with a new Tool Head to replace it
+item.gt.tool.usable_as=Usable as: §f%s
+item.gt.tool.behavior.silk_ice=§bIce Cutter: §fSilk Harvests Ice
+item.gt.tool.behavior.torch_place=§eSpelunker: §fPlaces Torches on Right-Click
+item.gt.tool.behavior.tree_felling=§4Lumberjack: §fTree Felling
+item.gt.tool.behavior.shield_disable=§cBrute: §fDisables Shields
+item.gt.tool.behavior.relocate_mining=§2Magnetic: §fRelocates Mined Blocks
+item.gt.tool.behavior.aoe_mining=§5Area-of-Effect: §f%sx%sx%s
+item.gt.tool.behavior.ground_tilling=§eFarmer: §fTills Ground
+item.gt.tool.behavior.grass_path=§eLandscaper: §fCreates Grass Paths
+item.gt.tool.behavior.rail_rotation=§eRailroad Engineer: §fRotates Rails
+item.gt.tool.behavior.crop_harvesting=§aHarvester: §fHarvests Crops
+item.gt.tool.behavior.plunger=§9Plumber: §fDrains Fluids
+item.gt.tool.behavior.block_rotation=§2Mechanic: §fRotates Blocks
+item.gt.tool.behavior.damage_boost=§4Damage Boost: §fExtra damage against %s
+
+item.gt.tool.sword.name=%s Sword
+item.gt.tool.pickaxe.name=%s Pickaxe
+item.gt.tool.shovel.name=%s Shovel
+item.gt.tool.axe.name=%s Axe
+item.gt.tool.hoe.name=%s Hoe
+item.gt.tool.saw.name=%s Saw
+item.gt.tool.hammer.name=%s Hammer
+item.gt.tool.hammer.tooltip=§8Crushes Blocks when harvesting them
+item.gt.tool.mallet.name=%s Soft Mallet
+item.gt.tool.mallet.tooltip=§8Stops/Starts Machinery
+item.gt.tool.wrench.name=%s Wrench
+item.gt.tool.wrench.tooltip=§8Hold left click to dismantle Machines
+item.gt.tool.file.name=%s File
+item.gt.tool.crowbar.name=%s Crowbar
+item.gt.tool.crowbar.tooltip=§8Dismounts Covers
+item.gt.tool.screwdriver.name=%s Screwdriver
+item.gt.tool.screwdriver.tooltip=§8Adjusts Covers and Machines
+item.gt.tool.mortar.name=%s Mortar
+item.gt.tool.wire_cutter.name=%s Wire Cutter
+item.gt.tool.knife.name=%s Knife
+item.gt.tool.butchery_knife.name=%s Butchery Knife
+item.gt.tool.butchery_knife.tooltip=§8Has a slow Attack Rate
+item.gt.tool.scythe.name=%s Scythe
+item.gt.tool.scythe.tooltip=§8Because a Scythe doesn't make Sense
+item.gt.tool.rolling_pin.name=%s Rolling Pin
+item.gt.tool.drill_lv.name=%s Drill (LV)
+item.gt.tool.drill_mv.name=%s Drill (MV)
+item.gt.tool.drill_hv.name=%s Drill (HV)
+item.gt.tool.drill_ev.name=%s Drill (EV)
+item.gt.tool.drill_iv.name=%s Drill (IV)
+item.gt.tool.mining_hammer.name=%s Mining Hammer
+item.gt.tool.mining_hammer.tooltip=§8Mines a large area at once (unless you're crouching)
+item.gt.tool.spade.name=%s Spade
+item.gt.tool.spade.tooltip=§8Mines a large area at once (unless you're crouching)
+item.gt.tool.chainsaw_lv.name=%s Chainsaw (LV)
+item.gt.tool.chainsaw_mv.name=%s Chainsaw (MV)
+item.gt.tool.chainsaw_hv.name=%s Chainsaw (HV)
+item.gt.tool.wrench_lv.name=%s Wrench (LV)
+item.gt.tool.wrench_lv.tooltip=§8Hold left click to dismantle Machines
+item.gt.tool.wrench_hv.name=%s Wrench (HV)
+item.gt.tool.wrench_hv.tooltip=§8Hold left click to dismantle Machines
+item.gt.tool.wrench_iv.name=%s Wrench (IV)
+item.gt.tool.wrench_iv.tooltip=§8Hold left click to dismantle Machines
+item.gt.tool.buzzsaw.name=%s Buzzsaw (LV)
+item.gt.tool.buzzsaw.tooltip=§8Not suitable for harvesting Blocks
+item.gt.tool.screwdriver_lv.name=%s Screwdriver (LV)
+item.gt.tool.screwdriver_lv.tooltip=§8Adjusts Covers and Machines
+item.gt.tool.plunger.name=%s Plunger
+item.gt.tool.plunger.tooltip=§8Removes Fluids from Machines
+
+
+item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses
+item.gt.tool.tooltip.general_uses=§b%s Durability
+item.gt.tool.tooltip.attack_damage=§c%s Attack Damage
+item.gt.tool.tooltip.attack_speed=§9%s Attack Speed
+item.gt.tool.tooltip.mining_speed=§d%s Mining Speed
+item.gt.tool.tooltip.harvest_level=§eHarvest Level %s
+item.gt.tool.tooltip.harvest_level_extra=§eHarvest Level %s §f(%s§f)
+
+item.gt.tool.harvest_level.0=§8Wood
+item.gt.tool.harvest_level.1=§7Stone
+item.gt.tool.harvest_level.2=§aIron
+item.gt.tool.harvest_level.3=§bDiamond
+item.gt.tool.harvest_level.4=§dUltimet
+item.gt.tool.harvest_level.5=§9Duranium
+item.gt.tool.harvest_level.6=§cNeutronium
+
+item.gt.tool.tooltip.repair_info=Hold SHIFT to show Repair Info
+item.gt.tool.tooltip.repair_material=Repair with: §a%s
+
+item.gt.tool.aoe.rows=Rows
+item.gt.tool.aoe.columns=Columns
+item.gt.tool.aoe.layers=Layers
+
 metaitem.turbine_rotor.name=%s Turbine Rotor
 metaitem.turbine_rotor.tooltip=Turbine Rotors for your power station
 
 metaitem.clipboard.name=Clipboard
 metaitem.clipboard.tooltip=Can be written on (without any writing Instrument). Right-click on Wall to place, and Shift-Right-Click to remove
 
-metaitem.drill.mode.three_cube=3x3x3 Cube
-metaitem.drill.mode.five_cube=5x5x5 Cube
-metaitem.drill.mode.seven_cube=7x7x7 Cube
-metaitem.drill.mode.nine_cube=9x9x9 Cube
-metaitem.drill.mode.single_block=Single Block
 
 metaitem.behavior.mode_switch.tooltip=Use while sneaking to switch mode
 metaitem.behavior.mode_switch.mode_switched=§eMode Set to: %s
 metaitem.behavior.mode_switch.current_mode=Mode: %s
 
-metaitem.tool.tooltip.primary_material=§fMaterial: §e%s (%s lvl)
-metaitem.tool.tooltip.attack_damage=§fAttack damage: §9%,.1f
-metaitem.tool.tooltip.mining_speed=§fMining speed: §6%,.1f
+metaitem.tool.tooltip.primary_material=§fMaterial: §e%s
 metaitem.tool.tooltip.durability=§fDurability: §a%,d / %,d
 metaitem.tool.tooltip.rotor.efficiency=Turbine Efficiency: §9%,d%%
 metaitem.tool.tooltip.rotor.power=Turbine Power: §9%,d%%
@@ -989,11 +1022,11 @@ metaitem.voltage_coil.uhv.name=Ultra High Voltage Coil
 metaitem.voltage_coil.uhv.tooltip=Ultra Coil
 metaitem.voltage_coil.uev.name=Ultra Excessive Voltage Coil
 metaitem.voltage_coil.uev.tooltip=Unreal Coil
-metaitem.voltage_coil.uiv.name=Ultra Insane Coil
+metaitem.voltage_coil.uiv.name=Ultra Immense Coil
 metaitem.voltage_coil.uiv.tooltip=Insane Coil
 metaitem.voltage_coil.uxv.name=Ultra Extreme Voltage Coil
 metaitem.voltage_coil.uxv.tooltip=Epic Coil
-metaitem.voltage_coil.opv.name=Ultra Immense Voltage Coil
+metaitem.voltage_coil.opv.name=Overpowered Voltage Coil
 metaitem.voltage_coil.opv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
@@ -1076,6 +1109,9 @@ metaitem.nan.certificate.tooltip=Challenge Accepted!
 
 metaitem.fertilizer.name=Fertilizer
 
+metaitem.blacklight.name=Blacklight
+metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
@@ -1113,6 +1149,11 @@ cover.fluid.voiding.title=Fluid Voiding Settings
 cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
 cover.item.voiding.title=Item Voiding Settings
 cover.item.voiding.advanced.title=Advanced Item Voiding Settings
+cover.voiding.label.disabled=Disabled
+cover.voiding.label.enabled=Enabled
+cover.voiding.tooltip=§cWARNING!§7 Setting this to "Enabled" means that fluids or items WILL be voided.
+cover.voiding.message.disabled=Voiding Cover Disabled
+cover.voiding.message.enabled=Voiding Cover Enabled
 
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
@@ -1174,6 +1215,27 @@ cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPri
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
+cover.advanced_energy_detector.label=Advanced Energy Detector
+cover.advanced_energy_detector.min=Minimum:
+cover.advanced_energy_detector.max=Maximum:
+cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
+cover.advanced_energy_detector.invert_label=Inverted:
+cover.advanced_energy_detector.normal=Normal
+cover.advanced_energy_detector.inverted=Inverted
+cover.advanced_energy_detector.modes_tooltip=Change between using discrete EU values or percentages for comparing min/max against an attached energy storage.
+cover.advanced_energy_detector.modes_label=Mode:
+cover.advanced_energy_detector.mode_eu=Discrete EU
+cover.advanced_energy_detector.mode_percent=Percentage
+
+cover.advanced_fluid_detector.label=Advanced Fluid Detector
+cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
+cover.advanced_fluid_detector.max=Maximum Fluid:
+cover.advanced_fluid_detector.min=Minimum Fluid:
+cover.advanced_item_detector.label=Advanced Item Detector
+cover.advanced_item_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum amount of items, and starts emitting when greater than the min amount of items up to the set maximum
+cover.advanced_item_detector.max=Maximum Items:
+cover.advanced_item_detector.min=Minimum Items:
+
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
 item.material.oreprefix.oreRedgranite=Granite %s Ore
@@ -1208,6 +1270,7 @@ item.material.oreprefix.nugget=%s Nugget
 item.material.oreprefix.plateDense=Dense %s Plate
 item.material.oreprefix.plateDouble=Double %s Plate
 item.material.oreprefix.plate=%s Plate
+item.material.oreprefix.plank=%s Planks
 item.material.oreprefix.foil=%s Foil
 item.material.oreprefix.stickLong=Long %s Rod
 item.material.oreprefix.stick=%s Rod
@@ -1227,12 +1290,12 @@ item.material.oreprefix.toolHeadPickaxe=%s Pickaxe Head
 item.material.oreprefix.toolHeadShovel=%s Shovel Head
 item.material.oreprefix.toolHeadAxe=%s Axe Head
 item.material.oreprefix.toolHeadHoe=%s Hoe Head
-item.material.oreprefix.toolHeadSense=%s Sense Blade
+item.material.oreprefix.toolHeadScythe=%s Scythe Blade
 item.material.oreprefix.toolHeadFile=%s File Head
 item.material.oreprefix.toolHeadHammer=%s Hammer Head
 item.material.oreprefix.toolHeadSaw=%s Saw Blade
 item.material.oreprefix.toolHeadBuzzSaw=%s Buzzsaw Blade
-item.material.oreprefix.toolHeadScrewdriver=%s Screwdriver Head
+item.material.oreprefix.toolHeadScrewdriver=%s Screwdriver Tip
 item.material.oreprefix.toolHeadDrill=%s Drill Tip
 item.material.oreprefix.toolHeadChainsaw=%s Chainsaw Tip
 item.material.oreprefix.toolHeadWrench=%s Wrench Tip
@@ -1266,6 +1329,15 @@ item.material.oreprefix.cableGtOctal=8x %s Cable
 item.material.oreprefix.cableGtQuadruple=4x %s Cable
 item.material.oreprefix.cableGtDouble=2x %s Cable
 item.material.oreprefix.cableGtSingle=1x %s Cable
+item.material.oreprefix.polymer.plate=%s Sheet
+item.material.oreprefix.polymer.foil=Thin %s Sheet
+item.material.oreprefix.polymer.nugget=%s Chip
+item.material.oreprefix.polymer.plateDense=Dense %s Sheet
+item.material.oreprefix.polymer.plateDouble=Double %s Sheet
+item.material.oreprefix.polymer.dustTiny=Tiny Pile of %s Pulp
+item.material.oreprefix.polymer.dustSmall=Small Pile of %s Pulp
+item.material.oreprefix.polymer.dust=%s Pulp
+item.material.oreprefix.polymer.ingot=%s Bar
 
 
 # Direct Element Materials
@@ -1446,6 +1518,7 @@ material.bauxite=Bauxite
 material.invar=Invar
 material.kanthal=Kanthal
 material.lazurite=Lazurite
+material.liquid_helium=Liquid Helium
 material.magnalium=Magnalium
 material.magnesite=Magnesite
 material.magnetite=Magnetite
@@ -1948,96 +2021,16 @@ item.ice.dust=Crushed Ice
 item.sugar.gem=Sugar Cube
 item.sugar.gemChipped=Small Sugar Cubes
 item.sugar.gemFlawed=Tiny Sugar Cube
-item.plastic.dustTiny=Tiny Pile of Polyethylene (PE) Pulp
-item.plastic.dustSmall=Small Pile of Polyethylene (PE) Pulp
-item.plastic.dust=Polyethylene (PE) Pulp
-item.plastic.plate=Polyethylene (PE) Sheet
-item.plastic.nugget=Polyethylene (PE) Chip
-item.plastic.ingot=Polyethylene (PE) Bar
-item.epoxy.ingot=Epoxy Resin Bar
-item.epoxy.dustTiny=Tiny Pile of Epoxy Resin Pulp
-item.epoxy.dustSmall=Small Pile of Epoxy Resin Pulp
-item.epoxy.dust=Epoxy Resin Pulp
-item.epoxy.nugget=Epoxy Resin Chip
-item.epoxy.plateDense=Dense Epoxy Resin Sheet
-item.epoxy.plate=Epoxy Resin Sheet
-item.epoxy.foil=Thin Epoxy Resin Sheet
-item.reinforced_epoxy_resin.ingot=Fiber-Reinforced Epoxy Resin Bar
-item.reinforced_epoxy_resin.dustTiny=Tiny Pile of Fiber-Reinforced Epoxy Resin Pulp
-item.reinforced_epoxy_resin.dustSmall=Small Pile of Fiber-Reinforced Epoxy Resin Pulp
-item.reinforced_epoxy_resin.dust=Fiber-Reinforced Epoxy Resin Pulp
-item.reinforced_epoxy_resin.nugget=Fiber-Reinforced Epoxy Resin Chip
-item.reinforced_epoxy_resin.plateDense=Dense Fiber-Reinforced Epoxy Resin Sheet
-item.reinforced_epoxy_resin.plate=Fiber-Reinforced Epoxy Resin Sheet
-item.reinforced_epoxy_resin.foil=Thin Fiber-Reinforced Epoxy Resin Sheet
-item.polycaprolactam.dustTiny=Tiny Pile of Polycaprolactam Pulp
-item.polycaprolactam.dustSmall=Small Pile of Polycaprolactam Pulp
-item.polycaprolactam.dust=Polycaprolactam Pulp
-item.polycaprolactam.plateDense=Dense Polycaprolactam Sheet
-item.polycaprolactam.plate=Polycaprolactam Sheet
-item.polycaprolactam.nugget=Polycaprolactam Nugget
-item.polycaprolactam.ingot=Polycaprolactam Bar
-item.polytetrafluoroethylene.dustTiny=Tiny Pile of Polytetrafluoroethylene (PTFE) Pulp
-item.polytetrafluoroethylene.dustSmall=Small Pile of Polytetrafluoroethylene (PTFE) Pulp
-item.polytetrafluoroethylene.dust=Polytetrafluoroethylene (PTFE) Pulp
-item.polytetrafluoroethylene.plateDense=Dense Polytetrafluoroethylene (PTFE) Sheet
-item.polytetrafluoroethylene.plate=Polytetrafluoroethylene (PTFE) Sheet
-item.polytetrafluoroethylene.nugget=Polytetrafluoroethylene (PTFE) Chip
-item.polytetrafluoroethylene.ingot=Polytetrafluoroethylene (PTFE) Bar
-item.polyvinyl_chloride.dustTiny=Tiny Pile of Polyvinyl Chloride (PVC) Pulp
-item.polyvinyl_chloride.dustSmall=Small Pile of Polyvinyl Chloride (PVC) Pulp
-item.polyvinyl_chloride.dust=Polyvinyl Chloride (PVC) Pulp
-item.polyvinyl_chloride.nugget=Polyvinyl Chloride (PVC) Chip
-item.polyvinyl_chloride.ingot=Polyvinyl Chloride (PVC) Bar
-item.polyvinyl_chloride.plate=Polyvinyl Chloride (PVC) Sheet
-item.polyvinyl_chloride.foil=Thin Polyvinyl Chloride (PVC) Sheet
-item.polyphenylene_sulfide.dustTiny=Tiny Pile of Polyphenylene Sulfide Pulp
-item.polyphenylene_sulfide.dustSmall=Small Pile of Polyphenylene Sulfide Pulp
-item.polyphenylene_sulfide.dust=Polyphenylene Sulfide Pulp
-item.polyphenylene_sulfide.nugget=Polyphenylene Sulfide Chip
-item.polyphenylene_sulfide.ingot=Polyphenylene Sulfide Bar
-item.polyphenylene_sulfide.plate=Polyphenylene Sulfide Sheet
-item.polyphenylene_sulfide.foil=Thin Polyphenylene Sulfide Sheet
-item.polybenzimidazole.dustTiny=Tiny Pile of Polybenzimidazole (PBI) Pulp
-item.polybenzimidazole.dustSmall=Small Pile of Polybenzimidazole (PBI) Pulp
-item.polybenzimidazole.dust=Polybenzimidazole (PBI) Pulp
-item.polybenzimidazole.nugget=Polybenzimidazole (PBI) Chip
-item.polybenzimidazole.ingot=Polybenzimidazole (PBI) Bar
-item.polybenzimidazole.plate=Polybenzimidazole (PBI) Sheet
-item.polybenzimidazole.foil=Thin Polybenzimidazole (PBI) Sheet
 item.rock_salt.dustTiny=Tiny Pile of Rock Salt
 item.rock_salt.dustSmall=Small Pile of Rock Salt
 item.rock_salt.dustImpure=Impure Pile of Rock Salt
 item.rock_salt.dustPure=Purified Pile of Rock Salt
 item.rock_salt.dust=Rock Salt
-item.rubber.ingot=Rubber Bar
-item.rubber.dustTiny=Tiny Pile of Rubber Pulp
-item.rubber.dustSmall=Small Pile of Rubber Pulp
-item.rubber.dust=Rubber Pulp
-item.rubber.nugget=Rubber Chip
-item.rubber.plate=Rubber Sheet
-item.raw_rubber.dustTiny=Tiny Pile of Raw Rubber Pulp
-item.raw_rubber.dustSmall=Small Pile of Raw Rubber Pulp
-item.raw_rubber.dust=Raw Rubber Pulp
 item.salt.dustTiny=Tiny Pile of Salt
 item.salt.dustSmall=Small Pile of Salt
 item.salt.dustImpure=Impure Pile of Salt
 item.salt.dustPure=Purified Pile of Salt
 item.salt.dust=Salt
-item.silicone_rubber.dustTiny=Tiny Pile of Silicone Rubber Pulp
-item.silicone_rubber.dustSmall=Small Pile of Silicone Rubber Pulp
-item.silicone_rubber.dust=Silicone Rubber Pulp
-item.silicone_rubber.nugget=Silicone Rubber Chip
-item.silicone_rubber.ingot=Silicone Rubber Bar
-item.silicone_rubber.plate=Silicone Rubber Sheet
-item.silicone_rubber.foil=Thin Silicone Rubber Sheet
-item.styrene_butadiene_rubber.dustTiny=Tiny Pile of Styrene-Butadiene Rubber Pulp
-item.styrene_butadiene_rubber.dustSmall=Small Pile of Styrene-Butadiene Rubber Pulp
-item.styrene_butadiene_rubber.dust=Styrene-Butadiene Rubber Pulp
-item.styrene_butadiene_rubber.nugget=Styrene-Butadiene Rubber Chip
-item.styrene_butadiene_rubber.ingot=Styrene-Butadiene Rubber Bar
-item.styrene_butadiene_rubber.plate=Styrene-Butadiene Rubber Sheet
-item.styrene_butadiene_rubber.foil=Thin Styrene-Butadiene Rubber Sheet
 item.wood.dustTiny=Tiny Pile of Wood Pulp
 item.wood.dustSmall=Small Pile of Wood Pulp
 item.wood.dust=Wood Pulp
@@ -2202,7 +2195,6 @@ behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.fluid.tooltip=Can light things on fire with Butane or Propane
 behaviour.lighter.uses=Remaining uses: %,d
-behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
 enchantment.damage.disjunction=Disjunction
@@ -2221,6 +2213,10 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
+
+tile.brittle_charcoal.name=Brittle Charcoal
+tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
+tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -2267,6 +2263,7 @@ behavior.tricorder.debug_machine_valid= valid
 behavior.tricorder.debug_machine_invalid= invalid!
 behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
+behavior.tricorder.debug_cpu_load_seconds=This is %s seconds.
 behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
@@ -2288,8 +2285,9 @@ metaitem.plugin.text.name=Text Plugin
 metaitem.plugin.online_pic.name=Online Picture Plugin
 metaitem.plugin.fake_gui.name=GUI Proxy Plugin
 metaitem.plugin.advanced_monitor.name=Advanced Monitor Proxy Plugin
-metaitem.cover.digital.name=Digital Interface Cover
-metaitem.cover.digital.wireless.name=Wireless Digital Interface Cover
+metaitem.cover.digital.name=Digital Interface
+metaitem.cover.digital.tooltip=Connects machines over §fPower Cables§7 to the §fCentral Monitor§7 as §fCover§7.
+metaitem.cover.digital.wireless.name=Wireless Digital Interface
 metaitem.coloured.leds.name=Coloured LEDs
 metaitem.display.name=Display
 
@@ -2301,14 +2299,15 @@ tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
 
 # Wire coil blocks
-tile.wire_coil.tooltip_heat=Base Heat Capacity: §e%,dK
-tile.wire_coil.tooltip_smelter=§aMulti Smelter§7:
-tile.wire_coil.tooltip_parallel_smelter=  Max Parallel: §e%s§7
-tile.wire_coil.tooltip_energy_smelter=  Energy Usage: §e%s EU/t per recipe§7
-tile.wire_coil.tooltip_pyro=§aPyrolyse Oven§7:
-tile.wire_coil.tooltip_speed_pyro=  Processing Speed: §e%s%%§7
-tile.wire_coil.tooltip_cracking=§aCracking Unit§7:
-tile.wire_coil.tooltip_energy_cracking=  Energy Usage: §e%s%%§7
+tile.wire_coil.tooltip_extended_info=Hold SHIFT to show Coil Bonus Info
+tile.wire_coil.tooltip_heat=§cBase Heat Capacity: §f%,d K
+tile.wire_coil.tooltip_smelter=§8Multi Smelter:
+tile.wire_coil.tooltip_parallel_smelter=  §5Max Parallel: §f%s
+tile.wire_coil.tooltip_energy_smelter=  §aEnergy Usage: §f%s EU/t §8per recipe
+tile.wire_coil.tooltip_pyro=§8Pyrolyse Oven:
+tile.wire_coil.tooltip_speed_pyro=  §bProcessing Speed: §f%s%%
+tile.wire_coil.tooltip_cracking=§8Cracking Unit:
+tile.wire_coil.tooltip_energy_cracking=  §aEnergy Usage: §f%s%%
 
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
@@ -2318,10 +2317,6 @@ tile.wire_coil.hss_g.name=HSS-G Coil Block
 tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.trinium.name=Trinium Coil Block
 tile.wire_coil.tritanium.name=Tritanium Coil Block
-
-# General casing block tooltip
-tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
-tile.machine_casing.tooltip2=This is NOT a TileEntity!
 
 # Warning sign blocks
 tile.warning_sign.yellow_stripes.name=Yellow Stripes Block
@@ -2390,7 +2385,7 @@ tile.machine_casing.ultra_high_voltage.name=UHV Machine Casing
 tile.machine_casing.ultra_excessive_voltage.name=UEV Machine Casing
 tile.machine_casing.ultra_immense_voltage.name=UIV Machine Casing
 tile.machine_casing.ultra_extreme_voltage.name=UXV Machine Casing
-tile.machine_casing.Ultra Immense_voltage.name=OpV Machine Casing
+tile.machine_casing.overpowered_voltage.name=OpV Machine Casing
 tile.machine_casing.maximum_voltage.name=MAX Machine Casing
 
 # Steam casing blocks
@@ -2434,6 +2429,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
+tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -2449,7 +2445,7 @@ gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 
-gregtech.machine.drum.enable_output=Will drain Fluid to vertically adjacent Tanks
+gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid
 
 # Crates
@@ -2466,8 +2462,10 @@ gregtech.machine.locked_safe.name=Locked Safe
 gregtech.machine.locked_safe.malfunctioning=§cMalfunctioning!
 gregtech.machine.locked_safe.requirements=§7Replacements required:
 
-#Workbench
+# Workbench
 gregtech.machine.workbench.name=Crafting Station
+gregtech.machine.workbench.tooltip1=Better than Forestry
+gregtech.machine.workbench.tooltip2=Has Item Storage, Tool Storage, pulls from adjacent Inventories, and saves Recipes.
 gregtech.machine.workbench.tab.workbench=Crafting
 gregtech.machine.workbench.tab.item_list=Storage
 gregtech.machine.workbench.storage_note_1=(Available items from connected
@@ -2487,6 +2485,13 @@ gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank v
 gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
+
+# Cleanroom Casings
+tile.cleanroom_casing.plascrete.name=Plascrete
+tile.cleanroom_casing.filter_casing.name=Filter Casing
+tile.cleanroom_casing.filter_casing_sterile.name=Sterilizing Filter Casing
+tile.cleanroom_casing.filter.tooltip=Creates a §aParticle-Free§7 environment
+tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environment
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -2605,8 +2610,6 @@ tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
 
 
 # Steam machines
-gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
-
 gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_coal_bronze.tooltip=An early way to get Steam Power
 gregtech.machine.steam_boiler_coal_steel.name=High Pressure Steam Solid Fuel Boiler
@@ -2647,12 +2650,11 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
-gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
-gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
+gregtech.machine.steam_miner.tooltip=Mines ores below the Miner!
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=Requires flammable Liquids
@@ -2685,9 +2687,7 @@ gregtech.machine.block_breaker.mv.name=Advanced Block Breaker
 gregtech.machine.block_breaker.hv.name=Advanced Block Breaker II
 gregtech.machine.block_breaker.ev.name=Advanced Block Breaker III
 gregtech.machine.block_breaker.tooltip=Mines block on front face and collects its drops
-gregtech.machine.block_breaker.redstone=Only works when powered with Redstone
-gregtech.machine.block_breaker.consumption=Consumes §e%,d EU§7 per operation
-gregtech.machine.block_breaker.speed_bonus=Speed Bonus: §e%,d%%
+gregtech.machine.block_breaker.speed_bonus=§eSpeed Bonus: §f%,d%%
 
 # Electric Furnace
 gregtech.machine.electric_furnace.lv.name=Basic Electric Furnace
@@ -3223,7 +3223,6 @@ gregtech.machine.extruder.uxv.tooltip=Shape Driver
 gregtech.machine.extruder.opv.name=Legendary Extruder
 gregtech.machine.extruder.opv.tooltip=Shape Driver
 
-# Fermenter TODO
 gregtech.machine.fermenter.lv.name=Basic Fermenter
 gregtech.machine.fermenter.lv.tooltip=Fermenting Fluids
 gregtech.machine.fermenter.mv.name=Advanced Fermenter
@@ -3728,15 +3727,15 @@ gregtech.machine.scanner.opv.name=Legendary Scanner
 gregtech.machine.scanner.opv.tooltip=Electron Microscope
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
-gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
 gregtech.machine.creative_chest.name=Creative Quantum Chest
-gregtech.machine.creative_chest.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
 gregtech.machine.creative_tank.name=Creative Quantum Tank
-gregtech.machine.creative_tank.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.creative_tooltip.1=§7You just need
+gregtech.creative_tooltip.2= Creative Mode
+gregtech.creative_tooltip.3=§7 to use this
 
 
 # Machine hulls
-gregtech.machine.hull.tooltip=§fYou just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§f to use this
+gregtech.machine.hull.tooltip=§7You just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§7 to use this
 
 gregtech.machine.hull.ulv.name=ULV Machine Hull
 gregtech.machine.hull.lv.name=LV Machine Hull
@@ -3819,13 +3818,15 @@ gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
 
 # Transformers
-gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
-gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
-gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
-gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer_adjustable.tooltip_tool_usage=Use Screwdriver to cycle amperage (Starts as 4 Amps)
-gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dEU %dA, Lo-Amp to %dEU %dA
+gregtech.machine.transformer.description=Transforms Energy between voltage tiers
+gregtech.machine.transformer.tooltip_tool_usage=Starts as §fTransform Down§7, use Soft Mallet to change
+gregtech.machine.transformer.tooltip_transform_down=§aTransform Down: §f%dA %d EU (%s§f) -> %dA %d EU (%s§f)
+gregtech.machine.transformer.message_transform_down=Transforming Down, In: %d EU %dA, Out: %d EU %dA
+gregtech.machine.transformer.tooltip_transform_up=§cTransform Up: §f%dA %d EU (%s§f) -> %dA %d EU (%s§f)
+gregtech.machine.transformer.message_transform_up=Transforming Up, In: %d EU %dA, Out: %d EU %dA
+gregtech.machine.transformer_adjustable.description=Transforms Energy between voltage tiers, now with more Amps!
+gregtech.machine.transformer_adjustable.tooltip_tool_usage=Starts as §f4A§7, use Screwdriver to change
+gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %d EU %dA, Lo-Amp to %d EU %dA
 
 gregtech.machine.transformer.ulv.name=Ultra Low Voltage Transformer
 gregtech.machine.transformer.lv.name=Low Voltage Transformer
@@ -3859,8 +3860,9 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Adjustable 
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
-gregtech.machine.diode.tooltip_general=A simple Diode that will allow Energy Flow in only one direction.
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to change Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
+gregtech.machine.diode.tooltip_general=Allows Energy Flow in one direction and limits Amperage
+gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Soft Mallet to change
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -3956,16 +3958,16 @@ gregtech.machine.energy_converter.max.4.name=MAX Energy Converter (4A)
 gregtech.machine.energy_converter.max.8.name=MAX Energy Converter (8A)
 gregtech.machine.energy_converter.max.16.name=MAX Energy Converter (16A)
 
-gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Hammer to invert (Starts as FE Converter)
-gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §c%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
-gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %dFE, Out: %dA %dEU
-gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%,dA %,dEU (§r%s§a)§7 -> §c%,dFE
-gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %dEU, Out: %dFE
+gregtech.machine.energy_converter.description=Converts Energy between EU and FE
+gregtech.machine.energy_converter.tooltip_tool_usage=Starts as §fFE Converter§7, use Soft Mallet to change
+gregtech.machine.energy_converter.tooltip_conversion_fe=§cForge Conversion: §f%,d FE -> %,dA %,d EU (%s§f)
+gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %d FE, Out: %dA %d EU
+gregtech.machine.energy_converter.tooltip_conversion_eu=§aEU Conversion: §f%,dA %,d EU (%s§f) -> %,d FE
+gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %d EU, Out: %d FE
 
 # Pumps
-gregtech.machine.pump.tooltip=The best way to empty Oceans! Outputs to the front
-gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d
-gregtech.machine.pump.tooltip_rate=%dEU/operation, %d ticks per bucket
+gregtech.machine.pump.tooltip=The best way to empty Oceans!
+gregtech.machine.pump.tooltip_buckets=§f%,d §7ticks per Bucket
 
 gregtech.machine.pump.lv.name=Basic Pump
 gregtech.machine.pump.mv.name=Advanced Pump
@@ -3981,16 +3983,11 @@ gregtech.machine.item_collector.mv.name=Advanced Item Collector
 gregtech.machine.item_collector.hv.name=Advanced Item Collector II
 gregtech.machine.item_collector.ev.name=Advanced Item Collector III
 
-gregtech.machine.item_collector.collect_range=Collection Area: %,dx%,d
 gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
+gregtech.machine.item_collector.tooltip=Collects Items around itself when given a Redstone signal
 
 #Quantum Chests
-gregtech.machine.quantum_chest.tooltip=Better than JABBA.
-gregtech.machine.quantum_chest.capacity=Item Capacity: %,d items
-gregtech.machine.quantum_chest.items_stored=Item Amount:
-gregtech.machine.quantum_chest.tooltip.item=Item Stored: §b%s
-gregtech.machine.quantum_chest.tooltip.count=Item Amount: §e%,d
-
+gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
 gregtech.machine.super_chest.hv.name=Super Chest III
@@ -4001,13 +3998,10 @@ gregtech.machine.quantum_chest.luv.name=Quantum Chest II
 gregtech.machine.quantum_chest.zpm.name=Quantum Chest III
 gregtech.machine.quantum_chest.uv.name=Quantum Chest IV
 gregtech.machine.quantum_chest.uhv.name=Quantum Chest V
+gregtech.machine.quantum_chest.items_stored=Item Amount:
 
 #Quantum Tanks
-gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids.
-gregtech.machine.quantum_tank.capacity=Fluid Capacity: %,d L
-gregtech.machine.quantum_tank.tooltip.name=Fluid Stored: §b%s
-gregtech.machine.quantum_tank.tooltip.count=Fluid Amount: §e%,d L
-
+gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
 gregtech.machine.super_tank.hv.name=Super Tank III
@@ -4021,8 +4015,6 @@ gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
 
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids
-gregtech.machine.buffer.inventory=Item Capacity: %d Slots
-gregtech.machine.buffer.tanks=Fluid Capacity: %d Tanks at 64,000L each
 gregtech.machine.buffer.lv.name=Basic Buffer
 gregtech.machine.buffer.mv.name=Advanced Buffer
 gregtech.machine.buffer.hv.name=Advanced Buffer II
@@ -4068,13 +4060,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Place Lava and Water adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
@@ -4117,10 +4109,12 @@ gregtech.machine.world_accelerator.uev.name=Epic World Accelerator II
 gregtech.machine.world_accelerator.uiv.name=Epic World Accelerator III
 gregtech.machine.world_accelerator.uxv.name=Epic World Accelerator IV
 gregtech.machine.world_accelerator.opv.name=Legendary World Accelerator
-gregtech.machine.world_accelerator.description=Increase tick updates per tick. 2 modes: Tile Entity or Random Tick. Use a Screwdriver to change modes.
-gregtech.machine.world_accelerator.area=On Tile Entity mode, only adjacent blocks are sped up. On Random Tick, it is %dx%d blocks radius.
+gregtech.machine.world_accelerator.description=Tick accelerates nearby blocks in one of 2 modes: §fTile Entity§7 or §fRandom Tick§7. Use Screwdriver to change mode.
+gregtech.machine.world_accelerator.working_area=§bWorking Area:
+gregtech.machine.world_accelerator.working_area_tile=  Tile Entity Mode:§f Adjacent Blocks
+gregtech.machine.world_accelerator.working_area_random=  Random Tick Mode:§f %dx%d
 gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
-gregtech.machine.world_accelerator.mode_entity=Entity Mode
+gregtech.machine.world_accelerator.mode_entity=Random Tick Mode
 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
@@ -4351,23 +4345,24 @@ behaviour.paintspray.green.tooltip=Can paint things in Green
 behaviour.paintspray.red.tooltip=Can paint things in Red
 behaviour.paintspray.black.tooltip=Can paint things in Black
 behaviour.paintspray.uses=Remaining Uses: %,d
+behaviour.paintspray.offhand=Hold in offhand to color while placing blocks
 behaviour.prospecting=Usable for Prospecting
 
 # Multiblock machine controllers
 gregtech.machine.primitive_water_pump.name=Primitive Water Pump
 gregtech.machine.primitive_blast_furnace.bronze.name=Primitive Blast Furnace
 gregtech.machine.electric_blast_furnace.name=Electric Blast Furnace
-gregtech.machine.electric_blast_furnace.tooltip.1=For every §a900K§7 above the recipe temperature, a multiplicative §a95%%§7 energy multiplier is applied pre-overclocking.
-gregtech.machine.electric_blast_furnace.tooltip.2=For every §a1800K§7 above the recipe temperature, one overclock becomes §a100%%§7 efficient.
-gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above §aMV§7, temperature is increased by §a100K§7.
+gregtech.machine.electric_blast_furnace.tooltip.1=For every §f900K§7 above the recipe temperature, a multiplicative §f95%%§7 energy multiplier is applied pre-overclocking.
+gregtech.machine.electric_blast_furnace.tooltip.2=For every §f1800K§7 above the recipe temperature, one overclock becomes §f100%% efficient§7 (perfect overclock).
+gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above §bMV§7, temperature is increased by §f100K§7.
 gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
-gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
+gregtech.machine.pyrolyse_oven.tooltip.1=§6Cupronickel §7coils are §f25%%§7 slower. Every coil after §bKanthal§7 increases speed by §f50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Oil Cracking Unit
-gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a10%%§7.
+gregtech.machine.cracker.tooltip.1=Every coil after §6Cupronickel§7 reduces energy usage by §f10%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.advanced_processing_array.name=Advanced Processing Array
@@ -4375,14 +4370,11 @@ gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
-
-
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
-gregtech.machine.large_combustion_engine.tooltip.1=Produces up to §e%s§7 EU/t.
-gregtech.machine.large_combustion_engine.tooltip.2=Requires §e1000 L/hr§7 of Lubricant to run.
-gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §e20 L/s§7 of Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
-gregtech.machine.large_combustion_engine.tooltip.boost_extreme=Supply §e80 L/s§7 of Liquid Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
 gregtech.machine.extreme_combustion_engine.name=Extreme Combustion Engine
+gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §f20 L/s§7 of Oxygen to produce up to §f%s EU/t§7 at §f2x§7 fuel consumption.
+gregtech.machine.large_combustion_engine.tooltip.boost_extreme=Supply §f80 L/s§7 of Liquid Oxygen to produce up to §f%s EU/t§7 at §f2x§7 fuel consumption.
+
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
 gregtech.machine.large_turbine.gas.name=Large Gas Turbine
 gregtech.machine.large_turbine.plasma.name=Large Plasma Turbine
@@ -4402,19 +4394,16 @@ gregtech.machine.fusion_reactor.overclocking=Overclocks double energy and halve 
 gregtech.machine.miner.lv.name=Basic Miner
 gregtech.machine.miner.mv.name=Advanced Miner
 gregtech.machine.miner.hv.name=Advanced Miner II
-gregtech.machine.miner.tooltip=Mines ores below the miner ONLY! Use screwdriver to configure radius.
-gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b%d§7 EU/t.
+gregtech.machine.miner.tooltip=Mines ores below the Miner! Starts as §f%sx%s §7area
+gregtech.machine.miner.per_block=§7takes §f%,ds §7per Block
 
 gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
 gregtech.machine.large_miner.iv.name=Advanced Ore Drilling Plant
 gregtech.machine.large_miner.luv.name=Advanced Ore Drilling Plant II
 gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
-gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
-gregtech.machine.miner.multi.production=Produces §b3x§7 more crushed ore than a macerator.
+gregtech.machine.miner.multi.production=Produces §f3x§7 more crushed ore than a §fMacerator§7.
+gregtech.machine.miner.fluid_usage=Uses §f%,d L/t §7of §f%s§7, doubled per overclock.
 gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
-#Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
-gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
-gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
 gregtech.machine.miner.startx=sX: %d
 gregtech.machine.miner.starty=sY: %d
@@ -4429,10 +4418,32 @@ gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.ev.name=Advanced Fluid Drilling Rig II
 gregtech.machine.fluid_drilling_rig.description=Drills fluids from veins under bedrock.
-gregtech.machine.fluid_drilling_rig.production=Production Multiplier: §e%sx§7
-gregtech.machine.fluid_drilling_rig.depletion=Depletion Rate: §b%s%%§7
-gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7.
-gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
+gregtech.machine.fluid_drilling_rig.production=§eProduction Multiplier: §f%dx, %fx overclocked
+gregtech.machine.fluid_drilling_rig.depletion=§bDepletion Rate: §f%s%%
+
+gregtech.machine.cleanroom.name=Cleanroom
+gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
+gregtech.machine.cleanroom.tooltip.2=Uses §f30 EU/t§7 when dirty, §f4 EU/t§7 when clean.
+gregtech.machine.cleanroom.tooltip.3=Overclocking increases cleaning per cycle.
+gregtech.machine.cleanroom.tooltip.4=§bSize: §f5x5x5 to 15x15x15
+gregtech.machine.cleanroom.tooltip.hold_ctrl=Hold CTRL to show additional Structure Information
+gregtech.machine.cleanroom.tooltip.5=Requires §fFilter Casings §7in the ceiling, excluding the edges.
+gregtech.machine.cleanroom.tooltip.6=Accepts up to §f4 Doors§7! Remains clean when the door is open.
+gregtech.machine.cleanroom.tooltip.7=Generators, Mufflers, Drills, and Primitive Machines are too dirty for the cleanroom!
+gregtech.machine.cleanroom.tooltip.8=Send power through §fHulls §7or §fDiodes §7in the walls.
+gregtech.machine.cleanroom.tooltip.9=Send items and fluids with §fPassthrough Hatches §7in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.channels=Send up to §f8 AE2 Channels §7through §fHulls§7 in the walls.
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through §fHulls§7 in the walls.
+gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
+gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
+gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
+
+gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
+gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
+gregtech.machine.charcoal_pile.tooltip.2=Right Click with fire-starting items to start.
+gregtech.machine.charcoal_pile.tooltip.3=Pyrolysis occurs in up to a §b9x4x9§7 space beneath.
+gregtech.machine.charcoal_pile.tooltip.4=Logs must be not be exposed to §eAir§7!
+gregtech.multiblock.charcoal_pile.description=Converts logs into Brittle Charcoal in a 9x4x9 area beneath it.\n\nThe floor of the pit must be made from bricks, and any ground-related block can be used for the walls and roof. No air can be inside the pit.\n\nLarger pits take more time to process logs, but are more efficient.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4447,18 +4458,63 @@ gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-
 gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
 gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
 
+metaitem.cover.digital.mode.proxy.disabled=Click to enable Proxy Mode
+metaitem.cover.digital.mode.proxy.enabled=Proxy Mode enabled
+metaitem.cover.digital.mode.machine.disabled=Click to enable Machine Mode
+metaitem.cover.digital.mode.machine.enabled=Machine Mode enabled
+metaitem.cover.digital.mode.energy.disabled=Click to enable Energy Mode
+metaitem.cover.digital.mode.energy.enabled=Energy Mode enabled
+metaitem.cover.digital.mode.item.disabled=Click to enable Item Mode
+metaitem.cover.digital.mode.item.enabled=Item Mode enabled
+metaitem.cover.digital.mode.fluid.disabled=Click to enable Fluid Mode
+metaitem.cover.digital.mode.fluid.enabled=Fluid Mode enabled
 
 gregtech.machine.monitor_screen.name=Monitor Screen
 
 
 # Multiblock Tooltips
-gregtech.machine.primitive_blast_furnace.bronze.tooltip=Structure: 3x3x4 (WxLxH) The entire structure is made out of Primitive Bricks (32 in total)./nFirst Layer is a 3x3 square./nSecond, third, and fourth layers are hollow, without the middle block./nThis block goes on the middle of any side in the second layer./nThe sides of Blast Furnaces can be shared, if the side does not have a controller./n
-gregtech.machine.multiblock.universal.controller_information=Controller block for the §e%s§7.
+gregtech.machine.primitive_water_pump.tooltip=Endervoir at Home
+gregtech.machine.primitive_blast_furnace.bronze.tooltip=Making your first Steel
+gregtech.machine.electric_blast_furnace.tooltip=Where's the electric smoker?
+gregtech.machine.vacuum_freezer.tooltip=Aluminium Ice Box
+gregtech.machine.implosion_compressor.tooltip=The only Machine you want to go Boom
+gregtech.machine.pyrolyse_oven.tooltip=Electric Coke Oven
+gregtech.machine.distillation_tower.tooltip=Fluid Refinery
+gregtech.machine.multi_furnace.tooltip=Just like the Oven at Home
+gregtech.machine.large_combustion_engine.tooltip=Fuel Ignition Chamber
+gregtech.machine.extreme_combustion_engine.tooltip=Extreme Chemical Energy Releaser
+gregtech.machine.cracker.tooltip=Makes Oil useful
+gregtech.machine.large_turbine.steam.tooltip=Do not put your Head in it
+gregtech.machine.large_turbine.gas.tooltip=Not a Jet Engine
+gregtech.machine.large_turbine.plasma.tooltip=Plasma Energy Siphon
+gregtech.machine.large_boiler.bronze.tooltip=We need more Steam!
+gregtech.machine.large_boiler.steel.tooltip=Charcoal Incinerator
+gregtech.machine.large_boiler.titanium.tooltip=Where's the Magic Super Fuel?
+gregtech.machine.large_boiler.tungstensteel.tooltip=How do you even fuel this thing?
+gregtech.machine.coke_oven.tooltip=Making better fuels for Steel and Power
+gregtech.machine.assembly_line.tooltip=Not a multiblock Assembling Machine!
+gregtech.machine.fusion_reactor.luv.tooltip=Atomic Alloy Smelter
+gregtech.machine.fusion_reactor.zpm.tooltip=A SUN DOWN ON EARTH
+gregtech.machine.fusion_reactor.uv.tooltip=A WHITE DWARF DOWN ON YOUR BASE
+gregtech.machine.large_chemical_reactor.tooltip=Black Box Reactor
+gregtech.machine.steam_oven.tooltip=Not to be confused with Multi-Smelter
+gregtech.machine.steam_grinder.tooltip=A multiblock Macerator without the Byproducts
+gregtech.machine.large_miner.ev.tooltip=Digging Ore instead of You
+gregtech.machine.large_miner.iv.tooltip=Biome Excavator
+gregtech.machine.large_miner.luv.tooltip=Terrestrial Harvester
+gregtech.machine.central_monitor.tooltip=But can it run Doom?
+gregtech.machine.processing_array.tooltip=When a few Machines just doesn't cut it
+gregtech.machine.advanced_processing_array.tooltip=Parallelize the World
+gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
+gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
+gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
+gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
+gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
-gregtech.universal.disabled=Sharing between Multiblocks: §4Disabled
-gregtech.universal.enabled=Sharing between Multiblocks: §aEnabled
+gregtech.universal.disabled=Multiblock Sharing §4Disabled
+gregtech.universal.enabled=Multiblock Sharing §aEnabled
 
 gregtech.machine.item_bus.import.ulv.name=ULV Input Bus
 gregtech.machine.item_bus.import.lv.name=LV Input Bus
@@ -4484,6 +4540,10 @@ gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
+gregtech.bus.collapse_true=Bus will collapse Items
+gregtech.bus.collapse_false=Bus will not collapse Items
+gregtech.bus.collapse.error=Bus must be attached to multiblock first
+
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
 gregtech.machine.fluid_hatch.import.ulv.name=ULV Input Hatch
@@ -4503,8 +4563,6 @@ gregtech.machine.fluid_hatch.import_4x.name=Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.name=Nonuple Input Hatch
 gregtech.machine.fluid_hatch.export_4x.name=Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.name=Nonuple Output Hatch
-gregtech.machine.multi_fluid_hatch_universal.tooltip.1=Capacity: §b16000mB§7 per tank.
-gregtech.machine.multi_fluid_hatch_universal.tooltip.2=Tank Count: §b%d
 
 gregtech.machine.fluid_hatch.export.ulv.name=ULV Output Hatch
 gregtech.machine.fluid_hatch.export.lv.name=LV Output Hatch
@@ -4599,6 +4657,9 @@ gregtech.machine.maintenance_hatch_configurable.name=Configurable Maintenance Ha
 gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over Multiblocks/nStarts with no Maintenance problems!
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+gregtech.machine.maintenance_hatch_cleanroom_auto.name=Automatic Filtration Maintenance Hatch
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=For automatically maintaining Multiblocks with Cleaning!
+gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 
@@ -4610,7 +4671,8 @@ gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
 gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
-gregtech.machine.muffler_hatch.tooltip=DO NOT OBSTRUCT THE OUTPUT!
+gregtech.machine.muffler_hatch.tooltip1=Recovers waste from machines
+gregtech.machine.muffler_hatch.tooltip2=DO NOT OBSTRUCT THE OUTPUT!
 
 gregtech.machine.muffler_hatch.ulv.name=ULV Muffler Hatch
 gregtech.machine.muffler_hatch.lv.name=LV Muffler Hatch
@@ -4628,7 +4690,7 @@ gregtech.machine.muffler_hatch.uxv.name=UXV Muffler Hatch
 gregtech.machine.muffler_hatch.opv.name=OpV Muffler Hatch
 gregtech.machine.muffler_hatch.max.name=MAX Muffler Hatch
 
-gregtech.muffler.recovery_tooltip=Recovers Items §b%d%%§7 of the time!
+gregtech.muffler.recovery_tooltip=§bRecovery Chance: §f%d%%
 
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
@@ -4638,41 +4700,89 @@ gregtech.machine.machine_hatch.locked=Machine Interface Locked
 gregtech.machine.machine_hatch.tooltip=Specialized Access Bus that only holds valid items
 gregtech.machine.machine_hatch.processing_array=When in the §eProcessing Array§7, only holds machines that work in the §eProcessing Array
 
+gregtech.machine.passthrough_hatch_item.name=Item Passthrough Hatch
+gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the other
+gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
+gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
+
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
-gregtech.machine.item_controller.tooltip.redstone=Requires Redstone Input To Work
-gregtech.machine.item_controller.tooltip.consumption=While working, constantly consumes %,d EU/t
-
 # Universal tooltips
-gregtech.universal.tooltip.voltage_in=Voltage IN: §a%,d (§r%s§a)
-gregtech.universal.tooltip.voltage_out=Voltage OUT: §a%,d (§r%s§a)
-gregtech.universal.tooltip.energy_storage_capacity=Energy Capacity: §9%,d
-gregtech.universal.tooltip.amperage_in=Amperage IN: §e%,d
-gregtech.universal.tooltip.amperage_in_till=Amperage IN up to: §e%,d
-gregtech.universal.tooltip.amperage_out=Amperage OUT: §e%,d
-gregtech.universal.tooltip.amperage_out_till=Amperage OUT up to: §e%,d
-gregtech.universal.tooltip.item_storage_capacity=Item Slots: %,d
-gregtech.universal.tooltip.fluid_storage_capacity=Fluid Capacity: %,d L
-gregtech.universal.tooltip.max_voltage_in=Max Voltage IN: §a%,d (§r%s§a)
+gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.max_voltage_in=§aMax Voltage IN: §f%,d (%s§f)
+gregtech.universal.tooltip.voltage_out=§aVoltage OUT: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.max_voltage_out=§aMax Voltage OUT: §f%,d (%s§f)
+gregtech.universal.tooltip.voltage_in_out=§aVoltage IN/OUT: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.max_voltage_in_out=§aMax Voltage IN/OUT: §f%,d EU/t (%s§f)
+gregtech.universal.tooltip.amperage_in=§eAmperage IN: §f%,dA
+gregtech.universal.tooltip.amperage_in_till=§eAmperage IN up to: §f%,dA
+gregtech.universal.tooltip.amperage_out=§eAmperage OUT: §f%,dA
+gregtech.universal.tooltip.amperage_out_till=§eAmperage OUT up to: §f%,dA
+gregtech.universal.tooltip.amperage_in_out=§eAmperage IN/OUT: §f%,dA
+gregtech.universal.tooltip.amperage_in_out_till=§eAmperage IN/OUT up to: §f%,dA
+gregtech.universal.tooltip.energy_storage_capacity=§cEnergy Capacity: §r%,d EU
+gregtech.universal.tooltip.energy_tier_range=§aAllowed Voltage Tiers: §f%s §f- %s
+gregtech.universal.tooltip.item_storage_capacity=§6Item Slots: §f%,d
+gregtech.universal.tooltip.item_storage_total=§6Item Capacity: §f%,d items
+gregtech.universal.tooltip.item_stored=§dItem Stored: §f%s, %,d items
+gregtech.universal.tooltip.item_transfer_rate=§bTransfer Rate: §f%,d items/s
+gregtech.universal.tooltip.item_transfer_rate_stacks=§bTransfer Rate: §f%,d stacks/s
+gregtech.universal.tooltip.fluid_storage_capacity=§9Fluid Capacity: §f%,d L
+gregtech.universal.tooltip.fluid_storage_capacity_mult=§9Fluid Capacity: §f%,d §7Tanks, §f%,d L §7each
+gregtech.universal.tooltip.fluid_stored=§dFluid Stored: §f%s, %,d L
+gregtech.universal.tooltip.fluid_transfer_rate=§bTransfer Rate: §f%,d L/t
+gregtech.universal.tooltip.parallel=§dMax Parallel: §f%d
+gregtech.universal.tooltip.working_area=§bWorking Area: §f%,dx%,d
+gregtech.universal.tooltip.working_area_max=§bMax Working Area: §f%,dx%,d
+gregtech.universal.tooltip.working_area_chunks_max=§bMax Working Area: §f%,dx%,d Chunks
+gregtech.universal.tooltip.uses_per_tick=Uses §f%,d EU/t §7while working
+gregtech.universal.tooltip.uses_per_tick_steam=Uses §f%,d L/t §7of Steam while working
+gregtech.universal.tooltip.uses_per_hour_lubricant=Uses §f%,d L/hr §7of Lubricant while working
+gregtech.universal.tooltip.uses_per_second=Uses §f%,d EU/s §7while working
+gregtech.universal.tooltip.uses_per_op=Uses §f%,d EU/operation
+gregtech.universal.tooltip.base_production_eut=§eBase Production: §f%,d EU/t
+gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
+gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
+gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
+gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=Generation: %,d EU/t
 gregtech.recipe.duration=Duration: %,.2f secs
 gregtech.recipe.amperage=Amperage: %,d
-gregtech.recipe.not_consumed=§bDoes not get consumed in the process
+gregtech.recipe.not_consumed=Does not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
 gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
+gregtech.recipe.cleanroom=Requires %s
+gregtech.recipe.cleanroom.display_name=Cleanroom
+gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
-
 gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
+
+gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
+gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
+gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle Modes or access Covers
+gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
+gregtech.tool_action.screwdriver.auto_collapse=§8Use Screwdriver to toggle Item collapsing
+gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-Output
+gregtech.tool_action.screwdriver.auto_output_down=§8Use Screwdriver to toggle Auto-Output from the Bottom
+gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
+gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
+gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections, sneak to block Connections
+gregtech.tool_action.wire_cutter.connect=§8Use Wire Cutters to set Connections
+gregtech.tool_action.soft_mallet.reset=§8Use Soft Mallet to toggle Working
+gregtech.tool_action.soft_mallet.toggle_mode=§8Use Soft Mallet to toggle Modes
+gregtech.tool_action.hammer=§8Use Hard Hammer to muffle Sounds
+gregtech.tool_action.crowbar=§8Use Crowbar to remove Covers
+gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems
 
 gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%s Plasma
@@ -4698,7 +4808,7 @@ gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fConfigurator Slot§r/n§7Place a §6Programmed Circuit§7 in this slot to/n§7change its configured value./n§7Hold §6Shift§7 when clicking buttons to change by §65
+gregtech.gui.configurator_slot.tooltip=§fConfigurator Slot§r/n§7Place a §6Programmed Circuit§7 in this slot to/n§7change its configured value./n§7Hold §6Shift§7 when clicking buttons to change by §65./n§aA Programmed Circuit in this slot is also valid for recipe inputs.§r
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
@@ -4717,8 +4827,9 @@ gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
 gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust, with Fortune giving a bonus.
-gregtech.jei.ore.biome_weighting=%s Weight: %d
-gregtech.jei.ore.biome_weighting_no_spawn=%s Weight: Cannot Spawn
+gregtech.jei.ore.biome_weighting_title=§dModified Biome Total Weights:
+gregtech.jei.ore.biome_weighting=§d%s Weight: §3%d
+gregtech.jei.ore.biome_weighting_no_spawn=§d%s Weight: §cCannot Spawn
 gregtech.jei.ore.ore_weight=Weight in vein: %d%%
 gregtech.jei.ore.primary_1=Top Ore
 gregtech.jei.ore.primary_2=Spawns in the top %d layers of the vein
@@ -4728,6 +4839,21 @@ gregtech.jei.ore.between_1=Between Ore
 gregtech.jei.ore.between_2=Spawns in the middle %d layers of the vein, with other ores
 gregtech.jei.ore.sporadic_1=Sporadic Ore
 gregtech.jei.ore.sporadic_2=Spawns anywhere in the vein
+
+fluid.spawnlocation.name=Fluid Vein Information
+gregtech.jei.fluid.vein_weight=Vein Weight: %d
+gregtech.jei.fluid.min_yield=Minimum Yield: %d
+gregtech.jei.fluid.max_yield=Maximum Yield: %d
+gregtech.jei.fluid.depletion_chance=Depletion Chance: %d%%
+gregtech.jei.fluid.depletion_amount=Depletion Amount: %d
+gregtech.jei.fluid.depleted_rate=Depleted Yield: %d
+gregtech.jei.fluid.dimension=Dimensions:
+gregtech.jei.fluid.weight_hover=The Weight of the vein. Hover over the fluid to see any possible biome modifications
+gregtech.jei.fluid.min_hover=The minimum yield that any fluid vein of this fluid can have
+gregtech.jei.fluid.max_hover=The maximum yield that any fluid vein of this fluid can have
+gregtech.jei.fluid.dep_chance_hover=The percentage chance for the vein to be depleted upon harvest
+gregtech.jei.fluid.dep_amount_hover=The amount the vein will be depleted by
+gregtech.jei.fluid.dep_yield_hover=The maximum yield of the vein when it is fully depleted
 
 gregtech.jei.materials.average_mass=Average mass: %,d
 gregtech.jei.materials.average_protons=Average protons: %,d
@@ -4741,19 +4867,16 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
-gregtech.fluid_pipe.capacity=§9Capacity: %,d L
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
-gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.capacity=§9Capacity: §f%,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: §f%,d K
+gregtech.fluid_pipe.channels=§eChannels: §f%d
 gregtech.fluid_pipe.gas_proof=§6Can handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids
 gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
 gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
-gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
-gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
-gregtech.item_pipe.priority=§9Priority: %d
+gregtech.item_pipe.priority=§9Priority: §f%,d
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.
@@ -4798,6 +4921,7 @@ gregtech.multiblock.pattern.error.limited.1=§cMinimum: %d§r
 gregtech.multiblock.pattern.error.limited.2=§cMaximum: %d per layer§r
 gregtech.multiblock.pattern.error.limited.3=§cMinimum: %d per layer§r
 gregtech.multiblock.pattern.error.coils=§cAll heating coils must be the same§r
+gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
@@ -4826,17 +4950,16 @@ gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
 gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t
 gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
-gregtech.multiblock.turbine.voltage_tooltip=Base Production: §e%s§7 EU/t
-gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §610%%§7 efficiency.
+gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 
 gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t
 gregtech.multiblock.large_boiler.throttle=Throttle: %d
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
-gregtech.multiblock.large_boiler.rate_tooltip=Produces %dL of Steam with 1 Coal at %dL/t
-gregtech.multiblock.large_boiler.heat_time_tooltip=Takes %.2f seconds to heat up
-gregtech.multiblock.large_boiler.explosion_tooltip=§cWill explode if provided Fuel with no Water
+gregtech.multiblock.large_boiler.rate_tooltip=§7Produces §f%d L §7of Steam with §f1 Coal
+gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to heat up
+gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
 
 gregtech.multiblock.large_miner.done=Done!
 gregtech.multiblock.large_miner.working=Working...
@@ -4857,6 +4980,7 @@ gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
+gregtech.command.hand.groovy=Consider using §6/gs hand
 gregtech.command.hand.usage=Usage: /gregtech hand
 gregtech.command.hand.item_id=Item: %s (Metadata: %d)
 gregtech.command.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
@@ -4923,8 +5047,6 @@ gregtech.terminal.app_name.fluid_prospector=Fluid Prospector
 gregtech.terminal.app_name.pong=Pong
 gregtech.terminal.app_name.minesweeper=Minesweeper
 gregtech.terminal.app_name.maze=Theseus's Escape
-
-
 gregtech.terminal.app_name.console=GT Console
 gregtech.terminal.app_name.battery=Battery Manager
 gregtech.terminal.app_name.hardware=Hardware Manager
@@ -4933,7 +5055,6 @@ gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
-
 gregtech.terminal.app_name.teleport=Teleporter
 
 
@@ -4948,7 +5069,7 @@ terminal.pong.description=A classic pong game, if you're really that bored of wa
 terminal.minesweeper.description=A classic minesweeper game, if you're in class.
 terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 terminal.cape_selector.description=An app that allows you to equip GT capes that you've unlocked through advancements.
-
+terminal.teleport.description=Open portals to any coordinate in any dimension. Be careful not to teleport into a wall!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
@@ -4956,7 +5077,7 @@ texture.url_texture.fail=Load Failed
 terminal.hw.battery=Battery
 terminal.hw.device=Device
 
-terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
+terminal.os.shutdown_confirm=Confirm shutdown? (Press ESC again to see ok)
 terminal.os.hw_demand=Missing mounting hardware:
 
 terminal.system_call.null=NULL
@@ -5040,7 +5161,7 @@ terminal.recipe_chart.tier.1=cache of 6 pages
 terminal.recipe_chart.tier.2=cache of 7 pages
 terminal.recipe_chart.tier.3=cache of 8 pages
 
-terminal.prospector.vis_mode=switching color mode
+terminal.prospector.vis_mode=Switch color mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore Data
 terminal.prospector.fluid=Fluid Deposit Data
@@ -5084,13 +5205,13 @@ terminal.hardware.remove=Remove hardware
 terminal.hardware.remove.full=There are no empty slots in inventory
 terminal.hardware.tip.remove=§4right-click remove the hardware
 
-terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
+terminal.battery.description=Battery manager, visually analyze your app's energy consumption.
 terminal.battery.hover=%s: Usage %d eu/s
 terminal.battery.low_energy=Low power! Plz recharge the terminal.
 
 terminal.store.description=App store, check out what you got? Install and upgrade the app.
-terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?
-terminal.store.miss=Require %s (%d).
+terminal.store.match=Detected required item in inventory, install/upgrade App?
+terminal.store.miss=Requires %s (%d).
 
 terminal.ar.open=Open AR
 
@@ -5138,9 +5259,10 @@ terminal.cape_selector.tip=You can get these from high-level advancements.
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
-metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.
-metaitem.cover.digital.wireless.tooltip.2=§eShift Right click to remove the current binding.
-metaitem.cover.digital.wireless.tooltip.3=§cBinding: (%s)
+metaitem.cover.digital.wireless.tooltip.1=§fWirelessly§7 connects machines to the §fCentral Monitor§7 as §fCover§7.
+metaitem.cover.digital.wireless.tooltip.2=§fRight Click§7 on the §fCentral Monitor§7 to remotely bind to it.
+metaitem.cover.digital.wireless.tooltip.3=§fSneak Right Click§7 to remove the current binding.
+metaitem.cover.digital.wireless.tooltip.4=§aBinding: §f%s
 monitor.gui.title.back=Back
 monitor.gui.title.scale=Scale:
 monitor.gui.title.argb=ARGB:
@@ -5156,3 +5278,6 @@ gregtech.key.armor_mode_switch=Armor Mode Switch
 gregtech.key.armor_hover=Armor Hover Toggle
 gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
+
+# Debug messaging
+gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more

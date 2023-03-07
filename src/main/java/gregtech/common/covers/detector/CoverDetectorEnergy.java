@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 public class CoverDetectorEnergy extends CoverBehavior implements ITickable {
 
-    private boolean isInverted;
+    protected boolean isInverted;
 
     public CoverDetectorEnergy(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -88,9 +88,11 @@ public class CoverDetectorEnergy extends CoverBehavior implements ITickable {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("isInverted", this.isInverted);
+
+        return tagCompound;
     }
 
     @Override

@@ -2,20 +2,24 @@ package gregtech.common.terminal.app.prospector.widget;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.net.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
-import net.minecraft.block.Block;
+import gregtech.core.network.packets.PacketProspecting;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -103,13 +107,40 @@ public class WidgetProspectingMap extends Widget {
 
             switch (mode) {
                 case ORE_PROSPECTING_MODE:
+                    BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
                             int ySize = chunk.getHeightValue(x, z);
                             for (int y = 1; y < ySize; y++) {
-                                Block block = chunk.getBlockState(x, y, z).getBlock();
-                                if (GTUtility.isOre(block)) {
-                                    packet.addBlock(x, y, z, OreDictUnifier.getOreDictionaryNames(new ItemStack(block)).stream().findFirst().get());
+                                pos.setPos(x, y, z);
+                                IBlockState state = chunk.getBlockState(pos);
+                                ItemStack itemBlock = GTUtility.toItem(state);
+                                if (GTUtility.isOre(itemBlock)) {
+                                    boolean added = false;
+                                    String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream()
+                                            .findFirst()
+                                            .orElse("");
+                                    OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
+                                    for(StoneType type : StoneType.STONE_TYPE_REGISTRY) {
+                                        if(type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
+                                            packet.addBlock(x, y, z, oreDictString);
+                                            added = true;
+                                            break;
+                                        }
+                                        else if(type.processingPrefix == prefix) {
+                                            MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
+                                            if(materialStack != null) {
+                                                packet.addBlock(x, y, z, "ore" + materialStack.material.getLocalizedName());
+                                                added = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    // Probably other mod's ores
+                                    if(!added) {
+                                        // Fallback
+                                        packet.addBlock(x, y, z, oreDictString);
+                                    }
                                 }
                             }
                         }
@@ -120,7 +151,7 @@ public class WidgetProspectingMap extends Widget {
                     if (fStack != null && fStack.getDefinition() != null) {
                         packet.addBlock(0, 3, 0, GTUtility.formatNumbers(100.0 * BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z)
                                 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
-                        packet.addBlock(0, 2, 0, "" + BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z));
+                        packet.addBlock(0, 2, 0, String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
                         packet.addBlock(0, 1, 0, BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z).getName());
                     }
                     break;

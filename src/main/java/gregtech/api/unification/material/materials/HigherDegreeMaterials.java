@@ -3,6 +3,7 @@ package gregtech.api.unification.material.materials;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
+import gregtech.api.unification.material.properties.ToolProperty;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -14,7 +15,7 @@ public class HigherDegreeMaterials {
     public static void register() {
 
         Electrotine = new Material.Builder(2507, "electrotine")
-                .dust().ore(5, 1)
+                .dust().ore(5, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Redstone, 1, Electrum, 1)
@@ -33,20 +34,22 @@ public class HigherDegreeMaterials {
                 .build();
 
         RedSteel = new Material.Builder(2510, "red_steel")
-                .ingot().fluid()
+                .ingot(3).fluid()
                 .color(0x8C6464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
                 .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(7.0f, 4.5f, 896, 21)
+                .toolStats(ToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
+                        .attackSpeed(0.1F).enchantability(21).build())
                 .blastTemp(1300, GasTier.LOW, VA[HV], 1000)
                 .build();
 
         BlueSteel = new Material.Builder(2511, "blue_steel")
-                .ingot().fluid()
+                .ingot(3).fluid()
                 .color(0x64648C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
                 .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(7.5f, 5.0f, 1024, 21)
+                .toolStats(ToolProperty.Builder.of(15.0F, 6.0F, 1024, 3)
+                        .attackSpeed(0.1F).enchantability(33).build())
                 .blastTemp(1400, GasTier.LOW, VA[HV], 1000)
                 .build();
 
@@ -83,7 +86,7 @@ public class HigherDegreeMaterials {
                 .color(0x999900).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1)
-                .toolStats(10.0f, 5.5f, 4000, 21)
+                .rotorStats(10.0f, 5.5f, 4000)
                 .cableProperties(GTValues.V[6], 4, 2)
                 .blastTemp(4200, GasTier.MID, VA[EV], 1300)
                 .build();
@@ -109,7 +112,9 @@ public class HigherDegreeMaterials {
                 .color(0x336600).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
-                .toolStats(10.0f, 8.0f, 5120, 21)
+                .toolStats(ToolProperty.Builder.of(5.0F, 10.0F, 3072, 4)
+                        .attackSpeed(0.3F).enchantability(33).build())
+                .rotorStats(10.0f, 8.0f, 5120)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1400)
                 .build();
 
@@ -118,7 +123,7 @@ public class HigherDegreeMaterials {
                 .color(0x660033).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_ROUND, GENERATE_FOIL, GENERATE_GEAR)
                 .components(HSSG, 6, Iridium, 2, Osmium, 1)
-                .toolStats(15.0f, 7.0f, 3000, 21)
+                .rotorStats(15.0f, 7.0f, 3000)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1500)
                 .build();
 

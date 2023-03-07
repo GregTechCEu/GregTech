@@ -2,6 +2,7 @@ package gregtech.common.pipelike.fluidpipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -43,13 +44,13 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     public BlockFluidPipe(FluidPipeType pipeType) {
         super(pipeType);
-        setHarvestLevel("wrench", 1);
+        setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 
     public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
         Preconditions.checkNotNull(material, "material");
-        Preconditions.checkNotNull(fluidPipeProperties, "fluidPipeProperties");
-        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkNotNull(fluidPipeProperties, "material %s fluidPipeProperties was null", material);
+        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material %s is not registered", material);
         this.enabledMaterials.put(material, fluidPipeProperties);
     }
 

@@ -12,6 +12,7 @@ import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
@@ -20,6 +21,7 @@ import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,12 +40,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -96,7 +98,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public String getHarvestTool() {
-        return isMaterialWood(material) ? "axe" : "wrench";
+        return isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
     }
 
     @Override
@@ -221,7 +223,10 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        return getWorld().isRemote || (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
+        if (playerIn.getHeldItem(hand).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            return getWorld().isRemote || (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
+        }
+        return false;
     }
 
     @Override
@@ -286,21 +291,23 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
-
-        if (ModHandler.isMaterialWood(material)) {
-            tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", 340));
-            tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
-        } else {
-            FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (TooltipHelper.isShiftDown()) {
+            if (ModHandler.isMaterialWood(material)) {
+                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", 340));
+                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
+            } else {
+                FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
                 tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
                 if (pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
                 if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
                 if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
                 if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
-            } else {
-                tooltip.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
             }
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
+            tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
         }
 
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -309,6 +316,12 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             if (fluidStack == null) return;
             tooltip.add(I18n.format("gregtech.machine.fluid_tank.fluid", fluidStack.amount, I18n.format(fluidStack.getUnlocalizedName())));
         }
+    }
+
+    // Override this so that we can control the "Hold SHIFT" tooltip manually
+    @Override
+    public boolean showToolUsages() {
+        return false;
     }
 
     @Override

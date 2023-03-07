@@ -7,7 +7,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ValidationResult;
 
 import javax.annotation.Nonnull;
 
@@ -46,10 +45,4 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
         return this.solderMultiplier;
     }
 
-    @Override
-    @Nonnull
-    public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
-    }
 }

@@ -11,11 +11,10 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -34,14 +33,11 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final RecipeLogicEnergy result = new GasCollectorRecipeLogic(this, recipeMap, () -> energyContainer);
-        result.enableOverclockVoltage();
-        return result;
+        return new GasCollectorRecipeLogic(this, recipeMap, () -> energyContainer);
     }
 
     protected boolean checkRecipe(@Nonnull Recipe recipe) {
-        List<Integer> recipeDimensions = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
-        for (Integer dimension : recipeDimensions) {
+        for (int dimension : recipe.getProperty(GasCollectorDimensionProperty.getInstance(), IntLists.EMPTY_LIST)) {
             if (dimension == this.getWorld().provider.getDimension()) {
                 return true;
             }
@@ -56,8 +52,8 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         }
 
         @Override
-        protected boolean checkRecipe(Recipe recipe) {
-            return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe);
+        protected boolean checkRecipe(@Nonnull Recipe recipe) {
+            return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe) && super.checkRecipe(recipe);
         }
     }
 }

@@ -8,10 +8,11 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.ingredients.NBTIngredient;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -19,6 +20,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
+
+    private static ItemStack NAME_MOLD = ItemStack.EMPTY;
 
     public RecipeMapFormingPress(String unlocalizedName, int minInputs, int maxInputs, int minOutputs, int maxOutputs, int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
         super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
@@ -28,24 +31,38 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
         Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, exactVoltage);
-        if (inputs.size() < 2 || inputs.get(0).isEmpty() || inputs.get(1).isEmpty()) {
-            return recipe;
-        }
-        if (recipe == null) {
+
+        // Item Mold renaming - min of 2 inputs required
+        if (recipe == null && inputs.size() > 1) {
+            // cache name mold target comparison stack so a new one is not made every lookup
+            // cannot statically initialize as RecipeMaps are registered before items, throwing a NullPointer
+            if (NAME_MOLD.isEmpty()) {
+                NAME_MOLD = MetaItems.SHAPE_MOLD_NAME.getStackForm();
+            }
+
+            // find the mold and the stack to rename
             ItemStack moldStack = ItemStack.EMPTY;
             ItemStack itemStack = ItemStack.EMPTY;
             for (ItemStack inputStack : inputs) {
-                if (MetaItems.SHAPE_MOLD_NAME.getStackForm().isItemEqual(moldStack)) {
-                    moldStack = inputStack;
-                } else {
+                // early exit
+                if (!moldStack.isEmpty() && !itemStack.isEmpty()) break;
+
+                if (moldStack.isEmpty() && inputStack.isItemEqual(NAME_MOLD)) {
+                    // only valid if the name mold has a name, which is stored in the "display" sub-compound
+                    if (inputStack.getTagCompound() != null && inputStack.getTagCompound().hasKey("display", Constants.NBT.TAG_COMPOUND)) {
+                        moldStack = inputStack;
+                    }
+                } else if (itemStack.isEmpty()) {
                     itemStack = inputStack;
                 }
             }
-            if (!moldStack.isEmpty() && !itemStack.isEmpty()) {
+
+            // make the mold recipe if the two required inputs were found
+            if (!moldStack.isEmpty() && moldStack.getTagCompound() != null && !itemStack.isEmpty()) {
                 ItemStack output = GTUtility.copyAmount(1, itemStack);
-                output.setStackDisplayName(inputs.get(0).getDisplayName());
+                output.setStackDisplayName(moldStack.getDisplayName());
                 return this.recipeBuilder()
-                        .notConsumable(new NBTIngredient(moldStack)) //recipe is reusable as long as mold stack matches
+                        .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
                         .inputs(GTUtility.copyAmount(1, itemStack))
                         .outputs(output)
                         .duration(40).EUt(4)

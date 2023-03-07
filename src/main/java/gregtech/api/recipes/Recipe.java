@@ -3,19 +3,24 @@ package gregtech.api.recipes;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.recipeproperties.EmptyRecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.integration.GroovyScriptCompat;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Class that represent machine recipe.<p>
@@ -31,6 +36,8 @@ import java.util.stream.Collectors;
  */
 public class Recipe {
 
+    private static final NonNullList<ItemStack> EMPTY = NonNullList.create();
+
     public static int getMaxChancedValue() {
         return 10000;
     }
@@ -39,14 +46,14 @@ public class Recipe {
         return String.format("%.2f", outputChance / (getMaxChancedValue() * 1.0) * 100);
     }
 
-    private final List<CountableIngredient> inputs;
+    private final List<GTRecipeInput> inputs;
     private final NonNullList<ItemStack> outputs;
 
     /**
      * A chance of 10000 equals 100%
      */
     private final List<ChanceEntry> chancedOutputs;
-    private final List<FluidStack> fluidInputs;
+    private final List<GTRecipeInput> fluidInputs;
     private final List<FluidStack> fluidOutputs;
 
     private final int duration;
@@ -64,67 +71,62 @@ public class Recipe {
     /**
      * If this Recipe is a Crafttweaker recipe. Used for logging purposes
      */
+    // TODO YEET
     private final boolean isCTRecipe;
-
-    private final RecipePropertyStorage recipePropertyStorage;
-
-    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
+    private final boolean groovyRecipe;
+    private final IRecipePropertyStorage recipePropertyStorage;
 
     private final int hashCode;
 
-    public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
-                  List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
-                  int duration, int EUt, boolean hidden, boolean isCTRecipe) {
-        this.recipePropertyStorage = new RecipePropertyStorage();
-        this.inputs = NonNullList.create();
-        this.inputs.addAll(inputs);
-        this.outputs = NonNullList.create();
-        this.outputs.addAll(outputs);
-        this.chancedOutputs = new ArrayList<>(chancedOutputs);
-        this.fluidInputs = ImmutableList.copyOf(fluidInputs);
-        this.fluidOutputs = ImmutableList.copyOf(fluidOutputs);
+    public Recipe(List<GTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
+                  List<GTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
+                  int duration, int EUt, boolean hidden, boolean isCTRecipe,
+                  IRecipePropertyStorage recipePropertyStorage) {
+        this.recipePropertyStorage =
+                recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage;
+        if (inputs.isEmpty()) {
+            this.inputs = Collections.emptyList();
+        } else {
+            this.inputs = NonNullList.create();
+            this.inputs.addAll(inputs);
+            this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
+        }
+        if (outputs.isEmpty()) {
+            this.outputs = EMPTY;
+        } else {
+            this.outputs = NonNullList.create();
+            this.outputs.addAll(outputs);
+        }
+        this.chancedOutputs = chancedOutputs.isEmpty() ? Collections.emptyList() : new ArrayList<>(chancedOutputs);
+        this.fluidInputs = fluidInputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidInputs);
+        this.fluidOutputs = fluidOutputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidOutputs);
         this.duration = duration;
         this.EUt = EUt;
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
-
-        //sort not consumables inputs to the end
-        this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
         this.hashCode = makeHashCode();
+        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
     }
 
     public Recipe copy() {
-
-        // Create a new Recipe object
-        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe);
-
-        // Apply Properties from the original recipe onto the new one
-        if(this.recipePropertyStorage.getSize() > 0) {
-            for(Map.Entry<RecipeProperty<?>, Object> property : getRecipePropertyStorage().getRecipeProperties()) {
-                newRecipe.setProperty(property.getKey(), property.getValue());
-            }
-        }
-
-        return newRecipe;
+        return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
+                this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe, this.recipePropertyStorage);
     }
 
     /**
      * Trims the recipe outputs, chanced outputs, and fluid outputs based on the performing MetaTileEntity's trim limit.
      *
-     * @param currentRecipe The recipe to perform the output trimming upon
-     * @param recipeMap     The RecipeMap that the recipe is from
-     * @param itemTrimLimit The Limit to which item outputs should be trimmed to, -1 for no trimming
+     * @param currentRecipe  The recipe to perform the output trimming upon
+     * @param recipeMap      The RecipeMap that the recipe is from
+     * @param itemTrimLimit  The Limit to which item outputs should be trimmed to, -1 for no trimming
      * @param fluidTrimLimit The Limit to which fluid outputs should be trimmed to, -1 for no trimming
-     *
      * @return A new Recipe whose outputs have been trimmed.
      */
-    public Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
-
+    public static Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
         // Fast return early if no trimming desired
-        if(itemTrimLimit == -1 && fluidTrimLimit == -1) {
+        if (itemTrimLimit == -1 && fluidTrimLimit == -1) {
             return currentRecipe;
         }
-
 
         currentRecipe = currentRecipe.copy();
         RecipeBuilder<?> builder = new RecipeBuilder<>(currentRecipe, recipeMap);
@@ -162,94 +164,112 @@ public class Recipe {
      * @return true if the recipe matches the given inputs false otherwise.
      */
     public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        Pair<Boolean, Integer[]> fluids;
-        Pair<Boolean, Integer[]> items;
+        Pair<Boolean, int[]> fluids = null;
+        Pair<Boolean, int[]> items = null;
 
-
-        fluids = matchesFluid(fluidInputs);
-        if (!fluids.getKey()) {
-            return false;
+        if (fluidInputs.size() >0 ) {
+            fluids = matchesFluid(fluidInputs);
+            if (!fluids.getKey()) {
+                return false;
+            }
         }
 
-        items = matchesItems(inputs);
-        if (!items.getKey()) {
-            return false;
+        if (inputs.size() > 0) {
+            items = matchesItems(inputs);
+            if (!items.getKey()) {
+                return false;
+            }
         }
 
         if (consumeIfSuccessful) {
-            Integer[] fluidAmountInTank = fluids.getValue();
-            Integer[] itemAmountInSlot = items.getValue();
-            for (int i = 0; i < fluidAmountInTank.length; i++) {
-                FluidStack fluidStack = fluidInputs.get(i);
-                int fluidAmount = fluidAmountInTank[i];
-                if (fluidStack == null || fluidStack.amount == fluidAmount)
-                    continue;
-                fluidStack.amount = fluidAmount;
-                if (fluidStack.amount == 0)
-                    fluidInputs.set(i, null);
+            if (fluids != null) {
+                int[] fluidAmountInTank = fluids.getValue();
+
+                for (int i = 0; i < fluidAmountInTank.length; i++) {
+                    FluidStack fluidStack = fluidInputs.get(i);
+                    int fluidAmount = fluidAmountInTank[i];
+                    if (fluidStack == null || fluidStack.amount == fluidAmount)
+                        continue;
+                    fluidStack.amount = fluidAmount;
+                    if (fluidStack.amount == 0)
+                        fluidInputs.set(i, null);
+                }
             }
-            for (int i = 0; i < itemAmountInSlot.length; i++) {
-                ItemStack itemInSlot = inputs.get(i);
-                int itemAmount = itemAmountInSlot[i];
-                if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
-                    continue;
-                itemInSlot.setCount(itemAmountInSlot[i]);
+            if(items != null) {
+                int[] itemAmountInSlot = items.getValue();
+                for (int i = 0; i < itemAmountInSlot.length; i++) {
+                    ItemStack itemInSlot = inputs.get(i);
+                    int itemAmount = itemAmountInSlot[i];
+                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
+                        continue;
+                    itemInSlot.setCount(itemAmountInSlot[i]);
+                }
             }
         }
 
         return true;
     }
 
-    private Pair<Boolean, Integer[]> matchesItems(List<ItemStack> inputs) {
-        Integer[] itemAmountInSlot = new Integer[inputs.size()];
+    private Pair<Boolean, int[]> matchesItems(List<ItemStack> inputs) {
+        int[] itemAmountInSlot = new int[inputs.size()];
+        int indexed = 0;
 
-        for (int i = 0; i < itemAmountInSlot.length; i++) {
-            ItemStack itemInSlot = inputs.get(i);
-            itemAmountInSlot[i] = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
-        }
+        List<GTRecipeInput> gtRecipeInputs = this.inputs;
+        for (GTRecipeInput ingredient : gtRecipeInputs) {
+            int ingredientAmount = ingredient.getAmount();
+            for (int j = 0; j < inputs.size(); j++) {
+                ItemStack inputStack = inputs.get(j);
 
-        for (CountableIngredient ingredient : this.inputs) {
-            int ingredientAmount = ingredient.getCount();
-            for (int i = 0; i < inputs.size(); i++) {
-                ItemStack inputStack = inputs.get(i);
-                if (inputStack.isEmpty() || !ingredient.getIngredient().apply(inputStack))
+                if (j == indexed) {
+                    itemAmountInSlot[j] = inputStack.isEmpty() ? 0 : inputStack.getCount();
+                    indexed++;
+                }
+
+                if (inputStack.isEmpty() || !ingredient.acceptsStack(inputStack))
                     continue;
-                int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
+                int itemAmountToConsume = Math.min(itemAmountInSlot[j], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
-                if (!ingredient.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;
+                if (!ingredient.isNonConsumable()) itemAmountInSlot[j] -= itemAmountToConsume;
                 if (ingredientAmount == 0) break;
             }
             if (ingredientAmount > 0)
                 return Pair.of(false, itemAmountInSlot);
         }
+        int[] retItemAmountInSlot = new int[indexed];
+        System.arraycopy(itemAmountInSlot, 0, retItemAmountInSlot, 0, indexed);
 
-        return Pair.of(true, itemAmountInSlot);
+        return Pair.of(true, retItemAmountInSlot);
     }
 
-    private Pair<Boolean, Integer[]> matchesFluid(List<FluidStack> fluidInputs) {
-        Integer[] fluidAmountInTank = new Integer[fluidInputs.size()];
+    private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
+        int[] fluidAmountInTank = new int[fluidInputs.size()];
+        int indexed = 0;
 
-        for (int i = 0; i < fluidAmountInTank.length; i++) {
-            FluidStack fluidInTank = fluidInputs.get(i);
-            fluidAmountInTank[i] = fluidInTank == null ? 0 : fluidInTank.amount;
-        }
+        List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
+        for (GTRecipeInput fluid : gtRecipeInputs) {
+            int fluidAmount = fluid.getAmount();
+            for (int j = 0; j < fluidInputs.size(); j++) {
+                FluidStack tankFluid = fluidInputs.get(j);
 
-        for (FluidStack fluid : this.fluidInputs) {
-            int fluidAmount = fluid.amount;
-            boolean isNotConsumed = (fluid.tag != null && fluid.tag.hasKey("nonConsumable"));
-            for (int i = 0; i < fluidInputs.size(); i++) {
-                FluidStack tankFluid = fluidInputs.get(i);
-                if (tankFluid == null || tankFluid.getFluid() != fluid.getFluid())
+                if (j == indexed) {
+                    indexed++;
+                    fluidAmountInTank[j] = tankFluid == null ? 0 : tankFluid.amount;
+                }
+
+                if (tankFluid == null || !fluid.acceptsFluid(tankFluid))
                     continue;
-                int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
+                int fluidAmountToConsume = Math.min(fluidAmountInTank[j], fluidAmount);
                 fluidAmount -= fluidAmountToConsume;
-                if (!isNotConsumed) fluidAmountInTank[i] -= fluidAmountToConsume;
+                if (!fluid.isNonConsumable()) fluidAmountInTank[j] -= fluidAmountToConsume;
                 if (fluidAmount == 0) break;
             }
             if (fluidAmount > 0)
                 return Pair.of(false, fluidAmountInTank);
         }
-        return Pair.of(true, fluidAmountInTank);
+        int[] retfluidAmountInTank = new int[indexed];
+        System.arraycopy(fluidAmountInTank, 0, retfluidAmountInTank, 0, indexed);
+
+        return Pair.of(true, retfluidAmountInTank);
     }
 
     @Override
@@ -257,24 +277,12 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return this.EUt == recipe.EUt &&
-                this.duration == recipe.duration &&
-                hasSameInputs(recipe) &&
-                hasSameOutputs(recipe) &&
-                hasSameChancedOutputs(recipe) &&
-                hasSameFluidInputs(recipe) &&
-                hasSameFluidOutputs(recipe) &&
-                hasSameRecipeProperties(recipe);
+        return hasSameInputs(recipe) && hasSameFluidInputs(recipe);
     }
 
     private int makeHashCode() {
-        int hash = Objects.hash(EUt, duration);
-        hash = 31 * hash + hashInputs();
-        hash = 41 * hash + hashOutputs();
-        hash = 31 * hash + hashChancedOutputs();
+        int hash = 31 * hashInputs();
         hash = 31 * hash + hashFluidList(this.fluidInputs);
-        hash = 41 * hash + hashFluidList(this.fluidOutputs);
-        hash = 31 * hash + hashRecipeProperties();
         return hash;
     }
 
@@ -285,105 +293,58 @@ public class Recipe {
 
     private int hashInputs() {
         int hash = 0;
-        for (CountableIngredient countableIngredient : this.inputs) {
-            for (ItemStack is : countableIngredient.getIngredient().getMatchingStacks()) {
-                hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
+        for (GTRecipeInput recipeIngredient : this.inputs) {
+            if (!recipeIngredient.isOreDict()) {
+                for (ItemStack is : recipeIngredient.getInputStacks()) {
+                    hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
+                }
+            } else {
+                hash = 31 * hash + recipeIngredient.getOreDict();
             }
         }
         return hash;
     }
 
     private boolean hasSameInputs(Recipe otherRecipe) {
-        if (this.inputs.size() != otherRecipe.inputs.size()) return false;
-        for (int i = 0; i < inputs.size(); i++) {
-            for (int j = 0; j < this.inputs.get(i).getIngredient().getMatchingStacks().length; j++) {
-                if (!hashStrategy.equals(this.inputs.get(i).getIngredient().getMatchingStacks()[j],
-                        otherRecipe.inputs.get(i).getIngredient().getMatchingStacks()[j])) {
-                    return false;
-                }
-            }
+        List<ItemStack> otherStackList = new ObjectArrayList<>(otherRecipe.inputs.size());
+        for (GTRecipeInput otherInputs : otherRecipe.inputs) {
+            otherStackList.addAll(Arrays.asList(otherInputs.getInputStacks()));
         }
-        return true;
+        if (!this.matchesItems(otherStackList).getLeft()) {
+            return false;
+        }
+
+        List<ItemStack> thisStackList = new ObjectArrayList<>(this.inputs.size());
+        for (GTRecipeInput thisInputs : this.inputs) {
+            thisStackList.addAll(Arrays.asList(thisInputs.getInputStacks()));
+        }
+        return otherRecipe.matchesItems(thisStackList).getLeft();
     }
 
-    private int hashOutputs() {
+    public static int hashFluidList(@Nonnull List<GTRecipeInput> fluids) {
         int hash = 0;
-        for (ItemStack is : this.outputs) {
-            hash = 31 * hash + hashStrategy.hashCode(is);
-        }
-        return hash;
-    }
-
-    private boolean hasSameOutputs(Recipe otherRecipe) {
-        if (this.outputs.size() != otherRecipe.outputs.size()) return false;
-        for (int i = 0; i < outputs.size(); i++) {
-            if (!hashStrategy.equals(this.outputs.get(i), otherRecipe.outputs.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private int hashChancedOutputs() {
-        int hash = 0;
-        for (ChanceEntry chanceEntry : this.chancedOutputs) {
-            hash = 31 * hash + hashStrategy.hashCode(chanceEntry.itemStack);
-            hash = 31 * hash + chanceEntry.chance;
-            hash = 31 * hash + chanceEntry.boostPerTier;
-        }
-        return hash;
-    }
-
-    private boolean hasSameChancedOutputs(Recipe otherRecipe) {
-        if (this.chancedOutputs.size() != otherRecipe.chancedOutputs.size()) return false;
-        for (int i = 0; i < chancedOutputs.size(); i++) {
-            if (!hashStrategy.equals(this.chancedOutputs.get(i).itemStack, otherRecipe.chancedOutputs.get(i).itemStack)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public int hashFluidList(List<FluidStack> fluids) {
-        int hash = 0;
-        for (FluidStack fluidStack : fluids) {
-            hash = 31 * hash + new FluidKey(fluidStack).hashCode();
-            hash = 31 * hash + fluidStack.amount;
+        for (GTRecipeInput fluidInput : fluids) {
+            hash = 31 * hash + fluidInput.hashCode();
         }
         return hash;
     }
 
     private boolean hasSameFluidInputs(Recipe otherRecipe) {
-        if (this.fluidInputs.size() != otherRecipe.fluidInputs.size()) return false;
-        for (int i = 0; i < fluidInputs.size(); i++) {
-            if (!fluidInputs.get(i).isFluidStackIdentical(otherRecipe.fluidInputs.get(i))) {
-                return false;
-            }
+        List<FluidStack> otherFluidList = new ObjectArrayList<>(otherRecipe.fluidInputs.size());
+        for (GTRecipeInput otherInputs : otherRecipe.fluidInputs) {
+            FluidStack fluidStack = otherInputs.getInputFluidStack();
+            otherFluidList.add(fluidStack);
         }
-        return true;
-    }
-
-    private boolean hasSameFluidOutputs(Recipe otherRecipe) {
-        if (this.fluidOutputs.size() != otherRecipe.fluidOutputs.size()) return false;
-        for (int i = 0; i < fluidOutputs.size(); i++) {
-            if (!fluidOutputs.get(i).isFluidStackIdentical(otherRecipe.fluidOutputs.get(i))) {
-                return false;
-            }
+        if (!this.matchesFluid(otherFluidList).getLeft()) {
+            return false;
         }
-        return true;
-    }
 
-    private int hashRecipeProperties() {
-        int hash = 0;
-        for (Map.Entry<RecipeProperty<?>, Object> propertyObjectEntry : this.recipePropertyStorage.getRecipeProperties()) {
-            hash = 31 * hash + propertyObjectEntry.getKey().hashCode();
+        List<FluidStack> thisFluidsList = new ObjectArrayList<>(this.fluidInputs.size());
+        for (GTRecipeInput thisFluidInputs : this.fluidInputs) {
+            FluidStack fluidStack = thisFluidInputs.getInputFluidStack();
+            thisFluidsList.add(fluidStack);
         }
-        return hash;
-    }
-
-    private boolean hasSameRecipeProperties(Recipe otherRecipe) {
-        if (this.getPropertyCount() != otherRecipe.getPropertyCount()) return false;
-        return this.recipePropertyStorage.getRecipeProperties().containsAll(otherRecipe.recipePropertyStorage.getRecipeProperties());
+        return otherRecipe.matchesFluid(thisFluidsList).getLeft();
     }
 
     @Override
@@ -405,7 +366,7 @@ public class Recipe {
     //    Getters    //
     ///////////////////
 
-    public List<CountableIngredient> getInputs() {
+    public List<GTRecipeInput> getInputs() {
         return inputs;
     }
 
@@ -421,17 +382,19 @@ public class Recipe {
      * The Recipe should be trimmed by calling {@link Recipe#getItemAndChanceOutputs(int)} before calling this method,
      * if trimming is required.
      *
-     * @param tier The Voltage Tier of the Recipe, used for chanced output calculation
-     * @param recipeMap The RecipeMap that the recipe is being performed upon, used for chanced output calculation
-     *
+     * @param recipeTier  The Voltage Tier of the Recipe, used for chanced output calculation
+     * @param machineTier The Voltage Tier of the Machine, used for chanced output calculation
+     * @param recipeMap   The RecipeMap that the recipe is being performed upon, used for chanced output calculation
      * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
      */
-    public List<ItemStack> getResultItemOutputs(int tier, RecipeMap<?> recipeMap) {
+    public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
         List<ItemStack> resultChanced = new ArrayList<>();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
-            int outputChance = recipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
+            int outputChance = recipeMap.getChanceFunction().chanceFor(
+                    chancedOutput.getChance(), chancedOutput.getBoostPerTier(),
+                    recipeTier, machineTier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
                 GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
@@ -455,23 +418,22 @@ public class Recipe {
         List<ItemStack> outputs = new ArrayList<>();
 
 
-
         // Create an entry for the chanced outputs, and initially populate it
         List<ChanceEntry> chancedOutputs = new ArrayList<>(getChancedOutputs());
 
 
         // No limiting
-        if(outputLimit == -1) {
+        if (outputLimit == -1) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()));
         }
         // If just the regular outputs would satisfy the outputLimit
-        else if(getOutputs().size() >= outputLimit) {
+        else if (getOutputs().size() >= outputLimit) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
             // clear the chanced outputs, as we are only getting regular outputs
             chancedOutputs.clear();
         }
         // If the regular outputs and chanced outputs are required to satisfy the outputLimit
-        else if(!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
+        else if (!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()));
 
             // Calculate the number of chanced outputs after adding all the regular outputs
@@ -480,7 +442,7 @@ public class Recipe {
             chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
         }
         // There are only chanced outputs to satisfy the outputLimit
-        else if(getOutputs().isEmpty()) {
+        else if (getOutputs().isEmpty()) {
             chancedOutputs = chancedOutputs.subList(0, Math.min(outputLimit, chancedOutputs.size()));
         }
         // The number of outputs + chanced outputs is lower than the trim number, so just add everything
@@ -500,7 +462,9 @@ public class Recipe {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> recipeOutputs = new ArrayList<>(this.outputs);
 
-        recipeOutputs.addAll(chancedOutputs.stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        for (ChanceEntry entry : this.chancedOutputs) {
+            recipeOutputs.add(entry.getItemStack());
+        }
 
         return recipeOutputs;
     }
@@ -510,20 +474,14 @@ public class Recipe {
         return chancedOutputs;
     }
 
-    public List<FluidStack> getFluidInputs() {
+    public List<GTRecipeInput> getFluidInputs() {
         return fluidInputs;
     }
 
     public boolean hasInputFluid(FluidStack fluid) {
-        for (FluidStack fluidStack : fluidInputs) {
+        for (GTRecipeInput fluidInput : fluidInputs) {
+            FluidStack fluidStack = fluidInput.getInputFluidStack();
             if (fluid.getFluid() == fluidStack.getFluid()) {
-                if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
-                    fluidStack = fluidStack.copy();
-                    fluidStack.tag.removeTag("nonConsumable");
-                    if (fluidStack.tag.isEmpty()) {
-                        fluidStack.tag = null;
-                    }
-                }
                 return fluidStack.isFluidEqual(fluid);
             }
         }
@@ -539,7 +497,6 @@ public class Recipe {
      * Similar to {@link Recipe#getItemAndChanceOutputs(int)} but does not handle chanced fluid outputs
      *
      * @param outputLimit The limiting factor to trim the fluid outputs to, -1 for disabled.
-     *
      * @return A trimmed List of fluid outputs.
      */
     // TODO, implement future chanced fluid outputs here
@@ -563,13 +520,27 @@ public class Recipe {
         return isCTRecipe;
     }
 
+    public boolean isGroovyRecipe() {
+        return groovyRecipe;
+    }
+
     public boolean hasValidInputsForDisplay() {
-        boolean hasValidInputs = true;
-        for (CountableIngredient ingredient : inputs) {
-            ItemStack[] matchingItems = ingredient.getIngredient().getMatchingStacks();
-            hasValidInputs &= Arrays.stream(matchingItems).anyMatch(s -> !s.isEmpty());
+        for (GTRecipeInput ingredient : inputs) {
+            if (ingredient.isOreDict()) {
+                if (OreDictionary.getOres(OreDictionary.getOreName(ingredient.getOreDict())).stream()
+                        .anyMatch(s -> !s.isEmpty())) {
+                    return true;
+                }
+            }
+            return Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty());
         }
-        return hasValidInputs;
+        for (GTRecipeInput fluidInput : fluidInputs) {
+            FluidStack fluidIngredient = fluidInput.getInputFluidStack();
+            if (fluidIngredient != null && fluidIngredient.amount > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     ///////////////////////////////////////////////////////////
@@ -581,10 +552,6 @@ public class Recipe {
 
     public Object getPropertyRaw(String key) {
         return recipePropertyStorage.getRawRecipePropertyValue(key);
-    }
-
-    public boolean setProperty(RecipeProperty<?> property, Object value) {
-        return recipePropertyStorage.store(property, value);
     }
 
     public Set<Map.Entry<RecipeProperty<?>, Object>> getPropertyValues() {
@@ -607,7 +574,7 @@ public class Recipe {
         return (int) recipePropertyStorage.getRecipeProperties().stream().filter((property) -> !property.getKey().isHidden()).count();
     }
 
-    public RecipePropertyStorage getRecipePropertyStorage() {
+    public IRecipePropertyStorage getRecipePropertyStorage() {
         return recipePropertyStorage;
     }
 

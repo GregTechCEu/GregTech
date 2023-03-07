@@ -26,7 +26,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     private long lastUpdate;
     boolean isValid = false;
 
-    public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet> world) {
+    public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>> world) {
         //noinspection unchecked
         this.worldData = (WorldPipeNet<NodeDataType, PipeNet<NodeDataType>>) world;
     }
@@ -254,7 +254,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         return !first.isBlocked(firstFacing) && !second.isBlocked(firstFacing.getOpposite());
     }
 
-    private boolean areMarksCompatible(int mark1, int mark2) {
+    private static boolean areMarksCompatible(int mark1, int mark2) {
         return mark1 == mark2 || mark1 == Node.DEFAULT_MARK || mark2 == Node.DEFAULT_MARK;
     }
 
@@ -275,7 +275,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         observedSet.put(startPos, getNodeAt(startPos));
         Node<NodeDataType> firstNode = getNodeAt(startPos);
         MutableBlockPos currentPos = new MutableBlockPos(startPos);
-        Stack<EnumFacing> moveStack = new Stack<>();
+        Deque<EnumFacing> moveStack = new ArrayDeque<>();
         main:
         while (true) {
             for (EnumFacing facing : EnumFacing.VALUES) {

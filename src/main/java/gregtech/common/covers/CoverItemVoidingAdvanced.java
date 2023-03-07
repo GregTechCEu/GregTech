@@ -1,5 +1,6 @@
 package gregtech.common.covers;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -15,7 +16,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -92,17 +95,23 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
-        this.initFilterUI(20, primaryGroup::addWidget);
-
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(91, 14, 75, 20,
+        primaryGroup.addWidget(new CycleButtonWidget(91, 14, 75, 20,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                 .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82)
+        this.initFilterUI(20, primaryGroup::addWidget);
+
+        primaryGroup.addWidget(new CycleButtonWidget(10, 92 + 23, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
+                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
+                .setTooltipHoverString("cover.voiding.tooltip"));
+
+        primaryGroup.addWidget(new CycleButtonWidget(10, 112 + 23, 116, 18,
+                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82 + 16 + 24)
                 .widget(primaryGroup)
-                .widget(filterGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125 + 16 + 24);
         return buildUI(builder, player);
     }
 
@@ -157,9 +166,11 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidMode", voidingMode.ordinal());
+
+        return tagCompound;
     }
 
     @Override

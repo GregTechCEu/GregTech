@@ -147,7 +147,7 @@ public abstract class PipeNetWalker {
         if (pipeTile == null) {
             if (walkedBlocks == 1) {
                 // if it is the first block, it wasn't already checked
-                GTLog.logger.warn("First PipeTile is null during walk");
+                GTLog.logger.error("First PipeTile is null during walk at {}", currentPos);
                 this.failed = true;
                 return;
             } else

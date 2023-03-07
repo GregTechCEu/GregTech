@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -25,7 +24,7 @@ public class AssemblerRecipeLoader {
                 .input(plate, Bronze, 4)
                 .input(gear, Bronze, 2)
                 .input(frameGt, Bronze)
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(BRONZE_GEARBOX, 2))
                 .duration(50).EUt(16).buildAndRegister();
 
@@ -33,7 +32,7 @@ public class AssemblerRecipeLoader {
                 .input(plate, Steel, 4)
                 .input(gear, Steel, 2)
                 .input(frameGt, Steel)
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(STEEL_GEARBOX, 2))
                 .duration(50).EUt(16).buildAndRegister();
 
@@ -41,7 +40,7 @@ public class AssemblerRecipeLoader {
                 .input(plate, StainlessSteel, 4)
                 .input(gear, StainlessSteel, 2)
                 .input(frameGt, StainlessSteel)
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(STAINLESS_STEEL_GEARBOX, 2))
                 .duration(50).EUt(16).buildAndRegister();
 
@@ -49,7 +48,7 @@ public class AssemblerRecipeLoader {
                 .input(plate, Titanium, 4)
                 .input(gear, Titanium, 2)
                 .input(frameGt, Titanium)
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, 2))
                 .duration(50).EUt(16).buildAndRegister();
 
@@ -57,7 +56,7 @@ public class AssemblerRecipeLoader {
                 .input(plate, TungstenSteel, 4)
                 .input(gear, TungstenSteel, 2)
                 .input(frameGt, TungstenSteel)
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(TUNGSTENSTEEL_GEARBOX, 2))
                 .duration(50).EUt(16).buildAndRegister();
 
@@ -136,7 +135,7 @@ public class AssemblerRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(plate, Wood, 3)
-                .circuitMeta(4)
+                .circuitMeta(6)
                 .fluidInputs(Glue.getFluid(20))
                 .output(pipeNormalFluid, Wood)
                 .buildAndRegister();
@@ -146,6 +145,28 @@ public class AssemblerRecipeLoader {
                 .circuitMeta(2)
                 .fluidInputs(Glue.getFluid(10))
                 .output(pipeLargeFluid, Wood)
+                .buildAndRegister();
+				
+        // Treated Wood Pipes
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(plate, TreatedWood)
+                .circuitMeta(12)
+                .fluidInputs(Glue.getFluid(50))
+                .output(pipeSmallFluid, TreatedWood)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(plate, TreatedWood, 3)
+                .circuitMeta(6)
+                .fluidInputs(Glue.getFluid(20))
+                .output(pipeNormalFluid, TreatedWood)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                .input(plate, TreatedWood, 6)
+                .circuitMeta(2)
+                .fluidInputs(Glue.getFluid(10))
+                .output(pipeLargeFluid, TreatedWood)
                 .buildAndRegister();
 
         // Voltage Coils

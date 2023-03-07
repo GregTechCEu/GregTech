@@ -29,7 +29,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     public VariantBlock(Material materialIn) {
         super(materialIn);
-        if(VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
+        if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
             for (T t : VALUES) {
                 IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
                 IBlockState state = getState(t);
@@ -37,6 +37,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             }
         }
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, VALUES[0]));
     }
 
     @Override
@@ -78,17 +79,13 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
-        //basic tooltip for all variant blocks
-        tooltip.add(I18n.format("tile.machine_casing.tooltip1"));
-        tooltip.add(I18n.format("tile.machine_casing.tooltip2"));
         //tier less tooltip like: tile.turbine_casing.tooltip
         String unlocalizedVariantTooltip = getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedVariantTooltip))
-            tooltip.addAll(Arrays.asList(I18n.format(unlocalizedVariantTooltip).split("/n")));
+            tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedVariantTooltip))));
         //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
-        if (I18n.hasKey(unlocalizedTooltip))
-            tooltip.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
+        if (I18n.hasKey(unlocalizedTooltip)) tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
     }
 
     @Override

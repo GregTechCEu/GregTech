@@ -3,9 +3,8 @@ package gregtech.api.gui;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.SPacketUIOpen;
-import gregtech.api.net.packets.SPacketUIWidgetUpdate;
+import gregtech.core.network.packets.PacketUIOpen;
+import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -34,6 +33,11 @@ public abstract class UIFactory<E extends IUIHolder> {
             return;
         }
         ModularUI uiTemplate = createUITemplate(holder, player);
+
+        if(uiTemplate == null) {
+            // Central monitor Screen can return null if clicked when not powered, maybe other multis too
+            return;
+        }
         uiTemplate.initWidgets();
 
         player.getNextWindowId();
@@ -50,11 +54,11 @@ public abstract class UIFactory<E extends IUIHolder> {
         container.accumulateWidgetUpdateData = true;
         uiTemplate.guiWidgets.values().forEach(Widget::detectAndSendChanges);
         container.accumulateWidgetUpdateData = false;
-        ArrayList<SPacketUIWidgetUpdate> updateData = new ArrayList<>(container.accumulatedUpdates);
+        ArrayList<PacketUIWidgetUpdate> updateData = new ArrayList<>(container.accumulatedUpdates);
         container.accumulatedUpdates.clear();
 
-        SPacketUIOpen packet = new SPacketUIOpen(uiFactoryId, serializedHolder, currentWindowId, updateData);
-        NetworkHandler.channel.sendTo(packet.toFMLPacket(), player);
+        PacketUIOpen packet = new PacketUIOpen(uiFactoryId, serializedHolder, currentWindowId, updateData);
+        GregTechAPI.networkHandler.sendTo(packet, player);
 
         container.addListener(player);
         player.openContainer = container;
@@ -64,7 +68,7 @@ public abstract class UIFactory<E extends IUIHolder> {
     }
 
     @SideOnly(Side.CLIENT)
-    public final void initClientUI(PacketBuffer serializedHolder, int windowId, List<SPacketUIWidgetUpdate> initialWidgetUpdates) {
+    public final void initClientUI(PacketBuffer serializedHolder, int windowId, List<PacketUIWidgetUpdate> initialWidgetUpdates) {
         E holder = readHolderFromSyncData(serializedHolder);
         Minecraft minecraft = Minecraft.getMinecraft();
         EntityPlayerSP entityPlayer = minecraft.player;
@@ -73,7 +77,7 @@ public abstract class UIFactory<E extends IUIHolder> {
         uiTemplate.initWidgets();
         ModularUIGui modularUIGui = new ModularUIGui(uiTemplate);
         modularUIGui.inventorySlots.windowId = windowId;
-        for (SPacketUIWidgetUpdate packet : initialWidgetUpdates) {
+        for (PacketUIWidgetUpdate packet : initialWidgetUpdates) {
             modularUIGui.handleWidgetUpdate(packet);
         }
         minecraft.addScheduledTask(() -> {

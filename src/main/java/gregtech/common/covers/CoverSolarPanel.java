@@ -17,7 +17,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -43,26 +42,13 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
     @Override
     public void update() {
         World world = coverHolder.getWorld();
-        BlockPos blockPos = coverHolder.getPos().up();
-        if (canSeeSunClearly(world, blockPos)) {
+        BlockPos blockPos = coverHolder.getPos();
+        if (GTUtility.canSeeSunClearly(world, blockPos)) {
             IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-            if(energyContainer != null) {
+            if (energyContainer != null) {
                 energyContainer.acceptEnergyFromNetwork(null, EUt, 1);
             }
         }
-    }
-
-    private boolean canSeeSunClearly(World world, BlockPos blockPos) {
-        if (!world.canSeeSky(blockPos)) {
-            return false;
-        }
-        if (world.isRaining()) {
-            Biome biome = world.getBiome(blockPos);
-            if (biome.canRain() || biome.getEnableSnow()) {
-                return false;
-            }
-        }
-        return world.isDaytime();
     }
 
 

@@ -1,13 +1,20 @@
 package gregtech.api.metatileentity;
 
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.security.IActionHost;
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.api.util.DimensionalCoord;
+import appeng.me.helpers.AENetworkProxy;
+import appeng.me.helpers.IGridProxyable;
 import com.google.common.base.Preconditions;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.CPacketRecoverMTE;
+import gregtech.core.network.packets.PacketRecoverMTE;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTNameTagParticle;
@@ -22,25 +29,30 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.*;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional.Interface;
+import net.minecraftforge.fml.common.Optional.InterfaceList;
+import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder, IWorldNameable {
+@InterfaceList(value = {
+        @Interface(iface = "appeng.api.networking.security.IActionHost", modid = GTValues.MODID_APPENG, striprefs = true),
+        @Interface(iface = "appeng.me.helpers.IGridProxyable", modid = GTValues.MODID_APPENG, striprefs = true),
+})
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder, IWorldNameable, IActionHost, IGridProxyable {
 
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
@@ -51,6 +63,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     private final int[] timeStatistics = new int[20];
     private int timeStatisticsIndex = 0;
     private int lagWarningCount = 0;
+    protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
 
     public MetaTileEntity getMetaTileEntity() {
         return metaTileEntity;
@@ -66,6 +79,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
         this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
@@ -110,10 +124,16 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
-                this.metaTileEntity.onAttached();
+                /* Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
+                * about the composition of the BlockPattern that onAttached may generate. */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
+                // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
+                this.metaTileEntity.onAttached();
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
+            }
+            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+                readFromNBT_AENetwork(compound);
             }
         }
     }
@@ -128,6 +148,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             NBTTagCompound metaTileEntityData = new NBTTagCompound();
             metaTileEntity.writeToNBT(metaTileEntityData);
             compound.setTag("MetaTileEntity", metaTileEntityData);
+            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+                writeToNBT_AENetwork(compound);
+            }
         }
         return compound;
     }
@@ -138,6 +161,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             metaTileEntity.invalidate();
         }
         super.invalidate();
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            invalidateAE();
+        }
     }
 
     @Override
@@ -159,7 +185,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (metaTileEntity != null) {
             metaTileEntity.update();
         } else if (world.isRemote) { // recover the mte
-            NetworkHandler.channel.sendToServer(new CPacketRecoverMTE(world.provider.getDimension(), getPos()).toFMLPacket());
+            GregTechAPI.networkHandler.sendToServer(new PacketRecoverMTE(world.provider.getDimension(), getPos()));
         } else { // remove the block
             if (world.getBlockState(pos).getBlock() instanceof BlockMachine) {
                 world.setBlockToAir(pos);
@@ -224,6 +250,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                         new TextComponentTranslation(GTUtility.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
                         new TextComponentTranslation(GTUtility.formatNumbers(worstTickTime)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds", tricorderFormat.format(worstTickTime / 1000000000)));
             }
             if (lagWarningCount > 0) {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_lag_count",
@@ -249,25 +276,31 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public void receiveInitialSyncData(PacketBuffer buf) {
         setCustomName(buf.readString(Short.MAX_VALUE));
         if (buf.readBoolean()) {
-            int metaTileEntityId = buf.readVarInt();
-            setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
-            this.metaTileEntity.receiveInitialSyncData(buf);
-            scheduleRenderUpdate();
-            this.needToUpdateLightning = true;
+            receiveMTEInitializationData(buf);
         }
     }
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buffer) {
         if (discriminator == INITIALIZE_MTE) {
-            int metaTileEntityId = buffer.readVarInt();
-            setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
-            this.metaTileEntity.receiveInitialSyncData(buffer);
-            scheduleRenderUpdate();
-            this.needToUpdateLightning = true;
+            receiveMTEInitializationData(buffer);
         } else if (metaTileEntity != null) {
             metaTileEntity.receiveCustomData(discriminator, buffer);
         }
+    }
+
+    /**
+     * Sets and initializes the MTE
+     *
+     * @param buf the buffer to read data from
+     */
+    private void receiveMTEInitializationData(@Nonnull PacketBuffer buf) {
+        int metaTileEntityId = buf.readVarInt();
+        setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
+        this.metaTileEntity.onPlacement();
+        this.metaTileEntity.receiveInitialSyncData(buf);
+        scheduleRenderUpdate();
+        this.needToUpdateLightning = true;
     }
 
     @Override
@@ -308,6 +341,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         super.onChunkUnload();
         if (metaTileEntity != null) {
             metaTileEntity.onUnload();
+        }
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            onChunkUnloadAE();
         }
     }
 
@@ -419,5 +455,84 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @Override
     public ITextComponent getDisplayName() {
         return this.hasCustomName() ? new TextComponentString(this.getName()) : metaTileEntity != null ? new TextComponentTranslation(metaTileEntity.getMetaFullName()) : new TextComponentString(this.getName());
+    }
+
+    @Nullable
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public IGridNode getGridNode(@Nonnull AEPartLocation part) {
+        AENetworkProxy proxy = getProxy();
+        return proxy == null ? null : proxy.getNode();
+    }
+
+    @Nonnull
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+        return metaTileEntity == null ? AECableType.NONE : metaTileEntity.getCableConnectionType(part);
+    }
+
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public void securityBreak() {}
+
+    @Nonnull
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public IGridNode getActionableNode() {
+        AENetworkProxy proxy = getProxy();
+        return proxy == null ? null : proxy.getNode();
+    }
+
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public AENetworkProxy getProxy() {
+        return metaTileEntity == null ? null : metaTileEntity.getProxy();
+    }
+
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public DimensionalCoord getLocation() {
+        return new DimensionalCoord(this);
+    }
+
+    @Override
+    @Method(modid = GTValues.MODID_APPENG)
+    public void gridChanged() {
+        if (metaTileEntity != null) {
+            metaTileEntity.gridChanged();
+        }
+    }
+
+    @Method(modid = GTValues.MODID_APPENG)
+    public void readFromNBT_AENetwork(NBTTagCompound data) {
+        AENetworkProxy proxy = getProxy();
+        if (proxy != null) {
+            proxy.readFromNBT(data);
+        }
+    }
+
+    @Method(modid = GTValues.MODID_APPENG)
+    public void writeToNBT_AENetwork(NBTTagCompound data) {
+        AENetworkProxy proxy = getProxy();
+        if (proxy != null) {
+            proxy.writeToNBT(data);
+        }
+    }
+
+    @Method(modid = GTValues.MODID_APPENG)
+    void onChunkUnloadAE() {
+        AENetworkProxy proxy = getProxy();
+        if (proxy != null) {
+            proxy.onChunkUnload();
+        }
+    }
+
+    @Method(modid = GTValues.MODID_APPENG)
+    void invalidateAE() {
+        AENetworkProxy proxy = getProxy();
+        if (proxy != null) {
+            proxy.invalidate();
+        }
     }
 }

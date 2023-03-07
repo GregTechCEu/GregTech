@@ -5,6 +5,9 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockCleanroomCasing;
+import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -158,6 +161,20 @@ public class MaterialInfoLoader {
                 new MaterialStack(Materials.NeodymiumMagnetic, M / 2) // rod
         ));
 
+        OreDictUnifier.registerOre(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE), new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, M), // frame / 2
+                new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
+                new MaterialStack(Materials.Concrete, M / 2) // 1 block / 2
+        ));
+
+        OreDictUnifier.registerOre(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS), new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, M), // frame / 2
+                new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
+                new MaterialStack(Materials.Glass, M / 2) // 1 block / 2
+        ));
+
+        OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS), new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M * 4)));
+
         if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, M / 9))); // screw
             OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, M / 9))); // screw
@@ -173,6 +190,14 @@ public class MaterialInfoLoader {
             OreDictUnifier.registerOre(new ItemStack(Items.SPRUCE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
             OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         }
+
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 2), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 3), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 4), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.PLANKS, 1, 5), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M)));
+
 
         if (ConfigHolder.recipes.hardIronRecipes)
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(

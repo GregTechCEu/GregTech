@@ -3,8 +3,8 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -14,9 +14,11 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.common.blocks.properties.PropertyMaterial;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.BlockFaceShape;
@@ -28,6 +30,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -86,15 +89,23 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     public String getHarvestTool(IBlockState state) {
         Material material = state.getValue(variantProperty);
         if (ModHandler.isMaterialWood(material)) {
-            return "axe";
+            return ToolClasses.AXE;
         }
-        return "pickaxe";
+        return ToolClasses.WRENCH;
     }
 
     @Nonnull
     @Override
     public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
         Material material = state.getValue(variantProperty);
+        if (ModHandler.isMaterialWood(material)) {
+            return SoundType.WOOD;
+        }
+        return SoundType.METAL;
+    }
+
+    public SoundType getSoundType(ItemStack stack) {
+        Material material = getGtMaterial(stack.getMetadata());
         if (ModHandler.isMaterialWood(material)) {
             return SoundType.WOOD;
         }
@@ -129,8 +140,8 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
                 .forEach(blockState -> list.add(getItem(blockState)));
     }
 
-    public ItemStack getItem(IBlockState blockState) {
-        return new ItemStack(this, 1, getMetaFromState(blockState));
+    public static ItemStack getItem(IBlockState blockState) {
+        return GTUtility.toItem(blockState);
     }
 
     public ItemStack getItem(Material material) {
@@ -150,6 +161,46 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return false;
     }
 
+    public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, ItemStack stackInHand, EnumFacing facing) {
+        BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
+        if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
+            ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
+            IBlockState pipeState = blockPipe.getDefaultState();
+            // these 0 values are not actually used by forge
+            itemBlock.placeBlockAt(stackInHand, playerIn, worldIn, pos, facing, 0, 0, 0, pipeState);
+            IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
+            if (pipeTile instanceof TileEntityPipeBase) {
+                ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
+            } else {
+                GTLog.logger.error("Pipe was not placed!");
+                return false;
+            }
+            SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
+            worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+            if (!playerIn.capabilities.isCreativeMode) {
+                stackInHand.shrink(1);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeFrame(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
+
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityPipeBase<?, ?> && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
+            TileEntityPipeBase<?, ?> pipeTile = (TileEntityPipeBase<?, ?>) te;
+            Material frameMaterial = pipeTile.getFrameMaterial();
+            pipeTile.setFrameMaterial(null);
+            Block.spawnAsEntity(world, pos, this.getItem(frameMaterial));
+            ToolHelper.damageItem(stack, player);
+            ToolHelper.playToolSound(stack, player);
+            return true;
+
+        }
+        return false;
+    }
+
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
@@ -158,24 +209,11 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         }
         // replace frame with pipe and set the frame material to this frame
         if (stackInHand.getItem() instanceof ItemBlockPipe) {
-            BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
-            if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
-                IBlockState pipeState = blockPipe.getDefaultState();
-                worldIn.setBlockState(pos, pipeState);
-                blockPipe.onBlockPlacedBy(worldIn, pos, pipeState, playerIn, stackInHand);
-                IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
-                if (pipeTile instanceof TileEntityPipeBase) {
-                    ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(getMetaFromState(state)));
-                } else {
-                    GTLog.logger.error("Pipe was not placed!");
-                    return false;
-                }
-                if (!playerIn.capabilities.isCreativeMode) {
-                    stackInHand.shrink(1);
-                }
-                return true;
-            }
-            return false;
+            return replaceWithFramedPipe(worldIn, pos, state, playerIn, stackInHand, facing);
+        }
+
+        if (stackInHand.getItem().getToolClasses(stackInHand).contains(ToolClasses.CROWBAR))  {
+            return removeFrame(worldIn, pos, playerIn, stackInHand);
         }
 
         if (!(stackInHand.getItem() instanceof FrameItemBlock)) {
@@ -195,6 +233,8 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
             }
             if (canPlaceBlockAt(worldIn, blockPos)) {
                 worldIn.setBlockState(blockPos, ((FrameItemBlock) stackInHand.getItem()).getBlockState(stackInHand));
+                SoundType type = getSoundType(stackInHand);
+                worldIn.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!playerIn.capabilities.isCreativeMode) {
                     stackInHand.shrink(1);
                 }
@@ -203,6 +243,11 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
             } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
                 Material material = ((BlockFrame) ((FrameItemBlock) stackInHand.getItem()).getBlock()).getGtMaterial(stackInHand.getMetadata());
                 ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(material);
+                SoundType type = getSoundType(stackInHand);
+                worldIn.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                if (!playerIn.capabilities.isCreativeMode) {
+                    stackInHand.shrink(1);
+                }
                 blockPos.release();
                 return true;
             } else {
@@ -267,7 +312,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         for (IBlockState state : this.getBlockState().getValidStates()) {
             Material material = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.frameGt.getBlockPath(material.getMaterialIconSet()));
+            event.getMap().registerSprite(MaterialIconType.frameGt.getBlockTexturePath(material.getMaterialIconSet()));
         }
     }
 

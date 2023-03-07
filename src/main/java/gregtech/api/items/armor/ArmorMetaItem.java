@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -204,6 +205,11 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
         EntityEquipmentSlot slot = this.getEquipmentSlot(stack);
         if(slot == null || enchantment.type == null) {
+            return false;
+        }
+
+        IArmorLogic armorLogic = getArmorLogic(stack);
+        if (!armorLogic.canBreakWithDamage(stack) && enchantment.type == EnumEnchantmentType.BREAKABLE) {
             return false;
         }
 

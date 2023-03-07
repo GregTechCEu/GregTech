@@ -44,9 +44,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (previousRecipe == null) {
             Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
-            return recipe == null ? null : getInputTank().drain(new FluidStack(recipe.getFluidInputs().get(0).getFluid(), Integer.MAX_VALUE), false);
+            return recipe == null ? null : getInputTank().drain(new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE), false);
         }
-        FluidStack fuelStack = previousRecipe.getFluidInputs().get(0);
+        FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
     }
 
@@ -78,7 +78,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             return false;
 
         int turbineMaxVoltage = (int) getMaxVoltage();
-        FluidStack recipeFluidStack = recipe.getFluidInputs().get(0);
+        FluidStack recipeFluidStack = recipe.getFluidInputs().get(0).getInputFluidStack();
         int parallel = 0;
 
         if (excessVoltage >= turbineMaxVoltage) {

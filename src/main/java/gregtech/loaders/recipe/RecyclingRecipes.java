@@ -82,6 +82,12 @@ public class RecyclingRecipes {
             if (OreDictUnifier.getPrefix(input) == OrePrefix.ingot && m.getProperty(PropertyKey.INGOT).getArcSmeltInto() == m) {
                 return;
             }
+
+            // Prevent Magnetic dust -> Regular Ingot Arc Furnacing, avoiding the EBF recipe
+            // "I will rework magnetic materials soon" - DStrand1
+            if(prefix == OrePrefix.dust && m.hasFlag(IS_MAGNETIC)) {
+                return;
+            }
         }
         registerArcRecycling(input, components, prefix);
     }
@@ -284,6 +290,12 @@ public class RecyclingRecipes {
                     highestTemp = prop.getBlastTemperature();
                 }
             }
+            else if(m.hasFlag(IS_MAGNETIC) && m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getSmeltingInto().hasProperty(PropertyKey.BLAST)) {
+                BlastProperty prop = m.getProperty(PropertyKey.INGOT).getSmeltingInto().getProperty(PropertyKey.BLAST);
+                if (prop.getBlastTemperature() > highestTemp) {
+                    highestTemp = prop.getBlastTemperature();
+                }
+            }
         }
 
         // No blast temperature in the list means no multiplier
@@ -305,7 +317,7 @@ public class RecyclingRecipes {
         long duration = 0;
         for (ItemStack is : materials) {
             MaterialStack ms = OreDictUnifier.getMaterial(is);
-            if (ms != null) duration += ms.amount * ms.material.getMass();
+            if (ms != null) duration += ms.amount * ms.material.getMass() * is.getCount();
         }
         return (int) Math.max(1L, duration / M);
     }

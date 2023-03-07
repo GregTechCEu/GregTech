@@ -1,14 +1,11 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -20,12 +17,13 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // no overclocking happens other than parallelization,
         // so return the recipe's values, with EUt made positive for it to be made negative later
         return new int[]{recipeEUt * -1, recipeDuration};
     }
 
+    @Nonnull
     @Override
     public Enum<ParallelLogicType> getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS

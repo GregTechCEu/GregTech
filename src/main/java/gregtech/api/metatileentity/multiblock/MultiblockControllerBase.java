@@ -5,27 +5,31 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GregTechAPI;
+import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
-import gregtech.api.sound.GTSoundManager;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.Material;
+import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.api.block.VariantActiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -61,8 +65,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
+    public void onPlacement() {
+        super.onPlacement();
         reinitializeStructurePattern();
     }
 
@@ -93,6 +97,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
+    @Nonnull
     protected abstract BlockPattern createStructurePattern();
 
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
@@ -116,15 +121,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return 0;
-    }
-
-    @Override
-    public final int getActualLightValue() {
-        return getLightValueForPart(null);
-    }
-
     public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
@@ -143,22 +139,23 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).map(tile->tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
     }
 
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
-        return ()->Arrays.stream(metaTileEntities).map(tile->{
+        return ()->Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
+            holder.getMetaTileEntity().onPlacement();
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
             return new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
         }).toArray(BlockInfo[]::new);
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates){
-        return ()->Arrays.stream(allowedStates).map(state-> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
+    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates) {
+        return () -> Arrays.stream(allowedStates).map(state -> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
     }
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
@@ -171,11 +168,23 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return new TraceabilityPredicate(blockWorldState -> {
             IBlockState state = blockWorldState.getBlockState();
             if (state.getBlock() instanceof VariantActiveBlock) {
-                state = state.withProperty(VariantActiveBlock.ACTIVE, false);
                 blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             }
             return ArrayUtils.contains(allowedStates, state);
         }, getCandidates(allowedStates));
+    }
+
+    /** Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks. */
+    public static TraceabilityPredicate frames(Material... frameMaterials) {
+        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m)).toArray(IBlockState[]::new))
+                .or(new TraceabilityPredicate(blockWorldState -> {
+                    TileEntity tileEntity = blockWorldState.getTileEntity();
+                    if (!(tileEntity instanceof IPipeTile)) {
+                        return false;
+                    }
+                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
+                    return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
+                }));
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
@@ -207,18 +216,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColorForRendering());
     }
-    
+
     /**
      * Override to disable Multiblock pattern from being added to Jei
      */
-    public boolean shouldShowInJei(){
-        return true;
-    }
-
-    /**
-     * Override to disable MultiblockPart sharing for this Multiblock. (Rotor Holders always disallowed).
-     */
-    public boolean canShare() {
+    public boolean shouldShowInJei() {
         return true;
     }
 
@@ -239,7 +241,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
-                    if (!canShare() || !part.canPartShare()) {
+                    if (!part.canPartShare()) {
                         return;
                     }
                 }
@@ -293,6 +295,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.reinitializeStructurePattern();
+    }
+
+    @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
@@ -310,7 +318,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (dataId == STRUCTURE_FORMED) {
             this.structureFormed = buf.readBoolean();
             if (!structureFormed) {
-                GTSoundManager.stopTileSound(getPos());
+                GregTechAPI.soundManager.stopTileSound(getPos());
             }
         }
     }
@@ -344,9 +352,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.multiblock.universal.controller_information", I18n.format(getMetaFullName())));
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        if (this instanceof IMultipleRecipeMaps) {
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        }
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -400,9 +413,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return 0xFFFFFF;
     }
 
-    public void explodeMultiblock() {
+    public void explodeMultiblock(float explosionPower) {
         List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
-        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
-        doExplosion(8);
+        for (IMultiblockPart part : parts) {
+            part.removeFromMultiBlock(this);
+            ((MetaTileEntity) part).doExplosion(explosionPower);
+        }
+        doExplosion(explosionPower);
     }
 }

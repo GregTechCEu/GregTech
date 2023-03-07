@@ -1,0 +1,63 @@
+# Creates a release on GitHub with a new tag of the current version
+name: Release to GitHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'Release Label'
+        default: 'BETA RELEASE'
+        required: false
+      hotfix:
+        description: 'Hotfix Release'
+        required: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Fetch Git Tags
+        run: git fetch --prune --unshallow --tags
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-executable: ".gradlew"
+          generate-job-summary: false
+
+      - name: Get Current Mod Version
+        id: get_current_version
+        run: echo ::set-output name=version::$(echo "$(./gradlew getVersionFromJava --q | sed -E 's/1.12.2-|-.+//g')" > ver.txt && cat ver.txt)
+
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
+
+      # exit CI early as a failure if creating this release clashes with the previous version
+      - name: Check Build Versions
+        if: ${{ (steps.get_latest_tag.outputs.version) == format('v{0}', steps.get_current_version.outputs.version) }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('A version bump from ${{ steps.get_latest_tag.outputs.latest }} is required!')
+
+      - name: Execute Gradle build
+        run: ./gradlew build
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: v${{ steps.get_current_version.outputs.version }}
+          files: build/libs/*.jar
+          body: "**${{ github.event.inputs.label }}${{ inputs.hotfix && ' (HOTFIX)' || '' }}**\n"
+          generate_release_notes: true

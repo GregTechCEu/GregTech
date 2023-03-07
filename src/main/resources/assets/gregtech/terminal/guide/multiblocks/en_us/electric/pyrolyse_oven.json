@@ -1,7 +1,14 @@
 {
   "section": "Electric",
   "title": "Pyrolyse Oven",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oThe Pyrolyse Oven processes organic products by thermal decomposition in an inert environment.§r\n\nThe §3Pyrolyse Oven§r is an electric equivalent of the §3Coke Oven§r. It can produce §9Coal Coke§r and §9Charcoal§r with a §9Creosote§r byproduct just as before, but also has additional §6Organic Byproducts§r. The most beneficial of these being §aWood Tar§r.\nAnother product is §aBiomass§r, which is more pertinent for progression §oright now§r.\n\nThose byproducts can be Distilled for an array of organic resources, with different byproducts giving different ratios of different chemicals.\nYou will need to read the §9Distillation§r Quest to hopefully understand the full scale..\n\nThere are recipes that can accept §bNitrogen§r to double the speed.\n\nThe §3Cupronickel Coils§r are more than enough to get started, but you will want to upgrade eventually. This is because the §3Cupronickel Coils§r actually have a processing speed malus, making all recipes slower. This malus turns into a processing speed bonus as the coil tier used increases.\n\n\n§9§lNote:§r§l The Plant path is one path towards §9§lEthylene§r§l. The other path involves Oil.§r\nThe Pyrolyse Oven remains §doptional§r. But it is great to have either for Power, or for the various Byproducts.\n\n\n§bLore:§r In GT5u, the structure for the Pyrolyse Oven is a giant box with only 9 coils inside. Players usually spend several minutes debugging what is wrong due to the lack of JEI preview."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "pyrolyse_oven"
 }

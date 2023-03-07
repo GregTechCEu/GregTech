@@ -1,32 +1,35 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.util.GTLog;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class RecipePropertyStorage {
-    private static final String STACKTRACE = "Stacktrace:";
+public class RecipePropertyStorage implements IRecipePropertyStorage {
 
     private final Map<RecipeProperty<?>, Object> recipeProperties;
 
+    private boolean frozen = false;
+
     public RecipePropertyStorage() {
-        recipeProperties = new HashMap<>();
+        recipeProperties = new Object2ObjectArrayMap<>(1);
     }
 
-    /**
-     * Stores new {@link RecipeProperty} with value
-     *
-     * @param recipeProperty {@link RecipeProperty}
-     * @param value          value
-     * @return <code>true</code> if store succeeds; otherwise <code>false</code>
-     */
+    private RecipePropertyStorage(Map<RecipeProperty<?>, Object> recipeProperties) {
+        this();
+        this.recipeProperties.putAll(recipeProperties);
+    }
+
+    @Override
     public boolean store(RecipeProperty<?> recipeProperty, Object value) {
         boolean success = true;
         String key = recipeProperty.getKey();
-
+        if (frozen) {
+            GTLog.logger.warn("Unable to add RecipeProperty with key {} as the storage is frozen", key);
+            success = false;
+        }
         for (RecipeProperty<?> existingRecipeProperty : recipeProperties.keySet()) {
             if (existingRecipeProperty.getKey().equals(key)) {
                 GTLog.logger.warn("Unable to add RecipeProperty with key {} as it already exists", key);
@@ -56,36 +59,39 @@ public class RecipePropertyStorage {
         return success;
     }
 
-    /**
-     * Provides information how many {@link RecipeProperty} are stored
-     *
-     * @return number of stored {@link RecipeProperty}
-     */
+    @Override
+    public boolean remove(RecipeProperty<?> recipeProperty) {
+        return this.recipeProperties.remove(recipeProperty) != null;
+    }
+
+    @Override
+    public void freeze(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    @Override
+    public IRecipePropertyStorage copy() {
+        return new RecipePropertyStorage(this.recipeProperties);
+    }
+
+    @Override
     public int getSize() {
         return recipeProperties.size();
     }
 
-    /**
-     * Provides all stored {@link RecipeProperty}
-     *
-     * @return all stored {@link RecipeProperty} and values
-     */
+    @Override
     public Set<Map.Entry<RecipeProperty<?>, Object>> getRecipeProperties() {
         return this.recipeProperties.entrySet();
     }
 
-    /**
-     * Provides casted value for one specific {@link RecipeProperty} if is stored or defaultValue
-     *
-     * @param recipeProperty {@link RecipeProperty}
-     * @param defaultValue   Default value if recipeProperty is not found
-     * @param <T>            Type of returned value
-     * @return value tied with provided recipeProperty on success; otherwise defaultValue
-     */
+    @Override
     public <T> T getRecipePropertyValue(RecipeProperty<T> recipeProperty, T defaultValue) {
         Object value = recipeProperties.get(recipeProperty);
 
         if (value == null) {
+            if (defaultValue == null) {
+                return null;
+            }
             GTLog.logger.warn("There is no property with key {}", recipeProperty.getKey());
             GTLog.logger.warn(STACKTRACE, new IllegalArgumentException());
             return defaultValue;
@@ -98,11 +104,7 @@ public class RecipePropertyStorage {
         return recipeProperties.containsKey(recipeProperty);
     }
 
-    /**
-     * Provides keys of all stored {@link RecipeProperty}
-     *
-     * @return {@link Set} of keys
-     */
+    @Override
     public Set<String> getRecipePropertyKeys() {
         HashSet<String> keys = new HashSet<>();
 
@@ -111,12 +113,7 @@ public class RecipePropertyStorage {
         return keys;
     }
 
-    /**
-     * Provides un-casted value for one specific {@link RecipeProperty} searched by key
-     *
-     * @param key Key of stored {@link RecipeProperty}
-     * @return {@link Object} value on success; otherwise <code>null</code>
-     */
+    @Override
     public Object getRawRecipePropertyValue(String key) {
         RecipeProperty<?> recipeProperty = getRecipePropertyValue(key);
         if (recipeProperty != null) {
@@ -137,4 +134,5 @@ public class RecipePropertyStorage {
 
         return null;
     }
+
 }

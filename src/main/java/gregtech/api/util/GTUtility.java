@@ -6,34 +6,38 @@ import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.items.IToolItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
-import gregtech.common.items.behaviors.CrowbarBehaviour;
-import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.BlockSnow;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,20 +48,20 @@ import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -65,15 +69,17 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -83,8 +89,19 @@ import static gregtech.api.GTValues.V;
 public class GTUtility {
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    private static final DecimalFormat TWO_PLACES_FORMAT = new DecimalFormat("#.##");
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
+
+    private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
+
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
+
+    static {
+        for (int i = 0; i < V.length; i++) {
+            tierByVoltage.put(V[i], (byte) i);
+        }
+    }
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
@@ -95,23 +112,16 @@ public class GTUtility {
         };
     }
 
+    private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
+
     public static Stream<Object> flatten(Object[] array) {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
 
-    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
+    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            if (fixTools && itemStack.getItem() instanceof ToolMetaItem) {
-                ItemStack toolStack = itemStack.copy();
-                NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
-                toolStats.setInteger("Dmg", 0);
-                NBTTagCompound itemTag = new NBTTagCompound();
-                itemTag.setTag("GT.ToolStats", toolStats);
-                toolStack.setTagCompound(itemTag);
-                dest.setStackInSlot(i, toolStack);
-            } else
-                dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
+            dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
         }
     }
 
@@ -178,28 +188,6 @@ public class GTUtility {
         return alphaColor & 0xFFFFFF;
     }
 
-    public static void setItem(ItemStack itemStack, ItemStack newStack) {
-        try {
-            Field itemField = Arrays.stream(ItemStack.class.getDeclaredFields())
-                    .filter(field -> field.getType() == Item.class)
-                    .findFirst().orElseThrow(ReflectiveOperationException::new);
-            itemField.setAccessible(true);
-            //replace item field instance
-            itemField.set(itemStack, newStack.getItem());
-            //set damage then
-            itemStack.setItemDamage(newStack.getItemDamage());
-            itemStack.setTagCompound(newStack.getTagCompound());
-
-            Method forgeInit = ItemStack.class.getDeclaredMethod("forgeInit");
-            forgeInit.setAccessible(true);
-            //reinitialize forge capabilities and delegate reference
-            forgeInit.invoke(itemStack);
-        } catch (ReflectiveOperationException exception) {
-            //should be impossible, actually
-            throw new RuntimeException(exception);
-        }
-    }
-
     /**
      * Exists because for stack equality checks actual ItemStack.itemDamage
      * field is used, and ItemStack.getItemDamage() can be overriden,
@@ -236,7 +224,8 @@ public class GTUtility {
                 continue; //if itemstacks don't match, continue
             int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
             int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
-            if (amountToInsert == 0)
+            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
+            if (amountToInsert <= 0)
                 continue; //if we can't insert anything, continue
             //shrink our stack, grow slot's stack and mark slot as changed
             if (!simulate) {
@@ -351,42 +340,12 @@ public class GTUtility {
             playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
         } else {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.getConnection().sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+            NetHandlerPlayClient connection = mc.getConnection();
+            if (connection != null) {
+                connection.sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+            }
         }
         return wasRemovedByPlayer;
-    }
-
-    /**
-     * Applies specific amount of damage to item, either to durable items (which implement IDamagableItem)
-     * or to electric items, which have capability IElectricItem
-     * Damage amount is equal to EU amount used for electric items
-     *
-     * @return if damage was applied successfully
-     */
-    //TODO get rid of that
-    public static boolean doDamageItem(ItemStack itemStack, int vanillaDamage, boolean simulate) {
-        Item item = itemStack.getItem();
-        if (item instanceof IToolItem) {
-            //if item implements IDamagableItem, it manages it's own durability itself
-            IToolItem damagableItem = (IToolItem) item;
-            return damagableItem.damageItem(itemStack, null, vanillaDamage, simulate);
-
-        } else if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
-            //if we're using electric item, use default energy multiplier for textures
-            IElectricItem capability = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            int energyNeeded = vanillaDamage * ConfigHolder.machines.energyUsageMultiplier;
-            //noinspection ConstantConditions
-            return capability.discharge(energyNeeded, Integer.MAX_VALUE, true, false, simulate) == energyNeeded;
-
-        } else if (itemStack.isItemStackDamageable()) {
-            if (!simulate && itemStack.attemptDamageItem(vanillaDamage, new Random(), null)) {
-                //if we can't accept more damage, just shrink stack and mark it as broken
-                //actually we would play broken animation here, but we don't have an entity who holds item
-                itemStack.shrink(1);
-            }
-            return true;
-        }
-        return false;
     }
 
     public static void writeItems(IItemHandler handler, String tagName, NBTTagCompound tag) {
@@ -437,15 +396,18 @@ public class GTUtility {
      * @return lowest tier that can handle passed voltage
      */
     public static byte getTierByVoltage(long voltage) {
-        byte tier = 0;
-        while (++tier < V.length) {
-            if (voltage == V[tier]) {
-                return tier;
-            } else if (voltage < V[tier]) {
-                return (byte) Math.max(0, tier - 1);
-            }
-        }
-        return (byte) Math.min(V.length - 1, tier);
+        if (voltage > V[GTValues.MAX]) return GTValues.MAX;
+        return tierByVoltage.ceilingEntry(voltage).getValue();
+    }
+
+    /**
+     * Ex: This method turns both 1024 and 512 into HV.
+     *
+     * @return the highest tier below or equal to the voltage value given
+     */
+    public static byte getFloorTierByVoltage(long voltage) {
+        if (voltage < V[GTValues.ULV]) return GTValues.ULV;
+        return tierByVoltage.floorEntry(voltage).getValue();
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
@@ -768,19 +730,22 @@ public class GTUtility {
         return isCoverBehaviorItem(itemStack, null, null);
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier, Function<CoverDefinition, Boolean> canPlaceCover) {
-        if (itemStack.getItem() instanceof MetaItem) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
+        Item item = itemStack.getItem();
+        if (item instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
-                List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                for (IItemBehaviour behaviour : behaviourList) {
-                    if (behaviour instanceof CoverPlaceBehavior)
-                        return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
-                    if (behaviour instanceof CrowbarBehaviour)
-                        return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
+                for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                    if (behaviour instanceof CoverPlaceBehavior) {
+                        return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
+                    }
                 }
             }
+        } else if (item.getToolClasses(itemStack).contains(ToolClasses.CROWBAR)) {
+            return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
+        } else if (item.getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
+            return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
         }
         return false;
     }
@@ -906,8 +871,16 @@ public class GTUtility {
         return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
     }
 
-    public static boolean isOre(Block block) {
-        OrePrefix orePrefix = OreDictUnifier.getPrefix(new ItemStack(block));
+    public static ItemStack toItem(IBlockState state) {
+        return toItem(state, 1);
+    }
+
+    public static ItemStack toItem(IBlockState state, int amount) {
+        return new ItemStack(state.getBlock(), amount, state.getBlock().getMetaFromState(state));
+    }
+
+    public static boolean isOre(ItemStack item) {
+        OrePrefix orePrefix = OreDictUnifier.getPrefix(item);
         return orePrefix != null && orePrefix.name().startsWith("ore");
     }
 
@@ -946,9 +919,7 @@ public class GTUtility {
         }
 
         MetaTileEntity machine = getMetaTileEntity(machineStack);
-        // Blacklist the Rock Breaker here instead of through the config option so we don't get people removing the config entry and then
-        // complaining it does not work. Remove from here if we ever decide to implement PA Rock Breaker
-        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity || machine instanceof MetaTileEntityRockBreaker))
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity))
             return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
 
         return false;
@@ -1009,6 +980,11 @@ public class GTUtility {
         return NUMBER_FORMAT.format(number);
     }
 
+    @Nonnull
+    public static String formatNumber2Places(float number) {
+        return TWO_PLACES_FORMAT.format(number);
+    }
+
     /**
      * If pos of this world loaded
      */
@@ -1025,5 +1001,244 @@ public class GTUtility {
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof MachineItemBlock)) return null;
         return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+    }
+
+    public static boolean canSeeSunClearly(World world, BlockPos blockPos) {
+        if (!world.canSeeSky(blockPos.up())) {
+            return false;
+        }
+        Biome biome = world.getBiome(blockPos.up());
+        if (world.isRaining()) {
+            if (biome.canRain() || biome.getEnableSnow()) {
+                return false;
+            }
+        }
+        Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
+        if (biomeTypes.contains(BiomeDictionary.Type.END)) {
+            return false;
+        }
+        return world.isDaytime();
+    }
+
+    public static MapColor getMapColor(int rgb) {
+        MapColor color = MapColor.BLACK;
+        int originalR = (rgb >> 16) & 0xFF;
+        int originalG = (rgb >> 8) & 0xFF;
+        int originalB = rgb & 0xFF;
+        int distance = Integer.MAX_VALUE;
+
+        for (MapColor mapColor : MapColor.COLORS) {
+            // why is there a null in here mojang!?
+            if (mapColor == null) continue;
+
+            int colorValue = mapColor.colorValue;
+            if (colorValue == 0) continue;
+
+            int colorR = (colorValue >> 16) & 0xFF;
+            int colorG = (colorValue >> 8) & 0xFF;
+            int colorB = colorValue & 0xFF;
+
+            int distR = Math.abs(originalR - colorR);
+            int distG = Math.abs(originalG - colorG);
+            int distB = Math.abs(originalB - colorB);
+            int dist = distR * distR + distG * distG + distB * distB;
+
+            if (dist < distance) {
+                distance = dist;
+                color = mapColor;
+            }
+        }
+        return color;
+    }
+
+    /**
+     * Gather a list of all registered dimensions. Done as a Supplier so that it can be called at any time and catch
+     * dimensions that are registered late
+     *
+     * @param filter An Optional filter to restrict the returned dimensions
+     * @return A Supplier containing a list of all registered dimensions
+     */
+    public static Supplier<List<Integer>> getAllRegisteredDimensions(@Nullable Predicate<WorldProvider> filter) {
+        List<Integer> dims = new ArrayList<>();
+
+        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
+        dimMap.values().stream()
+                .flatMapToInt(s -> Arrays.stream(s.toIntArray()))
+                .filter(num -> filter == null || filter.test(DimensionManager.createProviderFor(num)))
+                .forEach(dims::add);
+
+        return () -> dims;
+    }
+
+    public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
+        return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+    }
+
+    /**
+     * Attempt to break a (single) snow layer at the given BlockPos.
+     * @return true if the passed IBlockState was a snow layer
+     */
+    public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
+        if (isBlockSnowLayer(blockState)) {
+            world.destroyBlock(pos, false);
+            if (playSound) {
+                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Nonnull
+    public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
+        return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
+    }
+
+    @Nonnull
+    public static Pattern getForwardNewLineRegex() {
+        return NEW_LINE_PATTERN;
+    }
+
+    /**
+     * Tries to parse a string into an int, returning a default value if it fails.
+     * @param val string to parse
+     * @param defaultValue default value to return
+     * @return returns an int from the parsed string, otherwise the default value
+     */
+    public static int tryParseInt(String val, int defaultValue){
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Tries to parse a string into a long, returning a default value if it fails.
+     * @param val string to parse
+     * @param defaultValue default value to return
+     * @return returns a long from the parsed string, otherwise the default value
+     */
+    public static long tryParseLong(String val, long defaultValue){
+        try {
+            return Long.parseLong(val);
+        } catch (NumberFormatException e) {
+            GTLog.logger.warn(e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Compares a value against a min and max, with an option to invert the logic
+     * @param value value to be compared
+     * @param maxValue the max that the value can be
+     * @param minValue the min that the value can be
+     * @param isInverted whether to invert the logic of this method
+     * @return an int from 0 (value <= min) to 15 (value >= max) normally, with a ratio when the value is between min and max
+     */
+    public static int computeRedstoneBetweenValues(int value, float maxValue, float minValue, boolean isInverted) {
+        if (value >= maxValue) {
+            return isInverted ? 0 : 15; // value above maxValue should normally be 15, otherwise 0
+        } else if (value <= minValue) {
+            return isInverted ? 15 : 0; // value below minValue should normally be 0, otherwise 15
+        }
+
+        float ratio;
+        if (!isInverted) {
+            ratio = 15 * (value - minValue) / (maxValue - minValue); // value closer to max results in higher output
+        } else {
+            ratio = 15 * (maxValue - value) / (maxValue - minValue); // value closer to min results in higher output
+        }
+
+        return Math.round(ratio);
+    }
+
+    /**
+     * Compares a value against a min and max, with an option to invert the logic. Has latching functionality.
+     * @param value value to be compared
+     * @param maxValue the max that the value can be
+     * @param minValue the min that the value can be
+     * @param output the output value the function modifies
+     * @return returns the modified output value
+     */
+    public static int computeLatchedRedstoneBetweenValues(float value, float maxValue, float minValue, boolean isInverted, int output) {
+        if (value >= maxValue) {
+            output = !isInverted ? 0 : 15; // value above maxValue should normally be 0, otherwise 15
+        } else if (value <= minValue) {
+            output = !isInverted ? 15 : 0; // value below minValue should normally be 15, otherwise 0
+        }
+        return output;
+    }
+
+    /**
+     * @param fluidHandler the handler to drain from
+     * @param doDrain      if the handler should be actually drained
+     * @return a valid boiler fluid from a container, with amount=1
+     */
+    @Nullable
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
+        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
+    }
+
+    /**
+     * @param fluidHandler the handler to drain from
+     * @param amount       the amount to drain
+     * @param doDrain      if the handler should be actually drained
+     * @return a valid boiler fluid from a container
+     */
+    @Nullable
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
+        if (amount == 0) return null;
+        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
+        if (drainedWater == null || drainedWater.amount == 0) {
+            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
+        }
+        if (drainedWater == null || drainedWater.amount == 0) {
+            for (String fluidName : ConfigHolder.machines.boilerFluids) {
+                Fluid fluid = FluidRegistry.getFluid(fluidName);
+                if (fluid != null) {
+                    drainedWater = fluidHandler.drain(new FluidStack(fluid, amount), doDrain);
+                    if (drainedWater != null && drainedWater.amount > 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return drainedWater;
+    }
+
+    /**
+     * @param stack the stack to retrieve from
+     * @return all the sub-items of an ItemStack
+     */
+    @Nonnull
+    public static Set<ItemStack> getAllSubItems(@Nonnull ItemStack stack) {
+        //match subtypes only on wildcard damage value items
+        if (stack.getItemDamage() != GTValues.W) return Collections.singleton(stack);
+
+        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
+        for (CreativeTabs tab : stack.getItem().getCreativeTabs()) {
+            NonNullList<ItemStack> subItems = NonNullList.create();
+            stack.getItem().getSubItems(tab, subItems);
+            set.addAll(subItems);
+        }
+        return set;
+    }
+
+    /**
+     * Checks if an (X,Y) point is within a defined box range
+     *
+     * @param initialX The initial X point of the box
+     * @param initialY The initial Y point of the box
+     * @param width    The width of the box
+     * @param height   The height of the box
+     * @param pointX   The X value of the point to check
+     * @param pointY   The Y value of the point to check
+     *
+     * @return True if the provided (X,Y) point is within the described box, else false
+     */
+    public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
+        return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
 }

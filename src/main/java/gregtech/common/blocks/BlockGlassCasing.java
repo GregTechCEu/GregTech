@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantActiveBlock;
-import net.minecraft.block.Block;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -23,10 +23,10 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     public BlockGlassCasing() {
         super(Material.IRON);
         setTranslationKey("transparent_casing");
-        setHardness(5.0f);
-        setResistance(5000.0f);
+        setHardness(5.0F);
+        setResistance(5.0F);
         setSoundType(SoundType.GLASS);
-        setHarvestLevel("wrench", 2);
+        setHarvestLevel(ToolClasses.PICKAXE, 1);
         setDefaultState(getState(CasingType.TEMPERED_GLASS));
     }
 
@@ -38,7 +38,12 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     @Override
     @Nonnull
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT;
+    }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return getState(state) == CasingType.TEMPERED_GLASS ? layer == BlockRenderLayer.TRANSLUCENT : super.canRenderInLayer(state, layer);
     }
 
     @Override
@@ -49,6 +54,7 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isFullCube(IBlockState state) {
         return false;
     }
@@ -56,18 +62,20 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     @Override
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
-        Block block = iblockstate.getBlock();
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        IBlockState sideState = world.getBlockState(pos.offset(side));
 
-        return block != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+        return sideState.getBlock() == this ?
+                getState(sideState) != getState(state) :
+                super.shouldSideBeRendered(state, world, pos, side);
     }
 
     public enum CasingType implements IStringSerializable {
 
         TEMPERED_GLASS("tempered_glass"),
         FUSION_GLASS("fusion_glass"),
-        LAMINATED_GLASS("laminated_glass");
+        LAMINATED_GLASS("laminated_glass"),
+        CLEANROOM_GLASS("cleanroom_glass");
 
         private final String name;
 

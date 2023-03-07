@@ -5,7 +5,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidDrillLogic;
 import gregtech.api.capability.impl.FluidTankList;
@@ -18,6 +21,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -109,7 +113,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(1)))
                 .where('C', states(getCasingState()))
-                .where('F', states(getFrameState()))
+                .where('F', getFramePredicate())
                 .where('#', any())
                 .build();
     }
@@ -125,14 +129,14 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     @Nonnull
-    private IBlockState getFrameState() {
+    private TraceabilityPredicate getFramePredicate() {
         if (tier == GTValues.MV)
-            return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
+            return frames(Materials.Steel);
         if (tier == GTValues.HV)
-            return MetaBlocks.FRAMES.get(Materials.Titanium).getBlock(Materials.Titanium);
+            return frames(Materials.Titanium);
         if (tier == GTValues.EV)
-            return MetaBlocks.FRAMES.get(Materials.TungstenSteel).getBlock(Materials.TungstenSteel);
-        return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
+            return frames(Materials.TungstenSteel);
+        return frames(Materials.Steel);
     }
 
     @Override
@@ -153,8 +157,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
             return;
 
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+            int energyContainer = getEnergyTier();
+            long maxVoltage = GTValues.V[energyContainer];
+            String voltageName = GTValues.VNF[energyContainer];
             textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
         }
 
@@ -178,13 +183,18 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier()));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.energy", GTValues.VNF[tier], GTValues.VNF[tier + 1]));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.overclock"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), GTUtility.formatNumbers(getRigMultiplier() * 1.5)));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
@@ -239,8 +249,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     public int getEnergyTier() {
-        int minVoltage = Math.max(this.tier, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
-        return Math.min(minVoltage, this.tier + 1);
+        if (energyContainer == null) return this.tier;
+        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     public long getEnergyInputPerSecond() {

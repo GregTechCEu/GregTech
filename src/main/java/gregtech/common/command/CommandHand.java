@@ -2,22 +2,21 @@ package gregtech.common.command;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.items.toolitem.ToolMetaItem;
-import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
+import gregtech.integration.GroovyScriptCompat;
+import gregtech.api.util.GTLog;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
@@ -55,7 +54,14 @@ public class CommandHand extends CommandBase {
                     throw new CommandException("gregtech.command.hand.no_item");
                 }
             }
-            String registryName = stackInHand.getItem().getRegistryName().toString();
+            String registryName;
+            ResourceLocation registryLocation =  stackInHand.getItem().getRegistryName();
+            if  (registryLocation != null) {
+                registryName = registryLocation.toString();
+            } else {
+                registryName = "ERROR";
+                GTLog.logger.warn("ItemStack {} has a null registry name", stackInHand.getTranslationKey());
+            }
             ClickEvent itemNameEvent = new ClickEvent(Action.OPEN_URL, registryName);
             player.sendMessage(new TextComponentTranslation("gregtech.command.hand.item_id", registryName, stackInHand.getItemDamage())
                     .setStyle(new Style().setClickEvent(itemNameEvent)));
@@ -93,16 +99,10 @@ public class CommandHand extends CommandBase {
                         .setStyle(getCopyStyle(ctId, true)));
             }
 
-            if (stackInHand.getItem() instanceof MetaItem) {
-                MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
-                MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
-                if (metaValueItem != null) {
-                    // tool info
-                    if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
-                        IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", toolStats.getClass().getName()));
-                    }
-                }
+            // tool info
+            if (stackInHand.getItem() instanceof IGTTool) {
+                IGTTool tool = (IGTTool) stackInHand.getItem();
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getToolClasses(stackInHand)));
             }
 
             // material info
@@ -125,6 +125,10 @@ public class CommandHand extends CommandBase {
                     player.sendMessage(new TextComponentString("    \u00A7e- \u00A7b" + oreName)
                             .setStyle(getCopyStyle("<ore:" + oreName + ">", false)));
                 }
+            }
+
+            if (GroovyScriptCompat.isLoaded()) {
+                sender.sendMessage(new TextComponentTranslation("gregtech.command.hand.groovy"));
             }
         } else {
             throw new CommandException("gregtech.command.hand.not_a_player");

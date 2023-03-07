@@ -17,10 +17,9 @@ import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
-import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
+import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -134,13 +133,15 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         tagCompound.setTag("ToolInventory", toolInventory.serializeNBT());
         tagCompound.setTag("InternalInventory", internalInventory.serializeNBT());
         tagCompound.setInteger("ItemsCrafted", recipeLogic == null ? itemsCrafted : recipeLogic.getItemsCraftedAmount());
         tagCompound.setTag("RecipeMemory", recipeMemory.serializeNBT());
+
+        return tagCompound;
     }
 
     @Override

@@ -5,17 +5,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
-import gregtech.common.tools.DamageValues;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -129,31 +126,21 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
-            ISoftHammerItem softHammerItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
-
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-            if (!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false)) {
-                return false;
-            }
-
-            if (isTransformUp) {
-                setTransformUp(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
-                        energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-            } else {
-                setTransformUp(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
-                        energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-            }
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
+            scheduleRenderUpdate();
             return true;
         }
-        return false;
+        if (isTransformUp) {
+            setTransformUp(false);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+        } else {
+            setTransformUp(true);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+        }
+        return true;
     }
 
     @Override
@@ -175,9 +162,17 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         long lowerAmperage = energyContainer.getInputAmperage();
         long higherAmperage = energyContainer.getOutputAmperage();
 
+        tooltip.add(I18n.format("gregtech.machine.transformer.description"));
         tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_down", lowerAmperage, higherVoltage, higherTierName, higherAmperage, lowerVoltage, lowerTierName));
         tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_up", higherAmperage, lowerVoltage, lowerTierName, lowerAmperage, higherVoltage, higherTierName));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.toggle_mode"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

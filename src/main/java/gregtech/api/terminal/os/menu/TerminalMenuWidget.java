@@ -18,7 +18,6 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
