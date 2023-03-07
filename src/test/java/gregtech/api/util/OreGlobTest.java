@@ -212,6 +212,7 @@ public class OreGlobTest {
 
         assertReport("dust !impure !iron", false);
         assertReport("dust !(impure) !(iron)", false);
+        assertReport("$cc 1", false);
     }
 
     private static OreGlob compile(String expression) {

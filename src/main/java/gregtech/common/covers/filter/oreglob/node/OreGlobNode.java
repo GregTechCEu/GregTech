@@ -56,7 +56,8 @@ public abstract class OreGlobNode {
      */
     @Nullable
     public final OreGlobNode visit(NodeVisitor visitor) {
-        switch (this.getMatchDescription()) {
+        if (this instanceof ErrorNode) visitor.error();
+        else switch (this.getMatchDescription()) {
             case EVERYTHING:
                 visitor.everything();
                 break;

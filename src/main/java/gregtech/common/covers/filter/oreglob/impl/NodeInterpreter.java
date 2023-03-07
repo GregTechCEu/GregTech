@@ -100,15 +100,13 @@ class NodeInterpreter implements NodeVisitor {
     @Override
     public void charsOrMore(int amount, boolean inverted) {
         if (inverted) {
-            if (amount > 0) { // inversion of 'zero or more' is impossible
-                // less than n chars
-                IntIterator it = this.inputStates.iterator();
-                while (it.hasNext()) {
-                    int state = it.nextInt();
-                    IntIterator it2 = new PossibleStateIterator(state, calculateOffset(state, amount - 1));
-                    while (it2.hasNext()) {
-                        this.outputStates.add(it2.nextInt());
-                    }
+            // less than n chars
+            IntIterator it = this.inputStates.iterator();
+            while (it.hasNext()) {
+                int state = it.nextInt();
+                IntIterator it2 = new PossibleStateIterator(state, calculateOffset(state, amount - 1));
+                while (it2.hasNext()) {
+                    this.outputStates.add(it2.nextInt());
                 }
             }
         } else {
@@ -143,11 +141,6 @@ class NodeInterpreter implements NodeVisitor {
                 break;
             }
             case AND: {
-                if (nodes.isEmpty()) {
-                    IntIterator it = new PossibleStateIterator(computeMinInputState());
-                    while (it.hasNext()) this.outputStates.add(it.nextInt());
-                    return;
-                }
                 boolean first = true;
                 for (OreGlobNode node : nodes) {
                     NodeInterpreter branchState = new NodeInterpreter(this.input, this.inputStates).evaluate(node);
