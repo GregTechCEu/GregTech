@@ -5,10 +5,6 @@ buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven {
-            name 'MixinGradle Maven'
-            url 'https://repo.spongepowered.org/repository/maven-public'
-        }
     }
     dependencies {
         classpath "org.spongepowered:mixingradle:${mixingradle_version}"
@@ -19,8 +15,8 @@ plugins {
     id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
     id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
 }
-apply plugin: 'org.spongepowered.mixin'
 
+apply plugin: 'org.spongepowered.mixin'
 
 tasks.register('getVersionFromJava') {
     return getVersionFromJava()
@@ -111,15 +107,15 @@ repositories {
         url 'https://maven.blamejared.com'
     }
     maven {
-        name 'Sponge Maven'
-        url 'https://repo.spongepowered.org/maven'
-    }
-    maven {
         name 'Curse Maven'
         url 'https://www.cursemaven.com'
         content {
             includeGroup 'curse.maven'
         }
+    }
+    maven {
+        name 'Sponge Maven'
+        url 'https://repo.spongepowered.org/maven'
     }
 }
 
@@ -136,8 +132,10 @@ dependencies {
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
     implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
-    //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
+    // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
+    // causing crashes at run-time when deobfuscated
     implementation files("libs/groovyscript-0.4.0.jar")
+    //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
     implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Tests
@@ -149,9 +147,9 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 
     // GroovyScript dependency
-    compileOnly "zone.rong:mixinbooter:${mixinbooter_version}"
-    runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
+    implementation "zone.rong:mixinbooter:${mixinbooter_version}"
 
+    // Mixin dependency
     annotationProcessor "org.spongepowered:mixin:${mixin_annotations_version}:processor"
 }
 
@@ -293,9 +291,9 @@ private void processJarTask(task) {
                     attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
                 }
             }
-            // if (project.use_mixins.toBoolean()) {
-            //     attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
-            // }
+            if (project.use_mixins.toBoolean()) {
+                attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
+            }
             if (project.has_access_transformer.toBoolean()) {
                 attribute_map['FMLAT'] = 'gregtech_at.cfg'
             }
