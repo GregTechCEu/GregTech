@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.Bootstrap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.map.AbstractMapIngredient;
 import gregtech.api.recipes.map.MapFluidIngredient;
 import gregtech.api.recipes.map.MapItemStackIngredient;
 import gregtech.api.recipes.map.MapOreDictIngredient;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -207,31 +209,44 @@ public class RecipeMapTest {
         RecipeBuilder r = new RecipeBuilder<>()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
+                .inputs(new ItemStack(Blocks.STONE, 2))
                 .input("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1);
 
         Recipe rec = (Recipe) r.build().getResult();
 
-        MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0)) {
-            @Override
-            protected int hash() {
-                return 1;
-            }
-        };
+        //create the MapItemStackIngredient and call hashCode so the hash cached to the "hash" field
 
-        MapItemStackIngredient ing1FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(1).getInputStacks()[0], rec.getInputs().get(0)) {
-            @Override
-            protected int hash() {
-                return 1;
-            }
-        };
+        MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0));
+        ing0FromGTRecipeInput.hashCode();
+        MapItemStackIngredient ing1FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(1).getInputStacks()[0], rec.getInputs().get(0));
+        ing1FromGTRecipeInput.hashCode();
+        MapItemStackIngredient ing2FromGTRecipeInput = new MapItemStackIngredient(rec.getInputs().get(2).getInputStacks()[0], rec.getInputs().get(0));
+        ing1FromGTRecipeInput.hashCode();
 
-        Object2ObjectOpenHashMap<MapItemStackIngredient, Object> map = new Object2ObjectOpenHashMap();
+        //Reflection so the equals in AbstractMapIngredient doesn't return false due to anonymous class check failure
+
+        try {
+            Field hash = AbstractMapIngredient.class.getDeclaredField("hash");
+            hash.setAccessible(true);
+            hash.set(ing0FromGTRecipeInput, 1);
+            hash.set(ing1FromGTRecipeInput, 1);
+            hash.set(ing2FromGTRecipeInput, 1);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        //Add the cobblestone ingredients to the map, which should considered equals.
+        Object2ObjectOpenHashMap<MapItemStackIngredient, Object> map = new Object2ObjectOpenHashMap<>();
         map.put(ing0FromGTRecipeInput, ing0FromGTRecipeInput);
         map.put(ing1FromGTRecipeInput, ing1FromGTRecipeInput);
 
-        MatcherAssert.assertThat(map.keySet().size(), is(2));
+        MatcherAssert.assertThat(map.keySet().size(), is(1));
 
+        //Add the stone, which is not equal and is a new key
+        map.put(ing2FromGTRecipeInput, ing2FromGTRecipeInput);
+
+        MatcherAssert.assertThat(map.keySet().size(), is(2));
     }
 }
