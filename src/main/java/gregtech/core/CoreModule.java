@@ -47,7 +47,6 @@ import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
-import gregtech.integration.GroovyScriptCompat;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;

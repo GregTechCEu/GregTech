@@ -1,6 +1,7 @@
-package gregtech.integration;
+package gregtech.integration.groovy;
 
 import com.cleanroommc.groovyscript.GroovyScript;
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModSupport;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static gregtech.api.GregTechAPI.MATERIAL_REGISTRY;
 
@@ -69,6 +71,16 @@ public class GroovyScriptCompat {
 
     public static Container getInstance() {
         return modSupportContainer.get();
+    }
+
+    public static boolean validateNonNull(Object o, Supplier<String> errorMsg) {
+        if (o == null) {
+            if (isCurrentlyRunning()) {
+                GroovyLog.get().error(errorMsg.get());
+            }
+            return false;
+        }
+        return true;
     }
 
     public static ItemStack getMetaItem(String name) {
@@ -236,6 +248,7 @@ public class GroovyScriptCompat {
 
             ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
             ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
+            ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
         }
     }
 }

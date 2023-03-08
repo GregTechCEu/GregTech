@@ -24,7 +24,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

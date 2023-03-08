@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;

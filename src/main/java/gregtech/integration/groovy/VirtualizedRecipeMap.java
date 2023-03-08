@@ -1,4 +1,4 @@
-package gregtech.integration;
+package gregtech.integration.groovy;
 
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.helper.SimpleObjectStream;

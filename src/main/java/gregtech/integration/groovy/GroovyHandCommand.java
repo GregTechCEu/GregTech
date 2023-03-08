@@ -1,4 +1,4 @@
-package gregtech.integration;
+package gregtech.integration.groovy;
 
 import com.cleanroommc.groovyscript.command.TextCopyable;
 import com.cleanroommc.groovyscript.event.GsHandEvent;
