@@ -147,7 +147,9 @@ public class MaterialIconType {
             return cache.get(this, iconSet);
         }
 
-        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getSide().isClient()) {
+        if (!iconSet.isRootIconset &&
+                FMLCommonHandler.instance().getSidedDelegate() != null && // Test environment check
+                FMLCommonHandler.instance().getSide().isClient()) {
             ResourceLocation fullLocation = new ResourceLocation(GTValues.MODID, String.format(fullPath, iconSet.name, this.name));
             if (!ResourceHelper.doResourcepacksHaveResource(fullLocation)) {
                 ResourceLocation iconSetPath = recurseIconsetPath(iconSet.parentIconset, cache, fullPath, path);
