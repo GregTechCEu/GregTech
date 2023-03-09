@@ -16,6 +16,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -24,6 +25,8 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -151,7 +154,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", getMachineLimit()));
     }
@@ -162,6 +165,16 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         MetaTileEntity mte = GTUtility.getMetaTileEntity(machineStack);
         return mte == null ? 0 : mte.getItemOutputLimit();
 
+    }
+
+    @Override
+    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        if (recipe.getPropertyCount() == 0) return super.checkRecipe(recipe, consumeIfSuccess);
+        if (recipe.getPropertyKeys().contains(GasCollectorDimensionProperty.KEY)) {
+            IntList list = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), IntLists.EMPTY_LIST);
+            return list.contains(getWorld().provider.getDimension());
+        }
+        return super.checkRecipe(recipe, consumeIfSuccess);
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
