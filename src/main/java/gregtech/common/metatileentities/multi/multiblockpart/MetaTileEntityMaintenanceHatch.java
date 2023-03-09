@@ -20,6 +20,7 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
@@ -425,6 +426,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
         if (isConfigurable) durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
+        // Legacy Inventory Handler Support
+        if (data.hasKey("ImportInventory")) {
+            GTUtility.readItems(itemStackHandler, "ImportInventory", data);
+        }
     }
 
     @Override
