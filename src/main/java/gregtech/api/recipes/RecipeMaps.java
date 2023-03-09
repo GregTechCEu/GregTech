@@ -108,9 +108,7 @@ public class RecipeMaps {
                 if (recipeBuilder.fluidInputs.size() == 1 && recipeBuilder.fluidInputs.get(0).getInputFluidStack().getFluid() == Materials.SolderingAlloy.getFluid()) {
                     int amount = recipeBuilder.fluidInputs.get(0).getInputFluidStack().amount;
 
-                    recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Lead.getFluid(amount * 2)).buildAndRegister();
-
-                    recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid((int) (amount * 1.5))).buildAndRegister();
+                    recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2)).buildAndRegister();
                 }
             });
 
