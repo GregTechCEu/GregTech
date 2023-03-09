@@ -37,24 +37,31 @@ import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
 
     private static final Int2ObjectMap<ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Int2ObjectOpenHashMap<>();
+    private static final ReadWriteLock ACTIVE_BLOCKS_LOCK = new ReentrantReadWriteLock();
 
     public static final PropertyBool ACTIVE_DEPRECATED = PropertyBool.create("active");
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
 
     public static boolean isBlockActive(int dimension, BlockPos pos) {
-        synchronized (ACTIVE_BLOCKS) {
+        ACTIVE_BLOCKS_LOCK.readLock().lock();
+        try {
             ObjectSet<BlockPos> set = ACTIVE_BLOCKS.get(dimension);
             return set != null && set.contains(pos);
+        } finally {
+            ACTIVE_BLOCKS_LOCK.readLock().unlock();
         }
     }
 
     public static void setBlockActive(int dimension, BlockPos pos, boolean active) {
-        synchronized (ACTIVE_BLOCKS) {
+        ACTIVE_BLOCKS_LOCK.writeLock().lock();
+        try {
             ObjectSet<BlockPos> set = ACTIVE_BLOCKS.get(dimension);
             if (active) {
                 if (set == null) {
@@ -64,6 +71,8 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
             } else {
                 if (set != null) set.remove(pos);
             }
+        } finally {
+            ACTIVE_BLOCKS_LOCK.writeLock().unlock();
         }
     }
 
