@@ -188,9 +188,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         if (worldIn.isRemote) return;
-        if (!ConfigHolder.machines.gt6StylePipesCables) {
-            IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-            if (pipeTile != null) {
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null) {
+            pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
+            if (!ConfigHolder.machines.gt6StylePipesCables) {
                 EnumFacing facing = null;
                 for (EnumFacing facing1 : EnumFacing.values()) {
                     if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
@@ -209,10 +210,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 if (open && !canConnect)
                     pipeTile.setConnection(facing, false, false);
                 updateActiveNodeStatus(worldIn, pos, pipeTile);
-                pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
             }
         }
-
     }
 
     @Override
