@@ -504,6 +504,48 @@ public class VanillaStandardRecipes {
                 .circuitMeta(2)
                 .duration(100).EUt(4).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PLANKS, 3, 0))
+                .input(stick, Wood, 2)
+                .outputs(new ItemStack(Items.BOAT))
+                .circuitMeta(5)
+                .duration(100).EUt(4).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PLANKS, 3, 1))
+                .input(stick, Wood, 2)
+                .outputs(new ItemStack(Items.SPRUCE_BOAT))
+                .circuitMeta(5)
+                .duration(100).EUt(4).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PLANKS, 3, 2))
+                .input(stick, Wood, 2)
+                .outputs(new ItemStack(Items.BIRCH_BOAT))
+                .circuitMeta(5)
+                .duration(100).EUt(4).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PLANKS, 3, 3))
+                .input(stick, Wood, 2)
+                .outputs(new ItemStack(Items.JUNGLE_BOAT))
+                .circuitMeta(5)
+                .duration(100).EUt(4).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PLANKS, 3, 4))
+                .input(stick, Wood, 2)
+                .outputs(new ItemStack(Items.ACACIA_BOAT))
+                .circuitMeta(5)
+                .duration(100).EUt(4).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PLANKS, 3, 5))
+                .input(stick, Wood, 2)
+                .outputs(new ItemStack(Items.DARK_OAK_BOAT))
+                .circuitMeta(5)
+                .duration(100).EUt(4).buildAndRegister();
+
         ModHandler.addShapedRecipe("sticky_resin_torch", new ItemStack(Blocks.TORCH, 3), "X", "Y", 'X', MetaItems.STICKY_RESIN, 'Y', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_sulfur", new ItemStack(Blocks.TORCH, 2), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Sulfur), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_phosphorus", new ItemStack(Blocks.TORCH, 6), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Phosphorus), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
@@ -524,7 +566,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 4)).outputs(new ItemStack(Blocks.ACACIA_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 5)).outputs(new ItemStack(Blocks.DARK_OAK_STAIRS, 4)).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(40).circuitMeta(7).inputs(new ItemStack(Items.STICK, 7)).outputs(new ItemStack(Blocks.LADDER, 2)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(40).circuitMeta(7).inputs(new ItemStack(Items.STICK, 7)).outputs(new ItemStack(Blocks.LADDER, ConfigHolder.recipes.hardWoodRecipes ? 2 : 3)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(4).duration(100).inputs(new ItemStack(Items.MINECART)).inputs(OreDictUnifier.get("chestWood")).outputs(new ItemStack(Items.CHEST_MINECART)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(4).duration(100).inputs(new ItemStack(Items.MINECART)).inputs(new ItemStack(Blocks.FURNACE)).outputs(new ItemStack(Items.FURNACE_MINECART)).buildAndRegister();
