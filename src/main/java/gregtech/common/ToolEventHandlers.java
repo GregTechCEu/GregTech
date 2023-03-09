@@ -103,7 +103,7 @@ public class ToolEventHandlers {
         EntityPlayer player = event.getHarvester();
         if (player != null) {
             ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.hasTagCompound() || !(stack.getItem() instanceof IGTTool)) {
+            if (stack.isEmpty() || !stack.hasTagCompound() || !(stack.getItem() instanceof IGTTool)) {
                 return;
             }
             if (!event.isSilkTouching()) {
@@ -121,6 +121,8 @@ public class ToolEventHandlers {
                         IBlockState flowingState = world.getBlockState(icePos);
                         if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
                             world.setBlockToAir(icePos);
+                            // end immediately so the task doesn't remove other water that comes into this block-space
+                            return false;
                         }
                         return true;
                     });
