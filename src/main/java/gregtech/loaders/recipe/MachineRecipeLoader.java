@@ -418,72 +418,73 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-        for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L / 2)}) {
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(solder)
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        FluidStack solder = SolderingAlloy.getFluid(L / 2);
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(cableGtSingle, Copper, 4)
-                    .input(circuit, MarkerMaterials.Tier.LV)
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ENERGY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LEVER))
+                .input(OrePrefix.plate, material)
+                .fluidInputs(solder)
+                .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ENERGY_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .output(COVER_ENERGY_DETECTOR_ADVANCED)
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(cableGtSingle, Copper, 4)
+                .input(circuit, MarkerMaterials.Tier.LV)
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ENERGY_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .output(COVER_ENERGY_DETECTOR_ADVANCED)
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(wireFine, Gold, 4)
-                    .input(circuit, MarkerMaterials.Tier.HV)
-                    .input(plate, Aluminium)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, Gold, 4)
+                .input(circuit, MarkerMaterials.Tier.HV)
+                .input(plate, Aluminium)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_FLUID_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_FLUID_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(COVER_ITEM_DETECTOR)
@@ -492,7 +493,6 @@ public class MachineRecipeLoader {
                     .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
                     .EUt(16).duration(100)
                     .buildAndRegister();
-        }
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
