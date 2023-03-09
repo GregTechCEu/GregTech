@@ -227,12 +227,12 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.DARK_OAK_STAIRS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (3 * M) / 2))); // dust small
         OreDictUnifier.registerOre(new ItemStack(Blocks.ACACIA_STAIRS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, (3 * M) / 2))); // dust small
 
-        OreDictUnifier.registerOre(new ItemStack(Items.BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 5)));
-        OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 5)));
-        OreDictUnifier.registerOre(new ItemStack(Items.SPRUCE_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 5)));
-        OreDictUnifier.registerOre(new ItemStack(Items.JUNGLE_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 5)));
-        OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 5)));
-        OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 5)));
+        OreDictUnifier.registerOre(new ItemStack(Items.BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Items.SPRUCE_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Items.JUNGLE_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_BOAT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 4)));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE_STAIRS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Stone, (3 * M) / 2))); // dust small
         OreDictUnifier.registerOre(new ItemStack(Blocks.SANDSTONE_STAIRS, 1), new ItemMaterialInfo(new MaterialStack(Materials.Stone, (3 * M) / 2))); // dust small
