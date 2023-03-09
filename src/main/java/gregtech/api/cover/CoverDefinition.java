@@ -9,16 +9,24 @@ import java.util.function.BiFunction;
 
 public final class CoverDefinition {
 
+    public static CoverDefinition getCoverById(int hashCode) {
+        return GregTechAPI.COVER_REGISTRY.getObject(hashCode);
+    }
+
     public static CoverDefinition getCoverById(ResourceLocation id) {
         return GregTechAPI.COVER_REGISTRY.getObject(id);
     }
 
+    @Deprecated
     public static CoverDefinition getCoverByNetworkId(int networkId) {
-        return GregTechAPI.COVER_REGISTRY.getObjectById(networkId);
+        return null; //TODO
+//        return GregTechAPI.COVER_REGISTRY.getObjectById(networkId);
     }
 
+    @Deprecated
     public static int getNetworkIdForCover(CoverDefinition definition) {
-        return GregTechAPI.COVER_REGISTRY.getIDForObject(definition);
+        return 0; //TODO
+//        return GregTechAPI.COVER_REGISTRY.getIDForObject(definition);
     }
 
     private final ResourceLocation coverId;

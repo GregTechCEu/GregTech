@@ -213,7 +213,7 @@ public class CoreModule implements IGregTechModule {
         /* Start Cover Definition Registration */
         COVER_REGISTRY.unfreeze();
         CoverBehaviors.init();
-        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(COVER_REGISTRY, CoverDefinition.class));
+        MinecraftForge.EVENT_BUS.post(new SimpleRegisterEvent<>(COVER_REGISTRY, CoverDefinition.class));
         COVER_REGISTRY.freeze();
         /* End Cover Definition Registration */
 

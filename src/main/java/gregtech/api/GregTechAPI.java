@@ -11,6 +11,8 @@ import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
+import gregtech.api.registry.GTCompactNetworkRegistry;
+import gregtech.api.registry.GTSimpleRegistry;
 import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -35,6 +37,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GregTechAPI {
 
@@ -53,7 +56,7 @@ public class GregTechAPI {
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
-    public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
+    public static final GTCompactNetworkRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTCompactNetworkRegistry<>();
     public static final MaterialRegistry MATERIAL_REGISTRY = new MaterialRegistry();
 
     public static BlockMachine MACHINE;
@@ -66,6 +69,26 @@ public class GregTechAPI {
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
             new BaseCreativeTab(GTValues.MODID + ".ores", () -> ToolItems.DRILL_MV.get(Materials.Aluminium), true);
+
+    public static class SimpleRegisterEvent<V> extends GenericEvent<V> {
+
+        private final GTSimpleRegistry<ResourceLocation, V> registry;
+
+        public SimpleRegisterEvent(GTSimpleRegistry<ResourceLocation, V> registry, Class<V> clazz) {
+            super(clazz);
+            this.registry = registry;
+        }
+
+        public void register(ResourceLocation key, V value) {
+            if (registry != null) registry.putObject(key, value);
+        }
+
+        public void register(String key, V value) {
+            if (registry != null) {
+                registry.putObject(new ResourceLocation(Objects.requireNonNull(Loader.instance().activeModContainer()).getModId(), key), value);
+            }
+        }
+    }
 
     public static class RegisterEvent<V> extends GenericEvent<V> {
 

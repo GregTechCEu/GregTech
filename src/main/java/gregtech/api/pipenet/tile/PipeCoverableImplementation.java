@@ -72,7 +72,7 @@ public class PipeCoverableImplementation implements ICoverable {
         coverBehavior.onAttached(itemStack, player);
         writeCustomData(COVER_ATTACHED_PIPE, buffer -> {
             buffer.writeByte(side.getIndex());
-            buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
+            buffer.writeString(coverDefinition.getCoverId().toString());
             coverBehavior.writeInitialSyncData(buffer);
         });
         if (coverBehavior.shouldAutoConnect()) {
@@ -248,21 +248,22 @@ public class PipeCoverableImplementation implements ICoverable {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             CoverBehavior coverBehavior = getCoverAtSide(coverSide);
             if (coverBehavior != null) {
-                int coverId = CoverDefinition.getNetworkIdForCover(coverBehavior.getCoverDefinition());
-                buf.writeVarInt(coverId);
+                buf.writeBoolean(true);
+                String name = coverBehavior.getCoverDefinition().getCoverId().toString();
+                buf.writeString(name);
                 coverBehavior.writeInitialSyncData(buf);
             } else {
-                // -1 means no cover attached
-                buf.writeVarInt(-1);
+                // no cover attached
+                buf.writeBoolean(false);
             }
         }
     }
 
     public void readInitialSyncData(PacketBuffer buf) {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
-            int coverId = buf.readVarInt();
-            if (coverId != -1) {
-                CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
+            if (buf.readBoolean()) {
+                ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
+                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
                 CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
                 coverBehavior.readInitialSyncData(buf);
                 this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
@@ -278,8 +279,8 @@ public class PipeCoverableImplementation implements ICoverable {
         if (dataId == COVER_ATTACHED_PIPE) {
             //cover placement event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            int coverId = buf.readVarInt();
-            CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
+            ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
+            CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
             CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, placementSide);
             this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
             coverBehavior.readInitialSyncData(buf);
