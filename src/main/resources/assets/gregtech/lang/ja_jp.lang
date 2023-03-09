@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.5.3 - beta
-# 対応バージョン: 2.5.3 - beta
+# Corresponding Version: 2.5.4 - beta
+# 対応バージョン: 2.5.4 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -830,6 +830,8 @@ metaitem.cover.item.voiding.name=アイテム消去カバー
 metaitem.cover.item.voiding.tooltip=§fアイテム§7を消去する§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
 metaitem.cover.item.voiding.advanced.name=発展型アイテム消去カバー
 metaitem.cover.item.voiding.advanced.tooltip=§fアイテム§7を消去する量を制御できる§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
+metaitem.cover.storage.name=収納カバー
+metaitem.cover.storage.tooltip=小物用の収納スペースを持つカバー
 
 metaitem.cover.facade.name=%sの外装
 metaitem.cover.facade.tooltip=カーブルを装飾する§fカバー§7
@@ -1241,6 +1243,8 @@ cover.advanced_item_detector.label=発展型アイテム検出器
 cover.advanced_item_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小アイテム量を下回った時に信号が停止し、最大アイテム量を上回った時に信号が出力されます。 
 cover.advanced_item_detector.max=最大アイテム量:
 cover.advanced_item_detector.min=最小アイテム量:
+
+cover.storage.title=収納カバー
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=%s鉱石 (黒色花崗岩)
