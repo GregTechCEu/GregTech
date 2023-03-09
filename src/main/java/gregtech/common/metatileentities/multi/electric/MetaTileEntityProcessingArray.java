@@ -2,10 +2,9 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.metatileentity.IMachineHatchMultiblock;
-import gregtech.api.metatileentity.ITieredMetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -168,6 +167,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
         ItemStack currentMachineStack = ItemStack.EMPTY;
+        MetaTileEntity mte = null;
         //The Voltage Tier of the machines the PA is operating upon, from GTValues.V
         private int machineTier;
         //The maximum Voltage of the machines the PA is operating upon
@@ -184,6 +184,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             super.invalidate();
             // Reset locally cached variables upon invalidation
             currentMachineStack = ItemStack.EMPTY;
+            mte = null;
             machineChanged = true;
             machineTier = 0;
             machineVoltage = 0L;
@@ -238,12 +239,18 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             ItemStack machine = controller.getAbilities(MultiblockAbility.MACHINE_HATCH).get(0).getStackInSlot(0);
 
 
-            MetaTileEntity mte = GTUtility.getMetaTileEntity(machine);
+            mte = GTUtility.getMetaTileEntity(machine);
 
-            if (mte == null)
+            if (mte == null) {
                 this.activeRecipeMap = null;
-            else
+            }
+            else {
                 this.activeRecipeMap = mte.getRecipeMap();
+                // Set the world for MTEs, as some need it for checking their recipes
+                MetaTileEntityHolder holder = new MetaTileEntityHolder();
+                mte = holder.setMetaTileEntity(mte);
+                holder.setWorld(this.metaTileEntity.getWorld());
+            }
 
 
             //Find the voltage tier of the machine.
@@ -252,6 +259,27 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             this.machineVoltage = GTValues.V[this.machineTier];
 
             this.currentMachineStack = machine;
+        }
+
+        @Override
+        public boolean checkRecipe(@Nonnull Recipe recipe) {
+
+            if (mte == null) {
+                return false;
+            }
+
+            AbstractRecipeLogic arl = null;
+            for (MTETrait trait : mte.mteTraits) {
+                if (trait.getName().equals("RecipeMapWorkable")) {
+                    arl = ((AbstractRecipeLogic) trait);
+                }
+            }
+
+            if (arl == null) {
+                return false;
+            }
+
+            return arl.checkRecipe(recipe) && super.checkRecipe(recipe);
         }
 
         @Override

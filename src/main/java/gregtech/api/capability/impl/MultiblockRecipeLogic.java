@@ -300,7 +300,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@Nonnull Recipe recipe) {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false)) {
             controller.checkRecipe(recipe, true);

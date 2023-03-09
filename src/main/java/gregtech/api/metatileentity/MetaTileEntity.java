@@ -15,7 +15,9 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -97,7 +99,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     protected IFluidHandler fluidInventory;
 
-    protected final List<MTETrait> mteTraits = new ArrayList<>();
+    public final List<MTETrait> mteTraits = new ArrayList<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
     private int paintingColor = -1;

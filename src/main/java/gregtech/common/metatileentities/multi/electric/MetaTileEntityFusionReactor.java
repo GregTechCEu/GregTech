@@ -327,7 +327,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        protected boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@Nonnull Recipe recipe) {
             if (!super.checkRecipe(recipe))
                 return false;
 
