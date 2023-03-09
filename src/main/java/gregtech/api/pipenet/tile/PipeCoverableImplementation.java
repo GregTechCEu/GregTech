@@ -3,6 +3,7 @@ package gregtech.api.pipenet.tile;
 import com.google.common.base.Preconditions;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverNetworking;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
@@ -52,9 +53,8 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public final boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
-        if (side == null || coverDefinition == null) {
-            return false;
-        }
+        Preconditions.checkNotNull(side, "side");
+        Preconditions.checkNotNull(coverDefinition, "coverDefinition");
         CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, side);
         if (!canPlaceCoverOnSide(side) || !coverBehavior.canAttach()) {
             return false;
@@ -70,11 +70,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_PIPE, buffer -> {
-            buffer.writeByte(side.getIndex());
-            buffer.writeString(coverDefinition.getCoverId().toString());
-            coverBehavior.writeInitialSyncData(buffer);
-        });
+        writeCustomData(COVER_ATTACHED_PIPE, CoverNetworking.getCoverPlacementCustomDataWriter(side, coverBehavior));
         if (coverBehavior.shouldAutoConnect()) {
             holder.setConnection(side, true, false);
         }
@@ -245,30 +241,11 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void writeInitialSyncData(PacketBuffer buf) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
-            if (coverBehavior != null) {
-                buf.writeBoolean(true);
-                String name = coverBehavior.getCoverDefinition().getCoverId().toString();
-                buf.writeString(name);
-                coverBehavior.writeInitialSyncData(buf);
-            } else {
-                // no cover attached
-                buf.writeBoolean(false);
-            }
-        }
+        CoverNetworking.writeCoverSyncData(buf, this);
     }
 
     public void readInitialSyncData(PacketBuffer buf) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            if (buf.readBoolean()) {
-                ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readInitialSyncData(buf);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverNetworking.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
     }
 
     public void writeCustomData(int dataId, Consumer<PacketBuffer> writer) {
@@ -277,14 +254,9 @@ public class PipeCoverableImplementation implements ICoverable {
 
     public void readCustomData(int dataId, PacketBuffer buf) {
         if (dataId == COVER_ATTACHED_PIPE) {
-            //cover placement event
-            EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-            CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
-            CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, placementSide);
-            this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
-            coverBehavior.readInitialSyncData(buf);
-            holder.scheduleChunkForRenderUpdate();
+            CoverNetworking.readCoverPlacement(buf, this,
+                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
+                    holder::scheduleChunkForRenderUpdate);
         } else if (dataId == COVER_REMOVED_PIPE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];

@@ -21,6 +21,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverNetworking;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -566,11 +567,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_MTE, buffer -> {
-            buffer.writeByte(side.getIndex());
-            buffer.writeString(coverDefinition.getCoverId().toString());
-            coverBehavior.writeInitialSyncData(buffer);
-        });
+        writeCustomData(COVER_ATTACHED_MTE, CoverNetworking.getCoverPlacementCustomDataWriter(side, coverBehavior));
         notifyBlockUpdate();
         markDirty();
         onCoverPlacementUpdate();
@@ -868,7 +865,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void writeInitialSyncData(PacketBuffer buf) {
-        long start = System.nanoTime();
         buf.writeByte(this.frontFacing.getIndex());
         buf.writeInt(this.paintingColor);
         buf.writeShort(mteTraits.size());
@@ -876,23 +872,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             buf.writeVarInt(trait.getNetworkID());
             trait.writeInitialData(buf);
         }
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
-            if (coverBehavior != null) {
-                buf.writeBoolean(true);
-                String name = coverBehavior.getCoverDefinition().getCoverId().toString();
-                buf.writeString(name);
-                coverBehavior.writeInitialSyncData(buf);
-            } else {
-                // cover was not attached
-                buf.writeBoolean(false);
-            }
-        }
+        CoverNetworking.writeCoverSyncData(buf, this);
         buf.writeBoolean(isFragile);
         buf.writeBoolean(muffled);
-        long delta = System.nanoTime() - start;
-        System.out.println("Writing Packet: " + delta);
-        System.out.println("Writing Packet Start Time: " + System.nanoTime());
     }
 
     public boolean isPainted() {
@@ -900,8 +882,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void receiveInitialSyncData(PacketBuffer buf) {
-        System.out.println("Reading Packet End Time: " + System.nanoTime());
-        long start = System.nanoTime();
         this.frontFacing = EnumFacing.VALUES[buf.readByte()];
         this.paintingColor = buf.readInt();
         int amountOfTraits = buf.readShort();
@@ -912,19 +892,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                     .findAny()
                     .ifPresent(trait -> trait.receiveInitialData(buf));
         }
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            if (buf.readBoolean()) {
-                ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readInitialSyncData(buf);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverNetworking.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
         this.isFragile = buf.readBoolean();
         this.muffled = buf.readBoolean();
-        long delta = System.nanoTime() - start;
-        System.out.println("Reading Packet: " + delta);
     }
 
     public void writeTraitData(MTETrait trait, int internalId, Consumer<PacketBuffer> dataWriter) {
@@ -957,15 +927,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                     .findAny()
                     .ifPresent(trait -> trait.receiveCustomData(buf.readVarInt(), buf));
         } else if (dataId == COVER_ATTACHED_MTE) {
-            //cover placement event
-            EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-            CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
-            CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, placementSide);
-            this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
-            coverBehavior.readInitialSyncData(buf);
-            onCoverPlacementUpdate();
-            scheduleRenderUpdate();
+            CoverNetworking.readCoverPlacement(buf, this,
+                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
+                    this::scheduleRenderUpdate);
         } else if (dataId == COVER_REMOVED_MTE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];

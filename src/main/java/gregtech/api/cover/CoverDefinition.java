@@ -20,13 +20,11 @@ public final class CoverDefinition {
     @Deprecated
     public static CoverDefinition getCoverByNetworkId(int networkId) {
         return null; //TODO
-//        return GregTechAPI.COVER_REGISTRY.getObjectById(networkId);
     }
 
     @Deprecated
     public static int getNetworkIdForCover(CoverDefinition definition) {
         return 0; //TODO
-//        return GregTechAPI.COVER_REGISTRY.getIDForObject(definition);
     }
 
     private final ResourceLocation coverId;
@@ -52,5 +50,4 @@ public final class CoverDefinition {
         coverBehavior.setCoverDefinition(this);
         return coverBehavior;
     }
-
 }
