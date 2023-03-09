@@ -105,7 +105,7 @@ gregtech.multiblock.coke_oven.description=焦炉是一种多方块结构，用�
 gregtech.multiblock.vacuum_freezer.description=真空冷冻机是一种多方块结构，主要用于将热锭冷却为成品锭。此外，它还可以冻结水等其他物质。
 gregtech.multiblock.implosion_compressor.description=内爆压缩机是一种多方块结构，能够借助炸药将宝石粉转化为相应的宝石。
 gregtech.multiblock.pyrolyse_oven.description=热解炉是一种用于将原木处理为木炭、杂酚油、灰烬或重油的多方块结构。
-gregtech.multiblock.cracker.description=石油裂化机是一种用于将轻燃料和重燃料裂解为相应裂化物的多方块结构。
+gregtech.multiblock.cracker.description=石油裂化机是一种用于将轻燃油和重燃油裂解为相应裂化物的多方块结构。
 gregtech.multiblock.large_combustion_engine.description=大型燃油引擎是一种产出 EV 能量的多方块结构，工作方式与燃油发电机类似。
 gregtech.multiblock.extreme_combustion_engine.description=极限燃油引擎是一种产出 IV 能量的多方块结构，工作方式与燃油发电机类似。
 gregtech.multiblock.distillation_tower.description=蒸馏塔是一种用于蒸馏不同石油及其副产品的多方块结构。
@@ -903,16 +903,16 @@ metaitem.wooden_form.brick.name=砖木制模具
 
 item.gt.tool.replace_tool_head=可在合成栏用一个新的工具头部来替换它
 item.gt.tool.usable_as=可用作：§f%s
-item.gt.tool.behavior.silk_ice=§b冰刀：§f精准采集冰块
-item.gt.tool.behavior.torch_place=§e洞穴勘探：§f右键单击放置火把
+item.gt.tool.behavior.silk_ice=§b切冰利刃：§f精准采集冰块
+item.gt.tool.behavior.torch_place=§e洞穴勘探：§f右击放置火把
 item.gt.tool.behavior.tree_felling=§4伐木：§f连锁砍树
 item.gt.tool.behavior.shield_disable=§c蛮力：§f无视盾牌
 item.gt.tool.behavior.relocate_mining=§2磁力：§f吸引物品聚集
 item.gt.tool.behavior.aoe_mining=§5作用范围：§f%sx%sx%s
-item.gt.tool.behavior.ground_tilling=§e农夫：§f耕地
-item.gt.tool.behavior.grass_path=§e景观设计：§f创造草径
-item.gt.tool.behavior.rail_rotation=§e铁路工程：§f旋转铁轨
-item.gt.tool.behavior.crop_harvesting=§a收割：§f收获农作物
+item.gt.tool.behavior.ground_tilling=§e耕地农夫：§f耕耘土地
+item.gt.tool.behavior.grass_path=§e园林策划：§f制造草径
+item.gt.tool.behavior.rail_rotation=§e铁路技工：§f旋转铁轨
+item.gt.tool.behavior.crop_harvesting=§a庄稼收割：§f收获成熟的作物
 item.gt.tool.behavior.plunger=§9管道工：§f清除流体
 item.gt.tool.behavior.block_rotation=§2机械师：§f旋转方块，调配输出口
 item.gt.tool.behavior.damage_boost=§4伤害加成：§f对%s造成额外伤害
@@ -996,6 +996,7 @@ metaitem.turbine_rotor.tooltip=发电站的涡轮转子
 
 metaitem.clipboard.name=剪贴板
 metaitem.clipboard.tooltip=可以在上面书写(不使用任何书写工具)。右键单击墙壁放置，Shift + 右键单击取下
+
 
 metaitem.behavior.mode_switch.tooltip=潜行右击以切换模式
 metaitem.behavior.mode_switch.mode_switched=§e模式设置为: %s
@@ -1215,6 +1216,7 @@ cover.machine_controller.mode.cover_east=控制目标：覆盖板（东面）
 cover.machine_controller.mode.cover_west=控制目标：覆盖板（西面）
 
 cover.ender_fluid_link.title=末影流体连接
+cover.ender_fluid_link.iomode.enabled=已启用I/O
 cover.ender_fluid_link.iomode.disabled=已禁用I/O
 cover.ender_fluid_link.private.tooltip.disabled=切换至私有储罐模式/n私有权归最初加装该覆盖板的玩家所有
 cover.ender_fluid_link.private.tooltip.enabled=切换至公共储罐模式
@@ -4673,6 +4675,7 @@ gregtech.machine.maintenance_hatch_tape_slot.tooltip=放入胶带以防止出现
 gregtech.maintenance.configurable_duration=处理耗时: %fx
 gregtech.maintenance.configurable_duration.unchanged_description=配方以正常速度运行。将配置更改以更新。
 gregtech.maintenance.configurable_duration.changed_description=配方处理速度现为正常速度（不计超频）的%f倍。
+
 gregtech.maintenance.configurable_time=故障几率: %fx
 gregtech.maintenance.configurable_time.unchanged_description=维修问题将以正常速度发生。将配置更改以更新。
 gregtech.maintenance.configurable_time.changed_description=维护问题将在%fx倍的正常速率下发生。
@@ -4710,6 +4713,7 @@ gregtech.machine.passthrough_hatch_item.name=物品通行仓
 gregtech.machine.passthrough_hatch_item.tooltip=将物品从一侧发送到另一侧
 gregtech.machine.passthrough_hatch_fluid.name=流体通行仓
 gregtech.machine.passthrough_hatch_fluid.tooltip=将流体从一侧输送到另一侧
+
 
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸：%dx%dx%d
 gregtech.machine.fluid_tank.fluid=包含 %s L 的 %s
@@ -4771,6 +4775,7 @@ gregtech.recipe.cleanroom_sterile.display_name=无菌超净间
 gregtech.fluid.click_to_fill=§7手持流体容器点击流体槽以§b填入§7流体（Shift+单击以用整组容器中的流体进行填入）
 gregtech.fluid.click_combined=§7手持流体容器点击流体槽以§c倒出§7或§b填入§7流体（Shift+单击以用整组容器倒出流体或用整组容器中的流体进行填入）
 gregtech.fluid.click_to_empty=§7手持流体容器点击流体槽以§c倒出§7流体（Shift+单击以用整组容器倒出流体）
+
 gregtech.tool_action.show_tooltips=按住SHIFT显示工具信息
 gregtech.tool_action.screwdriver.auto_output_covers=§8使用螺丝刀设置允许从输出端输入或访问覆盖板
 gregtech.tool_action.screwdriver.toggle_mode_covers=§8使用螺丝刀切换模式或访问覆盖板
@@ -4937,9 +4942,9 @@ gregtech.multiblock.multi_furnace.heating_coil_level=加热线圈等级：%s
 gregtech.multiblock.multi_furnace.heating_coil_discount=加热线圈增幅：%sx
 gregtech.multiblock.distillation_tower.distilling_fluid=正在蒸馏%s
 
-gregtech.multiblock.large_combustion_engine.lubricant_amount=润滑油量:%sL
-gregtech.multiblock.large_combustion_engine.oxygen_amount=氧气量:%sL
-gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=液氧量:%sL
+gregtech.multiblock.large_combustion_engine.lubricant_amount=润滑油储量:%sL
+gregtech.multiblock.large_combustion_engine.oxygen_amount=氧气储量:%sL
+gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=液氧储量:%sL
 gregtech.multiblock.large_combustion_engine.oxygen_boosted=§b氧气增幅中
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted=§b液氧增幅中
 gregtech.multiblock.large_combustion_engine.boost_disallowed=§b升级你的动力仓以激活氧气增幅
