@@ -1,18 +1,21 @@
 package gregtech.loaders.recipe;
 
+import com.google.common.collect.ImmutableMap;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.wood.BlockGregPlanks;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.item.crafting.IRecipe;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.GTValues.VA;
@@ -24,83 +27,96 @@ import static gregtech.common.items.MetaItems.BIO_CHAFF;
 public class WoodMachineRecipes {
 
     public static void init() {
+        registerWoodRecipes();
         registerPyrolyseOvenRecipes();
     }
 
-    public static void postInit() {
-        processLogOreDictionary();
-    }
+    private static void registerWoodRecipes() {
+        ImmutableMap<String, ItemStack[]> map = ImmutableMap.<String, ItemStack[]>builder()
+                .put("oak", new ItemStack[]{new ItemStack(Blocks.PLANKS), new ItemStack(Blocks.LOG), new ItemStack(Items.OAK_DOOR), new ItemStack(Blocks.WOODEN_SLAB)})
+                .put("spruce", new ItemStack[]{new ItemStack(Blocks.PLANKS, 1, 1), new ItemStack(Blocks.LOG, 1, 1), new ItemStack(Items.SPRUCE_DOOR), new ItemStack(Blocks.WOODEN_SLAB, 1, 1)})
+                .put("birch", new ItemStack[]{new ItemStack(Blocks.PLANKS, 1, 2), new ItemStack(Blocks.LOG, 1, 2), new ItemStack(Items.BIRCH_DOOR), new ItemStack(Blocks.WOODEN_SLAB, 1, 2)})
+                .put("jungle", new ItemStack[]{new ItemStack(Blocks.PLANKS, 1, 3), new ItemStack(Blocks.LOG, 1, 3), new ItemStack(Items.JUNGLE_DOOR), new ItemStack(Blocks.WOODEN_SLAB, 1, 3)})
+                .put("acacia", new ItemStack[]{new ItemStack(Blocks.PLANKS, 1, 4), new ItemStack(Blocks.LOG2), new ItemStack(Items.ACACIA_DOOR), new ItemStack(Blocks.WOODEN_SLAB, 1, 4)})
+                .put("dark_oak", new ItemStack[]{new ItemStack(Blocks.PLANKS, 1, 5), new ItemStack(Blocks.LOG2, 1, 1), new ItemStack(Items.DARK_OAK_DOOR), new ItemStack(Blocks.WOODEN_SLAB, 1, 5)})
+                .build();
 
-    private static void processLogOreDictionary() {
-        List<ItemStack> allWoodLogs = OreDictUnifier.getAllWithOreDictionaryName("logWood").stream()
-                .flatMap(stack -> GTUtility.getAllSubItems(stack).stream())
-                .collect(Collectors.toList());
+        for (Map.Entry<String, ItemStack[]> entry : map.entrySet()) {
+            final String name = entry.getKey();
+            final String name_planks = name + "_planks";
 
-        for (ItemStack stack : allWoodLogs) {
-            Pair<IRecipe, ItemStack> outputPair = ModHandler.getRecipeOutput(null, stack);
-            ItemStack plankStack = outputPair.getValue();
-            int originalOutput = plankStack.getCount();
-            if (plankStack.isEmpty()) {
-                continue;
-            }
-            IRecipe outputRecipe = outputPair.getKey();
+            final ItemStack[] items = entry.getValue();
+            final ItemStack planks = items[0];
+            final ItemStack log = items[1];
+            final ItemStack door = items[2];
+            final ItemStack slab = items[3];
 
-            //wood nerf
+            ItemStack recipeOutput =  planks.copy();
+
+            // log -> plank crafting
             if (ConfigHolder.recipes.nerfWoodCrafting) {
-                //remove the old recipe
-                ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
-
-                // new wood recipes
-                //noinspection ConstantConditions
-                ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
-                        GTUtility.copyAmount(Math.max(1, originalOutput / 2), plankStack), stack);
-
-                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                        GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
-            } else {
-                //noinspection ConstantConditions
-                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                        GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), "s", "L", 'L', stack);
+                ModHandler.removeRecipeByName(name_planks);
+                recipeOutput.setCount(2);
+                ModHandler.addShapelessRecipe(name_planks, recipeOutput, log.copy());
             }
 
+            recipeOutput = recipeOutput.copy();
+            recipeOutput.setCount(ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6);
+            ModHandler.addShapedRecipe(name_planks + "_saw", recipeOutput, "s", "L", 'L', log.copy());
 
-            CUTTER_RECIPES.recipeBuilder().inputs(stack)
-                    .fluidInputs(Lubricant.getFluid(1))
-                    .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))
+            // log -> plank cutting
+            CUTTER_RECIPES.recipeBuilder()
+                    .inputs(log.copy())
+                    .outputs(recipeOutput.copy())
+                    .output(dust, Wood, 2)
+                    .duration(200)
+                    .EUt(VA[ULV])
+                    .buildAndRegister();
+
+            // plank -> door assembling
+            recipeOutput = door.copy();
+            recipeOutput.setCount(3);
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .inputs(GTUtility.copyAmount(6, planks))
+                    .outputs(recipeOutput)
+                    .circuitMeta(6)
+                    .duration(600).EUt(4)
+                    .buildAndRegister();
+
+            // plank -> slab crafting
+            recipeOutput = slab.copy();
+            recipeOutput.setCount(2);
+            ModHandler.addShapedRecipe(name + "_slab_saw", recipeOutput, "sS", 'S', planks.copy());
+
+            // plank -> slab cutting
+            CUTTER_RECIPES.recipeBuilder()
+                    .inputs(planks.copy())
+                    .outputs(recipeOutput.copy())
                     .duration(200).EUt(VA[ULV])
                     .buildAndRegister();
 
-            ItemStack doorStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE,
-                    plankStack, plankStack, ItemStack.EMPTY,
-                    plankStack, plankStack, ItemStack.EMPTY,
-                    plankStack, plankStack, ItemStack.EMPTY).getRight();
-
-            if (!doorStack.isEmpty()) {
-                ASSEMBLER_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copyAmount(6, plankStack))
-                        .outputs(doorStack)
-                        .duration(600).EUt(4).circuitMeta(6)
-                        .buildAndRegister();
-            }
-
-            ItemStack slabStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE, plankStack, plankStack, plankStack).getRight();
-
-            if (!slabStack.isEmpty()) {
-                CUTTER_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copyAmount(1, plankStack))
-                        .outputs(GTUtility.copyAmount(2, slabStack))
-                        .duration(200).EUt(VA[ULV])
-                        .buildAndRegister();
-
-                ModHandler.addShapedRecipe(slabStack.getDisplayName() + "_saw", GTUtility.copyAmount(2, slabStack), "sS", 'S', GTUtility.copyAmount(1, plankStack));
-            }
-
+            // log -> charcoal furnace recipe
             if (ConfigHolder.recipes.harderCharcoalRecipe) {
-                ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(stack);
+                ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(log);
                 if (outputStack.getItem() == Items.COAL && outputStack.getItemDamage() == 1) {
-                    ModHandler.removeFurnaceSmelting(stack);
+                    ModHandler.removeFurnaceSmelting(log);
                 }
             }
+        }
+
+        // GT wood special handling
+        ModHandler.addShapelessRecipe("rubber_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.nerfWoodCrafting ? 2 : 4), new ItemStack(MetaBlocks.RUBBER_LOG));
+        ModHandler.addShapedRecipe("rubber_wood_planks_saw", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6), "s", "L", 'L', new ItemStack(MetaBlocks.RUBBER_LOG));
+
+        ModHandler.addShapedRecipe("treated_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK, 8), "PPP", "PBP", "PPP", 'P', "plankWood", 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
+
+        ModHandler.addShapedRecipe("treated_wood_stick", OreDictUnifier.get(OrePrefix.stick, TreatedWood, ConfigHolder.recipes.nerfWoodCrafting ? 2 : 4), "L", "L", 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
+        if (ConfigHolder.recipes.nerfWoodCrafting) {
+            ModHandler.addShapedRecipe("treated_wood_stick_saw", OreDictUnifier.get(OrePrefix.stick, TreatedWood, 4), "s", "L", 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
+        }
+
+        if (!ConfigHolder.recipes.harderCharcoalRecipe) {
+            GameRegistry.addSmelting(MetaBlocks.RUBBER_LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
         }
     }
 

@@ -368,7 +368,6 @@ public class CommonProxy {
     }
 
     public void onPostLoad() {
-        GTRecipeManager.postLoad();
         TerminalRegistry.init();
 
         if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
