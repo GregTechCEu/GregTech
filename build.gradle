@@ -142,6 +142,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:${junit_version}")
     testImplementation("org.hamcrest:hamcrest:${hamcrest_version}")
 
+    compileOnly "curse.maven:journeymap-${jm_pid}:${jm_fid}"
+    compileOnly "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
+    compileOnly "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
+
     // Compile-Time Dependencies
     compileOnly "org.projectlombok:lombok:${lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
