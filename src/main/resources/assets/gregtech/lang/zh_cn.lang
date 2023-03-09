@@ -825,6 +825,8 @@ metaitem.cover.item.voiding.name=物品销毁覆盖板
 metaitem.cover.item.voiding.tooltip=作§f覆盖板§7时销毁物品。/n加装后需手持§f软槌§7右击方可启用
 metaitem.cover.item.voiding.advanced.name=进阶物品销毁覆盖板
 metaitem.cover.item.voiding.advanced.tooltip=作§f覆盖板§7时销毁物品，兼有控量功能。/n加装后需手持§f软槌§7右击方可启用
+metaitem.cover.storage.name=存储覆盖板
+metaitem.cover.storage.tooltip=给零碎的小玩意准备的小型存储空间
 
 metaitem.cover.facade.name=%s伪装板
 metaitem.cover.facade.tooltip=可作为§f覆盖板§7加装的装饰性套壳。
@@ -1235,6 +1237,8 @@ cover.advanced_item_detector.label=进阶物品探测器
 cover.advanced_item_detector.invert_tooltip=启用反相以反转红石逻辑/n默认情况下，物品数量处于所设定的最小值和最大值之间时覆盖板将发出红石信号，小于最小值时则停止发出红石信号
 cover.advanced_item_detector.max=最大物品数量：
 cover.advanced_item_detector.min=最小物品数量：
+
+cover.storage.title存储覆盖板
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=黑花岗岩%s矿石
