@@ -10,7 +10,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
@@ -60,8 +60,8 @@ public class MachineSceneWidget extends WidgetGroup {
     private boolean blendColor = true;
     private Set<BlockPos> cores;
     private Set<BlockPos> around;
-    private BlockPosFace hoverPosFace;
-    private BlockPosFace selectedPosFace;
+    private FacingPos hoveredFacingPos;
+    private FacingPos selectedFacingPos;
     private BiConsumer<BlockPos, EnumFacing> onSelected;
 
     protected MetaTileEntity mte;
@@ -97,7 +97,7 @@ public class MachineSceneWidget extends WidgetGroup {
         return around;
     }
 
-    public FBOWorldSceneRenderer getWorldSceneRenderer() {
+    public static FBOWorldSceneRenderer getWorldSceneRenderer() {
         return worldSceneRenderer;
     }
 
@@ -108,7 +108,7 @@ public class MachineSceneWidget extends WidgetGroup {
 
     @SideOnly(Side.CLIENT)
     private void renderBlockOverLay(WorldSceneRenderer renderer) {
-        hoverPosFace = null;
+        hoveredFacingPos = null;
         if (isMouseOverElement(currentMouseX, currentMouseY)) {
             int x = getPosition().x;
             int y = getPosition().y;
@@ -118,7 +118,7 @@ public class MachineSceneWidget extends WidgetGroup {
             int resolutionHeight = worldSceneRenderer.getResolutionHeight();
             int mouseX = resolutionWidth * (currentMouseX - x) / width;
             int mouseY = (int) (resolutionHeight * (1 - (currentMouseY - y) / (float) height));
-            Vector3f hitPos = renderer.unProject(mouseX, mouseY);
+            Vector3f hitPos = WorldSceneRenderer.unProject(mouseX, mouseY);
             World world = renderer.world;
             Vec3d eyePos = new Vec3d(renderer.getEyePos().x, renderer.getEyePos().y, renderer.getEyePos().z);
             hitPos.scale(2); // Double view range to ensure pos can be seen.
@@ -134,20 +134,20 @@ public class MachineSceneWidget extends WidgetGroup {
                     double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
                     if (dist < min) {
                         min = dist;
-                        hoverPosFace = new BlockPosFace(hit.getBlockPos(), hit.sideHit);
+                        hoveredFacingPos = new FacingPos(hit.getBlockPos(), hit.sideHit);
                     }
                 }
             }
         }
-        if (selectedPosFace != null || hoverPosFace != null) {
+        if (selectedFacingPos != null || hoveredFacingPos != null) {
             GlStateManager.pushMatrix();
             RenderUtil.useLightMap(240, 240, () -> {
                 GlStateManager.disableDepth();
-                if (selectedPosFace != null) {
-                    drawFacingBorder(selectedPosFace, 0xff00ff00);
+                if (selectedFacingPos != null) {
+                    drawFacingBorder(selectedFacingPos, 0xff00ff00);
                 }
-                if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
-                    drawFacingBorder(hoverPosFace, 0xffffffff);
+                if (hoveredFacingPos != null && !hoveredFacingPos.equals(selectedFacingPos)) {
+                    drawFacingBorder(hoveredFacingPos, 0xffffffff);
                 }
                 GlStateManager.enableDepth();
             });
@@ -157,10 +157,10 @@ public class MachineSceneWidget extends WidgetGroup {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
     }
 
-    private void drawFacingBorder(BlockPosFace posFace, int color) {
+    private static void drawFacingBorder(FacingPos posFace, int color) {
         GlStateManager.pushMatrix();
-        RenderUtil.moveToFace(posFace.pos.getX(), posFace.pos.getY(), posFace.pos.getZ(), posFace.facing);
-        RenderUtil.rotateToFace(posFace.facing, null);
+        RenderUtil.moveToFace(posFace.getPos().getX(), posFace.getPos().getY(), posFace.getPos().getZ(), posFace.getFacing());
+        RenderUtil.rotateToFace(posFace.getFacing(), null);
         GlStateManager.scale(1f / 16, 1f / 16, 0);
         GlStateManager.translate(-8, -8, 0);
         Widget.drawBorder(1, 1, 14, 14, color, 1);
@@ -265,10 +265,10 @@ public class MachineSceneWidget extends WidgetGroup {
             dragging = true;
             lastMouseX = mouseX;
             lastMouseY = mouseY;
-            if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
-                selectedPosFace = hoverPosFace;
+            if (hoveredFacingPos != null && !hoveredFacingPos.equals(selectedFacingPos)) {
+                selectedFacingPos = hoveredFacingPos;
                 if (onSelected != null) {
-                    onSelected.accept(selectedPosFace.pos, selectedPosFace.facing);
+                    onSelected.accept(selectedFacingPos.getPos(), selectedFacingPos.getFacing());
                 }
             }
             return true;

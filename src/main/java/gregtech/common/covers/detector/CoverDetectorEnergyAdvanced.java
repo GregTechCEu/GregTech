@@ -6,47 +6,41 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
-import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
-import java.util.regex.Pattern;
 
+public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
 
-public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
+    private static final int PADDING = 5, SIZE = 18;
 
-    public long minEU, maxEU;
+    private static final long DEFAULT_MIN_EU = 0, DEFAULT_MAX_EU = 2048;
+    private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
+
+    public long minValue, maxValue;
     private int outputAmount;
-    private boolean inverted;
-    private boolean isEnabled;
+    private boolean usePercent;
+    private WidgetGroup widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.minEU = 0;
-        this.maxEU = 32;
+        this.minValue = DEFAULT_MIN_EU;
+        this.maxValue = DEFAULT_MAX_EU;
         this.outputAmount = 0;
-        this.inverted = false;
-        this.isEnabled = true;
-    }
-
-    @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null;
+        this.usePercent = false;
     }
 
     @Override
@@ -64,166 +58,181 @@ public class CoverDetectorEnergyAdvanced extends CoverBehavior implements CoverW
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0 || !isEnabled) return;
+        if (coverHolder.getOffsetTimer() % 20 != 0) return;
 
         IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            compareValue(energyContainer.getEnergyStored(), maxEU, minEU);
-            setRedstoneSignalOutput(outputAmount);
+        if (energyContainer != null) {
+            if (usePercent) {
+                if (energyContainer.getEnergyCapacity() > 0) {
+                    float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
+                    this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, this.isInverted, this.outputAmount);
+                    // compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+                } else {
+                    this.outputAmount = isInverted ? 0 : 15;
+                }
+            } else {
+                this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
+                        this.maxValue, this.minValue, this.isInverted, this.outputAmount);
+                // compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
+            }
         }
-    }
-
-    /**
-     * Compares the value to min and max, and sets the output value accordingly.
-     * <p>
-     * Behaves like an SR Latch.
-     */
-    private void compareValue(long value, long maxValue, long minValue) {
-        if (value >= maxValue) {
-            this.outputAmount = inverted ? 15 : 0;
-        } else if (value <= minValue) {
-            this.outputAmount = inverted ? 0 : 15;
-        }
+        setRedstoneSignalOutput(outputAmount);
     }
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        int PADDING = 5;
-        int SIZE = 18;
 
         WidgetGroup group = new WidgetGroup();
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_energy_detector.label"));
 
+        // get/set min EU
+        group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_energy_detector.min"));
+        group.addWidget(new ImageWidget(72, (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
+
+        // get/set max EU
+        group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
+        group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
+
+        // surely this is a good idea :clueless:
+        // construct widgets that need to be updated
+        this.widgetsToUpdate = constructWidgetsToUpdate();
+
+        // change modes between percent and discrete EU
+        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.modes_label"));
+        group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
+                "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
+                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip")
+        );
+
         // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + SIZE + PADDING, "cover.advanced_energy_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(72, 5 + SIZE, 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
+        group.addWidget(new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                 "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                 .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
         );
 
-        // get/set max EU
-        group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
-        group.addWidget(new ImageWidget(68, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(72, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
-                this::getMaxValue, this::setMaxValue)
-                    .setMaxLength(19)
-                    .setAllowedChars(Pattern.compile(".[0-9]*"))
-                    .setPostFix(" EU")
-        );
-
-        // get/set min EU
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.min"));
-        group.addWidget(new ImageWidget(68, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(72, 5 + 3 * (SIZE + PADDING), 4 * SIZE, SIZE,
-                this::getMinValue, this::setMinValue)
-                    .setMaxLength(19)
-                    .setAllowedChars(Pattern.compile(".[0-9]*"))
-                    .setPostFix(" EU")
-        );
-
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 108)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
                 .widget(group)
+                .widget(widgetsToUpdate) // add synced widgets
                 .build(this, player);
     }
 
+    private WidgetGroup constructWidgetsToUpdate() {
+        WidgetGroup sync = new WidgetGroup();
+
+        sync.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setMaxLength(this.getLength())
+                .setPostFix(this.getPostFix()));
+        sync.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setMaxLength(this.getLength())
+                .setPostFix(this.getPostFix()));
+        return sync;
+    }
+
     private String getMinValue() {
-        return String.valueOf(minEU);
+        return String.valueOf(minValue);
     }
 
     private String getMaxValue() {
-        return String.valueOf(maxEU);
+        return String.valueOf(maxValue);
     }
 
     private void setMinValue(String val){
-        try {
-            long c = Long.parseLong(val);
-            this.minEU = Math.min(maxEU - 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.minEU = Math.max(maxEU - 1, 0);
-        }
+        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
+
+        this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val){
-        try {
-            long c = Long.parseLong(val);
-            maxEU = Math.max(minEU + 1, c);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-            this.maxEU = Math.max(minEU + 1, 2048);
-        }
+        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
+        long maxUpperLimit = usePercent ? 100 : Long.MAX_VALUE;
+
+        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));
     }
 
     private boolean isInverted(){
-        return this.inverted;
+        return this.isInverted;
     }
 
     private void setInverted(boolean b){
-        this.inverted = b;
+        this.isInverted = b;
     }
 
-    @Override
-    public boolean canConnectRedstone() {
-        return true;
+    private boolean isUsePercent(){
+        return this.usePercent;
+    }
+
+    private void setUsePercent(boolean b){
+        this.usePercent =  b;
+
+        if (this.usePercent){ // using percent
+            this.minValue = DEFAULT_MIN_PERCENT;
+            this.maxValue = DEFAULT_MAX_PERCENT;
+        } else { // using discrete EU
+            this.minValue = DEFAULT_MIN_EU;
+            this.maxValue = DEFAULT_MAX_EU;
+        }
+
+        // update widgets
+        updateSyncedWidgets();
+    }
+
+    private void updateSyncedWidgets() {
+        for (Widget widget : widgetsToUpdate.widgets) {
+            ((TextFieldWidget2) widget).setPostFix(getPostFix());
+            ((TextFieldWidget2) widget).setMaxLength(getLength());
+        }
+    }
+
+    private String getPostFix(){
+        return usePercent ? " %" : " EU";
+    }
+
+    private int getLength() {
+        return usePercent ? 3 : 19;
     }
 
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setLong("maxEU", this.maxEU);
-        tagCompound.setLong("minEU", this.minEU);
+        tagCompound.setLong("maxEU", this.maxValue);
+        tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
-        tagCompound.setBoolean("inverted", this.inverted);
-        tagCompound.setBoolean("isEnabled", this.isEnabled);
+        tagCompound.setBoolean("inverted", this.isInverted);
+        tagCompound.setBoolean("usePercent", this.usePercent);
         return tagCompound;
     }
 
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.minEU = tagCompound.getLong("minEU");
-        this.maxEU = tagCompound.getLong("maxEU");
+        this.minValue = tagCompound.getLong("minEU");
+        this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
-        this.inverted = tagCompound.getBoolean("inverted");
-        this.isEnabled = tagCompound.getBoolean("isEnabled");
+        this.isInverted = tagCompound.getBoolean("inverted");
+        this.usePercent = tagCompound.getBoolean("usePercent");
     }
 
     @Override
     public void writeInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
-        packetBuffer.writeLong(this.minEU);
-        packetBuffer.writeLong(this.maxEU);
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeLong(this.minValue);
+        packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
-        packetBuffer.writeBoolean(this.inverted);
-        packetBuffer.writeBoolean(this.isEnabled);
+        packetBuffer.writeBoolean(this.isInverted);
+        packetBuffer.writeBoolean(this.usePercent);
     }
 
     @Override
     public void readInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
-        this.minEU = packetBuffer.readLong();
-        this.maxEU = packetBuffer.readLong();
+        super.readInitialSyncData(packetBuffer);
+        this.minValue = packetBuffer.readLong();
+        this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
-        this.inverted = packetBuffer.readBoolean();
-        this.isEnabled = packetBuffer.readBoolean();
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return this.isEnabled;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean isActivationAllowed) {
-        this.isEnabled = isActivationAllowed;
-        setRedstoneSignalOutput(0);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        }
-
-        return defaultValue;
+        this.isInverted = packetBuffer.readBoolean();
+        this.usePercent = packetBuffer.readBoolean();
     }
 }

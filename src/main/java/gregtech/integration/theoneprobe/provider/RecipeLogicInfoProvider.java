@@ -4,6 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.PrimitiveRecipeLogic;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -32,16 +35,29 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
     protected void addProbeInfo(@Nonnull AbstractRecipeLogic capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
         // do not show energy usage on machines that do not use energy
         if (capability.isWorking()) {
-            if (!(capability instanceof PrimitiveRecipeLogic)) {
-                int EUt = capability.getRecipeEUt();
-                int absEUt = Math.abs(EUt);
-                String text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN + " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
+            if (capability instanceof PrimitiveRecipeLogic) {
+                return; // do not show info for primitive machines, as they are supposed to appear powerless
+            }
+            int EUt = capability.getRecipeEUt();
+            int absEUt = Math.abs(EUt);
+            String text = null;
 
-                if (EUt > 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
-                } else if (EUt < 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + text);
+            if (tileEntity instanceof IGregTechTileEntity) {
+                IGregTechTileEntity gtTileEntity = (IGregTechTileEntity) tileEntity;
+                MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
+                if (mte instanceof SteamMetaTileEntity) {
+                    text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " L/t " + "{*material.steam*}";
                 }
+            }
+            if (text == null) {
+                // Default behavior, if this TE is not a steam machine (or somehow not instanceof IGregTechTileEntity...)
+                text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN + " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
+            }
+
+            if (EUt > 0) {
+                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
+            } else if (EUt < 0) {
+                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + text);
             }
         }
     }

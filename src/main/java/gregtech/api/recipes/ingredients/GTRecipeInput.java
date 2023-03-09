@@ -14,7 +14,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Definition of ItemStacks, Ore dicts, of ingredients for

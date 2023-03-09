@@ -1,6 +1,5 @@
 package gregtech.api.recipes.crafttweaker;
 
-import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
@@ -8,12 +7,12 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.oredict.IOreDictEntry;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.ingredients.*;
-import net.minecraft.item.ItemStack;
+import gregtech.api.recipes.ingredients.CraftTweakerItemInputWrapper;
+import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -64,7 +63,7 @@ public class CTRecipeBuilder {
             if (oreDict != null) {
                 throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
             } else {
-                throw new IllegalArgumentException("Invalid Item [" + ingredient.toString() + "]: item not found");
+                throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
             }
         }
     }
@@ -112,9 +111,7 @@ public class CTRecipeBuilder {
 
     @ZenMethod
     public CTRecipeBuilder circuit(int num) {
-        if (num < 0 || num > IntCircuitIngredient.CIRCUIT_MAX)
-            CraftTweakerAPI.logError("Given configuration number is out of range!", new IllegalArgumentException());
-        this.backingBuilder.notConsumable(new IntCircuitIngredient(num));
+        this.backingBuilder.circuitMeta(num);
         return this;
     }
 

@@ -15,7 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,13 +66,15 @@ public class CraftingComponent {
     public static Component VOLTAGE_COIL;
     public static Component SPRING;
 
-    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new HashMap<BlastProperty.GasTier, FluidStack>() {{
-        put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
-        put(BlastProperty.GasTier.MID, Materials.Helium.getFluid(100));
-        put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(50));
-        put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(25));
-        put(BlastProperty.GasTier.HIGHEST, Materials.Krypton.getFluid(10));
-    }};
+    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new EnumMap<>(BlastProperty.GasTier.class);
+
+    static {
+        EBF_GASES.put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
+        EBF_GASES.put(BlastProperty.GasTier.MID, Materials.Helium.getFluid(100));
+        EBF_GASES.put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(50));
+        EBF_GASES.put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(25));
+        EBF_GASES.put(BlastProperty.GasTier.HIGHEST, Materials.Krypton.getFluid(10));
+    }
 
     public static void initializeComponents() {
 
@@ -487,13 +489,13 @@ public class CraftingComponent {
                 {0, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Bronze)},
                 {1, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.CobaltBrass)},
                 {2, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.VanadiumSteel)},
-                {3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlackBronze)},
+                {3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlueSteel)},
                 {4, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Ultimet)},
                 {5, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.TungstenCarbide)},
-                {6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSS)},
-                {7, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
-                {8, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
-                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
+                {6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSE)},
+                {7, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

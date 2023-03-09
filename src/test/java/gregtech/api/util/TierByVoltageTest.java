@@ -1,130 +1,131 @@
 package gregtech.api.util;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import static gregtech.api.GTValues.*;
-import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TierByVoltageTest {
 
     @Test
     public void testV() {
-        assertEquals(ULV, GTUtility.getTierByVoltage(V[ULV]));
-        assertEquals(LV, GTUtility.getTierByVoltage(V[LV]));
-        assertEquals(MV, GTUtility.getTierByVoltage(V[MV]));
-        assertEquals(HV, GTUtility.getTierByVoltage(V[HV]));
-        assertEquals(EV, GTUtility.getTierByVoltage(V[EV]));
-        assertEquals(IV, GTUtility.getTierByVoltage(V[IV]));
-        assertEquals(LuV, GTUtility.getTierByVoltage(V[LuV]));
-        assertEquals(ZPM, GTUtility.getTierByVoltage(V[ZPM]));
-        assertEquals(UV, GTUtility.getTierByVoltage(V[UV]));
-        assertEquals(UHV, GTUtility.getTierByVoltage(V[UHV]));
-        assertEquals(UEV, GTUtility.getTierByVoltage(V[UEV]));
-        assertEquals(UIV, GTUtility.getTierByVoltage(V[UIV]));
-        assertEquals(UXV, GTUtility.getTierByVoltage(V[UXV]));
-        assertEquals(OpV, GTUtility.getTierByVoltage(V[OpV]));
-        assertEquals(MAX, GTUtility.getTierByVoltage(V[MAX]));
+        assertThat(GTUtility.getTierByVoltage(V[ULV]), is((byte) ULV));
+        assertThat(GTUtility.getTierByVoltage(V[LV]), is((byte) LV));
+        assertThat(GTUtility.getTierByVoltage(V[MV]), is((byte) MV));
+        assertThat(GTUtility.getTierByVoltage(V[HV]), is((byte) HV));
+        assertThat(GTUtility.getTierByVoltage(V[EV]), is((byte) EV));
+        assertThat(GTUtility.getTierByVoltage(V[IV]), is((byte) IV));
+        assertThat(GTUtility.getTierByVoltage(V[LuV]), is((byte) LuV));
+        assertThat(GTUtility.getTierByVoltage(V[ZPM]), is((byte) ZPM));
+        assertThat(GTUtility.getTierByVoltage(V[UV]), is((byte) UV));
+        assertThat(GTUtility.getTierByVoltage(V[UHV]), is((byte) UHV));
+        assertThat(GTUtility.getTierByVoltage(V[UEV]), is((byte) UEV));
+        assertThat(GTUtility.getTierByVoltage(V[UIV]), is((byte) UIV));
+        assertThat(GTUtility.getTierByVoltage(V[UXV]), is((byte) UXV));
+        assertThat(GTUtility.getTierByVoltage(V[OpV]), is((byte) OpV));
+        assertThat(GTUtility.getTierByVoltage(V[MAX]), is((byte) MAX));
     }
 
     @Test
     public void testV_div_2() {
-        assertEquals(ULV, GTUtility.getTierByVoltage(V[ULV] / 2L));
-        assertEquals(LV, GTUtility.getTierByVoltage(V[LV] / 2L));
-        assertEquals(MV, GTUtility.getTierByVoltage(V[MV] / 2L));
-        assertEquals(HV, GTUtility.getTierByVoltage(V[HV] / 2L));
-        assertEquals(EV, GTUtility.getTierByVoltage(V[EV] / 2L));
-        assertEquals(IV, GTUtility.getTierByVoltage(V[IV] / 2L));
-        assertEquals(LuV, GTUtility.getTierByVoltage(V[LuV] / 2L));
-        assertEquals(ZPM, GTUtility.getTierByVoltage(V[ZPM] / 2L));
-        assertEquals(UV, GTUtility.getTierByVoltage(V[UV] / 2L));
-        assertEquals(UHV, GTUtility.getTierByVoltage(V[UHV] / 2L));
-        assertEquals(UEV, GTUtility.getTierByVoltage(V[UEV] / 2L));
-        assertEquals(UIV, GTUtility.getTierByVoltage(V[UIV] / 2L));
-        assertEquals(UXV, GTUtility.getTierByVoltage(V[UXV] / 2L));
-        assertEquals(OpV, GTUtility.getTierByVoltage(V[OpV] / 2L));
-        assertEquals(MAX, GTUtility.getTierByVoltage(V[MAX] / 2L));
+        assertThat(GTUtility.getTierByVoltage(V[ULV] / 2L), is((byte) ULV));
+        assertThat(GTUtility.getTierByVoltage(V[LV] / 2L), is((byte) LV));
+        assertThat(GTUtility.getTierByVoltage(V[MV] / 2L), is((byte) MV));
+        assertThat(GTUtility.getTierByVoltage(V[HV] / 2L), is((byte) HV));
+        assertThat(GTUtility.getTierByVoltage(V[EV] / 2L), is((byte) EV));
+        assertThat(GTUtility.getTierByVoltage(V[IV] / 2L), is((byte) IV));
+        assertThat(GTUtility.getTierByVoltage(V[LuV] / 2L), is((byte) LuV));
+        assertThat(GTUtility.getTierByVoltage(V[ZPM] / 2L), is((byte) ZPM));
+        assertThat(GTUtility.getTierByVoltage(V[UV] / 2L), is((byte) UV));
+        assertThat(GTUtility.getTierByVoltage(V[UHV] / 2L), is((byte) UHV));
+        assertThat(GTUtility.getTierByVoltage(V[UEV] / 2L), is((byte) UEV));
+        assertThat(GTUtility.getTierByVoltage(V[UIV] / 2L), is((byte) UIV));
+        assertThat(GTUtility.getTierByVoltage(V[UXV] / 2L), is((byte) UXV));
+        assertThat(GTUtility.getTierByVoltage(V[OpV] / 2L), is((byte) OpV));
+        assertThat(GTUtility.getTierByVoltage(V[MAX] / 2L), is((byte) MAX));
     }
 
     @Test
     public void testV_mult_2() {
-        assertEquals(LV, GTUtility.getTierByVoltage(V[ULV] * 2L));
-        assertEquals(MV, GTUtility.getTierByVoltage(V[LV] * 2L));
-        assertEquals(HV, GTUtility.getTierByVoltage(V[MV] * 2L));
-        assertEquals(EV, GTUtility.getTierByVoltage(V[HV] * 2L));
-        assertEquals(IV, GTUtility.getTierByVoltage(V[EV] * 2L));
-        assertEquals(LuV, GTUtility.getTierByVoltage(V[IV] * 2L));
-        assertEquals(ZPM, GTUtility.getTierByVoltage(V[LuV] * 2L));
-        assertEquals(UV, GTUtility.getTierByVoltage(V[ZPM] * 2L));
-        assertEquals(UHV, GTUtility.getTierByVoltage(V[UV] * 2L));
-        assertEquals(UEV, GTUtility.getTierByVoltage(V[UHV] * 2L));
-        assertEquals(UIV, GTUtility.getTierByVoltage(V[UEV] * 2L));
-        assertEquals(UXV, GTUtility.getTierByVoltage(V[UIV] * 2L));
-        assertEquals(OpV, GTUtility.getTierByVoltage(V[UXV] * 2L));
-        assertEquals(MAX, GTUtility.getTierByVoltage(V[OpV] * 2L));
-        assertEquals(MAX, GTUtility.getTierByVoltage(V[MAX] * 2L));
+        assertThat(GTUtility.getTierByVoltage(V[ULV] * 2L), is((byte) LV));
+        assertThat(GTUtility.getTierByVoltage(V[LV] * 2L), is((byte) MV));
+        assertThat(GTUtility.getTierByVoltage(V[MV] * 2L), is((byte) HV));
+        assertThat(GTUtility.getTierByVoltage(V[HV] * 2L), is((byte) EV));
+        assertThat(GTUtility.getTierByVoltage(V[EV] * 2L), is((byte) IV));
+        assertThat(GTUtility.getTierByVoltage(V[IV] * 2L), is((byte) LuV));
+        assertThat(GTUtility.getTierByVoltage(V[LuV] * 2L), is((byte) ZPM));
+        assertThat(GTUtility.getTierByVoltage(V[ZPM] * 2L), is((byte) UV));
+        assertThat(GTUtility.getTierByVoltage(V[UV] * 2L), is((byte) UHV));
+        assertThat(GTUtility.getTierByVoltage(V[UHV] * 2L), is((byte) UEV));
+        assertThat(GTUtility.getTierByVoltage(V[UEV] * 2L), is((byte) UIV));
+        assertThat(GTUtility.getTierByVoltage(V[UIV] * 2L), is((byte) UXV));
+        assertThat(GTUtility.getTierByVoltage(V[UXV] * 2L), is((byte) OpV));
+        assertThat(GTUtility.getTierByVoltage(V[OpV] * 2L), is((byte) MAX));
+        assertThat(GTUtility.getTierByVoltage(V[MAX] * 2L), is((byte) MAX));
     }
 
     @Test
     public void testVA() {
-        assertEquals(ULV, GTUtility.getTierByVoltage(VA[ULV]));
-        assertEquals(LV, GTUtility.getTierByVoltage(VA[LV]));
-        assertEquals(MV, GTUtility.getTierByVoltage(VA[MV]));
-        assertEquals(HV, GTUtility.getTierByVoltage(VA[HV]));
-        assertEquals(EV, GTUtility.getTierByVoltage(VA[EV]));
-        assertEquals(IV, GTUtility.getTierByVoltage(VA[IV]));
-        assertEquals(LuV, GTUtility.getTierByVoltage(VA[LuV]));
-        assertEquals(ZPM, GTUtility.getTierByVoltage(VA[ZPM]));
-        assertEquals(UV, GTUtility.getTierByVoltage(VA[UV]));
-        assertEquals(UHV, GTUtility.getTierByVoltage(VA[UHV]));
-        assertEquals(UEV, GTUtility.getTierByVoltage(VA[UEV]));
-        assertEquals(UIV, GTUtility.getTierByVoltage(VA[UIV]));
-        assertEquals(UXV, GTUtility.getTierByVoltage(VA[UXV]));
-        assertEquals(OpV, GTUtility.getTierByVoltage(VA[OpV]));
-        assertEquals(MAX, GTUtility.getTierByVoltage(VA[MAX]));
+        assertThat(GTUtility.getTierByVoltage(VA[ULV]), is((byte) ULV));
+        assertThat(GTUtility.getTierByVoltage(VA[LV]), is((byte) LV));
+        assertThat(GTUtility.getTierByVoltage(VA[MV]), is((byte) MV));
+        assertThat(GTUtility.getTierByVoltage(VA[HV]), is((byte) HV));
+        assertThat(GTUtility.getTierByVoltage(VA[EV]), is((byte) EV));
+        assertThat(GTUtility.getTierByVoltage(VA[IV]), is((byte) IV));
+        assertThat(GTUtility.getTierByVoltage(VA[LuV]), is((byte) LuV));
+        assertThat(GTUtility.getTierByVoltage(VA[ZPM]), is((byte) ZPM));
+        assertThat(GTUtility.getTierByVoltage(VA[UV]), is((byte) UV));
+        assertThat(GTUtility.getTierByVoltage(VA[UHV]), is((byte) UHV));
+        assertThat(GTUtility.getTierByVoltage(VA[UEV]), is((byte) UEV));
+        assertThat(GTUtility.getTierByVoltage(VA[UIV]), is((byte) UIV));
+        assertThat(GTUtility.getTierByVoltage(VA[UXV]), is((byte) UXV));
+        assertThat(GTUtility.getTierByVoltage(VA[OpV]), is((byte) OpV));
+        assertThat(GTUtility.getTierByVoltage(VA[MAX]), is((byte) MAX));
     }
 
     @Test
     public void testVA_div_2() {
-        assertEquals(ULV, GTUtility.getTierByVoltage(VA[ULV] / 2L));
-        assertEquals(LV, GTUtility.getTierByVoltage(VA[LV] / 2L));
-        assertEquals(MV, GTUtility.getTierByVoltage(VA[MV] / 2L));
-        assertEquals(HV, GTUtility.getTierByVoltage(VA[HV] / 2L));
-        assertEquals(EV, GTUtility.getTierByVoltage(VA[EV] / 2L));
-        assertEquals(IV, GTUtility.getTierByVoltage(VA[IV] / 2L));
-        assertEquals(LuV, GTUtility.getTierByVoltage(VA[LuV] / 2L));
-        assertEquals(ZPM, GTUtility.getTierByVoltage(VA[ZPM] / 2L));
-        assertEquals(UV, GTUtility.getTierByVoltage(VA[UV] / 2L));
-        assertEquals(UHV, GTUtility.getTierByVoltage(VA[UHV] / 2L));
-        assertEquals(UEV, GTUtility.getTierByVoltage(VA[UEV] / 2L));
-        assertEquals(UIV, GTUtility.getTierByVoltage(VA[UIV] / 2L));
-        assertEquals(UXV, GTUtility.getTierByVoltage(VA[UXV] / 2L));
-        assertEquals(OpV, GTUtility.getTierByVoltage(VA[OpV] / 2L));
-        assertEquals(MAX, GTUtility.getTierByVoltage(VA[MAX] / 2L));
+        assertThat(GTUtility.getTierByVoltage(VA[ULV] / 2L), is((byte) ULV));
+        assertThat(GTUtility.getTierByVoltage(VA[LV] / 2L), is((byte) LV));
+        assertThat(GTUtility.getTierByVoltage(VA[MV] / 2L), is((byte) MV));
+        assertThat(GTUtility.getTierByVoltage(VA[HV] / 2L), is((byte) HV));
+        assertThat(GTUtility.getTierByVoltage(VA[EV] / 2L), is((byte) EV));
+        assertThat(GTUtility.getTierByVoltage(VA[IV] / 2L), is((byte) IV));
+        assertThat(GTUtility.getTierByVoltage(VA[LuV] / 2L), is((byte) LuV));
+        assertThat(GTUtility.getTierByVoltage(VA[ZPM] / 2L), is((byte) ZPM));
+        assertThat(GTUtility.getTierByVoltage(VA[UV] / 2L), is((byte) UV));
+        assertThat(GTUtility.getTierByVoltage(VA[UHV] / 2L), is((byte) UHV));
+        assertThat(GTUtility.getTierByVoltage(VA[UEV] / 2L), is((byte) UEV));
+        assertThat(GTUtility.getTierByVoltage(VA[UIV] / 2L), is((byte) UIV));
+        assertThat(GTUtility.getTierByVoltage(VA[UXV] / 2L), is((byte) UXV));
+        assertThat(GTUtility.getTierByVoltage(VA[OpV] / 2L), is((byte) OpV));
+        assertThat(GTUtility.getTierByVoltage(VA[MAX] / 2L), is((byte) MAX));
     }
 
     @Test
     public void testVA_mult_2() {
-        assertEquals(LV, GTUtility.getTierByVoltage(VA[ULV] * 2L));
-        assertEquals(MV, GTUtility.getTierByVoltage(VA[LV] * 2L));
-        assertEquals(HV, GTUtility.getTierByVoltage(VA[MV] * 2L));
-        assertEquals(EV, GTUtility.getTierByVoltage(VA[HV] * 2L));
-        assertEquals(IV, GTUtility.getTierByVoltage(VA[EV] * 2L));
-        assertEquals(LuV, GTUtility.getTierByVoltage(VA[IV] * 2L));
-        assertEquals(ZPM, GTUtility.getTierByVoltage(VA[LuV] * 2L));
-        assertEquals(UV, GTUtility.getTierByVoltage(VA[ZPM] * 2L));
-        assertEquals(UHV, GTUtility.getTierByVoltage(VA[UV] * 2L));
-        assertEquals(UEV, GTUtility.getTierByVoltage(VA[UHV] * 2L));
-        assertEquals(UIV, GTUtility.getTierByVoltage(VA[UEV] * 2L));
-        assertEquals(UXV, GTUtility.getTierByVoltage(VA[UIV] * 2L));
-        assertEquals(OpV, GTUtility.getTierByVoltage(VA[UXV] * 2L));
-        assertEquals(MAX, GTUtility.getTierByVoltage(VA[OpV] * 2L));
-        assertEquals(MAX, GTUtility.getTierByVoltage(VA[MAX] * 2L));
+        assertThat(GTUtility.getTierByVoltage(VA[ULV] * 2L), is((byte) LV));
+        assertThat(GTUtility.getTierByVoltage(VA[LV] * 2L), is((byte) MV));
+        assertThat(GTUtility.getTierByVoltage(VA[MV] * 2L), is((byte) HV));
+        assertThat(GTUtility.getTierByVoltage(VA[HV] * 2L), is((byte) EV));
+        assertThat(GTUtility.getTierByVoltage(VA[EV] * 2L), is((byte) IV));
+        assertThat(GTUtility.getTierByVoltage(VA[IV] * 2L), is((byte) LuV));
+        assertThat(GTUtility.getTierByVoltage(VA[LuV] * 2L), is((byte) ZPM));
+        assertThat(GTUtility.getTierByVoltage(VA[ZPM] * 2L), is((byte) UV));
+        assertThat(GTUtility.getTierByVoltage(VA[UV] * 2L), is((byte) UHV));
+        assertThat(GTUtility.getTierByVoltage(VA[UHV] * 2L), is((byte) UEV));
+        assertThat(GTUtility.getTierByVoltage(VA[UEV] * 2L), is((byte) UIV));
+        assertThat(GTUtility.getTierByVoltage(VA[UIV] * 2L), is((byte) UXV));
+        assertThat(GTUtility.getTierByVoltage(VA[UXV] * 2L), is((byte) OpV));
+        assertThat(GTUtility.getTierByVoltage(VA[OpV] * 2L), is((byte) MAX));
+        assertThat(GTUtility.getTierByVoltage(VA[MAX] * 2L), is((byte) MAX));
     }
-
 
     @Test
     public void testSpecialCases() {
-        assertEquals(ULV, GTUtility.getTierByVoltage(0L));
-        assertEquals(ULV, GTUtility.getTierByVoltage(2L));
+        assertThat(GTUtility.getTierByVoltage(0L), is((byte) ULV));
+        assertThat(GTUtility.getTierByVoltage(2L), is((byte) ULV));
     }
 }

@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/gear_small",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/gear_small",
-    "layer1": "gregtech:items/material_sets/magnetic/gear_small_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

@@ -31,7 +31,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
     public static Collection<AbstractMapIngredient> from(GTRecipeInput r) {
         ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
         for (ItemStack s : r.getInputStacks()) {
-            list.add(new MapItemStackIngredient(s,r));
+            list.add(new MapItemStackIngredient(s, r));
         }
         return list;
     }
@@ -40,7 +40,19 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
     public boolean equals(Object o) {
         if (super.equals(o)) {
             MapItemStackIngredient other = (MapItemStackIngredient) o;
-            return other.gtRecipeInput.acceptsStack(this.stack);
+            if (this.stack.getItem() != other.stack.getItem()) {
+                return false;
+            }
+            if (this.meta != other.meta) {
+                return false;
+            }
+            if (this.gtRecipeInput != null) {
+                if (other.gtRecipeInput != null) {
+                    return gtRecipeInput.equals(other.gtRecipeInput);
+                }
+            } else if (other.gtRecipeInput != null) {
+                return other.gtRecipeInput.acceptsStack(this.stack);
+            }
         }
         return false;
     }

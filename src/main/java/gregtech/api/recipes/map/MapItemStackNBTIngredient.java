@@ -1,20 +1,13 @@
 package gregtech.api.recipes.map;
 
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class MapItemStackNBTIngredient extends MapItemStackIngredient {
-    @Nullable
-    protected NBTCondition condition = null;
-    @Nullable
-    protected NBTMatcher matcher = null;
     protected GTRecipeInput gtRecipeInput = null;
 
     public MapItemStackNBTIngredient(ItemStack stack, int meta, NBTTagCompound tag) {
@@ -29,7 +22,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
     public static Collection<AbstractMapIngredient> from(GTRecipeInput r) {
         ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
         for (ItemStack s : r.getInputStacks()) {
-            list.add(new MapItemStackNBTIngredient(s,r));
+            list.add(new MapItemStackNBTIngredient(s, r));
         }
         return list;
     }
@@ -48,14 +41,26 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         }
         if (obj instanceof MapItemStackNBTIngredient) {
             MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
-            return other.gtRecipeInput.acceptsStack(this.stack);
+            if (this.stack.getItem() != other.stack.getItem()) {
+                return false;
+            }
+            if (this.meta != other.meta) {
+                return false;
+            }
+            if (this.gtRecipeInput != null) {
+                if (other.gtRecipeInput != null) {
+                    return gtRecipeInput.equals(other.gtRecipeInput);
+                }
+            } else if (other.gtRecipeInput != null) {
+                return other.gtRecipeInput.acceptsStack(this.stack);
+            }
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + "}" + "{meta=" + meta + "} {matcher=" + matcher + "}" + "{condition=" + condition + "}";
+        return "MapItemStackNBTIngredient{" + "item=" + stack.getItem().getRegistryName() + "}" + "{meta=" + meta + "}";
     }
 
     @Override

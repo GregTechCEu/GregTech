@@ -13,15 +13,14 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.GTToolTypes;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
@@ -46,7 +45,9 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -203,11 +204,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 }
             }
             // Lastly for each problem the multi has, try to fix with tools
-            byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
-            for (byte i = 0; i < 6; i++) {
-                if (((problems >> i) & 1) == 0)
-                    fixProblemWithTool(i, entityPlayer);
-            }
+            fixProblemsWithTools(((IMaintenance) this.getController()).getMaintenanceProblems(), entityPlayer);
         }
     }
 
@@ -239,59 +236,82 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * Attempts to fix a provided maintenance problem with a tool in the player's
      * inventory, if the tool exists.
      *
-     * @param problemIndex The index of the maintenance problem.
-     * @param entityPlayer The player whose inventory the tool may be in.
+     * @param problems Problem Flags
+     * @param entityPlayer Target Player which their inventory would be scanned for tools to fix
      */
-    private void fixProblemWithTool(int problemIndex, EntityPlayer entityPlayer) {
-        List<ToolMetaItem<?>.MetaToolValueItem> tools = null;
-
-        switch (problemIndex) {
-            case 0: tools = GTToolTypes.wrenches; break;
-            case 1: tools = GTToolTypes.screwdrivers; break;
-            case 2: tools = GTToolTypes.softHammers; break;
-            case 3: tools = GTToolTypes.hardHammers; break;
-            case 4: tools = GTToolTypes.wireCutters; break;
-            case 5: tools = GTToolTypes.crowbars; break;
+    private void fixProblemsWithTools(byte problems, EntityPlayer entityPlayer) {
+        List<String> toolsToMatch = Arrays.asList(new String[6]);
+        boolean proceed = false;
+        for (byte index = 0; index < 6; index++) {
+            if (((problems >> index) & 1) == 0) {
+                proceed = true;
+                switch (index) {
+                    case 0:
+                        toolsToMatch.set(0, ToolClasses.WRENCH);
+                        break;
+                    case 1:
+                        toolsToMatch.set(1, ToolClasses.SCREWDRIVER);
+                        break;
+                    case 2:
+                        toolsToMatch.set(2, ToolClasses.SOFT_MALLET);
+                        break;
+                    case 3:
+                        toolsToMatch.set(3, ToolClasses.HARD_HAMMER);
+                        break;
+                    case 4:
+                        toolsToMatch.set(4, ToolClasses.WIRE_CUTTER);
+                        break;
+                    case 5:
+                        toolsToMatch.set(5, ToolClasses.CROWBAR);
+                        break;
+                }
+            }
+        }
+        if (!proceed) {
+            return;
         }
 
-        if (tools == null)
-            return;
+        for (int i = 0; i < toolsToMatch.size(); i++) {
+            String toolToMatch = toolsToMatch.get(i);
+            if (toolToMatch != null) {
+                // Try to use the item in the player's "hand" (under the cursor)
+                ItemStack heldItem = entityPlayer.inventory.getItemStack();
+                if (ToolHelper.isTool(heldItem, toolToMatch)) {
+                    fixProblemWithTool(i, heldItem, entityPlayer);
 
-        for (ToolMetaItem<?>.MetaToolValueItem tool : tools) {
-            // Try to use the item in the player's "hand" (under the cursor)
-            ItemStack heldItem = entityPlayer.inventory.getItemStack();
-            if (heldItem.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                fixProblemWithTool(problemIndex, heldItem);
-                return;
-            }
+                    if (toolsToMatch.stream().allMatch(Objects::isNull)) {
+                        return;
+                    }
+                }
 
-            // Then try all the remaining inventory slots
-            for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
-                if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                    fixProblemWithTool(problemIndex, itemStack);
-                    return;
+                // Then try all the remaining inventory slots
+                for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
+                    if (ToolHelper.isTool(itemStack, toolToMatch)) {
+                        fixProblemWithTool(i, itemStack, entityPlayer);
+
+                        if (toolsToMatch.stream().allMatch(Objects::isNull)) {
+                            return;
+                        }
+                    }
+                }
+
+                for (ItemStack stack : entityPlayer.inventory.mainInventory) {
+                    if (ToolHelper.isTool(stack, toolToMatch)) {
+                        ((IMaintenance) this.getController()).setMaintenanceFixed(i);
+                        ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
+                        if (toolsToMatch.stream().allMatch(Objects::isNull)) {
+                            return;
+                        }
+                    }
                 }
             }
         }
     }
 
-    private void fixProblemWithTool(int problemIndex, ItemStack toolStack) {
+    private void fixProblemWithTool(int problemIndex, ItemStack stack, EntityPlayer player) {
         ((IMaintenance) getController()).setMaintenanceFixed(problemIndex);
-        IToolStats.onOtherUse(toolStack, getWorld(), getPos());
-        damageTool(toolStack);
+        ToolHelper.damageItemWhenCrafting(stack, player);
         setTaped(false);
-    }
-
-    /**
-     * Applies damage to toon upon its use for maintenance
-     *
-     * @param itemStack item to apply damage to
-     */
-    private void damageTool(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ToolMetaItem) {
-            ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) itemStack.getItem();
-            toolMetaItem.damageItem(itemStack, null, 1, true, false);
-        }
     }
 
     /**
@@ -378,7 +398,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
+    private static Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
         return (list) -> {
             ITextComponent tooltip;
             if (multiplier.get() == 1.0) {
@@ -463,5 +483,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.disabled"));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.tool_action.tape"));
     }
 }

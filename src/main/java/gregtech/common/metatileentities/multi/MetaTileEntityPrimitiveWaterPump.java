@@ -14,6 +14,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockSteamCasing;
@@ -140,7 +141,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
                 .aisle("SXXX", "**F*", "**F*")
                 .where('S', selfPredicate())
                 .where('X', states(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
-                .where('F', states(MetaBlocks.FRAMES.get(Materials.TreatedWood).getBlock(Materials.TreatedWood)))
+                .where('F', frames(Materials.TreatedWood))
                 .where('H', abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(metaTileEntities(MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1])))
                 .where('*', any())
                 .build();
@@ -167,8 +168,8 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     public String[] getDescription() {
         return Stream.of(
                 new String[]{I18n.format("gregtech.multiblock.primitive_water_pump.description")},
-                I18n.format("gregtech.multiblock.primitive_water_pump.extra1").split("/n"),
-                I18n.format("gregtech.multiblock.primitive_water_pump.extra2").split("/n")
+                GTUtility.getForwardNewLineRegex().split(I18n.format("gregtech.multiblock.primitive_water_pump.extra1")),
+                GTUtility.getForwardNewLineRegex().split(I18n.format("gregtech.multiblock.primitive_water_pump.extra2"))
         ).flatMap(Stream::of).toArray(String[]::new);
     }
 

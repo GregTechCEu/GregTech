@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "gregtech:items/material_sets/lignite/crushed_centrifuged",
-    "layer1": "gregtech:items/material_sets/lignite/crushed_centrifuged_overlay"
-  }
-}

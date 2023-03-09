@@ -4,8 +4,8 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -64,7 +64,7 @@ public class WidgetScreenGrid extends Widget {
                 int width = this.getSize().width;
                 int height = this.getSize().height;
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(x + (width / 2), y + (height / 2), 100);
+                GlStateManager.translate(x + (width / 2F), y + (height / 2F), 100);
                 GlStateManager.scale(width, height, 1);
                 RenderUtil.renderRect(-0.5f, -0.5f, this.monitorScreen.scale, this.monitorScreen.scale, 0, 0XFF000000);
                 monitorScreen.renderScreen(0, null);
@@ -77,9 +77,9 @@ public class WidgetScreenGrid extends Widget {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (this.isMouseOverElement(mouseX, mouseY)) {
-            ClickData clickData = new ClickData(Mouse.getEventButton(), this.isShiftDown(), this.isCtrlDown());
+            ClickData clickData = new ClickData(Mouse.getEventButton(), Widget.isShiftDown(), Widget.isCtrlDown());
             this.writeClientAction(1, clickData::writeToBuf);
-            this.playButtonClickSound();
+            Widget.playButtonClickSound();
             return true;
         } else {
             return false;

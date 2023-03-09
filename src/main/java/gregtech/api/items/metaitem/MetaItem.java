@@ -1,5 +1,6 @@
 package gregtech.api.items.metaitem;
 
+import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
@@ -20,9 +21,14 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.ToolChargeBarRenderer;
+import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.shorts.Short2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -44,7 +50,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -52,13 +57,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -78,7 +84,8 @@ import java.util.*;
  * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) }
  * This will add single-use (not rechargeable) LV battery with initial capacity 10000 EU
  */
-public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory {
+@Optional.Interface(modid = GTValues.MODID_ECORE, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory, IOverlayRenderAware {
 
     private static final List<MetaItem<?>> META_ITEMS = new ArrayList<>();
 
@@ -86,13 +93,16 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return Collections.unmodifiableList(META_ITEMS);
     }
 
-    protected final Short2ObjectMap<T> metaItems = new Short2ObjectAVLTreeMap<>();
     private final Map<String, T> names = new Object2ObjectOpenHashMap<>();
+    protected final Short2ObjectMap<T> metaItems = new Short2ObjectLinkedOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation> metaItemsModels = new Short2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation[]> specialItemsModels = new Short2ObjectOpenHashMap<>();
     protected static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
+
+    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[]{GregTechAPI.TAB_GREGTECH};
+    private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
 
     public MetaItem(short metaItemOffset) {
         setTranslationKey("meta_item");
@@ -178,12 +188,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Override
     public boolean showDurabilityBar(@Nonnull ItemStack stack) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().showsDurabilityBar(stack);
-        }
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return electricItem != null && (stack.getMaxStackSize() == 1 || electricItem.getCharge() > 0L);
+        // meta items now handle durability bars via custom rendering
+        return false;
     }
 
     @Override
@@ -192,20 +198,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
             return metaValueItem.getDurabilityManager().getDurabilityForDisplay(stack);
         }
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return 1.0 - electricItem.getCharge() / (1.0 * electricItem.getMaxCharge());
-        }
-        return 0.0;
-    }
-
-    @Override
-    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getDurabilityManager() != null) {
-            return metaValueItem.getDurabilityManager().getRGBDurabilityForDisplay(stack);
-        }
-        return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
+        return -1.0;
     }
 
     @Nonnull
@@ -235,14 +228,17 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return Collections.unmodifiableCollection(metaItems.values());
     }
 
+    @Nullable
     public final T getItem(short metaValue) {
         return metaItems.get(formatRawItemDamage(metaValue));
     }
 
+    @Nullable
     public final T getItem(String valueName) {
         return names.get(valueName);
     }
 
+    @Nullable
     public final T getItem(ItemStack itemStack) {
         return getItem((short) (itemStack.getItemDamage() - metaItemOffset));
     }
@@ -349,7 +345,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
     }
 
-    @Nullable
     @Override
     public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player) {
         if (player instanceof EntityPlayer) {
@@ -497,11 +492,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 oldStack.hasTagCompound() && newStack.hasTagCompound()) {
             oldStack = oldStack.copy();
             newStack = newStack.copy();
-            oldStack.getTagCompound().removeTag("Charge");
-            newStack.getTagCompound().removeTag("Charge");
-            if (oldStack.getTagCompound().hasKey("terminal")) {
-                oldStack.getTagCompound().getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
-                newStack.getTagCompound().getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+            NBTTagCompound oldTag = oldStack.getTagCompound();
+            NBTTagCompound newTag = newStack.getTagCompound();
+            if (oldTag != null && newTag != null) {
+                oldTag.removeTag("Charge");
+                newTag.removeTag("Charge");
+                if (oldTag.hasKey("terminal")) {
+                    oldTag.getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+                    newTag.getCompoundTag("terminal").getCompoundTag("_hw").removeTag("battery");
+                }
             }
         }
         return !ItemStack.areItemStacksEqual(oldStack, newStack);
@@ -545,7 +544,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (item == null) return;
         String unlocalizedTooltip = "metaitem." + item.unlocalizedName + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip)) {
-            lines.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
+            lines.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
         }
 
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -573,7 +572,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
             if (fluidHandler instanceof IThermalFluidHandlerItemStack) {
                 IThermalFluidHandlerItemStack thermalFluidHandler = (IThermalFluidHandlerItemStack) fluidHandler;
-                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (TooltipHelper.isShiftDown()) {
                     lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", thermalFluidHandler.getMaxFluidTemperature()));
                     if (thermalFluidHandler.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
                     if (thermalFluidHandler.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
@@ -589,7 +588,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             behaviour.addInformation(itemStack, lines);
         }
 
-        if (tooltipFlag.isAdvanced()) {
+        if (ConfigHolder.misc.debug) {
             lines.add("MetaItem Id: " + item.unlocalizedName);
         }
     }
@@ -646,20 +645,44 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @Nonnull
     @Override
     public CreativeTabs[] getCreativeTabs() {
-        return new CreativeTabs[]{GregTechAPI.TAB_GREGTECH, GregTechAPI.TAB_GREGTECH_MATERIALS};
+        if (additionalCreativeTabs.isEmpty()) return defaultCreativeTabs; // short circuit
+        Set<CreativeTabs> tabs = new ObjectArraySet<>(additionalCreativeTabs);
+        tabs.addAll(Arrays.asList(defaultCreativeTabs));
+        return tabs.toArray(new CreativeTabs[0]);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
-        if (tab != GregTechAPI.TAB_GREGTECH && tab != CreativeTabs.SEARCH) {
-            return;
+    public MetaItem<T> setCreativeTab(CreativeTabs tab) {
+        this.defaultCreativeTabs = new CreativeTabs[]{tab};
+        return this;
+    }
+
+    public MetaItem<T> setCreativeTabs(CreativeTabs... tabs) {
+        this.defaultCreativeTabs = tabs;
+        return this;
+    }
+
+    public void addAdditionalCreativeTabs(CreativeTabs... tabs) {
+        for (CreativeTabs tab : tabs) {
+            if (!ArrayUtils.contains(defaultCreativeTabs, tab) && tab != CreativeTabs.SEARCH) {
+                additionalCreativeTabs.add(tab);
+            }
         }
-        for (T enabledItem : metaItems.values()) {
-            if (!enabledItem.isVisible())
-                continue;
-            ItemStack itemStack = enabledItem.getStackForm();
-            enabledItem.getSubItemHandler().getSubItems(itemStack, tab, subItems);
+    }
+
+    @Override
+    protected boolean isInCreativeTab(CreativeTabs tab) {
+        return tab == CreativeTabs.SEARCH ||
+                ArrayUtils.contains(defaultCreativeTabs, tab) ||
+                additionalCreativeTabs.contains(tab);
+    }
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab)) return;
+        for (T item : metaItems.values()) {
+            if (!item.isInCreativeTab(tab)) continue;
+            item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
         }
     }
 
@@ -669,6 +692,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         T metaValueItem = getItem(itemStack);
         ItemUIFactory uiFactory = metaValueItem == null ? null : metaValueItem.getUIManager();
         return uiFactory == null ? null : uiFactory.createUI(holder, entityPlayer);
+    }
+
+    // IOverlayRenderAware
+    @Override
+    public void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+        ToolChargeBarRenderer.renderBarsItem(this, stack, xPosition, yPosition);
     }
 
     public class MetaValueItem {
@@ -695,9 +724,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private EnumRarity rarity;
 
         private int burnValue = 0;
-        private boolean visible = true;
         private int maxStackSize = 64;
         private int modelAmount = 1;
+
+        @Nullable
+        private CreativeTabs[] creativeTabsOverride;
 
         protected MetaValueItem(int metaValue, String unlocalizedName) {
             this.metaValue = metaValue;
@@ -736,13 +767,27 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return this;
         }
 
+        public MetaValueItem setCreativeTabs(CreativeTabs... tabs) {
+            this.creativeTabsOverride = tabs;
+            MetaItem.this.addAdditionalCreativeTabs(tabs);
+            return this;
+        }
+
+        /**
+         * @deprecated Use {@link MetaValueItem#setInvisibleIf(boolean)} instead
+         */
+        @Deprecated
         public MetaValueItem setInvisible(boolean isVisible) {
-            this.visible = isVisible;
+            return setInvisibleIf(!isVisible);
+        }
+
+        public MetaValueItem setInvisibleIf(boolean hide) {
+            if (hide) this.creativeTabsOverride = new CreativeTabs[0];
             return this;
         }
 
         public MetaValueItem setInvisible() {
-            this.visible = false;
+            this.creativeTabsOverride = new CreativeTabs[0];
             return this;
         }
 
@@ -816,7 +861,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 }
                 if (itemComponent instanceof IItemBehaviour) {
                     this.behaviours.add((IItemBehaviour) itemComponent);
-                    ((IItemBehaviour) itemComponent).onAddedToItem(this);
+                    ((IItemBehaviour) itemComponent).addPropertyOverride(getMetaItem());
                 }
                 if (itemComponent instanceof IEnchantabilityHelper) {
                     this.enchantabilityHelper = (IEnchantabilityHelper) itemComponent;
@@ -885,7 +930,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         public boolean isVisible() {
-            return visible;
+            return creativeTabsOverride == null || creativeTabsOverride.length > 0;
         }
 
         public int getModelAmount() {
@@ -970,6 +1015,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return itemStack;
         }
 
+        public boolean isInCreativeTab(CreativeTabs tab) {
+            CreativeTabs[] tabs = this.creativeTabsOverride != null ? this.creativeTabsOverride : MetaItem.this.defaultCreativeTabs;
+            return tabs.length > 0 && (tab == CreativeTabs.SEARCH || ArrayUtils.contains(tabs, tab));
+        }
+
         @Override
         public String toString() {
             return new ToStringBuilder(this)
@@ -978,5 +1028,4 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     .toString();
         }
     }
-
 }

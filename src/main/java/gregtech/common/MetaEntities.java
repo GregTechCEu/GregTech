@@ -2,9 +2,9 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.client.renderer.handler.DynamiteRenderer;
 import gregtech.client.renderer.handler.PortalRenderer;
 import gregtech.common.entities.DynamiteEntity;
-import gregtech.client.renderer.handler.DynamiteRenderer;
 import gregtech.common.entities.PortalEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -23,6 +23,6 @@ public class MetaEntities {
     @SideOnly(Side.CLIENT)
     public static void initRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(DynamiteEntity.class, manager -> new DynamiteRenderer(manager, Minecraft.getMinecraft().getRenderItem()));
-        RenderingRegistry.registerEntityRenderingHandler(PortalEntity.class, manager -> new PortalRenderer(manager));
+        RenderingRegistry.registerEntityRenderingHandler(PortalEntity.class, PortalRenderer::new);
     }
 }

@@ -38,9 +38,9 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         }
 
         for (int i = 0; i < fluidOutputs.size(); i++) {
-            IntCircuitRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy().EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
+            SimpleRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy().EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
 
-            int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i), this.outputs.size() > 0 ? this.outputs.get(0) : null);
+            int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i), !this.outputs.isEmpty() ? this.outputs.get(0) : null);
 
             int recipeDuration = (int) (this.duration * STANDARD_OVERCLOCK_DURATION_DIVISOR);
 
@@ -67,7 +67,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
                 continue;
             }
 
-            if (this.outputs.size() > 0) {
+            if (!this.outputs.isEmpty()) {
                 boolean itemsDivisible = GTUtility.isItemStackCountDivisible(this.outputs.get(0), ratio) && fluidsDivisible;
 
                 if (fluidsDivisible && itemsDivisible) {
@@ -83,7 +83,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         super.buildAndRegister();
     }
 
-    private int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {
+    private static int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {
         int[] divisors = new int[]{2, 5, 10, 25, 50};
         int ratio = -1;
 
@@ -104,7 +104,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         return Math.max(1, ratio);
     }
 
-    private boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
+    private static boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
         return GTUtility.isFluidStackAmountDivisible(fluidStack, divisor) && fluidStack.amount / divisor >= 25;
     }
 

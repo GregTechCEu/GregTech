@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
@@ -39,9 +40,9 @@ public class FrameItemBlock extends ItemBlock {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        if (flagIn.isAdvanced()) {
+        if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: frame" + frameBlock.getGtMaterial(stack.getMetadata()).toCamelCaseString());
         }
     }

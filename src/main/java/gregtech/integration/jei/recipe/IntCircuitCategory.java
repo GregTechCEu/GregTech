@@ -55,7 +55,7 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
             Suppliers.memoize(() -> {
                 IIngredientRenderer<ItemStack> defaultRenderer = GTJeiPlugin.ingredientRegistry.getIngredientRenderer(VanillaTypes.ITEM);
                 return CompositeRenderer.startBuilder(defaultRenderer)
-                        .then(this::slice)
+                        .then(IntCircuitCategory::slice)
                         .then(defaultRenderer::render)
                         .then(() -> GL11.glDisable(GL11.GL_STENCIL_TEST))
                         .build();
@@ -168,7 +168,7 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
     public static final int ITEM_WIDTH = 16;
 
-    private void slice(Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
+    private static void slice(Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
         Framebuffer fb = minecraft.getFramebuffer();
         if (!fb.isStencilEnabled()) {
             fb.enableStencil();

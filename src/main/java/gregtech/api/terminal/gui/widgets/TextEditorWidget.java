@@ -189,9 +189,9 @@ public class TextEditorWidget extends WidgetGroup {
             return true;
         }
 
-        private String formatFromMarkdown(String markdown) {
+        private static String formatFromMarkdown(String markdown) {
             StringBuilder builder = new StringBuilder();
-            Stack<TextFormatting> stack = new Stack<>();
+            Deque<TextFormatting> stack = new ArrayDeque<>();
             int[] chars = markdown.chars().toArray();
             for (int i = 0; i < chars.length; i++) {
                 if (chars[i] == '\\' && i + 1 < chars.length){
@@ -239,7 +239,7 @@ public class TextEditorWidget extends WidgetGroup {
             return builder.toString();
         }
 
-        private String checkCode(String code) {
+        private static String checkCode(String code) {
             Pattern[] patterns = new Pattern[]{COMMENT, STRING, BOOL, KEYWORD, KEYWORD_2, VARIABLE, NUMBER, ANY};
             TextFormatting[] colors = new TextFormatting[]{
                     TextFormatting.DARK_GRAY, // comment
@@ -256,7 +256,7 @@ public class TextEditorWidget extends WidgetGroup {
                 for (int i = 0; i < patterns.length; i++) {
                     Matcher matcher = patterns[i].matcher(code);
                     if (matcher.find() && matcher.start() == 0) {
-                        builder.append(colors[i].toString()).append(code, 0, matcher.end()).append(TextFormatting.RESET.toString());
+                        builder.append(colors[i]).append(code, 0, matcher.end()).append(TextFormatting.RESET);
                         find = true;
                         code = code.substring(matcher.end());
                         break;
@@ -270,9 +270,9 @@ public class TextEditorWidget extends WidgetGroup {
             return builder.toString();
         }
 
-        private void checkTextFormatting(StringBuilder builder, TextFormatting formatting,  Stack<TextFormatting> stack) {
+        private static void checkTextFormatting(StringBuilder builder, TextFormatting formatting, Deque<TextFormatting> stack) {
             if (!stack.isEmpty() && stack.peek() == formatting) {
-                builder.append(TextFormatting.RESET.toString());
+                builder.append(TextFormatting.RESET);
                 stack.pop();
                 for (TextFormatting pre : stack) {
                     builder.append(pre.toString());
@@ -407,7 +407,7 @@ public class TextEditorWidget extends WidgetGroup {
                 if(stringUpdate != null) {
                     stringUpdate.accept(content);
                 }
-                textHeight = this.fontRenderer.getWordWrappedHeight(content + "" + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
+                textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
             }
         }
 
@@ -416,7 +416,7 @@ public class TextEditorWidget extends WidgetGroup {
             if(stringUpdate != null) {
                 stringUpdate.accept(content);
             }
-            textHeight = this.fontRenderer.getWordWrappedHeight(content + "" + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
+            textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
         }
 
         @Override

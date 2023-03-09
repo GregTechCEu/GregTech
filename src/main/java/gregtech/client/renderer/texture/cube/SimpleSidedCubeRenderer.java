@@ -28,6 +28,8 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
     public enum RenderSide {
         TOP, BOTTOM, SIDE;
 
+        public static final RenderSide[] VALUES = values();
+
         public static RenderSide bySide(EnumFacing side) {
             if (side == EnumFacing.UP) {
                 return TOP;
@@ -63,13 +65,14 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
         }
         this.sprites = new EnumMap<>(RenderSide.class);
         this.spritesEmissive = new EnumMap<>(RenderSide.class);
-        for (RenderSide overlayFace : RenderSide.values()) {
+        for (RenderSide overlayFace : RenderSide.VALUES) {
             String faceName = overlayFace.name().toLowerCase();
             ResourceLocation resourceLocation = new ResourceLocation(modID, String.format("blocks/%s/%s", basePath, faceName));
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
-            ResourceLocation emissiveLocation = new ResourceLocation(modID, String.format("blocks/%s/%s_emissive", basePath, faceName));
-            if (ResourceHelper.isTextureExist(emissiveLocation)) {
-                spritesEmissive.put(overlayFace, textureMap.registerSprite(emissiveLocation));
+
+            String emissive = String.format("blocks/%s/%s_emissive", basePath, faceName);
+            if (ResourceHelper.doResourcepacksHaveTexture(modID, emissive, true)) {
+                spritesEmissive.put(overlayFace, textureMap.registerSprite(new ResourceLocation(modID, emissive)));
             }
         }
     }

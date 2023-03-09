@@ -3,9 +3,11 @@ package gregtech.common.items.behaviors;
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
 import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.util.GradientUtil;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -23,19 +25,26 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
+import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.List;
 
-public class ColorSprayBehaviour extends AbstractUsableBehaviour {
+public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IItemDurabilityManager {
 
     private final ItemStack empty;
     private final EnumDyeColor color;
+    private final Pair<Color, Color> durabilityBarColors;
 
     public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
         super(totalUses);
         this.empty = empty;
         EnumDyeColor[] colors = EnumDyeColor.values();
         this.color = color >= colors.length || color < 0 ? null : colors[color];
+        // default to a gray color if this.color is null (like for solvent spray)
+        int colorValue = this.color == null ? 0x969696 : this.color.colorValue;
+        this.durabilityBarColors = GradientUtil.getGradient(colorValue, 10);
     }
 
     @Override
@@ -95,7 +104,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     }
 
     @SuppressWarnings("unchecked, rawtypes")
-    private boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block, EnumFacing side) {
+    private static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block, EnumFacing side) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());
@@ -175,5 +184,22 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
             lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
+        lines.add(I18n.format("behaviour.paintspray.offhand"));
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack itemStack) {
+        return (double) getUsesLeft(itemStack) / totalUses;
+    }
+
+    @Nullable
+    @Override
+    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+        return durabilityBarColors;
+    }
+
+    @Override
+    public boolean doDamagedStateColors(ItemStack itemStack) {
+        return false;
     }
 }

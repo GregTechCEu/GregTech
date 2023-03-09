@@ -1,8 +1,8 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.tools.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
@@ -13,15 +13,12 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.IStepAssist;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
-import gregtech.common.tools.ToolUtility;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -38,7 +35,6 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
@@ -108,16 +104,6 @@ public class EventHandlers {
         }
     }
 
-    @SubscribeEvent
-    public static void hammer(BlockEvent.HarvestDropsEvent event) {
-        if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
-            int level = EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, event.getHarvester().getHeldItemMainhand());
-            if (level > 0) {
-                ToolUtility.applyHammerDrops(event.getWorld().rand, event.getState(), event.getDrops(), EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, event.getHarvester().getHeldItemMainhand()), event.getHarvester());
-            }
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onHarvestCheck(net.minecraftforge.event.entity.player.PlayerEvent.HarvestCheck event) {
         if (event.canHarvest()) {
@@ -126,7 +112,11 @@ public class EventHandlers {
             if (!canMineWithPick(tool)) {
                 return;
             }
-            tool = "pickaxe";
+            if (ConfigHolder.machines.requireGTToolsForBlocks) {
+                event.setCanHarvest(false);
+                return;
+            }
+            tool = ToolClasses.PICKAXE;
             int harvestLevel = event.getTargetBlock().getBlock().getHarvestLevel(event.getTargetBlock());
             if (!item.isEmpty() && harvestLevel > item.getItem().getHarvestLevel(item, tool, event.getEntityPlayer(), event.getTargetBlock())) {
                 event.setCanHarvest(false);
@@ -138,13 +128,13 @@ public class EventHandlers {
     public static void onDestroySpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
         ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
         String tool = event.getState().getBlock().getHarvestTool(event.getState());
-        if (tool != null && !item.isEmpty() && canMineWithPick(tool) && item.getItem().getToolClasses(item).contains("pickaxe")) {
+        if (tool != null && !item.isEmpty() && canMineWithPick(tool) && item.getItem().getToolClasses(item).contains(ToolClasses.PICKAXE)) {
             event.setNewSpeed(event.getNewSpeed() * 0.75f);
         }
     }
 
     public static boolean canMineWithPick(String tool) {
-        return "wrench".equals(tool) || "cutter".equals(tool);
+        return ToolClasses.WRENCH.equals(tool) || ToolClasses.WIRE_CUTTER.equals(tool);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -158,13 +148,19 @@ public class EventHandlers {
                 return;
 
             if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().damageArmor(player, armor, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
-                player.fallDistance = 0;
-                event.setCanceled(true);
+                ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                if (valueItem != null) {
+                    valueItem.getArmorLogic().damageArmor(player, armor, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                    player.fallDistance = 0;
+                    event.setCanceled(true);
+                }
             } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> && GTUtility.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
-                ((ArmorMetaItem<?>) jet.getItem()).getItem(jet).getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
-                player.fallDistance = 0;
-                event.setCanceled(true);
+                ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
+                if (valueItem != null) {
+                    valueItem.getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                    player.fallDistance = 0;
+                    event.setCanceled(true);
+                }
             }
         }
     }
@@ -179,14 +175,15 @@ public class EventHandlers {
         if (!(stack.getItem() instanceof ArmorMetaItem) || stack.getItem().equals(event.getTo().getItem()))
             return;
 
-        ArmorMetaItem<?> armorMetaItem = (ArmorMetaItem<?>) stack.getItem();
-        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
-                armorMetaItem.getItem(stack).isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
-                armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
+        ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
+        if (valueItem == null) return;
+        if (valueItem.isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
+                valueItem.isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
+                valueItem.isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
             event.getEntityLiving().removePotionEffect(MobEffects.NIGHT_VISION);
         }
-        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
-                armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
+        if (valueItem.isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
+                valueItem.isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
             event.getEntity().isImmuneToFire = false;
         }
     }
@@ -196,11 +193,13 @@ public class EventHandlers {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() && !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
             ItemStack feetEquip = event.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            if (lastFeetEquip.getItem().equals(feetEquip.getItem())) {
-                return;
-            } else {
-                if ((lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) && ((ArmorMetaItem<?>) lastFeetEquip.getItem()).getItem(lastFeetEquip).getArmorLogic() instanceof IStepAssist)
-                    event.player.stepHeight = 0.6f;
+            if (!lastFeetEquip.getItem().equals(feetEquip.getItem())) {
+                if (lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) {
+                    ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) lastFeetEquip.getItem()).getItem(lastFeetEquip);
+                    if (valueItem != null && valueItem.getArmorLogic() instanceof IStepAssist) {
+                        event.player.stepHeight = 0.6f;
+                    }
+                }
 
                 lastFeetEquip = feetEquip.copy();
             }

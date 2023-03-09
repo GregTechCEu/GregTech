@@ -25,10 +25,8 @@ public class MetaOreDictItem extends StandardMetaItem {
     public final Map<String, String> OREDICT_TO_FORMULA = new HashMap<>();
     private final Map<Short, OreDictValueItem> ITEMS = new HashMap<>();
     private static final List<MaterialIconType> DISALLOWED_TYPES = ImmutableList.of(
-            MaterialIconType.block, MaterialIconType.foilBlock, MaterialIconType.wire,
-            MaterialIconType.ore, MaterialIconType.frameGt, MaterialIconType.pipeHuge,
-            MaterialIconType.pipeLarge, MaterialIconType.pipeSide, MaterialIconType.pipeSmall,
-            MaterialIconType.pipeMedium, MaterialIconType.pipeTiny);
+            MaterialIconType.block, MaterialIconType.ore, MaterialIconType.oreSmall,
+            MaterialIconType.frameGt);
     private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     public MetaOreDictItem(short metaItemOffset) {

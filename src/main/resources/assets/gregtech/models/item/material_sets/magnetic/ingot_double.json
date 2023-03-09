@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/metallic/ingot_double",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/ingot_double",
-    "layer1": "gregtech:items/material_sets/magnetic/plate_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

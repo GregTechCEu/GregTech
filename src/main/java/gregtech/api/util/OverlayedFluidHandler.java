@@ -9,8 +9,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class OverlayedFluidHandler {
@@ -75,7 +73,7 @@ public class OverlayedFluidHandler {
             // if the fluid key matches the tank, insert the fluid
             OverlayedTank overlayedTank = this.overlayedTanks[i];
             if (toInsert.equals(overlayedTank.getFluidKey())) {
-                if ((tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]) || !this.allowSameFluidFill)) {
+                if ((!this.allowSameFluidFill || tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]))) {
                     if (overlayed.getTankAt(i) instanceof NotifiableFluidTankFromList) {
                         NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) overlayed.getTankAt(i);
                         if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {
@@ -107,8 +105,8 @@ public class OverlayedFluidHandler {
                 OverlayedTank overlayedTank = this.overlayedTanks[i];
                 // if the tank is empty
                 if (overlayedTank.getFluidKey() == null) {
-                    if ((tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]) || !this.allowSameFluidFill)) {
-                        IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
+                    if ((!this.allowSameFluidFill || tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]))) {
+                        IMultipleTankHandler mth = overlayed;
                         if (mth.getTankAt(i) instanceof NotifiableFluidTankFromList) {
                             NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(i);
                             if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {

@@ -6,12 +6,15 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Objects;
 
 public class FacingPos {
+
     private final BlockPos pos;
     private final EnumFacing facing;
+    private final int hashCode;
 
     public FacingPos(BlockPos pos, EnumFacing facing) {
         this.pos = pos;
         this.facing = facing;
+        this.hashCode = Objects.hash(pos, facing);
     }
 
     public EnumFacing getFacing() {
@@ -27,11 +30,11 @@ public class FacingPos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FacingPos facingPos = (FacingPos) o;
-        return GTUtility.arePosEqual(facingPos.pos, pos) && facing == facingPos.facing;
+        return GTUtility.arePosEqual(pos, facingPos.getPos()) && facing == facingPos.getFacing();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pos, facing);
+        return hashCode;
     }
 }

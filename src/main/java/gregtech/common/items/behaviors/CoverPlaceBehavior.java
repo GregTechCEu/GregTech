@@ -29,6 +29,9 @@ public class CoverPlaceBehavior implements IItemBehaviour {
             return EnumActionResult.PASS;
         }
         EnumFacing coverSide = ICoverable.rayTraceCoverableSide(coverable, player);
+        if (coverSide == null) {
+            return EnumActionResult.PASS;
+        }
         if (coverable.getCoverAtSide(coverSide) != null || !coverable.canPlaceCoverOnSide(coverSide)) {
             return EnumActionResult.PASS;
         }

@@ -18,17 +18,23 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
@@ -125,6 +131,19 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         }, "Sink", "Source")); //TODO: localisation
 
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.creative_tooltip.1")
+                + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
+                + I18n.format("gregtech.creative_tooltip.3"));
     }
 
     @Override
@@ -236,11 +255,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
-    public long addEnergy(long energyToAdd) {
-        return IEnergyContainer.super.addEnergy(energyToAdd);
-    }
-
-    @Override
     public long getInputAmperage() {
         return source ? 0 : amps;
     }
@@ -275,7 +289,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         }
     }
 
-    public Function<String, String> getTextFieldValidator() {
+    public static Function<String, String> getTextFieldValidator() {
         return val -> {
             if (val.isEmpty()) {
                 return "0";

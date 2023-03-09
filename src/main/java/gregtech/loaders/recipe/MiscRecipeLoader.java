@@ -1,26 +1,27 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -38,7 +39,7 @@ public class MiscRecipeLoader {
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
         // Potin Recipe
-        ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 9),
+        ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 8),
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Copper),
@@ -228,7 +229,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt(GTValues.VA[GTValues.LuV])
-                .inputs(QUANTUM_CHESTPLATE.getStackForm())
+                .inputNBT(((ArmorMetaItem<?>) QUANTUM_CHESTPLATE.getStackForm().getItem()).getItem(QUANTUM_CHESTPLATE.getStackForm()), NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(wireFine, NiobiumTitanium, 64)
                 .input(wireGtQuadruple, Osmium, 6)
@@ -436,6 +437,19 @@ public class MiscRecipeLoader {
                 .input(plank, TreatedWood)
                 .output(stick, TreatedWood, 2)
                 .duration(10).EUt(VA[ULV])
+                .buildAndRegister();
+
+        // Coke Brick and Firebrick decomposition
+        EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.COKE_BRICKS))
+                .output(COKE_OVEN_BRICK, 4)
+                .duration(300).EUt(2)
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS))
+                .output(FIRECLAY_BRICK, 4)
+                .duration(300).EUt(2)
                 .buildAndRegister();
     }
 }

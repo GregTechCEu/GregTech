@@ -9,10 +9,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.*;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
@@ -34,7 +31,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -396,6 +392,16 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R notConsumable(FluidStack fluidStack) {
         return fluidInputs(GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount).setNonConsumable());
+    }
+
+    public R circuitMeta(int circuitNumber) {
+        if (!GTUtility.isBetweenInclusive(IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, circuitNumber)) {
+            GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
+                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));
+            recipeStatus = EnumValidationResult.INVALID;
+        }
+        return notConsumable(new IntCircuitIngredient(circuitNumber));
     }
 
     public R output(OrePrefix orePrefix, Material material) {
@@ -831,8 +837,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
-        for (int i = 0; i < this.chancedOutputs.size(); i++) {
-            ChanceEntry entry = this.chancedOutputs.get(i);
+        for (ChanceEntry entry : this.chancedOutputs) {
             stacks.add(entry.getItemStack());
         }
 

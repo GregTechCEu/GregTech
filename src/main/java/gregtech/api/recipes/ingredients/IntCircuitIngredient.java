@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 public class IntCircuitIngredient extends GTRecipeItemInput {
 
+    public static final int CIRCUIT_MIN = 0;
     public static final int CIRCUIT_MAX = 32;
     private final int matchingConfigurations;
 
@@ -53,7 +54,10 @@ public class IntCircuitIngredient extends GTRecipeItemInput {
     public static int getCircuitConfiguration(ItemStack itemStack) {
         if (!isIntegratedCircuit(itemStack)) return 0;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
-        return tagCompound.getInteger("Configuration");
+        if (tagCompound != null) {
+            return tagCompound.getInteger("Configuration");
+        }
+        return 0;
     }
 
     public static boolean isIntegratedCircuit(ItemStack itemStack) {

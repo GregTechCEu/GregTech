@@ -124,4 +124,10 @@ public class GTRecipeOreInput extends GTRecipeInput {
         if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
         return ore == other.ore;
     }
+
+    @Override
+    public String toString() {
+        //noinspection StringConcatenationMissingWhitespace
+        return amount + "x" + OreDictionary.getOreName(ore);
+    }
 }

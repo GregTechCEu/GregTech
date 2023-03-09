@@ -17,10 +17,20 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class OreDictionaryItemFilter extends ItemFilter {
+
+    private static final Pattern ALLOWED_CHARS = Pattern.compile("[0-9a-zA-Z* &|^!()]*");
+
+    private static final Pattern DOUBLE_WILDCARD = Pattern.compile("\\*{2,}");
+    private static final Pattern DOUBLE_AND = Pattern.compile("&{2,}");
+    private static final Pattern DOUBLE_OR = Pattern.compile("\\|{2,}");
+    private static final Pattern DOUBLE_NOT = Pattern.compile("!{2,}");
+    private static final Pattern DOUBLE_XOR = Pattern.compile("\\^{2,}");
+    private static final Pattern DOUBLE_SPACE = Pattern.compile(" {2,}");
 
     protected String oreDictFilterExpression = "";
     private String testMsg = "";
@@ -29,7 +39,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
     private static final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
-    private final Object2BooleanOpenCustomHashMap<ItemStack> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
+    private final Map<ItemStack, Boolean> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
 
     protected void setOreDictFilterExpression(String oreDictFilterExpression) {
         this.oreDictFilterExpression = oreDictFilterExpression;
@@ -49,17 +59,17 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 .setTooltip("cover.ore_dictionary_filter.info"));
         widgetGroup.accept(new ImageWidget(10, 25, 156, 14, GuiTextures.DISPLAY));
         widgetGroup.accept(new TextFieldWidget2(14, 29, 152, 12, () -> oreDictFilterExpression, this::setOreDictFilterExpression)
-                .setAllowedChars(Pattern.compile("[(!]* *[0-9a-zA-Z*]* *\\)*( *[&|^]? *[(!]* *[0-9a-zA-Z*]* *\\)*)*"))
+                .setAllowedChars(ALLOWED_CHARS)
                 .setMaxLength(64)
                 .setScale(0.75f)
                 .setValidator(input -> {
                     // remove all operators that are double
-                    input = input.replaceAll("\\*{2,}", "*");
-                    input = input.replaceAll("&{2,}", "&");
-                    input = input.replaceAll("\\|{2,}", "|");
-                    input = input.replaceAll("!{2,}", "!");
-                    input = input.replaceAll("\\^{2,}", "^");
-                    input = input.replaceAll(" {2,}", " ");
+                    input = DOUBLE_WILDCARD.matcher(input).replaceAll("*");
+                    input = DOUBLE_AND.matcher(input).replaceAll("&");
+                    input = DOUBLE_OR.matcher(input).replaceAll("|");
+                    input = DOUBLE_NOT.matcher(input).replaceAll("!");
+                    input = DOUBLE_XOR.matcher(input).replaceAll("^");
+                    input = DOUBLE_SPACE.matcher(input).replaceAll(" ");
                     // move ( and ) so it doesn't create invalid expressions f.e. xxx (& yyy) => xxx & (yyy)
                     // append or prepend ( and ) if the amount is not equal
                     StringBuilder builder = new StringBuilder();
@@ -78,7 +88,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                             unclosed--;
                             if (last == '&' || last == '|' || last == '^') {
                                 int l = builder.lastIndexOf(" " + last);
-                                int l2 = builder.lastIndexOf("" + last);
+                                int l2 = builder.lastIndexOf(String.valueOf(last));
                                 builder.insert(l == l2 - 1 ? l : l2, ")");
                                 continue;
                             }

@@ -7,6 +7,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import net.minecraft.item.ItemStack;
@@ -136,9 +137,9 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                 amount -= excessWater / STEAM_PER_WATER;
                 excessWater %= STEAM_PER_WATER;
 
-                FluidStack drainedWater = ModHandler.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
+                FluidStack drainedWater = GTUtility.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
                 if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
-                    getMetaTileEntity().explodeMultiblock();
+                    getMetaTileEntity().explodeMultiblock((currentHeat/getMaximumHeat()) * 8);
                 } else {
                     setLastTickSteam(generatedSteam);
                     getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
