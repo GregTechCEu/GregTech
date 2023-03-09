@@ -1,0 +1,8 @@
+{
+  "parent": "block/stairs",
+  "textures": {
+    "bottom": "gregtech:blocks/wood/treated/planks_treated",
+    "top": "gregtech:blocks/wood/treated/planks_treated",
+    "side": "gregtech:blocks/wood/treated/planks_treated"
+  }
+}

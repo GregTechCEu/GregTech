@@ -2217,6 +2217,14 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
+tile.wood_slab.rubber.name=Rubber Wood Slab
+tile.wood_slab.treated.name=Treated Wood Slab
+tile.rubber_wood_stairs.name=Rubber Wood Stairs
+tile.treated_wood_stairs.name=Treated Wood Stairs
+tile.rubber_wood_fence.name=Rubber Wood Fence
+tile.treated_wood_fence.name=Treated Wood Fence
+tile.rubber_wood_fence_gate.name=Rubber Wood Fence Gate
+tile.treated_wood_fence_gate.name=Treated Wood Fence Gate
 
 tile.brittle_charcoal.name=Brittle Charcoal
 tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
