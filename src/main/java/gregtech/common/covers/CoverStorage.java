@@ -26,7 +26,7 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
 
     private final ItemStackHandler storageHandler = new ItemStackHandler(9);
     private static final int MAX_WIDTH = 176;
-    private static final int MAX_HEIGHT = 176;
+    private static final int MAX_HEIGHT = 126;
     private static final int SLOT_SIZE = 18;
 
     public CoverStorage(ICoverable coverHolder, EnumFacing attachedSide) {
@@ -68,7 +68,7 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
             builder.slot(storageHandler, index, (index * SLOT_SIZE) + 7, (MAX_HEIGHT - SLOT_SIZE * 5) / 2, true, true, GuiTextures.SLOT);
         }
 
-        builder.bindPlayerInventory(player.inventory);
+        builder.bindPlayerInventory(player.inventory, (MAX_HEIGHT - SLOT_SIZE * 2) / 2 - 1);
 
         return builder.build(this, player);
     }
