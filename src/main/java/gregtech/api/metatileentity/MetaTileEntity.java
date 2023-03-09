@@ -294,6 +294,20 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         subItems.add(getStackForm());
     }
 
+    /**
+     * Check if this MTE belongs in certain creative tab. To add machines in custom creative tab, the creative tab
+     * should be registered via {@link gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs)
+     * MachineItemBlock#addCreativeTab(CreativeTabs)} beforehand.
+     *
+     * @param creativeTab The creative tab to check
+     * @return Whether this MTE belongs in the creative tab or not
+     *
+     * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs) MachineItemBlock#addCreativeTab(CreativeTabs)
+     */
+    public boolean isInCreativeTab(CreativeTabs creativeTab) {
+        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH;
+    }
+
     public String getItemSubTypeId(ItemStack itemStack) {
         return "";
     }

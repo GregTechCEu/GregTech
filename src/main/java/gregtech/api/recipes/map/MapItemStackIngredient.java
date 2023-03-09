@@ -46,7 +46,13 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
             if (this.meta != other.meta) {
                 return false;
             }
-            return ItemStack.areItemStackTagsEqual(this.stack, other.stack);
+            if (this.gtRecipeInput != null) {
+                if (other.gtRecipeInput != null) {
+                    return gtRecipeInput.equalIgnoreAmount(other.gtRecipeInput);
+                }
+            } else if (other.gtRecipeInput != null) {
+                return other.gtRecipeInput.acceptsStack(this.stack);
+            }
         }
         return false;
     }

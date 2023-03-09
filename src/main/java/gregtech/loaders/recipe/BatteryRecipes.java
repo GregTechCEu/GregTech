@@ -2,9 +2,8 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -244,7 +243,7 @@ public class BatteryRecipes {
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[MV])
                 .input(dust, Redstone, 5)
                 .input(dust, Ruby, 4)
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .output(ENERGIUM_DUST, 9)
                 .buildAndRegister();
 
@@ -276,7 +275,7 @@ public class BatteryRecipes {
         MIXER_RECIPES.recipeBuilder()
                 .input(ENERGIUM_DUST, 3)
                 .input(dust, Lapis, 2)
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .output(dust, Lapotron, 5)
                 .duration(200).EUt(VA[HV]).buildAndRegister();
 
@@ -312,7 +311,7 @@ public class BatteryRecipes {
 
         // Lapotronic Energy Orb
         LASER_ENGRAVER_RECIPES.recipeBuilder()
-                .input(LAPOTRON_CRYSTAL)
+                .inputNBT(LAPOTRON_CRYSTAL, NBTMatcher.ANY, NBTCondition.ANY)
                 .notConsumable(craftingLens, Color.Blue)
                 .output(ENGRAVED_LAPOTRON_CHIP, 3)
                 .cleanroom(CleanroomType.CLEANROOM)

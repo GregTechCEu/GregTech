@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,10 @@ public class CompressedBlockBakedModel implements IBakedModel {
         private static final CompressedBlockItemOverride INSTANCE = new CompressedBlockItemOverride();
 
         private final ThreadLocal<ItemStack> stack = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
+
+        public CompressedBlockItemOverride() {
+            super(Collections.emptyList());
+        }
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {

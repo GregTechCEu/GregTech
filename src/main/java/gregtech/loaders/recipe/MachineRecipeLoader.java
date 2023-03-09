@@ -6,7 +6,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -419,72 +418,73 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-        for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L / 2)}) {
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(solder)
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        FluidStack solder = SolderingAlloy.getFluid(L / 2);
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(cableGtSingle, Copper, 4)
-                    .input(circuit, MarkerMaterials.Tier.LV)
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ENERGY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LEVER))
+                .input(OrePrefix.plate, material)
+                .fluidInputs(solder)
+                .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ENERGY_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .output(COVER_ENERGY_DETECTOR_ADVANCED)
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(cableGtSingle, Copper, 4)
+                .input(circuit, MarkerMaterials.Tier.LV)
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ENERGY_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .output(COVER_ENERGY_DETECTOR_ADVANCED)
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(wireFine, Gold, 4)
-                    .input(circuit, MarkerMaterials.Tier.HV)
-                    .input(plate, Aluminium)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, Gold, 4)
+                .input(circuit, MarkerMaterials.Tier.HV)
+                .input(plate, Aluminium)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_FLUID_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_FLUID_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(COVER_ITEM_DETECTOR)
@@ -493,7 +493,6 @@ public class MachineRecipeLoader {
                     .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
                     .EUt(16).duration(100)
                     .buildAndRegister();
-        }
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
@@ -521,6 +520,16 @@ public class MachineRecipeLoader {
                 .fluidInputs(Polyethylene.getFluid(L * 2))
                 .output(COVER_ENDER_FLUID_LINK)
                 .EUt(VA[HV]).duration(320)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OreDictNames.chestWood.toString())
+                .input(ELECTRIC_PISTON_LV)
+                .input(plate, Iron)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .output(COVER_STORAGE)
+                .EUt(16)
+                .duration(100)
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();
@@ -552,7 +561,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Titanium, 6).input(OrePrefix.frameGt, Materials.Titanium, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TITANIUM_STABLE, 2)).duration(50).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(plate, HSSE, 6).input(frameGt, Europium).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.HSSE_STURDY, 2)).duration(50).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID)).fluidInputs(Materials.Polytetrafluoroethylene.getFluid(216)).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.PTFE_INERT_CASING)).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID)).fluidInputs(Materials.Polytetrafluoroethylene.getFluid(216)).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.PTFE_INERT_CASING)).duration(50).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LuV]).input(OrePrefix.wireGtDouble, Materials.IndiumTinBariumTitaniumCuprate, 32).input(OrePrefix.foil, Materials.NiobiumTitanium, 32).fluidInputs(Materials.Trinium.getFluid(GTValues.L * 24)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).duration(100).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM]).input(OrePrefix.wireGtDouble, Materials.UraniumRhodiumDinaquadide, 16).input(OrePrefix.foil, Materials.NiobiumTitanium, 16).fluidInputs(Materials.Trinium.getFluid(GTValues.L * 16)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).duration(100).buildAndRegister();
@@ -566,10 +575,10 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM]).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ZPM)).inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL)).inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2)).inputs(MetaItems.FIELD_GENERATOR_LuV.getStackForm()).input(OrePrefix.plate, Materials.Europium, 6).fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 2)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_CASING_MK2, 2)).duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV]).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL)).inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2)).inputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm()).input(OrePrefix.plate, Materials.Americium, 6).fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 4)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_CASING_MK3, 2)).duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Magnalium, 6).input(OrePrefix.frameGt, Materials.BlueSteel, 1).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING, 2)).duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.StainlessSteel, 6).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STAINLESS_TURBINE_CASING, 2)).duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.Titanium, 6).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TITANIUM_TURBINE_CASING, 2)).duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.TungstenSteel, 6).notConsumable(new IntCircuitIngredient(6)).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING, 2)).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Magnalium, 6).input(OrePrefix.frameGt, Materials.BlueSteel, 1).circuitMeta(6).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING, 2)).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.StainlessSteel, 6).circuitMeta(6).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STAINLESS_TURBINE_CASING, 2)).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.Titanium, 6).circuitMeta(6).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TITANIUM_TURBINE_CASING, 2)).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.TungstenSteel, 6).circuitMeta(6).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING, 2)).duration(50).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel).input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Concrete.getFluid(L)).outputs(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE, 2)).duration(200).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel).input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Glass.getFluid(L)).outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS, 2)).duration(200).buildAndRegister();
