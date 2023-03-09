@@ -9,5 +9,9 @@ pluginManagement {
             name 'ForgeGradle Maven'
             url 'https://maven.minecraftforge.net'
         }
+        maven {
+            name 'MixinGradle Maven'
+            url 'https://repo.spongepowered.org/repository/maven-public'
+        }
     }
 }
