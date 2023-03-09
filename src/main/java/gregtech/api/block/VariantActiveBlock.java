@@ -6,7 +6,8 @@ import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.modelfactories.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.block.material.Material;
@@ -36,13 +37,44 @@ import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
 
-    public static final Object2ObjectOpenHashMap<Integer, ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Object2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Int2ObjectOpenHashMap<>();
+    private static final ReadWriteLock ACTIVE_BLOCKS_LOCK = new ReentrantReadWriteLock();
+
     public static final PropertyBool ACTIVE_DEPRECATED = PropertyBool.create("active");
     public static final UnlistedBooleanProperty ACTIVE = new UnlistedBooleanProperty("active");
+
+    public static boolean isBlockActive(int dimension, BlockPos pos) {
+        ACTIVE_BLOCKS_LOCK.readLock().lock();
+        try {
+            ObjectSet<BlockPos> set = ACTIVE_BLOCKS.get(dimension);
+            return set != null && set.contains(pos);
+        } finally {
+            ACTIVE_BLOCKS_LOCK.readLock().unlock();
+        }
+    }
+
+    public static void setBlockActive(int dimension, BlockPos pos, boolean active) {
+        ACTIVE_BLOCKS_LOCK.writeLock().lock();
+        try {
+            ObjectSet<BlockPos> set = ACTIVE_BLOCKS.get(dimension);
+            if (active) {
+                if (set == null) {
+                    ACTIVE_BLOCKS.put(dimension, set = new ObjectOpenHashSet<>());
+                }
+                set.add(pos);
+            } else {
+                if (set != null) set.remove(pos);
+            }
+        } finally {
+            ACTIVE_BLOCKS_LOCK.writeLock().unlock();
+        }
+    }
 
     public VariantActiveBlock(Material materialIn) {
         super(materialIn);
@@ -96,13 +128,10 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @Override
     public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IExtendedBlockState ext = (IExtendedBlockState) state;
-        if (Minecraft.getMinecraft().world == null) {
-            ext = ext.withProperty(ACTIVE, false);
-        } else {
-            ACTIVE_BLOCKS.putIfAbsent(Minecraft.getMinecraft().world.provider.getDimension(), new ObjectOpenHashSet<>());
-            ext = ext.withProperty(ACTIVE, ACTIVE_BLOCKS.get(Minecraft.getMinecraft().world.provider.getDimension()).contains(pos));
-        }
+        IExtendedBlockState ext = ((IExtendedBlockState) state)
+                .withProperty(ACTIVE, Minecraft.getMinecraft().world != null &&
+                        isBlockActive(Minecraft.getMinecraft().world.provider.getDimension(), pos));
+
         if (Loader.isModLoaded(GTValues.MODID_CTM)) {
             //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
             //so that the CTM renderer can render the block properly.
