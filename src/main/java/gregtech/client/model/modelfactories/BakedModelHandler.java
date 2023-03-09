@@ -3,13 +3,17 @@ package gregtech.client.model.modelfactories;
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
-import gregtech.api.block.VariantActiveBlock;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.BlockOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -83,10 +87,9 @@ public class BakedModelHandler {
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
-        event.getModelRegistry().putObject(VariantActiveBlock.MODEL_LOCATION, new ActiveVariantBlockBakedModel());
         event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, new OreBakedModel());
-        event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION,  new CompressedBlockBakedModel());
-        event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION,  new FrameBakedModel());
+        event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION, new CompressedBlockBakedModel());
+        event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION, new FrameBakedModel());
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {

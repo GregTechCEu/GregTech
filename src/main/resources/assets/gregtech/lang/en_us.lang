@@ -825,6 +825,8 @@ metaitem.cover.item.voiding.name=Item Voiding Cover
 metaitem.cover.item.voiding.tooltip=Voids §fItems§7 as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
 metaitem.cover.item.voiding.advanced.tooltip=Voids §fItems§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
+metaitem.cover.storage.name=Storage Cover
+metaitem.cover.storage.tooltip=Small storage space for odds and ends
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative Outfit §fCover§7.
@@ -1216,12 +1218,16 @@ cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 cover.advanced_energy_detector.label=Advanced Energy Detector
-cover.advanced_energy_detector.min=Minimum EU
-cover.advanced_energy_detector.max=Maximum EU
+cover.advanced_energy_detector.min=Minimum:
+cover.advanced_energy_detector.max=Maximum:
 cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
 cover.advanced_energy_detector.invert_label=Inverted:
 cover.advanced_energy_detector.normal=Normal
 cover.advanced_energy_detector.inverted=Inverted
+cover.advanced_energy_detector.modes_tooltip=Change between using discrete EU values or percentages for comparing min/max against an attached energy storage.
+cover.advanced_energy_detector.modes_label=Mode:
+cover.advanced_energy_detector.mode_eu=Discrete EU
+cover.advanced_energy_detector.mode_percent=Percentage
 
 cover.advanced_fluid_detector.label=Advanced Fluid Detector
 cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
@@ -1231,6 +1237,8 @@ cover.advanced_item_detector.label=Advanced Item Detector
 cover.advanced_item_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum amount of items, and starts emitting when greater than the min amount of items up to the set maximum
 cover.advanced_item_detector.max=Maximum Items:
 cover.advanced_item_detector.min=Minimum Items:
+
+cover.storage.title=Storage Cover
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore

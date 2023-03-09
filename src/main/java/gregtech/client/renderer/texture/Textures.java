@@ -178,6 +178,7 @@ public class Textures {
     public static final SimpleOverlayRenderer FLUID_VOIDING_ADVANCED = new SimpleOverlayRenderer("cover/overlay_fluid_voiding_advanced");
     public static final SimpleOverlayRenderer ITEM_VOIDING_ADVANCED = new SimpleOverlayRenderer("cover/overlay_item_voiding_advanced");
     public static final SimpleOverlayRenderer ENDER_FLUID_LINK = new SimpleOverlayRenderer("cover/overlay_ender_fluid_link");
+    public static final SimpleOverlayRenderer STORAGE = new SimpleOverlayRenderer("cover/overlay_storage");
     public static final SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_out");
     public static final SimpleOverlayRenderer PIPE_IN_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_in");
     public static final SimpleOverlayRenderer PIPE_4X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_4x");
@@ -258,21 +259,35 @@ public class Textures {
     public static final ResourceLocation RED_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/redcape.png");
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/yellowcape.png");
     public static final ResourceLocation GREEN_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/greencape.png");
-  
+
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_TINY;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SMALL;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_NORMAL;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_LARGE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_HUGE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_QUADRUPLE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_NONUPLE;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SIDE;
 
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SMALL_WOOD;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_NORMAL_WOOD;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_LARGE_WOOD;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_SIDE_WOOD;
 
     @SideOnly(Side.CLIENT)

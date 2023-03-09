@@ -38,9 +38,9 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         }
 
         for (int i = 0; i < fluidOutputs.size(); i++) {
-            IntCircuitRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy().EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
+            SimpleRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy().EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
 
-            int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i), this.outputs.size() > 0 ? this.outputs.get(0) : null);
+            int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i), !this.outputs.isEmpty() ? this.outputs.get(0) : null);
 
             int recipeDuration = (int) (this.duration * STANDARD_OVERCLOCK_DURATION_DIVISOR);
 
@@ -67,7 +67,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
                 continue;
             }
 
-            if (this.outputs.size() > 0) {
+            if (!this.outputs.isEmpty()) {
                 boolean itemsDivisible = GTUtility.isItemStackCountDivisible(this.outputs.get(0), ratio) && fluidsDivisible;
 
                 if (fluidsDivisible && itemsDivisible) {

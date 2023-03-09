@@ -1,0 +1,17 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name 'FancyGradle Maven'
+            url 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
+        }
+        maven {
+            name 'ForgeGradle Maven'
+            url 'https://maven.minecraftforge.net'
+        }
+        maven {
+            name 'MixinGradle Maven'
+            url 'https://repo.spongepowered.org/repository/maven-public'
+        }
+    }
+}

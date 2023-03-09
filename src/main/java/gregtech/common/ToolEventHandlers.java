@@ -5,6 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.toolitem.IGTTool;
@@ -60,7 +61,8 @@ public class ToolEventHandlers {
      */
     @SubscribeEvent
     public static void onPlayerDestroyItem(@Nonnull PlayerDestroyItemEvent event) {
-        Item item = event.getOriginal().getItem();
+        ItemStack original = event.getOriginal();
+        Item item = original.getItem();
         if (item instanceof IGTTool) {
             IGTTool def = (IGTTool) item;
             ItemStack brokenStack = def.getToolStats().getBrokenStack();
@@ -68,7 +70,16 @@ public class ToolEventHandlers {
             if (brokenStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) && def.isElectric()) {
                 long remainingCharge = def.getCharge(event.getOriginal());
                 IElectricItem electricStack = brokenStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                electricStack.charge(Math.min(remainingCharge, def.getMaxCharge(event.getOriginal())), def.getElectricTier(), true, false);
+                if (electricStack != null) {
+                    // update the max charge of the item, if possible
+                    // applies to items like power units, which can have different max charges depending on their recipe
+                    if (electricStack instanceof ElectricItem) {
+                        ((ElectricItem) electricStack).setMaxChargeOverride(def.getMaxCharge(original));
+                    }
+
+                    electricStack.charge(Math.min(remainingCharge, def.getMaxCharge(original)),
+                            def.getElectricTier(), true, false);
+                }
             }
             if (!brokenStack.isEmpty()) {
                 if (event.getHand() == null) {
