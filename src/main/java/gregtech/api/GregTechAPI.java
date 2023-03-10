@@ -11,7 +11,6 @@ import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
-import gregtech.api.registry.GTCompactNetworkRegistry;
 import gregtech.api.registry.GTSimpleRegistry;
 import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.OreDictUnifier;
@@ -56,7 +55,7 @@ public class GregTechAPI {
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
-    public static final GTCompactNetworkRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTCompactNetworkRegistry<>();
+    public static final GTSimpleRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTSimpleRegistry<>();
     public static final MaterialRegistry MATERIAL_REGISTRY = new MaterialRegistry();
 
     public static BlockMachine MACHINE;

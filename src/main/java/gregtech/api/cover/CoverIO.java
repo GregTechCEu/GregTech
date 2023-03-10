@@ -1,5 +1,7 @@
 package gregtech.api.cover;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
@@ -52,10 +54,15 @@ public final class CoverIO {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             if (buf.readBoolean()) {
                 ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, coverSide);
-                coverBehavior.readInitialSyncData(buf);
-                coverWriter.accept(coverSide, coverBehavior);
+                CoverDefinition coverDefinition = GregTechAPI.COVER_REGISTRY.getObject(coverLocation);
+                if (coverDefinition == null) {
+                    GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
+                            coverLocation, coverable.getPos());
+                } else {
+                    CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, coverSide);
+                    coverBehavior.readInitialSyncData(buf);
+                    coverWriter.accept(coverSide, coverBehavior);
+                }
             }
         }
     }
@@ -88,11 +95,16 @@ public final class CoverIO {
         //cover placement event
         EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
         ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-        CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
-        CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, placementSide);
-        coverWriter.accept(placementSide, coverBehavior);
+        CoverDefinition coverDefinition = GregTechAPI.COVER_REGISTRY.getObject(coverLocation);
+        if (coverDefinition == null) {
+            GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
+                    coverLocation, coverable.getPos());
+        } else {
+            CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, placementSide);
+            coverWriter.accept(placementSide, coverBehavior);
 
-        coverBehavior.readInitialSyncData(buf);
+            coverBehavior.readInitialSyncData(buf);
+        }
         renderUpdater.run();
     }
 
@@ -132,11 +144,16 @@ public final class CoverIO {
             NBTTagCompound tag = coversList.getCompoundTagAt(index);
             if (tag.hasKey("CoverId", Constants.NBT.TAG_STRING)) {
                 EnumFacing coverSide = EnumFacing.VALUES[tag.getByte("Side")];
-                ResourceLocation coverId = new ResourceLocation(tag.getString("CoverId"));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, coverSide);
-                coverBehavior.readFromNBT(tag);
-                coverWriter.accept(coverSide, coverBehavior);
+                ResourceLocation coverLocation = new ResourceLocation(tag.getString("CoverId"));
+                CoverDefinition coverDefinition = GregTechAPI.COVER_REGISTRY.getObject(coverLocation);
+                if (coverDefinition == null) {
+                    GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
+                            coverLocation, coverable.getPos());
+                } else {
+                    CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, coverSide);
+                    coverBehavior.readFromNBT(tag);
+                    coverWriter.accept(coverSide, coverBehavior);
+                }
             }
         }
     }

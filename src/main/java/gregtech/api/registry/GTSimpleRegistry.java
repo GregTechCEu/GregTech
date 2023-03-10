@@ -37,6 +37,7 @@ public class GTSimpleRegistry<K, V> extends RegistrySimple<K, V> {
         this.frozen = false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected static boolean checkActiveModContainerIsGregtech() {
         ModContainer container = Loader.instance().activeModContainer();
         return container != null && container.getModId().equals(GTValues.MODID);
