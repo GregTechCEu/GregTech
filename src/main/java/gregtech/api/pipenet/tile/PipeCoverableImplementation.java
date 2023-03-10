@@ -3,7 +3,7 @@ package gregtech.api.pipenet.tile;
 import com.google.common.base.Preconditions;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.CoverNetworking;
+import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
@@ -14,15 +14,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -70,7 +67,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_PIPE, CoverNetworking.getCoverPlacementCustomDataWriter(side, coverBehavior));
+        writeCustomData(COVER_ATTACHED_PIPE, CoverIO.getCoverPlacementCustomDataWriter(side, coverBehavior));
         if (coverBehavior.shouldAutoConnect()) {
             holder.setConnection(side, true, false);
         }
@@ -241,11 +238,11 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void writeInitialSyncData(PacketBuffer buf) {
-        CoverNetworking.writeCoverSyncData(buf, this);
+        CoverIO.writeCoverSyncData(buf, this);
     }
 
     public void readInitialSyncData(PacketBuffer buf) {
-        CoverNetworking.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
+        CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
     }
 
     public void writeCustomData(int dataId, Consumer<PacketBuffer> writer) {
@@ -254,7 +251,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     public void readCustomData(int dataId, PacketBuffer buf) {
         if (dataId == COVER_ATTACHED_PIPE) {
-            CoverNetworking.readCoverPlacement(buf, this,
+            CoverIO.readCoverPlacement(buf, this,
                     (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
                     holder::scheduleChunkForRenderUpdate);
         } else if (dataId == COVER_REMOVED_PIPE) {
@@ -274,34 +271,11 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void writeToNBT(NBTTagCompound data) {
-        NBTTagList coversList = new NBTTagList();
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = coverBehaviors[coverSide.getIndex()];
-            if (coverBehavior != null) {
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                ResourceLocation coverId = coverBehavior.getCoverDefinition().getCoverId();
-                tagCompound.setString("CoverId", coverId.toString());
-                tagCompound.setByte("Side", (byte) coverSide.getIndex());
-                coverBehavior.writeToNBT(tagCompound);
-                coversList.appendTag(tagCompound);
-            }
-        }
-        data.setTag("Covers", coversList);
+        CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
     }
 
     public void readFromNBT(NBTTagCompound data) {
-        NBTTagList coversList = data.getTagList("Covers", NBT.TAG_COMPOUND);
-        for (int index = 0; index < coversList.tagCount(); index++) {
-            NBTTagCompound tagCompound = coversList.getCompoundTagAt(index);
-            if (tagCompound.hasKey("CoverId", NBT.TAG_STRING)) {
-                EnumFacing coverSide = EnumFacing.VALUES[tagCompound.getByte("Side")];
-                ResourceLocation coverId = new ResourceLocation(tagCompound.getString("CoverId"));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readFromNBT(tagCompound);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
     }
 
     @Override

@@ -1,23 +1,28 @@
 package gregtech.api.cover;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
- * Contains default implementations for common networking involving covers
+ * Contains default implementations for common networking and data storage involving covers
  */
-public final class CoverNetworking {
+public final class CoverIO {
 
-    private CoverNetworking() {/**/}
+    private CoverIO() {/**/}
 
     /**
      * Write sync data for a coverable's covers
-     * @param buf the buf to write to
+     *
+     * @param buf       the buf to write to
      * @param coverable the coverable containing the covers
      */
     public static void writeCoverSyncData(@Nonnull PacketBuffer buf, @Nonnull ICoverable coverable) {
@@ -37,8 +42,9 @@ public final class CoverNetworking {
 
     /**
      * Receive sync data for a coverable's covers
-     * @param buf the buf to read from
-     * @param coverable the coverable containing the covers
+     *
+     * @param buf         the buf to read from
+     * @param coverable   the coverable containing the covers
      * @param coverWriter the operation the coverable uses to store a cover
      */
     public static void receiveCoverSyncData(@Nonnull PacketBuffer buf, @Nonnull ICoverable coverable,
@@ -55,7 +61,7 @@ public final class CoverNetworking {
     }
 
     /**
-     * @param side the side the cover is attached to
+     * @param side     the side the cover is attached to
      * @param behavior the cover's behavior
      * @return a writer for a cover's attachment data
      */
@@ -70,9 +76,10 @@ public final class CoverNetworking {
 
     /**
      * Read a cover's placement customData
-     * @param buf the buffer to read from
-     * @param coverable the coverable the cover is placed on
-     * @param coverWriter the operation the coverable uses to store a cover
+     *
+     * @param buf           the buffer to read from
+     * @param coverable     the coverable the cover is placed on
+     * @param coverWriter   the operation the coverable uses to store a cover
      * @param renderUpdater the operation the coverable uses to schedule render updates
      */
     public static void readCoverPlacement(@Nonnull PacketBuffer buf, @Nonnull ICoverable coverable,
@@ -87,5 +94,50 @@ public final class CoverNetworking {
 
         coverBehavior.readInitialSyncData(buf);
         renderUpdater.run();
+    }
+
+    /**
+     * Writes a coverable's covers to NBT
+     *
+     * @param tagCompound the tag compound to write to
+     * @param coverReader the operation the coverable uses to retrieve a stored cover
+     */
+    public static void writeCoverNBT(@Nonnull NBTTagCompound tagCompound, @Nonnull Function<EnumFacing, CoverBehavior> coverReader) {
+        NBTTagList coversList = new NBTTagList();
+        for (EnumFacing coverSide : EnumFacing.VALUES) {
+            CoverBehavior coverBehavior = coverReader.apply(coverSide);
+            if (coverBehavior != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                ResourceLocation coverId = coverBehavior.getCoverDefinition().getCoverId();
+                tag.setString("CoverId", coverId.toString());
+                tag.setByte("Side", (byte) coverSide.getIndex());
+                coverBehavior.writeToNBT(tag);
+                coversList.appendTag(tag);
+            }
+        }
+        tagCompound.setTag("Covers", coversList);
+    }
+
+    /**
+     * Reads a coverable's covers from NBT
+     *
+     * @param tagCompound the tag compound to read from
+     * @param coverable   the cover to store the covers in
+     * @param coverWriter the operation the coverable uses to write a stored cover
+     */
+    public static void readCoverNBT(@Nonnull NBTTagCompound tagCompound, @Nonnull ICoverable coverable,
+                                    @Nonnull BiConsumer<EnumFacing, CoverBehavior> coverWriter) {
+        NBTTagList coversList = tagCompound.getTagList("Covers", Constants.NBT.TAG_COMPOUND);
+        for (int index = 0; index < coversList.tagCount(); index++) {
+            NBTTagCompound tag = coversList.getCompoundTagAt(index);
+            if (tag.hasKey("CoverId", Constants.NBT.TAG_STRING)) {
+                EnumFacing coverSide = EnumFacing.VALUES[tag.getByte("Side")];
+                ResourceLocation coverId = new ResourceLocation(tag.getString("CoverId"));
+                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverId);
+                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, coverSide);
+                coverBehavior.readFromNBT(tag);
+                coverWriter.accept(coverSide, coverBehavior);
+            }
+        }
     }
 }

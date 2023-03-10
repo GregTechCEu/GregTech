@@ -5,27 +5,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public final class CoverDefinition {
-
-    public static CoverDefinition getCoverById(int hashCode) {
-        return GregTechAPI.COVER_REGISTRY.getObject(hashCode);
-    }
-
-    public static CoverDefinition getCoverById(ResourceLocation id) {
-        return GregTechAPI.COVER_REGISTRY.getObject(id);
-    }
-
-    @Deprecated
-    public static CoverDefinition getCoverByNetworkId(int networkId) {
-        return null; //TODO
-    }
-
-    @Deprecated
-    public static int getNetworkIdForCover(CoverDefinition definition) {
-        return 0; //TODO
-    }
 
     private final ResourceLocation coverId;
     private final BiFunction<ICoverable, EnumFacing, CoverBehavior> behaviorCreator;
@@ -35,6 +18,32 @@ public final class CoverDefinition {
         this.coverId = coverId;
         this.behaviorCreator = behaviorCreator;
         this.dropItemStack = dropItemStack.copy();
+    }
+
+    /**
+     * @param id the cover's id
+     * @return the cover associated with the id
+     */
+    public static CoverDefinition getCoverById(@Nonnull ResourceLocation id) {
+        return GregTechAPI.COVER_REGISTRY.getObject(id);
+    }
+
+    /**
+     * @see CoverIO
+     * @deprecated Use {@link CoverDefinition#getCoverById(ResourceLocation)}
+     */
+    @Deprecated
+    public static CoverDefinition getCoverByNetworkId(int networkId) {
+        return null;
+    }
+
+    /**
+     * @see CoverIO
+     * @deprecated Use {@link CoverDefinition#getCoverId()} with {@link ResourceLocation#toString()}
+     */
+    @Deprecated
+    public static int getNetworkIdForCover(CoverDefinition definition) {
+        return Integer.MAX_VALUE;
     }
 
     public ResourceLocation getCoverId() {
