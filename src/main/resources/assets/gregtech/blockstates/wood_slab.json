@@ -1,29 +1,27 @@
 {
   "forge_marker": 1,
   "variants": {
-    "half": {
-      "top": {
-        "model": "upper_slab_oak"
-      },
-      "bottom": {
-        "model": "half_slab"
+    "half=top,variant=rubber": {
+      "model": "upper_slab",
+      "textures": {
+        "bottom": "gregtech:blocks/wood/rubber/planks_rubber",
+        "top": "gregtech:blocks/wood/rubber/planks_rubber",
+        "side": "gregtech:blocks/wood/rubber/planks_rubber"
       }
     },
-    "variant": {
-      "rubber": {
-        "textures": {
-          "bottom": "gregtech:blocks/wood/rubber/planks_rubber",
-          "top": "gregtech:blocks/wood/rubber/planks_rubber",
-          "side": "gregtech:blocks/wood/rubber/planks_rubber"
-        }
-      },
-      "treated": {
-        "textures": {
-          "bottom": "gregtech:blocks/wood/treated/planks_treated",
-          "top": "gregtech:blocks/wood/treated/planks_treated",
-          "side": "gregtech:blocks/wood/treated/planks_treated"
-        }
+    "half=bottom,variant=rubber": {
+      "model": "half_slab",
+      "textures": {
+        "bottom": "gregtech:blocks/wood/rubber/planks_rubber",
+        "top": "gregtech:blocks/wood/rubber/planks_rubber",
+        "side": "gregtech:blocks/wood/rubber/planks_rubber"
       }
+    },
+    "half=top,variant=treated": {
+      "model": "gregtech:treated_slab_upper"
+    },
+    "half=bottom,variant=treated": {
+      "model": "gregtech:treated_slab_lower"
     }
   }
 }
