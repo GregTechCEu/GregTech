@@ -113,7 +113,7 @@ gregtech.multiblock.electric_blast_furnace.description=电力高炉是一种用�
 gregtech.multiblock.multi_furnace.description=工业熔炉是一种用于一次性烧制大量物品的多方块结构。不同级别的线圈会提供速度增幅和能量效率增幅。每次运作的基础烧制数量为 32，且可以使用高等级的线圈增加烧制数量。
 gregtech.multiblock.large_boiler.description=大型锅炉是一种使用水和能量源产生蒸汽的多方块结构。这里说的“能量源”通常是指固体燃料和高密度流体。不同等级的锅炉仅在蒸汽产量上有所差别。
 gregtech.multiblock.large_turbine.description=大型涡轮是一种使用蒸汽、燃气或等离子体转动涡轮转子来发电的多方块结构。转子效率和转子转速影响能量的输出。
-gregtech.multiblock.assembly_line.description=装配线是由5到16个“片”组成的大型多方块结构。理论上，它是一个大型组装机，用于生产高级元件。
+gregtech.multiblock.assembly_line.description=装配线是由5到16“片”组成的大型多方块结构。理论上，它是一个大型组装机，用于生产高级元件。
 gregtech.multiblock.fusion_reactor.luv.description=一型核聚变反应堆是一台大型多方块机器，可以通过聚变生产重元素。它仅可使用 LuV，ZPM 或 UV 等级的能源仓。每一个能源仓可增加 10M EU 的能量缓存，最大能量缓存为 160M。
 gregtech.multiblock.fusion_reactor.zpm.description=二型核聚变反应堆是一台大型多方块机器，可以通过聚变生产重元素。它仅可使用 ZPM 或 UV 等级的能源仓。每一个能源仓可增加 20M EU 的能量缓存，最大能量缓存为 320M。
 gregtech.multiblock.fusion_reactor.uv.description=三型核聚变反应堆是一台大型多方块机器，可以通过聚变生产重元素。它仅可使用 UV 等级的能源仓。每一个能源仓可增加 40M EU 的能量缓存，最大能量缓存为 640M。
@@ -412,7 +412,7 @@ metaitem.electric.pump.uiv.name=电动泵（UIV）
 metaitem.electric.pump.uxv.name=电动泵（UXV）
 metaitem.electric.pump.opv.name=电动泵（OpV）
 
-metaitem.electric.pump.tooltip=以特定速率传输§f流体§7（作为§f覆盖板§7时）
+metaitem.electric.pump.tooltip=作为§f覆盖板§7时以特定速率传输§f流体§7
 
 metaitem.fluid.regulator.lv.name=流体校准器（LV）
 metaitem.fluid.regulator.mv.name=流体校准器（MV）
@@ -423,7 +423,7 @@ metaitem.fluid.regulator.luv.name=流体校准器（LuV）
 metaitem.fluid.regulator.zpm.name=流体校准器（ZPM）
 metaitem.fluid.regulator.uv.name=流体校准器（UV）
 
-metaitem.fluid.regulator.tooltip=对§f流体§7的流量加以限制（作为§f覆盖板§7时）
+metaitem.fluid.regulator.tooltip=作为§f覆盖板§7时对§f流体§7的流量加以限制
 
 metaitem.conveyor.module.lv.name=传送带（LV）
 metaitem.conveyor.module.mv.name=传送带（MV）
@@ -439,7 +439,7 @@ metaitem.conveyor.module.uiv.name=传送带（UIV）
 metaitem.conveyor.module.uxv.name=传送带（UXV）
 metaitem.conveyor.module.opv.name=传送带（OpV）
 
-metaitem.conveyor.module.tooltip=以特定速率传输§f物品§7（作为§f覆盖板§7时）
+metaitem.conveyor.module.tooltip=作为§f覆盖板§7时以特定速率传输§f物品§7
 
 metaitem.electric.piston.lv.name=电力活塞（LV）
 metaitem.electric.piston.mv.name=电力活塞（MV）
@@ -469,7 +469,7 @@ metaitem.robot.arm.uiv.name=机械臂（UIV）
 metaitem.robot.arm.uxv.name=机械臂（UXV）
 metaitem.robot.arm.opv.name=机械臂（OpV）
 
-metaitem.robot.arm.tooltip=对§f物品§7的传输速率加以限制（作为§f覆盖板§7时）
+metaitem.robot.arm.tooltip=作为§f覆盖板§7时对§f物品§7的传输速率加以限制
 
 metaitem.field.generator.lv.name=力场发生器（LV）
 metaitem.field.generator.mv.name=力场发生器（MV）
@@ -717,7 +717,7 @@ metaitem.circuit.advanced_integrated.tooltip=更小，更强大/n§6HV级电路
 metaitem.circuit.nand_chip.name=NAND芯片
 metaitem.circuit.nand_chip.tooltip=一块卓越的简单电路/n§6ULV级电路
 metaitem.circuit.microprocessor.name=微型处理器
-metaitem.circuit.microprocessor.tooltip=一块卓越的简单电路/n§eLV级电路
+metaitem.circuit.microprocessor.tooltip=一块卓越的基础电路/n§eLV级电路
 
 # T3: Processor
 metaitem.circuit.processor.name=集成处理器
@@ -761,20 +761,20 @@ metaitem.circuit.crystal_mainframe.tooltip=利用水晶雕刻/n§9UV级电路
 
 # T7: Wetware
 metaitem.circuit.wetware_processor.name=湿件处理器
-metaitem.circuit.wetware_processor.tooltip=你感觉脊背发凉直冒冷汗，好像它正盯着你看似的/n§4LuV级电路
+metaitem.circuit.wetware_processor.tooltip=你感觉脊背发凉直冒冷汗，好像它正盯着你看似的。/n§4LuV级电路
 metaitem.circuit.wetware_assembly.name=湿件处理器集群
 metaitem.circuit.wetware_assembly.tooltip=可以运行Minecraft/n§4ZPM级电路
 metaitem.circuit.wetware_computer.name=湿件超级计算机
 metaitem.circuit.wetware_computer.tooltip=血肉与机械的终极结合/n§4UV级电路
 metaitem.circuit.wetware_mainframe.name=湿件电脑主机
-metaitem.circuit.wetware_mainframe.tooltip=至强造物/n§5UHV级电路
+metaitem.circuit.wetware_mainframe.tooltip=至强造物/n§4UHV级电路
 
 metaitem.stem_cells.name=干细胞
 metaitem.stem_cells.tooltip=智慧原料
 metaitem.processor.neuro.name=神经处理单元
 metaitem.processor.neuro.tooltip=神经CPU
 metaitem.petri_dish.name=培养皿
-metaitem.petri_dish.tooltip=用以培养细胞
+metaitem.petri_dish.tooltip=用以培育细胞
 metaitem.bio_chaff.name=生物糠
 
 metaitem.carbon.fibers.name=生碳纤维
@@ -806,7 +806,7 @@ metaitem.smart_item_filter.tooltip=作§f覆盖板§7时以§f机器的配方§7
 
 metaitem.cover.controller.name=机器控制覆盖板
 metaitem.cover.controller.tooltip=作为§f覆盖板§7时提供§f开关§7机器功能。
-metaitem.cover.activity.detector.name=设备活跃探测覆盖板
+metaitem.cover.activity.detector.name=活跃探测覆盖板
 metaitem.cover.activity.detector.tooltip=作为§f覆盖板§7时以§f机器活跃状态§7发出红石信号。
 metaitem.cover.activity.detector_advanced.name=进阶活跃状态探测器
 metaitem.cover.activity.detector_advanced.tooltip=作为§f覆盖板§7时以§f机器处理进度§7发出红石信号。
@@ -823,13 +823,13 @@ metaitem.cover.energy.detector.tooltip=作为§f覆盖板§7时依照§f能量�
 metaitem.cover.energy.detector.advanced.name=进阶能量探测覆盖板
 metaitem.cover.energy.detector.advanced.tooltip=作为§f覆盖板§7时以§fRS锁存器§7控制的§f能量状态§7发出红石信号。
 metaitem.cover.fluid.voiding.name=流体销毁覆盖板
-metaitem.cover.fluid.voiding.tooltip=作为§f覆盖板§7时清除§f流体§7。/n放置后使用§f软槌§7激活，
+metaitem.cover.fluid.voiding.tooltip=作为§f覆盖板§7时清除§f流体§7。/n放置后使用§f软锤§7激活，
 metaitem.cover.fluid.voiding.advanced.name=进阶流体销毁覆盖板
-metaitem.cover.fluid.voiding.advanced.tooltip=作为§f覆盖板§7时允许控制数量的清除§f流体§7。/n放置后使用§f软槌§7激活，
+metaitem.cover.fluid.voiding.advanced.tooltip=作为§f覆盖板§7时允许控制数量的清除§f流体§7。/n放置后使用§f软锤§7激活，
 metaitem.cover.item.voiding.name=物品销毁覆盖板
-metaitem.cover.item.voiding.tooltip=作为§f覆盖板§7时清除§f物品§7。/n放置后使用§f软槌§7激活。
+metaitem.cover.item.voiding.tooltip=作为§f覆盖板§7时清除§f物品§7。/n放置后使用§f软锤§7激活。
 metaitem.cover.item.voiding.advanced.name=进阶物品销毁覆盖板
-metaitem.cover.item.voiding.advanced.tooltip=作为§f覆盖板§7时允许控制数量的清除§f物品§7。/n放置后使用§f软槌§7激活，
+metaitem.cover.item.voiding.advanced.tooltip=作为§f覆盖板§7时允许控制数量的清除§f物品§7。/n放置后使用§f软锤§7激活，
 metaitem.cover.storage.name=存储覆盖板
 metaitem.cover.storage.tooltip=给零碎的小玩意准备的小型存储空间
 
@@ -899,22 +899,22 @@ metaitem.brick.fireclay.name=耐火砖
 metaitem.brick.fireclay.tooltip=耐热
 metaitem.brick.coke.name=焦炉砖
 metaitem.wooden_form.empty.name=空木制模具
-metaitem.wooden_form.brick.name=砖木制模具
+metaitem.wooden_form.brick.name=木制砖模具
 
 item.gt.tool.replace_tool_head=在合成栏用新的工具头部替换
 item.gt.tool.usable_as=可用作：§f%s
 item.gt.tool.behavior.silk_ice=§b切冰利刃：§f精准采集冰块
 item.gt.tool.behavior.torch_place=§e洞窟探客: §f右击放置火把
 item.gt.tool.behavior.tree_felling=§4伐木好手：§f连锁砍树
-item.gt.tool.behavior.shield_disable=c野兽蛮攻：§f无视盾牌
-item.gt.tool.behavior.relocate_mining=§2磁力吸引：§f吸入挖掘的方块
+item.gt.tool.behavior.shield_disable=§c野兽蛮攻：§f无视盾牌
+item.gt.tool.behavior.relocate_mining=§2磁力吸引：§f采掘的方块进入物品栏
 item.gt.tool.behavior.aoe_mining=§5作用范围：§f%sx%sx%s
 item.gt.tool.behavior.ground_tilling=§e耕地农夫：§f耕耘土地
 item.gt.tool.behavior.grass_path=§e园林策划：§f制造草径
 item.gt.tool.behavior.rail_rotation=§e铁路技工：§f旋转轨道
 item.gt.tool.behavior.crop_harvesting=§a庄稼收割：§f收获成熟的作物
-item.gt.tool.behavior.plunger§9水管工人：§f清除流体
-item.gt.tool.behavior.block_rotation=§2精械师傅：§f旋转方块，调配输出口
+item.gt.tool.behavior.plunger=§9水管工人：§f清除流体
+item.gt.tool.behavior.block_rotation=§2精械师傅：§f旋转方块
 item.gt.tool.behavior.damage_boost=§4伤害增益：§f对%s造成额外伤害
 
 item.gt.tool.sword.name=%s剑
@@ -923,9 +923,9 @@ item.gt.tool.shovel.name=%s锹
 item.gt.tool.axe.name=%s斧
 item.gt.tool.hoe.name=%s锄
 item.gt.tool.saw.name=%s锯
-item.gt.tool.hammer.name=%s锤
+item.gt.tool.hammer.name=%s锻造锤
 item.gt.tool.hammer.tooltip=§8粉碎矿石而非采掘
-item.gt.tool.mallet.name=%s软槌
+item.gt.tool.mallet.name=%s软锤
 item.gt.tool.mallet.tooltip=§8关闭/开启机器
 item.gt.tool.wrench.name=%s扳手
 item.gt.tool.wrench.tooltip=§8按住左键以拆卸机器
@@ -948,7 +948,7 @@ item.gt.tool.drill_hv.name=%s电钻（HV）
 item.gt.tool.drill_ev.name=%s电钻（EV）
 item.gt.tool.drill_iv.name=%s电钻（IV）
 item.gt.tool.mining_hammer.name=%s开采锤
-item.gt.tool.mining_hammer.tooltip=%8一次性开采大片区域（除非你蹲下）
+item.gt.tool.mining_hammer.tooltip=§8一次性开采大片区域（除非你蹲下）
 item.gt.tool.spade.name=%s铲
 item.gt.tool.spade.tooltip=§8一次性开采大片区域（除非你蹲下）
 item.gt.tool.chainsaw_lv.name=%s链锯（LV）
@@ -962,7 +962,7 @@ item.gt.tool.wrench_iv.name=%s扳手（IV）
 item.gt.tool.wrench_iv.tooltip=§8按住左键以拆卸机器
 item.gt.tool.buzzsaw.name=%s圆锯（LV）
 item.gt.tool.buzzsaw.tooltip=§8并不适合用来采掘方块
-item.gt.tool.screwdriver_lv.name=%s螺丝刀 （LV）
+item.gt.tool.screwdriver_lv.name=%s螺丝刀（LV）
 item.gt.tool.screwdriver_lv.tooltip=§8调整覆盖板和机器
 item.gt.tool.plunger.name=%s搋子
 item.gt.tool.plunger.tooltip=§8清除机器中的流体
@@ -984,7 +984,7 @@ item.gt.tool.harvest_level.4=§d哈氏合金
 item.gt.tool.harvest_level.5=§9铿铀
 item.gt.tool.harvest_level.6=§c中子素
 
-item.gt.tool.tooltip.repair_info=按住 SHIFT 显示修复详情
+item.gt.tool.tooltip.repair_info=按住SHIFT显示修复详情
 item.gt.tool.tooltip.repair_material=修复材料：§a%s
 
 item.gt.tool.aoe.rows=行
@@ -1005,7 +1005,7 @@ metaitem.behavior.mode_switch.current_mode=模式：%s
 metaitem.tool.tooltip.primary_material=§f材料：§e%s
 metaitem.tool.tooltip.durability=§f耐久度：§a%,d / %,d
 metaitem.tool.tooltip.rotor.efficiency=转子效率：§9%,d%%
-metaitem.tool.tooltip.rotor.power=涡轮产能：§9%，d%%
+metaitem.tool.tooltip.rotor.power=涡轮产能：§9%,d%%
 
 metaitem.voltage_coil.ulv.name=超低压线圈
 metaitem.voltage_coil.ulv.tooltip=初级线圈
@@ -1071,7 +1071,7 @@ metaarmor.qts.nightvision.error=夸克高科™套装：§c能量不足！
 metaarmor.jetpack.hover.enable=喷气背包：悬停模式已启用
 metaarmor.jetpack.hover.disable=喷气背包：悬停模式已禁用
 
-metaarmor.jetpack.emergency_hover_mode=紧急悬停模式已启用!
+metaarmor.jetpack.emergency_hover_mode=紧急悬停模式已启用！
 
 metaarmor.nms.share.enable=纳米肌体™套装：供能模式已启用
 metaarmor.nms.share.disable=纳米肌体™套装：供能模式已禁用
@@ -1087,7 +1087,7 @@ metaarmor.message.nightvision.error=§c能量不足！
 
 metaarmor.tooltip.stepassist=提供步行辅助
 metaarmor.tooltip.speed=提升奔跑速度
-metaarmor.tooltip.jump=提升跳跃高度和距离
+metaarmor.tooltip.jump=提升跳跃高度与距离
 metaarmor.tooltip.falldamage=消除摔落伤害
 metaarmor.tooltip.potions=消除负面效果
 metaarmor.tooltip.burning=消除燃烧伤害
@@ -1119,7 +1119,7 @@ metaitem.fertilizer.name=肥料
 metaitem.blacklight.name=暗光灯
 metaitem.blacklight.tooltip=长波§d紫外线§7光源
 
-gui.widget.incrementButton.default_tooltip=按住Shift键、Ctrl键或同时按住这两个键来改变数量
+gui.widget.incrementButton.default_tooltip=按住Shift，Ctrl键或同时按住这两个键来改变数量
 gui.widget.recipeProgressWidget.default_tooltip=查看配方
 
 gregtech.recipe_memory_widget.tooltip.1=§7左键点击自动输入该配方至合成格
@@ -1168,7 +1168,7 @@ cover.smart_item_filter.filtering_mode.centrifuge=离心机
 cover.smart_item_filter.filtering_mode.sifter=筛选器
 cover.smart_item_filter.filtering_mode.description=为该智能覆盖板选择目标机器。/n它会自动传输符合机器配方的物品。
 
-cover.conveyor.title=传送带覆盖板配置 (%s)
+cover.conveyor.title=传送带覆盖板配置（%s）
 cover.conveyor.transfer_rate=§7物品/秒
 cover.conveyor.mode.export=模式：过滤输出
 cover.conveyor.mode.import=模式：过滤输入
@@ -1184,7 +1184,7 @@ cover.universal.manual_import_export.mode.description=§e禁用§r-仅依照覆�
 cover.conveyor.item_filter.title=物品过滤
 cover.conveyor.ore_dictionary.title=矿物词典
 cover.conveyor.ore_dictionary.title2=（*可作通配符）
-cover.robotic_arm.title=机械臂设置（%s）	
+cover.robotic_arm.title=机械臂设置（%s）
 cover.robotic_arm.transfer_mode.transfer_any=任意传输
 cover.robotic_arm.transfer_mode.transfer_exact=精确补给
 cover.robotic_arm.transfer_mode.keep_exact=保持补给
@@ -2128,9 +2128,9 @@ item.inert_metal_mixture.dust=惰性金属混合物
 item.rarest_metal_mixture.dustTiny=小撮稀有金属混合物
 item.rarest_metal_mixture.dustSmall=小堆稀有金属混合物
 item.rarest_metal_mixture.dust=稀有金属混合物
-item.platinum_sludge_residue.dustTiny=小撮铂矿泥渣
-item.platinum_sludge_residue.dustSmall=小堆铂矿泥渣
-item.platinum_sludge_residue.dust=铂矿泥渣
+item.platinum_sludge_residue.dustTiny=小撮铂泥渣
+item.platinum_sludge_residue.dustSmall=小堆铂泥渣
+item.platinum_sludge_residue.dust=铂泥渣
 item.iridium_metal_residue.dustTiny=小撮铱金属渣
 item.iridium_metal_residue.dustSmall=小堆铱金属渣
 item.iridium_metal_residue.dust=铱金属渣
@@ -2209,7 +2209,7 @@ behavior.toggle_energy_consumer.tooltip=右击切换模式
 enchantment.damage.disjunction=末影离析
 enchantment.gregtech.disjunction.desc=对末影生物施加虚弱和缓慢效果。
 enchantment.hard_hammer=锤碎
-enchantment.gregtech.hard_hammer.desc=像格雷科技的锤一样粉碎所采掘的方块。
+enchantment.gregtech.hard_hammer.desc=像格雷科技的锻造锤一样粉碎所采掘的方块。
 
 tile.gt.seal.name=密封方块
 tile.gt.foam.name=建筑泡沫
@@ -2251,8 +2251,8 @@ behavior.tricorder.muffled=已消声。
 behavior.tricorder.machine_disabled=已停止。
 behavior.tricorder.machine_power_loss=因能量流失而停止工作。
 behavior.tricorder.machine_progress=处理进度/总计：%s / %s
-behavior.tricorder.energy_container_in=最大输入：%s (%s) EU 在 %s A
-behavior.tricorder.energy_container_out=最大输出：%s (%s) EU 在 %s A
+behavior.tricorder.energy_container_in=最大输入：%s（%s）EU，%sA
+behavior.tricorder.energy_container_out=最大输出：%s（%s）EU，%sA
 behavior.tricorder.energy_container_storage=电量：%s EU / %s EU
 behavior.tricorder.bedrock_fluid.amount=流体输入储存：%s %s - %s%%
 behavior.tricorder.bedrock_fluid.amount_unknown=流体输入储存：%s%%
@@ -2268,8 +2268,8 @@ behavior.tricorder.multiblock_energy_output=最大输出：%s EU/t，电压等�
 behavior.tricorder.multiblock_maintenance=故障：%s
 behavior.tricorder.multiblock_parallel=并行处理：%s
 behavior.tricorder.debug_machine=元数据-ID：%s
-behavior.tricorder.debug_machine_valid=有效
-behavior.tricorder.debug_machine_invalid=无效！
+behavior.tricorder.debug_machine_valid= 有效
+behavior.tricorder.debug_machine_invalid= 无效！
 behavior.tricorder.debug_machine_invalid_null=无效！MetaTileEntity == null！
 behavior.tricorder.debug_cpu_load=%2$s 刻内平均 CPU 负载约 %1$sns，最差情况为 %sns。
 behavior.tricorder.debug_cpu_load_seconds=负载秒数为 %s 秒。
@@ -2400,7 +2400,7 @@ tile.machine_casing.maximum_voltage.name=MAX机械外壳
 # Steam casing blocks
 tile.steam_casing.bronze_hull.name=青铜外壳
 tile.steam_casing.bronze_bricks_hull.name=砖砌青铜外壳
-tile.steam_casing.steel_hull.name=钢外壳
+tile.steam_casing.steel_hull.name=钢制外壳
 tile.steam_casing.steel_bricks_hull.name=砖砌锻铁外壳
 tile.steam_casing.bronze.tooltip=用以制作你的第一台蒸汽机器
 tile.steam_casing.steel.tooltip=用以制作改良的蒸汽机器
@@ -2471,7 +2471,7 @@ gregtech.machine.locked_safe.name=上锁的保险柜
 gregtech.machine.locked_safe.malfunctioning=§c故障中！
 gregtech.machine.locked_safe.requirements=§7需要更换以下部件：
 
-#Workbench
+# Workbench
 gregtech.machine.workbench.name=合成站
 gregtech.machine.workbench.tooltip1=比林业的好
 gregtech.machine.workbench.tooltip2=具有物品存储、工具存储、从相邻的存储容器中读取物品和保存配方功能。
@@ -2732,9 +2732,9 @@ gregtech.machine.macerator.lv.tooltip=粉碎矿石
 gregtech.machine.macerator.mv.name=进阶研磨机
 gregtech.machine.macerator.mv.tooltip=粉碎矿石
 gregtech.machine.macerator.hv.name=进阶研磨机 II
-gregtech.machine.macerator.hv.tooltip=粉碎矿石并获得副产品
+gregtech.machine.macerator.hv.tooltip=粉碎矿石并获得副产物
 gregtech.machine.macerator.ev.name=进阶研磨机 III
-gregtech.machine.macerator.ev.tooltip=粉碎矿石并获得副产品
+gregtech.machine.macerator.ev.tooltip=粉碎矿石并获得副产物
 gregtech.machine.macerator.iv.name=精英研磨机
 gregtech.machine.macerator.iv.tooltip=全自动破壁机 9001
 gregtech.machine.macerator.luv.name=精英研磨机 II
@@ -3828,7 +3828,7 @@ gregtech.battery_buffer.average_output=平均输出：%sEU/t
 
 # Transformers
 gregtech.machine.transformer.description=转换电压等级
-gregtech.machine.transformer.tooltip_tool_usage=用软槌右击以反转（默认§f降压§7）
+gregtech.machine.transformer.tooltip_tool_usage=用软锤右击以反转（默认§f降压§7）
 gregtech.machine.transformer.tooltip_transform_down=§a降压：§f%dA %dEU（%s§f）-> %dA %dEU（%s§f）
 gregtech.machine.transformer.message_transform_down=降压, 输出：%dEU %dA, 输出：%dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=§c升压：§f%dA %dEU（%s§f）-> %dA %dEU（%s§f）
@@ -3869,9 +3869,9 @@ gregtech.machine.transformer.adjustable.opv.name=过载压可调变压器
 
 # Diodes
 gregtech.machine.diode.message=最大电流：%s
-gregtech.machine.diode.tooltip_tool_usage=用软槌敲击以改变电流。
+gregtech.machine.diode.tooltip_tool_usage=用软锤右击以改变电流。
 gregtech.machine.diode.tooltip_general=将只允许能量向一个方向流动，并限制电流。
-gregtech.machine.diode.tooltip_starts_at=从§f1A§7开始，使用软槌循环切换电流设定。
+gregtech.machine.diode.tooltip_starts_at=从§f1A§7开始，使用软锤右击循环切换电流设定。
 
 gregtech.machine.diode.ulv.name=超低压二极管
 gregtech.machine.diode.lv.name=低压二极管
@@ -3968,7 +3968,7 @@ gregtech.machine.energy_converter.max.8.name=MAX 能量转换器（8A）
 gregtech.machine.energy_converter.max.16.name=MAX 能量转换器（16A）
 
 gregtech.machine.energy_converter.description=在EU和FE之间转换能量形式。
-gregtech.machine.energy_converter.tooltip_tool_usage=用软槌右键切换模式（默认转换§fFE§7）
+gregtech.machine.energy_converter.tooltip_tool_usage=用软锤右击切换模式（默认转换§fFE§7）
 gregtech.machine.energy_converter.tooltip_conversion_fe=FE转换：§c%,dFE§7 -> §a%,dA %,dEU（§r%s§a）
 gregtech.machine.energy_converter.message_conversion_fe=转换FE，输入：%dFE，输出：%dA %dEU
 gregtech.machine.energy_converter.tooltip_conversion_eu=EU转换：§a%,dA %,dEU（§r%s§a）§7 -> §c%,dFE
@@ -4128,25 +4128,25 @@ gregtech.machine.world_accelerator.mode_entity=随机刻模式
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=允许从输出端输入
 gregtech.machine.basic.input_from_output_side.disallow=禁止从输出端输入
-gregtech.machine.muffle.on=消声：启用
-gregtech.machine.muffle.off=消声：禁用
+gregtech.machine.muffle.on=消声：已启用
+gregtech.machine.muffle.off=消声：已禁用
 gregtech.machine.perfect_oc=超频时不会失去能源效率。
-gregtech.machine.parallel_limit=一次最多可以运行§b%d§r§7个配方。
+gregtech.machine.parallel_limit=可同时处理至多§b%d§r§7个配方。
 
 # Advancements
 gregtech.advancement.root_steam.name=蒸汽时代
 gregtech.advancement.root_steam.desc=欢迎来到格雷科技! 一切始于你的第一个铜锭。
 gregtech.advancement.steam.1_first_tools.name=第一把工具
-gregtech.advancement.steam.1_first_tools.desc=制造一把锤子。
+gregtech.advancement.steam.1_first_tools.desc=制造一把锻造锤。
 gregtech.advancement.steam.2_more_tools.name=更多的工具
 gregtech.advancement.steam.2_more_tools.desc=制作一把扳手。
 gregtech.advancement.steam.3_bronze_dust.name=青铜
 gregtech.advancement.steam.3_bronze_dust.desc=制作青铜粉。
-gregtech.advancement.steam.4_bronze_boiler.name=初始蒸汽
+gregtech.advancement.steam.4_bronze_boiler.name=第一桶蒸汽
 gregtech.advancement.steam.4_bronze_boiler.desc=制造一台小型燃煤锅炉。
 gregtech.advancement.steam.5_bronze_forge_hammer.name=比磨粉机便宜
 gregtech.advancement.steam.5_bronze_forge_hammer.desc=制作一个蒸汽锻造锤。
-gregtech.advancement.steam.6_bronze_alloy_smelter.name=合金熔炼
+gregtech.advancement.steam.6_bronze_alloy_smelter.name=合金冶炼
 gregtech.advancement.steam.6_bronze_alloy_smelter.desc=制作一个蒸汽合金炉。
 gregtech.advancement.steam.7_bronze_extractor.name=提取
 gregtech.advancement.steam.7_bronze_extractor.desc=制造一台蒸汽提取机。
@@ -4174,10 +4174,10 @@ gregtech.advancement.steam.83_hp_solar_boiler.name=太阳能这么强还不削�
 gregtech.advancement.steam.83_hp_solar_boiler.desc=制作一个高压太阳能锅炉。
 gregtech.advancement.steam.85_steam_vent_death.name=让开！
 gregtech.advancement.steam.85_steam_vent_death.desc=被蒸汽排气口烫死。
-gregtech.advancement.steam.87_fluid_pipe_death_heat.name=滚烫的！
-gregtech.advancement.steam.87_fluid_pipe_death_heat.desc=被充满热流体的流体管道烫死。
+gregtech.advancement.steam.87_fluid_pipe_death_heat.name=滚烫！
+gregtech.advancement.steam.87_fluid_pipe_death_heat.desc=被充满炽热流体的流体管道烫死。
 gregtech.advancement.steam.90_primitive_pump.name=原始的水泵
-gregtech.advancement.steam.90_primitive_pump.desc=制作一个原始水泵用于早期的水收集。
+gregtech.advancement.steam.90_primitive_pump.desc=制作一个原始水泵用于早期获取水。
 gregtech.advancement.root_lv.name=低压
 gregtech.advancement.root_lv.desc=制造一台基础蒸汽轮机。
 gregtech.advancement.low_voltage.17_lv_pump.name=泵
@@ -4353,7 +4353,7 @@ behaviour.paintspray.brown.tooltip=可以将物品染成棕色
 behaviour.paintspray.green.tooltip=可以将物品染成绿色
 behaviour.paintspray.red.tooltip=可以将物品染成红色
 behaviour.paintspray.black.tooltip=可以将物品染成黑色
-behaviour.paintspray.uses=剩余次数：%，d
+behaviour.paintspray.uses=剩余次数：%,d
 behaviour.paintspray.offhand=副手持握时所放置的方块将立即被染成对应颜色
 behaviour.prospecting=适用于探矿
 
@@ -4484,21 +4484,21 @@ gregtech.machine.monitor_screen.name=监控器屏幕
 # Multiblock Tooltips
 gregtech.machine.primitive_water_pump.tooltip=末影接口蓄水库-家用款
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=为你带来第一块钢
-gregtech.machine.electric_blast_furnace.tooltip=动的高炉有了，那电动的烟熏炉呢？
+gregtech.machine.electric_blast_furnace.tooltip=电力高炉有了，那电力烟熏炉呢？
 gregtech.machine.vacuum_freezer.tooltip=啊哈我的大冰箱！
 gregtech.machine.implosion_compressor.tooltip=你唯一想要它爆炸的机器
 gregtech.machine.pyrolyse_oven.tooltip=电力焦炉
 gregtech.machine.distillation_tower.tooltip=流体精炼厂
 gregtech.machine.multi_furnace.tooltip=就像家里的烤箱一样
 gregtech.machine.large_combustion_engine.tooltip=我想你有高十六吧..
-gregtech.machine.extreme_combustion_engine.tooltip=极限化学能释放器
+gregtech.machine.extreme_combustion_engine.tooltip=极限化学能释放
 gregtech.machine.cracker.tooltip=让石油变得有用
 gregtech.machine.large_turbine.steam.tooltip=不要把你的头放进去
 gregtech.machine.large_turbine.gas.tooltip=并不是喷气发动机
 gregtech.machine.large_turbine.plasma.tooltip=等离子能量虹吸器
 gregtech.machine.large_boiler.bronze.tooltip=我需要更多蒸汽！
 gregtech.machine.large_boiler.steel.tooltip=木炭吞噬者
-gregtech.machine.large_boiler.titanium.tooltip=我魔法超级燃料呢？
+gregtech.machine.large_boiler.titanium.tooltip=我的超级魔法燃料呢？
 gregtech.machine.large_boiler.tungstensteel.tooltip=你手上有几座煤矿也不够它吃的吧？
 gregtech.machine.coke_oven.tooltip=为炼钢和发电提供更优质的燃料
 gregtech.machine.assembly_line.tooltip=真的不是什么多方块组装机！
@@ -4716,7 +4716,7 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=将流体从一侧输送到另�
 
 
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸：%dx%dx%d
-gregtech.machine.fluid_tank.fluid=其中有%sL%s
+gregtech.machine.fluid_tank.fluid=含有%sL%s
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§a输入电压：§a%,d（§r%s§a）
@@ -4732,7 +4732,7 @@ gregtech.universal.tooltip.amperage_out_till=§e最大输出电流：§e%d
 gregtech.universal.tooltip.amperage_in_out=§e电流输入/输出：§f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§e电流输入/输出上限：§f%,dA
 gregtech.universal.tooltip.energy_storage_capacity=§c能量缓存：§r%,d EU
-gregtech.universal.tooltip.energy_tier_range=§a允许的电压等级：§f%s §f- %s
+gregtech.universal.tooltip.energy_tier_range=§a允许电压等级：§f%s§f-%s
 gregtech.universal.tooltip.item_storage_capacity=§6物品槽位数量：%,d
 gregtech.universal.tooltip.item_storage_total=§6物品容量：§f%,d物品
 gregtech.universal.tooltip.item_stored=§d内含物品：§f%2$,d个%1$s
@@ -4787,9 +4787,9 @@ gregtech.tool_action.screwdriver.toggle_mode=§8使用螺丝刀切换模式
 gregtech.tool_action.wrench.set_facing=§8使用扳手设置朝向
 gregtech.tool_action.wrench.connect=§8使用扳手设置连接，潜行时则可设置方块连接
 gregtech.tool_action.wire_cutter.connect=§8使用剪线钳设置连接
-gregtech.tool_action.soft_mallet.reset=§8使用软槌开关机器
-gregtech.tool_action.soft_mallet.toggle_mode=§8使用软槌切换模式
-gregtech.tool_action.hammer=§8使用锤来消声
+gregtech.tool_action.soft_mallet.reset=§8使用软锤开关机器
+gregtech.tool_action.soft_mallet.toggle_mode=§8使用软锤切换模式
+gregtech.tool_action.hammer=§8使用锻造锤来消声
 gregtech.tool_action.crowbar=§8使用撬棍移除覆盖板
 gregtech.tool_action.tape=§8使用胶带解决维护问题
 
@@ -4798,7 +4798,7 @@ gregtech.fluid.plasma=%s等离子体
 gregtech.fluid.empty=空
 gregtech.fluid.amount=§7总量：%,d/%,d L
 gregtech.fluid.temperature=§c温度: %,d K
-gregtech.fluid.state_gas=§a状态：气态
+gregtech.fluid.state_gas=§7状态：气态
 gregtech.fluid.temperature.cryogenic=§b低温！轻拿轻放！
 gregtech.fluid.state_liquid=§7状态：液态
 gregtech.fluid.state_plasma=§a状态：等离子态
@@ -4807,8 +4807,8 @@ gregtech.gui.fuel_amount=燃料总量：
 gregtech.gui.fluid_amount=流体总量：
 gregtech.gui.toggle_view.disabled=切换视图（流体）
 gregtech.gui.toggle_view.enabled=切换视图（物品）
-gregtech.gui.overclock.enabled=超频启用。/n点击禁用
-gregtech.gui.overclock.disabled=超频禁用。/n点击启用
+gregtech.gui.overclock.enabled=超频已启用。/n点击以禁用
+gregtech.gui.overclock.disabled=超频已禁用。/n点击以启用
 gregtech.gui.overclock.description=配方可以超频到这一等级。/nX表示没有超频。
 gregtech.gui.overclock.off=X
 gregtech.gui.sort=分类
@@ -4822,8 +4822,8 @@ gregtech.gui.fluid_lock.tooltip.enabled=流体锁定§a启用
 gregtech.gui.fluid_lock.tooltip.disabled=流体锁定§c禁用
 gregtech.gui.fluid_voiding_partial.tooltip.enabled=流体清空（%d%%以上）§a启用
 gregtech.gui.fluid_voiding_partial.tooltip.disabled=流体清空（%d%%以上）§c禁用
-gregtech.gui.fluid_voiding_all.tooltip.enabled=流体清空 （全部）启用
-gregtech.gui.fluid_voiding_all.tooltip.disabled=流体清空 （全部）禁用
+gregtech.gui.fluid_voiding_all.tooltip.enabled=流体清空（全部）启用
+gregtech.gui.fluid_voiding_all.tooltip.disabled=流体清空（全部）禁用
 gregtech.gui.silktouch.enabled=精准采集§a启用§r：单击禁用/n§7机器必须在空闲状态下切换。
 gregtech.gui.silktouch.disabled=精准采集§c禁用§r：单击启用/n§7机器必须在空闲状态下切换。
 gregtech.gui.chunkmode.enabled=区块模式§a启用§r：单击禁用/n§7机器必须在空闲状态下切换。
@@ -4833,7 +4833,7 @@ gregtech.gui.multiblock_fluid_voiding=销毁模式/n§7销毁§9流体
 gregtech.gui.multiblock_item_fluid_voiding=销毁模式/n§7销毁§6物品§7与§9流体
 gregtech.gui.multiblock_no_voiding=销毁模式/n§7不进行销毁
 
-ore.spawnlocation.name=矿石生成信息
+ore.spawnlocation.name=矿物生成信息
 gregtech.jei.ore.surface_rock_1=带有这种材料的地表岩石表示矿脉生成的位置。
 gregtech.jei.ore.surface_rock_2=挖掘掉落3小撮粉受时运加成
 gregtech.jei.ore.biome_weighting_title=§d特定生物群系中的例外权重：
@@ -4902,8 +4902,8 @@ gregtech.multiblock.universal.has_problems=存在故障！
 gregtech.multiblock.universal.has_problems_header=在维修仓中修复以下问题：
 gregtech.multiblock.universal.problem.wrench=%s§7管道松动了。（§a扳手§7）
 gregtech.multiblock.universal.problem.screwdriver=%s§7螺丝没拧紧。（§a螺丝刀§7）
-gregtech.multiblock.universal.problem.soft_mallet=%s§7有什么东西卡住了。（§a软槌§7）
-gregtech.multiblock.universal.problem.hard_hammer=%s板材有凹痕§7。（§a锤§7）
+gregtech.multiblock.universal.problem.soft_mallet=%s§7有什么东西卡住了。（§a软锤§7）
+gregtech.multiblock.universal.problem.hard_hammer=%s板材有凹痕§7。（§a锻造锤§7）
 gregtech.multiblock.universal.problem.wire_cutter=%s§7有电线烧坏了。（§a剪线钳§7）
 gregtech.multiblock.universal.problem.crowbar=%s§7有部件错位了。（§a撬棍§7）
 gregtech.multiblock.universal.muffler_obstructed=消声仓受阻!
@@ -4991,7 +4991,7 @@ gregtech.command.worldgen.reload.success=Worldgen已成功从配置重新加载�
 gregtech.command.worldgen.reload.failed=Worldgen重新加载失败。检查控制台是否有错误。
 gregtech.command.hand.groovy=考虑使用§6/gs hand
 gregtech.command.hand.usage=用法：/gregtech hand
-gregtech.command.hand.item_id=物品：%s (元数据：%d)
+gregtech.command.hand.item_id=物品：%s（元数据：%d）
 gregtech.command.hand.electric=电量信息：%d / %d EU - 等级：%d; 是否为电池：%s
 gregtech.command.hand.fluid=流体信息：%d / %d L;是否可输入：%s; 是否可输出：%s
 gregtech.command.hand.fluid2=流体 ID：
@@ -5005,7 +5005,7 @@ gregtech.command.hand.no_item=在执行此命令之前，您的主手必须拿�
 gregtech.command.recipecheck.usage=用法：/gregtech recipecheck
 gregtech.command.recipecheck.begin=开始配方冲突检查...
 gregtech.command.recipecheck.end=配方冲突检查找到%d可能存在的冲突，查看服务器日志以了解更多信息
-gregtech.command.recipecheck.end_no_conflicts=未发现配方冲突!
+gregtech.command.recipecheck.end_no_conflicts=未发现配方冲突！
 gregtech.command.copy.copied_and_click=已复制到剪贴板，点击再次复制
 gregtech.command.copy.click_to_copy=点击复制
 gregtech.command.copy.copied_start=已复制[
@@ -5157,7 +5157,7 @@ terminal.recipe_chart.description=用于分析配方链的工具，使用该工�
 terminal.recipe_chart.limit=页面数量受限。
 terminal.recipe_chart.delete=删除页面
 terminal.recipe_chart.add_slot=添加根槽位
-terminal.recipe_chart.demand=需要
+terminal.recipe_chart.demand=需求
 terminal.recipe_chart.calculator=计算
 terminal.recipe_chart.add=从物品栏选取物品
 terminal.recipe_chart.drag=将材料拖拽至此。
@@ -5165,13 +5165,13 @@ terminal.recipe_chart.visible=可见
 terminal.recipe_chart.jei=打开JEI
 terminal.recipe_chart.tier=等级：
 terminal.recipe_chart.ratio=权重
-terminal.recipe_chart.tier.0=可缓存缓存5个页面
-terminal.recipe_chart.tier.1=可缓存缓存6个页面
-terminal.recipe_chart.tier.2=可缓存缓存7个页面
-terminal.recipe_chart.tier.3=可缓存缓存8个页面
+terminal.recipe_chart.tier.0=可缓存5个页面
+terminal.recipe_chart.tier.1=可缓存6个页面
+terminal.recipe_chart.tier.2=可缓存7个页面
+terminal.recipe_chart.tier.3=可缓存8个页面
 
 terminal.prospector.vis_mode=切换颜色模式
-terminal.prospector.list=全部数据资源
+terminal.prospector.list=全部资源
 terminal.prospector.ore=矿石数据
 terminal.prospector.fluid=流体数据
 terminal.prospector.fluid.info=%s %s - %s%%
@@ -5194,7 +5194,7 @@ terminal.fluid_prospector.tier.4=半径大小 5
 terminal.fluid_prospector.tier.5=半径大小 6
 terminal.fluid_prospector.tier.6=半径大小 7
 
-terminal.console.description=一个工具，帮助你解放你的库存，是时候说再见扳手，螺丝刀，锤子，和撬棍。
+terminal.console.description=一个工具，帮助你解放你的库存，是时候说再见了扳手、螺丝刀、锻造锤丶撬棍。
 terminal.console.notice=以潜行右击机器的方式打开终端并进入本应用程序即可进行操作。
 terminal.console.front=设为正面
 terminal.console.items=设为物品输出
@@ -5215,12 +5215,12 @@ terminal.hardware.remove.full=物品栏已无空位
 terminal.hardware.tip.remove=§4右击以移除硬件
 
 terminal.battery.description=电池管理器，可视化分析你的应用程序的能源消耗。
-terminal.battery.hover=%s：消耗%d eu/s
+terminal.battery.hover=%s：消耗%dEU/s
 terminal.battery.low_energy=电量不足！请为终端充电。
 
 terminal.store.description=应用商店，看看你有什么？安装和升级应用程序。
 terminal.store.match=检测储存满足需求，是否(安装)升级？
-terminal.store.miss=需要以下物品%s(%d)。
+terminal.store.miss=需要以下物品%s（%d）。
 
 terminal.ar.open=打开AR
 
@@ -5249,7 +5249,7 @@ terminal.teleporter.dimension=维度：
 terminal.teleporter.spawn_portal=建立传送门
 
 terminal.maze.title=提修斯的逃跑
-terminal.maze.play=开始
+terminal.maze.play=游玩
 terminal.maze.continue=继续
 terminal.maze.pause=游戏已暂停
 terminal.maze.death.1=天啊! 你被米诺陶洛斯吃掉了！
@@ -5268,7 +5268,7 @@ terminal.cape_selector.tip=你可以通过完成高级进度来解锁这些披�
 
 metaitem.cover.digital.title.mode=模式：
 metaitem.cover.digital.title.spin=旋转：
-metaitem.cover.digital.wireless.tooltip.1=§f覆盖板§7时§f将机器§f无线§7接入§f中央监控器§7。
+metaitem.cover.digital.wireless.tooltip.1=作为§f覆盖板§7时§f将机器§f无线§7接入§f中央监控器§7。
 metaitem.cover.digital.wireless.tooltip.2=§f手持右击中央监控器§7来进行远程绑定。
 metaitem.cover.digital.wireless.tooltip.3=§f手持潜行右击§7则可移除现有绑定。
 metaitem.cover.digital.wireless.tooltip.4=§a绑定至：§f%s
