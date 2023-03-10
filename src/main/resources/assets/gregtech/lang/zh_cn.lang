@@ -1,5 +1,5 @@
-# Chinese translate by rentommy & 落樱之鱼(sakuranosakana) & Kasumi_Nova & ChromaPIE.
-# 中文翻译由 rentommy & 落樱之鱼(sakuranosakana) & Kasumi_Nova & ChromaPIE翻译。
+# Chinese translate by rentommy & 落樱之鱼(sakuranosakana) & Kasumi_Nova & ChromaPIE & iouter.
+# 中文翻译由 rentommy & 落樱之鱼(sakuranosakana) & Kasumi_Nova & ChromaPIE & iouter翻译。
 # Corresponding Version: 2.5.4 - beta
 # 对应版本: 2.5.4 - beta
 
@@ -284,22 +284,22 @@ metaitem.large_fluid_cell.titanium.name=%s钛单元
 metaitem.large_fluid_cell.tungstensteel.name=%s钨钢单元
 
 metaitem.spray.solvent.name=喷漆罐（溶剂）
-metaitem.spray.can.dyes.white.name=喷涂罐（白色）
-metaitem.spray.can.dyes.orange.name=喷涂罐（橙色）
-metaitem.spray.can.dyes.magenta.name=喷涂罐（品红色）
-metaitem.spray.can.dyes.light_blue.name=喷涂罐（淡蓝色）
-metaitem.spray.can.dyes.yellow.name=喷涂罐（黄色）
-metaitem.spray.can.dyes.lime.name=喷涂罐（黄绿色）
-metaitem.spray.can.dyes.pink.name=喷涂罐（粉红色）
-metaitem.spray.can.dyes.gray.name=喷涂罐（灰色）
-metaitem.spray.can.dyes.silver.name=喷涂罐（淡灰色）
-metaitem.spray.can.dyes.cyan.name=喷涂罐（青色）
-metaitem.spray.can.dyes.purple.name=喷涂罐（紫色）
-metaitem.spray.can.dyes.blue.name=喷涂罐（蓝色）
-metaitem.spray.can.dyes.brown.name=喷涂罐（棕色）
-metaitem.spray.can.dyes.green.name=喷涂罐（绿色）
-metaitem.spray.can.dyes.red.name=喷涂罐（红色）
-metaitem.spray.can.dyes.black.name=喷涂罐（黑色）
+metaitem.spray.can.dyes.white.name=喷漆罐（白色）
+metaitem.spray.can.dyes.orange.name=喷漆罐（橙色）
+metaitem.spray.can.dyes.magenta.name=喷漆罐（品红色）
+metaitem.spray.can.dyes.light_blue.name=喷漆罐（淡蓝色）
+metaitem.spray.can.dyes.yellow.name=喷漆罐（黄色）
+metaitem.spray.can.dyes.lime.name=喷漆罐（黄绿色）
+metaitem.spray.can.dyes.pink.name=喷漆罐（粉红色）
+metaitem.spray.can.dyes.gray.name=喷漆罐（灰色）
+metaitem.spray.can.dyes.silver.name=喷漆罐（淡灰色）
+metaitem.spray.can.dyes.cyan.name=喷漆罐（青色）
+metaitem.spray.can.dyes.purple.name=喷漆罐（紫色）
+metaitem.spray.can.dyes.blue.name=喷漆罐（蓝色）
+metaitem.spray.can.dyes.brown.name=喷漆罐（棕色）
+metaitem.spray.can.dyes.green.name=喷漆罐（绿色）
+metaitem.spray.can.dyes.red.name=喷漆罐（红色）
+metaitem.spray.can.dyes.black.name=喷漆罐（黑色）
 
 metaitem.tool.matches.name=火柴
 metaitem.tool.matchbox.name=火柴盒
@@ -851,7 +851,7 @@ metaitem.cover.solar.panel.hv.name=高压太阳能板（HV）
 metaitem.cover.solar.panel.ev.name=超高压太阳能板（EV）
 metaitem.cover.solar.panel.iv.name=强导压太阳能板（IV）
 metaitem.cover.solar.panel.luv.name=剧差压太阳能板（LuV）
-metaitem.cover.solar.panel.zpm.name=零电压太阳能板（ZPM）
+metaitem.cover.solar.panel.zpm.name=零点压太阳能板（ZPM）
 metaitem.cover.solar.panel.uv.name=极限压太阳能板（UV）
 
 metaitem.cover.solar.panel.tooltip.1=愿太阳与你同在。
@@ -1188,7 +1188,7 @@ cover.robotic_arm.title=机械臂设置（%s）
 cover.robotic_arm.transfer_mode.transfer_any=任意传输
 cover.robotic_arm.transfer_mode.transfer_exact=精确补给
 cover.robotic_arm.transfer_mode.keep_exact=保持补给
-cover.robotic_arm.transfer_mode.description=§e任意传输§r-在此模式下，覆盖板将尽可能传输一切符合过滤设置的物品。/n§e精确补给§r-在此模式下，覆盖板会将过滤设置中指定的物品分等份地传输（在矿物词典过滤模式则改变传输速率）。/n若物品的数量小于指定一份的数量，物品将不会被传输。/n§e保持补给§r-在此模式下，覆盖板将保持目标容器中指定物品的数量，需要物品时则传输相应量的物品。/n§7小提示：左/右击过滤槽可以调整物品数量，在同时按住Shift可以更快地调整。
+cover.robotic_arm.transfer_mode.description=§e任意传输§r-在此模式下，覆盖板将尽可能传输一切符合过滤设置的物品。/n§e精确补给§r-在此模式下，覆盖板会将过滤设置中指定的物品分等份地传输（在矿物词典过滤模式则改变传输速率）。/n若物品的数量小于指定一份的数量，物品将不会被传输。/n§e保持补给§r-在此模式下，覆盖板将保持目标容器中指定物品的数量，需要物品时则传输相应量的物品。/n§7小提示：左/右击过滤槽可以调整物品数量，再同时按住Shift可以更快地调整。
 
 cover.pump.title=泵覆盖板设置（%s）
 cover.pump.transfer_rate=%s
@@ -1198,7 +1198,7 @@ cover.pump.fluid_filter.title=流体过滤
 cover.bucket.mode.bucket=kL/s
 cover.bucket.mode.milli_bucket=L/s
 cover.fluid_regulator.title=流体校准器设置（%s）
-cover.fluid_regulator.transfer_mode.description=§e任意传输§r-在此模式下，覆盖板将传输任何与过滤器匹配的液体。/n§e精确供应-在此模式下，覆盖板将按此按钮下方窗口中指定的部分供应液体。若流体量小于指定的量，液体将不会被传输。/n§e保持供应-在此模式下，覆盖板将在目标容器中保持指定数量的液体，低于保持量时则传输相应量的液体。/n§7小提示：按住Shift并点击可将数量乘或除以10，按住Ctrl则会乘或除以100。
+cover.fluid_regulator.transfer_mode.description=§e任意传输§r-在此模式下，覆盖板将传输任何与过滤器匹配的液体。/n§e精确供应-在此模式下，覆盖板将按此按钮下方窗口中指定的部分供应液体。若流体量小于指定的量，液体将不会被传输。/n§e保持供应-在此模式下，覆盖板将在目标容器中保持指定数量的液体，低于保持量时则传输相应量的液体。/n§7小提示：按住Shift/Crtl把增加或减少的数量乘以10/100。
 cover.fluid_regulator.supply_exact=精确供应：%s
 cover.fluid_regulator.keep_exact=保持供应：%s
 
@@ -1231,7 +1231,7 @@ cover.advanced_energy_detector.normal=普通
 cover.advanced_energy_detector.inverted=反相
 cover.advanced_energy_detector.modes_tooltip=使用EU的离散值或百分比来比较所附着的能量存储中能量的最大/最小值。
 cover.advanced_energy_detector.modes_label=模式：
-cover.advanced_energy_detector.mode_eu=EU 离散值
+cover.advanced_energy_detector.mode_eu=EU离散值
 cover.advanced_energy_detector.mode_percent=百分比
 
 cover.advanced_fluid_detector.label=进阶流体探测器
@@ -4102,7 +4102,7 @@ gregtech.machine.fisher.hv.name=进阶捕鱼机 II
 gregtech.machine.fisher.ev.name=进阶捕鱼机 III
 gregtech.machine.fisher.tooltip=每次消耗一根线捕鱼
 gregtech.machine.fisher.speed=每%d刻获得一条鱼（或者其它什么东西）
-gregtech.machine.fisher.requirement=需要正下方有边长为%d格的水源。
+gregtech.machine.fisher.requirement=需要以机器正下方为中心的%,dx%,d正方形水源。
 
 # World Accelerator
 gregtech.machine.world_accelerator.lv.name=基础世界加速器
@@ -4231,7 +4231,7 @@ gregtech.advancement.medium_voltage.37_advanced_integrated_logic_circuit.desc=�
 gregtech.advancement.medium_voltage.38_super_chest.name=新式存储
 gregtech.advancement.medium_voltage.38_super_chest.desc=制作一个超级箱 I。
 gregtech.advancement.medium_voltage.39_super_tank.name=海洋在哪里？
-gregtech.advancement.medium_voltage.39_super_tank.desc=建造一个超级缸 I。
+gregtech.advancement.medium_voltage.39_super_tank.desc=制作一个超级缸 I。
 gregtech.advancement.root_hv.name=高压
 gregtech.advancement.root_hv.desc=生产一块不锈钢锭。
 gregtech.advancement.high_voltage.40_workstation.name=工作站
@@ -4436,8 +4436,8 @@ gregtech.machine.cleanroom.tooltip.2=污染状态耗能为§f30EU/t§7，洁净�
 gregtech.machine.cleanroom.tooltip.3=超频增加每个周期的清洁度。
 gregtech.machine.cleanroom.tooltip.4=§b大小：§f5x5x5到15x15x15
 gregtech.machine.cleanroom.tooltip.hold_ctrl=按住CTRL以显示完整的结构信息
-gregtech.machine.cleanroom.tooltip.5=天花板需要§f过滤器机械方块§7，不包含边缘。
-gregtech.machine.cleanroom.tooltip.6=接受最多§f四扇门§7！ 门处于打开状态时不会影响洁净度。
+gregtech.machine.cleanroom.tooltip.5=天花板需要§f过滤器机械方块§7，不包含天花板的边缘。	
+gregtech.machine.cleanroom.tooltip.6=接受最多§f四扇门§7！门处于打开状态时不会影响洁净度。
 gregtech.machine.cleanroom.tooltip.7=发电机、消声仓、采矿机和原始机器对于超净间来说太脏了！
 gregtech.machine.cleanroom.tooltip.8=通过在墙壁上放置§f机械方块§7或§f二极管§7以便向内部输入能量。
 gregtech.machine.cleanroom.tooltip.9=使用§f通行仓§7在墙上发送物品和流体。
@@ -4789,7 +4789,7 @@ gregtech.tool_action.wrench.connect=§8使用扳手设置连接，潜行时则�
 gregtech.tool_action.wire_cutter.connect=§8使用剪线钳设置连接
 gregtech.tool_action.soft_mallet.reset=§8使用软锤开关机器
 gregtech.tool_action.soft_mallet.toggle_mode=§8使用软锤切换模式
-gregtech.tool_action.hammer=§8使用锻造锤来消声
+gregtech.tool_action.hammer=§8使用锻造锤来消音
 gregtech.tool_action.crowbar=§8使用撬棍移除覆盖板
 gregtech.tool_action.tape=§8使用胶带解决维护问题
 
@@ -4799,10 +4799,10 @@ gregtech.fluid.empty=空
 gregtech.fluid.amount=§7总量：%,d/%,d L
 gregtech.fluid.temperature=§c温度: %,d K
 gregtech.fluid.state_gas=§7状态：气态
-gregtech.fluid.temperature.cryogenic=§b低温！轻拿轻放！
+gregtech.fluid.temperature.cryogenic=§b低温流体！轻拿轻放！
 gregtech.fluid.state_liquid=§7状态：液态
 gregtech.fluid.state_plasma=§a状态：等离子态
-gregtech.fluid.type_acid.tooltip=§6强酸！轻拿轻放！
+gregtech.fluid.type_acid.tooltip=§6酸性流体！轻拿轻放！
 gregtech.gui.fuel_amount=燃料总量：
 gregtech.gui.fluid_amount=流体总量：
 gregtech.gui.toggle_view.disabled=切换视图（流体）
