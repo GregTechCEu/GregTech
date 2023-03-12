@@ -160,5 +160,6 @@ public class MaterialBlockBakedModel implements IBakedModel {
                     t -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(t.toString()));
             event.getModelRegistry().putObject(e.getKey(), baked);
         }
+        UNBAKED_MODEL_CACHE.clear();
     }
 }
