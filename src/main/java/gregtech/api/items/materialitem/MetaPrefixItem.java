@@ -23,6 +23,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -156,15 +157,22 @@ public class MetaPrefixItem extends StandardMetaItem {
                 if (material == null || !material.hasProperty(PropertyKey.BLAST)) return;
 
                 float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
+                if (heatDamage == 0.0) return;
+                boolean isHeat = heatDamage > 0;
+
+                if (isHeat && entity.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
+                    return;
+                }
+
                 ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
                     ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
                     if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
                 }
 
-                if (heatDamage > 0.0) {
+                if (isHeat) {
                     entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), heatDamage);
-                } else if (heatDamage < 0.0) {
+                } else {
                     entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -heatDamage);
                 }
             }
