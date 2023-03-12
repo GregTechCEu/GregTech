@@ -37,7 +37,7 @@ public class GroovyMaterialBuilderExpansion {
         List<MaterialFlag> flags = new ArrayList<>();
         for (String rawFlag : rawFlags) {
             MaterialFlag flag = MaterialFlag.getByName(rawFlag);
-            if (GroovyScriptCompat.validateNonNull(flag, () -> "Can't find material flag for '" + flag + "' in material builder")) {
+            if (GroovyScriptCompat.validateNonNull(flag, () -> "Can't find material flag for '" + rawFlag + "' in material builder")) {
                 flags.add(flag);
             }
         }
