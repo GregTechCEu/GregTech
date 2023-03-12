@@ -14,6 +14,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.crafttweaker.MaterialExpansion;
@@ -249,6 +250,7 @@ public class GroovyScriptCompat {
             ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
             ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
             ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
+            ExpansionHelper.mixinClass(RecipeBuilder.class, GroovyRecipeBuilderExpansion.class);
         }
     }
 }
