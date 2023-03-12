@@ -4,10 +4,12 @@ import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
@@ -26,6 +28,18 @@ public class BlockStoneCobbleMossy extends VariantBlock<BlockStoneCobbleMossy.Bl
     @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
+    }
+
+    @Override
+    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
+
+        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
+        if (below == getState(BlockStoneCobbleMossy.BlockType.CONCRETE_DARK) || below == getState(BlockStoneCobbleMossy.BlockType.CONCRETE_LIGHT)) {
+            if (!entityIn.isInWater()) {
+                entityIn.motionX *= 1.6;
+                entityIn.motionZ *= 1.6;
+            }
+        }
     }
 
     public enum BlockType implements IStringSerializable {
