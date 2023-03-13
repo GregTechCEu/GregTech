@@ -112,7 +112,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
         IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
         if (checkApplicableBlocks(below)) {
-            if (!entityIn.isInWater()) {
+            if (bonusSpeedCondition(entityIn)) {
                 entityIn.motionX *= getWalkingSpeedBonus();
                 entityIn.motionZ *= getWalkingSpeedBonus();
             }
