@@ -160,6 +160,8 @@ public class CommonProxy {
         registry.register(TREATED_WOOD_FENCE);
         registry.register(RUBBER_WOOD_FENCE_GATE);
         registry.register(TREATED_WOOD_FENCE_GATE);
+        registry.register(RUBBER_WOOD_DOOR);
+        registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);

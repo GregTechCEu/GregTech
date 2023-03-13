@@ -25,6 +25,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         setSoundType(SoundType.WOOD);
         setHarvestLevel(ToolClasses.AXE, 0);
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        this.useNeighborBrightness = true;
     }
 
     @Override
@@ -64,7 +65,6 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             this.setDefaultState(this.blockState.getBaseState()
                     .withProperty(HALF, EnumBlockHalf.BOTTOM)
                     .withProperty(VARIANT, BlockGregPlanks.BlockType.RUBBER_PLANK));
-            this.setLightOpacity(0);
         }
 
         @Override

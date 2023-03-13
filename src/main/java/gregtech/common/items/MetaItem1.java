@@ -18,6 +18,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.entities.GTBoatEntity.GTBoatType;
 import gregtech.common.items.behaviors.*;
 import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
@@ -642,6 +643,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         RUBBER_WOOD_BOAT = addItem(473, "rubber_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.RUBBER_WOOD_BOAT)).setMaxStackSize(1);
         TREATED_WOOD_BOAT = addItem(474, "treated_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.TREATED_WOOD_BOAT)).setMaxStackSize(1);
+        RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR));
+        TREATED_WOOD_DOOR = addItem(476, "treated_wood_door").addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR));
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");

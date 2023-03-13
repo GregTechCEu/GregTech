@@ -2285,6 +2285,8 @@ behavior.item_magnet.disabled=§cMagnetic Field Disabled
 
 metaitem.rubber_wood_boat.name=Rubber Wood Boat
 metaitem.treated_wood_boat.name=Treated Wood Boat
+metaitem.rubber_wood_door.name=Rubber Wood Door
+metaitem.treated_wood_door.name=Treated Wood Door
 
 entity.GTBoat.name=Boat
 

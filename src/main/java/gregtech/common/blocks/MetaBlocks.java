@@ -24,6 +24,7 @@ import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.wood.*;
+import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -128,6 +129,8 @@ public class MetaBlocks {
     public static BlockFence TREATED_WOOD_FENCE;
     public static BlockFenceGate RUBBER_WOOD_FENCE_GATE;
     public static BlockFenceGate TREATED_WOOD_FENCE_GATE;
+    public static BlockWoodenDoor RUBBER_WOOD_DOOR;
+    public static BlockWoodenDoor TREATED_WOOD_DOOR;
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
@@ -248,6 +251,10 @@ public class MetaBlocks {
         RUBBER_WOOD_FENCE_GATE.setRegistryName("rubber_wood_fence_gate").setTranslationKey("rubber_wood_fence_gate");
         TREATED_WOOD_FENCE_GATE = new BlockGregFenceGate();
         TREATED_WOOD_FENCE_GATE.setRegistryName("treated_wood_fence_gate").setTranslationKey("treated_wood_fence_gate");
+        RUBBER_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.RUBBER_WOOD_DOOR.getStackForm());
+        RUBBER_WOOD_DOOR.setRegistryName("rubber_wood_door").setTranslationKey("rubber_wood_door");
+        TREATED_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.TREATED_WOOD_DOOR.getStackForm());
+        TREATED_WOOD_DOOR.setRegistryName("treated_wood_door").setTranslationKey("treated_wood_door");
 
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
@@ -276,6 +283,8 @@ public class MetaBlocks {
         Blocks.FIRE.setFireInfo(TREATED_WOOD_FENCE, 5, 20);
         Blocks.FIRE.setFireInfo(RUBBER_WOOD_FENCE_GATE, 5, 20);
         Blocks.FIRE.setFireInfo(TREATED_WOOD_FENCE_GATE, 5, 20);
+        Blocks.FIRE.setFireInfo(RUBBER_WOOD_DOOR, 5, 20);
+        Blocks.FIRE.setFireInfo(TREATED_WOOD_DOOR, 5, 20);
         Blocks.FIRE.setFireInfo(BRITTLE_CHARCOAL, 5, 5);
     }
 

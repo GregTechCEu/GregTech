@@ -491,6 +491,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem RUBBER_WOOD_BOAT;
     public static MetaItem<?>.MetaValueItem TREATED_WOOD_BOAT;
 
+    public static MetaItem<?>.MetaValueItem RUBBER_WOOD_DOOR;
+    public static MetaItem<?>.MetaValueItem TREATED_WOOD_DOOR;
+
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
