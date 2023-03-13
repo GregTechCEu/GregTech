@@ -3,7 +3,6 @@ package gregtech.client.model.modelfactories;
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
-import gregtech.common.blocks.BlockOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -85,7 +84,6 @@ public class BakedModelHandler {
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
-        event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, new OreBakedModel());
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {
@@ -136,6 +134,5 @@ public class BakedModelHandler {
             return PerspectiveMapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK, cameraTransformType);
         }
     }
-
 }
 

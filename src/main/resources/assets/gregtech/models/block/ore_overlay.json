@@ -1,0 +1,17 @@
+{
+  "parent": "block/block",
+  "elements": [
+    {
+      "from": [  0,  0,  0 ],
+      "to":   [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#texture", "tintindex": 1, "cullface": "down" },
+        "up":    { "texture": "#texture", "tintindex": 1, "cullface": "up" },
+        "north": { "texture": "#texture", "tintindex": 1, "cullface": "north" },
+        "south": { "texture": "#texture", "tintindex": 1, "cullface": "south" },
+        "west":  { "texture": "#texture", "tintindex": 1, "cullface": "west" },
+        "east":  { "texture": "#texture", "tintindex": 1, "cullface": "east" }
+      }
+    }
+  ]
+}
