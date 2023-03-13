@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 public final class CoverDefinition {
@@ -21,29 +22,30 @@ public final class CoverDefinition {
     }
 
     /**
-     * @deprecated use {@link GregTechAPI#COVER_REGISTRY} and {@link gregtech.api.registry.GTSimpleRegistry#getObject(Object)}
+     * @param id the cover's id
+     * @return the cover associated with the id
      */
-    @Deprecated
     public static CoverDefinition getCoverById(@Nonnull ResourceLocation id) {
         return GregTechAPI.COVER_REGISTRY.getObject(id);
     }
 
     /**
-     * @see CoverIO
-     * @deprecated use {@link GregTechAPI#COVER_REGISTRY} and {@link gregtech.api.registry.GTSimpleRegistry#getObject(Object)}
+     * @param networkId the cover's network id
+     * @return the cover definition associated with the id
+     * @see CoverIO for an existing implementation
      */
-    @Deprecated
-    public static CoverDefinition getCoverByNetworkId(@SuppressWarnings("unused") int networkId) {
-        return null;
+    @Nullable
+    public static CoverDefinition getCoverByNetworkId(int networkId) {
+        return GregTechAPI.COVER_REGISTRY.getValueForId(networkId);
     }
 
     /**
-     * @see CoverIO
-     * @deprecated Use {@link CoverDefinition#getCoverId()} with {@link ResourceLocation#toString()}
+     * @param definition the cover's definition
+     * @return the network id associated with the cover
+     * @see CoverIO for an existing implementation
      */
-    @Deprecated
-    public static int getNetworkIdForCover(@SuppressWarnings("unused") CoverDefinition definition) {
-        return Integer.MAX_VALUE;
+    public static int getNetworkIdForCover(@Nonnull CoverDefinition definition) {
+        return GregTechAPI.COVER_REGISTRY.getId(definition.getCoverId());
     }
 
     public ResourceLocation getCoverId() {

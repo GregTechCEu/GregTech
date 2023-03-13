@@ -1,6 +1,5 @@
 package gregtech.api.cover;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,6 +18,8 @@ import java.util.function.Function;
  */
 public final class CoverIO {
 
+    public static final int NO_COVER_ID = -1;
+
     private CoverIO() {/**/}
 
     /**
@@ -31,13 +32,11 @@ public final class CoverIO {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             CoverBehavior coverBehavior = coverable.getCoverAtSide(coverSide);
             if (coverBehavior != null) {
-                buf.writeBoolean(true);
-                String name = coverBehavior.getCoverDefinition().getCoverId().toString();
-                buf.writeString(name);
+                buf.writeVarInt(CoverDefinition.getNetworkIdForCover(coverBehavior.getCoverDefinition()));
                 coverBehavior.writeInitialSyncData(buf);
             } else {
                 // cover was not attached
-                buf.writeBoolean(false);
+                buf.writeVarInt(NO_COVER_ID);
             }
         }
     }
@@ -52,14 +51,13 @@ public final class CoverIO {
     public static void receiveCoverSyncData(@Nonnull PacketBuffer buf, @Nonnull ICoverable coverable,
                                             @Nonnull BiConsumer<EnumFacing, CoverBehavior> coverWriter) {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
-            if (buf.readBoolean()) {
-                ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-                CoverDefinition coverDefinition = GregTechAPI.COVER_REGISTRY.getObject(coverLocation);
-                if (coverDefinition == null) {
-                    GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
-                            coverLocation, coverable.getPos());
+            int id = buf.readVarInt();
+            if (id != NO_COVER_ID) {
+                CoverDefinition definition = CoverDefinition.getCoverByNetworkId(id);
+                if (definition == null) {
+                    GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverable.getPos());
                 } else {
-                    CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, coverSide);
+                    CoverBehavior coverBehavior = definition.createCoverBehavior(coverable, coverSide);
                     coverBehavior.readInitialSyncData(buf);
                     coverWriter.accept(coverSide, coverBehavior);
                 }
@@ -76,7 +74,7 @@ public final class CoverIO {
     public static Consumer<PacketBuffer> getCoverPlacementCustomDataWriter(@Nonnull EnumFacing side, @Nonnull CoverBehavior behavior) {
         return buffer -> {
             buffer.writeByte(side.getIndex());
-            buffer.writeString(behavior.getCoverDefinition().getCoverId().toString());
+            buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(behavior.getCoverDefinition()));
             behavior.writeInitialSyncData(buffer);
         };
     }
@@ -94,11 +92,10 @@ public final class CoverIO {
                                           @Nonnull Runnable renderUpdater) {
         //cover placement event
         EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-        ResourceLocation coverLocation = new ResourceLocation(buf.readString(Short.MAX_VALUE));
-        CoverDefinition coverDefinition = GregTechAPI.COVER_REGISTRY.getObject(coverLocation);
+        int id = buf.readVarInt();
+        CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(id);
         if (coverDefinition == null) {
-            GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
-                    coverLocation, coverable.getPos());
+            GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverable.getPos());
         } else {
             CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(coverable, placementSide);
             coverWriter.accept(placementSide, coverBehavior);
@@ -145,7 +142,7 @@ public final class CoverIO {
             if (tag.hasKey("CoverId", Constants.NBT.TAG_STRING)) {
                 EnumFacing coverSide = EnumFacing.VALUES[tag.getByte("Side")];
                 ResourceLocation coverLocation = new ResourceLocation(tag.getString("CoverId"));
-                CoverDefinition coverDefinition = GregTechAPI.COVER_REGISTRY.getObject(coverLocation);
+                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
                 if (coverDefinition == null) {
                     GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
                             coverLocation, coverable.getPos());
