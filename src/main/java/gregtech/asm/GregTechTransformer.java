@@ -1,5 +1,6 @@
 package gregtech.asm;
 
+import gregtech.api.GTValues;
 import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
@@ -14,7 +15,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
@@ -75,6 +75,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             }
             case BlockVisitor.TARGET_CLASS_NAME: {
                 try {
+                    // must use Class#forName because CTM is client side only, and there is no other way to check
                     Class.forName("team.chisel.ctm.CTM", false, Launch.classLoader);
                 } catch (ClassNotFoundException ignored) {
                     ClassReader classReader = new ClassReader(basicClass);
@@ -120,7 +121,8 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
 
-                ModContainer container = Loader.instance().getIndexedModList().get("nuclearcraft");
+                // fix NC recipe compat different depending on overhaul vs underhaul
+                ModContainer container = Loader.instance().getIndexedModList().get(GTValues.MODID_NC);
                 if (container.getVersion().contains("2o")) { // overhauled
                     classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new), 0);
                 } else {
@@ -130,18 +132,17 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
                 // do not conflict with EnderCore's changes, which already do what we need
-                if (isModPresent("com.enderio.core.IEnderMod")) {
-                    return basicClass;
+                if (!Loader.instance().getIndexedModList().containsKey(GTValues.MODID_ECORE)) {
+                    ClassNode classNode = new ClassNode();
+                    ClassReader classReader = new ClassReader(basicClass);
+                    classReader.accept(classNode, 0);
+                    Iterator<MethodNode> methods = classNode.methods.iterator();
+                    RenderItemVisitor.transform(methods);
+                    ClassWriter classWriter = new ClassWriter(0);
+                    classNode.accept(classWriter);
+                    return classWriter.toByteArray();
                 }
-
-                ClassNode classNode = new ClassNode();
-                ClassReader classReader = new ClassReader(basicClass);
-                classReader.accept(classNode, 0);
-                Iterator<MethodNode> methods = classNode.methods.iterator();
-                RenderItemVisitor.transform(methods);
-                ClassWriter classWriter = new ClassWriter(0);
-                classNode.accept(classWriter);
-                return classWriter.toByteArray();
+                break;
             }
             case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
@@ -180,24 +181,5 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             return classWriter.toByteArray();
         }
         return basicClass;
-    }
-
-    /**
-     * Cannot use {@link Loader#isModLoaded(String)} because of classloading issues with mods using mixin.
-     * <p>
-     * Instead, a given class from a mod must be checked if present to determine if it will be loaded after coremod
-     * loading completes.
-     *
-     * @param className the name of the class to check
-     * @return if the mod is present
-     */
-    private static boolean isModPresent(@Nonnull String className) {
-        // cannot use Loader#isModLoaded because of classloading issues with mods using mixin
-        try {
-            Class.forName(className, false, null);
-            return true;
-        } catch (NoClassDefFoundError | ClassNotFoundException ignored) {
-            return false;
-        }
     }
 }
