@@ -7,12 +7,18 @@ import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
+@EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class MaterialIconType {
 
     public static final Map<String, MaterialIconType> ICON_TYPES = new HashMap<>();
@@ -127,40 +133,45 @@ public class MaterialIconType {
     /**
      * Find the location of the asset associated with the iconset or its parents as a fallback
      *
-     * @param materialIconSet the starting IconSet to get the location for
-     * @param cache           the cache to store the value in
-     * @param fullPath        the full path to the asset with formatting (%s) for IconSet and IconType names
-     * @param path            the abbreviated path to the asset with formatting (%s) for IconSet and IconType names
+     * @param iconSet  the starting IconSet to get the location for
+     * @param cache    the cache to store the value in
+     * @param fullPath the full path to the asset with formatting (%s) for IconSet and IconType names
+     * @param path     the abbreviated path to the asset with formatting (%s) for IconSet and IconType names
      * @return the location of the asset
      */
     @Nonnull
-    public ResourceLocation recurseIconsetPath(@Nonnull MaterialIconSet materialIconSet,
+    public ResourceLocation recurseIconsetPath(@Nonnull MaterialIconSet iconSet,
                                                @Nonnull Table<MaterialIconType, MaterialIconSet, ResourceLocation> cache,
                                                @Nonnull String fullPath, @Nonnull String path) {
-        if (cache.contains(this, materialIconSet)) {
-            return cache.get(this, materialIconSet);
+        if (cache.contains(this, iconSet)) {
+            return cache.get(this, iconSet);
         }
 
-        MaterialIconSet iconSet = materialIconSet;
-        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            while (!iconSet.isRootIconset) {
-                ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format(fullPath, iconSet.name, this.name));
-                if (ResourceHelper.doResourcepacksHaveResource(location)) {
-                    break;
-                } else {
-                    iconSet = iconSet.parentIconset;
-                }
+        if (!iconSet.isRootIconset &&
+                FMLCommonHandler.instance().getSidedDelegate() != null && // Test environment check
+                FMLCommonHandler.instance().getSide().isClient()) {
+            ResourceLocation fullLocation = new ResourceLocation(GTValues.MODID, String.format(fullPath, iconSet.name, this.name));
+            if (!ResourceHelper.doResourcepacksHaveResource(fullLocation)) {
+                ResourceLocation iconSetPath = recurseIconsetPath(iconSet.parentIconset, cache, fullPath, path);
+                cache.put(this, iconSet, iconSetPath);
+                return iconSetPath;
             }
         }
 
-        ResourceLocation location = new ResourceLocation(GTValues.MODID, String.format(path, iconSet.name, this.name));
-        cache.put(this, iconSet, location);
-
-        return location;
+        ResourceLocation iconSetPath = new ResourceLocation(GTValues.MODID, String.format(path, iconSet.name, this.name));
+        cache.put(this, iconSet, iconSetPath);
+        return iconSetPath;
     }
 
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public static void onModelBake(ModelBakeEvent event) {
+        ITEM_MODEL_CACHE.clear();
+        BLOCK_TEXTURE_CACHE.clear();
     }
 }

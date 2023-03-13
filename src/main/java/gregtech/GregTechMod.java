@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
@@ -24,7 +25,7 @@ import net.minecraftforge.fml.common.event.*;
                 + "after:forestry;"
                 + "after:jei@[4.15.0,);"
                 + "after:crafttweaker@[4.1.20,);"
-                + "after:groovyscript@[0.1.0,);")
+                + "after:groovyscript@[0.4.0,);")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without
@@ -46,6 +47,9 @@ public class GregTechMod {
         OreGlob.setCompiler(input -> new OreGlobParser(input).compile());
         moduleManager.registerContainer(new GregTechModules());
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
+
+        /* GroovyScript must be initialized during construction since the first load stage is right after construction */
+        GroovyScriptCompat.init();
     }
 
     @EventHandler

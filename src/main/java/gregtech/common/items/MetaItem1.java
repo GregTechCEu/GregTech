@@ -496,6 +496,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_FLUID_VOIDING_ADVANCED = addItem(315, "cover.fluid.voiding.advanced");
         COVER_ITEM_VOIDING = addItem(316, "cover.item.voiding");
         COVER_ITEM_VOIDING_ADVANCED = addItem(317, "cover.item.voiding.advanced");
+        COVER_STORAGE = addItem(321, "cover.storage");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
