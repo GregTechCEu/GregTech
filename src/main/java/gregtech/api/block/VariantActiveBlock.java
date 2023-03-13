@@ -2,7 +2,7 @@ package gregtech.api.block;
 
 import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
-import gregtech.client.model.modelfactories.ActiveVariantBlockBakedModel;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
