@@ -4,6 +4,7 @@ import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
+import gregtech.api.util.ItemStackHashStrategy;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -86,11 +87,20 @@ public class CraftTweakerItemInputWrapper extends GTRecipeInput {
 
         if (this.isConsumable != other.isConsumable) return false;
 
-        if (this.ingredient.getItems().size() != other.ingredient.getItems().size()) return false;
+        List<IItemStack> items = this.ingredient.getItems();
+        List<IItemStack> otherItems = other.ingredient.getItems();
+        if (items.size() != otherItems.size()) return false;
         for (int i = 0; i < this.ingredient.getItems().size(); i++) {
-            if (!this.ingredient.getItems().get(i).matches(other.ingredient.getItems().get(i))) return false;
+            if (items.get(i).getInternal() instanceof ItemStack && otherItems.get(i).getInternal() instanceof ItemStack) {
+                // bypass CT's equals method which returns different values depending on the order because of stack quantity
+                if (!ItemStackHashStrategy.comparingAllButCount().equals(CraftTweakerMC.getItemStack(items.get(i)),
+                        CraftTweakerMC.getItemStack(otherItems.get(i)))) {
+                    return false;
+                }
+            } else if (!items.get(i).matches(otherItems.get(i))) {
+                return false;
+            }
         }
-
         return true;
     }
 
