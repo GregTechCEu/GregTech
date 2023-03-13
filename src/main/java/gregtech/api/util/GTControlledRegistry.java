@@ -2,8 +2,11 @@ package gregtech.api.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import gregtech.api.registry.GTSimpleRegistry;
+import gregtech.api.GTValues;
 import net.minecraft.util.IntIdentityHashBiMap;
+import net.minecraft.util.registry.RegistrySimple;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,13 +15,47 @@ import java.util.Map;
 
 // this class should extend RegistryNamespaced but due to
 // ForgeGradle bug (https://github.com/MinecraftForge/ForgeGradle/issues/498) it gives compile errors in CI environment
-public class GTControlledRegistry<K, V> extends GTSimpleRegistry<K, V> {
+public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
 
+    protected boolean frozen = true;
     protected final int maxId;
 
     public GTControlledRegistry(int maxId) {
         this.maxId = maxId;
         this.inverseObjectRegistry = ((BiMap<K, V>) this.registryObjects).inverse();
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void freeze() {
+        if (frozen) {
+            throw new IllegalStateException("Registry is already frozen!");
+        }
+
+        if (!checkActiveModContainerIsGregtech()) {
+            return;
+        }
+
+        this.frozen = true;
+    }
+
+    public void unfreeze() {
+        if (!frozen) {
+            throw new IllegalStateException("Registry is already unfrozen!");
+        }
+
+        if (!checkActiveModContainerIsGregtech()) {
+            return;
+        }
+
+        this.frozen = false;
+    }
+
+    private static boolean checkActiveModContainerIsGregtech() {
+        ModContainer container = Loader.instance().activeModContainer();
+        return container != null && container.getModId().equals(GTValues.MODID);
     }
 
     public void register(int id, K key, V value) {

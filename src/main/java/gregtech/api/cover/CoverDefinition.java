@@ -36,7 +36,7 @@ public final class CoverDefinition {
      */
     @Nullable
     public static CoverDefinition getCoverByNetworkId(int networkId) {
-        return GregTechAPI.COVER_REGISTRY.getValueForId(networkId);
+        return GregTechAPI.COVER_REGISTRY.getObjectById(networkId);
     }
 
     /**
@@ -45,7 +45,7 @@ public final class CoverDefinition {
      * @see CoverIO for an existing implementation
      */
     public static int getNetworkIdForCover(@Nonnull CoverDefinition definition) {
-        return GregTechAPI.COVER_REGISTRY.getId(definition.getCoverId());
+        return GregTechAPI.COVER_REGISTRY.getIDForObject(definition);
     }
 
     public ResourceLocation getCoverId() {
