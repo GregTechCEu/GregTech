@@ -1,6 +1,5 @@
 package gregtech.asm;
 
-import gregtech.api.GTValues;
 import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
@@ -15,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
@@ -129,9 +129,11 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
-                if (Loader.isModLoaded(GTValues.MODID_ECORE)) {
+                // do not conflict with EnderCore's changes, which already do what we need
+                if (isModPresent("com.enderio.core.IEnderMod")) {
                     return basicClass;
                 }
+
                 ClassNode classNode = new ClassNode();
                 ClassReader classReader = new ClassReader(basicClass);
                 classReader.accept(classNode, 0);
@@ -178,5 +180,24 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             return classWriter.toByteArray();
         }
         return basicClass;
+    }
+
+    /**
+     * Cannot use {@link Loader#isModLoaded(String)} because of classloading issues with mods using mixin.
+     * <p>
+     * Instead, a given class from a mod must be checked if present to determine if it will be loaded after coremod
+     * loading completes.
+     *
+     * @param className the name of the class to check
+     * @return if the mod is present
+     */
+    private static boolean isModPresent(@Nonnull String className) {
+        // cannot use Loader#isModLoaded because of classloading issues with mods using mixin
+        try {
+            Class.forName(className, false, null);
+            return true;
+        } catch (NoClassDefFoundError | ClassNotFoundException ignored) {
+            return false;
+        }
     }
 }
