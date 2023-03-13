@@ -122,6 +122,7 @@ public class CoverBehaviors {
         registerBehavior(101, new ResourceLocation(GTValues.MODID, "fluid_voiding.advanced"), MetaItems.COVER_FLUID_VOIDING_ADVANCED, CoverFluidVoidingAdvanced::new);
         registerBehavior(102, new ResourceLocation(GTValues.MODID, "item_voiding"), MetaItems.COVER_ITEM_VOIDING, CoverItemVoiding::new);
         registerBehavior(103, new ResourceLocation(GTValues.MODID, "item_voiding.advanced"), MetaItems.COVER_ITEM_VOIDING_ADVANCED, CoverItemVoidingAdvanced::new);
+        registerBehavior(104, new ResourceLocation(GTValues.MODID, "storage"), MetaItems.COVER_STORAGE, CoverStorage::new);
 
     }
 

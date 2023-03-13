@@ -87,19 +87,14 @@ public final class ResourceHelper {
      */
     @SideOnly(Side.CLIENT)
     public static boolean doResourcepacksHaveResource(@Nonnull ResourceLocation resource) {
-        // check minecraft for null for CI environments
-        //noinspection ConstantValue
-        if (Minecraft.getMinecraft() != null) {
-            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-            try {
-                // check if the texture file exists
-                manager.getResource(resource);
-                return true;
-            } catch (IOException ignored) {
-                return false;
-            }
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        try {
+            // check if the texture file exists
+            manager.getResource(resource);
+            return true;
+        } catch (IOException ignored) {
+            return false;
         }
-        return false;
     }
 
     /**

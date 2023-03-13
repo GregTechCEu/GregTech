@@ -102,7 +102,15 @@ public class RecipeMaps {
     public static final RecipeMap<AssemblerRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.ASSEMBLER);
+            .setSound(GTSoundEvents.ASSEMBLER)
+            .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
+                if (recipeBuilder.fluidInputs.size() == 1 && recipeBuilder.fluidInputs.get(0).getInputFluidStack().getFluid() == Materials.SolderingAlloy.getFluid()) {
+                    int amount = recipeBuilder.fluidInputs.get(0).getInputFluidStack().amount;
+
+                    recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2)).buildAndRegister();
+                }
+            });
 
     /**
      * Example:

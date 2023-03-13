@@ -119,6 +119,12 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDPro
         hud.newString(I18n.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean shouldDrawHUD() {
+        return this.SLOT == EntityEquipmentSlot.CHEST;
+    }
+
     public int getEnergyPerUse() {
         return this.energyPerUse;
     }
