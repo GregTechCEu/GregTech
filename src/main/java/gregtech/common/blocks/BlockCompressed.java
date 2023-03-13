@@ -9,7 +9,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.MaterialStateMapper;
-import gregtech.client.model.modelfactories.MaterialBlockModelGenerator;
+import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -154,7 +154,7 @@ public final class BlockCompressed extends DelayedStateBlock {
                 MaterialIconType.block, s -> s.getValue(this.variantProperty).getMaterialIconSet()));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
-                    MaterialBlockModelGenerator.registerItemModel(
+                    MaterialBlockModelLoader.registerItemModel(
                             MaterialIconType.block,
                             state.getValue(this.variantProperty).getMaterialIconSet()));
         }

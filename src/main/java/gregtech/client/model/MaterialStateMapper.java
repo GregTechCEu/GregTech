@@ -2,7 +2,7 @@ package gregtech.client.model;
 
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.client.model.modelfactories.MaterialBlockModelGenerator;
+import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -26,7 +26,7 @@ public class MaterialStateMapper implements IStateMapper {
     public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block) {
         return block.getBlockState().getValidStates().stream().collect(Collectors.toMap(
                 s -> s,
-                s -> MaterialBlockModelGenerator.registerBlockModel(
+                s -> MaterialBlockModelLoader.registerBlockModel(
                         this.iconType,
                         this.materialFunction.apply(s))));
     }

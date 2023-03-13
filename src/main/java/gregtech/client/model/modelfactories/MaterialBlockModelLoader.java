@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
-public class MaterialBlockModelGenerator {
+public class MaterialBlockModelLoader {
 
     private static final Table<MaterialIconType, MaterialIconSet, Entry> ENTRIES = HashBasedTable.create();
 

@@ -15,7 +15,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.MaterialStateMapper;
-import gregtech.client.model.modelfactories.MaterialBlockModelGenerator;
+import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -309,7 +309,7 @@ public final class BlockFrame extends DelayedStateBlock {
                 MaterialIconType.frameGt, s -> s.getValue(this.variantProperty).getMaterialIconSet()));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
-                    MaterialBlockModelGenerator.registerItemModel(
+                    MaterialBlockModelLoader.registerItemModel(
                             MaterialIconType.frameGt,
                             state.getValue(this.variantProperty).getMaterialIconSet()));
         }
