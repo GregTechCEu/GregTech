@@ -7,16 +7,25 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 
@@ -135,5 +144,39 @@ public class AbstractRecipeLogicTest {
         MatcherAssert.assertThat(arl.isOutputsFull, is(false));
         MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
                 new ItemStack(Blocks.STONE, 1)), is(true));
+    }
+
+    @Test
+    public void trySearchNewRecipe_testEdgeCase() {
+        RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Materials.SulfurDioxide.getFluid(1000), Materials.Oxygen.getFluid(1000))
+                .notConsumable(OreDictUnifier.get(OrePrefix.dust, Materials.Iron))
+                .fluidOutputs(Materials.SulfurTrioxide.getFluid(1000))
+                .duration(200).EUt(7).buildAndRegister();
+
+        List<FluidStack> fluidList = new ArrayList<>();
+        fluidList.add(Materials.SulfurDioxide.getFluid(1000));
+        fluidList.add(Materials.Oxygen.getFluid(1000));
+
+        List<ItemStack> itemList = new ArrayList<>();
+        itemList.add(OreDictUnifier.get(OrePrefix.dust, Materials.Iron));
+
+
+        Recipe recipe = RecipeMaps.CHEMICAL_RECIPES.findRecipe(GTValues.V[GTValues.EV], Collections.emptyList(), fluidList, 64000);
+
+        Recipe recipe2 = RecipeMaps.LARGE_CHEMICAL_RECIPES.findRecipe(GTValues.V[GTValues.EV], Collections.emptyList(), fluidList, 64000);
+
+        MatcherAssert.assertThat(recipe, nullValue());
+
+        MatcherAssert.assertThat(recipe2, nullValue());
+
+        Recipe recipe3 = RecipeMaps.CHEMICAL_RECIPES.findRecipe(GTValues.V[GTValues.EV], itemList, fluidList, 64000);
+
+        Recipe recipe4 = RecipeMaps.LARGE_CHEMICAL_RECIPES.findRecipe(GTValues.V[GTValues.EV], itemList, fluidList, 64000);
+
+        MatcherAssert.assertThat(recipe3, notNullValue());
+
+        MatcherAssert.assertThat(recipe4, notNullValue());
+
     }
 }
