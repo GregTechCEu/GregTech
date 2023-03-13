@@ -8,7 +8,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IBlockOre;
-import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.OreBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
@@ -26,7 +25,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class BlockOre extends Block implements IBlockOre, IModelSupplier {
+public class BlockOre extends Block implements IBlockOre {
 
     public final PropertyStoneType STONE_TYPE;
     public final Material material;
@@ -182,12 +180,6 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
         return this.getDefaultState().withProperty(this.STONE_TYPE, stoneType);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
         ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream()

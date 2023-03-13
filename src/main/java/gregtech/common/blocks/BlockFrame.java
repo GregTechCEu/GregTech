@@ -14,9 +14,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.MaterialStateMapper;
-import gregtech.client.model.modelfactories.MaterialBlockBakedModel;
+import gregtech.client.model.modelfactories.MaterialBlockModelGenerator;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -38,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,7 +44,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public final class BlockFrame extends DelayedStateBlock implements IModelSupplier {
+public final class BlockFrame extends DelayedStateBlock {
 
     public static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
@@ -305,21 +303,15 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return BlockFaceShape.UNDEFINED;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
         ModelLoader.setCustomStateMapper(this, new MaterialStateMapper(
-                MaterialIconType.frameGt, s -> s.getValue(this.variantProperty)));
+                MaterialIconType.frameGt, s -> s.getValue(this.variantProperty).getMaterialIconSet()));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
-                    MaterialBlockBakedModel
-                            .get(MaterialIconType.frameGt, state.getValue(this.variantProperty))
-                            .getBakedModelId());
+                    MaterialBlockModelGenerator.registerItemModel(
+                            MaterialIconType.frameGt,
+                            state.getValue(this.variantProperty).getMaterialIconSet()));
         }
     }
 }

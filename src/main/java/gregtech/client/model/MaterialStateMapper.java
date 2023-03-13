@@ -1,8 +1,8 @@
 package gregtech.client.model;
 
-import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.client.model.modelfactories.MaterialBlockBakedModel;
+import gregtech.client.model.modelfactories.MaterialBlockModelGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -13,10 +13,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MaterialStateMapper implements IStateMapper {
-    private final Function<IBlockState, Material> materialFunction;
+
+    private final Function<IBlockState, MaterialIconSet> materialFunction;
     private final MaterialIconType iconType;
 
-    public MaterialStateMapper(MaterialIconType iconType, Function<IBlockState, Material> materialFunction) {
+    public MaterialStateMapper(MaterialIconType iconType, Function<IBlockState, MaterialIconSet> materialFunction) {
         this.materialFunction = materialFunction;
         this.iconType = iconType;
     }
@@ -25,9 +26,8 @@ public class MaterialStateMapper implements IStateMapper {
     public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block) {
         return block.getBlockState().getValidStates().stream().collect(Collectors.toMap(
                 s -> s,
-                s -> MaterialBlockBakedModel.get(
-                                this.iconType,
-                                this.materialFunction.apply(s).getMaterialIconSet())
-                        .getBakedModelId()));
+                s -> MaterialBlockModelGenerator.registerBlockModel(
+                        this.iconType,
+                        this.materialFunction.apply(s))));
     }
 }
