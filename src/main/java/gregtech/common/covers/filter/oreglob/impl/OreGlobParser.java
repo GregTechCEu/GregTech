@@ -44,6 +44,8 @@ public final class OreGlobParser {
     private final String input;
     private final List<Report> reports = new ArrayList<>();
 
+    private boolean error;
+
     private boolean caseSensitive;
 
     private int inputIndex;
@@ -204,17 +206,16 @@ public final class OreGlobParser {
 
     public OreGlobCompileResult compile() {
         advance();
-        if (tokenType == EOF) {
-            return new OreGlobCompileResult(ImpossibleOreGlob.getInstance(),
-                    this.reports);
-        } else {
+        if (tokenType != EOF) {
             OreGlobNode expr = or();
             if (tokenType != EOF) { // likely caused by program error, not user issue
                 error("Unexpected token " + getTokenSection() + " after end of expression");
             }
-            return new OreGlobCompileResult(new NodeOreGlob(expr),
-                    this.reports);
+            if (!error) {
+                return new OreGlobCompileResult(new NodeOreGlob(expr), this.reports);
+            }
         }
+        return new OreGlobCompileResult(ImpossibleOreGlob.getInstance(), this.reports);
     }
 
     private OreGlobNode or() {
@@ -368,6 +369,7 @@ public final class OreGlobParser {
     }
 
     private void error(String message, int start, int len) {
+        this.error = true;
         this.reports.add(new Report(message, true, start, len));
     }
 
