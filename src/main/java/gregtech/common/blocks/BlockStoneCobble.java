@@ -4,12 +4,10 @@ import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
@@ -31,15 +29,13 @@ public class BlockStoneCobble extends VariantBlock<BlockStoneCobble.BlockType> {
     }
 
     @Override
-    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
 
-        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
-        if (below == getState(BlockStoneCobble.BlockType.CONCRETE_DARK) || below == getState(BlockStoneCobble.BlockType.CONCRETE_LIGHT)) {
-            if (!entityIn.isInWater()) {
-                entityIn.motionX *= 1.6;
-                entityIn.motionZ *= 1.6;
-            }
-        }
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockStoneCobble.BlockType.CONCRETE_DARK) || state == getState(BlockStoneCobble.BlockType.CONCRETE_LIGHT);
     }
 
     public enum BlockType implements IStringSerializable {
