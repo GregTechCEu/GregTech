@@ -21,13 +21,17 @@ import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.BIO_CHAFF;
 
-public class WoodMachineRecipes {
+public class WoodRecipeLoader {
 
     public static void init() {
         registerWoodRecipes();
+        registerGTWoodRecipes();
         registerPyrolyseOvenRecipes();
     }
 
+    /**
+     * Standardized processing for wood types
+     */
     private static void registerWoodRecipes() {
         for (WoodTypeEntry entry : WoodTypeEntry.ENTRIES) {
             final String name = entry.getWoodName();
@@ -142,7 +146,12 @@ public class WoodMachineRecipes {
                         .duration(100).EUt(4).buildAndRegister();
             }
         }
+    }
 
+    /**
+     * Standard recipes for GT woods
+     */
+    private static void registerGTWoodRecipes() {
         // GT wood special handling
         ModHandler.addShapelessRecipe("rubber_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.nerfWoodCrafting ? 2 : 4), new ItemStack(MetaBlocks.RUBBER_LOG));
         ModHandler.addShapedRecipe("rubber_wood_planks_saw", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6), "s", "L", 'L', new ItemStack(MetaBlocks.RUBBER_LOG));
@@ -159,6 +168,9 @@ public class WoodMachineRecipes {
         }
     }
 
+    /**
+     * Pyrolyse recipes
+     */
     private static void registerPyrolyseOvenRecipes() {
         // Logs ================================================
 
