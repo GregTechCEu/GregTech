@@ -438,7 +438,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(100).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(40).circuitMeta(7).inputs(new ItemStack(Items.STICK, 7)).outputs(new ItemStack(Blocks.LADDER, 2)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(40).circuitMeta(7).inputs(new ItemStack(Items.STICK, 7)).outputs(new ItemStack(Blocks.LADDER, ConfigHolder.recipes.hardWoodRecipes ? 2 : 3)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(4).duration(100).inputs(new ItemStack(Items.MINECART)).inputs(OreDictUnifier.get("chestWood")).outputs(new ItemStack(Items.CHEST_MINECART)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(4).duration(100).inputs(new ItemStack(Items.MINECART)).inputs(new ItemStack(Blocks.FURNACE)).outputs(new ItemStack(Items.FURNACE_MINECART)).buildAndRegister();
