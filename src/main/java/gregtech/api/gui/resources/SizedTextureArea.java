@@ -38,15 +38,15 @@ public class SizedTextureArea extends TextureArea {
     }
 
     public void drawHorizontalCutSubArea(int x, int y, int width, int height, double drawnV, double drawnHeight) {
-        double drawnWidth = width / 2.0 / pixelImageWidth;
         int half = width / 2;
+        double drawnWidth = half / pixelImageWidth;
         drawSubArea(x, y, half, height, 0.0, drawnV, drawnWidth, drawnHeight);
         drawSubArea(x + half, y, width - half, height, 1.0 - drawnWidth, drawnV, drawnWidth, drawnHeight);
     }
 
     public void drawVerticalCutSubArea(int x, int y, int width, int height, double drawnU, double drawnWidth) {
-        double drawnHeight = height / 2.0 / pixelImageHeight;
         int half = height / 2;
+        double drawnHeight = half / pixelImageHeight;
         drawSubArea(x, y, width, half, drawnU, 0.0, drawnWidth, drawnHeight);
         drawSubArea(x, y + half, width, height - half, drawnU, 1.0 - drawnHeight, drawnWidth, drawnHeight);
     }
