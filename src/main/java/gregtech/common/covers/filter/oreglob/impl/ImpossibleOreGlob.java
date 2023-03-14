@@ -2,10 +2,8 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlob;
 
-import static gregtech.api.util.oreglob.OreGlob.VisualizationHint.LOGIC_INVERSION;
-
 /**
- * 'Empty' implementation of oreglob. This instance doesn't match anything.
+ * Simple implementation of oreglob that doesn't match anything.
  */
 public final class ImpossibleOreGlob extends OreGlob {
 
@@ -17,12 +15,12 @@ public final class ImpossibleOreGlob extends OreGlob {
 
     @Override
     public <V extends Visualizer> V visualize(V visualizer) {
-        visualizer.text("(impossible to match)", LOGIC_INVERSION);
+        NodeVisualizer.impossible(visualizer);
         return visualizer;
     }
 
     @Override
     public boolean matches(String input) {
-        return input.isEmpty();
+        return false;
     }
 }

@@ -5,6 +5,14 @@ import java.util.Collection;
 /**
  * Compilation result for oreGlob.
  * <p>
+ * OreGlobCompileResult contains OreGlob instance and array of reports. Report is
+ * either an error or a warning, and a report contains string message and optional
+ * position at the input string that the reported originated.
+ * <p>
+ * Whether the compilation failed or succeeded is determined by presence of error
+ * reports. If there's one or more error report, then the result should be regarded
+ * as failure. On failed compilation result, the OreGlob instance provided is expected
+ * to match no inputs.
  */
 public final class OreGlobCompileResult {
 

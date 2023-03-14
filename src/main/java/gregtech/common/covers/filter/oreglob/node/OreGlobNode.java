@@ -55,9 +55,8 @@ public abstract class OreGlobNode {
      * @return Next node, if exists
      */
     @Nullable
-    public final OreGlobNode visit(NodeVisitor visitor) {
-        if (this instanceof ErrorNode) visitor.error();
-        else switch (this.getMatchDescription()) {
+    public OreGlobNode visit(NodeVisitor visitor) {
+        switch (this.getMatchDescription()) {
             case EVERYTHING:
                 visitor.everything();
                 break;

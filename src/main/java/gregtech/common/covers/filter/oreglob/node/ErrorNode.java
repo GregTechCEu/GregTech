@@ -1,10 +1,18 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ErrorNode extends OreGlobNode {
 
     ErrorNode() {
+    }
+
+    @Nullable
+    @Override
+    public OreGlobNode visit(NodeVisitor visitor) {
+        visitor.error();
+        return getNext();
     }
 
     @Override

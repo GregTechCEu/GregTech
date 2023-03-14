@@ -148,26 +148,46 @@ class NodeVisualizer implements NodeVisitor {
 
     @Override
     public void everything() {
-        visualizer.text("anything", NODE);
+        everything(this.visualizer);
     }
 
     @Override
     public void impossible() {
-        visualizer.text("(impossible to match)", LOGIC_INVERSION);
+        impossible(this.visualizer);
     }
 
     @Override
     public void something() {
-        visualizer.text("something", NODE);
+        something(this.visualizer);
     }
 
     @Override
     public void nothing() {
-        visualizer.text("nothing", LOGIC_INVERSION);
+        nothing(this.visualizer);
     }
 
     @Override
     public void error() {
+        error(this.visualizer);
+    }
+
+    public static void everything(OreGlob.Visualizer visualizer) {
+        visualizer.text("anything", NODE);
+    }
+
+    public static void impossible(OreGlob.Visualizer visualizer) {
+        visualizer.text("(impossible to match)", LOGIC_INVERSION);
+    }
+
+    public static void something(OreGlob.Visualizer visualizer) {
+        visualizer.text("something", NODE);
+    }
+
+    public static void nothing(OreGlob.Visualizer visualizer) {
+        visualizer.text("nothing", LOGIC_INVERSION);
+    }
+
+    public static void error(OreGlob.Visualizer visualizer) {
         visualizer.text("ERROR!", ERROR);
     }
 }
