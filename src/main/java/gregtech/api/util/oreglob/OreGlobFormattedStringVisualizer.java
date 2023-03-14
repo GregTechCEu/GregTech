@@ -72,9 +72,9 @@ public class OreGlobFormattedStringVisualizer implements Visualizer {
         switch (hint) {
             case PLAINTEXT:
             case LABEL:
-                return TextFormatting.DARK_GREEN;
+                return TextFormatting.GRAY;
             case NODE:
-                return TextFormatting.GREEN;
+                return TextFormatting.WHITE;
             case VALUE:
                 return TextFormatting.YELLOW;
             case LOGIC_INVERSION:

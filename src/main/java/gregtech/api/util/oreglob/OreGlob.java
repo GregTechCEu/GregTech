@@ -1,6 +1,10 @@
 package gregtech.api.util.oreglob;
 
+import gregtech.api.unification.OreDictUnifier;
+import net.minecraft.item.ItemStack;
+
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -22,6 +26,18 @@ public abstract class OreGlob {
     public abstract <V extends Visualizer> V visualize(V visualizer);
 
     public abstract boolean matches(String input);
+
+    public boolean matches(ItemStack stack) {
+        Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stack);
+        if (oreDicts.isEmpty()) {
+            return matches("");
+        } else {
+            for (String oreDict : oreDicts) {
+                if (matches(oreDict)) return true;
+            }
+            return false;
+        }
+    }
 
     public final List<String> toFormattedString() {
         return toFormattedString("  ");

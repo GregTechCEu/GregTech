@@ -44,7 +44,7 @@ class NodeVisualizer implements NodeVisitor {
 
     @Override
     public void chars(int amount, boolean inverted) {
-        if (inverted) visualizer.text("any amount of characters including nothing, but not ", LOGIC_INVERSION);
+        if (inverted) visualizer.text("either more or less than ", LOGIC_INVERSION);
         visualizer.number(amount, VALUE);
         visualizer.text(amount == 1 ? " character" : " characters", NODE);
     }
