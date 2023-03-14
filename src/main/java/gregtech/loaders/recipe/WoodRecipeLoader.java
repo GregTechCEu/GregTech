@@ -47,7 +47,7 @@ public class WoodRecipeLoader {
             ItemStack input = entry.getLog();
             if (!input.isEmpty()) {
                 // nerf regular log -> plank crafting, if enabled
-                if (ConfigHolder.recipes.nerfWoodCrafting) {
+                if (ConfigHolder.recipes.nerfWoodCrafting && entry.shouldRemoveRecipes()) {
                     ModHandler.removeRecipeByName(name_planks);
                     ModHandler.addShapelessRecipe(name_planks, GTUtility.copyAmount(2, output), input.copy());
                 }
@@ -67,7 +67,7 @@ public class WoodRecipeLoader {
                         .buildAndRegister();
 
                 // log -> charcoal furnace recipe removal, if enabled
-                if (ConfigHolder.recipes.harderCharcoalRecipe) {
+                if (ConfigHolder.recipes.harderCharcoalRecipe && entry.shouldRemoveRecipes()) {
                     final ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(input);
                     if (outputStack.getItem() == Items.COAL && outputStack.getItemDamage() == 1) {
                         ModHandler.removeFurnaceSmelting(input);
