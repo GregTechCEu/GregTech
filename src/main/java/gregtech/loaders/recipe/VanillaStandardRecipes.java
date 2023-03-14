@@ -425,85 +425,6 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.TORCH, 8))
                 .duration(100).EUt(1).buildAndRegister();
 
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 1, 0))
-                .outputs(new ItemStack(Blocks.OAK_FENCE))
-                .circuitMeta(1)
-                .duration(100).EUt(4).buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 1, 1))
-                .outputs(new ItemStack(Blocks.SPRUCE_FENCE))
-                .circuitMeta(1)
-                .duration(100).EUt(4).buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 1, 2))
-                .outputs(new ItemStack(Blocks.BIRCH_FENCE))
-                .circuitMeta(1)
-                .duration(100).EUt(4).buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 1, 3))
-                .outputs(new ItemStack(Blocks.JUNGLE_FENCE))
-                .circuitMeta(1)
-                .duration(100).EUt(4).buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 1, 4))
-                .outputs(new ItemStack(Blocks.ACACIA_FENCE))
-                .circuitMeta(1)
-                .duration(100).EUt(4).buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 1, 5))
-                .outputs(new ItemStack(Blocks.DARK_OAK_FENCE))
-                .circuitMeta(1)
-                .duration(100).EUt(4).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 2, 0))
-                .input(stick, Wood, 2)
-                .outputs(new ItemStack(Blocks.OAK_FENCE_GATE))
-                .circuitMeta(2)
-                .duration(100).EUt(4).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 2, 1))
-                .input(stick, Wood, 2)
-                .outputs(new ItemStack(Blocks.SPRUCE_FENCE_GATE))
-                .circuitMeta(2)
-                .duration(100).EUt(4).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 2, 2))
-                .input(stick, Wood, 2)
-                .outputs(new ItemStack(Blocks.BIRCH_FENCE_GATE))
-                .circuitMeta(2)
-                .duration(100).EUt(4).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 2, 3))
-                .input(stick, Wood, 2)
-                .outputs(new ItemStack(Blocks.JUNGLE_FENCE_GATE))
-                .circuitMeta(2)
-                .duration(100).EUt(4).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 2, 4))
-                .input(stick, Wood, 2)
-                .outputs(new ItemStack(Blocks.ACACIA_FENCE_GATE))
-                .circuitMeta(2)
-                .duration(100).EUt(4).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 2, 5))
-                .input(stick, Wood, 2)
-                .outputs(new ItemStack(Blocks.DARK_OAK_FENCE_GATE))
-                .circuitMeta(2)
-                .duration(100).EUt(4).buildAndRegister();
-
         ModHandler.addShapedRecipe("sticky_resin_torch", new ItemStack(Blocks.TORCH, 3), "X", "Y", 'X', MetaItems.STICKY_RESIN, 'Y', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_sulfur", new ItemStack(Blocks.TORCH, 2), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Sulfur), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_phosphorus", new ItemStack(Blocks.TORCH, 6), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Phosphorus), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
@@ -516,13 +437,6 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(dust, Redstone).input(stick, Wood).outputs(new ItemStack(Blocks.REDSTONE_TORCH, 1)).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(100).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 0)).outputs(new ItemStack(Blocks.OAK_STAIRS, 4)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 1)).outputs(new ItemStack(Blocks.SPRUCE_STAIRS, 4)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 2)).outputs(new ItemStack(Blocks.BIRCH_STAIRS, 4)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 3)).outputs(new ItemStack(Blocks.JUNGLE_STAIRS, 4)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 4)).outputs(new ItemStack(Blocks.ACACIA_STAIRS, 4)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(7).inputs(new ItemStack(Blocks.PLANKS, 6, 5)).outputs(new ItemStack(Blocks.DARK_OAK_STAIRS, 4)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(40).circuitMeta(7).inputs(new ItemStack(Items.STICK, 7)).outputs(new ItemStack(Blocks.LADDER, 2)).buildAndRegister();
 
