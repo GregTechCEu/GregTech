@@ -115,8 +115,6 @@ class NodeVisualizer implements NodeVisitor {
                 }
                 return;
             case XOR:
-                // TODO no idea if this visualization is logically correct
-                //  does ! ( a ^ b ^ c ) equal to ( a eq b eq c )?
                 if (not) {
                     visualizer.text("either both or none of...", LOGIC_INVERSION);
                 } else {
@@ -133,11 +131,7 @@ class NodeVisualizer implements NodeVisitor {
                     if (i == nodes.size() - 2) { // append last entry
                         new NodeVisualizer(visualizer, indents + i + 1).visit(nodes.get(nodes.size() - 1));
                     } else { // append another XOR text
-                        if (not) {
-                            visualizer.text("either both or none of...", LOGIC_INVERSION);
-                        } else {
-                            visualizer.text("only one of...", NODE);
-                        }
+                        visualizer.text("only one of...", NODE);
                     }
                 }
                 return;
