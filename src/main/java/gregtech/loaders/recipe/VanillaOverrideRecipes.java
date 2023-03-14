@@ -20,6 +20,8 @@ import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
+import static gregtech.api.unification.material.Materials.Wood;
+import static gregtech.api.unification.ore.OrePrefix.slab;
 
 public class VanillaOverrideRecipes {
 
@@ -164,7 +166,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:trapdoor"));
         ModHandler.addShapedRecipe("trapdoor", new ItemStack(Blocks.TRAPDOOR), "SRS", "RRR", "SRS",
-                'S', "slabWood",
+                'S', new UnificationEntry(OrePrefix.slab, Materials.Wood),
                 'R', new UnificationEntry(OrePrefix.stick, Materials.Wood)
         );
 
@@ -278,7 +280,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Iron)
                 .input(OrePrefix.gearSmall, Materials.Iron)
-                .input("slabWood", 1)
+                .input(slab, Wood, 1)
                 .input("cobblestone", 1)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L))
                 .outputs(new ItemStack(Blocks.PISTON))
@@ -287,7 +289,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Steel)
                 .input(OrePrefix.gearSmall, Materials.Steel)
-                .input("slabWood", 2)
+                .input(slab, Wood, 2)
                 .input("cobblestone", 2)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 2))
                 .outputs(new ItemStack(Blocks.PISTON, 2))
@@ -296,7 +298,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Aluminium)
                 .input(OrePrefix.gearSmall, Materials.Aluminium)
-                .input("slabWood", 4)
+                .input(slab, Wood, 4)
                 .input("cobblestone", 4)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 3))
                 .outputs(new ItemStack(Blocks.PISTON, 4))
@@ -305,7 +307,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.StainlessSteel)
                 .input(OrePrefix.gearSmall, Materials.StainlessSteel)
-                .input("slabWood", 8)
+                .input(slab, Wood, 8)
                 .input("cobblestone", 8)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 4))
                 .outputs(new ItemStack(Blocks.PISTON, 8))
@@ -314,7 +316,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Titanium)
                 .input(OrePrefix.gearSmall, Materials.Titanium)
-                .input("slabWood", 16)
+                .input(slab, Wood, 16)
                 .input("cobblestone", 16)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 8))
                 .outputs(new ItemStack(Blocks.PISTON, 16))
@@ -402,21 +404,21 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe("daylight_detector", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.NetherQuartz),
-                'S', "slabWood",
+                'S', new UnificationEntry(OrePrefix.slab, Materials.Wood),
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
         );
 
         ModHandler.addShapedRecipe("daylight_detector_certus", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.CertusQuartz),
-                'S', "slabWood",
+                'S', new UnificationEntry(OrePrefix.slab, Materials.Wood),
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
         );
 
         ModHandler.addShapedRecipe("daylight_detector_quartzite", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Quartzite),
-                'S', "slabWood",
+                'S', new UnificationEntry(OrePrefix.slab, Materials.Wood),
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
         );
 

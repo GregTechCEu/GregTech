@@ -370,7 +370,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
-                .input("slabWood")
+                .input(slab, Wood)
                 .outputs(new ItemStack(Items.BOWL))
                 .output(dustSmall, Wood)
                 .duration(50).EUt(VA[ULV])
@@ -825,13 +825,13 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("daylight_detector_certus", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "CCC", "PPP",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'C', new UnificationEntry(gem, CertusQuartz),
-                'P', "slabWood"
+                'P', new UnificationEntry(OrePrefix.slab, Materials.Wood)
         );
 
         ModHandler.addShapedRecipe("daylight_detector_quartzite", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "CCC", "PPP",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'C', new UnificationEntry(gem, Quartzite),
-                'P', "slabWood"
+                'P', new UnificationEntry(OrePrefix.slab, Materials.Wood)
         );
 
         ASSEMBLER_RECIPES.recipeBuilder()
