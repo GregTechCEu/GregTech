@@ -55,7 +55,7 @@ public abstract class OreGlob {
     /**
      * Tries to match each ore dictionary entries associated with given item.
      * If any of them matches, {@code true} is returned.
-     * <b>
+     * <p>
      * For items not associated with any ore dictionary entries, this method returns
      * {@code true} if this instance matches empty string instead.
      *
