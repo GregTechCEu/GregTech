@@ -505,43 +505,37 @@ public class VanillaStandardRecipes {
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 3, 0))
-                .input(stick, Wood, 2)
+                .inputs(new ItemStack(Blocks.PLANKS, 5, 0))
                 .outputs(new ItemStack(Items.BOAT))
                 .circuitMeta(5)
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 3, 1))
-                .input(stick, Wood, 2)
+                .inputs(new ItemStack(Blocks.PLANKS, 5, 1))
                 .outputs(new ItemStack(Items.SPRUCE_BOAT))
                 .circuitMeta(5)
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 3, 2))
-                .input(stick, Wood, 2)
+                .inputs(new ItemStack(Blocks.PLANKS, 5, 2))
                 .outputs(new ItemStack(Items.BIRCH_BOAT))
                 .circuitMeta(5)
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 3, 3))
-                .input(stick, Wood, 2)
+                .inputs(new ItemStack(Blocks.PLANKS, 5, 3))
                 .outputs(new ItemStack(Items.JUNGLE_BOAT))
                 .circuitMeta(5)
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 3, 4))
-                .input(stick, Wood, 2)
+                .inputs(new ItemStack(Blocks.PLANKS, 5, 4))
                 .outputs(new ItemStack(Items.ACACIA_BOAT))
                 .circuitMeta(5)
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.PLANKS, 3, 5))
-                .input(stick, Wood, 2)
+                .inputs(new ItemStack(Blocks.PLANKS, 5, 5))
                 .outputs(new ItemStack(Items.DARK_OAK_BOAT))
                 .circuitMeta(5)
                 .duration(100).EUt(4).buildAndRegister();
