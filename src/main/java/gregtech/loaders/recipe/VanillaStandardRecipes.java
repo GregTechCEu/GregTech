@@ -363,14 +363,14 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
+                .input("treeSapling")
                 .outputs(new ItemStack(Items.STICK))
                 .output(dustTiny, Wood)
                 .duration(16).EUt(VA[ULV])
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
+                .input("slabWood")
                 .outputs(new ItemStack(Items.BOWL))
                 .output(dustSmall, Wood)
                 .duration(50).EUt(VA[ULV])
@@ -605,7 +605,7 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
                     .buildAndRegister();
 
-            if(i != 0) {
+            if (i != 0) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                         .inputs(new ItemStack(Blocks.CONCRETE))
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
@@ -631,7 +631,7 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
                     .buildAndRegister();
 
-            if(i != 0) {
+            if (i != 0) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                         .inputs(new ItemStack(Blocks.WOOL))
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
@@ -825,13 +825,13 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("daylight_detector_certus", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "CCC", "PPP",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'C', new UnificationEntry(gem, CertusQuartz),
-                'P', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W)
+                'P', "slabWood"
         );
 
         ModHandler.addShapedRecipe("daylight_detector_quartzite", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "CCC", "PPP",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'C', new UnificationEntry(gem, Quartzite),
-                'P', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W)
+                'P', "slabWood"
         );
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).circuitMeta(1).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();

@@ -164,7 +164,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:trapdoor"));
         ModHandler.addShapedRecipe("trapdoor", new ItemStack(Blocks.TRAPDOOR), "SRS", "RRR", "SRS",
-                'S', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W),
+                'S', "slabWood",
                 'R', new UnificationEntry(OrePrefix.stick, Materials.Wood)
         );
 
@@ -402,21 +402,21 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe("daylight_detector", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.NetherQuartz),
-                'S', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W),
+                'S', "slabWood",
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
         );
 
         ModHandler.addShapedRecipe("daylight_detector_certus", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.CertusQuartz),
-                'S', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W),
+                'S', "slabWood",
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
         );
 
         ModHandler.addShapedRecipe("daylight_detector_quartzite", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Quartzite),
-                'S', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W),
+                'S', "slabWood",
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
         );
 
