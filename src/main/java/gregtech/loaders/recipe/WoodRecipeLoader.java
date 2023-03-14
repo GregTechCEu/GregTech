@@ -68,10 +68,9 @@ public class WoodRecipeLoader {
 
                 // log -> charcoal furnace recipe removal, if enabled
                 if (ConfigHolder.recipes.harderCharcoalRecipe) {
-                    final ItemStack log = entry.getLog();
-                    final ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(log);
+                    final ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(input);
                     if (outputStack.getItem() == Items.COAL && outputStack.getItemDamage() == 1) {
-                        ModHandler.removeFurnaceSmelting(log);
+                        ModHandler.removeFurnaceSmelting(input);
                     }
                 }
             }
