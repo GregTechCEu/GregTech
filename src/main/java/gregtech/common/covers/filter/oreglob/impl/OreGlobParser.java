@@ -264,15 +264,15 @@ public final class OreGlobParser {
         return not(false);
     }
 
-    private OreGlobNode not(boolean insideInversion) {
-        boolean inverted = false;
-        while (advanceIf(NOT)) inverted = !inverted;
+    private OreGlobNode not(boolean insideNegation) {
+        boolean not = false;
+        while (advanceIf(NOT)) not = !not;
         OreGlobNode root;
 
-        if (inverted && advanceIf(LPAR)) {
-            inverted = false;
+        if (not && advanceIf(LPAR)) {
+            not = false;
             if (advanceIf(RPAR)) { // negated empty, i.e. something
-                root = OreGlobNodes.not(OreGlobNodes.nothing());
+                root = OreGlobNodes.not(OreGlobNodes.empty());
             } else {
                 root = OreGlobNodes.not(or());
                 switch (tokenType) {
@@ -285,8 +285,8 @@ public final class OreGlobParser {
                 }
             }
         } else {
-            if (inverted && insideInversion) {
-                warn("Nested inversions can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
+            if (not && insideNegation) {
+                warn("Nested negations can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
             }
             root = primary();
         }
@@ -294,14 +294,14 @@ public final class OreGlobParser {
         switch (tokenType) {
             case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
                 int tokenStart = this.tokenStart;
-                OreGlobNode node = not(insideInversion || inverted);
-                if (root instanceof MatchNode && root.isInverted() &&
-                        node instanceof MatchNode && node.isInverted()) {
-                    warn("Consecutive inversions can be unintuitive. Please check if the evaluation result is desirable.", tokenStart, this.tokenStart + this.tokenLength - tokenStart);
+                OreGlobNode node = not(insideNegation || not);
+                if (root instanceof MatchNode && root.isNegated() &&
+                        node instanceof MatchNode && node.isNegated()) {
+                    warn("Consecutive negations can be unintuitive. Please check if the evaluation result is desirable.", tokenStart, this.tokenStart + this.tokenLength - tokenStart);
                 }
                 root = OreGlobNodes.append(root, node);
             default:
-                return inverted ? OreGlobNodes.not(root) : root;
+                return not ? OreGlobNodes.not(root) : root;
         }
     }
 
@@ -328,7 +328,7 @@ public final class OreGlobParser {
                         //    (
                         // ...in the same logic the ore expression below is valid
                         //    ( ore* | ingot*
-                        return OreGlobNodes.nothing();
+                        return OreGlobNodes.empty();
                     default:
                         OreGlobNode result = or();
                         advanceIf(RPAR); // optional enclosing parenthesis

@@ -14,7 +14,7 @@ public class MatchNode extends OreGlobNode {
 
     @Override
     protected void visitInternal(NodeVisitor visitor) {
-        visitor.match(match, ignoreCase, isInverted());
+        visitor.match(match, ignoreCase, isNegated());
     }
 
     @Override
@@ -26,7 +26,7 @@ public class MatchNode extends OreGlobNode {
 
     @Override
     protected MatchDescription getIndividualNodeMatchDescription() {
-        return this.match.isEmpty() ? MatchDescription.NOTHING : MatchDescription.OTHER_EXCLUDING_NOTHING;
+        return this.match.isEmpty() ? MatchDescription.EMPTY : MatchDescription.OTHER_EXCLUDING_EMPTY;
     }
 
     public boolean isMatchEquals(MatchNode other) {

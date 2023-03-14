@@ -16,9 +16,9 @@ public class BranchNode extends OreGlobNode {
     @Override
     protected void visitInternal(NodeVisitor visitor) {
         if (expressions.size() == 1) {
-            visitor.group(expressions.get(0), isInverted());
+            visitor.group(expressions.get(0), isNegated());
         } else {
-            visitor.branch(type, expressions, isInverted());
+            visitor.branch(type, expressions, isNegated());
         }
     }
 
@@ -26,16 +26,16 @@ public class BranchNode extends OreGlobNode {
     protected MatchDescription getIndividualNodeMatchDescription() {
         switch (this.expressions.size()) {
             case 0:
-                return this.type == BranchType.AND ? MatchDescription.EVERYTHING : MatchDescription.IMPOSSIBLE;
+                return this.type == BranchType.AND ? MatchDescription.EVERYTHING : MatchDescription.NOTHING;
             case 1:
                 return this.expressions.get(0).getIndividualNodeMatchDescription();
         }
         switch (this.type) {
             case OR: {
-                MatchDescription union = MatchDescription.IMPOSSIBLE;
+                MatchDescription union = MatchDescription.NOTHING;
                 for (OreGlobNode node : this.expressions) {
                     MatchDescription desc = node.getMatchDescription();
-                    if (desc == MatchDescription.IMPOSSIBLE) continue;
+                    if (desc == MatchDescription.NOTHING) continue;
                     union = union.or(desc);
                     if (union == MatchDescription.EVERYTHING) {
                         return MatchDescription.EVERYTHING;
@@ -49,14 +49,14 @@ public class BranchNode extends OreGlobNode {
                     MatchDescription desc = node.getMatchDescription();
                     if (desc == MatchDescription.EVERYTHING) continue;
                     intersection = intersection.and(desc);
-                    if (intersection == MatchDescription.NOTHING) {
-                        return MatchDescription.NOTHING;
+                    if (intersection == MatchDescription.EMPTY) {
+                        return MatchDescription.EMPTY;
                     }
                 }
                 return intersection;
             }
             case XOR: {
-                MatchDescription disjunction = MatchDescription.IMPOSSIBLE;
+                MatchDescription disjunction = MatchDescription.NOTHING;
                 for (OreGlobNode node : this.expressions) {
                     MatchDescription desc = node.getMatchDescription();
                     disjunction = disjunction.xor(desc);

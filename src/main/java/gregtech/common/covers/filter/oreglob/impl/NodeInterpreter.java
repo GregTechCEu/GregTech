@@ -29,6 +29,10 @@ import java.util.List;
  * When the next node gets evaluated, the input state will be the last evaluation result
  * from the last node; in the example above, input state for the node after {@code "i"}
  * will be {@code [ 1, 6 ]}.
+ * <p>
+ * Note that this implementation assumes both the input and match string consists of character
+ * no bigger than {@code 0xFFFF} as their codepoint value; i.e. characters that UTF-16 can express
+ * without using surrogate pairs.
  */
 class NodeInterpreter implements NodeVisitor {
     private final String input;
@@ -71,7 +75,7 @@ class NodeInterpreter implements NodeVisitor {
     }
 
     @Override
-    public void match(String match, boolean ignoreCase, boolean inverted) {
+    public void match(String match, boolean ignoreCase, boolean not) {
         IntIterator it = this.inputStates.iterator();
         while (it.hasNext()) {
             int state = it.nextInt();
@@ -79,12 +83,12 @@ class NodeInterpreter implements NodeVisitor {
                 this.outputStates.add(state + match.length());
             }
         }
-        if (inverted) invert();
+        if (not) negate();
     }
 
     @Override
-    public void chars(int amount, boolean inverted) {
-        if (inverted) {
+    public void chars(int amount, boolean not) {
+        if (not) {
             int state = computeMinInputState();
             for (int i = state + amount; state < i; state++) {
                 this.outputStates.add(state);
@@ -104,9 +108,9 @@ class NodeInterpreter implements NodeVisitor {
     }
 
     @Override
-    public void charsOrMore(int amount, boolean inverted) {
+    public void charsOrMore(int amount, boolean not) {
         IntIterator it = this.inputStates.iterator();
-        if (inverted) {
+        if (not) {
             // less than n chars
             while (it.hasNext()) {
                 int state = it.nextInt();
@@ -126,18 +130,19 @@ class NodeInterpreter implements NodeVisitor {
     }
 
     @Override
-    public void group(OreGlobNode node, boolean inverted) {
+    public void group(OreGlobNode node, boolean not) {
         evaluate(node);
-        if (inverted) invert();
+        if (not) negate();
     }
 
     @Override
-    public void branch(BranchType type, List<OreGlobNode> nodes, boolean inverted) {
+    public void branch(BranchType type, List<OreGlobNode> nodes, boolean not) {
         switch (type) {
             case OR: {
                 // Compute max possible state for short circuit - if outputState of one branch is equal to U then
                 // the entire set of possible output state is covered.
-                // Max amount of states possible from input states is equal to number of characters left plus one full match state
+                // Max amount of states possible from current input states is equal to
+                // number of characters left plus one full match state
                 int maxPossibleBranches = this.input.length() - computeMinInputState() + 1;
                 for (OreGlobNode node : nodes) {
                     NodeInterpreter branchState = new NodeInterpreter(this.input, this.inputStates).evaluate(node);
@@ -173,7 +178,7 @@ class NodeInterpreter implements NodeVisitor {
             default:
                 throw new IllegalStateException("Unknown BranchType '" + type + "'");
         }
-        if (inverted) invert();
+        if (not) negate();
     }
 
     @Override
@@ -184,19 +189,19 @@ class NodeInterpreter implements NodeVisitor {
     }
 
     @Override
-    public void impossible() {
+    public void nothing() {
         // Do not match anything!
     }
 
     @Override
-    public void something() {
+    public void nonempty() {
         for (int i = computeMinInputState() + 1; i <= this.input.length(); i++) {
             this.outputStates.add(i);
         }
     }
 
     @Override
-    public void nothing() {
+    public void empty() {
         // matches 0 chars; match every input state as-is
         this.outputStates.addAll(this.inputStates);
     }
@@ -216,15 +221,16 @@ class NodeInterpreter implements NodeVisitor {
     }
 
     /**
-     * Applies inversion to current outputStates.
+     * Applies logical complement to current outputStates.
      */
-    private void invert() {
+    private void negate() {
         int minInputState = computeMinInputState();
 
-        // Max amount of states possible from input states is equal to number of characters left plus one full match state
+        // Max amount of states possible from current input states is equal to
+        // number of characters left plus one full match state
         int maxPossibleBranches = this.input.length() - minInputState + 1;
 
-        // If outputStates is a set of max states, then its inversion is nothing
+        // If outputStates is a set of max states, then its complement set is nothing
         if (this.outputStates.size() >= maxPossibleBranches) {
             this.outputStates.clear();
             return;

@@ -35,23 +35,23 @@ class NodeVisualizer implements NodeVisitor {
     }
 
     @Override
-    public void match(String match, boolean ignoreCase, boolean inverted) {
-        if (inverted) visualizer.text("not ", LOGIC_INVERSION);
+    public void match(String match, boolean ignoreCase, boolean not) {
+        if (not) visualizer.text("not ", LOGIC_INVERSION);
         visualizer.text("'", NODE);
         visualizer.text(match, VALUE);
         visualizer.text("'", NODE);
     }
 
     @Override
-    public void chars(int amount, boolean inverted) {
-        if (inverted) visualizer.text("either more or less than ", LOGIC_INVERSION);
+    public void chars(int amount, boolean not) {
+        if (not) visualizer.text("either more or less than ", LOGIC_INVERSION);
         visualizer.number(amount, VALUE);
         visualizer.text(amount == 1 ? " character" : " characters", NODE);
     }
 
     @Override
-    public void charsOrMore(int amount, boolean inverted) {
-        if (inverted) {
+    public void charsOrMore(int amount, boolean not) {
+        if (not) {
             visualizer.text("less than ", NODE);
             visualizer.number(amount);
             visualizer.text(" characters", NODE);
@@ -62,8 +62,8 @@ class NodeVisualizer implements NodeVisitor {
     }
 
     @Override
-    public void group(OreGlobNode node, boolean inverted) {
-        if (inverted) {
+    public void group(OreGlobNode node, boolean not) {
+        if (not) {
             visualizer.text("not", LOGIC_INVERSION);
             visualizer.text(":", NODE);
             visualizer.newLine(indents + 1);
@@ -74,10 +74,10 @@ class NodeVisualizer implements NodeVisitor {
     }
 
     @Override
-    public void branch(BranchType type, List<OreGlobNode> nodes, boolean inverted) {
+    public void branch(BranchType type, List<OreGlobNode> nodes, boolean not) {
         switch (type) {
             case OR:
-                if (inverted) {
+                if (not) {
                     visualizer.text("anything that ", NODE);
                     visualizer.text("isn't", LOGIC_INVERSION);
                     visualizer.text(" one of...", NODE);
@@ -96,7 +96,7 @@ class NodeVisualizer implements NodeVisitor {
                 }
                 return;
             case AND:
-                if (inverted) {
+                if (not) {
                     visualizer.text("anything that ", NODE);
                     visualizer.text("isn't", LOGIC_INVERSION);
                     visualizer.text("...", NODE);
@@ -117,7 +117,7 @@ class NodeVisualizer implements NodeVisitor {
             case XOR:
                 // TODO no idea if this visualization is logically correct
                 //  does ! ( a ^ b ^ c ) equal to ( a eq b eq c )?
-                if (inverted) {
+                if (not) {
                     visualizer.text("either both or none of...", LOGIC_INVERSION);
                 } else {
                     visualizer.text("only one of...", NODE);
@@ -133,7 +133,7 @@ class NodeVisualizer implements NodeVisitor {
                     if (i == nodes.size() - 2) { // append last entry
                         new NodeVisualizer(visualizer, indents + i + 1).visit(nodes.get(nodes.size() - 1));
                     } else { // append another XOR text
-                        if (inverted) {
+                        if (not) {
                             visualizer.text("either both or none of...", LOGIC_INVERSION);
                         } else {
                             visualizer.text("only one of...", NODE);
@@ -152,18 +152,18 @@ class NodeVisualizer implements NodeVisitor {
     }
 
     @Override
-    public void impossible() {
+    public void nothing() {
         impossible(this.visualizer);
     }
 
     @Override
-    public void something() {
-        something(this.visualizer);
+    public void nonempty() {
+        nonempty(this.visualizer);
     }
 
     @Override
-    public void nothing() {
-        nothing(this.visualizer);
+    public void empty() {
+        empty(this.visualizer);
     }
 
     @Override
@@ -179,11 +179,11 @@ class NodeVisualizer implements NodeVisitor {
         visualizer.text("(impossible to match)", LOGIC_INVERSION);
     }
 
-    public static void something(OreGlob.Visualizer visualizer) {
+    public static void nonempty(OreGlob.Visualizer visualizer) {
         visualizer.text("something", NODE);
     }
 
-    public static void nothing(OreGlob.Visualizer visualizer) {
+    public static void empty(OreGlob.Visualizer visualizer) {
         visualizer.text("nothing", LOGIC_INVERSION);
     }
 

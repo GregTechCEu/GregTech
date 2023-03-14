@@ -32,6 +32,6 @@ public class ErrorNode extends OreGlobNode {
 
     @Override
     protected MatchDescription getIndividualNodeMatchDescription() {
-        return MatchDescription.IMPOSSIBLE;
+        return MatchDescription.NOTHING;
     }
 }

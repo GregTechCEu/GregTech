@@ -10,7 +10,7 @@ public abstract class OreGlobNode {
 
     @Nullable
     private OreGlobNode next;
-    private boolean inverted;
+    private boolean negated;
 
     @Nullable
     private MatchDescription descriptionCache;
@@ -37,13 +37,13 @@ public abstract class OreGlobNode {
         }
     }
 
-    public final boolean isInverted() {
-        return inverted;
+    public final boolean isNegated() {
+        return negated;
     }
 
-    final void setInverted(boolean inverted) {
-        if (this.inverted != inverted) {
-            this.inverted = inverted;
+    final void setNegated(boolean negated) {
+        if (this.negated != negated) {
+            this.negated = negated;
             clearMatchDescriptionCache();
         }
     }
@@ -60,14 +60,14 @@ public abstract class OreGlobNode {
             case EVERYTHING:
                 visitor.everything();
                 break;
-            case IMPOSSIBLE:
-                visitor.impossible();
-                break;
-            case SOMETHING:
-                visitor.something();
-                break;
             case NOTHING:
                 visitor.nothing();
+                break;
+            case NONEMPTY:
+                visitor.nonempty();
+                break;
+            case EMPTY:
+                visitor.empty();
                 break;
             default:
                 visitInternal(visitor);
@@ -79,7 +79,7 @@ public abstract class OreGlobNode {
 
     /**
      * Whether this node shares same structure and content with given node.
-     * The check includes types, type specific states, 'inverted' flag and
+     * The check includes types, type specific states, negation flag and
      * the next node's structural equality.<p>
      * Note that this check does not account for logical equivalency outside
      * structural equality.
@@ -89,14 +89,14 @@ public abstract class OreGlobNode {
      */
     public boolean isStructurallyEqualTo(@Nonnull OreGlobNode node) {
         if (this == node) return true;
-        if (this.isInverted() != node.isInverted()) return false;
+        if (this.isNegated() != node.isNegated()) return false;
         return isPropertyEqualTo(node) && isStructurallyEqualTo(this.getNext(), node.getNext());
     }
 
     public final MatchDescription getMatchDescription() {
         if (this.descriptionCache == null) {
             MatchDescription t = getSelfMatchDescription();
-            if (t != MatchDescription.IMPOSSIBLE && this.getNext() != null)
+            if (t != MatchDescription.NOTHING && this.getNext() != null)
                 t = t.append(this.getNext().getMatchDescription());
             return this.descriptionCache = t;
         }
@@ -106,7 +106,7 @@ public abstract class OreGlobNode {
     public final MatchDescription getSelfMatchDescription() {
         if (this.selfDescriptionCache == null) {
             MatchDescription t = getIndividualNodeMatchDescription();
-            if (this.isInverted() && !(this instanceof ErrorNode)) t = t.inverse();
+            if (this.isNegated() && !(this instanceof ErrorNode)) t = t.complement();
             return this.selfDescriptionCache = t;
         }
         return this.selfDescriptionCache;
@@ -117,20 +117,20 @@ public abstract class OreGlobNode {
     }
 
     public final boolean isImpossibleToMatch() {
-        return getMatchDescription() == MatchDescription.IMPOSSIBLE;
+        return getMatchDescription() == MatchDescription.NOTHING;
     }
 
     public final boolean isSomething() {
-        return getMatchDescription() == MatchDescription.SOMETHING;
+        return getMatchDescription() == MatchDescription.NONEMPTY;
     }
 
     public final boolean isNothing() {
-        return getMatchDescription() == MatchDescription.NOTHING;
+        return getMatchDescription() == MatchDescription.EMPTY;
     }
 
     /**
      * Whether this node has same type and property with given node. The check includes types and
-     * type specific states. Other properties such as inversion and next node are ignored.
+     * type specific states. Other properties such as negation and next node are ignored.
      *
      * @param node The node to check
      * @return Whether this node has same type and property with given node
@@ -138,7 +138,7 @@ public abstract class OreGlobNode {
     public abstract boolean isPropertyEqualTo(@Nonnull OreGlobNode node);
 
     /**
-     * @return Match type of this specific node, without considering inverted flag.
+     * @return Match type of this specific node, without considering negation flag.
      */
     protected abstract MatchDescription getIndividualNodeMatchDescription();
 

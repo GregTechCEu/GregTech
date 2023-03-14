@@ -58,10 +58,10 @@ public class OreGlobTest {
 
         assertCompile("(??***)(?*?*?****?*???*?)()()()", chars(10, true));
         assertCompile("(?)(??)(??*)(??**)", chars(7, true));
-        assertCompile("wdym this is impossible??????? !*", impossible());
-        assertCompile("!(*) when the impossible is impossible", impossible());
+        assertCompile("wdym this is impossible??????? !*", nothing());
+        assertCompile("!(*) when the impossible is impossible", nothing());
 
-        assertCompile("", impossible());
+        assertCompile("", nothing());
 
         assertCompile("!a b c",
                 not(append(
@@ -109,7 +109,7 @@ public class OreGlobTest {
 
         assertCompile("(() | () | abc)",
                 or(
-                        nothing(),
+                        empty(),
                         match("abc")
                 ));
 
@@ -117,7 +117,7 @@ public class OreGlobTest {
                 or(
                         or(
                                 match("a"),
-                                nothing()
+                                empty()
                         ),
                         match("b")
                 ));
@@ -130,7 +130,7 @@ public class OreGlobTest {
         assertCompile("((a | ()) | ())",
                 or(
                         match("a"),
-                        nothing()
+                        empty()
                 ));
 
         assertCompile("(a & b & *)",
@@ -145,12 +145,12 @@ public class OreGlobTest {
                         match("b")
                 ));
 
-        assertCompile("(a & b & !*)", impossible());
-        assertCompile("(() & ?)", impossible());
-        assertCompile("((a | ()) & ())", nothing());
-        assertCompile("(a & ())", impossible());
+        assertCompile("(a & b & !*)", nothing());
+        assertCompile("(() & ?)", nothing());
+        assertCompile("((a | ()) & ())", empty());
+        assertCompile("(a & ())", nothing());
 
-        assertCompile("(() ^ ())", impossible());
+        assertCompile("(() ^ ())", nothing());
         assertCompile("(!* ^ *)", everything());
         assertCompile("(!* ^ asdf)", match("asdf"));
         assertCompile("(* ^ asdf)", not(match("asdf")));
@@ -336,7 +336,7 @@ public class OreGlobTest {
 
             @Override
             protected boolean matchesSafely(OreGlob item) {
-                if (item instanceof ImpossibleOreGlob) return OreGlobNodes.impossible().isStructurallyEqualTo(result);
+                if (item instanceof ImpossibleOreGlob) return OreGlobNodes.nothing().isStructurallyEqualTo(result);
                 if (item instanceof NodeOreGlob) return ((NodeOreGlob) item).getRoot().isStructurallyEqualTo(result);
                 return false;
             }

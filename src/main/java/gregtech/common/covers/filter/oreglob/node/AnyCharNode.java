@@ -15,9 +15,9 @@ public class AnyCharNode extends OreGlobNode {
     @Override
     protected void visitInternal(NodeVisitor visitor) {
         if (more) {
-            visitor.charsOrMore(amount, isInverted());
+            visitor.charsOrMore(amount, isNegated());
         } else {
-            visitor.chars(amount, isInverted());
+            visitor.chars(amount, isNegated());
         }
     }
 
@@ -32,10 +32,10 @@ public class AnyCharNode extends OreGlobNode {
     protected MatchDescription getIndividualNodeMatchDescription() {
         if (this.more) {
             if (this.amount == 0) return MatchDescription.EVERYTHING;
-            if (this.amount == 1) return MatchDescription.SOMETHING;
+            if (this.amount == 1) return MatchDescription.NONEMPTY;
         } else {
-            if (this.amount == 0) return MatchDescription.NOTHING;
+            if (this.amount == 0) return MatchDescription.EMPTY;
         }
-        return MatchDescription.OTHER_EXCLUDING_NOTHING;
+        return MatchDescription.OTHER_EXCLUDING_EMPTY;
     }
 }
