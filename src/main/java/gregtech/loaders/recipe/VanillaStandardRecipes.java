@@ -834,8 +834,16 @@ public class VanillaStandardRecipes {
                 'P', "slabWood"
         );
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).circuitMeta(1).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(gem, Diamond).outputs(new ItemStack(Blocks.JUKEBOX)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 8)
+                .input(dust, Redstone)
+                .outputs(new ItemStack(Blocks.NOTEBLOCK))
+                .circuitMeta(1).duration(100).EUt(16).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 8)
+                .input(gem, Diamond)
+                .outputs(new ItemStack(Blocks.JUKEBOX))
+                .duration(100).EUt(16).buildAndRegister();
     }
 
     /**
