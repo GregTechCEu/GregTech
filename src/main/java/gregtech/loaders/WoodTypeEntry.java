@@ -16,6 +16,7 @@ public final class WoodTypeEntry {
 
     public static final Collection<WoodTypeEntry> ENTRIES = new ArrayList<>();
 
+    private final String modid;
     private final String woodName;
     private final ItemStack planks;
     private final ItemStack log;
@@ -26,6 +27,7 @@ public final class WoodTypeEntry {
     private final ItemStack stairs;
     private final ItemStack boat;
     private final boolean removeRecipes;
+
     /**
      * @param woodName      the name of the wood type (e.g. "oak")
      * @param planks        the planks form, required to be non-empty
@@ -38,12 +40,13 @@ public final class WoodTypeEntry {
      * @param boat          the boat form
      * @param removeRecipes if this entry should have recipes removed
      */
-    public WoodTypeEntry(@Nonnull String woodName, @Nonnull ItemStack planks, @Nonnull ItemStack log,
+    public WoodTypeEntry(@Nonnull String modid, @Nonnull String woodName, @Nonnull ItemStack planks, @Nonnull ItemStack log,
                          @Nonnull ItemStack door, @Nonnull ItemStack slab, @Nonnull ItemStack fence,
                          @Nonnull ItemStack fenceGate, @Nonnull ItemStack stairs, @Nonnull ItemStack boat,
                          boolean removeRecipes) {
         Preconditions.checkArgument(!woodName.isEmpty(), "WoodTypeEntry name must be non-empty.");
         Preconditions.checkArgument(!planks.isEmpty(), "WoodTypeEntry planks must be non-empty.");
+        this.modid = modid;
         this.woodName = woodName;
         this.planks = planks;
         this.log = log;
@@ -59,41 +62,47 @@ public final class WoodTypeEntry {
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void registerDefaultEntries() {
-        new WoodTypeEntry("oak", new ItemStack(Blocks.PLANKS),
+        final String mcModId = "minecraft";
+        new WoodTypeEntry(mcModId, "oak", new ItemStack(Blocks.PLANKS),
                 new ItemStack(Blocks.LOG), new ItemStack(Items.OAK_DOOR),
                 new ItemStack(Blocks.WOODEN_SLAB), new ItemStack(Blocks.OAK_FENCE),
                 new ItemStack(Blocks.OAK_FENCE_GATE), new ItemStack(Blocks.OAK_STAIRS),
                 new ItemStack(Items.BOAT), true);
 
-        new WoodTypeEntry("spruce", new ItemStack(Blocks.PLANKS, 1, 1),
+        new WoodTypeEntry(mcModId, "spruce", new ItemStack(Blocks.PLANKS, 1, 1),
                 new ItemStack(Blocks.LOG, 1, 1), new ItemStack(Items.SPRUCE_DOOR),
                 new ItemStack(Blocks.WOODEN_SLAB, 1, 1), new ItemStack(Blocks.SPRUCE_FENCE),
                 new ItemStack(Blocks.SPRUCE_FENCE_GATE), new ItemStack(Blocks.SPRUCE_STAIRS),
                 new ItemStack(Items.SPRUCE_BOAT), true);
 
-        new WoodTypeEntry("birch", new ItemStack(Blocks.PLANKS, 1, 2),
+        new WoodTypeEntry(mcModId, "birch", new ItemStack(Blocks.PLANKS, 1, 2),
                 new ItemStack(Blocks.LOG, 1, 2), new ItemStack(Items.BIRCH_DOOR),
                 new ItemStack(Blocks.WOODEN_SLAB, 1, 2), new ItemStack(Blocks.BIRCH_FENCE),
                 new ItemStack(Blocks.BIRCH_FENCE_GATE), new ItemStack(Blocks.BIRCH_STAIRS),
                 new ItemStack(Items.BIRCH_BOAT), true);
 
-        new WoodTypeEntry("jungle", new ItemStack(Blocks.PLANKS, 1, 3),
+        new WoodTypeEntry(mcModId, "jungle", new ItemStack(Blocks.PLANKS, 1, 3),
                 new ItemStack(Blocks.LOG, 1, 3), new ItemStack(Items.JUNGLE_DOOR),
                 new ItemStack(Blocks.WOODEN_SLAB, 1, 3), new ItemStack(Blocks.JUNGLE_FENCE),
                 new ItemStack(Blocks.JUNGLE_FENCE_GATE), new ItemStack(Blocks.JUNGLE_STAIRS),
                 new ItemStack(Items.JUNGLE_BOAT), true);
 
-        new WoodTypeEntry("acacia", new ItemStack(Blocks.PLANKS, 1, 4),
+        new WoodTypeEntry(mcModId, "acacia", new ItemStack(Blocks.PLANKS, 1, 4),
                 new ItemStack(Blocks.LOG2), new ItemStack(Items.ACACIA_DOOR),
                 new ItemStack(Blocks.WOODEN_SLAB, 1, 4), new ItemStack(Blocks.ACACIA_FENCE),
                 new ItemStack(Blocks.ACACIA_FENCE_GATE), new ItemStack(Blocks.ACACIA_STAIRS),
                 new ItemStack(Items.ACACIA_BOAT), true);
 
-        new WoodTypeEntry("dark_oak", new ItemStack(Blocks.PLANKS, 1, 5),
+        new WoodTypeEntry(mcModId, "dark_oak", new ItemStack(Blocks.PLANKS, 1, 5),
                 new ItemStack(Blocks.LOG2, 1, 1), new ItemStack(Items.DARK_OAK_DOOR),
                 new ItemStack(Blocks.WOODEN_SLAB, 1, 5), new ItemStack(Blocks.DARK_OAK_FENCE),
                 new ItemStack(Blocks.DARK_OAK_FENCE_GATE), new ItemStack(Blocks.DARK_OAK_STAIRS),
                 new ItemStack(Items.DARK_OAK_BOAT), true);
+    }
+
+    @Nonnull
+    public String getModid() {
+        return this.modid;
     }
 
     @Nonnull

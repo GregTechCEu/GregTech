@@ -984,7 +984,7 @@ public class VanillaStandardRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).circuitMeta(1).input("wool", 1).inputs(new ItemStack(Items.STICK, 8)).outputs(new ItemStack(Items.PAINTING)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Items.LEATHER)).inputs(new ItemStack(Items.STICK, 8)).outputs(new ItemStack(Items.ITEM_FRAME)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).input("plankWood", 6).inputs(new ItemStack(Items.STICK)).circuitMeta(1).outputs(new ItemStack(Items.SIGN, 3)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).input("plankWood", 6).inputs(new ItemStack(Items.STICK)).circuitMeta(9).outputs(new ItemStack(Items.SIGN, 3)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(10).EUt(2).inputs(new ItemStack(Items.BRICK, 3)).outputs(new ItemStack(Items.FLOWER_POT)).buildAndRegister();
 

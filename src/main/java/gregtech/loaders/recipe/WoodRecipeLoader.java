@@ -1,16 +1,22 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.loaders.WoodTypeEntry;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -78,13 +84,34 @@ public class WoodRecipeLoader {
             // door
             input = GTUtility.copyAmount(6, entry.getPlanks());
             if (!entry.getDoor().isEmpty()) {
-                // plank -> door assembling
-                ASSEMBLER_RECIPES.recipeBuilder()
-                        .inputs(input)
-                        .outputs(GTUtility.copyAmount(3, entry.getDoor()))
-                        .circuitMeta(6)
-                        .duration(600).EUt(4)
-                        .buildAndRegister();
+                if (ConfigHolder.recipes.hardWoodRecipes) {
+                    final String doorName = "oak".equals(name) ? "wooden_door" : name + "_door";
+                    // hard plank -> door crafting
+                    if (entry.shouldRemoveRecipes()) {
+                        ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), doorName));
+                    }
+                    ModHandler.addShapedRecipe(doorName, entry.getDoor().copy(), "PTd", "PRS", "PPs",
+                            'P', entry.getPlanks().copy(),
+                            'T', new ItemStack(Blocks.TRAPDOOR),
+                            'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
+                            'S', new UnificationEntry(OrePrefix.screw, Materials.Iron)
+                    );
+
+                    // plank -> door assembling
+                    RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                            .inputs(new ItemStack(Blocks.TRAPDOOR))
+                            .inputs(GTUtility.copyAmount(4, entry.getPlanks()))
+                            .fluidInputs(Materials.Iron.getFluid(GTValues.L / 9))
+                            .outputs(entry.getDoor().copy())
+                            .duration(400).EUt(4).buildAndRegister();
+                } else {
+                    ASSEMBLER_RECIPES.recipeBuilder()
+                            .inputs(input)
+                            .outputs(GTUtility.copyAmount(3, entry.getDoor()))
+                            .circuitMeta(6)
+                            .duration(600).EUt(4)
+                            .buildAndRegister();
+                }
             }
 
             // stairs
@@ -115,6 +142,19 @@ public class WoodRecipeLoader {
 
             // fence
             if (!entry.getFence().isEmpty()) {
+                if (ConfigHolder.recipes.hardWoodRecipes) {
+                    final String fenceName = "oak".equals(name) ? "fence" : name + "_fence";
+
+                    // hard plank -> fence crafting
+                    if (entry.shouldRemoveRecipes()) {
+                        ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), fenceName));
+                    }
+
+                    ModHandler.addShapedRecipe(fenceName, entry.getFence().copy(), "PSP", "PSP", "PSP",
+                            'P', entry.getPlanks().copy(),
+                            'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+                }
+
                 // plank -> fence assembling
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .inputs(input.copy())
@@ -126,6 +166,26 @@ public class WoodRecipeLoader {
 
             // fence gate
             if (!entry.getFenceGate().isEmpty()) {
+                if (ConfigHolder.recipes.hardWoodRecipes) {
+                    final String fenceGateName = "oak".equals(name) ? "fence_gate" : name + "_fence_gate";
+
+                    // hard plank -> fence gate crafting
+                    if (entry.shouldRemoveRecipes()) {
+                        ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), fenceGateName));
+                    }
+
+                    ModHandler.addShapedRecipe(fenceGateName, entry.getFenceGate().copy(), "F F", "SPS", "SPS",
+                            'P', entry.getPlanks().copy(),
+                            'S', new UnificationEntry(OrePrefix.stick, Materials.Wood),
+                            'F', new ItemStack(Items.FLINT));
+
+                    ModHandler.addShapedRecipe(fenceGateName + "_screws", GTUtility.copyAmount(2, entry.getFenceGate()),
+                            "IdI", "SPS", "SPS",
+                            'P', entry.getPlanks(),
+                            'S', new UnificationEntry(OrePrefix.stick, Materials.Wood),
+                            'I', new UnificationEntry(OrePrefix.screw, Materials.Iron));
+                }
+
                 // plank -> fence gate assembling
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copyAmount(2, input))
@@ -137,6 +197,20 @@ public class WoodRecipeLoader {
 
             // boat
             if (!entry.getBoat().isEmpty()) {
+                if (ConfigHolder.recipes.hardWoodRecipes && !entry.getSlab().isEmpty()) {
+                    final String boatName = "oak".equals(name) ? "boat" : name + "_boat";
+
+                    // hard plank -> boat crafting
+                    if (entry.shouldRemoveRecipes()) {
+                        ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), boatName));
+                    }
+
+                    ModHandler.addShapedRecipe(boatName, entry.getBoat().copy(), "PHP", "PkP", "SSS",
+                            'P', entry.getPlanks().copy(),
+                            'S', entry.getSlab().copy(),
+                            'H', new ItemStack(Items.WOODEN_SHOVEL));
+                }
+
                 // plank -> boat assembling
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copyAmount(5, input))
