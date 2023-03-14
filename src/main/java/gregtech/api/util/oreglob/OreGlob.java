@@ -10,9 +10,9 @@ import java.util.function.Function;
 /**
  * Glob-like string matcher language designed for ore dictionary matching.
  * <p>
- * OreGlob instances provide two kind of functions: the ability to match strings,
+ * An OreGlob instance provides two functions: the ability to match strings,
  * and the ability to translate expression structure into user-friendly text
- * explanations. The text can be either a plaintext, or a formatted text by standard
+ * explanations. The text can be either a plaintext, or a text formatted by standard
  * Minecraft text format.
  */
 public abstract class OreGlob {
