@@ -350,13 +350,12 @@ public class CommonProxy {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
         //handle sapling and log burn rates
-        if (block == RUBBER_LOG || block == PLANKS) {
-            event.setBurnTime(300);
-        } else if (block == RUBBER_SAPLING) {
+        if (block == RUBBER_SAPLING) {
             event.setBurnTime(100);
-        }
-        //handle material blocks burn value
-        if (stack.getItem() instanceof CompressedItemBlock) {
+        } else if (block == WOOD_SLAB) {
+            event.setBurnTime(150);
+        } else if (stack.getItem() instanceof CompressedItemBlock) {
+            //handle material blocks burn value
             CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
             Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
             DustProperty property = material.getProperty(PropertyKey.DUST);
