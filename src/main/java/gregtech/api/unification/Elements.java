@@ -5,8 +5,7 @@ import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @ZenClass("mods.gregtech.material.Elements")
 @ZenRegister
@@ -161,6 +160,11 @@ public class Elements {
         Element element = new Element(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);
         elements.put(name, element);
         return element;
+    }
+
+    @ZenMethod
+    public static List<Element> getAllElements() {
+        return Collections.unmodifiableList(new ArrayList<>(elements.values()));
     }
 
     @ZenMethod
