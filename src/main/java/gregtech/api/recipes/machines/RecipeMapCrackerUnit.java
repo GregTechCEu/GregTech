@@ -15,8 +15,8 @@ import java.util.function.DoubleSupplier;
 
 public class RecipeMapCrackerUnit<R extends RecipeBuilder<R>> extends RecipeMap<R> {
 
-    public RecipeMapCrackerUnit(String unlocalizedName, int minInputs, int maxInputs, int minOutputs, int maxOutputs, int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs, R defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapCrackerUnit(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, R defaultRecipe, boolean isHidden) {
+        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override

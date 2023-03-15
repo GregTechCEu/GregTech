@@ -13,8 +13,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationRecipeBuilder> {
 
-    public RecipeMapDistillationTower(String unlocalizedName, int minInputs, int maxInputs, int minOutputs, int maxOutputs, int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapDistillationTower(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe, boolean isHidden) {
+        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override
