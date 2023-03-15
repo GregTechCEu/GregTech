@@ -2654,9 +2654,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the Miner!
 
@@ -4064,13 +4064,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
