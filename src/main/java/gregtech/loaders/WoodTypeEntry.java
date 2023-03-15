@@ -1,163 +1,272 @@
 package gregtech.loaders;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
+import javax.annotation.Nullable;
 
 /**
  * Entry for a wood type and all of its associated items
  */
 public final class WoodTypeEntry {
 
-    private static final Collection<WoodTypeEntry> DEFAULT_ENTRIES = new ArrayList<>();
-
     private final String modid;
     private final String woodName;
-    private final ItemStack planks;
     private final ItemStack log;
+    private final boolean removeCharcoal;
+    private final ItemStack planks;
+    private final String planksRecipeName;
     private final ItemStack door;
+    private final String doorRecipeName;
     private final ItemStack slab;
     private final ItemStack fence;
+    private final String fenceRecipeName;
     private final ItemStack fenceGate;
+    private final String fenceGateRecipeName;
     private final ItemStack stairs;
     private final ItemStack boat;
-    private final boolean removeRecipes;
+    private final String boatRecipeName;
 
     /**
-     * @param woodName      the name of the wood type (e.g. "oak")
-     * @param planks        the planks form, required to be non-empty
-     * @param log           the log form
-     * @param door          the door form
-     * @param slab          the slab form
-     * @param fence         the fence form
-     * @param fenceGate     the fence gate form
-     * @param stairs        the stairs form
-     * @param boat          the boat form
-     * @param removeRecipes if this entry should have existing recipes removed
+     * @see WoodTypeEntry.Builder
      */
-    public WoodTypeEntry(@Nonnull String modid, @Nonnull String woodName, @Nonnull ItemStack planks, @Nonnull ItemStack log,
-                         @Nonnull ItemStack door, @Nonnull ItemStack slab, @Nonnull ItemStack fence,
-                         @Nonnull ItemStack fenceGate, @Nonnull ItemStack stairs, @Nonnull ItemStack boat,
-                         boolean removeRecipes) {
-        Preconditions.checkArgument(!woodName.isEmpty(), "WoodTypeEntry name must be non-empty.");
-        Preconditions.checkArgument(!planks.isEmpty(), "WoodTypeEntry planks must be non-empty.");
+    private WoodTypeEntry(@Nonnull String modid, @Nonnull String woodName, ItemStack log, boolean removeCharcoal,
+                          @Nonnull ItemStack planks, @Nullable String planksRecipeName, @Nonnull ItemStack door,
+                          @Nullable String doorRecipeName, @Nonnull ItemStack slab, @Nonnull ItemStack fence,
+                          @Nullable String fenceRecipeName, @Nonnull ItemStack fenceGate, @Nullable String fenceGateRecipeName,
+                          @Nonnull ItemStack stairs, @Nonnull ItemStack boat, @Nullable String boatRecipeName) {
         this.modid = modid;
         this.woodName = woodName;
-        this.planks = planks;
         this.log = log;
+        this.removeCharcoal = removeCharcoal;
+        this.planks = planks;
+        this.planksRecipeName = planksRecipeName;
         this.door = door;
+        this.doorRecipeName = doorRecipeName;
         this.slab = slab;
         this.fence = fence;
+        this.fenceRecipeName = fenceRecipeName;
         this.fenceGate = fenceGate;
+        this.fenceGateRecipeName = fenceGateRecipeName;
         this.stairs = stairs;
         this.boat = boat;
-        this.removeRecipes = removeRecipes;
-    }
-
-    @Nonnull
-    public static Iterable<WoodTypeEntry> getDefaultEntries() {
-        if (DEFAULT_ENTRIES.isEmpty()) registerDefaultEntries();
-        return DEFAULT_ENTRIES;
-    }
-
-    private static void registerDefaultEntries() {
-        final String mcModId = "minecraft";
-        DEFAULT_ENTRIES.add(new WoodTypeEntry(mcModId, "oak", new ItemStack(Blocks.PLANKS),
-                new ItemStack(Blocks.LOG), new ItemStack(Items.OAK_DOOR),
-                new ItemStack(Blocks.WOODEN_SLAB), new ItemStack(Blocks.OAK_FENCE),
-                new ItemStack(Blocks.OAK_FENCE_GATE), new ItemStack(Blocks.OAK_STAIRS),
-                new ItemStack(Items.BOAT), true));
-
-        DEFAULT_ENTRIES.add(new WoodTypeEntry(mcModId, "spruce", new ItemStack(Blocks.PLANKS, 1, 1),
-                new ItemStack(Blocks.LOG, 1, 1), new ItemStack(Items.SPRUCE_DOOR),
-                new ItemStack(Blocks.WOODEN_SLAB, 1, 1), new ItemStack(Blocks.SPRUCE_FENCE),
-                new ItemStack(Blocks.SPRUCE_FENCE_GATE), new ItemStack(Blocks.SPRUCE_STAIRS),
-                new ItemStack(Items.SPRUCE_BOAT), true));
-
-        DEFAULT_ENTRIES.add(new WoodTypeEntry(mcModId, "birch", new ItemStack(Blocks.PLANKS, 1, 2),
-                new ItemStack(Blocks.LOG, 1, 2), new ItemStack(Items.BIRCH_DOOR),
-                new ItemStack(Blocks.WOODEN_SLAB, 1, 2), new ItemStack(Blocks.BIRCH_FENCE),
-                new ItemStack(Blocks.BIRCH_FENCE_GATE), new ItemStack(Blocks.BIRCH_STAIRS),
-                new ItemStack(Items.BIRCH_BOAT), true));
-
-        DEFAULT_ENTRIES.add(new WoodTypeEntry(mcModId, "jungle", new ItemStack(Blocks.PLANKS, 1, 3),
-                new ItemStack(Blocks.LOG, 1, 3), new ItemStack(Items.JUNGLE_DOOR),
-                new ItemStack(Blocks.WOODEN_SLAB, 1, 3), new ItemStack(Blocks.JUNGLE_FENCE),
-                new ItemStack(Blocks.JUNGLE_FENCE_GATE), new ItemStack(Blocks.JUNGLE_STAIRS),
-                new ItemStack(Items.JUNGLE_BOAT), true));
-
-        DEFAULT_ENTRIES.add(new WoodTypeEntry(mcModId, "acacia", new ItemStack(Blocks.PLANKS, 1, 4),
-                new ItemStack(Blocks.LOG2), new ItemStack(Items.ACACIA_DOOR),
-                new ItemStack(Blocks.WOODEN_SLAB, 1, 4), new ItemStack(Blocks.ACACIA_FENCE),
-                new ItemStack(Blocks.ACACIA_FENCE_GATE), new ItemStack(Blocks.ACACIA_STAIRS),
-                new ItemStack(Items.ACACIA_BOAT), true));
-
-        DEFAULT_ENTRIES.add(new WoodTypeEntry(mcModId, "dark_oak", new ItemStack(Blocks.PLANKS, 1, 5),
-                new ItemStack(Blocks.LOG2, 1, 1), new ItemStack(Items.DARK_OAK_DOOR),
-                new ItemStack(Blocks.WOODEN_SLAB, 1, 5), new ItemStack(Blocks.DARK_OAK_FENCE),
-                new ItemStack(Blocks.DARK_OAK_FENCE_GATE), new ItemStack(Blocks.DARK_OAK_STAIRS),
-                new ItemStack(Items.DARK_OAK_BOAT), true));
+        this.boatRecipeName = boatRecipeName;
     }
 
     @Nonnull
     public String getModid() {
-        return this.modid;
+        return modid;
     }
 
     @Nonnull
     public String getWoodName() {
-        return this.woodName;
-    }
-
-    @Nonnull
-    public ItemStack getPlanks() {
-        return this.planks;
+        return woodName;
     }
 
     @Nonnull
     public ItemStack getLog() {
-        return this.log;
+        return log;
+    }
+
+    /**
+     * @return if log -> charcoal recipes should be removed
+     */
+    public boolean shouldRemoveCharcoal() {
+        return removeCharcoal;
+    }
+
+    @Nonnull
+    public ItemStack getPlanks() {
+        return planks;
+    }
+
+    @Nullable
+    public String getPlanksRecipeName() {
+        return planksRecipeName;
     }
 
     @Nonnull
     public ItemStack getDoor() {
-        return this.door;
+        return door;
+    }
+
+    @Nullable
+    public String getDoorRecipeName() {
+        return doorRecipeName;
     }
 
     @Nonnull
     public ItemStack getSlab() {
-        return this.slab;
+        return slab;
     }
 
     @Nonnull
     public ItemStack getFence() {
-        return this.fence;
+        return fence;
+    }
+
+    @Nullable
+    public String getFenceRecipeName() {
+        return fenceRecipeName;
     }
 
     @Nonnull
     public ItemStack getFenceGate() {
-        return this.fenceGate;
+        return fenceGate;
+    }
+
+    @Nullable
+    public String getFenceGateRecipeName() {
+        return fenceGateRecipeName;
     }
 
     @Nonnull
     public ItemStack getStairs() {
-        return this.stairs;
+        return stairs;
     }
 
     @Nonnull
     public ItemStack getBoat() {
-        return this.boat;
+        return boat;
     }
 
-    /**
-     * @return if this entry should have existing recipe removal performed
-     */
-    public boolean shouldRemoveRecipes() {
-        return this.removeRecipes;
+    @Nullable
+    public String getBoatRecipeName() {
+        return boatRecipeName;
+    }
+
+    public static class Builder {
+
+        private final String modid;
+        private final String woodName;
+
+        private ItemStack log = ItemStack.EMPTY;
+        private boolean removeCharcoal;
+        private ItemStack planks = ItemStack.EMPTY;
+        private String planksRecipeName;
+        private ItemStack door = ItemStack.EMPTY;
+        private String doorRecipeName;
+        private ItemStack slab = ItemStack.EMPTY;
+        private ItemStack fence = ItemStack.EMPTY;
+        private String fenceRecipeName;
+        private ItemStack fenceGate = ItemStack.EMPTY;
+        private String fenceGateRecipeName;
+        private ItemStack stairs = ItemStack.EMPTY;
+        private ItemStack boat = ItemStack.EMPTY;
+        private String boatRecipeName;
+
+        /**
+         * @param modid the modid adding recipes for the wood
+         * @param woodName the name of the wood
+         */
+        public Builder(@Nonnull String modid, @Nonnull String woodName) {
+            Preconditions.checkArgument(!modid.isEmpty(), "Modid cannot be empty.");
+            Preconditions.checkArgument(!woodName.isEmpty(), "Wood name cannot be empty.");
+            this.modid = modid;
+            this.woodName = woodName;
+        }
+
+        /**
+         * Add an entry for logs
+         * @param log the log to add
+         * @param removeCharcoal if log -> charcoal recipes should be removed if the config is enabled
+         * @return this
+         */
+        public Builder log(@Nonnull ItemStack log, boolean removeCharcoal) {
+            this.log = log;
+            this.removeCharcoal = removeCharcoal;
+            return this;
+        }
+
+        /**
+         * Add an entry for planks
+         * @param planks the planks to add
+         * @param planksRecipeName the recipe for crafting the planks
+         * @return this
+         */
+        public Builder planks(@Nonnull ItemStack planks, @Nullable String planksRecipeName) {
+            this.planks = planks;
+            this.planksRecipeName = planksRecipeName;
+            return this;
+        }
+
+        /**
+         * Add an entry for a door
+         * @param door the door to add
+         * @param doorRecipeName the recipe name for crafting the door
+         * @return this
+         */
+        public Builder door(@Nonnull ItemStack door, @Nullable String doorRecipeName) {
+            this.door = door;
+            this.doorRecipeName = doorRecipeName;
+            return this;
+        }
+
+        /**
+         * Add an entry for a slab
+         * @param slab the slab to add
+         * @return this
+         */
+        public Builder slab(@Nonnull ItemStack slab) {
+            this.slab = slab;
+            return this;
+        }
+
+        /**
+         * Add an entry for a fence
+         * @param fence the fence to add
+         * @param fenceRecipeName the recipe name for crafting the fence
+         * @return this
+         */
+        public Builder fence(@Nonnull ItemStack fence, @Nullable String fenceRecipeName) {
+            this.fence = fence;
+            this.fenceRecipeName = fenceRecipeName;
+            return this;
+        }
+
+        /**
+         * Add an entry for a fence gate
+         * @param fenceGate the fence gate to add
+         * @param fenceGateRecipeName the recipe name for crafting the fence gate
+         * @return this
+         */
+        public Builder fenceGate(@Nonnull ItemStack fenceGate, @Nullable String fenceGateRecipeName) {
+            this.fenceGate = fenceGate;
+            this.fenceGateRecipeName = fenceGateRecipeName;
+            return this;
+        }
+
+        /**
+         * Add an entry for stairs
+         * @param stairs the stairs to add
+         * @return this
+         */
+        public Builder stairs(@Nonnull ItemStack stairs) {
+            this.stairs = stairs;
+            return this;
+        }
+
+        /**
+         * Add an entry for a boat
+         * @param boat the boat to add
+         * @param boatRecipeName the recipe name for crafting the boat
+         * @return this
+         */
+        public Builder boat(@Nonnull ItemStack boat, @Nullable String boatRecipeName) {
+            this.boat = boat;
+            this.boatRecipeName = boatRecipeName;
+            return this;
+        }
+
+        /**
+         * @return a new wood type entry, if valid
+         */
+        @Nonnull
+        public WoodTypeEntry build() {
+            Preconditions.checkArgument(!planks.isEmpty(), "Planks cannot be empty.");
+            return new WoodTypeEntry(modid, woodName, log, removeCharcoal, planks, planksRecipeName, door, doorRecipeName,
+                    slab, fence, fenceRecipeName, fenceGate, fenceGateRecipeName, stairs, boat, boatRecipeName);
+        }
     }
 }

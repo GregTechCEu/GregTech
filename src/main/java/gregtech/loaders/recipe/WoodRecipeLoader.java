@@ -32,8 +32,8 @@ import static gregtech.common.items.MetaItems.BIO_CHAFF;
 public class WoodRecipeLoader {
 
     public static void init() {
-        registerWoodRecipes();
         registerGTWoodRecipes();
+        registerWoodRecipes();
         registerPyrolyseOvenRecipes();
     }
 
@@ -41,9 +41,78 @@ public class WoodRecipeLoader {
      * Standardized processing for wood types
      */
     private static void registerWoodRecipes() {
-        for (WoodTypeEntry entry : WoodTypeEntry.getDefaultEntries()) {
-            registerWoodTypeRecipe(entry);
-        }
+        final String mcModId = "minecraft";
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(mcModId, "oak")
+                .planks(new ItemStack(Blocks.PLANKS), "oak_planks")
+                .log(new ItemStack(Blocks.LOG), true)
+                .door(new ItemStack(Items.OAK_DOOR), "wooden_door")
+                .slab(new ItemStack(Blocks.WOODEN_SLAB))
+                .fence(new ItemStack(Blocks.OAK_FENCE), "fence")
+                .fenceGate(new ItemStack(Blocks.OAK_FENCE_GATE), "fence_gate")
+                .stairs(new ItemStack(Blocks.OAK_STAIRS))
+                .boat(new ItemStack(Items.BOAT), "boat")
+                .build()
+        );
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(mcModId, "spruce")
+                .planks(new ItemStack(Blocks.PLANKS, 1, 1), "spruce_planks")
+                .log(new ItemStack(Blocks.LOG, 1, 1), true)
+                .door(new ItemStack(Items.SPRUCE_DOOR), "spruce_door")
+                .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 1))
+                .fence(new ItemStack(Blocks.SPRUCE_FENCE), "spruce_fence")
+                .fenceGate(new ItemStack(Blocks.SPRUCE_FENCE_GATE), "spruce_fence_gate")
+                .stairs(new ItemStack(Blocks.SPRUCE_STAIRS))
+                .boat(new ItemStack(Items.SPRUCE_BOAT), "spruce_boat")
+                .build()
+        );
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(mcModId, "birch")
+                .planks(new ItemStack(Blocks.PLANKS, 1, 2), "birch_planks")
+                .log(new ItemStack(Blocks.LOG, 1, 2), true)
+                .door(new ItemStack(Items.BIRCH_DOOR), "birch_door")
+                .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 2))
+                .fence(new ItemStack(Blocks.BIRCH_FENCE), "birch_fence")
+                .fenceGate(new ItemStack(Blocks.BIRCH_FENCE_GATE), "birch_fence_gate")
+                .stairs(new ItemStack(Blocks.BIRCH_STAIRS))
+                .boat(new ItemStack(Items.BIRCH_BOAT), "birch_boat")
+                .build()
+        );
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(mcModId, "jungle")
+                .planks(new ItemStack(Blocks.PLANKS, 1, 3), "jungle_planks")
+                .log(new ItemStack(Blocks.LOG, 1, 3), true)
+                .door(new ItemStack(Items.JUNGLE_DOOR), "jungle_door")
+                .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 3))
+                .fence(new ItemStack(Blocks.JUNGLE_FENCE), "jungle_fence")
+                .fenceGate(new ItemStack(Blocks.JUNGLE_FENCE_GATE), "jungle_fence_gate")
+                .stairs(new ItemStack(Blocks.JUNGLE_STAIRS))
+                .boat(new ItemStack(Items.JUNGLE_BOAT), "jungle_boat")
+                .build()
+        );
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(mcModId, "acacia")
+                .planks(new ItemStack(Blocks.PLANKS, 1, 4), "acacia_planks")
+                .log(new ItemStack(Blocks.LOG2), true)
+                .door(new ItemStack(Items.ACACIA_DOOR), "acacia_door")
+                .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 4))
+                .fence(new ItemStack(Blocks.ACACIA_FENCE), "acacia_fence")
+                .fenceGate(new ItemStack(Blocks.ACACIA_FENCE_GATE), "acacia_fence_gate")
+                .stairs(new ItemStack(Blocks.ACACIA_STAIRS))
+                .boat(new ItemStack(Items.ACACIA_BOAT), "acacia_boat")
+                .build()
+        );
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(mcModId, "dark_oak")
+                .planks(new ItemStack(Blocks.PLANKS, 1, 5), "dark_oak_planks")
+                .log(new ItemStack(Blocks.LOG2, 1, 1), true)
+                .door(new ItemStack(Items.DARK_OAK_DOOR), "dark_oak_door")
+                .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 5))
+                .fence(new ItemStack(Blocks.DARK_OAK_FENCE), "dark_oak_fence")
+                .fenceGate(new ItemStack(Blocks.DARK_OAK_FENCE_GATE), "dark_oak_fence_gate")
+                .stairs(new ItemStack(Blocks.DARK_OAK_STAIRS))
+                .boat(new ItemStack(Items.DARK_OAK_BOAT), "dark_oak_boat")
+                .build()
+        );
+        registerWoodTypeRecipe(new WoodTypeEntry.Builder(GTValues.MODID, "rubber")
+                .planks(MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), null)
+                .log(new ItemStack(MetaBlocks.RUBBER_LOG), false)
+                .build()
+        );
     }
 
     /**
@@ -53,11 +122,10 @@ public class WoodRecipeLoader {
      */
     public static void registerWoodTypeRecipe(@Nonnull WoodTypeEntry entry) {
         final String name = entry.getWoodName();
-        final String name_planks = name + "_planks";
 
         ItemStack output = entry.getPlanks();
         if (output.isEmpty()) {
-            // all recipes involve planks, this should be checked earlier.
+            // all recipes involve planks, this should be checked at creation.
             throw new IllegalStateException("Could not find planks form of WoodTypeEntry '" + name + "'. This should be impossible.");
         }
 
@@ -65,13 +133,13 @@ public class WoodRecipeLoader {
         ItemStack input = entry.getLog();
         if (!input.isEmpty()) {
             // nerf regular log -> plank crafting, if enabled
-            if (ConfigHolder.recipes.nerfWoodCrafting && entry.shouldRemoveRecipes()) {
-                ModHandler.removeRecipeByName(name_planks);
-                ModHandler.addShapelessRecipe(name_planks, GTUtility.copyAmount(2, output), input.copy());
+            if (ConfigHolder.recipes.nerfWoodCrafting && entry.getPlanksRecipeName() != null) {
+                ModHandler.removeRecipeByName(entry.getPlanksRecipeName());
+                ModHandler.addShapelessRecipe(entry.getPlanksRecipeName(), GTUtility.copyAmount(2, output), input.copy());
             }
 
             // log -> plank saw crafting
-            ModHandler.addShapedRecipe(name_planks + "_saw",
+            ModHandler.addShapedRecipe(entry.getPlanksRecipeName() + "_saw",
                     GTUtility.copyAmount(ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6, output),
                     "s", "L", 'L', input.copy());
 
@@ -85,7 +153,7 @@ public class WoodRecipeLoader {
                     .buildAndRegister();
 
             // log -> charcoal furnace recipe removal, if enabled
-            if (ConfigHolder.recipes.harderCharcoalRecipe && entry.shouldRemoveRecipes()) {
+            if (ConfigHolder.recipes.harderCharcoalRecipe && entry.shouldRemoveCharcoal()) {
                 final ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(input);
                 if (outputStack.getItem() == Items.COAL && outputStack.getItemDamage() == 1) {
                     ModHandler.removeFurnaceSmelting(input);
@@ -97,12 +165,13 @@ public class WoodRecipeLoader {
         input = GTUtility.copyAmount(6, entry.getPlanks());
         if (!entry.getDoor().isEmpty()) {
             if (ConfigHolder.recipes.hardWoodRecipes) {
-                final String doorName = "oak".equals(name) ? "wooden_door" : name + "_door";
+                final boolean hasDoorName = entry.getDoorRecipeName() != null;
                 // hard plank -> door crafting
-                if (entry.shouldRemoveRecipes()) {
-                    ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), doorName));
+                if (hasDoorName) {
+                    ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), entry.getDoorRecipeName()));
                 }
-                ModHandler.addShapedRecipe(doorName, entry.getDoor().copy(), "PTd", "PRS", "PPs",
+                ModHandler.addShapedRecipe(hasDoorName ? entry.getDoorRecipeName() : name + "_door", entry.getDoor().copy(),
+                        "PTd", "PRS", "PPs",
                         'P', entry.getPlanks().copy(),
                         'T', new ItemStack(Blocks.TRAPDOOR),
                         'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
@@ -155,14 +224,15 @@ public class WoodRecipeLoader {
         // fence
         if (!entry.getFence().isEmpty()) {
             if (ConfigHolder.recipes.hardWoodRecipes) {
-                final String fenceName = "oak".equals(name) ? "fence" : name + "_fence";
+                final boolean hasFenceName = entry.getFenceRecipeName() != null;
 
                 // hard plank -> fence crafting
-                if (entry.shouldRemoveRecipes()) {
-                    ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), fenceName));
+                if (hasFenceName) {
+                    ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), entry.getFenceRecipeName()));
                 }
 
-                ModHandler.addShapedRecipe(fenceName, entry.getFence().copy(), "PSP", "PSP", "PSP",
+                ModHandler.addShapedRecipe(hasFenceName ? entry.getFenceRecipeName() : name + "_fence", entry.getFence().copy(),
+                        "PSP", "PSP", "PSP",
                         'P', entry.getPlanks().copy(),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             }
@@ -179,10 +249,11 @@ public class WoodRecipeLoader {
         // fence gate
         if (!entry.getFenceGate().isEmpty()) {
             if (ConfigHolder.recipes.hardWoodRecipes) {
-                final String fenceGateName = "oak".equals(name) ? "fence_gate" : name + "_fence_gate";
+                final boolean hasFenceGateName = entry.getFenceGateRecipeName() != null;
+                final String fenceGateName = hasFenceGateName ? entry.getFenceGateRecipeName() : name + "_fence_gate";
 
                 // hard plank -> fence gate crafting
-                if (entry.shouldRemoveRecipes()) {
+                if (hasFenceGateName) {
                     ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), fenceGateName));
                 }
 
@@ -210,14 +281,14 @@ public class WoodRecipeLoader {
         // boat
         if (!entry.getBoat().isEmpty()) {
             if (ConfigHolder.recipes.hardWoodRecipes && !entry.getSlab().isEmpty()) {
-                final String boatName = "oak".equals(name) ? "boat" : name + "_boat";
+                final boolean hasBoatName = entry.getBoatRecipeName() != null;
 
                 // hard plank -> boat crafting
-                if (entry.shouldRemoveRecipes()) {
-                    ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), boatName));
+                if (hasBoatName) {
+                    ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), entry.getBoatRecipeName()));
                 }
 
-                ModHandler.addShapedRecipe(boatName, entry.getBoat().copy(), "PHP", "PkP", "SSS",
+                ModHandler.addShapedRecipe(hasBoatName ? entry.getBoatRecipeName() : name + "_boat", entry.getBoat().copy(), "PHP", "PkP", "SSS",
                         'P', entry.getPlanks().copy(),
                         'S', entry.getSlab().copy(),
                         'H', new ItemStack(Items.WOODEN_SHOVEL));
@@ -238,7 +309,6 @@ public class WoodRecipeLoader {
     private static void registerGTWoodRecipes() {
         // GT wood special handling
         ModHandler.addShapelessRecipe("rubber_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.nerfWoodCrafting ? 2 : 4), new ItemStack(MetaBlocks.RUBBER_LOG));
-        ModHandler.addShapedRecipe("rubber_wood_planks_saw", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK, ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6), "s", "L", 'L', new ItemStack(MetaBlocks.RUBBER_LOG));
 
         ModHandler.addShapedRecipe("treated_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK, 8), "PPP", "PBP", "PPP", 'P', "plankWood", 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
 
