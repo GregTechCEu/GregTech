@@ -33,7 +33,6 @@ import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
-import gregtech.loaders.WoodTypeEntry;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -287,7 +286,6 @@ public class CommonProxy {
         MetaBlocks.registerOreDict();
         OreDictionaryLoader.init();
         MaterialInfoLoader.init();
-        WoodTypeEntry.registerDefaultEntries();
 
         // post an event for addons to modify unification data before base GT registers recycling recipes
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, ItemMaterialInfo.class));
