@@ -518,9 +518,17 @@ public class MetaBlocks {
     }
 
     public static void registerOreDict() {
-        OreDictUnifier.registerOre(new ItemStack(RUBBER_LOG, 1, GTValues.W), OrePrefix.log, Materials.Wood);
-        OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES, 1, GTValues.W), "treeLeaves");
-        OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING, 1, GTValues.W), "treeSapling");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_LOG), OrePrefix.log, Materials.Wood);
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES), "treeLeaves");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING), "treeSapling");
+        OreDictUnifier.registerOre(new ItemStack(WOOD_SLAB), "slabWood");
+        OreDictUnifier.registerOre(new ItemStack(WOOD_SLAB, 1, 1), "slabTreatedWood");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_WOOD_STAIRS), "stairWood");
+        OreDictUnifier.registerOre(new ItemStack(TREATED_WOOD_STAIRS), "stairTreatedWood");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_WOOD_FENCE), "fenceWood");
+        OreDictUnifier.registerOre(new ItemStack(TREATED_WOOD_FENCE), "fenceTreatedWood");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_WOOD_FENCE_GATE), "fenceGateWood");
+        OreDictUnifier.registerOre(new ItemStack(TREATED_WOOD_FENCE_GATE), "fenceGateTreatedWood");
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), OrePrefix.plank, Materials.Wood);
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.Wood, GTValues.M)));
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), OrePrefix.plank, Materials.TreatedWood);

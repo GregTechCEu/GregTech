@@ -643,8 +643,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         RUBBER_WOOD_BOAT = addItem(473, "rubber_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.RUBBER_WOOD_BOAT)).setMaxStackSize(1);
         TREATED_WOOD_BOAT = addItem(474, "treated_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.TREATED_WOOD_BOAT)).setMaxStackSize(1);
-        RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR));
-        TREATED_WOOD_DOOR = addItem(476, "treated_wood_door").addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR));
+        RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR)).addOreDict("doorWood");
+        TREATED_WOOD_DOOR = addItem(476, "treated_wood_door").addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR)).addOreDict("doorTreatedWood");
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
