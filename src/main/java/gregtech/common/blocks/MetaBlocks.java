@@ -251,7 +251,7 @@ public class MetaBlocks {
         RUBBER_WOOD_FENCE_GATE.setRegistryName("rubber_wood_fence_gate").setTranslationKey("rubber_wood_fence_gate");
         TREATED_WOOD_FENCE_GATE = new BlockGregFenceGate();
         TREATED_WOOD_FENCE_GATE.setRegistryName("treated_wood_fence_gate").setTranslationKey("treated_wood_fence_gate");
-        RUBBER_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.RUBBER_WOOD_DOOR.getStackForm());
+        RUBBER_WOOD_DOOR = new BlockRubberDoor(() -> MetaItems.RUBBER_WOOD_DOOR.getStackForm());
         RUBBER_WOOD_DOOR.setRegistryName("rubber_wood_door").setTranslationKey("rubber_wood_door");
         TREATED_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.TREATED_WOOD_DOOR.getStackForm());
         TREATED_WOOD_DOOR.setRegistryName("treated_wood_door").setTranslationKey("treated_wood_door");

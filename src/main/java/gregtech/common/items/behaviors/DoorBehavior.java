@@ -39,7 +39,9 @@ public class DoorBehavior implements IItemBehaviour {
             ItemDoor.placeDoor(world, pos, playerFacing, this.block, isRightHinge);
             SoundType soundType = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
             world.playSound(player, pos, soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8f);
-            stack.shrink(1);
+            if (!player.isCreative()) {
+                stack.shrink(1);
+            }
             return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
         } else {
             return ActionResult.newResult(EnumActionResult.FAIL, stack);
