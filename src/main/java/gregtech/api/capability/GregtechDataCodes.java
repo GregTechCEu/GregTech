@@ -114,7 +114,7 @@ public class GregtechDataCodes {
     // Phantom Tanks
     public static final int REMOVE_PHANTOM_FLUID_TYPE = 10;
     public static final int CHANGE_PHANTOM_FLUID = 11;
-    public static final int VOID_PHANTOM_FLUID = 12;
+    public static final int SET_PHANTOM_FLUID = 12;
     public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
 
     // Recipe Logic
