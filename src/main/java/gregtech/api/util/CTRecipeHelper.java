@@ -1,5 +1,7 @@
 package gregtech.api.util;
 
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
@@ -16,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CTRecipeHelper {
@@ -234,5 +237,14 @@ public class CTRecipeHelper {
         }
         builder.append(", ");
         return builder.toString();
+    }
+
+    @Nonnull
+    public static ItemStack[] getStacksFromIngredient(@Nonnull IIngredient ingredient) {
+        ItemStack[] items = new ItemStack[ingredient.getItems().size()];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
+        }
+        return items;
     }
 }

@@ -7,9 +7,10 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.oredict.IOreDictEntry;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.ingredients.CraftTweakerItemInputWrapper;
 import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.util.CTRecipeHelper;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -59,7 +60,7 @@ public class CTRecipeBuilder {
             throw new IllegalArgumentException("Invalid ingredient: is null");
         }
 
-        if (ingredient.getItems().size() == 0) {
+        if (ingredient.getItems().isEmpty()) {
             if (oreDict != null) {
                 throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
             } else {
@@ -75,10 +76,12 @@ public class CTRecipeBuilder {
             checkIfExists(ingredient, oreDict);
 
             if (oreDict != null) {
-                this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
+                this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
+            } else if (ingredient.getItems().size() == 1) {
+                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(CraftTweakerMC.getItemStack(ingredient.getItems().get(0)),
+                        ingredient.getAmount()));
             } else {
-                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(ingredient, ingredient.getAmount()));
+                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(CTRecipeHelper.getStacksFromIngredient(ingredient)));
             }
         }
         return this;
@@ -91,13 +94,13 @@ public class CTRecipeBuilder {
             checkIfExists(ingredient, oreDict);
 
             if (oreDict != null) {
-                this.backingBuilder.input(
-                        GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount())
-                                .setNonConsumable());
-            } else {
-                this.backingBuilder.input(CraftTweakerItemInputWrapper.getOrCreate(
-                                ingredient, ingredient.getAmount())
-                        .setNonConsumable());
+                this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()).setNonConsumable());
+            } else if (!ingredient.getItems().isEmpty()) {
+                if (ingredient.getItems().size() == 1) {
+                    this.backingBuilder.notConsumable(CraftTweakerMC.getItemStack(ingredient.getItems().get(0)));
+                } else {
+                    this.backingBuilder.notConsumable(GTRecipeItemInput.getOrCreate(CTRecipeHelper.getStacksFromIngredient(ingredient)));
+                }
             }
         }
         return this;
