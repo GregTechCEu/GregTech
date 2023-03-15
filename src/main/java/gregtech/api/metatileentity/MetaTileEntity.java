@@ -430,7 +430,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             }
             EnumActionResult result = coverBehavior.onRightClick(playerIn, hand, hitResult);
 
-            if (result != EnumActionResult.SUCCESS && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+            if (result == EnumActionResult.SUCCESS) {
+                return true;
+            }
+            else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
                 result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
 
                 return result == EnumActionResult.SUCCESS;
