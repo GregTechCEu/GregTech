@@ -748,7 +748,7 @@ public class VanillaStandardRecipes {
                 'P', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W)
         );
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).circuitMeta(1).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).circuitMeta(9).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(gem, Diamond).outputs(new ItemStack(Blocks.JUKEBOX)).buildAndRegister();
     }
 
