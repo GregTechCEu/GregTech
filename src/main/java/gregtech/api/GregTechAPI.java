@@ -66,7 +66,7 @@ public class GregTechAPI {
     public static final BaseCreativeTab TAB_GREGTECH_MACHINES =
             new BaseCreativeTab(GTValues.MODID + ".machines", () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_CABLES =
-            new BaseCreativeTab(GTValues.MODID + ".cables", () -> OreDictUnifier.get(OrePrefix.wireGtDouble, Materials.Aluminium), true);
+            new BaseCreativeTab(GTValues.MODID + ".cables", () -> OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_PIPES =
             new BaseCreativeTab(GTValues.MODID + ".pipes", () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_TOOLS =
