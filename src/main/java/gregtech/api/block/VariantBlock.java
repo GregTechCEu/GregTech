@@ -108,7 +108,11 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
+    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
+        // Short circuit if there is no bonus speed
+        if (getWalkingSpeedBonus() == 1.0D) {
+            return;
+        }
 
         IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
         if (checkApplicableBlocks(below)) {

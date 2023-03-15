@@ -30,7 +30,7 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
 
     @Override
     public double getWalkingSpeedBonus() {
-        return 1.3D;
+        return 1.6D;
     }
 
     @Override
