@@ -77,7 +77,7 @@ public class OreGlobFormattedStringVisualizer implements Visualizer {
                 return TextFormatting.WHITE;
             case VALUE:
                 return TextFormatting.YELLOW;
-            case LOGIC_INVERSION:
+            case NEGATION:
             case ERROR:
                 return TextFormatting.RED;
             default:

@@ -36,7 +36,7 @@ class NodeVisualizer implements NodeVisitor {
 
     @Override
     public void match(String match, boolean ignoreCase, boolean not) {
-        if (not) visualizer.text("not ", LOGIC_INVERSION);
+        if (not) visualizer.text("not ", NEGATION);
         visualizer.text("'", NODE);
         visualizer.text(match, VALUE);
         visualizer.text("'", NODE);
@@ -44,7 +44,7 @@ class NodeVisualizer implements NodeVisitor {
 
     @Override
     public void chars(int amount, boolean not) {
-        if (not) visualizer.text("either more or less than ", LOGIC_INVERSION);
+        if (not) visualizer.text("either more or less than ", NEGATION);
         visualizer.number(amount, VALUE);
         visualizer.text(amount == 1 ? " character" : " characters", NODE);
     }
@@ -64,7 +64,7 @@ class NodeVisualizer implements NodeVisitor {
     @Override
     public void group(OreGlobNode node, boolean not) {
         if (not) {
-            visualizer.text("not", LOGIC_INVERSION);
+            visualizer.text("not", NEGATION);
             visualizer.text(":", NODE);
             visualizer.newLine(indents + 1);
             new NodeVisualizer(visualizer, indents + 1).visit(node);
@@ -79,7 +79,7 @@ class NodeVisualizer implements NodeVisitor {
             case OR:
                 if (not) {
                     visualizer.text("anything that ", NODE);
-                    visualizer.text("isn't", LOGIC_INVERSION);
+                    visualizer.text("isn't", NEGATION);
                     visualizer.text(" one of...", NODE);
                 } else {
                     visualizer.text("one of...", NODE);
@@ -98,7 +98,7 @@ class NodeVisualizer implements NodeVisitor {
             case AND:
                 if (not) {
                     visualizer.text("anything that ", NODE);
-                    visualizer.text("isn't", LOGIC_INVERSION);
+                    visualizer.text("isn't", NEGATION);
                     visualizer.text("...", NODE);
                 } else {
                     visualizer.text("anything that is...", NODE);
@@ -116,7 +116,7 @@ class NodeVisualizer implements NodeVisitor {
                 return;
             case XOR:
                 if (not) {
-                    visualizer.text("either both or none of...", LOGIC_INVERSION);
+                    visualizer.text("either both or none of...", NEGATION);
                 } else {
                     visualizer.text("only one of...", NODE);
                 }
@@ -170,7 +170,7 @@ class NodeVisualizer implements NodeVisitor {
     }
 
     public static void impossible(OreGlob.Visualizer visualizer) {
-        visualizer.text("(impossible to match)", LOGIC_INVERSION);
+        visualizer.text("(impossible to match)", NEGATION);
     }
 
     public static void nonempty(OreGlob.Visualizer visualizer) {
@@ -178,7 +178,7 @@ class NodeVisualizer implements NodeVisitor {
     }
 
     public static void empty(OreGlob.Visualizer visualizer) {
-        visualizer.text("nothing", LOGIC_INVERSION);
+        visualizer.text("nothing", NEGATION);
     }
 
     public static void error(OreGlob.Visualizer visualizer) {

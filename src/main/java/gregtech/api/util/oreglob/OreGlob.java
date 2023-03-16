@@ -135,7 +135,7 @@ public abstract class OreGlob {
         PLAINTEXT, // Plain text
         NODE, // Text indicating part of a node
         VALUE, // Text indicating some kind of value, whether it's string or number
-        LOGIC_INVERSION, // Text indicating logical inversion of the statement
+        NEGATION, // Text indicating logical negation of the statement
         LABEL, // Text indication for each label in group nodes
         ERROR // Text indicating a syntax error; you shouldn't be able to see this
     }
