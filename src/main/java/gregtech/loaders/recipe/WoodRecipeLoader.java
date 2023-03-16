@@ -160,7 +160,7 @@ public class WoodRecipeLoader {
             }
 
             // log -> plank saw crafting
-            ModHandler.addShapedRecipe(entry.getPlanksRecipeName() + "_saw",
+            ModHandler.addShapedRecipe(name + "_planks_saw",
                     GTUtility.copyAmount(ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6, entry.getPlanks()),
                     "s", "L", 'L', entry.getLog().copy());
 
@@ -305,16 +305,14 @@ public class WoodRecipeLoader {
                     ModHandler.removeRecipeByName(new ResourceLocation(entry.getModid(), entry.getFenceGateRecipeName()));
                 }
 
-                final String fenceGateName = hasFenceGateRecipe ? entry.getFenceGateRecipeName() : name + "_fence_gate";
-
-                ModHandler.addShapedRecipe(fenceGateName, entry.getFenceGate().copy(),
+                ModHandler.addShapedRecipe(hasFenceGateRecipe ? entry.getFenceGateRecipeName() : name + "_fence_gate", entry.getFenceGate().copy(),
                         "F F", "SPS", "SPS",
                         'P', entry.getPlanks().copy(),
                         'S', entry.getStick(),
                         'F', new ItemStack(Items.FLINT)
                 );
 
-                ModHandler.addShapedRecipe(fenceGateName + "_screws", GTUtility.copyAmount(2, entry.getFenceGate()),
+                ModHandler.addShapedRecipe(name + "_fence_gate_screws", GTUtility.copyAmount(2, entry.getFenceGate()),
                         "IdI", "SPS", "SPS",
                         'P', entry.getPlanks(),
                         'S', entry.getStick(),
