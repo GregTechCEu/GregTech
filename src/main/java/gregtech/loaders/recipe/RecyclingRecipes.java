@@ -2,7 +2,6 @@ package gregtech.loaders.recipe;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -35,6 +34,8 @@ import static gregtech.api.GTValues.M;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class RecyclingRecipes {
+
+    private static final NBTCondition RENAMED_NBT = NBTCondition.create(NBTTagType.COMPOUND, "display", "");
 
     // TODO - Fix recipe order with some things (noticed Hermetic Casings)
     // TODO - Figure out solution to LuV+ components
@@ -510,8 +511,7 @@ public class RecyclingRecipes {
         if (mte != null) {
             builder.clearInputs();
             // Don't use ANY to avoid issues with Drums, Super Chests, and other MTEs that hold an inventory
-            NBTCondition condition = NBTCondition.create(NBTTagType.STRING, GregtechDataCodes.CUSTOM_NAME, "");
-            builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, condition);
+            builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, RENAMED_NBT);
         }
     }
 }
