@@ -321,7 +321,7 @@ public class WidgetProspectingMap extends Widget {
         int zPos = ((Minecraft.getMinecraft().player.chunkCoordZ + zDiff) << 4) + 8;
 
         BlockPos b = new BlockPos(xPos, Minecraft.getMinecraft().world.getHeight(xPos, zPos), zPos);
-        if (System.currentTimeMillis() - lastClicked < 200) {
+        if (System.currentTimeMillis() - lastClicked < 400) {
             boolean added = false;
             trimHoveredNames();
 
