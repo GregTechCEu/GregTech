@@ -11,14 +11,18 @@ import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.RecipeBuilder")
@@ -76,14 +80,7 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder inputs(@Nonnull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            String oreDict = extractOreDictEntry(ingredient);
-            checkIfExists(ingredient, oreDict);
-
-            if (oreDict != null) {
-                this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
-            } else if (!ingredient.getItems().isEmpty()) {
-                this.backingBuilder.input(getInputFromCTIngredient(ingredient));
-            }
+            this.backingBuilder.input(getInputFromCTIngredient(ingredient));
         }
         return this;
     }
@@ -91,39 +88,50 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder notConsumable(@Nonnull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
-            String oreDict = extractOreDictEntry(ingredient);
-            checkIfExists(ingredient, oreDict);
-
-            if (oreDict != null) {
-                this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()).setNonConsumable());
-            } else if (!ingredient.getItems().isEmpty()) {
-                this.backingBuilder.notConsumable(getInputFromCTIngredient(ingredient));
-            }
+            this.backingBuilder.notConsumable(getInputFromCTIngredient(ingredient));
         }
         return this;
     }
 
     @Nonnull
-    private static GTRecipeInput getInputFromCTIngredient(@Nonnull IIngredient ingredient) {
-        if (ingredient.getItems().size() == 1) {
-            ItemStack stack = CraftTweakerMC.getItemStack(ingredient.getItems().get(0));
-            final NBTTagCompound compound = stack.getTagCompound();
+    private static GTRecipeInput getInputFromCTIngredient(@Nullable IIngredient ingredient) {
+        if (ingredient == null) {
+            throw new IllegalArgumentException("Invalid ingredient: is null");
+        }
 
+        final List<IItemStack> items = ingredient.getItems();
+        final String oreDict = extractOreDictEntry(ingredient);
+        if (oreDict != null) {
+            // ore dict
+            if (items.isEmpty()) {
+                throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
+            }
+            return GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount());
+        } else if (items.isEmpty()) {
+            // no possible input from what was supplied
+            throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
+        } else if (items.size() == 1) {
+            // single input
+            ItemStack stack = CraftTweakerMC.getItemStack(items.get(0));
             GTRecipeInput input = GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount());
+
+            // nbt support, if a tag is present
+            final NBTTagCompound compound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
             if (compound != null) {
-                final String compoundString = compound.toString();
-                input.setNBTMatchingCondition((tag, ignored) -> {
-                    if (compound.getSize() < tag.getSize()) return false;
-                    return compoundString.contains(tag.toString());
-                }, NBTCondition.ANY);
+                final Set<Map.Entry<String, NBTBase>> entrySet = compound.tagMap.entrySet();
+                return input.setNBTMatchingCondition((tag, ignored) -> {
+                    // return if the tag to check has everything the recipe requires
+                    return tag.tagMap.entrySet().containsAll(entrySet);
+                }, null);
             }
             return input;
         } else {
-            ItemStack[] items = new ItemStack[ingredient.getItems().size()];
-            for (int i = 0; i < items.length; i++) {
-                items[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
+            // multiple inputs for a single input entry
+            ItemStack[] itemStacks = new ItemStack[items.size()];
+            for (int i = 0; i < itemStacks.length; i++) {
+                itemStacks[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
             }
-            return GTRecipeItemInput.getOrCreate(items);
+            return GTRecipeItemInput.getOrCreate(itemStacks);
         }
     }
 
