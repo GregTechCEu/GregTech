@@ -8,12 +8,16 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.oredict.IOreDictEntry;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.util.CTRecipeHelper;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -70,25 +74,22 @@ public class CTRecipeBuilder {
     }
 
     @ZenMethod
-    public CTRecipeBuilder inputs(IIngredient... ingredients) {
+    public CTRecipeBuilder inputs(@Nonnull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             String oreDict = extractOreDictEntry(ingredient);
             checkIfExists(ingredient, oreDict);
 
             if (oreDict != null) {
                 this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()));
-            } else if (ingredient.getItems().size() == 1) {
-                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(CraftTweakerMC.getItemStack(ingredient.getItems().get(0)),
-                        ingredient.getAmount()));
-            } else {
-                this.backingBuilder.input(GTRecipeItemInput.getOrCreate(CTRecipeHelper.getStacksFromIngredient(ingredient)));
+            } else if (!ingredient.getItems().isEmpty()) {
+                this.backingBuilder.input(getInputFromCTIngredient(ingredient));
             }
         }
         return this;
     }
 
     @ZenMethod
-    public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
+    public CTRecipeBuilder notConsumable(@Nonnull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             String oreDict = extractOreDictEntry(ingredient);
             checkIfExists(ingredient, oreDict);
@@ -96,14 +97,34 @@ public class CTRecipeBuilder {
             if (oreDict != null) {
                 this.backingBuilder.input(GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount()).setNonConsumable());
             } else if (!ingredient.getItems().isEmpty()) {
-                if (ingredient.getItems().size() == 1) {
-                    this.backingBuilder.notConsumable(CraftTweakerMC.getItemStack(ingredient.getItems().get(0)));
-                } else {
-                    this.backingBuilder.notConsumable(GTRecipeItemInput.getOrCreate(CTRecipeHelper.getStacksFromIngredient(ingredient)));
-                }
+                this.backingBuilder.notConsumable(getInputFromCTIngredient(ingredient));
             }
         }
         return this;
+    }
+
+    @Nonnull
+    private static GTRecipeInput getInputFromCTIngredient(@Nonnull IIngredient ingredient) {
+        if (ingredient.getItems().size() == 1) {
+            ItemStack stack = CraftTweakerMC.getItemStack(ingredient.getItems().get(0));
+            final NBTTagCompound compound = stack.getTagCompound();
+
+            GTRecipeInput input = GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount());
+            if (compound != null) {
+                final String compoundString = compound.toString();
+                input.setNBTMatchingCondition((tag, ignored) -> {
+                    if (compound.getSize() < tag.getSize()) return false;
+                    return compoundString.contains(tag.toString());
+                }, NBTCondition.ANY);
+            }
+            return input;
+        } else {
+            ItemStack[] items = new ItemStack[ingredient.getItems().size()];
+            for (int i = 0; i < items.length; i++) {
+                items[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
+            }
+            return GTRecipeItemInput.getOrCreate(items);
+        }
     }
 
     @ZenMethod
