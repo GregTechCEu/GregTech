@@ -75,14 +75,17 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
         });
         if (isClient) {
             loadPacketLocalConfig();
-            int color = this.widgetProspectingMap.getDarkMode() ? 0xF0F0F0 : 0x404040;
             //Cardinal directions
-            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset, "N", color).setShadow(true));
-            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset - 6 + 16 * (chunkRadius * 2 - 1), "S", color).setShadow(true));
-            this.addWidget(new LabelWidget(0, offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "W", color).setShadow(true));
-            this.addWidget(new LabelWidget(-6 + 16 * (chunkRadius * 2 - 1), offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "E", color).setShadow(true));
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset, "N", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset - 6 + 16 * (chunkRadius * 2 - 1), "S", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(0, offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "W", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(-6 + 16 * (chunkRadius * 2 - 1), offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "E", this::labelColor).setShadow(true));
         }
         return this;
+    }
+
+    int labelColor() {
+        return this.widgetProspectingMap.getDarkMode() ? 0xF0F0F0 : 0x404040;
     }
 
     @SideOnly(Side.CLIENT)
