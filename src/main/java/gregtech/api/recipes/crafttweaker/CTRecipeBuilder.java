@@ -118,18 +118,29 @@ public class CTRecipeBuilder {
             return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
         } else {
             // multiple inputs for a single input entry
-            ItemStack[] itemStacks = new ItemStack[items.size()];
-            NBTTagCompound tagCompound = null;
+            final ItemStack[] itemStacks = new ItemStack[items.size()];
+            NBTTagCompound inputNBTTagCompound = null;
             for (int i = 0; i < itemStacks.length; i++) {
                 itemStacks[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
                 NBTTagCompound compound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
-                // use the first present tag to match all the potential items, if present
-                if (tagCompound == null && compound != null) {
-                    tagCompound = compound;
+                if (i == 0 && compound != null) {
+                    // set the used tag to the first item's tag
+                    inputNBTTagCompound = compound;
+                }
+
+                if (inputNBTTagCompound != null) {
+                    // if using a tag, validate it
+                    if (compound == null) {
+                        // every ingredient must have nbt tags
+                        throw new IllegalArgumentException("Invalid nbt tag on ingredient [" + ingredient + "]. Must all have NBT tags.");
+                    } else if (!inputNBTTagCompound.equals(compound)) {
+                        // every ingredient must have the same nbt tag
+                        throw new IllegalArgumentException("Invalid nbt tag on ingredient [" + ingredient + "]. Must all be the same.");
+                    }
                 }
             }
 
-            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(itemStacks), tagCompound);
+            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(itemStacks), inputNBTTagCompound);
         }
     }
 
