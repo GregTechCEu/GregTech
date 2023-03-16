@@ -8,6 +8,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -45,14 +46,11 @@ import xaero.common.minimap.waypoints.WaypointWorld;
 
 import java.awt.*;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
 
 public class WidgetProspectingMap extends Widget {
     private final int chunkRadius;
@@ -241,7 +239,7 @@ public class WidgetProspectingMap extends Widget {
     public void drawInForeground(int mouseX, int mouseY) {
         // draw tooltips
         if (this.isMouseOverElement(mouseX, mouseY) && texture != null) {
-            this.hoveredNames = new ArrayList<>();
+            this.hoveredNames.clear();
             List<String> tooltips = new ArrayList<>();
             int cX = (mouseX - this.getPosition().x) / 16;
             int cZ = (mouseY - this.getPosition().y) / 16;
@@ -335,7 +333,7 @@ public class WidgetProspectingMap extends Widget {
                 added = addXaeroMapWaypoint(b);
             }
             if (added) {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("behavior.prospector.added_waypoint"), false);
+                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("behavior.prospector.added_waypoint"), true);
             }
         }
         this.lastClicked = System.currentTimeMillis();
@@ -359,31 +357,11 @@ public class WidgetProspectingMap extends Widget {
                 }
                 if (matches.size() > pr.size() / 2) {
                     this.hoveredNames.removeAll(matches);
-                    this.hoveredNames.add(makePrettyName(odd.getDepositName()));
+                    this.hoveredNames.add(FileUtility.trimFileName(odd.getDepositName()));
                 }
             }
         }
         return this.hoveredNames;
-    }
-
-    public String makePrettyName(String name) {
-        FileSystem fs = FileSystems.getDefault();
-        String separator = fs.getSeparator();
-
-        //Remove the leading "folderName\"
-        String[] tempName = name.split(Matcher.quoteReplacement(separator));
-        //Take the last entry in case of nested folders
-        String newName = tempName[tempName.length - 1];
-        //Remove the ".json"
-        tempName = newName.split("\\.");
-        //Take the first entry
-        newName = tempName[0];
-        //Replace all "_" with a space
-        newName = newName.replaceAll("_", " ");
-        //Capitalize the first letter
-        newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
-
-        return newName;
     }
 
     @Optional.Method(modid = "journeymap")
