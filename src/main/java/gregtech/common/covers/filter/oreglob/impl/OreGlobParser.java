@@ -103,6 +103,7 @@ public final class OreGlobParser {
                         error("Compilation flags in the middle of expression", start, 1);
                     }
                     gatherFlags(first);
+                    first = false;
                     continue;
                 case CHAR_EOF:
                     setCurrentToken(EOF, input.length(), 0);
@@ -160,6 +161,7 @@ public final class OreGlobParser {
     }
 
     private void gatherFlags(boolean add) {
+        boolean flagsAdded = false;
         while (true) {
             int i = this.inputIndex;
             int c = readNextChar();
@@ -168,19 +170,26 @@ public final class OreGlobParser {
                     c = readNextChar();
                     if (c == CHAR_EOF) {
                         error("End of file after escape character ('\\')", i, 1);
-                        return;
+                        break;
                     } else if (add) {
                         addFlag(c, i);
+                        flagsAdded = true;
+                        continue;
                     }
-                    break;
                 case ' ': case '\t': case '\n': case '\r':
                 case CHAR_EOF:
-                    return;
+                    break;
                 default:
                     if (add) {
                         addFlag(c, i);
+                        flagsAdded = true;
                     }
+                    continue;
             }
+            if (!flagsAdded && add) {
+                error("No compilation flags given", i, 1);
+            }
+            return;
         }
     }
 

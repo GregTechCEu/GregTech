@@ -94,12 +94,11 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                 h.format(i++, TextFormatting.YELLOW);
                                 break;
                             case '$': {
-                                int start = i;
+                                h.format(i, TextFormatting.DARK_GREEN);
                                 L:
                                 for (; i < t.length(); i++) {
                                     switch (t.charAt(i)) {
                                         case ' ': case '\t': case '\n': case '\r':
-                                            h.format(start, TextFormatting.DARK_GREEN);
                                             break L;
                                     }
                                 }
