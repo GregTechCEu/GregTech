@@ -9,7 +9,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
@@ -30,11 +29,18 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
     }
 
     @Override
-    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
-        if ((entityIn.motionX != 0 || entityIn.motionZ != 0) && !entityIn.isInWater() && !entityIn.isSneaking()) {
-            entityIn.motionX *= 1.3;
-            entityIn.motionZ *= 1.3;
-        }
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockType.ASPHALT);
+    }
+
+    @Override
+    public boolean bonusSpeedCondition(Entity walkingEntity) {
+        return super.bonusSpeedCondition(walkingEntity) && !walkingEntity.isSneaking();
     }
 
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
