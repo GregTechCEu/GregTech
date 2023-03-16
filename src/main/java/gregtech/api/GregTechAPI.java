@@ -62,7 +62,7 @@ public class GregTechAPI {
     public static final Object2ObjectOpenHashMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
 
     public static final BaseCreativeTab TAB_GREGTECH =
-            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.LOGO.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_MACHINES =
             new BaseCreativeTab(GTValues.MODID + ".machines", () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_CABLES =
