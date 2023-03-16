@@ -102,7 +102,7 @@ public class SecondDegreeMaterials {
         DamascusSteel = new Material.Builder(2012, "damascus_steel")
                 .ingot(3).fluid()
                 .color(0x6E6E6E).iconSet(METALLIC)
-                .flags(EXT_METAL)
+                .flags(EXT_METAL, GENERATE_GEAR)
                 .components(Steel, 1)
                 .toolStats(ToolProperty.Builder.of(6.0F, 4.0F, 1024, 3)
                         .attackSpeed(0.3F).enchantability(33)
