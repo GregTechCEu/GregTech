@@ -103,7 +103,7 @@ public class ToolEventHandlers {
         EntityPlayer player = event.getHarvester();
         if (player != null) {
             ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.hasTagCompound() || !(stack.getItem() instanceof IGTTool)) {
+            if (stack.isEmpty() || !stack.hasTagCompound() || !(stack.getItem() instanceof IGTTool)) {
                 return;
             }
             if (!event.isSilkTouching()) {
@@ -122,7 +122,8 @@ public class ToolEventHandlers {
                         if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
                             world.setBlockToAir(icePos);
                         }
-                        return true;
+                        // only try once, so future water placement does not get eaten too
+                        return false;
                     });
                 }
             }

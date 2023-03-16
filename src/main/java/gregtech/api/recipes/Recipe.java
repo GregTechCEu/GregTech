@@ -9,7 +9,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

@@ -1016,7 +1016,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         public boolean isInCreativeTab(CreativeTabs tab) {
-            return tab == CreativeTabs.SEARCH || ArrayUtils.contains(creativeTabsOverride != null ? creativeTabsOverride : MetaItem.this.defaultCreativeTabs, tab);
+            CreativeTabs[] tabs = this.creativeTabsOverride != null ? this.creativeTabsOverride : MetaItem.this.defaultCreativeTabs;
+            return tabs.length > 0 && (tab == CreativeTabs.SEARCH || ArrayUtils.contains(tabs, tab));
         }
 
         @Override

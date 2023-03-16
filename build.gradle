@@ -5,17 +5,9 @@ buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
-        if (project.use_mixins.toBoolean()) {
-            maven {
-                name 'MixinGradle Maven'
-                url 'https://repo.spongepowered.org/repository/maven-public'
-            }
-        }
     }
     dependencies {
-        if (project.use_mixins.toBoolean()) {
-            classpath "org.spongepowered:mixingradle:${mixingradle_version}"
-        }
+        classpath "org.spongepowered:mixingradle:${mixingradle_version}"
     }
 }
 
@@ -23,6 +15,8 @@ plugins {
     id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
     id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
 }
+
+apply plugin: 'org.spongepowered.mixin'
 
 tasks.register('getVersionFromJava') {
     return getVersionFromJava()
@@ -76,11 +70,9 @@ minecraft {
             if (project.use_coremod.toBoolean()) {
                 jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
             }
-            if (project.use_mixins.toBoolean()) {
-                jvmArg '-Dmixin.hotSwap=true'
-                jvmArg '-Dmixin.checks.interfaces=true'
-                jvmArg '-Dmixin.debug=true'
-            }
+            jvmArg '-Dmixin.hotSwap=true'
+            jvmArg '-Dmixin.checks.interfaces=true'
+            jvmArg '-Dmixin.debug=true'
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             environment 'MC_VERSION', minecraft_version.toString()
@@ -92,10 +84,8 @@ minecraft {
             if (project.use_coremod.toBoolean()) {
                 jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
             }
-            if (project.use_mixins.toBoolean()) {
-                jvmArg '-Dmixin.hotSwap=true'
-                jvmArg '-Dmixin.checks.interfaces=true'
-            }
+            jvmArg '-Dmixin.hotSwap=true'
+            jvmArg '-Dmixin.checks.interfaces=true'
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             environment 'MC_VERSION', minecraft_version.toString()
@@ -116,18 +106,16 @@ repositories {
         name 'BlameJared Maven'
         url 'https://maven.blamejared.com'
     }
-    if (project.use_mixins.toBoolean()) {
-        maven {
-            name 'Sponge Maven'
-            url 'https://repo.spongepowered.org/maven'
-        }
-    }
     maven {
         name 'Curse Maven'
         url 'https://www.cursemaven.com'
         content {
             includeGroup 'curse.maven'
         }
+    }
+    maven {
+        name 'Sponge Maven'
+        url 'https://repo.spongepowered.org/maven'
     }
 }
 
@@ -144,7 +132,10 @@ dependencies {
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
     implementation fg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation fg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
-    implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
+    // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
+    // causing crashes at run-time when deobfuscated
+    implementation files("libs/groovyscript-0.4.0.jar")
+    //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
     implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Tests
@@ -155,16 +146,11 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 
-    if (project.use_mixins.toBoolean()) {
-        compileOnly "zone.rong:mixinbooter:${mixinbooter_version}"
-        runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
-
-        annotationProcessor "org.spongepowered:mixin:${mixin_annotations_version}:processor"
-    }
-
     // GroovyScript dependency
-    // remove this if project.use_mixins is true
-    runtimeOnly "zone.rong:mixinbooter:${mixinbooter_version}"
+    implementation "zone.rong:mixinbooter:${mixinbooter_version}"
+
+    // Mixin dependency
+    annotationProcessor "org.spongepowered:mixin:${mixin_annotations_version}:processor"
 }
 
 fancyGradle {
@@ -355,3 +341,4 @@ private String getVersionFromJava() {
         return "${major}.${minor}.${revision}"
     }
 }
+

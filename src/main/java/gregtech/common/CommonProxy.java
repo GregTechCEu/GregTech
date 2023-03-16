@@ -29,7 +29,7 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.integration.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -368,7 +368,6 @@ public class CommonProxy {
     }
 
     public void onPostLoad() {
-        GTRecipeManager.postLoad();
         TerminalRegistry.init();
 
         if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
