@@ -9,7 +9,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @EventBusSubscriber(modid = GTValues.MODID)
 public class TaskScheduler {
@@ -48,17 +51,13 @@ public class TaskScheduler {
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
         if (!event.getWorld().isRemote) {
-            TaskScheduler scheduler = tasksPerWorld.get(event.getWorld());
-            if (scheduler != null) {
-                scheduler.unload();
-                tasksPerWorld.remove(event.getWorld());
-            }
+            tasksPerWorld.remove(event.getWorld());
         }
     }
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (!event.world.isRemote) {
+        if (!event.world.isRemote && event.phase == TickEvent.Phase.START) {
             TaskScheduler scheduler = get(event.world);
             if (scheduler != null) {
                 if (!scheduler.scheduledTasks.isEmpty()) {
