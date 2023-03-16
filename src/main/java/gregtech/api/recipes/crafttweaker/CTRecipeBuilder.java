@@ -112,27 +112,36 @@ public class CTRecipeBuilder {
             throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
         } else if (items.size() == 1) {
             // single input
-            ItemStack stack = CraftTweakerMC.getItemStack(items.get(0));
-            GTRecipeInput input = GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount());
+            final ItemStack stack = CraftTweakerMC.getItemStack(items.get(0));
+            final NBTTagCompound tagCompound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
 
-            // nbt support, if a tag is present
-            final NBTTagCompound compound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
-            if (compound != null) {
-                final Set<Map.Entry<String, NBTBase>> entrySet = compound.tagMap.entrySet();
-                return input.setNBTMatchingCondition((tag, ignored) -> {
-                    // return if the tag to check has everything the recipe requires
-                    return tag.tagMap.entrySet().containsAll(entrySet);
-                }, null);
-            }
-            return input;
+            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
         } else {
             // multiple inputs for a single input entry
             ItemStack[] itemStacks = new ItemStack[items.size()];
+            NBTTagCompound tagCompound = null;
             for (int i = 0; i < itemStacks.length; i++) {
                 itemStacks[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
+                NBTTagCompound compound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
+                // use the first present tag to match all the potential items, if present
+                if (tagCompound == null && compound != null) {
+                    tagCompound = compound;
+                }
             }
-            return GTRecipeItemInput.getOrCreate(itemStacks);
+
+            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(itemStacks), tagCompound);
         }
+    }
+
+    @Nonnull
+    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nullable NBTTagCompound compound) {
+        if (compound == null) return input; // do not append nbt, if there is no tag to check
+
+        final Set<Map.Entry<String, NBTBase>> entrySet = compound.tagMap.entrySet();
+        return input.setNBTMatchingCondition((tag, ignored) -> {
+            // return if the tag to check has everything the recipe requires
+            return tag.tagMap.entrySet().containsAll(entrySet);
+        }, null);
     }
 
     @ZenMethod
