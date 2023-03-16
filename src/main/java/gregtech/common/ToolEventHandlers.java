@@ -121,10 +121,9 @@ public class ToolEventHandlers {
                         IBlockState flowingState = world.getBlockState(icePos);
                         if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
                             world.setBlockToAir(icePos);
-                            // end immediately so the task doesn't remove other water that comes into this block-space
-                            return false;
                         }
-                        return true;
+                        // only try once, so future water placement does not get eaten too
+                        return false;
                     });
                 }
             }
