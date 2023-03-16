@@ -1,6 +1,7 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.Multimap;
+import gregtech.api.GregTechAPI;
 import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -54,7 +55,7 @@ public class ItemGTHoe extends ItemHoe implements IGTTool {
         this.secondaryOreDicts = secondaryOreDicts;
         this.markerItem = markerItem;
         setMaxStackSize(1);
-        setCreativeTab(CreativeTabs.TOOLS);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
         setRegistryName(domain, id);
     }

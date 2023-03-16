@@ -60,8 +60,9 @@ public class MachineRecipeLoader {
         ComponentRecipes.register();
         MiscRecipeLoader.init();
         BatteryRecipes.init();
-
         CircuitRecipes.init();
+        WoodRecipeLoader.init();
+
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
         registerAssemblerRecipes();

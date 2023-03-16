@@ -40,6 +40,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
 
     public BlockItemPipe(ItemPipeType itemPipeType) {
         super(itemPipeType);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 
