@@ -2437,6 +2437,10 @@ tile.transparent_casing.cleanroom_glass.name=超净间玻璃
 
 # Creative tabs
 itemGroup.gregtech.main=格雷科技
+itemGroup.gregtech.machines=机器（格雷科技）
+itemGroup.gregtech.cables=线缆（格雷科技）
+itemGroup.gregtech.pipes=管道（格雷科技）
+itemGroup.gregtech.tools=工具（格雷科技）
 itemGroup.gregtech.materials=材料（格雷科技）
 itemGroup.gregtech.ores=矿石（格雷科技）
 
@@ -2654,9 +2658,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=熔合冶炼炉
 gregtech.machine.steam_alloy_smelter_steel.name=高压合金炉
 gregtech.machine.steam_alloy_smelter_steel.tooltip=熔合冶炼炉
 gregtech.machine.steam_rock_breaker_bronze.name=蒸汽碎岩机
-gregtech.machine.steam_rock_breaker_bronze.tooltip=需紧贴侧面放置水和熔岩
+gregtech.machine.steam_rock_breaker_bronze.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.steam_rock_breaker_steel.name=高压蒸汽碎岩机
-gregtech.machine.steam_rock_breaker_steel.tooltip=需紧贴侧面放置水和熔岩
+gregtech.machine.steam_rock_breaker_steel.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.steam_miner.name=蒸汽采矿机
 gregtech.machine.steam_miner.tooltip=采掘机器下方的矿石！
 
@@ -4064,13 +4068,13 @@ gregtech.machine.gas_collector.opv.tooltip=从宇宙中依照不同的维度收�
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=基础碎岩机
-gregtech.machine.rock_breaker.lv.tooltip=需紧贴侧面放置水和熔岩
+gregtech.machine.rock_breaker.lv.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.rock_breaker.mv.name=进阶碎岩机
-gregtech.machine.rock_breaker.mv.tooltip=需紧贴侧面放置水和熔岩
+gregtech.machine.rock_breaker.mv.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.rock_breaker.hv.name=进阶碎岩机 II
-gregtech.machine.rock_breaker.hv.tooltip=需紧贴侧面放置水和熔岩
+gregtech.machine.rock_breaker.hv.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.rock_breaker.ev.name=进阶碎岩机 III
-gregtech.machine.rock_breaker.ev.tooltip=需紧贴侧面放置水和熔岩
+gregtech.machine.rock_breaker.ev.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.rock_breaker.iv.name=精英碎岩机
 gregtech.machine.rock_breaker.iv.tooltip=岩浆冷却固化机 R-8200
 gregtech.machine.rock_breaker.luv.name=精英碎岩机 II
