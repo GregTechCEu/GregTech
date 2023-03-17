@@ -5,9 +5,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'gradle/**'
   pull_request:
     branches:
       - '*'
+    paths:
+      - 'gradle/**'
 
 # if a second commit is pushed quickly after the first, cancel the first one's build
 concurrency:
