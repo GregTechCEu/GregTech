@@ -120,7 +120,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
                     if (tagList.meta == input.getMetadata()) {
                         final NBTTagCompound inputNBT = input.getTagCompound();
                         if (nbtMatcher != null) {
-                            return nbtMatcher.evaluate(inputNBT, nbtCondition);
+                            return nbtMatcher.evaluate(input, nbtCondition);
                         } else {
                             List<TagToStack> tagMaps = tagList.tagToStack;
                             for (TagToStack tagMapping : tagMaps) {

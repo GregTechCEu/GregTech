@@ -11,18 +11,19 @@ import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.util.ItemStackHashStrategy;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.RecipeBuilder")
@@ -62,7 +63,7 @@ public class CTRecipeBuilder {
             return ((IOreDictEntry) ingredient.getInternal()).getName();
         return null;
     }
-    
+
     private static void checkIfExists(IIngredient ingredient, String oreDict) {
         if (ingredient == null) {
             throw new IllegalArgumentException("Invalid ingredient: is null");
@@ -118,41 +119,57 @@ public class CTRecipeBuilder {
             return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
         } else {
             // multiple inputs for a single input entry
-            final ItemStack[] itemStacks = new ItemStack[items.size()];
-            NBTTagCompound inputNBTTagCompound = null;
-            for (int i = 0; i < itemStacks.length; i++) {
-                itemStacks[i] = CraftTweakerMC.getItemStack(ingredient.getItems().get(i));
-                NBTTagCompound compound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
-                if (i == 0 && compound != null) {
-                    // set the used tag to the first item's tag
-                    inputNBTTagCompound = compound;
-                }
+            final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingItemDamageCount());
 
-                if (inputNBTTagCompound != null) {
-                    // if using a tag, validate it
-                    if (compound == null) {
-                        // every ingredient must have nbt tags
-                        throw new IllegalArgumentException("Invalid nbt tag on ingredient [" + ingredient + "]. Must all have NBT tags.");
-                    } else if (!inputNBTTagCompound.equals(compound)) {
-                        // every ingredient must have the same nbt tag
-                        throw new IllegalArgumentException("Invalid nbt tag on ingredient [" + ingredient + "]. Must all be the same.");
+            ItemStack[] stacks = new ItemStack[items.size()];
+            for (int i = 0; i < stacks.length; i++) {
+                IItemStack item = items.get(i);
+                final ItemStack stack = CraftTweakerMC.getItemStack(item);
+                if (stack.isEmpty()) {
+                    throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: contains empty ItemStack.");
+                }
+                stacks[i] = stack;
+
+                final NBTTagCompound compound = CraftTweakerMC.getNBTCompound(item.getTag());
+                if (compound != null) {
+                    if (map.containsKey(stack)) {
+                        map.get(stack).add(compound);
+                    } else {
+                        List<NBTTagCompound> list = new ArrayList<>(1);
+                        list.add(compound);
+                        map.put(stack, list);
                     }
                 }
             }
 
-            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(itemStacks), inputNBTTagCompound);
+            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stacks), map);
         }
     }
 
+    /**
+     * Attempt to construct an NBT matcher for matching a single tag compound
+     *
+     * @param input    the base recipe input
+     * @param compound the nbt compound to match
+     * @return the nbt matching input if successful, otherwise the original recipe input
+     */
     @Nonnull
     private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nullable NBTTagCompound compound) {
-        if (compound == null) return input; // do not append nbt, if there is no tag to check
+        if (compound == null) return input; // do not use nbt matching, if there is no tag to check
+        return input.setNBTMatchingCondition(new CTNBTMatcher(compound), null);
+    }
 
-        final Set<Map.Entry<String, NBTBase>> entrySet = compound.tagMap.entrySet();
-        return input.setNBTMatchingCondition((tag, ignored) -> {
-            // return if the tag to check has everything the recipe requires
-            return tag.tagMap.entrySet().containsAll(entrySet);
-        }, null);
+    /**
+     * Attempt to construct an NBT matcher for matching multiple item stacks to their respective compounds
+     *
+     * @param input the base recipe input
+     * @param map   a mapping of stacks to compounds. The map's key hashing should ignore NBT compounds
+     * @return the nbt matching input if successful, otherwise the original recipe input
+     */
+    @Nonnull
+    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nonnull Map<ItemStack, List<NBTTagCompound>> map) {
+        if (map.isEmpty()) return input; // do not use nbt matching, if there are no tags to check
+        return input.setNBTMatchingCondition(new CTNBTMultiItemMatcher(map), null);
     }
 
     @ZenMethod
