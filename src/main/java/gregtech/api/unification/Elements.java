@@ -162,9 +162,14 @@ public class Elements {
         return element;
     }
 
-    @ZenMethod
+
     public static List<Element> getAllElements() {
         return Collections.unmodifiableList(new ArrayList<>(elements.values()));
+    }
+
+    @ZenMethod("getAllElements")
+    public static Element[] getAllElementsCT() {
+        return elements.values().toArray(new Element[0]);
     }
 
     @ZenMethod
