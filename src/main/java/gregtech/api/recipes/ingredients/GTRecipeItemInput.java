@@ -59,8 +59,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
         }).toArray(ItemStack[]::new);
     }
 
-    protected GTRecipeItemInput(ItemStack... stack) {
-        this(stack, stack[0].getCount());
+    protected GTRecipeItemInput(ItemStack... stacks) {
+        this(stacks, stacks[0].getCount());
     }
 
     public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
@@ -75,8 +75,12 @@ public class GTRecipeItemInput extends GTRecipeInput {
         return getFromCache(new GTRecipeItemInput(ri.getInputStacks()));
     }
 
-    public static GTRecipeInput getOrCreate(ItemStack ri) {
-        return getFromCache(new GTRecipeItemInput(ri));
+    public static GTRecipeInput getOrCreate(ItemStack stack) {
+        return getFromCache(new GTRecipeItemInput(stack));
+    }
+
+    public static GTRecipeInput getOrCreate(ItemStack[] stacks) {
+        return getFromCache(new GTRecipeItemInput(stacks));
     }
 
     @Override
@@ -116,7 +120,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
                     if (tagList.meta == input.getMetadata()) {
                         final NBTTagCompound inputNBT = input.getTagCompound();
                         if (nbtMatcher != null) {
-                            return nbtMatcher.evaluate(inputNBT, nbtCondition);
+                            return nbtMatcher.evaluate(input, nbtCondition);
                         } else {
                             List<TagToStack> tagMaps = tagList.tagToStack;
                             for (TagToStack tagMapping : tagMaps) {
