@@ -21,6 +21,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -43,7 +44,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -574,11 +574,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_MTE, buffer -> {
-            buffer.writeByte(side.getIndex());
-            buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
-            coverBehavior.writeInitialSyncData(buffer);
-        });
+        writeCustomData(COVER_ATTACHED_MTE, CoverIO.getCoverPlacementCustomDataWriter(side, coverBehavior));
         notifyBlockUpdate();
         markDirty();
         onCoverPlacementUpdate();
@@ -883,16 +879,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             buf.writeVarInt(trait.getNetworkID());
             trait.writeInitialData(buf);
         }
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
-            if (coverBehavior != null) {
-                int coverId = CoverDefinition.getNetworkIdForCover(coverBehavior.getCoverDefinition());
-                buf.writeVarInt(coverId);
-                coverBehavior.writeInitialSyncData(buf);
-            } else {
-                buf.writeVarInt(-1);
-            }
-        }
+        CoverIO.writeCoverSyncData(buf, this);
         buf.writeBoolean(isFragile);
         buf.writeBoolean(muffled);
     }
@@ -912,15 +899,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                     .findAny()
                     .ifPresent(trait -> trait.receiveInitialData(buf));
         }
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            int coverId = buf.readVarInt();
-            if (coverId != -1) {
-                CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readInitialSyncData(buf);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
         this.isFragile = buf.readBoolean();
         this.muffled = buf.readBoolean();
     }
@@ -955,15 +934,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                     .findAny()
                     .ifPresent(trait -> trait.receiveCustomData(buf.readVarInt(), buf));
         } else if (dataId == COVER_ATTACHED_MTE) {
-            //cover placement event
-            EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            int coverId = buf.readVarInt();
-            CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
-            CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, placementSide);
-            this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
-            coverBehavior.readInitialSyncData(buf);
-            onCoverPlacementUpdate();
-            scheduleRenderUpdate();
+            CoverIO.readCoverPlacement(buf, this,
+                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
+                    this::scheduleRenderUpdate);
         } else if (dataId == COVER_REMOVED_MTE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
@@ -1217,19 +1190,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             data.setTag(mteTrait.getName(), mteTrait.serializeNBT());
         }
 
-        NBTTagList coversList = new NBTTagList();
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = coverBehaviors[coverSide.getIndex()];
-            if (coverBehavior != null) {
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                ResourceLocation coverId = coverBehavior.getCoverDefinition().getCoverId();
-                tagCompound.setString("CoverId", coverId.toString());
-                tagCompound.setByte("Side", (byte) coverSide.getIndex());
-                coverBehavior.writeToNBT(tagCompound);
-                coversList.appendTag(tagCompound);
-            }
-        }
-        data.setTag("Covers", coversList);
+        CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
+
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
         return data;
@@ -1255,18 +1217,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             mteTrait.deserializeNBT(traitCompound);
         }
 
-        NBTTagList coversList = data.getTagList("Covers", NBT.TAG_COMPOUND);
-        for (int index = 0; index < coversList.tagCount(); index++) {
-            NBTTagCompound tagCompound = coversList.getCompoundTagAt(index);
-            if (tagCompound.hasKey("CoverId", NBT.TAG_STRING)) {
-                EnumFacing coverSide = EnumFacing.VALUES[tagCompound.getByte("Side")];
-                ResourceLocation coverId = new ResourceLocation(tagCompound.getString("CoverId"));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readFromNBT(tagCompound);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
 
         this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
