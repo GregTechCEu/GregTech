@@ -21,12 +21,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
 public class CoverBehaviors {
 
-    private static final AtomicInteger atomicId = new AtomicInteger();
+    private static int rollingId = 0;
 
     public static void init() {
         GTLog.logger.info("Registering cover behaviors...");
@@ -172,7 +171,7 @@ public class CoverBehaviors {
     public static CoverDefinition registerCover(@Nonnull ResourceLocation coverId, @Nonnull MetaValueItem itemStack,
                                                 @Nonnull BiFunction<ICoverable, EnumFacing, CoverBehavior> behaviorCreator) {
         CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, itemStack.getStackForm());
-        GregTechAPI.COVER_REGISTRY.register(atomicId.getAndIncrement(), coverId, coverDefinition);
+        GregTechAPI.COVER_REGISTRY.register(rollingId++, coverId, coverDefinition);
         return coverDefinition;
     }
 }
