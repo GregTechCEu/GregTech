@@ -75,16 +75,11 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public EnumActionResult onRightClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
-    }
-
-    @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        return EnumActionResult.FAIL;
     }
 
     @Override
