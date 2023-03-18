@@ -124,4 +124,10 @@ public class GregtechDataCodes {
     // Creative Energy
     public static final int UPDATE_IO_SPEED = 1;
 
+
+    // NBT Keys
+
+    // From MetaTileEntityHolder
+    public static final String CUSTOM_NAME = "CustomName";
+
 }
