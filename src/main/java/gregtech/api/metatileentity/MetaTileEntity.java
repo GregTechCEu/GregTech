@@ -99,7 +99,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     protected IFluidHandler fluidInventory;
 
-    protected final List<MTETrait> mteTraits = new ArrayList<>();
+    public final List<MTETrait> mteTraits = new ArrayList<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
     private int paintingColor = -1;
