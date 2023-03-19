@@ -125,7 +125,6 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold SHIFT for more info
-gregtech.tooltip.hold_ctrl=Hold CTRL for more info
 gregtech.tooltip.fluid_pipe_hold_shift=Hold SHIFT to show Fluid Containment Info
 gregtech.tooltip.tool_fluid_hold_shift=Hold SHIFT to show Fluid Containment and Tool Info
 
@@ -807,12 +806,8 @@ metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
 metaitem.cover.activity.detector_advanced.tooltip=Gives out §fMachine Progress§7 as Redstone as §fCover§7.
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out §fFluid Amount§7 as Redstone as §fCover§7.
-metaitem.cover.fluid.detector.advanced.name=Advanced Fluid Detector
-metaitem.cover.fluid.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fFluid Storage Status§7 as Redstone as §fCover§7.
 metaitem.cover.item.detector.name=Item Detector
 metaitem.cover.item.detector.tooltip=Gives out §fItem Amount§7 as Redstone as §fCover§7.
-metaitem.cover.item.detector.advanced.name=Advanced Item Detector
-metaitem.cover.item.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fItem Storage Status§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out §fEnergy Amount§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector
@@ -825,8 +820,6 @@ metaitem.cover.item.voiding.name=Item Voiding Cover
 metaitem.cover.item.voiding.tooltip=Voids §fItems§7 as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
 metaitem.cover.item.voiding.advanced.tooltip=Voids §fItems§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
-metaitem.cover.storage.name=Storage Cover
-metaitem.cover.storage.tooltip=Small storage space for odds and ends
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative Outfit §fCover§7.
@@ -1151,11 +1144,6 @@ cover.fluid.voiding.title=Fluid Voiding Settings
 cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
 cover.item.voiding.title=Item Voiding Settings
 cover.item.voiding.advanced.title=Advanced Item Voiding Settings
-cover.voiding.label.disabled=Disabled
-cover.voiding.label.enabled=Enabled
-cover.voiding.tooltip=§cWARNING!§7 Setting this to "Enabled" means that fluids or items WILL be voided.
-cover.voiding.message.disabled=Voiding Cover Disabled
-cover.voiding.message.enabled=Voiding Cover Enabled
 
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
@@ -1218,27 +1206,12 @@ cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 cover.advanced_energy_detector.label=Advanced Energy Detector
-cover.advanced_energy_detector.min=Minimum:
-cover.advanced_energy_detector.max=Maximum:
+cover.advanced_energy_detector.min=Minimum EU
+cover.advanced_energy_detector.max=Maximum EU
 cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
 cover.advanced_energy_detector.invert_label=Inverted:
 cover.advanced_energy_detector.normal=Normal
 cover.advanced_energy_detector.inverted=Inverted
-cover.advanced_energy_detector.modes_tooltip=Change between using discrete EU values or percentages for comparing min/max against an attached energy storage.
-cover.advanced_energy_detector.modes_label=Mode:
-cover.advanced_energy_detector.mode_eu=Discrete EU
-cover.advanced_energy_detector.mode_percent=Percentage
-
-cover.advanced_fluid_detector.label=Advanced Fluid Detector
-cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
-cover.advanced_fluid_detector.max=Maximum Fluid:
-cover.advanced_fluid_detector.min=Minimum Fluid:
-cover.advanced_item_detector.label=Advanced Item Detector
-cover.advanced_item_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum amount of items, and starts emitting when greater than the min amount of items up to the set maximum
-cover.advanced_item_detector.max=Maximum Items:
-cover.advanced_item_detector.min=Minimum Items:
-
-cover.storage.title=Storage Cover
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -2218,10 +2191,6 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
 
-tile.brittle_charcoal.name=Brittle Charcoal
-tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
-tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
-
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
@@ -2437,10 +2406,6 @@ tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
-itemGroup.gregtech.machines=Machines (GT)
-itemGroup.gregtech.cables=Cables (GT)
-itemGroup.gregtech.pipes=Pipes (GT)
-itemGroup.gregtech.tools=Tools (GT)
 itemGroup.gregtech.materials=Materials (GT)
 itemGroup.gregtech.ores=Ores (GT)
 
@@ -2658,9 +2623,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the Miner!
 
@@ -4010,7 +3975,6 @@ gregtech.machine.quantum_chest.items_stored=Item Amount:
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
-gregtech.machine.quantum_tank.tooltip.voiding_enabled=Excess Fluid Voiding §aEnabled
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
 gregtech.machine.super_tank.hv.name=Super Tank III
@@ -4069,13 +4033,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
@@ -4354,7 +4318,6 @@ behaviour.paintspray.green.tooltip=Can paint things in Green
 behaviour.paintspray.red.tooltip=Can paint things in Red
 behaviour.paintspray.black.tooltip=Can paint things in Black
 behaviour.paintspray.uses=Remaining Uses: %,d
-behaviour.paintspray.offhand=Hold in offhand to color while placing blocks
 behaviour.prospecting=Usable for Prospecting
 
 # Multiblock machine controllers
@@ -4409,11 +4372,10 @@ gregtech.machine.miner.per_block=§7takes §f%,ds §7per Block
 gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
 gregtech.machine.large_miner.iv.name=Advanced Ore Drilling Plant
 gregtech.machine.large_miner.luv.name=Advanced Ore Drilling Plant II
-gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
-gregtech.machine.miner.multi.production=Produces §f3x§7 more crushed ore than a §fMacerator§7.
-gregtech.machine.miner.fluid_usage=Uses §f%,d L/t §7of §f%s§7, doubled per overclock.
-gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
-gregtech.machine.miner.multi.needsfluid=Needs Drilling Fluid
+gregtech.machine.large_miner.modes=Has Silk Touch and Chunk Aligned Modes.
+gregtech.machine.large_miner.production=Produces §f3x§7 more crushed ore than a §fMacerator§7.
+gregtech.machine.large_miner.fluid_usage=Uses §f%,d L/t §7of §f%s§7, doubled per overclock.
+gregtech.machine.large_miner.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
 
 gregtech.machine.miner.startx=sX: %d
 gregtech.machine.miner.starty=sY: %d
@@ -4422,8 +4384,6 @@ gregtech.machine.miner.minex=mX: %d
 gregtech.machine.miner.miney=mY: %d
 gregtech.machine.miner.minez=mZ: %d
 gregtech.machine.miner.radius=Radius: %d
-gregtech.machine.miner.working_area=Working Area: %dx%d blocks
-gregtech.machine.miner.working_area_chunks=Working Area: %dx%d chunks
 gregtech.machine.miner.chunkradius=Chunk Radius: %d
 
 gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
@@ -4449,13 +4409,6 @@ gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 throu
 gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
 gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
 gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
-
-gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
-gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
-gregtech.machine.charcoal_pile.tooltip.2=Right Click with fire-starting items to start.
-gregtech.machine.charcoal_pile.tooltip.3=Pyrolysis occurs in up to a §b9x4x9§7 space beneath.
-gregtech.machine.charcoal_pile.tooltip.4=Logs must be not be exposed to §eAir§7!
-gregtech.multiblock.charcoal_pile.description=Converts logs into Brittle Charcoal in a 9x4x9 area beneath it.\n\nThe floor of the pit must be made from bricks, and any ground-related block can be used for the walls and roof. No air can be inside the pit.\n\nLarger pits take more time to process logs, but are more efficient.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4521,7 +4474,6 @@ gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
 gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
 gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
-gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
@@ -4551,10 +4503,6 @@ gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
-
-gregtech.bus.collapse_true=Bus will collapse Items
-gregtech.bus.collapse_false=Bus will not collapse Items
-gregtech.bus.collapse.error=Bus must be attached to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -4747,6 +4695,7 @@ gregtech.universal.tooltip.fluid_stored=§dFluid Stored: §f%s, %,d L
 gregtech.universal.tooltip.fluid_transfer_rate=§bTransfer Rate: §f%,d L/t
 gregtech.universal.tooltip.parallel=§dMax Parallel: §f%d
 gregtech.universal.tooltip.working_area=§bWorking Area: §f%,dx%,d
+gregtech.universal.tooltip.working_area_chunks=§bWorking Area: §f%,dx%,d Chunks
 gregtech.universal.tooltip.working_area_max=§bMax Working Area: §f%,dx%,d
 gregtech.universal.tooltip.working_area_chunks_max=§bMax Working Area: §f%,dx%,d Chunks
 gregtech.universal.tooltip.uses_per_tick=Uses §f%,d EU/t §7while working
@@ -4783,9 +4732,7 @@ gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
 gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle Modes or access Covers
 gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
-gregtech.tool_action.screwdriver.auto_collapse=§8Use Screwdriver to toggle Item collapsing
 gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-Output
-gregtech.tool_action.screwdriver.auto_output_down=§8Use Screwdriver to toggle Auto-Output from the Bottom
 gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
 gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections, sneak to block Connections
@@ -4823,8 +4770,10 @@ gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s bat
 gregtech.gui.configurator_slot.tooltip=§fConfigurator Slot§r/n§7Place a §6Programmed Circuit§7 in this slot to/n§7change its configured value./n§7Hold §6Shift§7 when clicking buttons to change by §65./n§aA Programmed Circuit in this slot is also valid for recipe inputs.§r
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
-gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
-gregtech.gui.fluid_voiding.tooltip.disabled=Excess Fluid Voiding Disabled
+gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
+gregtech.gui.fluid_voiding_partial.tooltip.disabled=Fluid Voiding (Above %d%%) Disabled
+gregtech.gui.fluid_voiding_all.tooltip.enabled=Fluid Voiding (All) Enabled
+gregtech.gui.fluid_voiding_all.tooltip.disabled=Fluid Voiding (All) Disabled
 gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
@@ -4837,9 +4786,8 @@ gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
 gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust, with Fortune giving a bonus.
-gregtech.jei.ore.biome_weighting_title=§dModified Biome Total Weights:
-gregtech.jei.ore.biome_weighting=§d%s Weight: §3%d
-gregtech.jei.ore.biome_weighting_no_spawn=§d%s Weight: §cCannot Spawn
+gregtech.jei.ore.biome_weighting=%s Weight: %d
+gregtech.jei.ore.biome_weighting_no_spawn=%s Weight: Cannot Spawn
 gregtech.jei.ore.ore_weight=Weight in vein: %d%%
 gregtech.jei.ore.primary_1=Top Ore
 gregtech.jei.ore.primary_2=Spawns in the top %d layers of the vein
@@ -4849,21 +4797,6 @@ gregtech.jei.ore.between_1=Between Ore
 gregtech.jei.ore.between_2=Spawns in the middle %d layers of the vein, with other ores
 gregtech.jei.ore.sporadic_1=Sporadic Ore
 gregtech.jei.ore.sporadic_2=Spawns anywhere in the vein
-
-fluid.spawnlocation.name=Fluid Vein Information
-gregtech.jei.fluid.vein_weight=Vein Weight: %d
-gregtech.jei.fluid.min_yield=Minimum Yield: %d
-gregtech.jei.fluid.max_yield=Maximum Yield: %d
-gregtech.jei.fluid.depletion_chance=Depletion Chance: %d%%
-gregtech.jei.fluid.depletion_amount=Depletion Amount: %d
-gregtech.jei.fluid.depleted_rate=Depleted Yield: %d
-gregtech.jei.fluid.dimension=Dimensions:
-gregtech.jei.fluid.weight_hover=The Weight of the vein. Hover over the fluid to see any possible biome modifications
-gregtech.jei.fluid.min_hover=The minimum yield that any fluid vein of this fluid can have
-gregtech.jei.fluid.max_hover=The maximum yield that any fluid vein of this fluid can have
-gregtech.jei.fluid.dep_chance_hover=The percentage chance for the vein to be depleted upon harvest
-gregtech.jei.fluid.dep_amount_hover=The amount the vein will be depleted by
-gregtech.jei.fluid.dep_yield_hover=The maximum yield of the vein when it is fully depleted
 
 gregtech.jei.materials.average_mass=Average mass: %,d
 gregtech.jei.materials.average_protons=Average protons: %,d
@@ -4977,7 +4910,9 @@ gregtech.machine.miner.invfull=Inventory Full!
 gregtech.machine.miner.needspower=Needs Power!
 gregtech.machine.steam_miner.vent=Venting Blocked!
 gregtech.machine.steam_miner.steam=Needs Steam!
+gregtech.multiblock.large_miner.radius=Radius: §a%d§r Blocks
 gregtech.machine.miner.errorradius=§cCannot change radius while working!
+gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
