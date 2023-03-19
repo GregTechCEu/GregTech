@@ -61,7 +61,7 @@ public class MachineRecipeLoader {
         MiscRecipeLoader.init();
         BatteryRecipes.init();
         CircuitRecipes.init();
-        WoodRecipeLoader.init();
+        WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
@@ -487,13 +487,13 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ITEM_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ITEM_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)

@@ -1,6 +1,7 @@
 package gregtech.loaders;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -14,37 +15,78 @@ import javax.annotation.Nullable;
  */
 public final class WoodTypeEntry {
 
-    private final String modid;
-    private final String woodName;
-    private final ItemStack log;
-    private final boolean removeCharcoalRecipe;
-    private final boolean addCharcoalRecipe;
-    private final ItemStack planks;
-    private final String planksRecipeName;
-    private final ItemStack door;
-    private final String doorRecipeName;
-    private final ItemStack slab;
-    private final boolean addSlabCraftingRecipe;
-    private final ItemStack fence;
-    private final String fenceRecipeName;
-    private final ItemStack fenceGate;
-    private final String fenceGateRecipeName;
-    private final ItemStack stairs;
-    private final boolean addStairsCraftingRecipe;
-    private final ItemStack boat;
-    private final String boatRecipeName;
-    private final UnificationEntry stick;
+    @Nonnull
+    public final String modid;
+    @Nonnull
+    public final String woodName;
+    @Nonnull
+    public final ItemStack log;
+    /**
+     * if log -> charcoal recipes should be removed
+     */
+    public final boolean removeCharcoalRecipe;
+    /**
+     * if log -> charcoal recipes should be added
+     */
+    public final boolean addCharcoalRecipe;
+    @Nonnull
+    public final ItemStack planks;
+    @Nullable
+    public final String planksRecipeName;
+    @Nonnull
+    public final ItemStack door;
+    @Nullable
+    public final String doorRecipeName;
+    @Nonnull
+    public final ItemStack slab;
+    public final boolean addSlabCraftingRecipe;
+    public final ItemStack fence;
+    @Nullable
+    public final String fenceRecipeName;
+    @Nonnull
+    public final ItemStack fenceGate;
+    @Nullable
+    public final String fenceGateRecipeName;
+    @Nonnull
+    public final ItemStack stairs;
+    public final boolean addStairsCraftingRecipe;
+    @Nonnull
+    public final ItemStack boat;
+    @Nullable
+    public final String boatRecipeName;
+    public final Material material;
+
+    public final boolean addLogOreDict;
+    public final boolean addPlanksOreDict;
+    public final boolean addDoorsOreDict;
+    public final boolean addSlabsOreDict;
+    public final boolean addFencesOreDict;
+    public final boolean addFenceGatesOreDict;
+    public final boolean addStairsOreDict;
+    public final boolean addPlanksUnificationInfo;
+    public final boolean addDoorsUnificationInfo;
+    public final boolean addSlabsUnificationInfo;
+    public final boolean addFencesUnificationInfo;
+    public final boolean addFenceGatesUnificationInfo;
+    public final boolean addStairsUnificationInfo;
+    public final boolean addBoatsUnificationInfo;
 
     /**
      * @see WoodTypeEntry.Builder
      */
-    private WoodTypeEntry(@Nonnull String modid, @Nonnull String woodName, ItemStack log, boolean removeCharcoalRecipe,
-                          boolean addCharcoalRecipe, @Nonnull ItemStack planks, @Nullable String planksRecipeName,
-                          @Nonnull ItemStack door, @Nullable String doorRecipeName, @Nonnull ItemStack slab,
-                          boolean addSlabCraftingRecipe, @Nonnull ItemStack fence, @Nullable String fenceRecipeName,
-                          @Nonnull ItemStack fenceGate, @Nullable String fenceGateRecipeName, @Nonnull ItemStack stairs,
+    private WoodTypeEntry(@Nonnull String modid, @Nonnull String woodName, @Nonnull ItemStack log,
+                          boolean removeCharcoalRecipe, boolean addCharcoalRecipe, @Nonnull ItemStack planks,
+                          @Nullable String planksRecipeName, @Nonnull ItemStack door, @Nullable String doorRecipeName,
+                          @Nonnull ItemStack slab, boolean addSlabCraftingRecipe, @Nonnull ItemStack fence,
+                          @Nullable String fenceRecipeName, @Nonnull ItemStack fenceGate,
+                          @Nullable String fenceGateRecipeName, @Nonnull ItemStack stairs,
                           boolean addStairsCraftingRecipe, @Nonnull ItemStack boat, @Nullable String boatRecipeName,
-                          @Nullable UnificationEntry stick) {
+                          @Nullable Material material, boolean addLogOreDict, boolean addPlanksOreDict,
+                          boolean addDoorsOreDict, boolean addSlabsOreDict, boolean addFencesOreDict,
+                          boolean addFenceGatesOreDict, boolean addStairsOreDict, boolean addPlanksUnificationInfo,
+                          boolean addDoorsUnificationInfo, boolean addSlabsUnificationInfo,
+                          boolean addFencesUnificationInfo, boolean addFenceGatesUnificationInfo,
+                          boolean addStairsUnificationInfo, boolean addBoatsUnificationInfo) {
         this.modid = modid;
         this.woodName = woodName;
         this.log = log;
@@ -64,109 +106,27 @@ public final class WoodTypeEntry {
         this.addStairsCraftingRecipe = addStairsCraftingRecipe;
         this.boat = boat;
         this.boatRecipeName = boatRecipeName;
-        this.stick = stick != null ? stick : new UnificationEntry(OrePrefix.stick, Materials.Wood);
-    }
+        this.material = material != null ? material : Materials.Wood;
 
-    @Nonnull
-    public String getModid() {
-        return modid;
-    }
-
-    @Nonnull
-    public String getWoodName() {
-        return woodName;
-    }
-
-    @Nonnull
-    public ItemStack getLog() {
-        return log;
-    }
-
-    /**
-     * @return if log -> charcoal recipes should be removed
-     */
-    public boolean shouldRemoveCharcoalRecipe() {
-        return removeCharcoalRecipe;
-    }
-
-    /**
-     * @return if log -> charcoal recipes should be added
-     */
-    public boolean shouldAddCharcoalRecipe() {
-        return addCharcoalRecipe;
-    }
-
-    @Nonnull
-    public ItemStack getPlanks() {
-        return planks;
-    }
-
-    @Nullable
-    public String getPlanksRecipeName() {
-        return planksRecipeName;
-    }
-
-    @Nonnull
-    public ItemStack getDoor() {
-        return door;
-    }
-
-    @Nullable
-    public String getDoorRecipeName() {
-        return doorRecipeName;
-    }
-
-    @Nonnull
-    public ItemStack getSlab() {
-        return slab;
-    }
-
-    public boolean shouldAddSlabCraftingRecipe() {
-        return addSlabCraftingRecipe;
-    }
-
-    @Nonnull
-    public ItemStack getFence() {
-        return fence;
-    }
-
-    @Nullable
-    public String getFenceRecipeName() {
-        return fenceRecipeName;
-    }
-
-    @Nonnull
-    public ItemStack getFenceGate() {
-        return fenceGate;
-    }
-
-    @Nullable
-    public String getFenceGateRecipeName() {
-        return fenceGateRecipeName;
-    }
-
-    @Nonnull
-    public ItemStack getStairs() {
-        return stairs;
-    }
-
-    public boolean shouldAddStairsCraftingRecipe() {
-        return addStairsCraftingRecipe;
-    }
-
-    @Nonnull
-    public ItemStack getBoat() {
-        return boat;
-    }
-
-    @Nullable
-    public String getBoatRecipeName() {
-        return boatRecipeName;
+        this.addLogOreDict = addLogOreDict;
+        this.addPlanksOreDict = addPlanksOreDict;
+        this.addDoorsOreDict = addDoorsOreDict;
+        this.addSlabsOreDict = addSlabsOreDict;
+        this.addFencesOreDict = addFencesOreDict;
+        this.addFenceGatesOreDict = addFenceGatesOreDict;
+        this.addStairsOreDict = addStairsOreDict;
+        this.addPlanksUnificationInfo = addPlanksUnificationInfo;
+        this.addDoorsUnificationInfo = addDoorsUnificationInfo;
+        this.addSlabsUnificationInfo = addSlabsUnificationInfo;
+        this.addFencesUnificationInfo = addFencesUnificationInfo;
+        this.addFenceGatesUnificationInfo = addFenceGatesUnificationInfo;
+        this.addStairsUnificationInfo = addStairsUnificationInfo;
+        this.addBoatsUnificationInfo = addBoatsUnificationInfo;
     }
 
     @Nonnull
     public UnificationEntry getStick() {
-        return stick;
+        return new UnificationEntry(OrePrefix.stick, this.material);
     }
 
     public static class Builder {
@@ -192,7 +152,23 @@ public final class WoodTypeEntry {
         private ItemStack boat = ItemStack.EMPTY;
         private String boatRecipeName;
         @Nullable
-        private UnificationEntry stick = null;
+        private Material material = null;
+
+        private boolean addLogOreDict;
+        private boolean addPlanksOreDict;
+        private boolean addDoorsOreDict;
+        private boolean addSlabsOreDict;
+        private boolean addFencesOreDict;
+        private boolean addFenceGatesOreDict;
+        private boolean addStairsOreDict;
+
+        private boolean addPlanksUnificationInfo;
+        private boolean addDoorsUnificationInfo;
+        private boolean addSlabsUnificationInfo;
+        private boolean addFencesUnificationInfo;
+        private boolean addFenceGatesUnificationInfo;
+        private boolean addStairsUnificationInfo;
+        private boolean addBoatsUnificationInfo;
 
         /**
          * @param modid    the modid adding recipes for the wood
@@ -344,13 +320,79 @@ public final class WoodTypeEntry {
         }
 
         /**
-         * Add an entry for a stick. If not provided, vanilla sticks will be used.
+         * Specify material for wood entry. If not provided, {@link Materials#Wood} will be used
          *
-         * @param unificationEntry Unification entry for sticks
+         * @param material material for wood entry
          * @return this
          */
-        public Builder stick(@Nonnull UnificationEntry unificationEntry) {
-            this.stick = unificationEntry;
+        public Builder material(@Nonnull Material material) {
+            this.material = material;
+            return this;
+        }
+
+        /**
+         * Register all possible ore dictionary for wood entry.
+         *
+         * @return this
+         */
+        public Builder registerAllOres() {
+            return registerOre(true, true, true, true, true, true, true);
+        }
+
+        /**
+         * Register all possible unification info for wood entry.
+         *
+         * @return this
+         */
+        public Builder registerAllUnificationInfo() {
+            return registerUnificationInfo(true, true, true, true, true, true, true);
+        }
+
+        /**
+         * Register ore dictionary for wood entry.
+         *
+         * @param log       whether to add ore dictionary for logs
+         * @param planks    whether to add ore dictionary for planks
+         * @param door      whether to add ore dictionary for doors
+         * @param slab      whether to add ore dictionary for slab
+         * @param fence     whether to add ore dictionary for fences
+         * @param fenceGate whether to add ore dictionary for fence gates
+         * @param stairs    whether to add ore dictionary for stairs
+         * @return this
+         */
+        public Builder registerOre(boolean log, boolean planks, boolean door, boolean slab, boolean fence,
+                                   boolean fenceGate, boolean stairs) {
+            this.addLogOreDict = log;
+            this.addPlanksOreDict = planks;
+            this.addDoorsOreDict = door;
+            this.addSlabsOreDict = slab;
+            this.addFencesOreDict = fence;
+            this.addFenceGatesOreDict = fenceGate;
+            this.addStairsOreDict = stairs;
+            return this;
+        }
+
+        /**
+         * Register unification info for wood entry.
+         *
+         * @param planks    whether to add unification info for planks
+         * @param door      whether to add unification info for doors
+         * @param slab      whether to add unification info for slab
+         * @param fence     whether to add unification info for fences
+         * @param fenceGate whether to add unification info for fence gates
+         * @param stairs    whether to add unification info for stairs
+         * @param boat      whether to add unification info for boats
+         * @return this
+         */
+        public Builder registerUnificationInfo(boolean planks, boolean door, boolean slab, boolean fence,
+                                               boolean fenceGate, boolean stairs, boolean boat) {
+            this.addPlanksUnificationInfo = planks;
+            this.addDoorsUnificationInfo = door;
+            this.addSlabsUnificationInfo = slab;
+            this.addFencesUnificationInfo = fence;
+            this.addFenceGatesUnificationInfo = fenceGate;
+            this.addStairsUnificationInfo = stairs;
+            this.addBoatsUnificationInfo = boat;
             return this;
         }
 
@@ -362,7 +404,11 @@ public final class WoodTypeEntry {
             Preconditions.checkArgument(!planks.isEmpty(), "Planks cannot be empty.");
             return new WoodTypeEntry(modid, woodName, log, removeCharcoalRecipe, addCharcoalRecipe, planks,
                     planksRecipeName, door, doorRecipeName, slab, addSlabsCraftingRecipe, fence, fenceRecipeName,
-                    fenceGate, fenceGateRecipeName, stairs, addStairsCraftingRecipe, boat, boatRecipeName, stick);
+                    fenceGate, fenceGateRecipeName, stairs, addStairsCraftingRecipe, boat, boatRecipeName, material,
+                    addLogOreDict, addPlanksOreDict, addDoorsOreDict, addSlabsOreDict, addFencesOreDict,
+                    addFenceGatesOreDict, addStairsOreDict, addPlanksUnificationInfo, addDoorsUnificationInfo,
+                    addSlabsUnificationInfo, addFencesUnificationInfo, addFenceGatesUnificationInfo,
+                    addStairsUnificationInfo, addBoatsUnificationInfo);
         }
     }
 }
