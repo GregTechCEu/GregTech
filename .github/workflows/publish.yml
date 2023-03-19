@@ -13,8 +13,6 @@ env:
   CHANGELOG_LOCATION: "Changelog is available [here](https://github.com/${{github.repository}}/releases/tag/${{github.ref_name}})"
   # type of release
   RELEASE_TYPE: "beta"
-  # mark the environment as CI/CD for enabling required tasks
-  CI_CD_ENVIRONMENT: true
 
 jobs:
   Publish:

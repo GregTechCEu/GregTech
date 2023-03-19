@@ -164,7 +164,7 @@ fancyGradle {
 
 processJarTask jar
 
-def final is_ci_env = providers.environmentVariable('CI_CD_ENVIRONMENT').getOrElse('false').toBoolean()
+def final is_ci_env = providers.environmentVariable('CI').getOrElse('false').toBoolean()
 
 if (is_ci_env || project.build_deobfJar.toBoolean()) {
     // Create deobf dev jars
