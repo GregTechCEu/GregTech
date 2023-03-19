@@ -166,7 +166,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         if (tag.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
             this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(tag.getCompoundTag(FLUID_NBT_KEY)));
         }
-        if (tag.hasKey("IsVoiding") || tag.hasKey("IsPartialVoiding")) { // legacy save support
+        if (tag.getBoolean("IsVoiding") || tag.getBoolean("IsPartialVoiding")) { // legacy save support
             setVoiding(true);
         }
 
@@ -238,11 +238,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", maxFluidCapacity));
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null && compound.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FLUID_NBT_KEY));
-            if (fluidStack != null) {
-                tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_stored", fluidStack.getLocalizedName(), fluidStack.amount));
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag != null) {
+            if (tag.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
+                FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag(FLUID_NBT_KEY));
+                if (fluidStack != null) {
+                    tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_stored", fluidStack.getLocalizedName(), fluidStack.amount));
+                }
+            }
+            if (tag.getBoolean("IsVoiding") || tag.getBoolean("IsPartialVoiding")) { // legacy save support
+                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.voiding_enabled"));
             }
         }
     }
