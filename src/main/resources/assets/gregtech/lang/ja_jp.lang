@@ -4406,6 +4406,7 @@ gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モー
 gregtech.machine.miner.multi.production=§f粉砕機§7の§f3倍§7以上の砕いた鉱石を生産。
 gregtech.machine.miner.fluid_usage=§f%,d L/t§7で§f%s§7を消費する。オーバークロックごとに液体消費が2倍になる。
 gregtech.machine.miner.multi.description=広い面積をカバーし、大量の鉱石を生産するマルチブロック採掘機。
+gregtech.machine.miner.multi.needsfluid=掘削油が必要
 
 gregtech.machine.miner.startx=開始X: %d
 gregtech.machine.miner.starty=開始Y: %d
@@ -4963,15 +4964,13 @@ gregtech.multiblock.large_boiler.rate_tooltip=§f石炭1つ§7から§f%d L§7�
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7予熱に§f%,d 秒§7必要
 gregtech.multiblock.large_boiler.explosion_tooltip=水がない状態で燃料を入れると爆発する。
 
-gregtech.multiblock.large_miner.done=終了!
-gregtech.multiblock.large_miner.working=稼働中...
-gregtech.multiblock.large_miner.invfull=インベントリが満タン!
-gregtech.multiblock.large_miner.needspower=エネルギー不足!
-gregtech.multiblock.large_miner.vent=排気がブロックされた!
-gregtech.multiblock.large_miner.steam=蒸気不足!
-gregtech.multiblock.large_miner.radius=半径: §a%d§rブロック
-gregtech.multiblock.large_miner.errorradius=§c動作中は変更できない!
-gregtech.multiblock.large_miner.needsfluid=掘削油が必要
+gregtech.machine.miner.done=終了!
+gregtech.machine.miner.working=稼働中...
+gregtech.machine.miner.invfull=インベントリが満タン!
+gregtech.machine.miner.needspower=エネルギー不足!
+gregtech.machine.steam_miner.vent=排気がブロックされた!
+gregtech.machine.steam_miner.steam=蒸気不足!
+gregtech.machine.miner.errorradius=§c動作中は変更できない!
 
 gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s%%
 
