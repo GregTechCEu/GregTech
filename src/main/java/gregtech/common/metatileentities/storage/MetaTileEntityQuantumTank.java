@@ -267,12 +267,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                     if (this.fluidTank.getFluidAmount() != 0) {
                         return;
                     }
-                    if (!this.isLocked()) {
-                        this.setLocked(true);
-                    }
                     if (f == null) {
+                        this.setLocked(false);
                         this.lockedFluid = null;
                     } else {
+                        this.setLocked(true);
                         this.lockedFluid = f.copy();
                         this.lockedFluid.amount = 1;
                     }
