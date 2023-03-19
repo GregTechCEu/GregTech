@@ -38,9 +38,10 @@ import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
+    public static final String MTE_TRAIT_NAME = "RecipeMapWorkable";
+
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
-
 
     private final RecipeMap<?> recipeMap;
 
@@ -152,12 +153,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     @Nonnull
     @Override
     public final String getName() {
-        return "RecipeMapWorkable";
-    }
-
-    @Override
-    public final int getNetworkID() {
-        return TraitNetworkIds.TRAIT_ID_WORKABLE;
+        // this is final so machines are not accidentally given multiple workable instances
+        return MTE_TRAIT_NAME;
     }
 
     @Override
@@ -934,7 +931,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().scheduleRenderUpdate();
@@ -956,6 +953,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.workingEnabled = buf.readBoolean();
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();

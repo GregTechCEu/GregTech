@@ -72,6 +72,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
         this.energyContainer = new EnergyContainerHandler(this, Integer.MAX_VALUE, 0, 0, 0, 0) {
+            @Nonnull
             @Override
             public String getName() {
                 return "EnergyContainerInternal";
@@ -205,6 +206,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.inputEnergyContainers = new EnergyContainerList(energyInputs);
         long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
+            @Nonnull
             @Override
             public String getName() {
                 return "EnergyContainerInternal";
@@ -351,6 +353,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
             return true;
         }
 
+        @Nonnull
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound tag = super.serializeNBT();

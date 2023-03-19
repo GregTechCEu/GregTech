@@ -15,11 +15,13 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
+    public static final String MTE_TRAIT_NAME = "BatteryEnergyContainer";
     public static final long AMPS_PER_BATTERY = 2L;
 
     private final int tier;
@@ -233,9 +235,10 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         return !inputsEnergy(side);
     }
 
+    @Nonnull
     @Override
     public String getName() {
-        return "BatteryEnergyContainer";
+        return MTE_TRAIT_NAME;
     }
 
     protected IItemHandlerModifiable getInventory() {

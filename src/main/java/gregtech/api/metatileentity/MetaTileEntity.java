@@ -33,6 +33,9 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.core.advancement.AdvancementTriggers;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
@@ -71,9 +74,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -99,7 +100,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     protected IFluidHandler fluidInventory;
 
-    public final List<MTETrait> mteTraits = new ArrayList<>();
+    private final Map<String, MTETrait> mteTraits = new Object2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<MTETrait> mteTraitByNetworkId = new Int2ObjectOpenHashMap<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
     private int paintingColor = -1;
@@ -351,25 +353,25 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * Adds a trait to this meta tile entity
-     * traits are objects linked with meta tile entity and performing certain
-     * actions. usually traits implement capabilities
-     * there can be only one trait for given name
+     * Adds a trait to this meta tile entity.
+     * Traits are objects linked with meta tile entity and performing certain actions.
+     * Usually traits implement capabilities there can be only one trait for a given name
      *
      * @param trait trait object to add
      */
-    void addMetaTileEntityTrait(MTETrait trait) {
-        mteTraits.removeIf(otherTrait -> {
-            if (trait.getName().equals(otherTrait.getName())) {
-                return true;
-            }
-            if (otherTrait.getNetworkID() == trait.getNetworkID()) {
-                String message = "Trait %s is incompatible with trait %s, as they both use same network id %d";
-                throw new IllegalArgumentException(String.format(message, trait, otherTrait, trait.getNetworkID()));
-            }
-            return false;
-        });
-        this.mteTraits.add(trait);
+    void addMetaTileEntityTrait(@Nonnull MTETrait trait) {
+        this.mteTraits.put(trait.getName(), trait);
+        this.mteTraitByNetworkId.put(trait.getNetworkID(), trait);
+    }
+
+    /**
+     * Get a trait by name
+     * @param name the name of the trait
+     * @return the trait associated with the name
+     */
+    @Nullable
+    public final MTETrait getMTETrait(@Nonnull String name) {
+        return this.mteTraits.get(name);
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
@@ -743,7 +745,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void update() {
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
             }
@@ -874,10 +876,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
         buf.writeInt(this.paintingColor);
-        buf.writeShort(mteTraits.size());
-        for (MTETrait trait : mteTraits) {
-            buf.writeVarInt(trait.getNetworkID());
-            trait.writeInitialData(buf);
+        buf.writeShort(this.mteTraitByNetworkId.size());
+        for (Int2ObjectMap.Entry<MTETrait> entry : mteTraitByNetworkId.int2ObjectEntrySet()) {
+            buf.writeVarInt(entry.getIntKey());
+            entry.getValue().writeInitialData(buf);
         }
         CoverIO.writeCoverSyncData(buf, this);
         buf.writeBoolean(isFragile);
@@ -894,10 +896,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         int amountOfTraits = buf.readShort();
         for (int i = 0; i < amountOfTraits; i++) {
             int traitNetworkId = buf.readVarInt();
-            mteTraits.stream()
-                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
-                    .findAny()
-                    .ifPresent(trait -> trait.receiveInitialData(buf));
+            Objects.requireNonNull(mteTraitByNetworkId.get(traitNetworkId)).receiveInitialData(buf);
         }
         CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
         this.isFragile = buf.readBoolean();
@@ -929,10 +928,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
-            mteTraits.stream()
-                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
-                    .findAny()
-                    .ifPresent(trait -> trait.receiveCustomData(buf.readVarInt(), buf));
+            Objects.requireNonNull(mteTraitByNetworkId.get(traitNetworkId)).receiveCustomData(buf.readVarInt(), buf);
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverIO.readCoverPlacement(buf, this,
                     (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
@@ -992,7 +988,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getItemInventory());
         }
         T capabilityResult = null;
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             capabilityResult = mteTrait.getCapability(capability);
             if (capabilityResult != null) {
                 break;
@@ -1128,7 +1124,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             notifyBlockUpdate();
             markDirty();
             writeCustomData(UPDATE_FRONT_FACING, buf -> buf.writeByte(frontFacing.getIndex()));
-            mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
+            for (MTETrait mteTrait : this.mteTraits.values()) {
+                mteTrait.onFrontFacingSet(frontFacing);
+            }
         }
     }
 
@@ -1186,7 +1184,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             data.setTag("ExportFluidInventory", exportFluids.serializeNBT());
         }
 
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             data.setTag(mteTrait.getName(), mteTrait.serializeNBT());
         }
 
@@ -1212,7 +1210,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             exportFluids.deserializeNBT(data.getCompoundTag("ExportFluidInventory"));
         }
 
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             NBTTagCompound traitCompound = data.getCompoundTag(mteTrait.getName());
             mteTrait.deserializeNBT(traitCompound);
         }
@@ -1382,13 +1380,28 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return face == this.getFrontFacing() && this.canRenderFrontFaceX();
     }
 
-    public RecipeMap<?> getRecipeMap() {
-        for (MTETrait mteTrait : mteTraits) {
-            if (mteTrait.getName().equals("RecipeMapWorkable")) {
-                return ((AbstractRecipeLogic) mteTrait).getRecipeMap();
-            }
+    /**
+     * @return the MTE's {@link AbstractRecipeLogic}
+     */
+    @Nullable
+    public final AbstractRecipeLogic getRecipeLogic() {
+        MTETrait trait = getMTETrait(AbstractRecipeLogic.MTE_TRAIT_NAME);
+        if (trait instanceof AbstractRecipeLogic) {
+            return ((AbstractRecipeLogic) trait);
+        } else if (trait != null) {
+            throw new IllegalStateException("MTE Trait " + trait.getName() + " has name " + AbstractRecipeLogic.MTE_TRAIT_NAME +
+                    " but is not instanceof AbstractRecipeLogic");
         }
         return null;
+    }
+
+    /**
+     * @return the RecipeMap from the MTE's {@link AbstractRecipeLogic}
+     */
+    @Nullable
+    public final RecipeMap<?> getRecipeMap() {
+        AbstractRecipeLogic recipeLogic = getRecipeLogic();
+        return recipeLogic == null ? null : recipeLogic.getRecipeMap();
     }
 
     public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance, IEnergyContainer energyContainer) {

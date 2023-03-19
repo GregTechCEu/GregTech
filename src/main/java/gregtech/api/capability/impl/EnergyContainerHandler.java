@@ -18,9 +18,12 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 public class EnergyContainerHandler extends MTETrait implements IEnergyContainer {
+
+    public static final String MTE_TRAIT_NAME = "EnergyContainer";
 
     protected final long maxCapacity;
     protected long energyStored;
@@ -76,14 +79,10 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         return lastEnergyOutputPerSec;
     }
 
+    @Nonnull
     @Override
     public String getName() {
-        return "EnergyContainer";
-    }
-
-    @Override
-    public int getNetworkID() {
-        return TraitNetworkIds.TRAIT_ID_ENERGY_CONTAINER;
+        return MTE_TRAIT_NAME;
     }
 
     @Override
@@ -94,6 +93,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         return null;
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -102,7 +102,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound compound) {
+    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         this.energyStored = compound.getLong("EnergyStored");
         notifyEnergyListener(true);
     }
