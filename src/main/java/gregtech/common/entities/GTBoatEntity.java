@@ -123,12 +123,18 @@ public class GTBoatEntity extends EntityBoat {
         }
     }
 
+    /**
+     * @deprecated Vanilla boat types do not affect GTBoat instances; use {@link GTBoatEntity#setGTBoatType(GTBoatType)}.
+     */
     @Deprecated
     @Override
     public void setBoatType(Type type) {
         super.setBoatType(type);
     }
 
+    /**
+     * @deprecated Vanilla boat types do not affect GTBoat instances; use {@link GTBoatEntity#getGTBoatType()}.
+     */
     @Deprecated
     @Override
     public Type getBoatType() {

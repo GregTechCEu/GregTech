@@ -64,7 +64,7 @@ public final class WoodTypeEntry {
         this.addStairsCraftingRecipe = addStairsCraftingRecipe;
         this.boat = boat;
         this.boatRecipeName = boatRecipeName;
-        this.stick = stick;
+        this.stick = stick != null ? stick : new UnificationEntry(OrePrefix.stick, Materials.Wood);
     }
 
     @Nonnull
@@ -166,7 +166,7 @@ public final class WoodTypeEntry {
 
     @Nonnull
     public UnificationEntry getStick() {
-        return stick != null ? stick : new UnificationEntry(OrePrefix.stick, Materials.Wood);
+        return stick;
     }
 
     public static class Builder {
