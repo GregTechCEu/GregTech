@@ -552,6 +552,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FERTILIZER;
     public static MetaItem<?>.MetaValueItem BLACKLIGHT;
 
+    public static MetaItem<?>.MetaValueItem LOGO;
 
     public static MetaOreDictItem CT_OREDICT_ITEM;
 

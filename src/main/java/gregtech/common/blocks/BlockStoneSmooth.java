@@ -28,6 +28,16 @@ public class BlockStoneSmooth extends VariantBlock<BlockStoneSmooth.BlockType> {
         return false;
     }
 
+    @Override
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockStoneSmooth.BlockType.CONCRETE_DARK) || state == getState(BlockStoneSmooth.BlockType.CONCRETE_LIGHT);
+    }
+
     public BlockStoneSmooth.BlockType getVariant(IBlockState blockState) {
         return blockState.getValue(VARIANT);
     }

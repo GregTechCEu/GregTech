@@ -2,8 +2,13 @@ package gregtech.loaders.recipe;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTTagType;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -29,6 +34,8 @@ import static gregtech.api.GTValues.M;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class RecyclingRecipes {
+
+    private static final NBTCondition RENAMED_NBT = NBTCondition.create(NBTTagType.COMPOUND, "display", "");
 
     // TODO - Fix recipe order with some things (noticed Hermetic Casings)
     // TODO - Figure out solution to LuV+ components
@@ -105,12 +112,16 @@ public class RecyclingRecipes {
         if (outputs.size() == 0) return;
 
         // Build the final Recipe.
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+        RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(2 * multiplier)
-                .buildAndRegister();
+                .EUt(2 * multiplier);
+
+        cleanInputNBT(input, recipe);
+
+        recipe.buildAndRegister();
+
     }
 
     private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
@@ -169,6 +180,7 @@ public class RecyclingRecipes {
             extractorBuilder.output(outputPrefix, itemMs.material, (int) (itemMs.amount / M));
         }
 
+        cleanInputNBT(input, extractorBuilder);
         extractorBuilder.buildAndRegister();
     }
 
@@ -209,12 +221,14 @@ public class RecyclingRecipes {
         if (outputs.size() == 0) return;
 
         // Build the final Recipe.
-        RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+        RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(GTValues.VA[GTValues.LV])
-                .buildAndRegister();
+                .EUt(GTValues.VA[GTValues.LV]);
+
+        cleanInputNBT(input, recipe);
+        recipe.buildAndRegister();
     }
 
     private static MaterialStack getArcSmeltingResult(MaterialStack materialStack) {
@@ -482,5 +496,22 @@ public class RecyclingRecipes {
 
     private static boolean isAshMaterial(MaterialStack ms) {
         return ms.material == Materials.Ash || ms.material == Materials.DarkAsh || ms.material == Materials.Carbon;
+    }
+
+    /**
+     * Performs various NBT matching on the provided input and adds the result to the provided RecipeBuilder
+     *
+     * @param input The input itemStack
+     * @param builder The RecipeBuilder to add the NBT condition to
+     */
+    private static void cleanInputNBT(ItemStack input, RecipeBuilder<?> builder) {
+
+        // Ignore String tag from naming machines
+        MetaTileEntity mte = GTUtility.getMetaTileEntity(input);
+        if (mte != null) {
+            builder.clearInputs();
+            // Don't use ANY to avoid issues with Drums, Super Chests, and other MTEs that hold an inventory
+            builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, RENAMED_NBT);
+        }
     }
 }

@@ -2452,6 +2452,10 @@ tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
+itemGroup.gregtech.machines=Machines (GT)
+itemGroup.gregtech.cables=Cables (GT)
+itemGroup.gregtech.pipes=Pipes (GT)
+itemGroup.gregtech.tools=Tools (GT)
 itemGroup.gregtech.materials=Materials (GT)
 itemGroup.gregtech.ores=Ores (GT)
 

@@ -110,7 +110,7 @@ public class HigherDegreeMaterials {
         HSSE = new Material.Builder(2519, "hsse")
                 .ingot(4).fluid()
                 .color(0x336600).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING)
+                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_GEAR)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
                 .toolStats(ToolProperty.Builder.of(5.0F, 10.0F, 3072, 4)
                         .attackSpeed(0.3F).enchantability(33).build())

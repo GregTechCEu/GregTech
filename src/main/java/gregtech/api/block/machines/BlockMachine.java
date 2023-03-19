@@ -79,7 +79,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     public BlockMachine() {
         super(Material.IRON);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_MACHINES);
         setSoundType(SoundType.METAL);
         setHardness(6.0f);
         setResistance(6.0f);

@@ -42,6 +42,7 @@ public class CraftingComponent {
     public static Component PIPE_LARGE;
     public static Component GLASS;
     public static Component PLATE;
+    public static Component DOUBLE_PLATE;
     public static Component HULL_PLATE;
     public static Component MOTOR;
     public static Component ROTOR;
@@ -394,6 +395,21 @@ public class CraftingComponent {
                 {7, new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy)},
                 {8, new UnificationEntry(OrePrefix.plate, Materials.Darmstadtium)},
                 {9, new UnificationEntry(OrePrefix.plate, Materials.Neutronium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        DOUBLE_PLATE = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.plateDouble, Materials.WroughtIron)},
+                {1, new UnificationEntry(OrePrefix.plateDouble, Materials.Steel)},
+                {2, new UnificationEntry(OrePrefix.plateDouble, Materials.Aluminium)},
+                {3, new UnificationEntry(OrePrefix.plateDouble, Materials.StainlessSteel)},
+                {4, new UnificationEntry(OrePrefix.plateDouble, Materials.Titanium)},
+                {5, new UnificationEntry(OrePrefix.plateDouble, Materials.TungstenSteel)},
+                {6, new UnificationEntry(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)},
+                {7, new UnificationEntry(OrePrefix.plateDouble, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.plateDouble, Materials.Darmstadtium)},
+                {9, new UnificationEntry(OrePrefix.plateDouble, Materials.Neutronium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
