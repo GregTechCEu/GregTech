@@ -36,7 +36,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
@@ -139,7 +142,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -332,7 +335,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.universal.tooltip.working_area", workingArea, workingArea)));
+        int workingArea = getWorkingArea(this.minerLogic.getCurrentRadius());
+        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
     }
 }

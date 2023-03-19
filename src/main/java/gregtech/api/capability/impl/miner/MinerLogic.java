@@ -92,8 +92,7 @@ public class MinerLogic {
         this.PIPE_TEXTURE = pipeTexture;
     }
 
-    private IBlockState findMiningReplacementBlock() {
-
+    private static IBlockState findMiningReplacementBlock() {
         String[] blockDescription = StringUtils.split(ConfigHolder.machines.replaceMinedBlocksWith, ":");
         Block replacementBlock;
 
@@ -333,8 +332,7 @@ public class MinerLogic {
      */
     public void resetArea() {
         initPos(metaTileEntity.getPos(), currentRadius);
-        if (this.isDone)
-            this.setWorkingEnabled(false);
+        if (this.isDone) this.setWorkingEnabled(false);
         this.isDone = false;
         blocksToMine.clear();
         checkBlocksToMine();
