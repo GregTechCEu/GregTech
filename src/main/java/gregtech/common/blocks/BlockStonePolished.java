@@ -28,6 +28,16 @@ public class BlockStonePolished extends VariantBlock<BlockStonePolished.BlockTyp
         return false;
     }
 
+    @Override
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockStonePolished.BlockType.CONCRETE_DARK) || state == getState(BlockStonePolished.BlockType.CONCRETE_LIGHT);
+    }
+
     public enum BlockType implements IStringSerializable {
 
         BLACK_GRANITE("black_granite"),

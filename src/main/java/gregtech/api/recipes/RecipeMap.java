@@ -70,6 +70,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return baseChance + (boostPerTier * tierDiff);
     };
 
+    private static boolean foundInvalidRecipe = false;
+
     public IChanceFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
 
     public final String unlocalizedName;
@@ -190,10 +192,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return smallRecipeMap;
     }
 
-    private static boolean foundInvalidRecipe = false;
-
-    //internal usage only, use buildAndRegister()
-    public void addRecipe(ValidationResult<Recipe> validationResult) {
+    /**
+     * Internal usage <strong>only</strong>, use {@link RecipeBuilder#buildAndRegister()}
+     * @param validationResult the validation result from building the recipe
+     */
+    public void addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
         switch (validationResult.getType()) {
             case SKIP:
@@ -208,9 +211,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             this.virtualizedRecipeMap.addScripted(recipe);
         }
         compileRecipe(recipe);
-
     }
 
+    /**
+     * Compiles a recipe and adds it to the ingredient tree
+     *
+     * @param recipe the recipe to compile
+     */
     public void compileRecipe(Recipe recipe) {
         if (recipe == null) {
             return;
@@ -219,7 +226,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
     }
 
-    public boolean removeRecipe(Recipe recipe) {
+    /**
+     * @param recipe the recipe to remove
+     * @return if removal was successful
+     */
+    public boolean removeRecipe(@Nonnull Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
             if (GroovyScriptCompat.isCurrentlyRunning()) {
@@ -230,7 +241,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
+    /**
+     * Performs additional validation of recipes before adding to the ingredient tree.
+     *
+     * @param validationResult the current validation result
+     * @return the new result based on validation
+     */
+    @Nonnull
+    protected ValidationResult<Recipe> postValidateRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
         if (recipe.isGroovyRecipe()) {
@@ -304,19 +322,33 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param exactVoltage            should require exact voltage matching on recipe. used by craftweaker
      * @return the Recipe it has found or null for no matching Recipe
      */
-
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
-        return find(inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()), fluidInputs.stream().filter(Objects::nonNull).collect(Collectors.toList()), recipe -> {
+    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
+        final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+        final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0).collect(Collectors.toList());
+
+        return find(items, fluids, recipe -> {
             if (exactVoltage && recipe.getEUt() != voltage) {
+                // if exact voltage is required, the recipe is not considered valid
                 return false;
             }
-            return recipe.getEUt() <= voltage && recipe.matches(false, inputs, fluidInputs);
+            if (recipe.getEUt() > voltage) {
+                // there is not enough voltage to consider the recipe valid
+                return false;
+            }
+            return recipe.matches(false, inputs, fluidInputs);
         });
     }
 
+    /**
+     * Prepares Items and Fluids for use in recipe search
+     *
+     * @param items the items to prepare
+     * @param fluids the fluids to prepare
+     * @return a List of Lists of AbstractMapIngredients used for finding recipes
+     */
     @Nullable
-    public Recipe find(@Nonnull List<ItemStack> items, @Nonnull List<FluidStack> fluids, @Nonnull Predicate<Recipe> canHandle) {
+    protected List<List<AbstractMapIngredient>> prepareRecipeFind(@Nonnull Collection<ItemStack> items, @Nonnull Collection<FluidStack> fluids) {
         // First, check if items and fluids are valid.
         if (items.size() == Integer.MAX_VALUE || fluids.size() == Integer.MAX_VALUE) {
             return null;
@@ -325,25 +357,28 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             return null;
         }
 
+        // Build input.
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.size() + fluids.size());
-        if (items.size() > 0) {
-            buildFromItemStacks(list, uniqueItems(items));
-        }
-        if (fluids.size() > 0) {
-            List<FluidStack> stack = new ObjectArrayList<>(fluids.size());
-            for (FluidStack f : fluids) {
-                if (f == null || f.amount == 0) {
-                    continue;
-                }
-                stack.add(f);
-            }
-            if (stack.size() > 0) {
-                buildFromFluidStacks(list, stack);
-            }
-        }
-        if (list.size() == 0) {
-            return null;
-        }
+        if (items.size() > 0) buildFromItemStacks(list, uniqueItems(items));
+        if (fluids.size() > 0) buildFromFluidStacks(list, fluids);
+
+        // nothing was added, so return nothing
+        if (list.size() == 0) return null;
+        return list;
+    }
+
+    /**
+     * Finds a recipe using Items and Fluids.
+     * @param items a collection of items
+     * @param fluids a collection of fluids
+     * @param canHandle a predicate for determining if a recipe is valid
+     * @return the recipe found
+     */
+    @Nullable
+    public Recipe find(@Nonnull Collection<ItemStack> items, @Nonnull Collection<FluidStack> fluids, @Nonnull Predicate<Recipe> canHandle) {
+        List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
+        // couldn't build any inputs to use for search, so no recipe could be found
+        if (list == null) return null;
         return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
     }
 
@@ -357,8 +392,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param inputs The Collection of GTRecipeInputs.
      * @return an array of unique itemstacks.
      */
-
-    public static ItemStack[] uniqueItems(Collection<ItemStack> inputs) {
+    @Nonnull
+    public static ItemStack[] uniqueItems(@Nonnull Collection<ItemStack> inputs) {
         int index = 0;
         ItemStack[] uniqueItems = new ItemStack[inputs.size()];
         main:
@@ -386,16 +421,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * Builds a list of unique inputs from the given list GTRecipeInputs.
-     * Used to reduce the number inputs, if for example there is more than one of the same input,
-     * pack them into one.
+     * Used to reduce the number inputs, if for example there is more than one of the same input, pack them into one.
      *
-     * @param input The list of GTRecipeInputs.
+     * @param inputs The list of GTRecipeInputs.
      * @return The list of unique inputs.
      */
-
-    public static List<GTRecipeInput> uniqueIngredientsList(List<GTRecipeInput> input) {
-        List<GTRecipeInput> list = new ObjectArrayList<>(input.size());
-        for (GTRecipeInput item : input) {
+    @Nonnull
+    public static List<GTRecipeInput> uniqueIngredientsList(@Nonnull Collection<GTRecipeInput> inputs) {
+        List<GTRecipeInput> list = new ObjectArrayList<>(inputs.size());
+        for (GTRecipeInput item : inputs) {
             boolean isEqual = false;
             for (GTRecipeInput obj : list) {
                 if (item.equalIgnoreAmount(obj)) {
@@ -414,14 +448,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Recursively finds a recipe, top level. call this to find a recipe
+     * Recursively finds a recipe, top level.
      *
      * @param ingredients the ingredients part
      * @param branchRoot  the root branch to search from.
+     * @param canHandle   if the found recipe is valid
      * @return a recipe
      */
-    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchRoot, @Nonnull Predicate<Recipe> canHandle) {
-        // Try each ingredient as a starting point, adding it to the skiplist.
+    @Nullable
+    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                                   @Nonnull Branch branchRoot, @Nonnull Predicate<Recipe> canHandle) {
+        // Try each ingredient as a starting point, adding it to the skip-list.
+        // The skip-list is a packed long, where each 1 bit represents an index to skip
         for (int i = 0; i < ingredients.size(); i++) {
             Recipe r = recurseIngredientTreeFindRecipe(ingredients, branchRoot, canHandle, i, 0, (1L << i));
             if (r != null) {
@@ -439,28 +477,27 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param canHandle   predicate to test found recipe.
      * @param index       the index of the wrapper to get
      * @param count       how deep we are in recursion, < ingredients.length
-     * @param skip        bitmap of ingredients to skip, i.e. which ingredients are used in the
-     *                    recursion.
+     * @param skip        bitmap of ingredients to skip, i.e. which ingredients are already used in the recursion.
      * @return a recipe
      */
-    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
-        if (count == ingredients.size()) {
-            return null;
-        }
-        List<AbstractMapIngredient> wr = ingredients.get(index);
-        // Iterate over current level of nodes.
-        for (AbstractMapIngredient t : wr) {
-            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (t.isSpecialIngredient()) {
-                targetMap = branchMap.getSpecialNodes();
-            } else {
-                targetMap = branchMap.getNodes();
-            }
+    @Nullable
+    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                                   @Nonnull Branch branchMap, @Nonnull Predicate<Recipe> canHandle,
+                                                   int index, int count, long skip) {
+        // exhausted all the ingredients, and didn't find anything
+        if (count == ingredients.size()) return null;
 
-            Either<Recipe, Branch> result = targetMap.get(t);
+        // Iterate over current level of nodes.
+        for (AbstractMapIngredient obj : ingredients.get(index)) {
+            // determine the root nodes
+            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap = determineRootNodes(obj, branchMap);
+
+            Either<Recipe, Branch> result = targetMap.get(obj);
             if (result != null) {
-                // Either return recipe or continue branch.
-                Recipe r = result.map(recipe -> canHandle.test(recipe) ? recipe : null, right -> diveIngredientTreeFindRecipe(ingredients, right, canHandle, index, count, skip));
+                // if there is a recipe (left mapping), return it immediately as found, if it can be handled
+                // Otherwise, recurse and go to the next branch.
+                Recipe r = result.map(potentialRecipe -> canHandle.test(potentialRecipe) ? potentialRecipe : null,
+                        potentialBranch -> diveIngredientTreeFindRecipe(ingredients, potentialBranch, canHandle, index, count, skip));
                 if (r != null) {
                     return r;
                 }
@@ -469,19 +506,36 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
+    /**
+     * Recursively finds a recipe
+     *
+     * @param ingredients  the ingredients part
+     * @param map          the current branch of the tree
+     * @param canHandle    predicate to test found recipe.
+     * @param currentIndex the index of the wrapper to get
+     * @param count        how deep we are in recursion, < ingredients.length
+     * @param skip         bitmap of ingredients to skip, i.e. which ingredients are already used in the recursion.
+     * @return a recipe
+     */
+    @Nullable
+    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map,
+                                                @Nonnull Predicate<Recipe> canHandle, int currentIndex, int count, long skip) {
         // We loop around ingredients.size() if we reach the end.
-        int counter = (index + 1) % ingredients.size();
-        while (counter != index) {
+        // only end when all ingredients are exhausted, or a recipe is found
+        int i = (currentIndex + 1) % ingredients.size();
+        while (i != currentIndex) {
             // Have we already used this ingredient? If so, skip this one.
-            if (((skip & (1L << counter)) == 0)) {
-                // Recursive call.
-                Recipe found = recurseIngredientTreeFindRecipe(ingredients, map, canHandle, counter, count + 1, skip | (1L << counter));
+            if (((skip & (1L << i)) == 0)) {
+                // Recursive call
+                // Increase the count, so the recursion can terminate if needed (ingredients is exhausted)
+                // Append the current index to the skip list
+                Recipe found = recurseIngredientTreeFindRecipe(ingredients, map, canHandle, i, count + 1, skip | (1L << i));
                 if (found != null) {
                     return found;
                 }
             }
-            counter = (counter + 1) % ingredients.size();
+            // increment the index if the current index is skipped, or the recipe is not found
+            i = (i + 1) % ingredients.size();
         }
         return null;
     }
@@ -493,68 +547,58 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param fluids the ingredients, in the form of a List of FluidStack. Usually the inputs of a Recipe
      * @return a Set of recipes that can be crafted with the given ingredients
      */
-
     @Nullable
-    public Set<Recipe> findRecipeCollisions(List<ItemStack> items, List<FluidStack> fluids) {
-        // First, check if items and fluids are valid.
-        if (items.size() == Integer.MAX_VALUE || fluids.size() == Integer.MAX_VALUE) {
-            return null;
-        }
-        if (items.size() == 0 && fluids.size() == 0) {
-            return null;
-        }
-        // Filter out empty fluids.
-
-        // Build input.
-        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.size() + fluids.size());
-        if (items.size() > 0) {
-            buildFromItemStacks(list, uniqueItems(items));
-        }
-        if (fluids.size() > 0) {
-            List<FluidStack> stack = new ObjectArrayList<>(fluids.size());
-            for (FluidStack f : fluids) {
-                if (f == null || f.amount == 0) {
-                    continue;
-                }
-                stack.add(f);
-            }
-            if (stack.size() > 0) {
-                buildFromFluidStacks(list, stack);
-            }
-        }
-        if (list.size() == 0) {
-            return null;
-        }
-        Set<Recipe> collidingRecipes = new HashSet<>();
-        return recurseIngredientTreeFindRecipeCollisions(list, lookup, collidingRecipes);
-    }
-
-    private Set<Recipe> recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchRoot, Set<Recipe> collidingRecipes) {
-        // Try each ingredient as a starting point, adding it to the skiplist.
-        for (int i = 0; i < ingredients.size(); i++) {
-            recurseIngredientTreeFindRecipeCollisions(ingredients, branchRoot, i, 0, (1L << i), collidingRecipes);
-        }
+    public Set<Recipe> findRecipeCollisions(Collection<ItemStack> items, Collection<FluidStack> fluids) {
+        List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
+        if (list == null) return null;
+        Set<Recipe> collidingRecipes = new ObjectOpenHashSet<>();
+        recurseIngredientTreeFindRecipeCollisions(list, lookup, collidingRecipes);
         return collidingRecipes;
     }
 
-    private Recipe recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int index, int count, long skip, Set<Recipe> collidingRecipes) {
-        if (count == ingredients.size()) {
-            return null;
+    /**
+     * @param ingredients      the ingredients to search with
+     * @param branchRoot       the root branch to start searching from
+     * @param collidingRecipes the list to store recipe collisions
+     */
+    private void recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                                                  @Nonnull Branch branchRoot, @Nonnull Set<Recipe> collidingRecipes) {
+        // Try each ingredient as a starting point, adding it to the skip-list.
+        // The skip-list is a packed long, where each 1 bit represents an index to skip
+        for (int i = 0; i < ingredients.size(); i++) {
+            recurseIngredientTreeFindRecipeCollisions(ingredients, branchRoot, i, 0, (1L << i), collidingRecipes);
         }
+    }
+
+    /**
+     * Recursively finds all colliding recipes
+     *
+     * @param ingredients      the ingredients part
+     * @param branchMap        the current branch of the tree
+     * @param index            the index of the wrapper to get
+     * @param count            how deep we are in recursion, < ingredients.length
+     * @param skip             bitmap of ingredients to skip, i.e. which ingredients are already used in the recursion.
+     * @param collidingRecipes the set to store the recipes in
+     */
+    @Nullable
+    private Recipe recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                                             @Nonnull Branch branchMap, int index, int count, long skip,
+                                                             @Nonnull Set<Recipe> collidingRecipes) {
+        // exhausted all the ingredients, and didn't find anything
+        if (count == ingredients.size()) return null;
+
         List<AbstractMapIngredient> wr = ingredients.get(index);
         // Iterate over current level of nodes.
-        for (AbstractMapIngredient t : wr) {
-            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (t.isSpecialIngredient()) {
-                targetMap = branchMap.getSpecialNodes();
-            } else {
-                targetMap = branchMap.getNodes();
-            }
+        for (AbstractMapIngredient obj : wr) {
+            // determine the root nodes
+            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap = determineRootNodes(obj, branchMap);
 
-            Either<Recipe, Branch> result = targetMap.get(t);
+            Either<Recipe, Branch> result = targetMap.get(obj);
             if (result != null) {
-                // Either return recipe or continue branch.
-                Recipe r = result.map(recipe -> recipe, right -> diveIngredientTreeFindRecipeCollisions(ingredients, right, index, count, skip, collidingRecipes));
+                // if there is a recipe (left mapping), return it immediately as found
+                // Otherwise, recurse and go to the next branch.
+                Recipe r = result.map(recipe -> recipe,
+                        right -> diveIngredientTreeFindRecipeCollisions(ingredients, right, index, count, skip, collidingRecipes));
                 if (r != null) {
                     collidingRecipes.add(r);
                 }
@@ -563,19 +607,36 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private Recipe diveIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map, int index, int count, long skip, Set<Recipe> collidingRecipes) {
+    /**
+     * Recursively finds a recipe
+     *
+     * @param ingredients      the ingredients part
+     * @param map              the current branch of the tree
+     * @param currentIndex     the index of the wrapper to get
+     * @param count            how deep we are in recursion, < ingredients.length
+     * @param skip             bitmap of ingredients to skip, i.e. which ingredients are already used in the recursion.
+     * @param collidingRecipes the set to store the recipes in
+     * @return a recipe
+     */
+    @Nullable
+    private Recipe diveIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                                          @Nonnull Branch map, int currentIndex, int count, long skip, @Nonnull Set<Recipe> collidingRecipes) {
         // We loop around ingredients.size() if we reach the end.
-        int counter = (index + 1) % ingredients.size();
-        while (counter != index) {
+        // only end when all ingredients are exhausted, or a recipe is found
+        int i = (currentIndex + 1) % ingredients.size();
+        while (i != currentIndex) {
             // Have we already used this ingredient? If so, skip this one.
-            if (((skip & (1L << counter)) == 0)) {
-                // Recursive call.
-                Recipe r = recurseIngredientTreeFindRecipeCollisions(ingredients, map, counter, count + 1, skip | (1L << counter), collidingRecipes);
+            if (((skip & (1L << i)) == 0)) {
+                // Recursive call
+                // Increase the count, so the recursion can terminate if needed (ingredients is exhausted)
+                // Append the current index to the skip list
+                Recipe r = recurseIngredientTreeFindRecipeCollisions(ingredients, map, i, count + 1, skip | (1L << i), collidingRecipes);
                 if (r != null) {
                     return r;
                 }
             }
-            counter = (counter + 1) % ingredients.size();
+            // increment the index if the current index is skipped, or the recipe is not found
+            i = (i + 1) % ingredients.size();
         }
         return null;
     }
@@ -700,35 +761,37 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Adds a recipe to the map. (recursive part)
      *
      * @param recipe      the recipe to add.
-     * @param ingredients list of input ingredients.
+     * @param ingredients list of input ingredients representing the recipe.
      * @param branchMap   the current branch in the recursion.
      * @param index       where in the ingredients list we are.
-     * @param count       how many added already.
+     * @param count       how many branches were added already.
      */
-    boolean recurseIngredientTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int index, int count) {
+    private boolean recurseIngredientTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                             @Nonnull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
             throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
         }
         // Loop through NUMBER_OF_INGREDIENTS times.
-        List<AbstractMapIngredient> current = ingredients.get(index);
-        Either<Recipe, Branch> r;
+
+        // the current contents to be added to a node in the branch
+        final List<AbstractMapIngredient> current = ingredients.get(index);
         final Branch branchRight = new Branch();
+        Either<Recipe, Branch> r;
+
+        // for every ingredient, add it to a node
         for (AbstractMapIngredient obj : current) {
-            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-            if (obj.isSpecialIngredient()) {
-                targetMap = branchMap.getSpecialNodes();
-            } else {
-                targetMap = branchMap.getNodes();
-            }
+            // determine the root nodes
+            Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap = determineRootNodes(obj, branchMap);
 
             // Either add the recipe or create a branch.
             r = targetMap.compute(obj, (k, v) -> {
                 if (count == ingredients.size() - 1) {
+                    // handle very last ingredient
                     if (v != null) {
-                        if (v.left().isPresent() && v.left().get() == recipe) {
-                            return v;
-                        } else {
+                        // handle the existing branch
+                        if (!v.left().isPresent() || v.left().get() != recipe) {
+                            // the recipe already there was not the one being added, so there is a conflict
                             if (recipe.getIsCTRecipe()) {
                                 CraftTweakerAPI.logError(String.format("Recipe duplicate or conflict found in RecipeMap %s and was not added. See next lines for details.", this.unlocalizedName));
 
@@ -752,56 +815,120 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                 }
                             }
                         }
+                        // Return the existing recipe, even on conflicts.
+                        // If there was no conflict but a recipe was still present, it was added on an earlier recurse,
+                        // and this will carry the result further back in the call stack
+                        return v;
                     } else {
-                        v = Either.left(recipe);
+                        // nothing exists for this path, so end with the recipe
+                        return Either.left(recipe);
                     }
-                    return v;
                 } else if (v == null) {
-                    v = Either.right(branchRight);
+                    // no existing ingredient is present, so use the new one
+                    return Either.right(branchRight);
                 }
+                // there is an existing ingredient here already, so use it
                 return v;
             });
 
-            if (r.right().map(m -> !recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
-                current.forEach(i -> {
-                    if (count == ingredients.size() - 1) {
-                        targetMap.remove(obj);
-                    } else {
-                        if (targetMap.get(obj).right().isPresent()) {
-                            Branch branch = targetMap.get(obj).right().get();
-                            if (branch.isEmptyBranch()) {
-                                targetMap.remove(obj);
-                            }
+            // left branches are always either empty or contain recipes.
+            // If there's a recipe present, the addition is finished
+            if (r.left().isPresent()) return true;
+
+            // recursive part: apply the addition for the next ingredient in the list, for the right branch.
+            // the right branch only contains ingredients, or is empty when the left branch is present
+            boolean addedNextBranch = r.right()
+                    .filter(m -> recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1))
+                    .isPresent();
+
+            if (!addedNextBranch) {
+                // failed to add the next branch, so undo any made changes
+                if (count == ingredients.size() - 1) {
+                    // was the final ingredient, so the mapping of it to a recipe needs to be removed
+                    targetMap.remove(obj);
+                } else {
+                    // was a regular ingredient
+                    if (targetMap.get(obj).right().isPresent()) {
+                        // if something was put into the map
+                        if (targetMap.get(obj).right().get().isEmptyBranch()) {
+                            // if what was put was empty (invalid), remove it
+                            targetMap.remove(obj);
                         }
                     }
-                });
+                }
+                // because a branch addition failure happened, fail the recipe addition for this step
                 return false;
             }
         }
+        // recipe addition was successful
         return true;
     }
 
-    protected void buildFromRecipeFluids(List<List<AbstractMapIngredient>> builder, List<GTRecipeInput> fluidInputs) {
+    /**
+     * Determine the correct root nodes for an ingredient
+     *
+     * @param ingredient the ingredient to check
+     * @param branchMap the branch containing the nodes
+     * @return the correct nodes for the ingredient
+     */
+    @Nonnull
+    protected static Map<AbstractMapIngredient, Either<Recipe, Branch>> determineRootNodes(@Nonnull AbstractMapIngredient ingredient,
+                                                                                           @Nonnull Branch branchMap) {
+        return ingredient.isSpecialIngredient() ? branchMap.getSpecialNodes() : branchMap.getNodes();
+    }
+
+    /**
+     * Converts a list of {@link GTRecipeInput}s for Fluids into a List of {@link AbstractMapIngredient}s.
+     * Do not supply GTRecipeInputs dealing with any other type of input other than Fluids.
+     *
+     * @param list the list of MapIngredients to add to
+     * @param fluidInputs the GTRecipeInputs to convert
+     */
+    protected void buildFromRecipeFluids(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull List<GTRecipeInput> fluidInputs) {
         for (GTRecipeInput fluidInput : fluidInputs) {
-            AbstractMapIngredient ingredient;
-            ingredient = new MapFluidIngredient(fluidInput);
-            WeakReference<AbstractMapIngredient> cached = fluidIngredientRoot.get(ingredient);
-            if (cached != null && cached.get() != null) {
-                builder.add(Collections.singletonList(cached.get()));
-            } else {
-                fluidIngredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                builder.add(Collections.singletonList(ingredient));
-            }
+            AbstractMapIngredient ingredient = new MapFluidIngredient(fluidInput);
+            retrieveCachedIngredient(list, ingredient, fluidIngredientRoot);
         }
     }
 
-    protected void buildFromFluidStacks(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
+    /**
+     * Retrieves a cached ingredient, or inserts a default one
+     *
+     * @param list the list to append to
+     * @param defaultIngredient the ingredient to use as a default value, if not cached
+     * @param cache the ingredient root to retrieve from
+     */
+    protected static void retrieveCachedIngredient(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull AbstractMapIngredient defaultIngredient,
+                                                   @Nonnull WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> cache) {
+        WeakReference<AbstractMapIngredient> cached = cache.get(defaultIngredient);
+        if (cached != null && cached.get() != null) {
+            list.add(Collections.singletonList(cached.get()));
+        } else {
+            cache.put(defaultIngredient, new WeakReference<>(defaultIngredient));
+            list.add(Collections.singletonList(defaultIngredient));
+        }
+    }
+
+    /**
+     * Populates a list of MapIngredients from a list of FluidStacks
+     *
+     * @param list the list to populate
+     * @param ingredients the ingredients to convert
+     */
+    protected void buildFromFluidStacks(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull Iterable<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
-            builder.add(Collections.singletonList(new MapFluidIngredient(t)));
+            list.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
     }
 
-    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r) {
+    /**
+     * Converts a Recipe's {@link GTRecipeInput}s into a List of {@link AbstractMapIngredient}s
+     *
+     * @param r the recipe to use
+     * @return a list of all the AbstractMapIngredients comprising the recipe
+     */
+    @Nonnull
+    protected List<List<AbstractMapIngredient>> fromRecipe(@Nonnull Recipe r) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>((r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
             buildFromRecipeItems(list, uniqueIngredientsList(r.getInputs()));
@@ -812,11 +939,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return list;
     }
 
-    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, List<GTRecipeInput> ingredients) {
-        for (GTRecipeInput r : ingredients) {
-            AbstractMapIngredient ingredient;
+    /**
+     * Converts a list of {@link GTRecipeInput}s for Items into a List of {@link AbstractMapIngredient}s.
+     * Do not supply GTRecipeInputs dealing with any other type of input other than Items.
+     *
+     * @param list the list of MapIngredients to add to
+     * @param inputs the GTRecipeInputs to convert
+     */
+    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, @Nonnull List<GTRecipeInput> inputs) {
+        for (GTRecipeInput r : inputs) {
             if (r.isOreDict()) {
-                hasOreDictedInputs = true;
+                AbstractMapIngredient ingredient;
+                this.hasOreDictedInputs = true;
                 if (r.hasNBTMatchingCondition()) {
                     hasNBTMatcherInputs = true;
                     ingredient = new MapOreDictNBTIngredient(r.getOreDict(), r.getNBTMatcher(), r.getNBTMatchingCondition());
@@ -824,61 +958,69 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     ingredient = new MapOreDictIngredient(r.getOreDict());
                 }
 
-                WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(ingredient);
-                if (cached != null && cached.get() != null) {
-                    list.add(Collections.singletonList(cached.get()));
-                } else {
-                    ingredientRoot.put(ingredient, new WeakReference<>(ingredient));
-                    list.add(Collections.singletonList(ingredient));
-                }
-
+                // use the cached ingredient, if possible
+                retrieveCachedIngredient(list, ingredient, ingredientRoot);
             } else {
-                List<AbstractMapIngredient> inner = new ObjectArrayList<>(1);
+                // input must be represented as a list of possible stacks
+                List<AbstractMapIngredient> ingredients;
                 if (r.hasNBTMatchingCondition()) {
-                    inner.addAll(MapItemStackNBTIngredient.from(r));
+                    ingredients = MapItemStackNBTIngredient.from(r);
                     hasNBTMatcherInputs = true;
                 } else {
-                    inner.addAll(MapItemStackIngredient.from(r));
+                    ingredients = MapItemStackIngredient.from(r);
                 }
 
-                for (int i = 0; i < inner.size(); i++) {
-                    AbstractMapIngredient mappedIngredient = inner.get(i);
+                for (int i = 0; i < ingredients.size(); i++) {
+                    AbstractMapIngredient mappedIngredient = ingredients.get(i);
+                    // attempt to use the cached value if possible, otherwise cache for the next time
                     WeakReference<AbstractMapIngredient> cached = ingredientRoot.get(mappedIngredient);
                     if (cached != null && cached.get() != null) {
-                        inner.set(i, cached.get());
+                        ingredients.set(i, cached.get());
                     } else {
                         ingredientRoot.put(mappedIngredient, new WeakReference<>(mappedIngredient));
                     }
                 }
-                list.add(inner);
+                list.add(ingredients);
             }
         }
     }
 
-    protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
+    /**
+     * Populates a list of MapIngredients from a list of ItemStacks
+     *
+     * @param list the list to populate
+     * @param ingredients the ingredients to convert
+     */
+    protected void buildFromItemStacks(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull ItemStack[] ingredients) {
         AbstractMapIngredient ingredient;
         for (ItemStack stack : ingredients) {
             int meta = stack.getMetadata();
             NBTTagCompound nbt = stack.getTagCompound();
 
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(1);
+
+            // add the regular input
             ls.add(new MapItemStackIngredient(stack, meta, nbt));
+
             if (hasOreDictedInputs) {
+
+                // add the ore dict inputs
                 for (int i : OreDictionary.getOreIDs(stack)) {
                     ingredient = new MapOreDictIngredient(i);
                     ls.add(ingredient);
+
                     if (hasNBTMatcherInputs) {
+                        // add the nbt inputs for the oredict inputs
                         ingredient = new MapOreDictNBTIngredient(i, nbt);
                         ls.add(ingredient);
                     }
                 }
             }
             if (hasNBTMatcherInputs) {
+                // add the nbt input for the regular input
                 ls.add(new MapItemStackNBTIngredient(stack, meta, nbt));
             }
-            if (ls.size() > 0) {
-                list.add(ls);
-            }
+            if (!ls.isEmpty()) list.add(ls);
         }
     }
 
@@ -939,44 +1081,57 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param ingredients    list of input ingredients.
      * @param branchMap      the current branch in the recursion.
      */
+    @Nullable
     private Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int depth) {
+        // for every ingredient
         for (List<AbstractMapIngredient> current : ingredients) {
+            // for all possibilities as keys
             for (AbstractMapIngredient obj : current) {
-                Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap;
-                if (obj.isSpecialIngredient()) {
-                    targetMap = branchMap.getSpecialNodes();
-                } else {
-                    targetMap = branchMap.getNodes();
+                // determine the root nodes
+                Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap = determineRootNodes(obj, branchMap);
+
+                // recursive part:
+                Recipe found = null;
+                Either<Recipe, Branch> result = targetMap.get(obj);
+                if (result != null) {
+                    // if there is a recipe (left mapping), return it immediately as found
+                    // otherwise, recurse and go to the next branch. Do so by omitting the current ingredient.
+                    Recipe r = result.map(potentialRecipe -> potentialRecipe,
+                            potentialBranch -> recurseIngredientTreeRemove(recipeToRemove, ingredients.subList(1, ingredients.size()), potentialBranch, depth + 1));
+                    if (r == recipeToRemove) {
+                        found = r;
+                    } else {
+                        // wasn't the correct recipe
+                        if (recipeToRemove.getIsCTRecipe()) {
+                            CraftTweakerAPI.logError(String.format("Failed to remove Recipe from RecipeMap %s: %s",
+                                    this.unlocalizedName, CTRecipeHelper.getRecipeRemoveLine(this, recipeToRemove)));
+                        }
+                        if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
+                            GTLog.logger.warn("Failed to remove recipe from RecipeMap {}. See next lines for details", this.unlocalizedName);
+                            GTLog.logger.warn("Failed to remove Recipe: {}", recipeToRemove.toString());
+                        }
+                    }
                 }
-                if (ingredients.size() == 0) return null;
-                Recipe r = removeDive(recipeToRemove, ingredients.subList(1, ingredients.size()), targetMap, obj, depth);
-                if (r != null) {
+
+                if (found != null) {
                     if (ingredients.size() == 1) {
+                        // a recipe was found, and this is the only ingredient, so remove it directly
                         targetMap.remove(obj);
                     } else {
                         if (targetMap.get(obj).right().isPresent()) {
                             Branch branch = targetMap.get(obj).right().get();
                             if (branch.isEmptyBranch()) {
+                                // have a branch at this stage, so remove the ingredient for this step
                                 targetMap.remove(obj);
                             }
                         }
                     }
-                    return r;
+                    // return the successfully removed recipe
+                    return found;
                 }
             }
         }
-        return null;
-    }
-
-    private Recipe removeDive(Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, Map<AbstractMapIngredient, Either<Recipe, Branch>> targetMap, AbstractMapIngredient obj, int depth) {
-        Either<Recipe, Branch> result = targetMap.get(obj);
-        if (result != null) {
-            // Either return recipe or continue branch.
-            Recipe r = result.map(recipe -> recipe, right -> recurseIngredientTreeRemove(recipeToRemove, ingredients, right, depth + 1));
-            if (r == recipeToRemove) {
-                return r;
-            }
-        }
+        // could not remove the recipe
         return null;
     }
 

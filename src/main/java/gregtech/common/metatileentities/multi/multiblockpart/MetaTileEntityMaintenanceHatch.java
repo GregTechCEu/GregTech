@@ -6,7 +6,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -21,6 +20,7 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
@@ -42,6 +42,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -58,6 +59,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     private final boolean isConfigurable;
     private boolean isTaped;
+    private ItemStackHandler itemStackHandler;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
@@ -104,7 +106,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemInventory = new ItemHandlerProxy(importItems, importItems);
+        this.itemInventory = itemStackHandler = new ItemStackHandler(1);
     }
 
     /**
@@ -384,7 +386,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     .setOnFinished(this::fixAllMaintenanceProblems)
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));
         } else {
-            builder.widget(new SlotWidget(importItems, 0, 89 - 10, 18 - 1)
+            builder.widget(new SlotWidget(itemStackHandler, 0, 89 - 10, 18 - 1)
                     .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY).setTooltipText("gregtech.machine.maintenance_hatch_tape_slot.tooltip"))
                     .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
                             .setButtonTexture(GuiTextures.MAINTENANCE_ICON).setTooltipText("gregtech.machine.maintenance_hatch_tool_slot.tooltip"));
@@ -424,6 +426,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
         if (isConfigurable) durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
+        // Legacy Inventory Handler Support
+        if (data.hasKey("ImportInventory")) {
+            GTUtility.readItems(itemStackHandler, "ImportInventory", data);
+        }
     }
 
     @Override
@@ -480,8 +486,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 
