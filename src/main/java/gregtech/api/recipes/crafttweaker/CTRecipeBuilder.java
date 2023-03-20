@@ -118,7 +118,8 @@ public class CTRecipeBuilder {
             final ItemStack stack = CraftTweakerMC.getItemStack(items.get(0));
             final IData data = items.get(0).getTag();
             // MCItemStack#getTag returns DataMap.EMPTY when there is no tag, instead of null
-            // CraftTweakerMC#getNBTCompound does not check for this, so returns an empty NBT tag instead of null.
+            // CraftTweakerMC#getNBTCompound does not check for this, so it would otherwise return an empty NBT tag
+            // check for the empty tag specifically, so it is treated as a non-nbt input instead
             final NBTTagCompound tagCompound = data == DataMap.EMPTY ? null : CraftTweakerMC.getNBTCompound(data);
 
             return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
