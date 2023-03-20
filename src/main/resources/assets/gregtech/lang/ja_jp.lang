@@ -901,7 +901,7 @@ metaitem.brick.coke.name=コークス炉用レンガ
 metaitem.wooden_form.empty.name=木枠
 metaitem.wooden_form.brick.name=レンガ型の木枠
 
-item.gt.tool.replace_tool_head=ツールの先端とクラフトすると修理できる
+item.gt.tool.replace_tool_head=ツールの先端とクラフトすると先端を置き換える
 item.gt.tool.usable_as=§f%s§7として使用可能
 item.gt.tool.behavior.silk_ice=§b製氷: §f氷をシルクタッチ回収
 item.gt.tool.behavior.torch_place=§e採掘者: §f右クリックで松明設置
