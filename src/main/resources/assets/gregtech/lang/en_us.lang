@@ -2350,40 +2350,43 @@ tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sig
 tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
 # Lamps(ON)
-tile.lamp.lamp_white.name=White Lamp
-tile.lamp.lamp_orange.name=Orange Lamp
-tile.lamp.lamp_magenta.name=Magenta Lamp
-tile.lamp.lamp_lightblue.name=Light Blue Lamp
-tile.lamp.lamp_yellow.name=Yellow Lamp
-tile.lamp.lamp_lime.name=Lime Lamp
-tile.lamp.lamp_pink.name=Pink Lamp
-tile.lamp.lamp_gray.name=gray Lamp
-tile.lamp.lamp_lightgray.name=Light Gray Lamp
-tile.lamp.lamp_cyan.name=Cyan Lamp
-tile.lamp.lamp_purple.name=Purple Lamp
-tile.lamp.lamp_blue.name=Blue Lamp
-tile.lamp.lamp_brown.name=Brown Lamp
-tile.lamp.lamp_green.name=Green Lamp
-tile.lamp.lamp_red.name=Red Lamp
-tile.lamp.lamp_black.name=Black Lamp
+tile.gregtech_lamp.white.name=White Lamp
+tile.gregtech_lamp.orange.name=Orange Lamp
+tile.gregtech_lamp.magenta.name=Magenta Lamp
+tile.gregtech_lamp.light_blue.name=Light Blue Lamp
+tile.gregtech_lamp.yellow.name=Yellow Lamp
+tile.gregtech_lamp.lime.name=Lime Lamp
+tile.gregtech_lamp.pink.name=Pink Lamp
+tile.gregtech_lamp.gray.name=Gray Lamp
+tile.gregtech_lamp.silver.name=Light Gray Lamp
+tile.gregtech_lamp.cyan.name=Cyan Lamp
+tile.gregtech_lamp.purple.name=Purple Lamp
+tile.gregtech_lamp.blue.name=Blue Lamp
+tile.gregtech_lamp.brown.name=Brown Lamp
+tile.gregtech_lamp.green.name=Green Lamp
+tile.gregtech_lamp.red.name=Red Lamp
+tile.gregtech_lamp.black.name=Black Lamp
 
-# Lamps(OFF)
-tile.off_lamp.lamp_white.name=White Lamp (OFF)
-tile.off_lamp.lamp_orange.name=Orange Lamp (OFF)
-tile.off_lamp.lamp_magenta.name=Magenta Lamp (OFF)
-tile.off_lamp.lamp_lightblue.name=Light Blue Lamp (OFF)
-tile.off_lamp.lamp_yellow.name=Yellow Lamp (OFF)
-tile.off_lamp.lamp_lime.name=Lime Lamp (OFF)
-tile.off_lamp.lamp_pink.name=Pink Lamp (OFF)
-tile.off_lamp.lamp_gray.name=gray Lamp (OFF)
-tile.off_lamp.lamp_lightgray.name=Light Gray Lamp (OFF)
-tile.off_lamp.lamp_cyan.name=Cyan Lamp (OFF)
-tile.off_lamp.lamp_purple.name=Purple Lamp (OFF)
-tile.off_lamp.lamp_blue.name=Blue Lamp (OFF)
-tile.off_lamp.lamp_brown.name=Brown Lamp (OFF)
-tile.off_lamp.lamp_green.name=Green Lamp (OFF)
-tile.off_lamp.lamp_red.name=Red Lamp (OFF)
-tile.off_lamp.lamp_black.name=Black Lamp (OFF)
+tile.gregtech_lamp_borderless.white.name=Borderless White Lamp
+tile.gregtech_lamp_borderless.orange.name=Borderless Orange Lamp
+tile.gregtech_lamp_borderless.magenta.name=Borderless Magenta Lamp
+tile.gregtech_lamp_borderless.light_blue.name=Borderless Light Blue Lamp
+tile.gregtech_lamp_borderless.yellow.name=Borderless Yellow Lamp
+tile.gregtech_lamp_borderless.lime.name=Borderless Lime Lamp
+tile.gregtech_lamp_borderless.pink.name=Borderless Pink Lamp
+tile.gregtech_lamp_borderless.gray.name=Borderless Gray Lamp
+tile.gregtech_lamp_borderless.silver.name=Borderless Light Gray Lamp
+tile.gregtech_lamp_borderless.cyan.name=Borderless Cyan Lamp
+tile.gregtech_lamp_borderless.purple.name=Borderless Purple Lamp
+tile.gregtech_lamp_borderless.blue.name=Borderless Blue Lamp
+tile.gregtech_lamp_borderless.brown.name=Borderless Brown Lamp
+tile.gregtech_lamp_borderless.green.name=Borderless Green Lamp
+tile.gregtech_lamp_borderless.red.name=Borderless Red Lamp
+tile.gregtech_lamp_borderless.black.name=Borderless Black Lamp
+
+tile.gregtech_lamp.tooltip.inverted=Inverted
+tile.gregtech_lamp.tooltip.no_bloom=No Bloom
+tile.gregtech_lamp.tooltip.no_light=No Light
 
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing

@@ -1,0 +1,47 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "CTM",
+    "layer": "BLOOM",
+    "gregtech": true,
+    "textures": [
+      "gregtech:blocks/lamps/purple_ctm_emissive"
+    ],
+    "extra": {
+      "connect_to": [
+        { "block": "gregtech:lamp", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_borderless", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_borderless_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_borderless_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_borderless_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_borderless", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_borderless_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_borderless_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_bloom_borderless_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_borderless", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_borderless_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_borderless_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_borderless_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_inverted_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_borderless", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_borderless_powered", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_borderless_inverted", "predicate": { "color": "purple" } },
+        { "block": "gregtech:lamp_no_light_no_bloom_borderless_inverted_powered", "predicate": { "color": "purple" } }
+      ]
+    }
+  }
+}

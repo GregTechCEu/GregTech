@@ -97,8 +97,8 @@ public class MetaBlocks {
     public static BlockHermeticCasing HERMETIC_CASING;
     public static BlockCleanroomCasing CLEANROOM_CASING;
 
-    public static BlockLamp LAMP;
-    public static BlockLampOff OFF_LAMP;
+    // light/no light, bloom/no-bloom, bordered/borderless, powered/unpowered, normal/inverted
+    public static final BlockLamp[] LAMPS = new BlockLamp[32];
 
     public static BlockAsphalt ASPHALT;
 
@@ -181,10 +181,9 @@ public class MetaBlocks {
         CLEANROOM_CASING = new BlockCleanroomCasing();
         CLEANROOM_CASING.setRegistryName("cleanroom_casing");
 
-        LAMP = new BlockLamp();
-        LAMP.setRegistryName("lamp");
-        OFF_LAMP = new BlockLampOff();
-        OFF_LAMP.setRegistryName("off_lamp");
+        for (int i = 0; i < LAMPS.length; i++) {
+            LAMPS[i] = new BlockLamp((i & 16) != 0, (i & 8) != 0, (i & 4) != 0, (i & 2) != 0, (i & 1) != 0);
+        }
 
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
@@ -340,8 +339,6 @@ public class MetaBlocks {
         registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
         registerItemModel(CLEANROOM_CASING);
-        registerItemModel(LAMP);
-        registerItemModel(OFF_LAMP);
         registerItemModel(ASPHALT);
         registerItemModel(STONE_SMOOTH);
         registerItemModel(STONE_COBBLE);
@@ -370,6 +367,7 @@ public class MetaBlocks {
         FUSION_CASING.onModelRegister();
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
+        for (BlockLamp lamp : LAMPS) lamp.onModelRegister();
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);

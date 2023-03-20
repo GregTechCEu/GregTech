@@ -27,6 +27,7 @@ import gregtech.loaders.recipe.chemistry.AssemblerRecipeLoader;
 import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -399,7 +400,7 @@ public class MachineRecipeLoader {
                     .input(plate, Glass, 6)
                     .input(dust, Glowstone, 1)
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
-                    .outputs(MetaBlocks.LAMP.getItemVariant(BlockLamp.LampType.values()[i], 6))
+                    .outputs(MetaBlocks.LAMPS[0].getItemVariant(EnumDyeColor.byMetadata(i), 6))
                     .EUt(VA[ULV]).duration(40)
                     .buildAndRegister();
         }

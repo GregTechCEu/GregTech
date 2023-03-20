@@ -77,7 +77,7 @@ public class CommonProxy {
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
 
-           if (material.hasProperty(PropertyKey.ORE)) {
+            if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
             }
 
@@ -89,21 +89,21 @@ public class CommonProxy {
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
                     }
                 }
             }
             if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                 for (BlockItemPipe pipe : ITEM_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
                     }
                 }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
+            if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
                     !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
                 pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(340, 5, false, false, false, false));
                 pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(340, 10, false, false, false, false));
@@ -152,8 +152,8 @@ public class CommonProxy {
         registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
         registry.register(BRITTLE_CHARCOAL);
-        registry.register(LAMP);
-        registry.register(OFF_LAMP);
+
+        registry.registerAll(LAMPS);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
@@ -232,8 +232,11 @@ public class CommonProxy {
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN_1, VariantItemBlock::new));
-        registry.register(createItemBlock(LAMP, VariantItemBlock::new));
-        registry.register(createItemBlock(OFF_LAMP, VariantItemBlock::new));
+        for (BlockLamp lamp : LAMPS) {
+            if (!lamp.isPowered()) {
+                registry.register(createItemBlock(lamp, VariantItemBlock::new));
+            }
+        }
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_SMOOTH, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_COBBLE, VariantItemBlock::new));
@@ -374,13 +377,13 @@ public class CommonProxy {
     public void onPostLoad() {
         TerminalRegistry.init();
 
-        if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
+        if (ConfigHolder.compat.removeSmeltingForEBFMetals) {
             ModHandler.removeSmeltingEBFMetals();
         }
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if(Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
+        if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
         GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
