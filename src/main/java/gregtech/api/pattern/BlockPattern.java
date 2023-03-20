@@ -336,8 +336,9 @@ public class BlockPattern {
                                 MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(found.getItemDamage());
                                 if (sampleMetaTileEntity != null) {
                                     MetaTileEntity metaTileEntity = ((IGregTechTileEntity) holder).setMetaTileEntity(sampleMetaTileEntity);
+                                    metaTileEntity.onPlacement();
                                     blocks.put(pos, metaTileEntity);
-                                    if (found.hasTagCompound()) {
+                                    if (found.getTagCompound() != null) {
                                         metaTileEntity.initFromItemStackData(found.getTagCompound());
                                     }
                                 }
@@ -519,6 +520,7 @@ public class BlockPattern {
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
+                            holder.getMetaTileEntity().onPlacement();
                             info = new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
                         }
                         blocks.put(pos, info);

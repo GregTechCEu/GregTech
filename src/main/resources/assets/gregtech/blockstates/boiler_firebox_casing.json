@@ -6,15 +6,7 @@
         "model": "minecraft:cube_bottom_top"
       },
       "true": {
-        "model": "gregtech:cube_2_layer_bottom_top",
-        "textures": {
-          "bot_bottom": "#bottom",
-          "bot_top": "#top",
-          "bot_side": "#side",
-          "top_side": "gregtech:blocks/casings/firebox/machine_casing_firebox_bloom",
-          "top_bottom": "#bottom",
-          "top_top": "#top"
-        }
+        "model": "gregtech:active_firebox"
       }
     },
     "variant": {
@@ -22,28 +14,36 @@
         "textures": {
           "bottom": "gregtech:blocks/casings/solid/machine_bronze_plated_bricks",
           "top": "gregtech:blocks/casings/solid/machine_bronze_plated_bricks",
-          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_bronze"
+          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_bronze",
+          "side_active": "gregtech:blocks/casings/firebox/machine_casing_firebox_bronze_active",
+          "side_emissive": "gregtech:blocks/casings/firebox/machine_casing_firebox_bronze_active_emissive"
         }
       },
       "steel_firebox": {
         "textures": {
           "bottom": "gregtech:blocks/casings/solid/machine_casing_solid_steel",
           "top": "gregtech:blocks/casings/solid/machine_casing_solid_steel",
-          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_steel"
+          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_steel",
+          "side_active": "gregtech:blocks/casings/firebox/machine_casing_firebox_steel_active",
+          "side_emissive": "gregtech:blocks/casings/firebox/machine_casing_firebox_steel_active_emissive"
         }
       },
       "titanium_firebox": {
         "textures": {
           "bottom": "gregtech:blocks/casings/solid/machine_casing_stable_titanium",
           "top": "gregtech:blocks/casings/solid/machine_casing_stable_titanium",
-          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_titanium"
+          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_titanium",
+          "side_active": "gregtech:blocks/casings/firebox/machine_casing_firebox_titanium_active",
+          "side_emissive": "gregtech:blocks/casings/firebox/machine_casing_firebox_titanium_active_emissive"
         }
       },
       "tungstensteel_firebox": {
         "textures": {
           "bottom": "gregtech:blocks/casings/solid/machine_casing_robust_tungstensteel",
           "top": "gregtech:blocks/casings/solid/machine_casing_robust_tungstensteel",
-          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_tungstensteel"
+          "side": "gregtech:blocks/casings/firebox/machine_casing_firebox_tungstensteel",
+          "side_active": "gregtech:blocks/casings/firebox/machine_casing_firebox_tungstensteel_active",
+          "side_emissive": "gregtech:blocks/casings/firebox/machine_casing_firebox_tungstensteel_active_emissive"
         }
       }
     }

@@ -35,8 +35,8 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
                 actions[actionMap(true, false, false)] = new MutablePair<>(SystemCall.MINIMIZE_FOCUS_APP, null);
             } else {
                 for (int i = 0; i < actions.length; i++) {
-                    if (nbt.hasKey(i + "")) {
-                        NBTTagCompound tag = nbt.getCompoundTag(i + "");
+                    if (nbt.hasKey(String.valueOf(i))) {
+                        NBTTagCompound tag = nbt.getCompoundTag(String.valueOf(i));
                         actions[i] = new MutablePair<>(SystemCall.getFromIndex(tag.getInteger("action")), tag.hasKey("arg") ? tag.getString("arg") : null);
                     }
                 }
@@ -62,7 +62,7 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
                     if (actions[i].getValue() != null) {
                         tag.setString("arg", actions[i].getValue());
                     }
-                    nbt.setTag(i + "", tag);
+                    nbt.setTag(String.valueOf(i), tag);
                 }
             }
             try {

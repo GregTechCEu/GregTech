@@ -1,6 +1,5 @@
 package gregtech.api.util;
 
-import gregtech.api.GTValues;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 

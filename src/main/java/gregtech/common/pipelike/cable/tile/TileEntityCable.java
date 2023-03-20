@@ -41,6 +41,8 @@ import java.util.List;
 
 public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> implements IDataInfoProvider {
 
+    private static final int meltTemp = 3000;
+
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter(0);
     private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter(0, 20);
@@ -52,8 +54,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     @SideOnly(Side.CLIENT)
     private GTOverheatParticle particle;
     private int heatQueue;
-    private int temperature = 293;
-    private final int meltTemp = 3000;
+    private int temperature = getDefaultTemp();
     private boolean isTicking = false;
 
     @Override
@@ -87,7 +88,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         super.onLoad();
         if (!world.isRemote) {
             setTemperature(temperature);
-            if (temperature > 293) {
+            if (temperature > getDefaultTemp()) {
                 TaskScheduler.scheduleTask(world, this::update);
             }
         }
@@ -116,7 +117,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     public void applyHeat(int amount) {
         heatQueue += amount;
-        if (!world.isRemote && !isTicking && temperature + heatQueue > 293) {
+        if (!world.isRemote && !isTicking && temperature + heatQueue > getDefaultTemp()) {
             TaskScheduler.scheduleTask(world, this::update);
             isTicking = true;
         }
@@ -135,7 +136,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
             return false;
         }
 
-        if (temperature <= 293) {
+        if (temperature <= getDefaultTemp()) {
             isTicking = false;
             return false;
         }
@@ -149,7 +150,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
         if (heatQueue == 0) {
             // otherwise cool down
-            setTemperature((int) (temperature - Math.pow(temperature - 293, 0.35)));
+            setTemperature((int) (temperature - Math.pow(temperature - getDefaultTemp(), 0.35)));
         } else {
             heatQueue = 0;
         }
@@ -158,7 +159,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     private void uninsulate() {
         int temp = temperature;
-        setTemperature(293);
+        setTemperature(getDefaultTemp());
         int index = getPipeType().insulationLevel;
         BlockCable newBlock = MetaBlocks.CABLES[index];
         world.setBlockState(pos, newBlock.getDefaultState());
@@ -184,7 +185,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         if (!world.isRemote) {
             writeCustomData(100, buf -> buf.writeVarInt(temperature));
         } else {
-            if (temperature <= 293) {
+            if (temperature <= getDefaultTemp()) {
                 if (isParticleAlive())
                     particle.setExpired();
             } else {

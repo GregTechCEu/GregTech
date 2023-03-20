@@ -5,7 +5,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;

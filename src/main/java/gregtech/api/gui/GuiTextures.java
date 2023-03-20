@@ -9,6 +9,7 @@ public class GuiTextures {
 
     //GREGTECH
     public static final TextureArea GREGTECH_LOGO = TextureArea.fullImage("textures/gui/icon/gregtech_logo.png");
+    public static final TextureArea GREGTECH_LOGO_XMAS = TextureArea.fullImage("textures/gui/icon/gregtech_logo_xmas.png");
 
     //BASE TEXTURES
     public static final TextureArea BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/background.png", 176, 166, 3, 3);
@@ -38,8 +39,8 @@ public class GuiTextures {
     public static final TextureArea BUTTON_CLEAR_GRID = TextureArea.fullImage("textures/gui/widget/button_clear_grid.png");
     public static final TextureArea BUTTON_FILTER_DAMAGE = TextureArea.fullImage("textures/gui/widget/button_filter_damage.png");
     public static final TextureArea BUTTON_FILTER_NBT = TextureArea.fullImage("textures/gui/widget/button_filter_nbt.png");
-    public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output.png");
-    public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output.png");
+    public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output_overlay.png");
+    public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output_overlay.png");
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
     public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
     public static final TextureArea BUTTON_VOID_PARTIAL = TextureArea.fullImage("textures/gui/widget/button_void_partial.png");

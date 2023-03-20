@@ -32,7 +32,7 @@ public class CleanroomProperty extends RecipeProperty<CleanroomType> {
     }
 
     @Nonnull
-    private String getName(@Nonnull CleanroomType value) {
+    private static String getName(@Nonnull CleanroomType value) {
         String name = I18n.format(value.getTranslationKey());
         if (name.length() >= 20) return name.substring(0, 20) + "..";
         return name;

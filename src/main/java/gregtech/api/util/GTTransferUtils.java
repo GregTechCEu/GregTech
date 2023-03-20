@@ -2,6 +2,8 @@ package gregtech.api.util;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.FluidKey;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,7 +15,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -172,7 +173,7 @@ public class GTTransferUtils {
             return insertToEmpty(handler, stack, simulate);
         }
 
-        List<Integer> emptySlots = new ArrayList<>();
+        IntList emptySlots = new IntArrayList();
         int slots = handler.getSlots();
 
         for (int i = 0; i < slots; i++) {
@@ -188,7 +189,7 @@ public class GTTransferUtils {
             }
         }
 
-        for (Integer slot : emptySlots) {
+        for (int slot : emptySlots) {
             stack = handler.insertItem(slot, stack, simulate);
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;

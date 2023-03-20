@@ -1,5 +1,6 @@
 {
   "tick.forge_hammer": {
+    "subtitle" : "Hammer smashes",
     "category": "block",
     "sounds": [
       {
@@ -9,6 +10,7 @@
     ]
   },
   "tick.macerator": {
+    "subtitle" : "Items macerating",
     "category": "block",
     "sounds": [
       {
@@ -18,6 +20,7 @@
     ]
   },
   "tick.chemical_reactor": {
+    "subtitle" : "Chemicals reacting",
     "category": "block",
     "sounds": [
       {
@@ -27,6 +30,7 @@
     ]
   },
   "tick.assembler": {
+    "subtitle" : "Items assembling",
     "category": "block",
     "sounds": [
       {
@@ -36,6 +40,7 @@
     ]
   },
   "tick.centrifuge": {
+    "subtitle" : "Items separating",
     "category": "block",
     "sounds": [
       {
@@ -45,6 +50,7 @@
     ]
   },
   "tick.compressor": {
+    "subtitle" : "Items compressing",
     "category": "block",
     "sounds": [
       {
@@ -54,6 +60,7 @@
     ]
   },
   "tick.electrolyzer": {
+    "subtitle" : "Elements electrolyzing",
     "category": "block",
     "sounds": [
       {
@@ -63,6 +70,7 @@
     ]
   },
   "tick.mixer": {
+    "subtitle" : "Dusts mixing",
     "category": "block",
     "sounds": [
       {
@@ -72,6 +80,7 @@
     ]
   },
   "tick.replicator": {
+    "subtitle" : "Items replicating",
     "category": "block",
     "sounds": [
       {
@@ -81,6 +90,7 @@
     ]
   },
   "tick.arc": {
+    "subtitle" : "Electricity arcing",
     "category": "block",
     "sounds": [
       {
@@ -90,6 +100,7 @@
     ]
   },
   "tick.boiler": {
+    "subtitle" : "Liquid boiling",
     "category": "block",
     "sounds": [
       {
@@ -99,6 +110,7 @@
     ]
   },
   "tick.furnace": {
+    "subtitle" : "Furnace smelting",
     "category": "block",
     "sounds": [
       {
@@ -108,6 +120,7 @@
     ]
   },
   "tick.cooling": {
+    "subtitle" : "Ingot cooling",
     "category": "block",
     "sounds": [
       {
@@ -117,6 +130,7 @@
     ]
   },
   "tick.fire": {
+    "subtitle" : "Fire burning",
     "category": "block",
     "sounds": [
       {
@@ -126,6 +140,7 @@
     ]
   },
   "tick.bath": {
+    "subtitle" : "Items bathing",
     "category": "block",
     "sounds": [
       {
@@ -135,6 +150,7 @@
     ]
   },
   "tick.motor": {
+    "subtitle" : "Motor turning",
     "category": "block",
     "sounds": [
       {
@@ -144,6 +160,7 @@
     ]
   },
   "tick.cut": {
+    "subtitle" : "Blocks cutting",
     "category": "block",
     "sounds": [
       {
@@ -153,6 +170,7 @@
     ]
   },
   "tick.turbine": {
+    "subtitle" : "Turbine spinning",
     "category": "block",
     "sounds": [
       {
@@ -162,6 +180,7 @@
     ]
   },
   "tick.combustion": {
+    "subtitle" : "Fuel combusting",
     "category": "block",
     "sounds": [
       {
@@ -171,6 +190,7 @@
     ]
   },
   "tick.miner": {
+    "subtitle" : "Miner drilling",
     "category": "block",
     "sounds": [
       {
@@ -189,6 +209,7 @@
     ]
   },
   "use.wrench": {
+    "subtitle" : "Wrench turns",
     "category": "block",
     "sounds": [
       {
@@ -198,6 +219,7 @@
     ]
   },
   "use.soft_hammer": {
+    "subtitle" : "Block smacked",
     "category": "block",
     "sounds": [
       {
@@ -207,6 +229,7 @@
     ]
   },
   "use.drill": {
+    "subtitle" : "Blocks drilled",
     "category": "block",
     "sounds": [
       {
@@ -216,6 +239,7 @@
     ]
   },
   "use.plunger": {
+    "subtitle" : "Fluid evacuated",
     "category": "block",
     "sounds": [
       {
@@ -225,6 +249,7 @@
     ]
   },
   "use.file": {
+    "subtitle" : "Ingot filed",
     "category": "block",
     "sounds": [
       {
@@ -234,6 +259,7 @@
     ]
   },
   "use.saw": {
+    "subtitle" : "Wood sawing",
     "category": "block",
     "sounds": [
       {
@@ -243,6 +269,7 @@
     ]
   },
   "use.screwdriver": {
+    "subtitle" : "Screws turning",
     "category": "block",
     "sounds": [
       {
@@ -252,6 +279,7 @@
     ]
   },
   "use.chainsaw": {
+    "subtitle" : "Chainsaw growls",
     "category": "block",
     "sounds": [
       {
@@ -261,6 +289,7 @@
     ]
   },
   "use.wirecutter": {
+    "subtitle" : "Wires snip",
     "category": "block",
     "sounds": [
       {
@@ -270,6 +299,7 @@
     ]
   },
   "use.spray_can": {
+    "subtitle" : "Paint sprays",
     "category": "block",
     "sounds": [
       {
@@ -279,6 +309,7 @@
     ]
   },
   "use.tricorder": {
+    "subtitle" : "Beep beep",
     "category": "block",
     "sounds": [
       {
@@ -288,6 +319,7 @@
     ]
   },
   "use.mortar": {
+    "subtitle" : "Grinding",
     "category": "block",
     "sounds": [
       {
@@ -297,6 +329,7 @@
     ]
   },
   "record.sus": {
+    "subtitle" : "Sus",
     "category": "block",
     "sounds": [
       {
@@ -306,6 +339,7 @@
     ]
   },
   "entity.portal_opening": {
+    "subtitle" : "Portal opens",
     "category": "block",
       "sounds": [
         {
@@ -315,6 +349,7 @@
       ]
     },
   "entity.portal_closing": {
+    "subtitle" : "Portal closes",
     "category": "block",
     "sounds": [
       {

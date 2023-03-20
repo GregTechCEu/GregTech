@@ -43,11 +43,11 @@ public class ConverterInfoProvider extends CapabilityInfoProvider<ConverterTrait
             if (data.getSideHit() == facing) {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_output*} " + voltageN + TextFormatting.GREEN + " (" + amperage + "A)");
             } else {
-                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_input*} " + TextFormatting.RED + FeCompat.toFe(capability.getVoltage(), FeCompat.ratio(true)) + " FE");
+                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_input*} " + TextFormatting.RED + FeCompat.toFe(capability.getVoltage() * amperage, FeCompat.ratio(true)) + " FE");
             }
         } else {
             if (data.getSideHit() == facing) {
-                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_output*} " + TextFormatting.RED + FeCompat.toFe(capability.getVoltage(), FeCompat.ratio(false)) + " FE");
+                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_output*} " + TextFormatting.RED + FeCompat.toFe(capability.getVoltage() * amperage, FeCompat.ratio(false)) + " FE");
             } else {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_input*} " + voltageN + TextFormatting.GREEN + " (" + amperage + "A)");
             }

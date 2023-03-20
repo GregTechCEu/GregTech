@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
 
 import static gregtech.api.GTValues.*;
@@ -427,28 +426,28 @@ public class PetrochemRecipes {
 
     private static void lightlyCrack(Material raw, Material hydroCracked, Material steamCracked) {
         CRACKING_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
                 .duration(80).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(raw.getFluid(500))
                 .fluidInputs(Hydrogen.getFluid(1000))
                 .fluidOutputs(hydroCracked.getFluid(250))
                 .duration(80).EUt(30).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
                 .duration(80).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(500))
@@ -457,28 +456,28 @@ public class PetrochemRecipes {
 
     private static void moderatelyCrack(Material raw, Material hydroCracked, Material steamCracked) {
         CRACKING_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(4000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
                 .duration(120).EUt(180).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(raw.getFluid(500))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(hydroCracked.getFluid(250))
                 .duration(60).EUt(VA[LV]).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
                 .duration(120).EUt(360).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(500))
@@ -487,28 +486,28 @@ public class PetrochemRecipes {
 
     private static void severelyCrack(Material raw, Material hydroCracked, Material steamCracked) {
         CRACKING_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(6000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
                 .duration(160).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidInputs(raw.getFluid(500))
                 .fluidInputs(Hydrogen.getFluid(3000))
                 .fluidOutputs(hydroCracked.getFluid(250))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(3))
+                .circuitMeta(3)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(3))
+                .circuitMeta(3)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(500))

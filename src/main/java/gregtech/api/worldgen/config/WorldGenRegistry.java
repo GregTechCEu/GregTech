@@ -27,16 +27,19 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WorldGenRegistry {
 
@@ -106,7 +109,7 @@ public class WorldGenRegistry {
         registerVeinPopulator("surface_block", SurfaceBlockPopulator::new);
 
         GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
-        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.INSTANCE);
+        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.class);
         try {
             reinitializeRegisteredVeins();
         } catch (IOException | RuntimeException exception) {
@@ -200,10 +203,18 @@ public class WorldGenRegistry {
         }
 
         //attempt extraction if worldgen root directory is empty
-        if (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()) {
+        boolean shouldExtract = false;
+        try (Stream<Path> stream = Files.list(worldgenRootPath.resolve(veinPath))) {
+            shouldExtract = !stream.findFirst().isPresent();
+        }
+        if (shouldExtract) {
             extractJarVeinDefinitions(configPath, veinPath);
         }
-        if (!Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent()) {
+
+        try (Stream<Path> stream = Files.list(worldgenRootPath.resolve(bedrockVeinPath))) {
+            shouldExtract = !stream.findFirst().isPresent();
+        }
+        if (shouldExtract) {
             extractJarVeinDefinitions(configPath, bedrockVeinPath);
         }
 
@@ -220,10 +231,12 @@ public class WorldGenRegistry {
         }
 
         // Gather the worldgen vein files from the various folders in the config
-        List<Path> veinFiles = Files.walk(veinPath)
-                .filter(path -> path.toString().endsWith(".json"))
-                .filter(Files::isRegularFile)
-                .collect(Collectors.toList());
+        List<Path> veinFiles;
+        try (Stream<Path> stream = Files.walk(veinPath)) {
+            veinFiles = stream.filter(path -> path.toString().endsWith(".json"))
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+        }
 
         for (Path worldgenDefinition : veinFiles) {
 
@@ -249,10 +262,12 @@ public class WorldGenRegistry {
         GTLog.logger.info("Loaded {} vein worldgen definitions", registeredVeinDefinitions.size());
 
         // Gather the worldgen vein files from the various folders in the config
-        List<Path> bedrockFluidVeinFiles = Files.walk(bedrockVeinPath)
-                .filter(path -> path.toString().endsWith(".json"))
-                .filter(Files::isRegularFile)
-                .collect(Collectors.toList());
+        List<Path> bedrockFluidVeinFiles;
+        try (Stream<Path> stream = Files.walk(bedrockVeinPath)) {
+            bedrockFluidVeinFiles = stream.filter(path -> path.toString().endsWith(".json"))
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+        }
 
         for (Path worldgenDefinition : bedrockFluidVeinFiles) {
 
@@ -307,7 +322,9 @@ public class WorldGenRegistry {
         Path extractLockPath = configPath.resolve("worldgen_extracted.json");
         FileSystem zipFileSystem = null;
         try {
-            URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
+            URL sampleUrl = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot");
+            if (sampleUrl == null) throw new FileNotFoundException("Could not find .gtassetsroot");
+            URI sampleUri = sampleUrl.toURI();
             // The Path for representing the worldgen folder in the assets folder in the Gregtech resources folder in the jar
             Path worldgenJarRootPath;
             // The Path for representing the vein folder in the vein folder in the assets folder in the Gregtech resources folder in the jar
@@ -320,9 +337,17 @@ public class WorldGenRegistry {
                 oreVeinJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/vein");
                 bedrockFluidJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/fluid");
             } else if (sampleUri.getScheme().equals("file")) {
-                worldgenJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen").toURI());
-                oreVeinJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/vein").toURI());
-                bedrockFluidJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/fluid").toURI());
+                URL url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen");
+                if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen");
+                worldgenJarRootPath = Paths.get(url.toURI());
+
+                url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/vein");
+                if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen/vein");
+                oreVeinJarRootPath = Paths.get(url.toURI());
+
+                url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/fluid");
+                if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen/fluid");
+                bedrockFluidJarRootPath = Paths.get(url.toURI());
             } else {
                 throw new IllegalStateException("Unable to locate absolute path to worldgen root directory: " + sampleUri);
             }
@@ -332,9 +357,10 @@ public class WorldGenRegistry {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
                         oreVeinJarRootPath, oreVeinRootPath);
                 // Find all the default worldgen files in the assets folder
-                List<Path> jarFiles = Files.walk(oreVeinJarRootPath)
-                        .filter(Files::isRegularFile)
-                        .collect(Collectors.toList());
+                List<Path> jarFiles;
+                try (Stream<Path> stream = Files.walk(oreVeinJarRootPath)) {
+                    jarFiles = stream.filter(Files::isRegularFile).collect(Collectors.toList());
+                }
 
                 // Replaces or creates the default worldgen files
                 for (Path jarFile : jarFiles) {
@@ -348,9 +374,10 @@ public class WorldGenRegistry {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
                         bedrockFluidJarRootPath, bedrockFluidVeinRootPath);
                 // Find all the default worldgen files in the assets folder
-                List<Path> jarFiles = Files.walk(bedrockFluidJarRootPath)
-                        .filter(Files::isRegularFile)
-                        .collect(Collectors.toList());
+                List<Path> jarFiles;
+                try (Stream<Path> stream = Files.walk(bedrockFluidJarRootPath)) {
+                    jarFiles = stream.filter(Files::isRegularFile).collect(Collectors.toList());
+                }
 
                 // Replaces or creates the default worldgen files
                 for (Path jarFile : jarFiles) {
@@ -393,7 +420,7 @@ public class WorldGenRegistry {
         }
     }
 
-    private void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
+    private static void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
         for(IWorldgenDefinition definition : definitions) {
             Path filePath = root.resolve(Paths.get(definition.getDepositName()));
 
@@ -409,20 +436,22 @@ public class WorldGenRegistry {
         }
     }
 
-    private <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
-        for(IWorldgenDefinition definition : definitions) {
+    private static <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
+        Iterator<T> it = definitions.iterator();
+        while (it.hasNext()) {
+            T definition = it.next();
 
             JsonObject element = FileUtility.tryExtractFromFile(root.resolve(definition.getDepositName()));
 
             if(element == null) {
                 GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
-                definitions.remove(definition);
+                it.remove();
                 continue;
             }
 
             try {
                 definition.initializeFromConfig(element);
-                registeredDefinitions.add((T) definition);
+                registeredDefinitions.add(definition);
             }
             catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse addon worldgen definition {}", definition.getDepositName(), exception);

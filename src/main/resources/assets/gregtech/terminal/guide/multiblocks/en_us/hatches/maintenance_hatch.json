@@ -1,0 +1,14 @@
+{
+  "section": "Hatches",
+  "title": "Maintenance Hatch",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oI know what you\u0027re thinking! Don\u0027t think! I mean... Maintenance in GregTech is not as bad as you think, and looking at multiblocks with this hatch makes me feel happy.§r\n\nMost Multiblocks require a §3Maintenance Hatch§r. You will need to do Maintenance for the Multiblock to begin operating.\nThis is done by having a §9Wrench§r, a §9Screwdriver§r, a §9Soft Mallet§r, a §9Hammer§r, a §9Wire Cutter§r, and a §9Crowbar§r in your inventory, opening the Maintenance Hatch and §4clicking the center spot once§r. §cNo need to move tools individually§r.\nAlternatively you can fix problems by placing a §9Tape§r in the Maintenance Hatch, but I would love to tell you that\u0027s unethical.\n\nMaintenance problems may occur after §d48 real hours of activity§r. Needless to say they are very rare. Each problem increases the recipe durations by 10%. Fixing the problems is done the same way as above.\n\n\nAt §6HV§r age, you will unlock other Maintenance Hatches that do not enforce fixing the problems manually.\n\n\n§bLore:§r Maintenance dates back to GregTech 3 for Minecraft 1.5.2. That\u0027s a long time ago!\nMaintenance problems increased power usage instead of duration. And that caused all sorts of \"happy\" issues. Ah, fun times!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "maintenance_hatch"
+}

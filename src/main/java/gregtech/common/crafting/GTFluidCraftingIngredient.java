@@ -15,7 +15,7 @@ public class GTFluidCraftingIngredient extends Ingredient {
         super(stacks);
         IFluidHandlerItem handler = stacks[0].getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (handler != null) {
-            this.fluidStack = stacks[0].getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).drain(Integer.MAX_VALUE, false);
+            this.fluidStack = handler.drain(Integer.MAX_VALUE, false);
         } else {
             throw new IllegalArgumentException("The ItemStack " + stacks[0] + " has no FLUID_HANDLER_ITEM_CAPABILITY!");
         }
@@ -25,7 +25,14 @@ public class GTFluidCraftingIngredient extends Ingredient {
     public boolean apply(@Nullable ItemStack testedStack) {
         if (testedStack == null || testedStack.isEmpty()) return false;
         IFluidHandlerItem handler = null;
+        if (!testedStack.getItem().hasContainerItem(testedStack)) {
+            return false;
+        }
         if (testedStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            if (testedStack.getCount() > 1) {
+                testedStack = testedStack.copy();
+                testedStack.setCount(1);
+            }
             handler = testedStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         }
         if (handler != null) {

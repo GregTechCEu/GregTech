@@ -6,6 +6,7 @@ import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.*;
 import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,7 +21,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -142,7 +142,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidInTank.amount, 4) + "L";
 
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
@@ -296,9 +296,11 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 performedFill = true;
             }
             if (performedFill) {
-                SoundEvent soundevent = initialFluid.getFluid().getFillSound(initialFluid);
-                player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
-                        soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (initialFluid != null) {
+                    SoundEvent soundevent = initialFluid.getFluid().getFillSound(initialFluid);
+                    player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
+                            soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                }
                 gui.entityPlayer.inventory.setItemStack(currentStack);
                 return currentStack.getCount();
             }
@@ -337,7 +339,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
             ItemStack currentStack = gui.entityPlayer.inventory.getItemStack();
             if (button == 0 && (allowClickEmptying || allowClickFilling) &&
                     currentStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                boolean isShiftKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                boolean isShiftKeyDown = TooltipHelper.isShiftDown();
                 writeClientAction(1, writer -> writer.writeBoolean(isShiftKeyDown));
                 playButtonClickSound();
                 return true;

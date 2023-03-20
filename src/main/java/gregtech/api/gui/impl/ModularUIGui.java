@@ -4,8 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.net.packets.SPacketUIWidgetUpdate;
-import gregtech.common.ConfigHolder;
+import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -65,7 +64,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         modularUI.guiWidgets.values().forEach(Widget::updateScreen);
     }
 
-    public void handleWidgetUpdate(SPacketUIWidgetUpdate packet) {
+    public void handleWidgetUpdate(PacketUIWidgetUpdate packet) {
         if (packet.windowId == inventorySlots.windowId) {
             Widget widget = modularUI.guiWidgets.get(packet.widgetId);
             int updateId = packet.updateData.readVarInt();
@@ -170,6 +169,8 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
                 itemStack = itemStack.copy();
                 itemStack.setCount(this.dragSplittingRemnant);
             }
+            // This null is eventually nullable, 2 calls deep
+            //noinspection DataFlowIssue
             this.drawItemStack(itemStack, mouseX - guiLeft - 8, mouseY - guiTop - dragOffset, null);
         }
     }

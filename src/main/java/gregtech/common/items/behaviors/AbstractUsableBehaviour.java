@@ -40,7 +40,7 @@ public class AbstractUsableBehaviour implements IItemBehaviour {
         return tagCompound.getInteger("GT.UsesLeft");
     }
 
-    public final void setUsesLeft(ItemStack itemStack, int usesLeft) {
+    public static void setUsesLeft(ItemStack itemStack, int usesLeft) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();

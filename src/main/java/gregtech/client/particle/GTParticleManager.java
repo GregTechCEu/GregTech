@@ -147,9 +147,10 @@ public class GTParticleManager {
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
     }
 
-    private void renderGlParticlesInLayer(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue, Tessellator tessellator, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        for (IGTParticleHandler handler : renderQueue.keySet()) {
-            ArrayDeque<GTParticle> particles = renderQueue.get(handler);
+    private static void renderGlParticlesInLayer(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue, Tessellator tessellator, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        for (Map.Entry<IGTParticleHandler, ArrayDeque<GTParticle>> entry : renderQueue.entrySet()) {
+            IGTParticleHandler handler = entry.getKey();
+            ArrayDeque<GTParticle> particles = entry.getValue();
             if (particles.isEmpty()) continue;
             BufferBuilder buffer = tessellator.getBuffer();
             handler.preDraw(buffer);
@@ -191,14 +192,14 @@ public class GTParticleManager {
     public static void debugOverlay(RenderGameOverlayEvent.Text event) {
         if (event.getLeft().size() >= 5) {
             String particleTxt = event.getLeft().get(4);
-            particleTxt += "." + TextFormatting.GOLD + " PARTICLE-BACK: " + INSTANCE.getStatistics(INSTANCE.renderQueueBack) + "PARTICLE-FRONt: " + INSTANCE.getStatistics(INSTANCE.renderQueueFront);
+            particleTxt += "." + TextFormatting.GOLD + " PARTICLE-BACK: " + GTParticleManager.getStatistics(INSTANCE.renderQueueBack) + "PARTICLE-FRONt: " + GTParticleManager.getStatistics(INSTANCE.renderQueueFront);
             event.getLeft().set(4, particleTxt);
         }
     }
 
-    public String getStatistics(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue) {
+    public static String getStatistics(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue) {
         int g = 0;
-        for (ArrayDeque<GTParticle> queue : renderQueue.values()) {
+        for (Deque<GTParticle> queue : renderQueue.values()) {
             g += queue.size();
         }
         return " GLFX: " + g;

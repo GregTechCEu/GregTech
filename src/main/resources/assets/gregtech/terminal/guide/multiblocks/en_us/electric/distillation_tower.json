@@ -21,6 +21,15 @@
   ],
   "fixed": [
     {
+      "type": "card",
+      "x": 10,
+      "y": 234,
+      "width": 177,
+      "height": 90,
+      "fill": -3745585,
+      "isShadow": true
+    },
+    {
       "type": "slots",
       "x": 3,
       "y": 269,
@@ -61,15 +70,6 @@
           "count": 1
         }
       ]
-    },
-    {
-      "type": "card",
-      "x": 10,
-      "y": 234,
-      "width": 177,
-      "height": 90,
-      "fill": -3745585,
-      "isShadow": true
     },
     {
       "type": "textbox",

@@ -10,23 +10,28 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
@@ -164,4 +169,12 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         tag.setInteger("mBPerCycle", itemsPerCycle);
         tag.setInteger("ticksPerCycle", ticksPerCycle);
     }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.creative_tooltip.1")
+                + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
+                + I18n.format("gregtech.creative_tooltip.3"));
+        // do not append the normal tooltips
+        }
 }

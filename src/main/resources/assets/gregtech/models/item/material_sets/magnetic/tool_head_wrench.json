@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/tool_head_wrench",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/tool_head_wrench",
-    "layer1": "gregtech:items/material_sets/magnetic/tool_head_wrench_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

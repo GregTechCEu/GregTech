@@ -401,4 +401,19 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
                 .widget(lockedGroup)
                 .build(getHolder(), entityPlayer);
     }
+
+    @Override
+    public boolean canPlaceCoverOnSide(EnumFacing side) {
+        return false;
+    }
+
+    @Override
+    public boolean canRenderMachineGrid() {
+        return false;
+    }
+
+    @Override
+    public boolean showToolUsages() {
+        return false;
+    }
 }

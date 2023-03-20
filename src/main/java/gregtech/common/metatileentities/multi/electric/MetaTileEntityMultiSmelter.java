@@ -110,6 +110,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             super(tileEntity);
         }
 
+        @Nonnull
         @Override
         public ParallelLogicType getParallelLogicType() {
             return ParallelLogicType.APPEND_ITEMS;

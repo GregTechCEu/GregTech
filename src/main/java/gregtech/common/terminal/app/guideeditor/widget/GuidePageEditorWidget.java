@@ -6,8 +6,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
-import gregtech.common.terminal.app.guide.widget.IGuideWidget;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.CustomPositionSizeWidget;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -15,6 +13,8 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
+import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
+import gregtech.common.terminal.app.guide.widget.IGuideWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -350,7 +350,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             int index = fixed.indexOf(selected);
             String layer = "L: " + (index >= 0 ? index : stream.indexOf(selected));
             fontRenderer.drawString(layer,
-                    selected.getPosition().x + (selected.getSize().width - fontRenderer.getStringWidth(layer)) / 2,
+                    selected.getPosition().x + (selected.getSize().width - fontRenderer.getStringWidth(layer)) / 2F,
                     selected.getPosition().y - 20,
                     0xffff0000, true);
         }

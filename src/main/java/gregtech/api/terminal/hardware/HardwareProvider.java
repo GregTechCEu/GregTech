@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.common.items.behaviors.TerminalBehaviour;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;

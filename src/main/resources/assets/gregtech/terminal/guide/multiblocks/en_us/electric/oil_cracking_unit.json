@@ -1,7 +1,14 @@
 {
   "section": "Electric",
   "title": "Oil Cracking Unit",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oLet\u0027s get cracking, shall we?§r\n\nThe §3Oil Cracking Unit§r is a multiblock meant to make cracked fluids. It has all the recipes of §3Chemical Reactor§r Cracking, but it is §6lossless§r.\n\nThis multiblock is §doptional§r, but it saves a lot of Fuel in the long term!\n\nHigher Coil tiers provide small energy discount, not too important."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "cracker"
 }

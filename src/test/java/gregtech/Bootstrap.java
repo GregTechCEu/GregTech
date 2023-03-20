@@ -1,6 +1,9 @@
 package gregtech;
 
+import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.MetaFluids;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
@@ -14,9 +17,11 @@ import net.minecraftforge.fml.relauncher.CoreModManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class Bootstrap {
+public final class Bootstrap {
 
     private static boolean bootstrapped = false;
+
+    private Bootstrap() {/**/}
 
     public static void perform() {
         if (bootstrapped) {
@@ -34,13 +39,17 @@ public class Bootstrap {
         }
         net.minecraft.init.Bootstrap.register();
         ModMetadata meta = new ModMetadata();
-        meta.modId = "gregtech";
+        meta.modId = GTValues.MODID;
         Loader.instance().setupTestHarness(new DummyModContainer(meta));
+
+        GregTechAPI.MATERIAL_REGISTRY.unfreeze();
         Materials.register();
+        GregTechAPI.MATERIAL_REGISTRY.freeze();
+
         OrePrefix.runMaterialHandlers();
         MetaFluids.init();
         MetaItems.init();
+        ModHandler.init();
         bootstrapped = true;
     }
-
 }

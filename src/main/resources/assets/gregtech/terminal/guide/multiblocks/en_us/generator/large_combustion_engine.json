@@ -1,7 +1,14 @@
 {
   "section": "Generator",
   "title": "Large Combustion Engine",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Large Combustion Engine§r is a multiblock able to burn §dCombustion Fuels§r for even more Power Generation!\n\nIt\u0027s default production outputs 2048 EU/t, which is simply the same as 4 §3Turbo Combustion Generators§r.\n\nWhere it shines is the ability to §6boost§r it with §aOxygen§r.\nThis will double the fuel consumption, but §9triple the power generation§r for 6144 EU/t!\nThis results in §6150% Fuel efficiency§r.\n\nIt also requires a small amount of §aLubricant§r, nothing too crazy.\n\nThe §3LCE§r is also void-free, unlike Large Turbines. Any energy that cannot be output will momentarily pause the multiblock.\n\n\n§9Note:§r To harness the 6144 EU/t Power output, you will need a §34A EV Dynamo Hatch§r, or an §3IV Dynamo Hatch§r."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "large_combustion_engine"
 }

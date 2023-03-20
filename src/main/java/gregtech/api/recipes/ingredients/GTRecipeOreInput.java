@@ -86,12 +86,9 @@ public class GTRecipeOreInput extends GTRecipeInput {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        for (int i : OreDictionary.getOreIDs(input)) {
-            if (i == ore) {
-                if (nbtMatcher != null) {
-                    return nbtMatcher.evaluate(input, nbtCondition);
-                }
-                return true;
+        for (ItemStack target : getInputStacks()) {
+            if (OreDictionary.itemMatches(target, input, false)) {
+                return nbtMatcher == null || nbtMatcher.evaluate(input, nbtCondition);
             }
         }
         return false;
@@ -126,5 +123,11 @@ public class GTRecipeOreInput extends GTRecipeInput {
         if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
         if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
         return ore == other.ore;
+    }
+
+    @Override
+    public String toString() {
+        //noinspection StringConcatenationMissingWhitespace
+        return amount + "x" + OreDictionary.getOreName(ore);
     }
 }

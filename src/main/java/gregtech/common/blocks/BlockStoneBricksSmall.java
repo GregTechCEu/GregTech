@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -18,13 +19,23 @@ public class BlockStoneBricksSmall extends VariantBlock<BlockStoneBricksSmall.Bl
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 1);
+        setHarvestLevel(ToolClasses.PICKAXE, 1);
         setDefaultState(getState(BlockType.BLACK_GRANITE));
     }
 
     @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
+    }
+
+    @Override
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockStoneBricksSmall.BlockType.CONCRETE_DARK) || state == getState(BlockStoneBricksSmall.BlockType.CONCRETE_LIGHT);
     }
 
     public enum BlockType implements IStringSerializable {

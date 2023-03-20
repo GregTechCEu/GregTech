@@ -7,12 +7,18 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -33,6 +39,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
@@ -40,19 +47,45 @@ import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
 public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity implements IControllable {
 
-    private static Class<?> cofhTileClass;
+    private static final String COFH_CLASS_NAME = "cofh.thermalexpansion.block.device.TileDeviceBase";
+
+    private static final Map<String, Class<?>> blacklistedClasses = new Object2ObjectOpenHashMap<>();
+    private static final Object2BooleanFunction<Class<? extends TileEntity>> blacklistCache = new Object2BooleanOpenHashMap<>();
+    private static boolean gatheredClasses = false;
 
     private static boolean considerTile(TileEntity tile) {
-        // TODO interface for this?
-        if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) {
-            return false;
-        }
-        if (cofhTileClass == null) {
+        if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) return false;
+
+        if (!gatheredClasses) {
+            for (String name : ConfigHolder.machines.worldAcceleratorBlacklist) {
+                if (!blacklistedClasses.containsKey(name)) {
+                    try {
+                        blacklistedClasses.put(name, Class.forName(name));
+                    } catch (ClassNotFoundException ignored) {
+                        GTLog.logger.warn("Could not find class {} for World Accelerator Blacklist.", name);
+                    }
+                }
+            }
             try {
-                cofhTileClass = Class.forName("cofh.thermalexpansion.block.device.TileDeviceBase");
-            } catch (Exception ignored) {}
+                blacklistedClasses.put(COFH_CLASS_NAME, Class.forName(COFH_CLASS_NAME));
+            } catch (ClassNotFoundException ignored) {/**/}
+
+            gatheredClasses = true;
         }
-        return cofhTileClass == null || !cofhTileClass.isInstance(tile);
+
+        final Class<? extends TileEntity> tileClass = tile.getClass();
+        if (blacklistCache.containsKey(tileClass)) {
+            return blacklistCache.getBoolean(tileClass);
+        } else {
+            for (Class<?> clazz : blacklistedClasses.values()) {
+                if (clazz.isAssignableFrom(tileClass)) {
+                    blacklistCache.put(tileClass, false);
+                    return false;
+                }
+            }
+            blacklistCache.put(tileClass, true);
+            return true;
+        }
     }
 
     private final long energyPerTick;
@@ -79,13 +112,29 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
+    protected void reinitializeEnergyContainer() {
+        long tierVoltage = GTValues.V[getTier()];
+        this.energyContainer = EnergyContainerHandler.receiverContainer(this,
+                tierVoltage * 256L, tierVoltage, getMaxInputOutputAmperage());
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in", getMaxInputOutputAmperage()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
-        int area = getTier() * 2;
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.area", area, area));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area"));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_tile"));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_random", getTier() * 2, getTier() * 2));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.toggle_mode_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

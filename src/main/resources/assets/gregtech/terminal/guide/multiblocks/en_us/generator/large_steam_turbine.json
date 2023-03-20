@@ -1,7 +1,14 @@
 {
   "section": "Generator",
   "title": "Large Steam Turbine",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§oIf you\u0027re still running off Steam, here is a solution for you!§r\n\nThe §3Large Steam Turbine§r is a multiblock Steam Turbine for §6HV§r power. It is a quite expensive multiblock to generate 1024 EU/t, but it also the ability to scale to §9higher Power Production and higher Effiency§r.\n\nThe Turbine will output §dDistilled Water§r given an §3Output Hatch§r, so you can loop it back to your §3Large Boilers§r.\nNot completely recommend, as your Boilers will end up exploding if the system fails...\n\nEach Large Turbine will require a §aTurbine Rotor§r and a §3Rotor Holder§r. More on the Turbine mechanics in the §lnext§r Quest.\n\n§9Note:§r Turbines §cvoid§r energy that they can not output. If you plan on using this with HV power, use a Rotor with close to 100% Power stat."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "large_turbine.steam"
 }

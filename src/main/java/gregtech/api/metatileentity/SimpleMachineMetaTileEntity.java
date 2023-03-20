@@ -10,7 +10,6 @@ import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -22,6 +21,7 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -117,13 +117,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
-            //TODO Separate the setters
-            EnumFacing currentOutputSide = getOutputFacing();
-            if (currentOutputSide == facing || getFrontFacing() == facing) {
-                return false;
-            }
+            //TODO Separate into two output getters
+            if (getOutputFacing() == facing) return false;
+            if (hasFrontFacing() && facing == getFrontFacing()) return false;
             if (!getWorld().isRemote) {
-                //TODO Separate two setters
+                //TODO Separate into two output setters
                 setOutputFacing(facing);
             }
             return true;
@@ -139,7 +137,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (cover != null && cover.shouldCoverInteractWithOutputside()) {
                 if (getOutputFacingItems() == side) {
                     setAllowInputFromOutputSideItems(true);
-                } else if (getOutputFacingFluids() == side) {
+                }
+                if (getOutputFacingFluids() == side) {
                     setAllowInputFromOutputSideFluids(true);
                 }
             }
@@ -152,16 +151,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (outputFacingFluids != null && getExportFluids().getTanks() > 0) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingFluids, renderState, RenderUtil.adjustTrans(translation, outputFacingFluids, 2), pipeline);
         }
         if (outputFacingItems != null && getExportItems().getSlots() > 0) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingItems, renderState, RenderUtil.adjustTrans(translation, outputFacingItems, 2), pipeline);
         }
         if (isAutoOutputItems() && outputFacingItems != null) {
-            Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
+            Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacingItems, renderState, RenderUtil.adjustTrans(translation, outputFacingItems, 2), pipeline);
         }
         if (isAutoOutputFluids() && outputFacingFluids != null) {
-            Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
+            Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacingFluids, renderState, RenderUtil.adjustTrans(translation, outputFacingFluids, 2), pipeline);
         }
     }
 
@@ -184,25 +183,18 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
-        if (facing == getOutputFacingItems() || facing == getOutputFacingFluids() ||
-                ((hitFacing == getOutputFacingItems() || hitFacing == getOutputFacingFluids()) && playerIn.isSneaking())) {
-            if (!getWorld().isRemote) {
-                if (facing == getOutputFacingItems() || hitFacing == getOutputFacingItems()) {
-                    if (isAllowInputFromOutputSideItems()) {
-                        setAllowInputFromOutputSideItems(false);
-                        setAllowInputFromOutputSideFluids(false);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
-                    } else {
-                        setAllowInputFromOutputSideItems(true);
-                        setAllowInputFromOutputSideFluids(true);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
-                    }
-                }
+        if (!getWorld().isRemote) {
+            if (isAllowInputFromOutputSideItems()) {
+                setAllowInputFromOutputSideItems(false);
+                setAllowInputFromOutputSideFluids(false);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+            } else {
+                setAllowInputFromOutputSideItems(true);
+                setAllowInputFromOutputSideFluids(true);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
             }
-            return true;
         }
-        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+        return true;
     }
 
     @Override
@@ -366,6 +358,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
     }
 
+    public void setGhostCircuitConfig(int config) {
+        this.circuitInventory.setStackInSlot(0, IntCircuitIngredient.getIntegratedCircuit(config));
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+    }
+
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);
@@ -408,7 +407,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, chargerInventory);
-        clearInventory(itemBuffer, circuitInventory);
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
@@ -450,10 +448,10 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                 .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            SlotWidget circuitSlot = new SlotWidget(circuitInventory, 0, 124, 62 + yOffset, true, true, false)
+            ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17, GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO).setIgnoreColor(true);
+            SlotWidget circuitSlot = new FakeCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
                     .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-            builder.widget(getCircuitSlotTooltip(circuitSlot))
-                    .widget(new ImageWidget(152, 63 + yOffset, 17, 17, GuiTextures.GREGTECH_LOGO).setIgnoreColor(true))
+            builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo)
                     .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "", this::circuitConfigPlus)
                             .setShouldClientCallback(true)
                             .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
@@ -505,5 +503,18 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         if (I18n.hasKey(mainKey)) {
             tooltip.add(1, mainKey);
         }
+    }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

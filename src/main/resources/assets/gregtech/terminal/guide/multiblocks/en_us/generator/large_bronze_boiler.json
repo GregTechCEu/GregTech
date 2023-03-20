@@ -1,0 +1,14 @@
+{
+  "section": "Generator",
+  "title": "Large Bronze Boiler",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "This is an §6optional§r power generating multiblock, depending on which power options you chose.\n\n\nThe §3Large Boilers§r ultimately are §othe§r option for large scale Steam production. They will run off solid and liquid fuels.\n§cImportant:§r This Boiler can also §cexplode§r similarly to the regular Boilers!\n§cWater supply is crucial§r. But simply upgrading the §3Output Hatch§r on your §3Primitive Pump§r should be enough.\n\n\nOnce fully heated up, the §3LBB§r produces 800 Steam per tick, which is §d400EU/t§r after conversion, or 12.5 Basic Steam Turbines! This (relatively!) immense power comes at the cost of §la lot§r of burnable fuel.\n§5§lBut§r the GUI can let you §9throttle§r the Boiler, down to 25% power for 200 Steam per tick. That is §d100EU/t§r, or slightly above 3 Basic Steam Turbines."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "large_boiler.bronze"
+}

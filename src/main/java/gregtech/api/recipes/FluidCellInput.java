@@ -1,11 +1,9 @@
 package gregtech.api.recipes;
 
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -24,14 +22,11 @@ public class FluidCellInput extends GTRecipeItemInput {
     public static ItemStack getFilledCell(Fluid fluid, int count) {
         ItemStack fluidCell = MetaItems.FLUID_CELL.getStackForm().copy();
         IFluidHandlerItem fluidHandlerItem = fluidCell.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        try {
-            fluidHandlerItem.fill(new FluidStack(fluid, 1000), true);
-
-        } catch (Exception e) {
-            GTLog.logger.error("The fluid " + fluid.toString() + " failed to do something with getFilledCell");
-            GTLog.logger.error(e);
-            fluidHandlerItem.fill(new FluidStack(FluidRegistry.WATER, 1000), true);
+        if (fluidHandlerItem ==null) {
+            throw new IllegalStateException("Could not get FluidHandlerItem capability for the fluid cell.");
         }
+        fluidHandlerItem.fill(new FluidStack(fluid, 1000), true);
+
         fluidCell = fluidHandlerItem.getContainer();
         fluidCell.setCount(count);
         return fluidCell;

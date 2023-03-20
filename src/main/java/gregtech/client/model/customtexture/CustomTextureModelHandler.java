@@ -62,8 +62,8 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
         }
     }
 
-    private @Nonnull
-    IBakedModel wrap(IModel model, IBakedModel object) {
+    @Nonnull
+    private static IBakedModel wrap(IModel model, IBakedModel object) {
         CustomTextureModel ctm = new CustomTextureModel(null, model);
         ctm.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, rl -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString()));
         return new CustomTextureBakedModel(ctm, object);

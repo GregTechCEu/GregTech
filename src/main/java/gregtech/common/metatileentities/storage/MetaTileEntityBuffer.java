@@ -32,6 +32,7 @@ import java.util.List;
 
 public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaTileEntity {
 
+    private static final int TANK_SIZE = 64000;
     private final int tier;
 
     private FluidTankList fluidTankList;
@@ -48,7 +49,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
         super.initializeInventory();
         FilteredFluidHandler[] fluidHandlers = new FilteredFluidHandler[tier + 2];
         for (int i = 0; i < tier + 2; i++) {
-            fluidHandlers[i] = new FilteredFluidHandler(64000);
+            fluidHandlers[i] = new FilteredFluidHandler(TANK_SIZE);
         }
         fluidInventory = fluidTankList = new FluidTankList(false, fluidHandlers);
         itemInventory = itemStackHandler = new ItemStackHandler((int)Math.pow(tier + 2, 2));
@@ -129,8 +130,17 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.buffer.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.buffer.inventory", (int)Math.pow(tier + 2, 2)));
-        tooltip.add(I18n.format("gregtech.machine.buffer.tanks", tier + 2));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", (int) Math.pow(tier + 2, 2)));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", tier + 2, TANK_SIZE));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        // TODO Add this when the Buffer gets an auto-output side, and change the above to
+        // "gregtech.tool_action.screwdriver.auto_output_covers"
+        //tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override

@@ -13,6 +13,7 @@ import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -22,8 +23,8 @@ public class CTRecipeHelper {
     @Nullable
     public static String getMetaItemId(ItemStack item) {
         if (item.getItem() instanceof MetaItem) {
-            MetaItem<?> metaItem = (MetaItem<?>) item.getItem();
-            return metaItem.getItem(item).unlocalizedName;
+            MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.getItem()).getItem(item);
+            if (metaValueItem != null) return metaValueItem.unlocalizedName;
         }
         if (item.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) item.getItem()).getBlock();
@@ -40,7 +41,7 @@ public class CTRecipeHelper {
                 return "frame" + ((BlockFrame) block).getGtMaterial(item.getMetadata()).toCamelCaseString();
             }
             if (block instanceof BlockMaterialPipe) {
-                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item).toCamelCaseString();
+                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(item).toCamelCaseString();
             }
         }
         return null;
@@ -148,11 +149,14 @@ public class CTRecipeHelper {
                             .append(itemId)
                             .append(">");
                 } else {
-                    builder.append("<")
-                            .append(itemStack.getItem().getRegistryName().toString())
-                            .append(":")
-                            .append(itemStack.getItemDamage())
-                            .append(">");
+                    ResourceLocation registryName = itemStack.getItem().getRegistryName();
+                    if (registryName != null) {
+                        builder.append("<")
+                                .append(registryName)
+                                .append(":")
+                                .append(itemStack.getItemDamage())
+                                .append(">");
+                    }
                 }
 
                 if (itemStack.serializeNBT().hasKey("tag")) {
@@ -185,18 +189,6 @@ public class CTRecipeHelper {
 
         builder.append("....");
         return builder.toString();
-    }
-
-    public static String getFirstOutputString(Recipe recipe) {
-        String output = "";
-        if (!recipe.getOutputs().isEmpty()) {
-            ItemStack item = recipe.getOutputs().get(0);
-            output = item.getDisplayName() + " * " + item.getCount();
-        } else if (!recipe.getFluidOutputs().isEmpty()) {
-            FluidStack fluid = recipe.getFluidOutputs().get(0);
-            output = fluid.getLocalizedName() + " * " + fluid.amount;
-        }
-        return output;
     }
 
     public static String getCtItemString(GTRecipeInput recipeInput) {

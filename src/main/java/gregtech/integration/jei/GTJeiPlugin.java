@@ -16,20 +16,21 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.GTLog;
+import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.integration.jei.basic.*;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 import gregtech.integration.jei.recipe.*;
-import gregtech.integration.jei.recipe.primitive.MaterialTree;
-import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
-import gregtech.integration.jei.recipe.primitive.OreByProduct;
-import gregtech.integration.jei.recipe.primitive.OreByProductCategory;
-import gregtech.integration.jei.utils.*;
-import gregtech.loaders.recipe.CustomItemReturnShapedOreRecipeRecipe;
+import gregtech.integration.jei.utils.MachineSubtypeHandler;
+import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
+import gregtech.integration.jei.utils.ModularUIGuiHandler;
+import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
 import mezz.jei.Internal;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
@@ -39,7 +40,9 @@ import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.config.Constants;
 import mezz.jei.input.IShowsRecipeFocuses;
 import mezz.jei.input.InputHandler;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
@@ -84,6 +87,7 @@ public class GTJeiPlugin implements IModPlugin {
         }
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
+        registry.addRecipeCategories(new GTFluidVeinCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
@@ -93,7 +97,6 @@ public class GTJeiPlugin implements IModPlugin {
 
         registry.addRecipes(IntCircuitRecipeWrapper.create(), IntCircuitCategory.UID);
         MultiblockInfoCategory.registerRecipes(registry);
-        registry.handleRecipes(CustomItemReturnShapedOreRecipeRecipe.class, recipe -> new CustomItemReturnRecipeWrapper(jeiHelpers, recipe), VanillaRecipeCategoryUid.CRAFTING);
         registry.addRecipeRegistryPlugin(new FacadeRegistryPlugin());
 
         // register transfer handler for all categories, but not for the crafting station
@@ -194,6 +197,18 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), oreSpawnID);
         //Ore Veins End
 
+        // Fluid Veins
+        List<BedrockFluidDepositDefinition> fluidVeins = WorldGenRegistry.getBedrockVeinDeposits();
+        List<GTFluidVeinInfo> fluidVeinInfos = new CopyOnWriteArrayList<>();
+        for (BedrockFluidDepositDefinition fluidVein : fluidVeins) {
+            fluidVeinInfos.add(new GTFluidVeinInfo(fluidVein));
+        }
+
+        String fluidVeinSpawnID = GTValues.MODID + ":" + "fluid_spawn_location";
+        registry.addRecipes(fluidVeinInfos, fluidVeinSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), fluidVeinSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), fluidVeinSpawnID);
+        // Fluid Veins End
 
         ingredientRegistry = registry.getIngredientRegistry();
         for (int i = 0; i <= IntCircuitIngredient.CIRCUIT_MAX; i++) {
@@ -216,6 +231,7 @@ public class GTJeiPlugin implements IModPlugin {
                 registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
             }
         });
+        registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM, I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
     }
 
     public static void setupInputHandler() {
@@ -228,7 +244,7 @@ public class GTJeiPlugin implements IModPlugin {
             showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            GTLog.logger.error("Could not reflect JEI Internal inputHandler", e);
         }
     }
 

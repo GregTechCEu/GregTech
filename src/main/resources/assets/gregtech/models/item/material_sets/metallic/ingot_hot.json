@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "gregtech:items/material_sets/metallic/ingot_hot",
-    "layer1": "gregtech:items/material_sets/metallic/ingot_hot_overlay"
-  }
-}

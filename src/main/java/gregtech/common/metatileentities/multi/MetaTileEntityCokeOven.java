@@ -59,11 +59,6 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     }
 
     @Override
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return sourcePart == null && recipeMapWorkable.isActive() ? 15 : 0;
-    }
-
-    @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.COKE_BRICKS;
     }

@@ -173,7 +173,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
     }
 
     //This was copied over from VertexLighterFlat because the tint parameter shouldn't be a float
-    protected void updateColor(float[] normal, float[] color, float x, float y, float z, int tint, int multiplier) {
+    protected static void updateColor(float[] normal, float[] color, float x, float y, float z, int tint, int multiplier) {
         if (tint != -1) {
             color[0] *= (float) (multiplier >> 0x10 & 0xFF) / 0xFF;
             color[1] *= (float) (multiplier >> 0x8 & 0xFF) / 0xFF;

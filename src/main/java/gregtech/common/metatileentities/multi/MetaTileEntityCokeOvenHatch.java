@@ -14,14 +14,20 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
 
@@ -100,5 +106,12 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     @Override
     public boolean canPartShare() {
         return false;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

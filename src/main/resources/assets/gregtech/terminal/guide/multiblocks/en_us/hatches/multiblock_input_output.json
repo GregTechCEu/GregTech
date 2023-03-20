@@ -1,0 +1,14 @@
+{
+  "section": "Hatches",
+  "title": "Multiblock Input/Output",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "§3Busses§r are needed to for Multiblocks in order to insert recipe inputs and retrieve recipe outputs.\nHigher tier §3Busses§r have more slots for items\n\nFor fluids, you will need §3Hatches§r.\n\nFor fluids, there are also special §3Multi-Fluid Hatches§r, which can handle multiple fluids at the same time. These come in 4x and 9x versions."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "item_bus.import.lv"
+}

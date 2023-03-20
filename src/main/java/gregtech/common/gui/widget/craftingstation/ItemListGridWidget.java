@@ -93,7 +93,7 @@ public class ItemListGridWidget extends ScrollableListWidget {
             int widgetAmount = widgets.size();
             WidgetGroup widgetGroup = new WidgetGroup();
             for (int j = 0; j < slotAmountX; j++) {
-                Widget widget = new ItemListSlotWidget(j * 18, 0, this, widgetAmount * 9 + j);
+                Widget widget = new ItemListSlotWidget(j * 18, 0, this, widgetAmount * slotAmountX + j);
                 widgetGroup.addWidget(widget);
             }
             addWidget(widgetGroup);

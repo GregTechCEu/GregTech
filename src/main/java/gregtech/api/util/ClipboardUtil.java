@@ -1,7 +1,7 @@
 package gregtech.api.util;
 
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.SPacketClipboard;
+import gregtech.api.GregTechAPI;
+import gregtech.core.network.packets.PacketClipboard;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.awt.*;
@@ -19,7 +19,6 @@ public class ClipboardUtil {
     }
 
     public static void copyToClipboard(final EntityPlayerMP player, final String text) {
-        SPacketClipboard packet = new SPacketClipboard(text);
-        NetworkHandler.channel.sendTo(packet.toFMLPacket(), player);
+        GregTechAPI.networkHandler.sendTo(new PacketClipboard(text), player);
     }
 }

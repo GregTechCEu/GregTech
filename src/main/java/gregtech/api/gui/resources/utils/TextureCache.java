@@ -5,6 +5,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -28,7 +29,7 @@ public class TextureCache {
         boolean saved = false;
         OutputStream out = null;
         try {
-            out = new FileOutputStream(entry.getFile());
+            out = Files.newOutputStream(entry.getFile().toPath());
             out.write(data);
             saved = true;
         } catch (IOException e) {
@@ -52,7 +53,7 @@ public class TextureCache {
             entries = new HashMap<>();
             DataInputStream in = null;
             try {
-                in = new DataInputStream(new GZIPInputStream(new FileInputStream(index)));
+                in = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())));
                 int length = in.readInt();
                 for (int i = 0; i < length; i++) {
                     String url = in.readUTF();
@@ -74,7 +75,7 @@ public class TextureCache {
     private void saveIndex() {
         DataOutputStream out = null;
         try {
-            out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)));
+            out = new DataOutputStream(new GZIPOutputStream(Files.newOutputStream(index.toPath())));
             out.writeInt(entries.size());
             for (Map.Entry<String, CacheEntry> mapEntry : entries.entrySet()) {
                 CacheEntry entry = mapEntry.getValue();

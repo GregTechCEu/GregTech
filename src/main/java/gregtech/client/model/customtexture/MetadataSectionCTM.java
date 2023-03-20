@@ -32,7 +32,7 @@ public class MetadataSectionCTM implements IMetadataSection {
                 try {
                     ret.layer = BlockRenderLayer.valueOf(layerEle.getAsString());
                 } catch (IllegalArgumentException e) {
-                    throw new JsonParseException("Invalid block layer given: " + layerEle);
+                    throw new JsonParseException("Invalid block layer given: " + layerEle, e);
                 }
             }
         }

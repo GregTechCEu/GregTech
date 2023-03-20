@@ -44,7 +44,7 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
         return new ItemStack(this, 1, materialId);
     }
 
-    public Material getItemMaterial(ItemStack itemStack) {
+    public static Material getItemMaterial(ItemStack itemStack) {
         return GregTechAPI.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
     }
 

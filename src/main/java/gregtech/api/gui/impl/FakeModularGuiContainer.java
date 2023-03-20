@@ -11,7 +11,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public abstract class FakeModularGuiContainer implements WidgetUIAccess {
     protected final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
@@ -80,10 +79,4 @@ public abstract class FakeModularGuiContainer implements WidgetUIAccess {
     @Override
     public void sendHeldItemUpdate() {
     }
-
-    @Override
-    public abstract void writeClientAction(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter);
-
-    @Override
-    public abstract void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter);
 }

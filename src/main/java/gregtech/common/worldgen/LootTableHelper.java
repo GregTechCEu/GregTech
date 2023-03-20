@@ -83,7 +83,7 @@ public class LootTableHelper {
                 } else {
                     lootConditions = new LootCondition[0];
                 }
-                LootTableEntrySerializer serializer = serializerMap.get(type);
+                LootTableEntrySerializer<?> serializer = serializerMap.get(type);
                 return serializer.deserialize(jsonobject, context, weight, quality, lootConditions);
             }
             return delegatedDeserializer.deserialize(json, typeOfT, context);

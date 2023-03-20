@@ -22,6 +22,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -167,6 +168,8 @@ public class MultiblockPreviewRenderer {
             mte.checkStructurePattern();
         }
 
+        BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
+
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
         for (BlockPos pos : blockMap.keySet()) {
             targetBA.setPos(pos);
@@ -187,6 +190,7 @@ public class MultiblockPreviewRenderer {
             tes.draw();
             GlStateManager.popMatrix();
         }
+        ForgeHooksClient.setRenderLayer(oldLayer);
 
         GlStateManager.popMatrix();
 

@@ -31,7 +31,7 @@ public class PortalRenderer extends Render<PortalEntity> {
     @Override
     public void doRender(PortalEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.pushMatrix();
-        this.setupTranslation(x, y, z);
+        PortalRenderer.setupTranslation(x, y, z);
         this.bindEntityTexture(entity);
         float scaleX = 0.0625F, scaleY = 0.0625F, scaleZ = 0.0625F;
         float translateY = 0.F;
@@ -68,7 +68,7 @@ public class PortalRenderer extends Render<PortalEntity> {
         GlStateManager.disableBlend();
     }
 
-    public void setupTranslation(double x, double y, double z) {
+    public static void setupTranslation(double x, double y, double z) {
         GlStateManager.translate((float)x, (float)y + 0.5F, (float)z);
     }
 

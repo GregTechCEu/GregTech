@@ -85,7 +85,7 @@ public class WorldGenRubberTree extends WorldGenerator {
         return true;
     }
 
-    public int getGrowHeight(World world, BlockPos pos) {
+    public int getGrowHeight(@Nonnull World world, @Nonnull BlockPos pos) {
         BlockPos below = pos.down();
         IBlockState baseState = world.getBlockState(below);
         Block baseBlock = baseState.getBlock();

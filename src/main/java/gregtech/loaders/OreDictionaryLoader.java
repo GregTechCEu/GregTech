@@ -21,11 +21,14 @@ import static gregtech.api.GTValues.W;
 
 public class OreDictionaryLoader {
 
+    public static final String OREDICT_FUEL_COKE = "fuelCoke";
+    public static final String OREDICT_BLOCK_FUEL_COKE = "blockFuelCoke";
+    
     public static void init() {
         GTLog.logger.info("Registering OreDict entries.");
 
-        OreDictionary.registerOre("fuelCoke", OreDictUnifier.get(OrePrefix.gem, Materials.Coke));
-        OreDictionary.registerOre("blockFuelCoke", OreDictUnifier.get(OrePrefix.block, Materials.Coke));
+        OreDictionary.registerOre(OREDICT_FUEL_COKE, OreDictUnifier.get(OrePrefix.gem, Materials.Coke));
+        OreDictionary.registerOre(OREDICT_BLOCK_FUEL_COKE, OreDictUnifier.get(OrePrefix.block, Materials.Coke));
         OreDictionary.registerOre("crystalCertusQuartz", OreDictUnifier.get(OrePrefix.gem, Materials.CertusQuartz));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.CLAY), OrePrefix.block, Materials.Clay);

@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/shiny/round",
   "textures": {
-    "layer0": "gregtech:items/material_sets/bright/round",
     "layer1": "gregtech:items/material_sets/bright/round_overlay"
   }
 }

@@ -12,7 +12,7 @@ public interface IRecipePropertyStorage {
      *
      * @param recipeProperty {@link RecipeProperty}
      * @param value          value
-     * @return <code>true</code> if store succeeds; otherwise <code>false</code>
+     * @return {@code true} if store succeeds; otherwise {@code false}
      */
     boolean store(RecipeProperty<?> recipeProperty, Object value);
 
@@ -54,7 +54,7 @@ public interface IRecipePropertyStorage {
      * Provides un-casted value for one specific {@link RecipeProperty} searched by key
      *
      * @param key Key of stored {@link RecipeProperty}
-     * @return {@link Object} value on success; otherwise <code>null</code>
+     * @return {@link Object} value on success; otherwise {@code null}
      */
     Object getRawRecipePropertyValue(String key);
 

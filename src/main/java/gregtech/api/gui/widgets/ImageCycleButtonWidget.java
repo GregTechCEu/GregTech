@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
@@ -16,7 +17,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 public class ImageCycleButtonWidget extends Widget {
 
@@ -77,7 +81,7 @@ public class ImageCycleButtonWidget extends Widget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (isMouseOverElement(mouseX, mouseY) && tooltipHoverString != null) {
-            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString.apply(currentOption)).split("/n"));
+            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipHoverString.apply(currentOption))));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

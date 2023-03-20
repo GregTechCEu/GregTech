@@ -5,6 +5,7 @@ import gregtech.api.unification.stack.ItemAndMetadata;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class CustomModPriorityComparator implements Comparator<ItemAndMetadata> {
 
@@ -16,8 +17,8 @@ public class CustomModPriorityComparator implements Comparator<ItemAndMetadata> 
 
     @Override
     public int compare(ItemAndMetadata first, ItemAndMetadata second) {
-        String firstModId = first.item.getRegistryName().getNamespace();
-        String secondModId = second.item.getRegistryName().getNamespace();
+        String firstModId = Objects.requireNonNull(first.item.getRegistryName()).getNamespace();
+        String secondModId = Objects.requireNonNull(second.item.getRegistryName()).getNamespace();
         int firstModIndex = modPriorityList.indexOf(firstModId);
         int secondModIndex = modPriorityList.indexOf(secondModId);
         if (firstModIndex == -1 && secondModIndex == -1) {

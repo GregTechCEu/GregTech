@@ -3,7 +3,6 @@ package gregtech.common.items.behaviors;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import gregtech.api.GTValues;
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.enchantment.Enchantment;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements IEnchantabilityHelper {
 
-    private static final ResourceLocation OVERRIDE_KEY_LOCATION = new ResourceLocation(GTValues.MODID, "nano_saber_active");
+    public static final ResourceLocation OVERRIDE_KEY_LOCATION = new ResourceLocation(GTValues.MODID, "nano_saber_active");
     protected static final UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A288-9C13A33DB5CF");
     protected static final UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4288-B01B-BCCE9785ACA3");
 
@@ -30,11 +29,6 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
         super(ConfigHolder.tools.nanoSaber.energyConsumption);
         this.baseAttackDamage = ConfigHolder.tools.nanoSaber.nanoSaberBaseDamage;
         this.additionalAttackDamage = ConfigHolder.tools.nanoSaber.nanoSaberDamageBoost;
-    }
-
-    @Override
-    public void onAddedToItem(MetaValueItem metaValueItem) {
-        metaValueItem.getMetaItem().addPropertyOverride(OVERRIDE_KEY_LOCATION, (stack, worldIn, entityIn) -> isItemActive(stack) ? 1.0f : 0.0f);
     }
 
     @Override

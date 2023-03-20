@@ -5,13 +5,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.PhantomFluidWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
-import gregtech.common.terminal.app.guide.widget.TankListWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.common.terminal.app.guide.widget.TankListWidget;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

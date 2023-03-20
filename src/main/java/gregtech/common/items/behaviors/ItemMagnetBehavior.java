@@ -45,7 +45,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
-    private boolean isActive(ItemStack stack) {
+    private static boolean isActive(ItemStack stack) {
         if (stack == ItemStack.EMPTY) {
             return false;
         }
@@ -59,7 +59,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         return false;
     }
 
-    private boolean toggleActive(ItemStack stack) {
+    private static boolean toggleActive(ItemStack stack) {
         boolean isActive = isActive(stack);
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
@@ -147,7 +147,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         return new AxisAlignedBB(player.getPosition()).grow(range, range, range);
     }
 
-    private boolean drainEnergy(boolean simulate, @Nonnull ItemStack stack, long amount) {
+    private static boolean drainEnergy(boolean simulate, @Nonnull ItemStack stack, long amount) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null)
             return false;

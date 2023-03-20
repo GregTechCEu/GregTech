@@ -5,7 +5,6 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
@@ -13,7 +12,6 @@ import gregtech.api.capability.impl.CleanroomLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
@@ -22,6 +20,7 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
@@ -54,13 +53,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_FRONT_FACING;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
@@ -82,7 +78,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     private IEnergyContainer energyContainer;
 
     private final CleanroomLogic cleanroomLogic;
-    private final HashSet<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
+    private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -143,10 +139,18 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         }
     }
 
+    @Override
+    public void checkStructurePattern() {
+        if (!this.isStructureFormed()) {
+            reinitializeStructurePattern();
+        }
+        super.checkStructurePattern();
+    }
+
     /**
      * Scans for blocks around the controller to update the dimensions
      */
-    public void updateStructureDimensions() {
+    public boolean updateStructureDimensions() {
         World world = getWorld();
         EnumFacing front = getFrontFacing();
         EnumFacing back = front.getOpposite();
@@ -185,6 +189,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
         if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || fDist < MIN_RADIUS || hDist < MIN_DEPTH) {
             invalidateStructure();
+            return false;
         }
 
         this.lDist = lDist;
@@ -200,6 +205,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             buf.writeInt(this.fDist);
             buf.writeInt(this.hDist);
         });
+        return true;
     }
 
     /**
@@ -222,16 +228,25 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return isBlockEdge(world, pos, direction) || world.getBlockState(pos) == MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
+        // return the default structure, even if there is no valid size found
+        // this means auto-build will still work, and prevents terminal crashes.
         if (getWorld() != null) updateStructureDimensions();
 
         // these can sometimes get set to 0 when loading the game, breaking JEI
-        if (lDist == 0) lDist = MIN_RADIUS;
-        if (rDist == 0) rDist = MIN_RADIUS;
-        if (bDist == 0) bDist = MIN_RADIUS;
-        if (fDist == 0) fDist = MIN_RADIUS;
-        if (hDist == 0) hDist = MIN_DEPTH;
+        if (lDist < MIN_RADIUS) lDist = MIN_RADIUS;
+        if (rDist < MIN_RADIUS) rDist = MIN_RADIUS;
+        if (bDist < MIN_RADIUS) bDist = MIN_RADIUS;
+        if (fDist < MIN_RADIUS) fDist = MIN_RADIUS;
+        if (hDist < MIN_DEPTH) hDist = MIN_DEPTH;
+
+        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
+            int tmp = lDist;
+            lDist = rDist;
+            rDist = tmp;
+        }
 
         // build each row of the structure
         StringBuilder borderBuilder = new StringBuilder();     // BBBBB
@@ -297,8 +312,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         slice[slice.length - 1] = roofBuilder.toString();
 
         String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X   X", "X   X", "X   X", "BFSFB"
-        center[center.length - 1] = controllerBuilder.toString();
-        center[0] = centerBuilder.toString();
+        if (this.frontFacing == EnumFacing.NORTH || this.frontFacing == EnumFacing.SOUTH) {
+            center[0] = centerBuilder.reverse().toString();
+            center[center.length - 1] = controllerBuilder.reverse().toString();
+        } else {
+            center[0] = centerBuilder.toString();
+            center[center.length - 1] = controllerBuilder.toString();
+        }
 
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
         TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
@@ -374,9 +394,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return new TraceabilityPredicate(blockWorldState -> {
             // all non-MetaTileEntities are allowed inside by default
             TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof MetaTileEntityHolder)) return true;
+            if (!(tileEntity instanceof IGregTechTileEntity)) return true;
 
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
 
             // always ban other cleanrooms, can cause problems otherwise
             if (metaTileEntity instanceof ICleanroomProvider)
@@ -415,22 +435,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
-            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
-        }
-
-        if (!cleanroomLogic.isWorkingEnabled()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        } else if (cleanroomLogic.isActive()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
-        } else {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-        }
-
         if (isStructureFormed()) {
+            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+            }
+
+            if (!cleanroomLogic.isWorkingEnabled()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+            } else if (cleanroomLogic.isActive()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
+            } else {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
+            }
+
             if (!drainEnergy(true)) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
             }
@@ -443,12 +463,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.2"));
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.3"));
-            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.4"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.4"));
+
+        if (TooltipHelper.isCtrlDown()) {
+            tooltip.add("");
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.5"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.6"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.7"));
@@ -457,8 +478,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
                 tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ? "gregtech.machine.cleanroom.tooltip.ae2.channels" : "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));
             }
+            tooltip.add("");
         } else {
-            tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.hold_ctrl"));
         }
     }
 
@@ -534,10 +556,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public int getEnergyTier() {
-        if (energyContainer == null)
-            return GTValues.LV;
-
-        return Math.max(GTValues.LV, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
+        if (energyContainer == null) return GTValues.LV;
+        return Math.max(GTValues.LV, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
     }
 
     @Override
@@ -557,28 +577,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        Preconditions.checkNotNull(frontFacing, "frontFacing");
-        this.frontFacing = frontFacing;
-        if (getWorld() != null && !getWorld().isRemote) {
-            notifyBlockUpdate();
-            markDirty();
-            writeCustomData(UPDATE_FRONT_FACING, buf -> buf.writeByte(frontFacing.getIndex()));
-            mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
-        }
-        if (getWorld() != null && !getWorld().isRemote) {
-            // clear cache since the cache has no concept of pre-existing facing
-            // for the controller block (or any block) in the structure
-            structurePattern.clearCache();
-            // need to reinitialize structure again since it depends on the machine's facing
-            this.reinitializeStructurePattern();
-            // recheck structure pattern immediately to avoid a slight "lag"
-            // on deforming when rotating a multiblock controller
-            checkStructurePattern();
-        }
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
@@ -594,10 +592,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             this.lDist = buf.readInt();
             this.rDist = buf.readInt();
             this.hDist = buf.readInt();
-            this.reinitializeStructurePattern();
-        } else if (dataId == GregtechDataCodes.IS_WORKING) {
-            this.cleanroomLogic.setActive(buf.readBoolean());
-            scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.cleanroomLogic.setActive(buf.readBoolean());
             scheduleRenderUpdate();
@@ -627,6 +621,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         this.bDist = data.hasKey("bDist") ? data.getInteger("bDist") : this.bDist;
         this.fDist = data.hasKey("fDist") ? data.getInteger("fDist") : this.fDist;
+        reinitializeStructurePattern();
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
     }
@@ -675,7 +670,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS))
                 .where('S', MetaTileEntities.CLEANROOM, EnumFacing.SOUTH)
                 .where(' ', Blocks.AIR.getDefaultState())
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LV], EnumFacing.SOUTH)
                 .where('I', MetaTileEntities.PASSTHROUGH_HATCH_ITEM, EnumFacing.NORTH)
                 .where('L', MetaTileEntities.PASSTHROUGH_HATCH_FLUID, EnumFacing.NORTH)
                 .where('H', MetaTileEntities.HULL[GTValues.HV], EnumFacing.NORTH)

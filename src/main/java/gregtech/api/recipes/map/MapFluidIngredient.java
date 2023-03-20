@@ -25,7 +25,8 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        int hash = 31 + fluid.hashCode();
+        //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
+        int hash = 31 + fluid.getName().hashCode();
         if (tag != null) {
             return 31 * hash + tag.hashCode();
         }
@@ -36,7 +37,10 @@ public class MapFluidIngredient extends AbstractMapIngredient {
     public boolean equals(Object o) {
         if (super.equals(o)) {
             MapFluidIngredient other = (MapFluidIngredient) o;
-            return fluid == other.fluid && Objects.equals(tag, other.tag);
+            //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
+            if (this.fluid.getName().equals(other.fluid.getName())) {
+                return Objects.equals(tag, other.tag);
+            }
         }
         return false;
     }

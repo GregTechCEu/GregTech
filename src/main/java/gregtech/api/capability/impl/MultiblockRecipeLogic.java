@@ -12,6 +12,7 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -229,7 +230,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
 
-        recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         recipe = findParallelRecipe(
                 this,
@@ -238,7 +239,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 getInputTank(),
                 getOutputInventory(),
                 getOutputTank(),
-                getMaxVoltage(),
+                getMaxParallelVoltage(),
                 getParallelLimit());
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {
@@ -250,28 +251,31 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         int[] overclock = null;
         if (maintenanceValues.getSecond() != 1.0)
 
-            overclock = standardOverclockingLogic(Math.abs(recipeEUt),
+            overclock = standardOverclockingLogic(
+                    Math.abs(recipeEUt),
                     maxVoltage,
                     (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
+                    amountOC,
                     getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier(),
-                    maxOverclocks
+                    getOverclockingVoltageMultiplier()
             );
 
         if (overclock == null)
-            overclock = standardOverclockingLogic(Math.abs(recipeEUt),
+            overclock = standardOverclockingLogic(
+                    Math.abs(recipeEUt),
                     maxVoltage,
                     recipeDuration,
+                    amountOC,
                     getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier(),
-                    maxOverclocks);
+                    getOverclockingVoltageMultiplier()
+            );
 
         if (maintenanceValues.getFirst() > 0)
             overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
@@ -296,7 +300,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@Nonnull Recipe recipe) {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false)) {
             controller.checkRecipe(recipe, true);
@@ -357,6 +361,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
     }
 
+    @Nullable
     @Override
     public RecipeMap<?> getRecipeMap() {
         // if the multiblock has more than one RecipeMap, return the currently selected one

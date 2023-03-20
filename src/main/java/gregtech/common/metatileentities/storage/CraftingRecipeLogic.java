@@ -119,9 +119,13 @@ public class CraftingRecipeLogic {
                 continue;
             }
             ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
-            if (itemStack.isItemEqual(inventoryCrafting.getStackInSlot(i))) {
-                inventoryCrafting.setInventorySlotContents(i, itemStack);
+
+            ItemStack current = inventoryCrafting.getStackInSlot(i);
+            inventoryCrafting.setInventorySlotContents(i, itemStack);
+            if (!cachedRecipe.matches(inventoryCrafting, itemSources.getWorld())){
+                inventoryCrafting.setInventorySlotContents(i, current);
             }
+
             int remainingAmount = itemStack.getCount() - itemSources.insertItem(stackKey, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);

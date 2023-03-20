@@ -6,31 +6,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
 
 public class InventoryUtilsTest {
+
     /**
      * Required. Without this all item-related operations will fail because registries haven't been initialized.
      */
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
     }
-
-    /**
-     * Used by tests where exception properties need to be verified.
-     */
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void simulateItemStackMerge_succeeds_for_inserting_single_stack_into_empty_one_slot_inventory() {
@@ -43,10 +38,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertTrue(
-                "Merging one full stack into a single empty slot failed.",
-                result
-        );
+        MatcherAssert.assertThat("Merging one full stack into a single empty slot failed.", result, is(true));
     }
 
     @Test
@@ -60,10 +52,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertTrue(
-                "Merging two half-stacks into an empty inventory with one slot failed.",
-                result
-        );
+        MatcherAssert.assertThat("Merging two half-stacks into an empty inventory with one slot failed.", result, is(true));
     }
 
     @Test
@@ -79,10 +68,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertTrue(
-                "Merging half a stack into an inventory with one slot containing half a stack of the same item failed.",
-                result
-        );
+        MatcherAssert.assertThat("Merging half a stack into an inventory with one slot containing half a stack of the same item failed.", result, is(true));
     }
 
     @Test
@@ -100,10 +86,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertTrue(
-                "Merging half a stack into an inventory with two three-quarter stacks of the same item failed.",
-                result
-        );
+        MatcherAssert.assertThat("Merging half a stack into an inventory with two three-quarter stacks of the same item failed.", result, is(true));
     }
 
     @Test
@@ -121,10 +104,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertTrue(
-                "Merging half a stack into an inventory with one three-quarter stack of the same item and one empty slot failed.",
-                result
-        );
+        MatcherAssert.assertThat("Merging half a stack into an inventory with one three-quarter stack of the same item and one empty slot failed.", result, is(true));
     }
 
     @Test
@@ -141,10 +121,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertFalse(
-                "Unexpectedly succeeded at merging an arrow into an inventory full of feathers.",
-                result
-        );
+        MatcherAssert.assertThat("Unexpectedly succeeded at merging an arrow into an inventory full of feathers.", result, is(false));
     }
 
     @Test
@@ -161,10 +138,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertFalse(
-                "Unexpectedly succeeded at merging feathers into an inventory full of feathers.",
-                result
-        );
+        MatcherAssert.assertThat("Unexpectedly succeeded at merging feathers into an inventory full of feathers.", result, is(false));
     }
 
     @Test
@@ -182,10 +156,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertFalse(
-                "Unexpectedly succeeded at merging feathers with NBT tags into a stack of plain feathers.",
-                result
-        );
+        MatcherAssert.assertThat("Unexpectedly succeeded at merging feathers with NBT tags into a stack of plain feathers.", result, is(false));
     }
 
     @Test
@@ -203,10 +174,7 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertFalse(
-                "Unexpectedly succeeded at merging damaged feathers into a stack of plain feathers.",
-                result
-        );
+        MatcherAssert.assertThat("Unexpectedly succeeded at merging damaged feathers into a stack of plain feathers.", result, is(false));
     }
 
     @Test
@@ -215,7 +183,7 @@ public class InventoryUtilsTest {
         ItemStack pickaxe = new ItemStack(Items.IRON_PICKAXE, 1);
         ItemStack anotherPickaxe = new ItemStack(Items.IRON_PICKAXE, 1);
 
-        assertFalse(pickaxe.isStackable());
+        MatcherAssert.assertThat(pickaxe.isStackable(), is(false));
 
         handler.insertItem(0, pickaxe, false);
 
@@ -225,19 +193,13 @@ public class InventoryUtilsTest {
                         handler
                 );
 
-        assertFalse(
-                "Unexpectedly succeeded at merging a pickaxe into another one.",
-                result
-        );
+        MatcherAssert.assertThat("Unexpectedly succeeded at merging a pickaxe into another one.", result, is(false));
     }
 
     @Test
     public void normalizeItemStack_returns_empty_list_for_single_empty_stack() {
         List<ItemStack> result = InventoryUtils.normalizeItemStack(ItemStack.EMPTY);
-        assertTrue(
-                "Unexpectedly got results when normalizing an empty ItemStack",
-                result.isEmpty()
-        );
+        MatcherAssert.assertThat("Unexpectedly got results when normalizing an empty ItemStack", result.isEmpty(), is(true));
     }
 
     @Test
@@ -245,18 +207,9 @@ public class InventoryUtilsTest {
         ItemStack stack = new ItemStack(Items.ENDER_PEARL, 16);
         List<ItemStack> result = InventoryUtils.normalizeItemStack(stack);
 
-        assertFalse(
-                "Unexpectedly got no results when normalizing an already normal ItemStack",
-                result.isEmpty()
-        );
-        assertEquals(
-                "Unexpectedly got wrong number of resulting stacks when normalizing an already normal ItemStack",
-                1, result.size()
-        );
-        assertTrue(
-                "ItemStack was modified when it didn't need to be",
-                ItemStack.areItemStacksEqual(stack, result.get(0))
-        );
+        MatcherAssert.assertThat("Unexpectedly got no results when normalizing an already normal ItemStack", result.isEmpty(), is(false));
+        MatcherAssert.assertThat("Unexpectedly got wrong number of resulting stacks when normalizing an already normal ItemStack", result.size(), is(1));
+        MatcherAssert.assertThat("ItemStack was modified when it didn't need to be", ItemStack.areItemStacksEqual(stack, result.get(0)), is(true));
     }
 
     @Test
@@ -264,44 +217,38 @@ public class InventoryUtilsTest {
         ItemStack stack = new ItemStack(Items.ENDER_PEARL, 45);
         List<ItemStack> result = InventoryUtils.normalizeItemStack(stack);
 
-        assertFalse(
-                "Unexpectedly got no results when normalizing an abnormal stack",
-                result.isEmpty()
-        );
-        assertEquals(
-                "Unexpectedly got wrong number of resulting stacks when normalizing an abnormal ItemStack",
-                3, result.size()
-        );
+        MatcherAssert.assertThat("Unexpectedly got no results when normalizing an abnormal stack", result.isEmpty(), is(false));
+        MatcherAssert.assertThat("Unexpectedly got wrong number of resulting stacks when normalizing an abnormal ItemStack", result.size(), is(3));
 
         ItemStack expectedFull = new ItemStack(Items.ENDER_PEARL, 16);
         ItemStack expectedPartial = new ItemStack(Items.ENDER_PEARL, 13);
-        assertTrue("First item stack does not match expected full stack",
-                ItemStack.areItemStacksEqual(expectedFull, result.get(0)));
-        assertTrue("Second item stack does not match expected full stack",
-                ItemStack.areItemStacksEqual(expectedFull, result.get(1)));
-        assertTrue("Third item stack does not match expected partial stack",
-                ItemStack.areItemStacksEqual(expectedPartial, result.get(2)));
+        MatcherAssert.assertThat("First item stack does not match expected full stack", ItemStack.areItemStacksEqual(expectedFull, result.get(0)), is(true));
+        MatcherAssert.assertThat("Second item stack does not match expected full stack", ItemStack.areItemStacksEqual(expectedFull, result.get(1)), is(true));
+        MatcherAssert.assertThat("Third item stack does not match expected partial stack", ItemStack.areItemStacksEqual(expectedPartial, result.get(2)), is(true));
     }
 
     @Test
     public void apportionStack_throws_AssertionError_when_supplied_stack_is_empty() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Cannot apportion an empty stack.");
-        InventoryUtils.apportionStack(ItemStack.EMPTY, 64);
+        Throwable exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            InventoryUtils.apportionStack(ItemStack.EMPTY, 64);
+        });
+        MatcherAssert.assertThat(exception.getMessage(), is("Cannot apportion an empty stack."));
     }
 
     @Test
     public void apportionStack_throws_AssertionError_when_maxCount_is_zero() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Count must be non-zero and positive.");
-        InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), 0);
+        Throwable exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), 0);
+        });
+        MatcherAssert.assertThat(exception.getMessage(), is("Count must be non-zero and positive."));
     }
 
     @Test
     public void apportionStack_throws_AssertionError_when_maxCount_is_negative() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Count must be non-zero and positive.");
-        InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), -1);
+        Throwable exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), -1);
+        });
+        MatcherAssert.assertThat(exception.getMessage(), is("Count must be non-zero and positive."));
     }
 
     @Test
@@ -311,10 +258,10 @@ public class InventoryUtilsTest {
 
         List<ItemStack> result = InventoryUtils.apportionStack(oversized, 16);
 
-        assertFalse(result.isEmpty());
-        assertEquals(4, result.size());
+        MatcherAssert.assertThat(result.isEmpty(), is(false));
+        MatcherAssert.assertThat(result.size(), is(4));
         for (ItemStack stack : result) {
-            assertTrue(ItemStack.areItemStacksEqual(stack, normal));
+            MatcherAssert.assertThat(ItemStack.areItemStacksEqual(stack, normal), is(true));
         }
     }
 
@@ -326,12 +273,12 @@ public class InventoryUtilsTest {
 
         List<ItemStack> result = InventoryUtils.apportionStack(oversized, 16);
 
-        assertFalse(result.isEmpty());
-        assertEquals(3, result.size());
+        MatcherAssert.assertThat(result.isEmpty(), is(false));
+        MatcherAssert.assertThat(result.size(), is(3));
 
-        assertTrue(ItemStack.areItemStacksEqual(result.get(0), normal));
-        assertTrue(ItemStack.areItemStacksEqual(result.get(1), normal));
-        assertTrue(ItemStack.areItemStacksEqual(result.get(2), remainder));
+        MatcherAssert.assertThat(ItemStack.areItemStacksEqual(result.get(0), normal), is(true));
+        MatcherAssert.assertThat(ItemStack.areItemStacksEqual(result.get(1), normal), is(true));
+        MatcherAssert.assertThat(ItemStack.areItemStacksEqual(result.get(2), remainder), is(true));
     }
 
     @Test
@@ -340,14 +287,14 @@ public class InventoryUtilsTest {
 
         inventory.insertItem(1, new ItemStack(Items.FEATHER, 1), false);
 
-        assertTrue(inventory.getStackInSlot(0).isEmpty());
-        assertFalse(inventory.getStackInSlot(1).isEmpty());
+        MatcherAssert.assertThat(inventory.getStackInSlot(0).isEmpty(), is(true));
+        MatcherAssert.assertThat(inventory.getStackInSlot(1).isEmpty(), is(false));
 
         List<ItemStack> result = InventoryUtils.deepCopy(inventory, true);
 
-        assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
-        assertTrue(result.get(0).isEmpty());
+        MatcherAssert.assertThat(result.isEmpty(), is(false));
+        MatcherAssert.assertThat(result.size(), is(2));
+        MatcherAssert.assertThat(result.get(0).isEmpty(), is(true));
     }
 
     @Test
@@ -356,13 +303,13 @@ public class InventoryUtilsTest {
         ItemStack feather = new ItemStack(Items.FEATHER, 1);
         inventory.insertItem(1, feather, false);
 
-        assertTrue(inventory.getStackInSlot(0).isEmpty());
-        assertFalse(inventory.getStackInSlot(1).isEmpty());
+        MatcherAssert.assertThat(inventory.getStackInSlot(0).isEmpty(), is(true));
+        MatcherAssert.assertThat(inventory.getStackInSlot(1).isEmpty(), is(false));
 
         List<ItemStack> result = InventoryUtils.deepCopy(inventory, false);
 
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertTrue(ItemStack.areItemStacksEqual(feather, result.get(0)));
+        MatcherAssert.assertThat(result.isEmpty(), is(false));
+        MatcherAssert.assertThat(result.size(), is(1));
+        MatcherAssert.assertThat(ItemStack.areItemStacksEqual(feather, result.get(0)), is(true));
     }
 }

@@ -41,7 +41,7 @@ public enum SystemCall {
 
     public static SystemCall getFromName(String name) {
         for (SystemCall value : SystemCall.values()) {
-            if (value.name.toLowerCase().equals(name.toLowerCase())) {
+            if (value.name.equalsIgnoreCase(name)) {
                 return value;
             } else if(value.getTranslateKey().equals(name)) {
                 return value;

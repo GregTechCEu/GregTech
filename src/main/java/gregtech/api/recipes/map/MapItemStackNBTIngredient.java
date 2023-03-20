@@ -1,26 +1,32 @@
 package gregtech.api.recipes.map;
 
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MapItemStackNBTIngredient extends MapItemStackIngredient {
-    @Nullable
-    protected NBTCondition condition = null;
-    @Nullable
-    protected NBTMatcher matcher = null;
-
-    public MapItemStackNBTIngredient(ItemStack stack, @Nullable NBTMatcher matcher, @Nullable NBTCondition condition) {
-        super(stack);
-        this.matcher = matcher;
-        this.condition = condition;
-    }
+    protected GTRecipeInput gtRecipeInput = null;
 
     public MapItemStackNBTIngredient(ItemStack stack, int meta, NBTTagCompound tag) {
         super(stack, meta, tag);
+    }
+
+    public MapItemStackNBTIngredient(ItemStack s, GTRecipeInput gtRecipeInput) {
+        super(s, s.getMetadata(), null);
+        this.gtRecipeInput = gtRecipeInput;
+    }
+
+    @Nonnull
+    public static List<AbstractMapIngredient> from(@Nonnull GTRecipeInput r) {
+        ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
+        for (ItemStack s : r.getInputStacks()) {
+            list.add(new MapItemStackNBTIngredient(s, r));
+        }
+        return list;
     }
 
     @Override
@@ -37,26 +43,26 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         }
         if (obj instanceof MapItemStackNBTIngredient) {
             MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
-            if (this.matcher != null && other.matcher != null) {
-                if (!this.matcher.equals(other.matcher)) {
-                    return false;
-                }
+            if (this.stack.getItem() != other.stack.getItem()) {
+                return false;
             }
-            if (this.condition != null && other.condition != null) {
-                if (!this.condition.equals(other.condition)) {
-                    return false;
-                }
+            if (this.meta != other.meta) {
+                return false;
             }
-            //NBT condition is only available on the MapItemStackNBTIngredient created by from the Recipe, so
-            //the evaluate method is called from the comparing MapItemStackNBTIngredient that is on the RecipeMap
-            return ItemStack.areItemsEqual(stack, other.stack) && other.matcher.evaluate(this.stack, other.condition);
+            if (this.gtRecipeInput != null) {
+                if (other.gtRecipeInput != null) {
+                    return gtRecipeInput.equalIgnoreAmount(other.gtRecipeInput);
+                }
+            } else if (other.gtRecipeInput != null) {
+                return other.gtRecipeInput.acceptsStack(this.stack);
+            }
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "MapItemStackIngredient{" + "item=" + stack.getItem().getRegistryName() + "}" + "{meta=" + meta + "} {matcher=" + matcher + "}" + "{condition=" + condition + "}";
+        return "MapItemStackNBTIngredient{" + "item=" + stack.getItem().getRegistryName() + "}" + "{meta=" + meta + "}";
     }
 
     @Override

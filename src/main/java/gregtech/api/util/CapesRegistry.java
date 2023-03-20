@@ -2,8 +2,8 @@ package gregtech.api.util;
 
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.SPacketNotifyCapeChange;
+import gregtech.api.GregTechAPI;
+import gregtech.core.network.packets.PacketNotifyCapeChange;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
@@ -212,7 +212,7 @@ public class CapesRegistry {
 
     public static void giveCape(UUID uuid, ResourceLocation cape) {
         WORN_CAPES.put(uuid, cape);
-        NetworkHandler.channel.sendToAll(new SPacketNotifyCapeChange(uuid, cape).toFMLPacket());
+        GregTechAPI.networkHandler.sendToAll(new PacketNotifyCapeChange(uuid, cape));
         save();
     }
 
@@ -220,10 +220,10 @@ public class CapesRegistry {
     public static void loadWornCapeOnLogin(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
             UUID uuid = player.getPersistentID();
-            NetworkHandler.channel.sendToAll(new SPacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)).toFMLPacket()); // sync to others
+            GregTechAPI.networkHandler.sendToAll(new PacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid))); // sync to others
             for (EntityPlayerMP otherPlayer : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) { // sync to login
                 uuid = otherPlayer.getPersistentID();
-                NetworkHandler.channel.sendTo(new SPacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)).toFMLPacket(), (EntityPlayerMP) player);
+                GregTechAPI.networkHandler.sendTo(new PacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)), (EntityPlayerMP) player);
             }
         }
     }

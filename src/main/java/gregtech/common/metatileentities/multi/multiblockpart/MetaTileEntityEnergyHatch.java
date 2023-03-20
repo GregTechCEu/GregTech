@@ -11,10 +11,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
-import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -132,6 +131,13 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
     public boolean canRenderFrontFaceX() {
         return isExportHatch;
     }
@@ -165,7 +171,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     @Override
     public void doExplosion(float explosionPower) {
         if (getController() != null)
-            getController().explodeMultiblock();
+            getController().explodeMultiblock(explosionPower);
         else {
             super.doExplosion(explosionPower);
         }

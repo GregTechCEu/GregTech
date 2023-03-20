@@ -11,43 +11,36 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-
-import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
+
+    private static final int MAX_PARALLELS = 8;
 
     private boolean isActive;
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
         this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
-        this.recipeMapWorkable.setParallelLimit(8);
+        this.recipeMapWorkable.setParallelLimit(MAX_PARALLELS);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntitySteamOven(metaTileEntityId);
-    }
-
-    private void setActive(boolean active) {
-        this.isActive = active;
-        if (!getWorld().isRemote) {
-            if (isStructureFormed()) {
-                replaceFireboxAsActive(active);
-            }
-            writeCustomData(IS_WORKING, buf -> buf.writeBoolean(isActive));
-            markDirty();
-        }
     }
 
     @Override
@@ -85,77 +78,15 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (ConfigHolder.machines.steelSteamMultiblocks) {
             if (sourcePart != null && isFireboxPart(sourcePart)) {
-                return isActive ? Textures.STEEL_FIREBOX_ACTIVE : Textures.STEEL_FIREBOX;
+                return lastActive ? Textures.STEEL_FIREBOX_ACTIVE : Textures.STEEL_FIREBOX;
             }
             return Textures.SOLID_STEEL_CASING;
 
         } else {
             if (sourcePart != null && isFireboxPart(sourcePart)) {
-                return isActive ? Textures.BRONZE_FIREBOX_ACTIVE : Textures.BRONZE_FIREBOX;
+                return lastActive ? Textures.BRONZE_FIREBOX_ACTIVE : Textures.BRONZE_FIREBOX;
             }
             return Textures.BRONZE_PLATED_BRICKS;
-        }
-    }
-
-    private void replaceFireboxAsActive(boolean isActive) {
-        BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos blockPos = centerPos.add(x, 0, z);
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                if (blockState.getBlock() instanceof BlockFireboxCasing) {
-                    blockState = blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive);
-                    getWorld().setBlockState(blockPos, blockState);
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void updateFormedValid() {
-        super.updateFormedValid();
-        if (isActive != recipeMapWorkable.isActive()) {
-            setActive(recipeMapWorkable.isActive());
-        }
-    }
-
-    @Override
-    public void onRemoval() {
-        super.onRemoval();
-        if (!getWorld().isRemote && isStructureFormed()) {
-            replaceFireboxAsActive(false);
-        }
-    }
-
-    @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
-        this.isActive = false;
-        replaceFireboxAsActive(false);
-    }
-
-    @Override
-    public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return sourcePart == null ? 0 : (isActive ? 15 : 0);
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeBoolean(isActive);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.isActive = buf.readBoolean();
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == IS_WORKING) {
-            this.isActive = buf.readBoolean();
         }
     }
 
@@ -173,5 +104,13 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     @Override
     public int getItemOutputLimit() {
         return 1;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.multiblock.steam_.duration_modifier"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", MAX_PARALLELS));
+        tooltip.add(TooltipHelper.BLINKING_ORANGE + I18n.format("gregtech.multiblock.require_steam_parts"));
     }
 }

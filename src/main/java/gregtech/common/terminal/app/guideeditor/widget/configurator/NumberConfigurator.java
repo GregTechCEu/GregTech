@@ -9,8 +9,6 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 
-import java.awt.*;
-
 public class NumberConfigurator extends ConfiguratorWidget<Integer>{
 
     public NumberConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {

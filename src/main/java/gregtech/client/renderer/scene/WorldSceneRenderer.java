@@ -3,8 +3,8 @@ package gregtech.client.renderer.scene;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -190,7 +190,7 @@ public abstract class WorldSceneRenderer {
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
-    protected void resetCamera() {
+    protected static void resetCamera() {
         //reset viewport
         Minecraft minecraft = Minecraft.getMinecraft();
         GlStateManager.viewport(0, 0, minecraft.displayWidth, minecraft.displayHeight);
@@ -313,7 +313,7 @@ public abstract class WorldSceneRenderer {
         return this.world.rayTraceBlocks(startPos, endPos);
     }
 
-    public Vector3f project(BlockPos pos) {
+    public static Vector3f project(BlockPos pos) {
         //read current rendering parameters
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW_MATRIX_BUFFER);
         GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION_MATRIX_BUFFER);
@@ -346,7 +346,7 @@ public abstract class WorldSceneRenderer {
         return new Vector3f(winX, winY, winZ);
     }
 
-    public Vector3f unProject(int mouseX, int mouseY) {
+    public static Vector3f unProject(int mouseX, int mouseY) {
         //read depth of pixel under mouse
         GL11.glReadPixels(mouseX, mouseY, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, PIXEL_DEPTH_BUFFER);
 

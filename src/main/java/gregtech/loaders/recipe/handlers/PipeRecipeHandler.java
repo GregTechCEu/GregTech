@@ -3,7 +3,6 @@ package gregtech.loaders.recipe.handlers;
 import com.google.common.base.CaseFormat;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -84,7 +83,7 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material.toString()),
+            ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
                     GTUtility.copyAmount(2, pipeStack), " s ", "hXw",
                     'X', new UnificationEntry(OrePrefix.plate, material));
         }
@@ -109,7 +108,7 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("small_%s_pipe", material.toString()),
+            ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
                     pipeStack, "wXh",
                     'X', new UnificationEntry(OrePrefix.plate, material));
         }
@@ -134,7 +133,7 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material.toString()),
+            ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
                     pipeStack, "XXX", "w h",
                     'X', new UnificationEntry(OrePrefix.plate, material));
         }
@@ -159,7 +158,7 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("large_%s_pipe", material.toString()),
+            ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
                     pipeStack, "XXX", "w h", "XXX",
                     'X', new UnificationEntry(OrePrefix.plate, material));
         }
@@ -184,7 +183,7 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else if (OrePrefix.plateDouble.doGenerateItem(material)) {
-            ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material.toString()),
+            ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
                     pipeStack, "XXX", "w h", "XXX",
                     'X', new UnificationEntry(OrePrefix.plateDouble, material));
         }
@@ -199,7 +198,7 @@ public class PipeRecipeHandler {
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copyAmount(4, smallPipe))
-                .notConsumable(new IntCircuitIngredient(4))
+                .circuitMeta(4)
                 .outputs(quadPipe)
                 .duration(30)
                 .EUt(VA[ULV])
@@ -215,7 +214,7 @@ public class PipeRecipeHandler {
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copyAmount(9, smallPipe))
-                .notConsumable(new IntCircuitIngredient(9))
+                .circuitMeta(9)
                 .outputs(nonuplePipe)
                 .duration(40)
                 .EUt(VA[ULV])

@@ -61,7 +61,7 @@ public class ClipboardRenderer implements IIconRegister {
     }
 
     @SideOnly(Side.CLIENT)
-    public void renderBoard(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
+    public static void renderBoard(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
         translation.translate(0.5, 0.5, 0.5);
         translation.rotate(Math.toRadians(90.0 * rotations.indexOf(rotation)), Rotation.axes[1]);
         translation.translate(-0.5, -0.5, -0.5);
@@ -73,7 +73,7 @@ public class ClipboardRenderer implements IIconRegister {
     }
 
     @SideOnly(Side.CLIENT)
-    public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
+    public static void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.pushMatrix();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;

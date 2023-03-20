@@ -1,7 +1,5 @@
 package gregtech.api.recipes.map;
 
-import gregtech.api.recipes.RecipeMap;
-
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -3,25 +3,23 @@ package gregtech.api.pipenet.tile;
 import com.google.common.base.Preconditions;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -52,9 +50,8 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public final boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
-        if (side == null || coverDefinition == null) {
-            return false;
-        }
+        Preconditions.checkNotNull(side, "side");
+        Preconditions.checkNotNull(coverDefinition, "coverDefinition");
         CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, side);
         if (!canPlaceCoverOnSide(side) || !coverBehavior.canAttach()) {
             return false;
@@ -70,17 +67,13 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_PIPE, buffer -> {
-            buffer.writeByte(side.getIndex());
-            buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
-            coverBehavior.writeInitialSyncData(buffer);
-        });
+        writeCustomData(COVER_ATTACHED_PIPE, CoverIO.getCoverPlacementCustomDataWriter(side, coverBehavior));
         if (coverBehavior.shouldAutoConnect()) {
             holder.setConnection(side, true, false);
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
-        GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
+        AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
     }
 
@@ -167,7 +160,14 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public double getCoverPlateThickness() {
-        return holder.getPipeType().getThickness() >= 1 ? 0 : 1.0 / 16.0;
+        float thickness = holder.getPipeType().getThickness();
+        // no cover plate for pipes >= 1 block thick
+        if (thickness >= 1) return 0;
+
+        // If the available space for the cover is less than the regular cover plate thickness, use that
+
+        // need to divide by 2 because thickness is centered on the block, so the space is half on each side of the pipe
+        return Math.min(1.0 / 16.0, (1.0 - thickness) / 2);
     }
 
     @Override
@@ -238,29 +238,11 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void writeInitialSyncData(PacketBuffer buf) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
-            if (coverBehavior != null) {
-                int coverId = CoverDefinition.getNetworkIdForCover(coverBehavior.getCoverDefinition());
-                buf.writeVarInt(coverId);
-                coverBehavior.writeInitialSyncData(buf);
-            } else {
-                // -1 means no cover attached
-                buf.writeVarInt(-1);
-            }
-        }
+        CoverIO.writeCoverSyncData(buf, this);
     }
 
     public void readInitialSyncData(PacketBuffer buf) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            int coverId = buf.readVarInt();
-            if (coverId != -1) {
-                CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readInitialSyncData(buf);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
     }
 
     public void writeCustomData(int dataId, Consumer<PacketBuffer> writer) {
@@ -269,14 +251,9 @@ public class PipeCoverableImplementation implements ICoverable {
 
     public void readCustomData(int dataId, PacketBuffer buf) {
         if (dataId == COVER_ATTACHED_PIPE) {
-            //cover placement event
-            EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            int coverId = buf.readVarInt();
-            CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
-            CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, placementSide);
-            this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
-            coverBehavior.readInitialSyncData(buf);
-            holder.scheduleChunkForRenderUpdate();
+            CoverIO.readCoverPlacement(buf, this,
+                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
+                    holder::scheduleChunkForRenderUpdate);
         } else if (dataId == COVER_REMOVED_PIPE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
@@ -294,34 +271,11 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void writeToNBT(NBTTagCompound data) {
-        NBTTagList coversList = new NBTTagList();
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = coverBehaviors[coverSide.getIndex()];
-            if (coverBehavior != null) {
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                ResourceLocation coverId = coverBehavior.getCoverDefinition().getCoverId();
-                tagCompound.setString("CoverId", coverId.toString());
-                tagCompound.setByte("Side", (byte) coverSide.getIndex());
-                coverBehavior.writeToNBT(tagCompound);
-                coversList.appendTag(tagCompound);
-            }
-        }
-        data.setTag("Covers", coversList);
+        CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
     }
 
     public void readFromNBT(NBTTagCompound data) {
-        NBTTagList coversList = data.getTagList("Covers", NBT.TAG_COMPOUND);
-        for (int index = 0; index < coversList.tagCount(); index++) {
-            NBTTagCompound tagCompound = coversList.getCompoundTagAt(index);
-            if (tagCompound.hasKey("CoverId", NBT.TAG_STRING)) {
-                EnumFacing coverSide = EnumFacing.VALUES[tagCompound.getByte("Side")];
-                ResourceLocation coverId = new ResourceLocation(tagCompound.getString("CoverId"));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readFromNBT(tagCompound);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class ToggleEnergyConsumerBehavior implements IItemBehaviour {
         lines.add(I18n.format("behavior.toggle_energy_consumer.tooltip"));
     }
 
-    public boolean isItemActive(ItemStack itemStack) {
+    public static boolean isItemActive(ItemStack itemStack) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         return tagCompound != null && tagCompound.getBoolean("Active");
     }

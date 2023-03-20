@@ -77,8 +77,12 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
 
     protected void removePipeNetFromChunk(ChunkPos chunkPos, T pipeNet) {
         List<T> list = this.pipeNetsByChunk.get(chunkPos);
-        if (list != null) list.remove(pipeNet);
-        if (list.isEmpty()) this.pipeNetsByChunk.remove(chunkPos);
+        if (list != null) {
+            list.remove(pipeNet);
+            if (list.isEmpty()) {
+                this.pipeNetsByChunk.remove(chunkPos);
+            }
+        }
     }
 
     public void removeNode(BlockPos nodePos) {

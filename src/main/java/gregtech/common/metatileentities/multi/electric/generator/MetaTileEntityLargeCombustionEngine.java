@@ -101,8 +101,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.1", GTValues.V[tier]));
-        tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_eut", GTValues.V[tier]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_hour_lubricant", 1000));
         if (isExtreme) {
             tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.boost_extreme", GTValues.V[tier] * 4));
         } else {

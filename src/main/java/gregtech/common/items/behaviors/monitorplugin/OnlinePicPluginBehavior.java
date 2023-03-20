@@ -129,7 +129,7 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
-        if (!this.url.equals("")) {
+        if (!this.url.isEmpty()) {
             if (texture != null && texture.hasTexture()) {
                 texture.render(-0.5f, -0.5f, 1, 1, this.rotation, this.scaleX, this.scaleY, this.flippedX, this.flippedY);
             } else

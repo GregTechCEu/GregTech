@@ -32,10 +32,12 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
     public static final int TRANSFER_RATE = 8000; // mB/t
+    private static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");
 
     protected CoverPump.PumpMode pumpMode;
     private int color;
@@ -154,7 +156,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                 .drawCheckerboard(4, 4));
         widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
-                .setValidator(str -> str.matches("[0-9a-fA-F]*")));
+                .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
         widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));

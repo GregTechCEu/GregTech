@@ -1,0 +1,14 @@
+{
+  "section": "Hatches",
+  "title": "Muffler Hatch",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Electric Blast Furnace§r requires a §3Muffler Hatch§r to run. This hatch must be §cunobstructed§r so it can output its beautiful smoke particles.\n\nWhen a recipe is performed, there is a small chance for the §3Muffler Hatch§r to give bonus items, typically tiny Dusts of Ash.\n\n§9Note:§r Do not try to automate the extraction of items from the §3Muffler Hatch§r, it is not intended. It voids excess when full, so do not worry about it stopping machines from running.\n\n\n§bLore:§r In GregTech 5, polluting multiblocks had Muffler Hatches. The higher tier the hatch, the lower the Pollution.\nPollution had interesting effects such as turning grass and dirt into sand.\nMuffler Hatches in GTCEu are more about the look (can you deny that the particles look good!?) and small rewards, rather than punishing game mechanics."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "muffler_hatch.lv"
+}

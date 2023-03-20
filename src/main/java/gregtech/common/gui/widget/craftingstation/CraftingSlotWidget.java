@@ -114,7 +114,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         }
     }
 
-    private boolean canMerge(ItemStack stack, ItemStack stack1) {
+    private static boolean canMerge(ItemStack stack, ItemStack stack1) {
         if (stack.isEmpty()) return true;
         if (ItemStack.areItemsEqual(stack, stack1) && ItemStack.areItemStackTagsEqual(stack, stack1)) {
             return stack.getCount() + stack1.getCount() <= stack.getMaxStackSize();
@@ -122,7 +122,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         return false;
     }
 
-    private boolean canMergeToInv(OverlayedItemHandler inventory, ItemStackKey stack, int crafts) {
+    private static boolean canMergeToInv(OverlayedItemHandler inventory, ItemStackKey stack, int crafts) {
         return inventory.insertStackedItemStackKey(stack, crafts) == 0;
     }
 

@@ -5,7 +5,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
-import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -21,13 +20,10 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockFireboxCasing;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -38,16 +34,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
-    protected List<BlockPos> variantActiveBlocks;
-    protected boolean lastActive;
-
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler inputFluidInventory;
@@ -101,7 +93,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
-        variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
     }
 
     @Override
@@ -109,40 +100,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         super.invalidateStructure();
         resetTileAbilities();
         this.recipeMapWorkable.invalidate();
-        this.replaceVariantBlocksActive(false);
-        variantActiveBlocks.clear();
-        lastActive = false;
-    }
-
-    protected void replaceVariantBlocksActive(boolean isActive) {
-        if (variantActiveBlocks != null) {
-            for (BlockPos blockPos : variantActiveBlocks) {
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                if (blockState.getBlock() instanceof VariantActiveBlock) {
-                    getWorld().setBlockState(blockPos, blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive));
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onRemoval() {
-        super.onRemoval();
-        if (!getWorld().isRemote && isStructureFormed()) {
-            replaceVariantBlocksActive(false);
-            variantActiveBlocks.clear();
-            lastActive = false;
-        }
     }
 
     @Override
     protected void updateFormedValid() {
-        if (!hasMufflerMechanics() || isMufflerFaceFree())
+        if (!hasMufflerMechanics() || isMufflerFaceFree()){
             this.recipeMapWorkable.updateWorkable();
-        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.client.casingsActiveEmissiveTextures;
-        if (lastActive != state) {
-            lastActive = state;
-            replaceVariantBlocksActive(lastActive);
         }
     }
 
@@ -178,7 +141,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 

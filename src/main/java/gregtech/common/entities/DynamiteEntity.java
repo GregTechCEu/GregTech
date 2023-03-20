@@ -97,7 +97,7 @@ public class DynamiteEntity extends EntityThrowable {
         this.posZ += this.motionZ;
         float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float) (MathHelper.atan2(this.motionX, this.motionZ) * (180D / Math.PI));
-        this.rotationPitch = (float) (MathHelper.atan2(this.motionY, (double) f) * (180D / Math.PI));
+        this.rotationPitch = (float) (MathHelper.atan2(this.motionY, f) * (180D / Math.PI));
 
         while (this.rotationPitch - this.prevRotationPitch < -180.0F) {
             this.prevRotationPitch -= 360.0F;

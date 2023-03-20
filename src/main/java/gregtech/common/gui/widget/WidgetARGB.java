@@ -21,7 +21,7 @@ public class WidgetARGB extends WidgetGroup {
         this.color = initColor;
         this.height = height;
         Predicate<String> validator = (data)->{
-            if (data.equals("")) return true;
+            if (data.isEmpty()) return true;
             try { int num = Integer.parseInt(data, 16); if (num > 255 || num < 0) return false; } catch (Exception e) { return false; } return true;
         };
         Consumer<PacketBuffer> update = (buf)->{
@@ -29,22 +29,22 @@ public class WidgetARGB extends WidgetGroup {
         };
         TextFieldWidget[] ARGB = new TextFieldWidget[4];
         ARGB[0] = new TextFieldWidget(0, 0, 20, height, true, ()->Integer.toHexString(color >> 24 & 0XFF).toUpperCase(), (data)->{
-            this.color = (data.equals("")? 0 : Integer.parseInt(data, 16)) << 24 | (color & 0X00FFFFFF);
+            this.color = (data.isEmpty() ? 0 : Integer.parseInt(data, 16)) << 24 | (color & 0X00FFFFFF);
             onColorChanged.accept(color);
             writeUpdateInfo(2, update);
         }).setValidator(validator);
         ARGB[1] = new TextFieldWidget(22, 0, 20, height, true, ()->Integer.toHexString(color >> 16 & 0XFF).toUpperCase(), (data)->{
-            this.color = (data.equals("")? 0 : Integer.parseInt(data, 16)) << 16 | (color & 0XFF00FFFF);
+            this.color = (data.isEmpty() ? 0 : Integer.parseInt(data, 16)) << 16 | (color & 0XFF00FFFF);
             onColorChanged.accept(color);
             writeUpdateInfo(2, update);
         }).setValidator(validator);
         ARGB[2] = new TextFieldWidget(44, 0, 20, height, true, ()->Integer.toHexString(color >> 8 & 0XFF).toUpperCase(), (data)->{
-            this.color = (data.equals("")? 0 : Integer.parseInt(data, 16)) << 8 | (color & 0X00FF00FF);
+            this.color = (data.isEmpty() ? 0 : Integer.parseInt(data, 16)) << 8 | (color & 0X00FF00FF);
             onColorChanged.accept(color);
             writeUpdateInfo(2, update);
         }).setValidator(validator);
         ARGB[3] = new TextFieldWidget(66, 0, 20, height, true, ()->Integer.toHexString(color & 0XFF).toUpperCase(), (data)->{
-            this.color = (data.equals("")? 0 : Integer.parseInt(data, 16)) | (color & 0XFFFFFF00);
+            this.color = (data.isEmpty() ? 0 : Integer.parseInt(data, 16)) | (color & 0XFFFFFF00);
             onColorChanged.accept(color);
             writeUpdateInfo(2, update);
         }).setValidator(validator);

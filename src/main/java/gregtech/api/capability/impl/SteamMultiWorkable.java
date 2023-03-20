@@ -19,6 +19,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         super(tileEntity, tileEntity.recipeMap, tileEntity.getSteamFluidTank(), conversionRate);
     }
 
+    @Nonnull
     @Override
     public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.APPEND_ITEMS;

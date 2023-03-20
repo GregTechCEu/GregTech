@@ -6,7 +6,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.jei.recipe.primitive.OreByProduct;
+import gregtech.integration.jei.basic.OreByProduct;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

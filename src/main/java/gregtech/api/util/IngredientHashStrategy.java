@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Objects;
+
 public class IngredientHashStrategy implements Hash.Strategy<Ingredient> {
 
     public final static IngredientHashStrategy INSTANCE = new IngredientHashStrategy();
@@ -35,7 +37,7 @@ public class IngredientHashStrategy implements Hash.Strategy<Ingredient> {
             if (a.getMatchingStacks()[i].hasTagCompound()) taga = a.getMatchingStacks()[i].getTagCompound();
             if (b.getMatchingStacks()[i].hasTagCompound()) tagb = b.getMatchingStacks()[i].getTagCompound();
             if (taga == null && tagb != null) return false;
-            else if (taga != null && !taga.equals(tagb)) return false;
+            else if (taga != null && !Objects.equals(taga, tagb)) return false;
         }
         return true;
     }

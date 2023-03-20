@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -22,20 +23,6 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setDefaultState(getState(FireboxCasingType.BRONZE_FIREBOX));
-    }
-
-    @Override
-    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        return state.getValue(ACTIVE) ? 15 : 0;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        if (state.getValue(ACTIVE)) {
-            return 0b10100000 << 16 | 0b10100000;
-        }
-        return source.getCombinedLight(pos, state.getLightValue(source, pos));
     }
 
     @Override
@@ -71,7 +58,7 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
 
         @Override
         public String getHarvestTool(IBlockState state) {
-            return "wrench";
+            return ToolClasses.WRENCH;
         }
     }
 

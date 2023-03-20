@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
@@ -15,7 +16,7 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
         setHardness(2.0f);
         setResistance(3.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 1);
+        setHarvestLevel(ToolClasses.WRENCH, 1);
         setDefaultState(getState(SignType.YELLOW_STRIPES));
     }
 

@@ -170,6 +170,10 @@ public abstract class CoverBehavior implements IUIHolder {
         return EnumActionResult.PASS;
     }
 
+    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        return EnumActionResult.PASS;
+    }
+
     /**
      * Will be called for each capability request to meta tile entity
      * Cover can override meta tile entity capabilities, modify their values, or deny accessing them

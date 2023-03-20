@@ -2,7 +2,6 @@ package gregtech.api.capability;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EUToFEProvider;
-import gregtech.api.capability.tool.*;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.common.metatileentities.converter.ConverterTrait;
 import net.minecraft.tileentity.TileEntity;
@@ -21,22 +20,6 @@ public class GregtechCapabilities {
 
     @CapabilityInject(IElectricItem.class)
     public static Capability<IElectricItem> CAPABILITY_ELECTRIC_ITEM = null;
-
-    @CapabilityInject(IWrenchItem.class)
-    public static Capability<IWrenchItem> CAPABILITY_WRENCH = null;
-
-    @CapabilityInject(ICutterItem.class)
-    public static Capability<ICutterItem> CAPABILITY_CUTTER = null;
-
-    @CapabilityInject(IScrewdriverItem.class)
-    public static Capability<IScrewdriverItem> CAPABILITY_SCREWDRIVER = null;
-
-    @CapabilityInject(ISoftHammerItem.class)
-    public static Capability<ISoftHammerItem> CAPABILITY_MALLET = null;
-
-    @CapabilityInject(IHammerItem.class)
-    public static Capability<IHammerItem> CAPABILITY_HAMMER = null;
-
 
     @CapabilityInject(IFuelable.class)
     public static Capability<IFuelable> CAPABILITY_FUELABLE = null;

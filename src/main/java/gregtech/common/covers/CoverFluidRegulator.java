@@ -11,6 +11,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +28,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.message.FormattedMessage;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 
@@ -206,11 +210,11 @@ public class CoverFluidRegulator extends CoverPump {
         return fs2;
     }
 
-    private Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
-                                                           Predicate<IFluidTankProperties> tankTypeFilter,
-                                                           Predicate<FluidStack> fluidTypeFilter) {
+    private static Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
+                                                                  Predicate<IFluidTankProperties> tankTypeFilter,
+                                                                  Predicate<FluidStack> fluidTypeFilter) {
 
-        final Map<FluidStack, Integer> summedFluids = new HashMap<>();
+        final Map<FluidStack, Integer> summedFluids = new Object2IntOpenHashMap<>();
         Arrays.stream(handler.getTankProperties())
                 .filter(tankTypeFilter)
                 .map(IFluidTankProperties::getContents)

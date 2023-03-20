@@ -91,8 +91,9 @@ public interface ICoverable {
                 renderState.preRenderWorld(getWorld(), getPos());
                 coverBehavior.renderCoverPlate(renderState, translation, platePipeline, plateBox, layer);
             }
+
             if (coverBehavior.canRenderInLayer(layer)) {
-                coverBehavior.renderCover(renderState, RenderUtil.adjustTrans(translation, sideFacing, 1), coverPipeline, plateBox, layer);
+                coverBehavior.renderCover(renderState, RenderUtil.adjustTrans(translation, sideFacing, 2), coverPipeline, plateBox, layer);
                 if (coverPlateThickness == 0.0 && shouldRenderBackSide() && coverBehavior.canRenderBackside()) {
                     //machine is full block, but still not opaque - render cover on the back side too
                     Matrix4 backTranslation = translation.copy();
@@ -203,7 +204,7 @@ public interface ICoverable {
             case EAST:
                 return new Cuboid6(1.0 - plateThickness, 0.0, 0.0, 1.0, 1.0, 1.0);
             default:
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Cannot get cover plate box at side " + side);
         }
     }
 

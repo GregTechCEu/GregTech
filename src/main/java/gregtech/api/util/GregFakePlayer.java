@@ -84,14 +84,10 @@ public class GregFakePlayer extends EntityPlayer {
     }
 
     @Override
-    public void onDeath(DamageSource source) {
-        return;
-    }
+    public void onDeath(DamageSource source) {/**/}
 
     @Override
-    public void onUpdate() {
-        return;
-    }
+    public void onUpdate() {/**/}
 
     @Override
     public Entity changeDimension(int dim, ITeleporter teleporter) {

@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/metallic/nugget",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/nugget",
-    "layer1": "gregtech:items/material_sets/magnetic/nugget_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

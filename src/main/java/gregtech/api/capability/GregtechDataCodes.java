@@ -35,11 +35,11 @@ public class GregtechDataCodes {
     public static final int SYNC_TILE_MODE = 500;
 
     // Clipboard
-    public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
     public static final int INIT_CLIPBOARD_NBT = 3;
 
+    public static final int UPDATE_UI = 10; // 10-36
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
 
@@ -69,6 +69,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_ROTOR_COLOR = 201;
     public static final int UPDATE_STRUCTURE_SIZE = 202;
     public static final int STRUCTURE_FORMED = 400;
+    public static final int VARIANT_RENDER_UPDATE = 410;
     public static final int IS_TAPED = 550;
     public static final int STORE_MAINTENANCE = 551;
     public static final int STORE_TAPED = 552;
@@ -76,8 +77,14 @@ public class GregtechDataCodes {
     public static final int IS_FRONT_FACE_FREE = 554;
     public static final int MAINTENANCE_MULTIPLIER = 555;
 
+    // Item Bus Item Stack Auto Collapsing
+    public static final int TOGGLE_COLLAPSE_ITEMS = 600;
+
     // Fusion Reactor
     public static final int UPDATE_COLOR = 371;
+
+    // Assembly Line
+    public static final int UPDATE_PARTICLE = 371;
 
     // Central Monitor
     public static final int UPDATE_ALL = 1;
@@ -107,11 +114,20 @@ public class GregtechDataCodes {
     // Phantom Tanks
     public static final int REMOVE_PHANTOM_FLUID_TYPE = 10;
     public static final int CHANGE_PHANTOM_FLUID = 11;
-    public static final int VOID_PHANTOM_FLUID = 12;
+    public static final int SET_PHANTOM_FLUID = 12;
     public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
 
     // Recipe Logic
     public static final int WORKABLE_ACTIVE = 1;
     public static final int WORKING_ENABLED = 5;
+
+    // Creative Energy
+    public static final int UPDATE_IO_SPEED = 1;
+
+
+    // NBT Keys
+
+    // From MetaTileEntityHolder
+    public static final String CUSTOM_NAME = "CustomName";
 
 }

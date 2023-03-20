@@ -15,9 +15,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
+import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,6 +79,13 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
     public MultiblockAbility<IRotorHolder> getAbility() {
         return MultiblockAbility.ROTOR_HOLDER;
     }
@@ -86,9 +93,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     @Override
     public void update() {
         super.update();
-
-        if (getWorld().isRemote)
-            return;
+        if (getWorld().isRemote) return;
 
         if (getOffsetTimer() % 20 == 0) {
             boolean isFrontFree = checkTurbineFaceFree();
@@ -104,8 +109,9 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             if (currentSpeed < maxSpeed) {
                 setCurrentSpeed(currentSpeed + SPEED_INCREMENT);
             }
-            if (getOffsetTimer() % 20 == 0)
+            if (getOffsetTimer() % 20 == 0) {
                 damageRotor(1 + controller.getNumMaintenanceProblems());
+            }
         } else if (!hasRotor()) {
             setCurrentSpeed(0);
         } else if (currentSpeed > 0) {
@@ -162,13 +168,12 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     private boolean onRotorHolderInteract(@Nonnull EntityPlayer player) {
-        if (player.isCreative())
-            return false;
+        if (player.isCreative()) return false;
 
         if (!getWorld().isRemote && isRotorSpinning) {
             float damageApplied = Math.min(1, currentSpeed / 1000);
             player.attackEntityFrom(DamageSources.getTurbineDamage(), damageApplied);
-            GTTriggers.ROTOR_HOLDER_DEATH.trigger((EntityPlayerMP) player);
+            AdvancementTriggers.ROTOR_HOLDER_DEATH.trigger((EntityPlayerMP) player);
             return true;
         }
         return isRotorSpinning;
@@ -230,8 +235,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     @Override
     public int getHolderPowerMultiplier() {
         int tierDifference = getTierDifference();
-        if (tierDifference == -1)
-            return -1;
+        if (tierDifference == -1) return -1;
 
         return (int) Math.pow(2, getTierDifference());
     }
@@ -246,8 +250,9 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     private int getTierDifference() {
-        if (getController() instanceof ITieredMetaTileEntity)
+        if (getController() instanceof ITieredMetaTileEntity) {
             return getTier() - ((ITieredMetaTileEntity) getController()).getTier();
+        }
         return -1;
     }
 
@@ -364,8 +369,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         @Nullable
         private TurbineRotorBehavior getTurbineBehavior() {
             ItemStack stack = getStackInSlot(0);
-            if (stack.isEmpty())
-                return null;
+            if (stack.isEmpty()) return null;
 
             return TurbineRotorBehavior.getInstanceFor(stack);
         }
@@ -376,40 +380,35 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         }
 
         private int getRotorColor() {
-            if (!hasRotor())
-                return -1;
+            if (!hasRotor()) return -1;
             //noinspection ConstantConditions
             return getTurbineBehavior().getPartMaterial(getStackInSlot(0)).getMaterialRGB();
 
         }
 
         private int getRotorDurabilityPercent() {
-            if (!hasRotor())
-                return 0;
+            if (!hasRotor()) return 0;
 
             //noinspection ConstantConditions
             return getTurbineBehavior().getRotorDurabilityPercent(getStackInSlot(0));
         }
 
         private int getRotorEfficiency() {
-            if (!hasRotor())
-                return -1;
+            if (!hasRotor()) return -1;
 
             //noinspection ConstantConditions
             return getTurbineBehavior().getRotorEfficiency(getTurbineStack());
         }
 
         private int getRotorPower() {
-            if (!hasRotor())
-                return -1;
+            if (!hasRotor()) return -1;
 
             //noinspection ConstantConditions
             return getTurbineBehavior().getRotorPower(getTurbineStack());
         }
 
         private void damageRotor(int damageAmount) {
-            if (!hasRotor())
-                return;
+            if (!hasRotor()) return;
             //noinspection ConstantConditions
             getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
         }
@@ -423,8 +422,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack itemStack = super.extractItem(slot, amount, simulate);
-            if (!simulate && itemStack != ItemStack.EMPTY)
-                setRotorColor(-1);
+            if (!simulate && itemStack != ItemStack.EMPTY) setRotorColor(-1);
             return itemStack;
         }
     }

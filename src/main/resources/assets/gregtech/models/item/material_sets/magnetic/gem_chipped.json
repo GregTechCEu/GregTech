@@ -1,7 +1,7 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/gem_chipped",
   "textures": {
     "layer0": "gregtech:items/material_sets/magnetic/gem_chipped",
-    "layer1": "gregtech:items/material_sets/magnetic/plate_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

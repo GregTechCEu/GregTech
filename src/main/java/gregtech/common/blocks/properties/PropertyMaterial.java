@@ -38,7 +38,7 @@ public class PropertyMaterial extends PropertyHelper<Material> {
     @Override
     public Optional<Material> parseValue(@Nonnull String value) {
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(value);
-        if (this.allowedValues.contains(material)) {
+        if (material != null && this.allowedValues.contains(material)) {
             return Optional.of(material);
         }
         return Optional.of(Materials.NULL);

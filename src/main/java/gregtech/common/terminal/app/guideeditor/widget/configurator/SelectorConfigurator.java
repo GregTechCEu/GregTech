@@ -5,7 +5,6 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 
-import java.awt.*;
 import java.util.List;
 
 public class SelectorConfigurator extends ConfiguratorWidget<String>{

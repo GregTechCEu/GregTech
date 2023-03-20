@@ -1,6 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import com.google.common.collect.UnmodifiableIterator;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.*;
@@ -11,12 +10,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -33,6 +32,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -40,6 +41,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class TricorderBehavior implements IItemBehaviour {
 
@@ -61,7 +64,7 @@ public class TricorderBehavior implements IItemBehaviour {
                     player.sendMessage(line);
                 }
                 if (ConfigHolder.client.toolUseSounds)
-                    world.playSound(null, pos, GTSounds.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
+                    world.playSound(null, pos, GTSoundEvents.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
             } else {
                 player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
             }
@@ -69,6 +72,7 @@ public class TricorderBehavior implements IItemBehaviour {
         return EnumActionResult.SUCCESS;
     }
 
+    @SuppressWarnings("deprecation")
     public List<ITextComponent> getScannerInfo(EntityPlayer player, World world, BlockPos pos) {
         int energyCost = 100;
 
@@ -76,7 +80,9 @@ public class TricorderBehavior implements IItemBehaviour {
 
         TileEntity tileEntity = world.getTileEntity(pos);
 
-        Block block = world.getBlockState(pos).getBlock();
+        IBlockState state = world.getBlockState(pos);
+        state = state.getBlock().getActualState(state, world, pos);
+        Block block = state.getBlock();
 
         // coordinates of the block
 
@@ -89,20 +95,25 @@ public class TricorderBehavior implements IItemBehaviour {
 
         // hardness and blast resistance
         list.add(new TextComponentTranslation("behavior.tricorder.block_hardness",
-                new TextComponentTranslation(GTUtility.formatNumbers(block.blockHardness)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(GTUtility.formatNumbers(block.getBlockHardness(state, world, pos))).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                 new TextComponentTranslation(GTUtility.formatNumbers(block.getExplosionResistance(player))).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
 
         if (debugLevel > 2) {
-            IBlockState state = world.getBlockState(pos);
-            UnmodifiableIterator<IProperty<?>> propertyItr = state.getProperties().keySet().iterator();
-            IProperty prop;
-            while (propertyItr.hasNext()) {
-                prop = propertyItr.next();
+            for (Map.Entry<IProperty<?>, Comparable<?>> prop : state.getProperties().entrySet()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.state",
-                        new TextComponentTranslation(prop.getName()),
-                        new TextComponentTranslation(state.getValue(prop).toString()).setStyle(new Style().setColor(TextFormatting.AQUA))
-                ));
+                        new TextComponentTranslation(prop.getKey().getName()),
+                        new TextComponentTranslation(prop.getValue().toString()).setStyle(new Style().setColor(TextFormatting.AQUA))));
+            }
+            if (state instanceof IExtendedBlockState) {
+                IExtendedBlockState extState = (IExtendedBlockState) state;
+                for (Map.Entry<IUnlistedProperty<?>, Optional<?>> prop : extState.getUnlistedProperties().entrySet()) {
+                    if (prop.getValue().isPresent()) {
+                        list.add(new TextComponentTranslation("behavior.tricorder.state",
+                                new TextComponentTranslation(prop.getKey().getName()),
+                                new TextComponentTranslation(prop.getValue().get().toString()).setStyle(new Style().setColor(TextFormatting.AQUA))));
+                    }
+                }
             }
         }
 
@@ -270,12 +281,12 @@ public class TricorderBehavior implements IItemBehaviour {
             if (player.isCreative()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount",
                         new TextComponentTranslation(fluid.getLocalizedName(stack)).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation("" + BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16)).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation("" + fluidPercent).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                        new TextComponentTranslation(String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16))).setStyle(new Style().setColor(TextFormatting.GOLD)),
+                        new TextComponentTranslation(String.valueOf(fluidPercent)).setStyle(new Style().setColor(TextFormatting.YELLOW))
                 ));
             } else {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount_unknown",
-                        new TextComponentTranslation("" + fluidPercent).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                        new TextComponentTranslation(String.valueOf(fluidPercent)).setStyle(new Style().setColor(TextFormatting.YELLOW))
                 ));
             }
         } else {

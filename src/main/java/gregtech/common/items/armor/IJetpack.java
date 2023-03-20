@@ -1,7 +1,6 @@
 package gregtech.common.items.armor;
 
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

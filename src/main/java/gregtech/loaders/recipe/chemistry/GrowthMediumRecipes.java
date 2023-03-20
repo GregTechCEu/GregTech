@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -133,7 +132,7 @@ public class GrowthMediumRecipes {
 
         // Sterile Growth Medium
         FLUID_HEATER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(20)
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(RawGrowthMedium.getFluid(100))
                 .fluidOutputs(SterileGrowthMedium.getFluid(100))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)

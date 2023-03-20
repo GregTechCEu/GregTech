@@ -23,8 +23,9 @@ public class CTMaterialHelpers {
 
         FluidType type = FluidType.getByName(fluidTypeName);
         if (type == null) {
-            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\", \"gas\", \"plasma\", or \"acid\"!");
-            throw new IllegalArgumentException();
+            String message = "Fluid Type must be either \"liquid\", \"gas\", \"plasma\", or \"acid\"!";
+            CraftTweakerAPI.logError(message);
+            throw new IllegalArgumentException(message);
         }
         return type;
     }
@@ -35,12 +36,14 @@ public class CTMaterialHelpers {
 
         FluidType type = FluidType.getByName(fluidTypeName);
         if (type == null) {
-            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\", \"gas\", or \"acid\"!");
-            throw new IllegalArgumentException();
+            String message = "Fluid Type must be either \"liquid\", \"gas\", or \"acid\"!";
+            CraftTweakerAPI.logError(message);
+            throw new IllegalArgumentException(message);
         }
         if (type == FluidTypes.PLASMA) {
-            CraftTweakerAPI.logError("Fluid Type cannot be \"plasma\". Use the plasma method instead.");
-            throw new IllegalArgumentException();
+            String message = "Fluid Type cannot be \"plasma\". Use the plasma method instead.";
+            CraftTweakerAPI.logError(message);
+            throw new IllegalArgumentException(message);
         }
         return type;
     }

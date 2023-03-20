@@ -1,14 +1,18 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.ISubItemHandler;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GradientUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTNT;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,15 +29,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.List;
 
-public class LighterBehaviour implements IItemBehaviour {
+public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager, ISubItemHandler {
 
     private static final String LIGHTER_OPEN = "lighterOpen";
     private static final String USES_LEFT = "usesLeft";
+    private static final Pair<Color, Color> DURABILITY_BAR_COLORS = GradientUtil.getGradient(0xF07F1D, 10);
 
     private final ResourceLocation overrideLocation;
     private final boolean usesFluid;
@@ -64,8 +72,9 @@ public class LighterBehaviour implements IItemBehaviour {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         if (entity instanceof EntityCreeper) {
-            prepareLighter(stack);
-            if (consumeFuel(player, stack)) {
+            NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
+            // If this item does not have opening mechanics, or if it does and is currently open
+            if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
                 player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
                 ((EntityCreeper) entity).ignite();
                 return true;
@@ -77,18 +86,17 @@ public class LighterBehaviour implements IItemBehaviour {
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
 
-        if (canOpen) {
-            NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
-            if (player.isSneaking() && compound.getBoolean(LIGHTER_OPEN)) {
-                compound.setBoolean(LIGHTER_OPEN, false);
-                stack.setTagCompound(compound);
-                return EnumActionResult.PASS;
-            }
+        if (canOpen && player.isSneaking()) {
+            compound.setBoolean(LIGHTER_OPEN, !compound.getBoolean(LIGHTER_OPEN));
+            stack.setTagCompound(compound);
+            return EnumActionResult.PASS;
         }
 
-        prepareLighter(stack);
-        if (consumeFuel(player, stack)) {
+        if (!player.canPlayerEdit(pos, side, player.getHeldItem(hand))) return EnumActionResult.FAIL;
+        // If this item does not have opening mechanics, or if it does and is currently open
+        if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
             player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
             IBlockState blockState = world.getBlockState(pos);
             Block block = blockState.getBlock();
@@ -117,18 +125,7 @@ public class LighterBehaviour implements IItemBehaviour {
         }
     }
 
-    private void prepareLighter(ItemStack stack) {
-        if (canOpen) {
-            NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
-            // open the lighter
-            if (!tagCompound.getBoolean(LIGHTER_OPEN)) {
-                tagCompound.setBoolean(LIGHTER_OPEN, true);
-                stack.setTagCompound(tagCompound);
-            }
-        }
-    }
-
-    private boolean consumeFuel(EntityPlayer entity, ItemStack stack) {
+    public boolean consumeFuel(EntityPlayer entity, ItemStack stack) {
         if (entity != null && entity.isCreative())
             return true;
 
@@ -185,10 +182,73 @@ public class LighterBehaviour implements IItemBehaviour {
     }
 
     @Override
-    public void onAddedToItem(@Nonnull MetaItem.MetaValueItem metaValueItem) {
+    public void addPropertyOverride(@Nonnull Item item) {
         if (overrideLocation != null) {
-            metaValueItem.getMetaItem().addPropertyOverride(overrideLocation,
-                    (stack, worldIn, entityIn) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
+            item.addPropertyOverride(overrideLocation,
+                    (stack, world, entity) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
         }
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack itemStack) {
+        if (usesFluid) {
+            // Lighters
+            IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandlerItem == null) return 0.0;
+            IFluidTankProperties properties = fluidHandlerItem.getTankProperties()[0];
+            FluidStack fluidStack = properties.getContents();
+            return fluidStack == null ? 0.0 : (double) fluidStack.amount / (double) properties.getCapacity();
+        }
+        if (hasMultipleUses) {
+            // Matchbox
+            return (double) getUsesLeft(itemStack) / (double) maxUses;
+        }
+        // no durability for Match
+        return 0.0;
+    }
+
+    @Nullable
+    @Override
+    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+        if (hasMultipleUses && usesFluid) {
+            return DURABILITY_BAR_COLORS;
+        }
+        // use default colors for Matchbox
+        return null;
+    }
+
+    @Override
+    public boolean doDamagedStateColors(ItemStack itemStack) {
+        return hasMultipleUses && !usesFluid; // don't show for Matchbox
+    }
+
+    @Override
+    public boolean showEmptyBar(ItemStack itemStack) {
+        return hasMultipleUses; // don't show for Match
+    }
+
+    @Override
+    public boolean showFullBar(ItemStack itemStack) {
+        return hasMultipleUses; // don't show for Match
+    }
+
+    @Override
+    public String getItemSubType(ItemStack itemStack) {
+        return "";
+    }
+
+    @Override
+    public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (usesFluid) {
+            // Show Lighters as filled in JEI
+            ItemStack copy = itemStack.copy();
+            IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandlerItem != null) {
+                fluidHandlerItem.fill(Materials.Butane.getFluid(Integer.MAX_VALUE), true);
+                subItems.add(copy);
+                return;
+            }
+        }
+        subItems.add(itemStack);
     }
 }

@@ -29,6 +29,7 @@ import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityL
 import gregtech.common.metatileentities.multi.multiblockpart.*;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
+import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
 import gregtech.common.metatileentities.steam.*;
 import gregtech.common.metatileentities.steam.boiler.SteamCoalBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
@@ -196,6 +197,7 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidDrill FLUID_DRILLING_RIG;
     public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
     public static MetaTileEntityCleanroom CLEANROOM;
+    public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -511,6 +513,8 @@ public class MetaTileEntities {
         ADVANCED_FLUID_DRILLING_RIG = registerMetaTileEntity(1034, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.ev"), 4));
 
         CLEANROOM = registerMetaTileEntity(1035, new MetaTileEntityCleanroom(gregtechId("cleanroom")));
+
+        CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
         // MISC MTE's START: IDs 1150-2000
 

@@ -1,7 +1,6 @@
 {
-  "parent": "item/generated",
+  "parent": "gregtech:item/material_sets/dull/crushed_purified",
   "textures": {
-    "layer0": "gregtech:items/material_sets/magnetic/crushed_purified",
-    "layer1": "gregtech:items/material_sets/magnetic/crushed_purified_overlay"
+    "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }
 }

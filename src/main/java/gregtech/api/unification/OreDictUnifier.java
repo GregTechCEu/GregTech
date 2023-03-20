@@ -1,6 +1,5 @@
 package gregtech.api.unification;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.MarkerMaterial;
@@ -66,7 +65,7 @@ public class OreDictUnifier {
 
     public static void registerMarkerMaterial(MarkerMaterial markerMaterial) {
         if (markerMaterialRegistry.containsKey(markerMaterial.toString())) {
-            throw new IllegalArgumentException(("Marker material with id " + markerMaterial.toString() + " is already registered!"));
+            throw new IllegalArgumentException(("Marker material with id " + markerMaterial + " is already registered!"));
         }
         markerMaterialRegistry.put(markerMaterial.toString(), markerMaterial);
     }

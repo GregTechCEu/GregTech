@@ -91,7 +91,7 @@ public class ItemNetHandler implements IItemHandler {
         return insertFirst(stack, simulate);
     }
 
-    public boolean checkImportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
+    public static boolean checkImportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
         if (cover == null) return true;
         if (cover instanceof CoverItemFilter) {
             CoverItemFilter filter = (CoverItemFilter) cover;
@@ -389,7 +389,7 @@ public class ItemNetHandler implements IItemHandler {
         return stack;
     }
 
-    public int countStack(IItemHandler handler, ItemStack stack, CoverRoboticArm arm, boolean isStackSpecific) {
+    public static int countStack(IItemHandler handler, ItemStack stack, CoverRoboticArm arm, boolean isStackSpecific) {
         if (arm == null) return 0;
         ItemStackKey key = new ItemStackKey(stack);
         int count = 0;

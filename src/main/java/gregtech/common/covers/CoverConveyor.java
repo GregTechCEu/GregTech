@@ -24,6 +24,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,7 +42,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -191,7 +195,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return false;
     }
 
-    protected boolean moveInventoryItemsExact(IItemHandler sourceInventory, IItemHandler targetInventory, TypeItemInfo itemInfo) {
+    protected static boolean moveInventoryItemsExact(IItemHandler sourceInventory, IItemHandler targetInventory, TypeItemInfo itemInfo) {
         //first, compute how much can we extract in reality from the machine,
         //because totalCount is based on what getStackInSlot returns, which may differ from what
         //extractItem() will return
@@ -345,7 +349,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     protected Map<ItemStackKey, TypeItemInfo> countInventoryItemsByType(IItemHandler inventory) {
-        Map<ItemStackKey, TypeItemInfo> result = new HashMap<>();
+        Map<ItemStackKey, TypeItemInfo> result = new Object2ObjectOpenHashMap<>();
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
             if (itemStack.isEmpty()) {
@@ -371,7 +375,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(IItemHandler inventory) {
-        HashMap<Object, GroupItemInfo> result = new HashMap<>();
+        Map<Object, GroupItemInfo> result = new Object2ObjectOpenHashMap<>();
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
             if (itemStack.isEmpty()) {

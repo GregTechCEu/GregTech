@@ -26,15 +26,18 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
     protected IFluidTankProperties[] properties;
     private final boolean allowSameFluidFill;
     private IFluidTankProperties[] fluidTankProperties;
+    private final int hashCode;
 
     public FluidTankList(boolean allowSameFluidFill, IFluidTank... fluidTanks) {
         this.fluidTanks = Arrays.asList(fluidTanks);
         this.allowSameFluidFill = allowSameFluidFill;
+        this.hashCode = Arrays.hashCode(fluidTanks);
     }
 
     public FluidTankList(boolean allowSameFluidFill, List<? extends IFluidTank> fluidTanks) {
         this.fluidTanks = new ArrayList<>(fluidTanks);
         this.allowSameFluidFill = allowSameFluidFill;
+        this.hashCode = Arrays.hashCode(fluidTanks.toArray());
     }
 
     public FluidTankList(boolean allowSameFluidFill, FluidTankList parent, IFluidTank... additionalTanks) {
@@ -42,6 +45,14 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
         this.fluidTanks.addAll(parent.fluidTanks);
         this.fluidTanks.addAll(Arrays.asList(additionalTanks));
         this.allowSameFluidFill = allowSameFluidFill;
+        int hash = Objects.hash(parent);
+        hash = 31 * hash + Arrays.hashCode(additionalTanks);
+        this.hashCode = hash;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 
     public List<IFluidTank> getFluidTanks() {
@@ -181,7 +192,7 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
             if (fluidTank instanceof FluidTank) {
                 writeTag = ((FluidTank) fluidTank).writeToNBT(new NBTTagCompound());
             } else if (fluidTank instanceof INBTSerializable) {
-                writeTag = ((INBTSerializable) fluidTank).serializeNBT();
+                writeTag = ((INBTSerializable<?>) fluidTank).serializeNBT();
             } else writeTag = new NBTTagCompound();
 
             tanks.appendTag(writeTag);

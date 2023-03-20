@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
@@ -20,7 +21,6 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -427,15 +427,13 @@ public abstract class Widget {
             buffer.pos(x + width, y, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
             buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y + height, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            tessellator.draw();
         } else {
             buffer.pos(x + width, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
             buffer.pos(x, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-            tessellator.draw();
         }
+        buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
@@ -590,18 +588,18 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void playButtonClickSound() {
+    protected static void playButtonClickSound() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @SideOnly(Side.CLIENT)
-    protected boolean isShiftDown() {
-        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+    protected static boolean isShiftDown() {
+        return TooltipHelper.isShiftDown();
     }
 
     @SideOnly(Side.CLIENT)
-    protected boolean isCtrlDown() {
-        return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+    protected static boolean isCtrlDown() {
+        return TooltipHelper.isCtrlDown();
     }
 
     public boolean isRemote() {

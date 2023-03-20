@@ -45,7 +45,7 @@ public class ColorWidget extends WidgetGroup {
                     writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(red), true)
-                .setValidator(this::checkValid);
+                .setValidator(ColorWidget::checkValid);
         TextFieldWidget greenField = new TextFieldWidget(barWidth + 5, barHeight + 5, 30, barHeight, textFieldBackground, null, null)
                 .setTextResponder((t) -> {
                     setGreen(t.isEmpty() ? 0 : Integer.parseInt(t));
@@ -55,7 +55,7 @@ public class ColorWidget extends WidgetGroup {
                     writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(green), true)
-                .setValidator(this::checkValid);
+                .setValidator(ColorWidget::checkValid);
         TextFieldWidget blueField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 2, 30, barHeight, textFieldBackground, null, null)
                 .setTextResponder((t) -> {
                     setBlue(t.isEmpty() ? 0 : Integer.parseInt(t));
@@ -65,7 +65,7 @@ public class ColorWidget extends WidgetGroup {
                     writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(blue), true)
-                .setValidator(this::checkValid);
+                .setValidator(ColorWidget::checkValid);
         TextFieldWidget alphaField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 3, 30, barHeight, textFieldBackground, null, null)
                 .setTextResponder((t) -> {
                     setAlpha(t.isEmpty() ? 0 : Integer.parseInt(t));
@@ -75,7 +75,7 @@ public class ColorWidget extends WidgetGroup {
                     writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(alpha), true)
-                .setValidator(this::checkValid);
+                .setValidator(ColorWidget::checkValid);
         this.addWidget(redField);
         this.addWidget(greenField);
         this.addWidget(blueField);
@@ -208,7 +208,7 @@ public class ColorWidget extends WidgetGroup {
         }
     }
 
-    private boolean checkValid(String input) {
+    private static boolean checkValid(String input) {
         if (input.length() > 3) return false;
         if (input.isEmpty()) return true;
         try {

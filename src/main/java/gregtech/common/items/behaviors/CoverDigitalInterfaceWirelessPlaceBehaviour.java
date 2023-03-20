@@ -63,7 +63,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.setTagCompound(NBTUtil.createPosTag(pos));
             NBTTagCompound tag = itemStack.getTagCompound();
-            if(!tag.hasKey("dimension")) {
+            if (tag != null && !tag.hasKey("dimension")) {
                 tag.setInteger("dimension", world.provider.getDimension());
             }
             return EnumActionResult.SUCCESS;
@@ -86,6 +86,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
         String binding = pos == null ? "---" : String.format("%d, %d, %d", pos.getX(), pos.getY(), pos.getZ());
         lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.1"));
         lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.2"));
-        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3", binding));
+        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3"));
+        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.4", binding));
     }
 }

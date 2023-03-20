@@ -7,11 +7,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @author brachy84
  */
 public class OreDictExprFilter {
+
+    private static final Pattern PARTS_PATTERN = Pattern.compile("\\*+");
 
     /**
      * Parses the given expression and creates a List.
@@ -165,7 +168,7 @@ public class OreDictExprFilter {
             filter = filter.substring(1);
         }
 
-        String[] parts = filter.split("\\*+");
+        String[] parts = PARTS_PATTERN.split(filter);
 
         return (rule.logic == MatchLogic.NOT) ^ matches(parts, oreDict, startWild, endWild);
     }

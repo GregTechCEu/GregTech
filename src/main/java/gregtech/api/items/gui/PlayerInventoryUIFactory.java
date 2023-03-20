@@ -43,8 +43,8 @@ public class PlayerInventoryUIFactory extends UIFactory<PlayerInventoryHolder> {
         ItemStack itemStack;
         try {
             itemStack = syncData.readItemStack();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return new PlayerInventoryHolder(entityPlayer, enumHand, itemStack);
     }

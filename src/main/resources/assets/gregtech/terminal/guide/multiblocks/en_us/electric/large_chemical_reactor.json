@@ -1,7 +1,14 @@
 {
   "section": "Electric",
   "title": "Large Chemical Reactor",
-  "stream": [],
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §3Large Chemical Reactor (LCR)§r is a multiblock §3Chemical Reactor§r with more input/output slots, which can handle more recipes thanks to Teflon.\n\nThe §3LCR§r can perform some exclusive reactions which allow you to combine multiple normal §3Chemical Reactor§r steps into a §6single step§r. Examples below:\n§9-§r §aNitrogen Dioxide§r (for Nitric Acid and Dinitrogen Tetroxide)\n§9-§r §aSulfuric Acid§r\n§9-§r §aPhenol§r\n§9-§r §aEpichlorohydrin§r (you need it for Epoxy§r!)\n§9-§r §aEpoxy§r\n\n\nThere are also §3LCR§r exclusive recipes. For example §aRadon§r requires it.\n\nAll §dOverclocks§r in the §3LCR§r are §6100% efficient§r; each overclock will §5quadruple the speed§r, as opposed to doubling it.\n\n\n§9Tip:§r Given the amount of LCRs you may end up using, I would recommend using the §dwallsharing§r to its full potential.\nYou may share one 2A (standard) §3Energy Hatch§r with 2 LCRs.\nYou may share §3Input/Output Hatches§r, but be careful to not make them run the wrong recipes.\nKeep in mind Maintenance is not sharable."
+      ]
+    }
+  ],
   "fixed": [],
   "metatileentity": "large_chemical_reactor"
 }

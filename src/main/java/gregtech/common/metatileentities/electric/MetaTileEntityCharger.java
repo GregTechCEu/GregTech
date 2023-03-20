@@ -98,8 +98,15 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 }

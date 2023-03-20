@@ -34,8 +34,7 @@ public class FusionEUToStartProperty extends RecipeProperty<Long> {
                 TextFormattingUtil.formatLongToCompactString(castValue(value))) + getFusionTier(castValue(value)), x, y, color);
     }
 
-    private String getFusionTier(Long eu) {
-
+    private static String getFusionTier(Long eu) {
         Map.Entry<Long, String> mapEntry = registeredFusionTiers.ceilingEntry(eu);
 
         if (mapEntry == null) {

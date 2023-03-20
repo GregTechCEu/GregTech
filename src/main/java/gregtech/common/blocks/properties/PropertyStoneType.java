@@ -36,7 +36,7 @@ public class PropertyStoneType extends PropertyHelper<StoneType> {
     @Override
     public Optional<StoneType> parseValue(@Nonnull String value) {
         StoneType stoneType = StoneType.STONE_TYPE_REGISTRY.getObject(value);
-        if (this.allowedValues.contains(stoneType)) {
+        if (stoneType != null && this.allowedValues.contains(stoneType)) {
             return Optional.of(stoneType);
         }
         return Optional.absent();

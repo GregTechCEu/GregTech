@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.GTValues;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
@@ -87,7 +86,7 @@ public class SeparationRecipes {
         for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
             if (item instanceof ItemFood) {
                 ItemFood itemFood = (ItemFood) item;
-                Collection<ItemStack> subItems = ModHandler.getAllSubItems(new ItemStack(item, 1, GTValues.W));
+                Collection<ItemStack> subItems = GTUtility.getAllSubItems(new ItemStack(item, 1, GTValues.W));
                 for (ItemStack itemStack : subItems) {
                     int healAmount = itemFood.getHealAmount(itemStack);
                     float saturationModifier = itemFood.getSaturationModifier(itemStack);

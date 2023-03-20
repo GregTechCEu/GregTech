@@ -7,6 +7,7 @@ import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
@@ -15,7 +16,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class ItemListSlotWidget extends Widget {
         this.index = index;
     }
 
-    public String formatItemAmount(int itemAmount) {
+    public static String formatItemAmount(int itemAmount) {
         return Integer.toString(itemAmount);
     }
 
@@ -77,7 +77,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private int getAmountToTake(ItemStack itemStack, int maxAmount, int button) {
+    private static int getAmountToTake(ItemStack itemStack, int maxAmount, int button) {
         int maxStackSize = Math.min(itemStack.getMaxStackSize(), maxAmount);
         return button == 0 ? maxStackSize : (maxStackSize >= 2 ? maxStackSize / 2 : 1);
     }
@@ -211,7 +211,7 @@ public class ItemListSlotWidget extends Widget {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            boolean shiftClick = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+            boolean shiftClick = TooltipHelper.isShiftDown();
             if (!shiftClick) {
                 dispatchMouseClick(button);
             } else {

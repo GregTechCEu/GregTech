@@ -29,11 +29,11 @@ public class GasCollectorDimensionProperty extends RecipeProperty<IntList> {
                 getDimensionsForRecipe(castValue(value))), x, y, color);
     }
 
-    private String getDimensionsForRecipe(List<Integer> value) {
+    private static String getDimensionsForRecipe(List<Integer> value) {
         Map<Integer, String> dimNames = WorldGenRegistry.getNamedDimensions();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < value.size(); i++) {
-            builder.append(dimNames.getOrDefault(value.get(i), "" + value.get(i)));
+            builder.append(dimNames.getOrDefault(value.get(i), String.valueOf(value.get(i))));
             if (i != value.size() - 1)
                 builder.append(", ");
         }

@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -69,6 +68,11 @@ public class ChemistryRecipes {
                 .fluidOutputs(LiquidOxygen.getFluid(1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
+        VACUUM_RECIPES.recipeBuilder()
+                .fluidInputs(Helium.getFluid(1000))
+                .fluidOutputs(LiquidHelium.getFluid(1000))
+                .duration(240).EUt(VA[EV]).buildAndRegister();
+
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))
@@ -87,19 +91,19 @@ public class ChemistryRecipes {
                 .duration(80).EUt(48).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidOutputs(Air.getFluid(10000))
                 .dimension(0)
                 .duration(200).EUt(16).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .circuitMeta(2)
                 .fluidOutputs(NetherAir.getFluid(10000))
                 .dimension(-1)
                 .duration(200).EUt(64).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(3))
+                .circuitMeta(3)
                 .fluidOutputs(EnderAir.getFluid(10000))
                 .dimension(1)
                 .duration(200).EUt(256).buildAndRegister();

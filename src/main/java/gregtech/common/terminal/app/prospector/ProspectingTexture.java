@@ -1,6 +1,6 @@
 package gregtech.common.terminal.app.prospector;
 
-import gregtech.api.net.packets.PacketProspecting;
+import gregtech.core.network.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.client.utils.RenderUtil;

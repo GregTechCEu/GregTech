@@ -110,9 +110,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         if (!itemPipe.handlers.isEmpty() && itemPipe.defaultHandler != null) {
             // take handlers from old pipe
             handlers.clear();
-            for (Map.Entry<EnumFacing, ItemNetHandler> entry : itemPipe.handlers.entrySet()) {
-                handlers.put(entry.getKey(), entry.getValue());
-            }
+            handlers.putAll(itemPipe.handlers);
             defaultHandler = itemPipe.defaultHandler;
             checkNetwork();
         } else {

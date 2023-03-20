@@ -545,14 +545,13 @@ public class GifDecoder {
 
                         case 0xff: // application extension
                             readBlock();
-                            String app = "";
+                            StringBuilder builder = new StringBuilder();
                             for (int i = 0; i < 11; i++) {
-                                app += (char) block[i];
+                                builder.append((char) block[i]);
                             }
-                            if (app.equals("NETSCAPE2.0")) {
+                            if (builder.toString().equals("NETSCAPE2.0")) {
                                 readNetscapeExt();
-                            } else
-                                skip(); // don't care
+                            } else skip(); // don't care
                             break;
 
                         default: // uninteresting extension
@@ -589,11 +588,11 @@ public class GifDecoder {
 
     /** Reads GIF file header information. */
     protected void readHeader() {
-        String id = "";
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 6; i++) {
-            id += (char) read();
+            builder.append((char) read());
         }
-        if (!id.startsWith("GIF")) {
+        if (!builder.toString().startsWith("GIF")) {
             status = STATUS_FORMAT_ERROR;
             return;
         }

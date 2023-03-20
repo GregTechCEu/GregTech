@@ -1,0 +1,14 @@
+{
+  "section": "Electric",
+  "title": "Basic Ore Drilling Plant",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "A completely §doptional§r Multiblock.\n\nThe §3Larger Miner§r is ridiculously good to collect ores from veins!\n\nOres are mined as if they were §amacerated§r, but they yield §6three times§r as many §dCrushed ores§r.\n\nYou will need §aDrilling Fluid§r automation to run this.\n\nYou might also want to use a §3Quantum Tunnel§r from AE2 and §3GTEU P2P Tunnels§r to transfer the items and to power it up.\n\n\n§bLore:§r There were some interesting side effects from porting this over from Gregicality, as the multiblock originated from GregTech 5... It\u0027s not perfect, as there isn\u0027t really any advantage on upgrading this miner to the advanced versions. We were thinking of rebalancing the energy costs and yield per tier, so there may be rework for this miner at some point!"
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "large_miner.ev"
+}

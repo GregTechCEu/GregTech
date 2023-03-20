@@ -3,10 +3,8 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -15,8 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -100,28 +96,6 @@ public class AdvancedJetpack extends Jetpack {
     @Override
     public float getFallDamageReduction() {
         return 2.0f;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isNeedDrawHUD() {
-        return true;
-    }
-
-    @Override
-    public void drawHUD(ItemStack item) {
-        super.addCapacityHUD(item);
-        IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (cont == null) return;
-        if (!cont.canUse(energyPerUse)) return;
-        NBTTagCompound data = item.getTagCompound();
-        if (data != null) {
-            if (data.hasKey("hover")) {
-                String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
-            }
-        }
-        this.HUD.draw();
-        this.HUD.reset();
     }
 
     @Override

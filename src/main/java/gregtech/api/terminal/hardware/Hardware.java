@@ -2,8 +2,6 @@ package gregtech.api.terminal.hardware;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

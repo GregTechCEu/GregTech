@@ -34,6 +34,10 @@ public interface IArmorLogic {
 
     EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack);
 
+    default boolean canBreakWithDamage(ItemStack stack) {
+        return false;
+    }
+
     default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
 
     }
@@ -66,5 +70,13 @@ public interface IArmorLogic {
     @Nullable
     default ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {
         return null;
+    }
+
+    /**
+     *
+     * @return the value to multiply heat damage by
+     */
+    default float getHeatResistance() {
+        return 1.0f;
     }
 }

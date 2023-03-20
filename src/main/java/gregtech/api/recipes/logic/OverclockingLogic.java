@@ -1,7 +1,5 @@
 package gregtech.api.recipes.logic;
 
-import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
 import javax.annotation.Nonnull;
@@ -15,52 +13,42 @@ public class OverclockingLogic {
     public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
-
     /**
      * applies standard logic for overclocking, where each overclock modifies energy and duration
      *
      * @param recipeEUt         the EU/t of the recipe to overclock
-     * @param maximumVoltage    the maximum voltage the recipe is allowed to be run at
+     * @param maxVoltage        the maximum voltage the recipe is allowed to be run at
      * @param recipeDuration    the duration of the recipe to overclock
      * @param durationDivisor   the value to divide the duration by for each overclock
      * @param voltageMultiplier the value to multiply the voltage by for each overclock
-     * @param maxOverclocks     the maximum amount of overclocks allowed
+     * @param numberOfOCs       the maximum amount of overclocks allowed
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    public static int[] standardOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
-        int overclockedEUt = recipeEUt;
-        double overclockedDuration = recipeDuration;
+    @Nonnull
+    public static int[] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration, int numberOfOCs, double durationDivisor, double voltageMultiplier) {
+        double resultDuration = recipeDuration;
+        double resultVoltage = recipeEUt;
 
-        while (overclockedEUt * voltageMultiplier <= GTValues.V[GTUtility.getTierByVoltage(maximumVoltage)] && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
-            overclockedEUt *= voltageMultiplier;
-            overclockedDuration /= durationDivisor;
-            maxOverclocks--;
+        for (; numberOfOCs > 0; numberOfOCs--) {
+            // it is important to do voltage first,
+            // so overclocking voltage does not go above the limit before changing duration
+
+            double potentialVoltage = resultVoltage * voltageMultiplier;
+            // do not allow voltage to go above maximum
+            if (potentialVoltage > maxVoltage) break;
+
+            double potentialDuration = resultDuration / durationDivisor;
+            // do not allow duration to go below one tick
+            if (potentialDuration < 1) break;
+            // update the duration for the next iteration
+            resultDuration = potentialDuration;
+
+            // update the voltage for the next iteration after everything else
+            // in case duration overclocking would waste energy
+            resultVoltage = potentialVoltage;
         }
-        return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
-    }
 
-    /**
-     * Identical to {@link OverclockingLogic#standardOverclockingLogic(int, long, int, double, double, int)}, except
-     * it does not enforce "maximumVoltage" being in-line with a voltage-tier.
-     *
-     * @param recipeEUt the EU/t of the recipe to overclock
-     * @param maximumVoltage the maximum voltage the recipe is allowed to be run at
-     * @param recipeDuration the duration of the recipe to overclock
-     * @param durationDivisor the value to divide the duration by for each overclock
-     * @param voltageMultiplier the value to multiply the voltage by for each overclock
-     * @param maxOverclocks the maximum amount of overclocks allowed
-     * @return an int array of {OverclockedEUt, OverclockedDuration}
-     */
-    public static int[] unlockedVoltageOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
-        int overclockedEUt = recipeEUt;
-        double overclockedDuration = recipeDuration;
-
-        while (overclockedEUt * voltageMultiplier <= maximumVoltage && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
-            overclockedEUt *= voltageMultiplier;
-            overclockedDuration /= durationDivisor;
-            maxOverclocks--;
-        }
-        return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
+        return new int[]{(int) resultVoltage, (int) resultDuration};
     }
 
     @Nonnull
@@ -74,13 +62,13 @@ public class OverclockingLogic {
         // perfect overclock for every 1800k over recipe temperature
         if (amountPerfectOC > 0) {
             // use the normal overclock logic to do perfect OCs up to as many times as calculated
-            int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, amountPerfectOC);
+            int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, amountPerfectOC, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
 
             // overclock normally as much as possible after perfects are exhausted
-            return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
+            return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], maxOverclocks - amountPerfectOC, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
         }
 
         // no perfects are performed, do normal overclocking
-        return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
+        return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, maxOverclocks, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
     }
 }

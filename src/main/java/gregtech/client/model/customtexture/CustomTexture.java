@@ -18,6 +18,7 @@ import org.lwjgl.util.vector.Vector;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -116,7 +117,7 @@ public class CustomTexture {
         }
 
         @SuppressWarnings("unchecked")
-        private <T extends Vector> T[] fromData(List<float[]> data, int size) {
+        private static <T extends Vector> T[] fromData(List<float[]> data, int size) {
             Vector[] ret = size == 2 ? new Vector2f[data.size()] : new Vector3f[data.size()];
             for (int i = 0; i < data.size(); i++) {
                 ret[i] = size == 2 ? new Vector2f(data.get(i)[0], data.get(i)[1]) : new Vector3f(data.get(i)[0], data.get(i)[1], data.get(i)[2]);
@@ -124,6 +125,7 @@ public class CustomTexture {
             return (T[]) ret;
         }
 
+        @Nonnull
         @Override
         public VertexFormat getVertexFormat() {
             return vertexFormat;

@@ -34,7 +34,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     private WorldGeneratorImpl() { }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onOreGenerate(OreGenEvent.GenerateMinable event) {
+    public static void onOreGenerate(OreGenEvent.GenerateMinable event) {
         EventType eventType = event.getType();
         if (ConfigHolder.worldgen.disableVanillaOres && ORE_EVENT_TYPES.contains(eventType)) {
             event.setResult(Result.DENY);
@@ -53,7 +53,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
         }
     }
 
-    private void generateInternal(World world, int selfGridX, int selfGridZ, int chunkX, int chunkZ, Random random) {
+    private static void generateInternal(World world, int selfGridX, int selfGridZ, int chunkX, int chunkZ, Random random) {
         int halfSizeX = (GRID_SIZE_X - 1) / 2;
         int halfSizeZ = (GRID_SIZE_Z - 1) / 2;
         for (int gridX = -halfSizeX; gridX <= halfSizeX; gridX++) {
