@@ -34,7 +34,7 @@ public abstract class UIFactory<E extends IUIHolder> {
         }
         ModularUI uiTemplate = createUITemplate(holder, player);
 
-        if(uiTemplate == null) {
+        if (uiTemplate == null) {
             // Central monitor Screen can return null if clicked when not powered, maybe other multis too
             return;
         }

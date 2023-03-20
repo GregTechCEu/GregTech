@@ -51,14 +51,14 @@ public class MachineItemBlock extends ItemBlock {
      *
      * @param creativeTab Creative tab to be checked during {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList)}
      * @throws NullPointerException     If {@code creativeTab == null}
-     * @throws IllegalArgumentException If {@code creativeTab == GregTechAPI.TAB_GREGTECH || creativeTab == CreativeTabs.SEARCH}
+     * @throws IllegalArgumentException If {@code creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH}
      *
      * @see MetaTileEntity#isInCreativeTab(CreativeTabs)
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
-        if (creativeTab == GregTechAPI.TAB_GREGTECH) {
-            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH.tabLabel + " as additional creative tab is redundant.");
+        if (creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES) {
+            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH_MACHINES.tabLabel + " as additional creative tab is redundant.");
         } else if (creativeTab == CreativeTabs.SEARCH) {
             throw new IllegalArgumentException("Adding " + CreativeTabs.SEARCH.tabLabel + " as additional creative tab is redundant.");
         }

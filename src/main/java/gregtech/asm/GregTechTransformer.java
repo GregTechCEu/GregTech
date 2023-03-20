@@ -75,6 +75,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             }
             case BlockVisitor.TARGET_CLASS_NAME: {
                 try {
+                    // must use Class#forName because CTM is client side only, and there is no other way to check
                     Class.forName("team.chisel.ctm.CTM", false, Launch.classLoader);
                 } catch (ClassNotFoundException ignored) {
                     ClassReader classReader = new ClassReader(basicClass);
@@ -120,7 +121,8 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
 
-                ModContainer container = Loader.instance().getIndexedModList().get("nuclearcraft");
+                // fix NC recipe compat different depending on overhaul vs underhaul
+                ModContainer container = Loader.instance().getIndexedModList().get(GTValues.MODID_NC);
                 if (container.getVersion().contains("2o")) { // overhauled
                     classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new), 0);
                 } else {
@@ -129,17 +131,18 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
-                if (Loader.isModLoaded(GTValues.MODID_ECORE)) {
-                    return basicClass;
+                // do not conflict with EnderCore's changes, which already do what we need
+                if (!Loader.instance().getIndexedModList().containsKey(GTValues.MODID_ECORE)) {
+                    ClassNode classNode = new ClassNode();
+                    ClassReader classReader = new ClassReader(basicClass);
+                    classReader.accept(classNode, 0);
+                    Iterator<MethodNode> methods = classNode.methods.iterator();
+                    RenderItemVisitor.transform(methods);
+                    ClassWriter classWriter = new ClassWriter(0);
+                    classNode.accept(classWriter);
+                    return classWriter.toByteArray();
                 }
-                ClassNode classNode = new ClassNode();
-                ClassReader classReader = new ClassReader(basicClass);
-                classReader.accept(classNode, 0);
-                Iterator<MethodNode> methods = classNode.methods.iterator();
-                RenderItemVisitor.transform(methods);
-                ClassWriter classWriter = new ClassWriter(0);
-                classNode.accept(classWriter);
-                return classWriter.toByteArray();
+                break;
             }
             case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);

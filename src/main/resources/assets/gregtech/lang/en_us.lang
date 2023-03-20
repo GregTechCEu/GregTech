@@ -513,7 +513,7 @@ metaitem.tool.datastick.tooltip=A Low Capacity Data Storage
 metaitem.tool.dataorb.name=Data Orb
 metaitem.tool.dataorb.tooltip=A High Capacity Data Storage
 metaitem.circuit.integrated.name=Programmed Circuit
-metaitem.circuit.integrated.tooltip=Use to open configuration GUI
+metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
@@ -2437,6 +2437,10 @@ tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
+itemGroup.gregtech.machines=Machines (GT)
+itemGroup.gregtech.cables=Cables (GT)
+itemGroup.gregtech.pipes=Pipes (GT)
+itemGroup.gregtech.tools=Tools (GT)
 itemGroup.gregtech.materials=Materials (GT)
 itemGroup.gregtech.ores=Ores (GT)
 
@@ -2654,9 +2658,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
 gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
-gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.steam_rock_breaker_steel.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the Miner!
 
@@ -4006,6 +4010,7 @@ gregtech.machine.quantum_chest.items_stored=Item Amount:
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
+gregtech.machine.quantum_tank.tooltip.voiding_enabled=Excess Fluid Voiding §aEnabled
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
 gregtech.machine.super_tank.hv.name=Super Tank III
@@ -4064,13 +4069,13 @@ gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depend
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
-gregtech.machine.rock_breaker.lv.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.lv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
-gregtech.machine.rock_breaker.mv.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.mv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
-gregtech.machine.rock_breaker.hv.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.hv.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
-gregtech.machine.rock_breaker.ev.tooltip=Place Water and Lava horizontally adjacent
+gregtech.machine.rock_breaker.ev.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.iv.tooltip=Cryogenic Magma Solidifier R-8200
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
@@ -4812,13 +4817,11 @@ gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fConfigurator Slot§r/n§7Place a §6Programmed Circuit§7 in this slot to/n§7change its configured value./n§7Hold §6Shift§7 when clicking buttons to change by §65./n§aA Programmed Circuit in this slot is also valid for recipe inputs.§r
+gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n/n§7Left-Click to add ghost programmed circuit/n§7Right-Click to remove ghost programmed circuit/n/n§7Left-Click with a §6Programmed Circuit§7 in hand to/n§7set this slot's config to its value./n/n§7Hold Shift when clicking buttons to change by 5.§r
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
-gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
-gregtech.gui.fluid_voiding_partial.tooltip.disabled=Fluid Voiding (Above %d%%) Disabled
-gregtech.gui.fluid_voiding_all.tooltip.enabled=Fluid Voiding (All) Enabled
-gregtech.gui.fluid_voiding_all.tooltip.disabled=Fluid Voiding (All) Disabled
+gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
+gregtech.gui.fluid_voiding.tooltip.disabled=Excess Fluid Voiding Disabled
 gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.

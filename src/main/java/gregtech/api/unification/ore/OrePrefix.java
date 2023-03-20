@@ -157,6 +157,8 @@ public class OrePrefix {
     public static final OrePrefix log = new OrePrefix("log", -1, null, null, 0, null);
     // Prefix for Planks. Usually "plankWood". Introduced by Eloraam
     public static final OrePrefix plank = new OrePrefix("plank", -1, null, null, 0, null);
+    // Prefix for Wood Slabs
+    public static final OrePrefix slab = new OrePrefix("slab", -1, null, null, 0, null);
 
     // Prefix to determine which kind of Rock this is.
     public static final OrePrefix stone = new OrePrefix("stone", -1, Materials.Stone, null, SELF_REFERENCING, null);
