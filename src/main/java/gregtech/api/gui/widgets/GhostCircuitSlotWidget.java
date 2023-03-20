@@ -46,11 +46,12 @@ public class GhostCircuitSlotWidget extends SlotWidget {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
             if (this.circuitInventory.hasCircuitValue()) {
                 int dir = wheelDelta >= 0 ? 1 : -1;
-                int newConfig = this.circuitInventory.getCircuitValue() + dir;
+                int prevValue = this.circuitInventory.getCircuitValue();
+                this.circuitInventory.addCircuitValue(dir * (isShiftDown() ? 5 : 1));
 
-                if (newConfig >= IntCircuitIngredient.CIRCUIT_MIN && newConfig <= IntCircuitIngredient.CIRCUIT_MAX) {
-                    this.circuitInventory.setCircuitValue(newConfig);
-                    writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newConfig));
+                int newValue = this.circuitInventory.getCircuitValue();
+                if (prevValue != newValue) {
+                    writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
                 }
             } else {
                 super.mouseWheelMove(mouseX, mouseY, wheelDelta);
