@@ -396,13 +396,23 @@ public class MachineRecipeLoader {
                     .EUt(VA[ULV]).duration(200)
                     .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(plate, Glass, 6)
-                    .input(dust, Glowstone, 1)
-                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
-                    .outputs(MetaBlocks.LAMPS[0].getItemVariant(EnumDyeColor.byMetadata(i), 6))
-                    .EUt(VA[ULV]).duration(40)
-                    .buildAndRegister();
+            int circuit = 1;
+            for (int i2 = 0; i2 < MetaBlocks.LAMPS.length; i2 += 2, circuit++) {
+                EnumDyeColor color = EnumDyeColor.byMetadata(i);
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(plate, Glass, 6)
+                        .input(dust, Glowstone, 1)
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                        .outputs(MetaBlocks.LAMPS[i2].getItemVariant(color, 6))
+                        .circuitMeta(circuit).EUt(VA[ULV]).duration(40)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(lampGt, MarkerMaterials.Color.COLORS.get(color))
+                        .outputs(MetaBlocks.LAMPS[i2].getItemVariant(color))
+                        .circuitMeta(circuit).EUt(VA[ULV]).duration(10)
+                        .buildAndRegister();
+            }
         }
 
         CANNER_RECIPES.recipeBuilder()

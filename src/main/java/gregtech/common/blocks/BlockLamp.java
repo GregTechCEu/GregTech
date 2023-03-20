@@ -1,6 +1,9 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantBlock;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.model.modelfactories.LampBakedModel;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.BloomEffectUtil;
@@ -200,5 +203,15 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
                 s -> s,
                 s -> models.get(s.getValue(VARIANT))
         )));
+    }
+
+    public void registerOreDict() {
+        if (this.powered) {
+            return;
+        }
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            OreDictUnifier.registerOre(new ItemStack(this, 1, color.getMetadata()),
+                    OrePrefix.lampGt, MarkerMaterials.Color.COLORS.get(color));
+        }
     }
 }

@@ -97,7 +97,7 @@ public class MetaBlocks {
     public static BlockHermeticCasing HERMETIC_CASING;
     public static BlockCleanroomCasing CLEANROOM_CASING;
 
-    // light/no light, bloom/no-bloom, bordered/borderless, powered/unpowered, normal/inverted
+    // light/no light, bloom/no-bloom, bordered/borderless, normal/inverted, powered/unpowered
     public static final BlockLamp[] LAMPS = new BlockLamp[32];
 
     public static BlockAsphalt ASPHALT;
@@ -481,6 +481,10 @@ public class MetaBlocks {
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.Wood, GTValues.M)));
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), OrePrefix.plank, Materials.TreatedWood);
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.TreatedWood, GTValues.M)));
+
+        for (int i = 0; i < LAMPS.length; i += 2) {
+            LAMPS[i].registerOreDict();
+        }
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {
             Material material = entry.getKey();
