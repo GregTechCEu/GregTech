@@ -57,6 +57,7 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        validateSlot(slot);
         setCircuitConfigFromStack(stack);
     }
 
@@ -68,18 +69,22 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
+        validateSlot(slot);
         return this.circuitStack;
     }
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        validateSlot(slot);
         return stack; // reject all item insertions
     }
 
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (amount <= 0) return ItemStack.EMPTY;
+        validateSlot(slot);
         if (!simulate) {
             setCircuitConfig(NO_CONFIG);
         }
@@ -88,7 +93,12 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
 
     @Override
     public int getSlotLimit(int slot) {
+        validateSlot(slot);
         return 1;
+    }
+
+    protected void validateSlot(int slot) {
+        if (slot != 0) throw new IndexOutOfBoundsException("Slot index out of bounds: " + slot);
     }
 
     @Override
