@@ -251,7 +251,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                 for (int i = 0; i < legacyCircuitInventory.getSlots(); i++) {
                     ItemStack stack = legacyCircuitInventory.getStackInSlot(i);
                     if (stack.isEmpty()) continue;
-                    GTTransferUtils.insertItem(this.importItems, stack, false);
+                    stack = GTTransferUtils.insertItem(this.importItems, stack, false);
+                    // If there's no space left in importItems, just set it as ghost circuit and void the item
+                    this.circuitInventory.setCircuitConfigFromStack(stack);
                 }
             } else {
                 this.circuitInventory.read(data);
