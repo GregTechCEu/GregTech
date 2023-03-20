@@ -590,7 +590,7 @@ public class FirstDegreeMaterials {
         StainlessSteel = new Material.Builder(323, "stainless_steel")
                 .ingot(3)
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .temperature(2011))
+                        .temperature(2011).color(0xFF6038))
                 .color(0xC8C8DC).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
@@ -604,7 +604,7 @@ public class FirstDegreeMaterials {
         Steel = new Material.Builder(324, "steel")
                 .ingot(3)
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .temperature(2046))
+                        .temperature(2046).color(0xFF5028))
                 .color(0x808080).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING,
                         GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE, GENERATE_GEAR)
@@ -699,7 +699,7 @@ public class FirstDegreeMaterials {
         WroughtIron = new Material.Builder(335, "wrought_iron")
                 .ingot()
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                        .temperature(2011))
+                        .temperature(2011).color(0xD92D2D))
                 .color(0xC8B4B4).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
@@ -1120,7 +1120,7 @@ public class FirstDegreeMaterials {
 
         NitrogenDioxide = new Material.Builder(399, "nitrogen_dioxide")
                 .fluid(FluidTypes.GAS)
-                .color(0x85FCFF)
+                .color(0xF05800)
                 .components(Nitrogen, 1, Oxygen, 2)
                 .build();
 

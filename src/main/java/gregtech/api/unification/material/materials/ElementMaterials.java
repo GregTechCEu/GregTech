@@ -375,7 +375,7 @@ public class ElementMaterials {
         Iron = new Material.Builder(51, "iron")
                 .ingot()
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
-                                .temperature(1811),
+                                .temperature(1811).color(0xD90202),
                         new MaterialFluidDefinition.Builder(FluidTypes.PLASMA, FluidState.PLASMA)
                                 .temperature(31811))
                 .fluid(FluidTypes.LIQUID, FluidTypes.PLASMA)

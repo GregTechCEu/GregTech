@@ -305,7 +305,7 @@ public class OrganicChemistryMaterials {
 
         DinitrogenTetroxide = new Material.Builder(1039, "dinitrogen_tetroxide")
                 .fluid(FluidTypes.GAS)
-                .color(0x004184)
+                .color(0x570C02)
                 .components(Nitrogen, 2, Oxygen, 4)
                 .build();
 
