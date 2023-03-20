@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -16,6 +15,7 @@ import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -31,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -42,7 +43,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -53,7 +53,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
+public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
 
     private final int tier;
@@ -88,15 +88,27 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
-                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
-        Textures.QUANTUM_CHEST_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+/*        for (EnumFacing facing : EnumFacing.VALUES) {
+            GlStateManager.disableCull();
+            if (facing != this.frontFacing)
+                Textures.VOLTAGE_CASINGS[tier].renderSided(facing, renderState, translation, ArrayUtils.add(pipeline,
+                        new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+            GlStateManager.enableCull();
+        }*/
+        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderMachine(renderState, translation, pipeline, this.getFrontFacing());
+        Textures.QUANTUM_CHEST_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             if (isAutoOutputItems()) {
                 Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
+
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        Textures.QUANTUM_CHEST_RENDERER[this.tier].render(x, y, z, this, partialTicks);
     }
 
     @Override
@@ -375,8 +387,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 return GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE.cast(this);
             }
             return null;
-        }
-        else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(combinedInventory);
         }
         return super.getCapability(capability, side);
@@ -438,6 +449,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (!getWorld().isRemote) {
             markDirty();
         }
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(getPos());
     }
 
     private class QuantumChestItemHandler implements IItemHandler {
@@ -504,7 +520,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             boolean insertMatching = areItemStackIdentical(stack, exportItems);
 
             // If the item being inserted does not match the item in the export slot, insert into the input slot and do not virtualize
-            if(!insertMatching) {
+            if (!insertMatching) {
                 return MetaTileEntityQuantumChest.this.importItems.insertItem(0, stack, simulate);
             }
 
@@ -517,7 +533,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             amountInsertedIntoExport = Math.min(spaceInExport, stack.getCount());
 
             // If we had more Items than would fit into the export slot, virtualize the remainder
-            if(amountInsertedIntoExport < stack.getCount()) {
+            if (amountInsertedIntoExport < stack.getCount()) {
                 long amountLeftInChest = itemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
                 insertedAmount = (int) Math.min(stack.getCount() - amountInsertedIntoExport, amountLeftInChest);
 
@@ -549,5 +565,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public boolean needsSneakToRotate() {
         return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
     }
 }
