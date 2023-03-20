@@ -513,7 +513,7 @@ metaitem.tool.datastick.tooltip=一个小容量的数据存储器
 metaitem.tool.dataorb.name=数据球
 metaitem.tool.dataorb.tooltip=一个大容量的数据存储器
 metaitem.circuit.integrated.name=编程电路
-metaitem.circuit.integrated.tooltip=右击以打开配置界面
+metaitem.circuit.integrated.tooltip=右击以打开配置界面/n/n手持并潜行右击带有编程电路槽位的机器可应用相应配置。/n
 metaitem.circuit.integrated.gui=编程电路配置
 metaitem.circuit.integrated.jei_description=JEI将仅显示匹配当前编程电路配置的配方。\n\n在编程电路配置界面中调整配置以查看对应配方。
 
@@ -4010,6 +4010,7 @@ gregtech.machine.quantum_chest.items_stored=物品数量：
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=小小身体，大大肚量
+gregtech.machine.quantum_tank.tooltip.voiding_enabled=超量流体销毁§a已启用
 gregtech.machine.super_tank.lv.name=超级缸 I
 gregtech.machine.super_tank.mv.name=超级缸 II
 gregtech.machine.super_tank.hv.name=超级缸 III
@@ -4816,13 +4817,11 @@ gregtech.gui.fluid_auto_output.tooltip.disabled=流体自动输出已禁用
 gregtech.gui.item_auto_output.tooltip.enabled=物品自动输出已启用
 gregtech.gui.item_auto_output.tooltip.disabled=物品自动输出已禁用
 gregtech.gui.charger_slot.tooltip=§f充能设备槽位§r/n§7从 %s §7等级的电池中提取电能/n§7为 %s §7等级的工具与电池充能
-gregtech.gui.configurator_slot.tooltip=§f配置器槽位§r/n§7将§6编程电路§7放入该槽位以变更配置值。/n§7按住 §6Shift§7 时，单次点击可使配置值加或减 §65。/n§a集成电路也可作为配方输入物放入该槽位。§r
+gregtech.gui.configurator_slot.tooltip=§f编程电路槽位§r/n/n§7左击可添加虚拟编程电路/n§7右击则可移除虚拟编程电路/n/n§7手持§6编程电路§7左击可将其配置值应用于该槽位。/n/n§7按住 Shift 时，单次点击可使配置值加或减 5。§r
 gregtech.gui.fluid_lock.tooltip.enabled=流体锁定已启用
 gregtech.gui.fluid_lock.tooltip.disabled=流体锁定已禁用
-gregtech.gui.fluid_voiding_partial.tooltip.enabled=流体销毁（%d%%以上部分）已启用
-gregtech.gui.fluid_voiding_partial.tooltip.disabled=流体销毁（%d%%以上部分）已禁用
-gregtech.gui.fluid_voiding_all.tooltip.enabled=流体销毁（全部）已启用
-gregtech.gui.fluid_voiding_all.tooltip.disabled=流体销毁（全部）已禁用
+gregtech.gui.fluid_voiding.tooltip.enabled=超量流体销毁已启用
+gregtech.gui.fluid_voiding.tooltip.disabled=超量流体销毁已禁用
 gregtech.gui.silktouch.enabled=已启用精准采集：点击以禁用。/n§7需在待机状态下切换。
 gregtech.gui.silktouch.disabled=已禁用精准采集：点击以启用。/n§7需在待机状态下切换。
 gregtech.gui.chunkmode.enabled=已启用区块模式：点击以禁用。/n§7需在待机状态下切换。
