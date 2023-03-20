@@ -20,7 +20,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
@@ -125,10 +128,14 @@ public class OreBakedModel implements IBakedModel {
         private final MaterialIconSet iconSet;
         private final boolean emissive;
 
+        private final int hash;
+
         private Entry(StoneType stoneType, MaterialIconSet iconSet, boolean emissive) {
             this.stoneType = stoneType;
             this.iconSet = iconSet;
             this.emissive = emissive;
+
+            this.hash = Objects.hash(stoneType.name, iconSet.name, emissive);
         }
 
         public ModelResourceLocation getModelId() {
@@ -148,7 +155,7 @@ public class OreBakedModel implements IBakedModel {
 
         @Override
         public int hashCode() {
-            return Objects.hash(stoneType.name, iconSet.name, emissive);
+            return hash;
         }
 
         @Override
