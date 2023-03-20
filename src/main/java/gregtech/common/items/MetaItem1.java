@@ -130,22 +130,22 @@ public class MetaItem1 extends StandardMetaItem {
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
-                .addComponents(new AdvancedFluidStats(8000, true, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(8000, true, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE)), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
-                .addComponents(new AdvancedFluidStats(32000, true, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(32000, true, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE)), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
-                .addComponents(new AdvancedFluidStats(64000, true, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(64000, true, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE)), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
-                .addComponents(new AdvancedFluidStats(128000, true, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature()), new ItemFluidContainer())
+                .addComponents(new AdvancedFluidStats(128000, true, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE)), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
