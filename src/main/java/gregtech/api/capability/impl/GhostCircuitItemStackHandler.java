@@ -15,27 +15,56 @@ import java.util.List;
 
 public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
 
+    /**
+     * Special circuit value indicating no circuit value is set.
+     */
     public static final int NO_CONFIG = -1;
 
     private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
 
-    private int circuitConfig = NO_CONFIG;
+    private int circuitValue = NO_CONFIG;
     private ItemStack circuitStack = ItemStack.EMPTY;
 
-    public int getCircuitConfig() {
-        return this.circuitConfig;
+    /**
+     * Return the circuit value, or {@link GhostCircuitItemStackHandler#NO_CONFIG} if
+     * no circuit value is set.
+     *
+     * @return A valid circuit value if present, otherwise {@link GhostCircuitItemStackHandler#NO_CONFIG}
+     */
+    public int getCircuitValue() {
+        return this.circuitValue;
     }
 
-    public boolean hasCircuitConfig() {
-        return this.circuitConfig != NO_CONFIG;
+    /**
+     * Returns whether this instance contains valid circuit value.
+     *
+     * @return Whether this instance contains valid circuit value.
+     */
+    public boolean hasCircuitValue() {
+        return this.circuitValue != NO_CONFIG;
     }
 
-    public void setCircuitConfig(int config) {
-        if (config < IntCircuitIngredient.CIRCUIT_MIN || config > IntCircuitIngredient.CIRCUIT_MAX)
-            config = NO_CONFIG;
-        if (this.circuitConfig == config) return;
-        this.circuitConfig = config;
-        this.circuitStack = config == NO_CONFIG ? ItemStack.EMPTY : IntCircuitIngredient.getIntegratedCircuit(config);
+    /**
+     * Set the circuit value of this inventory to given value and update the item. The item is set to circuit item
+     * with corresponding int value, or an empty itemstack if {@link GhostCircuitItemStackHandler#NO_CONFIG} is given.
+     * <p>
+     * The value is expected to be either a valid circuit value
+     * ({@link IntCircuitIngredient#CIRCUIT_MIN} ~ {@link IntCircuitIngredient#CIRCUIT_MAX}, both inclusive)
+     * or {@link GhostCircuitItemStackHandler#NO_CONFIG}; any other value will produce IllegalArgumentException.
+     *
+     * @param config New config value
+     * @throws IllegalArgumentException On invalid input
+     */
+    public void setCircuitValue(int config) {
+        if (config == NO_CONFIG) {
+            this.circuitValue = NO_CONFIG;
+            this.circuitStack = ItemStack.EMPTY;
+        } else if (config >= IntCircuitIngredient.CIRCUIT_MIN && config <= IntCircuitIngredient.CIRCUIT_MAX) {
+            this.circuitValue = config;
+            this.circuitStack = IntCircuitIngredient.getIntegratedCircuit(config);
+        } else {
+            throw new IllegalArgumentException("Circuit value out of range: " + config);
+        }
         for (MetaTileEntity mte : notifiableEntities) {
             if (mte != null && mte.isValid()) {
                 addToNotifiedList(mte, this, false);
@@ -43,14 +72,27 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
         }
     }
 
-    public void setCircuitConfigFromStack(@Nonnull ItemStack stack) {
-        setCircuitConfig(!stack.isEmpty() && IntCircuitIngredient.isIntegratedCircuit(stack) ?
+    /**
+     * Set the circuit value of this inventory from given item. Circuit value is set to valid circuit value only if
+     * the supplied item is int circuit; providing any other item will set the circuit value to {@link
+     * GhostCircuitItemStackHandler#NO_CONFIG}.
+     *
+     * @param stack Item stack to read circuit value from
+     */
+    public void setCircuitValueFromStack(@Nonnull ItemStack stack) {
+        setCircuitValue(!stack.isEmpty() && IntCircuitIngredient.isIntegratedCircuit(stack) ?
                 IntCircuitIngredient.getCircuitConfiguration(stack) : NO_CONFIG);
     }
 
-    public void addCircuitConfig(int configDelta) {
-        if (hasCircuitConfig()) {
-            setCircuitConfig(MathHelper.clamp(getCircuitConfig() + configDelta,
+    /**
+     * Add given value to preexisting circuit value. The resulting value is capped in range of valid circuit value.
+     * If there was no circuit value present, this method does nothing.
+     *
+     * @param configDelta Amount of circuit value to add, can be negative
+     */
+    public void addCircuitValue(int configDelta) {
+        if (hasCircuitValue()) {
+            setCircuitValue(MathHelper.clamp(getCircuitValue() + configDelta,
                     IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX));
         }
     }
@@ -58,7 +100,7 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         validateSlot(slot);
-        setCircuitConfigFromStack(stack);
+        setCircuitValueFromStack(stack);
     }
 
     @Override
@@ -86,7 +128,7 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
         if (amount <= 0) return ItemStack.EMPTY;
         validateSlot(slot);
         if (!simulate) {
-            setCircuitConfig(NO_CONFIG);
+            setCircuitValue(NO_CONFIG);
         }
         return this.circuitStack;
     }
@@ -113,12 +155,15 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
     }
 
     public void write(@Nonnull NBTTagCompound tag) {
-        if (this.circuitConfig != NO_CONFIG) {
-            tag.setByte("GhostCircuit", (byte) this.circuitConfig);
+        if (this.circuitValue != NO_CONFIG) {
+            tag.setByte("GhostCircuit", (byte) this.circuitValue);
         }
     }
 
     public void read(@Nonnull NBTTagCompound tag) {
-        setCircuitConfig(tag.hasKey("GhostCircuit", Constants.NBT.TAG_ANY_NUMERIC) ? tag.getInteger("GhostCircuit") : NO_CONFIG);
+        int circuitValue = tag.hasKey("GhostCircuit", Constants.NBT.TAG_ANY_NUMERIC) ? tag.getInteger("GhostCircuit") : NO_CONFIG;
+        if (circuitValue < IntCircuitIngredient.CIRCUIT_MIN || circuitValue > IntCircuitIngredient.CIRCUIT_MAX)
+            circuitValue = NO_CONFIG;
+        setCircuitValue(circuitValue);
     }
 }

@@ -27,11 +27,11 @@ public class GhostCircuitSlotWidget extends SlotWidget {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            if (button == 0 && !this.circuitInventory.hasCircuitConfig()) {
-                this.circuitInventory.setCircuitConfig(0);
+            if (button == 0 && !this.circuitInventory.hasCircuitValue()) {
+                this.circuitInventory.setCircuitValue(0);
                 writeClientAction(SET_TO_ZERO, buf -> {});
-            } else if (button == 1 && this.circuitInventory.hasCircuitConfig()) {
-                this.circuitInventory.setCircuitConfig(GhostCircuitItemStackHandler.NO_CONFIG);
+            } else if (button == 1 && this.circuitInventory.hasCircuitValue()) {
+                this.circuitInventory.setCircuitValue(GhostCircuitItemStackHandler.NO_CONFIG);
                 writeClientAction(SET_TO_EMPTY, buf -> {});
             } else {
                 this.gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
@@ -44,12 +44,12 @@ public class GhostCircuitSlotWidget extends SlotWidget {
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            if (this.circuitInventory.hasCircuitConfig()) {
+            if (this.circuitInventory.hasCircuitValue()) {
                 int dir = wheelDelta >= 0 ? 1 : -1;
-                int newConfig = this.circuitInventory.getCircuitConfig() + dir;
+                int newConfig = this.circuitInventory.getCircuitValue() + dir;
 
                 if (newConfig >= IntCircuitIngredient.CIRCUIT_MIN && newConfig <= IntCircuitIngredient.CIRCUIT_MAX) {
-                    this.circuitInventory.setCircuitConfig(newConfig);
+                    this.circuitInventory.setCircuitValue(newConfig);
                     writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newConfig));
                 }
             } else {
@@ -70,7 +70,7 @@ public class GhostCircuitSlotWidget extends SlotWidget {
         ItemStack stackHeld = player.inventory.getItemStack();
 
         if (IntCircuitIngredient.isIntegratedCircuit(stackHeld)) {
-            this.circuitInventory.setCircuitConfigFromStack(stackHeld);
+            this.circuitInventory.setCircuitValueFromStack(stackHeld);
             return this.circuitInventory.getStackInSlot(0).copy();
         }
 
@@ -86,13 +86,13 @@ public class GhostCircuitSlotWidget extends SlotWidget {
     public void handleClientAction(int id, PacketBuffer buffer) {
         switch (id) {
             case SET_TO_ZERO:
-                this.circuitInventory.setCircuitConfig(0);
+                this.circuitInventory.setCircuitValue(0);
                 return;
             case SET_TO_EMPTY:
-                this.circuitInventory.setCircuitConfig(GhostCircuitItemStackHandler.NO_CONFIG);
+                this.circuitInventory.setCircuitValue(GhostCircuitItemStackHandler.NO_CONFIG);
                 return;
             case SET_TO_N:
-                this.circuitInventory.setCircuitConfig(buffer.readVarInt());
+                this.circuitInventory.setCircuitValue(buffer.readVarInt());
         }
     }
 }

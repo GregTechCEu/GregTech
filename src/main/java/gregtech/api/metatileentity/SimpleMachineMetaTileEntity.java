@@ -253,7 +253,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                     if (stack.isEmpty()) continue;
                     stack = GTTransferUtils.insertItem(this.importItems, stack, false);
                     // If there's no space left in importItems, just set it as ghost circuit and void the item
-                    this.circuitInventory.setCircuitConfigFromStack(stack);
+                    this.circuitInventory.setCircuitValueFromStack(stack);
                 }
             } else {
                 this.circuitInventory.read(data);
@@ -385,10 +385,10 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
      * @param config New config value
      */
     public void setGhostCircuitConfig(int config) {
-        if (this.circuitInventory == null || this.circuitInventory.getCircuitConfig() == config) {
+        if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
             return;
         }
-        this.circuitInventory.setCircuitConfig(config);
+        this.circuitInventory.setCircuitValue(config);
         if (!getWorld().isRemote) {
             markDirty();
         }
@@ -487,15 +487,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                         .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
                 builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo)
                         .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "",
-                                click -> circuitInventory.addCircuitConfig(click.isShiftClick ? 5 : 1))
+                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? 5 : 1))
                                 .setShouldClientCallback(true)
                                 .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
-                                .setDisplayFunction(() -> circuitInventory.hasCircuitConfig() && circuitInventory.getCircuitConfig() < IntCircuitIngredient.CIRCUIT_MAX))
+                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() < IntCircuitIngredient.CIRCUIT_MAX))
                         .widget(new ClickButtonWidget(115, 71 + yOffset, 9, 9, "",
-                                click -> circuitInventory.addCircuitConfig(click.isShiftClick ? -5 : -1))
+                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? -5 : -1))
                                 .setShouldClientCallback(true)
                                 .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
-                                .setDisplayFunction(() -> circuitInventory.hasCircuitConfig() && circuitInventory.getCircuitConfig() > IntCircuitIngredient.CIRCUIT_MIN));
+                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
             }
         }
         return builder;
