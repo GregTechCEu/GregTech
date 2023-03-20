@@ -10,16 +10,19 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class MaterialFluidDefinition extends FluidDefinition {
 
     protected FluidType type;
+    protected String registryNameOverride;
     protected MaterialIconType stillIconType;
     protected MaterialIconType flowingIconType;
     protected boolean hasCustomTexture;
@@ -41,13 +44,14 @@ public class MaterialFluidDefinition extends FluidDefinition {
     public MaterialFluidDefinition(@Nonnull FluidType type, @Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
                                    @Nonnull String translationKey, @Nonnull MaterialIconType stillIconType,
                                    @Nonnull MaterialIconType flowingIconType, int color, int temperature,
-                                   boolean hasBlock, boolean hasCustomTexture) {
+                                   boolean hasBlock, boolean hasCustomTexture, @Nullable String registryNameOverride) {
         super(state, tags, translationKey, null, null, color, temperature, hasBlock);
         this.type = type;
         this.stillIconType = stillIconType;
         this.flowingIconType = flowingIconType;
         this.needsTemperatureInference = temperature == -1;
         this.hasCustomTexture = hasCustomTexture;
+        this.registryNameOverride = registryNameOverride;
     }
 
     /**
@@ -88,10 +92,21 @@ public class MaterialFluidDefinition extends FluidDefinition {
         if (material.hasProperty(PropertyKey.DUST)) {
             if (this.state == FluidState.LIQUID) this.translationKey = "gregtech.fluid.liquid";
             else if (this.state == FluidState.GAS) this.translationKey = "gregtech.fluid.gas";
-        } else if (this.state == FluidState.GAS) {
-            if (material.getProperty(PropertyKey.FLUID).getDefinitions().stream()
-                    .anyMatch(d -> d.getState() == FluidState.LIQUID)) {
-                this.translationKey = "gregtech.fluid.gas";
+        } else {
+            FluidProperty property = material.getProperty(PropertyKey.FLUID);
+            if (property.isGasFirst()) {
+                if (this.state == FluidState.LIQUID) this.translationKey = "gregtech.fluid.liquid";
+                else if (this.state == FluidState.GAS) this.translationKey = "gregtech.fluid.generic";
+            } else if (this.state == FluidState.GAS) {
+                if (property.getDefinitions().stream().anyMatch(d -> d.getState() == FluidState.LIQUID)) {
+                    this.translationKey = "gregtech.fluid.gas";
+                } else {
+                    this.translationKey = "gregtech.fluid.generic";
+                }
+            } else if (this.state == FluidState.LIQUID) {
+                this.translationKey = "gregtech.fluid.generic";
+            } else {
+                this.translationKey = "gregtech.fluid.plasma";
             }
         }
 
@@ -115,6 +130,15 @@ public class MaterialFluidDefinition extends FluidDefinition {
     public void setTemperature(int temperature) {
         super.setTemperature(temperature);
         this.needsTemperatureInference = temperature == -1;
+    }
+
+    /**
+     * @param material the material to get the registry name for
+     * @return the registry name associated with this definition and the material
+     */
+    @Nonnull
+    public String getRegistryName(@Nonnull Material material) {
+        return registryNameOverride != null ? registryNameOverride : getType().getFluidNameForMaterial(material);
     }
 
     /**
@@ -168,6 +192,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
         protected MaterialIconType stillIconType;
         protected MaterialIconType flowingIconType;
         protected boolean hasCustomTexture = false;
+        protected String registryNameOverride = null;
 
         /**
          * @param type   the fluid type for this fluid
@@ -213,10 +238,20 @@ public class MaterialFluidDefinition extends FluidDefinition {
             return this;
         }
 
+        /**
+         * Override the registry name with a specific one
+         * @param registryNameOverride the name to use
+         */
+        @Nonnull
+        public Builder registryName(@Nullable String registryNameOverride) {
+            this.registryNameOverride = registryNameOverride;
+            return this;
+        }
+
         @Nonnull
         public MaterialFluidDefinition build() {
             return new MaterialFluidDefinition(type, state, tags, translationKey, stillIconType, flowingIconType, color,
-                    temperature, hasBlock, hasCustomTexture);
+                    temperature, hasBlock, hasCustomTexture, registryNameOverride);
         }
     }
 }

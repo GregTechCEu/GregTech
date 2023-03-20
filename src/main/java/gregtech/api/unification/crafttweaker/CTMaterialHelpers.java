@@ -19,7 +19,7 @@ public class CTMaterialHelpers {
 
     public static FluidType validateFluidType(String typeName) {
         if (typeName == null) return FluidTypes.LIQUID;
-        FluidType type = FluidTypes.getType(typeName);
+        FluidType type = FluidType.getType(typeName);
         if (type != FluidTypes.LIQUID && type != FluidTypes.GAS && type != FluidTypes.PLASMA) {
             CraftTweakerAPI.logError("FluidType must be \"liquid\", \"gas\", or \"plasma\"!");
         }

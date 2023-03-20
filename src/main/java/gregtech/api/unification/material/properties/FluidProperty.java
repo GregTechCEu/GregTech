@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.fluids.definition.MaterialFluidDefinition;
+import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -17,6 +18,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
     private final Map<FluidType, Fluid> fluids = new Object2ObjectOpenHashMap<>();
     private final Collection<MaterialFluidDefinition> definitions = new ObjectOpenHashSet<>();
+    private boolean gasFirst = false;
 
     /**
      * Create a property with no fluids initially
@@ -96,6 +98,22 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     }
 
     /**
+     * @return if the fluid is gas-first for localization
+     */
+    public boolean isGasFirst() {
+        return this.gasFirst;
+    }
+
+    /**
+     * Set this fluid to be gas-first for localization, meaning it is primarily a gas, instead of primarily a liquid.
+     *
+     * @param gasFirst if the fluid is gas-first
+     */
+    public void setGasFirst(boolean gasFirst) {
+        this.gasFirst = gasFirst;
+    }
+
+    /**
      * @return all the definitions for this property
      */
     @Nonnull
@@ -104,5 +122,9 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     }
 
     @Override
-    public void verifyProperty(MaterialProperties properties) {/**/}
+    public void verifyProperty(MaterialProperties properties) {
+        if (this.definitions.size() == 1 && this.definitions.iterator().next().getState() == FluidState.GAS) {
+            this.gasFirst = true;
+        }
+    }
 }

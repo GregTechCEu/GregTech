@@ -20,7 +20,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -190,10 +189,19 @@ public class Material implements Comparable<Material> {
             throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
         }
 
-        Fluid fluid = prop.getFluid(FluidTypes.LIQUID);
-        if (fluid != null) return fluid;
+        Fluid fluid;
+        if (prop.isGasFirst()) {
+            fluid = prop.getFluid(FluidTypes.GAS);
+            if (fluid != null) return fluid;
 
-        fluid = prop.getFluid(FluidTypes.GAS);
+            fluid = prop.getFluid(FluidTypes.LIQUID);
+        } else {
+            fluid = prop.getFluid(FluidTypes.LIQUID);
+            if (fluid != null) return fluid;
+
+            fluid = prop.getFluid(FluidTypes.GAS);
+        }
+
         if (fluid != null) return fluid;
         GTLog.logger.warn("Material {} Fluid was null! Retrieve by the proper FluidType instead!", this);
 

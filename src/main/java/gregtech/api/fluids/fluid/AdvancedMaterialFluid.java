@@ -23,7 +23,7 @@ public class AdvancedMaterialFluid extends AdvancedFluid {
      * @param definition the fluid's definition
      */
     public AdvancedMaterialFluid(@Nonnull String name, @Nonnull Material material, @Nonnull MaterialFluidDefinition definition) {
-        super(name, material.getMaterialRGB(), definition);
+        super(name, definition.getColor() == -1 ? material.getMaterialRGB() : definition.getColor(), definition);
         this.material = material;
         if (AIR_MASS == -1) AIR_MASS = Materials.Air.getMass();
 

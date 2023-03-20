@@ -334,7 +334,10 @@ public class ElementMaterials {
                 .fluid(new MaterialFluidDefinition.Builder(FluidTypes.GAS, FluidState.GAS)
                                 .customTexture(true),
                         new MaterialFluidDefinition.Builder(FluidTypes.PLASMA, FluidState.PLASMA)
-                                .customTexture(true))
+                                .customTexture(true),
+                        new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
+                                .color(0xFCFF90).temperature(4)
+                                .registryName("liquid_helium"))
                 .element(Elements.He)
                 .build();
 
@@ -566,6 +569,9 @@ public class ElementMaterials {
 
         Oxygen = new Material.Builder(76, "oxygen")
                 .fluid(FluidTypes.GAS, FluidTypes.PLASMA)
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
+                        .color(0x6688DD).temperature(85)
+                        .registryName("liquid_oxygen"))
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();

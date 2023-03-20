@@ -68,7 +68,7 @@ public class MaterialExpansion {
         if (checkFrozen("set fluid temperature")) return;
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
         if (prop != null) {
-            FluidType type = FluidTypes.getType(fluidType);
+            FluidType type = FluidType.getType(fluidType);
             if (type == null) CraftTweakerAPI.logError("Cannot find fluid type for " + fluidType);
             else {
                 Fluid fluid = prop.getFluid(type);
@@ -104,7 +104,7 @@ public class MaterialExpansion {
     public static ILiquidDefinition getFluid(Material m, String fluidType) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
         if (prop != null) {
-            FluidType type = FluidTypes.getType(fluidType);
+            FluidType type = FluidType.getType(fluidType);
             if (type == null) CraftTweakerAPI.logError("Cannot find fluid type for " + fluidType);
             else {
                 Fluid fluid = prop.getFluid(type);

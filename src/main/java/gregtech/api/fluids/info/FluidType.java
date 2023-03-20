@@ -1,16 +1,19 @@
 package gregtech.api.fluids.info;
 
 import gregtech.api.unification.material.Material;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
  * A key for storing fluids of various types.
- * Create them with {@link FluidTypes#createType}
  */
 public final class FluidType {
+
+    private static final Map<String, FluidType> registeredKeys = new Object2ObjectOpenHashMap<>();
 
     private final String name;
     private final Function<Material, String> materialNameFunction;
@@ -19,9 +22,10 @@ public final class FluidType {
      * @param name                 the name of the fluid type
      * @param materialNameFunction a function creating a fluid name for a material
      */
-    FluidType(@Nonnull String name, Function<Material, String> materialNameFunction) {
+    public FluidType(@Nonnull String name, Function<Material, String> materialNameFunction) {
         this.name = name;
         this.materialNameFunction = materialNameFunction;
+        registeredKeys.put(name, this);
     }
 
     /**
@@ -52,6 +56,15 @@ public final class FluidType {
 
             return builder.append(material).append(".").append(suffix).toString();
         };
+    }
+
+    /**
+     * @param name the fluid type's name
+     * @return the FluidType associated with the name
+     */
+    @Nullable
+    public static FluidType getType(@Nonnull String name) {
+        return registeredKeys.get(name);
     }
 
     /**

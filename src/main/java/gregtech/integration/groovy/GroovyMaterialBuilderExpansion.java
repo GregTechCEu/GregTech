@@ -3,7 +3,6 @@ package gregtech.integration.groovy;
 import gregtech.api.fluids.definition.MaterialFluidDefinition;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidType;
-import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -21,7 +20,7 @@ public class GroovyMaterialBuilderExpansion {
     }
 
     public static Material.Builder fluid(Material.Builder builder, String fluidTypeRaw, String fluidStateRaw, boolean hasBlock) {
-        FluidType fluidType = FluidTypes.getType(fluidTypeRaw);
+        FluidType fluidType = FluidType.getType(fluidTypeRaw);
         boolean validType = GroovyScriptCompat.validateNonNull(fluidType, () -> "Can't find fluid type for " + fluidTypeRaw + " in material builder");
         FluidState fluidState = FluidState.getByName(fluidStateRaw);
         boolean validState = GroovyScriptCompat.validateNonNull(fluidState, () -> "Can't find fluid state for " + fluidStateRaw + " in material builder");

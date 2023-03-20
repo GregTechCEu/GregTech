@@ -1,5 +1,6 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.fluids.info.FluidType;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 
@@ -76,7 +77,7 @@ public class Materials {
         /*
          * Register info for cyclical references
          */
-        MaterialFlagAddition.register();
+        MaterialPropertyModification.register();
 
         /*
          * FOR ADDON DEVELOPERS:
@@ -287,6 +288,12 @@ public class Materials {
     public static Material Chromite;
     public static Material Cinnabar;
     public static Material Water;
+    /**
+     * @deprecated use {@link Materials#Oxygen} with {@link gregtech.api.unification.material.properties.FluidProperty#getFluid(FluidType)}
+     * and {@link gregtech.api.fluids.info.FluidTypes#LIQUID}
+     */
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
     public static Material LiquidOxygen;
     public static Material Coal;
     public static Material Cobaltite;
@@ -307,6 +314,12 @@ public class Materials {
     public static Material Invar;
     public static Material Kanthal;
     public static Material Lazurite;
+    /**
+     * @deprecated use {@link Materials#Helium} with {@link gregtech.api.unification.material.properties.FluidProperty#getFluid(FluidType)}
+     * and {@link gregtech.api.fluids.info.FluidTypes#LIQUID}
+     */
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
     public static Material LiquidHelium;
     public static Material Magnalium;
     public static Material Magnesite;

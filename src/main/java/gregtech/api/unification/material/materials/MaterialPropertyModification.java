@@ -5,7 +5,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 
 import static gregtech.api.unification.material.Materials.*;
 
-public class MaterialFlagAddition {
+public class MaterialPropertyModification {
 
     public static void register() {
         OreProperty oreProp = Aluminium.getProperty(PropertyKey.ORE);
@@ -404,5 +404,9 @@ public class MaterialFlagAddition {
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
+
+        // need to manually set these two, since they have more than just gases
+        Oxygen.getProperty(PropertyKey.FLUID).setGasFirst(true);
+        Helium.getProperty(PropertyKey.FLUID).setGasFirst(true);
     }
 }

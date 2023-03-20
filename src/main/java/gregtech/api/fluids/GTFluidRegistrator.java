@@ -201,8 +201,9 @@ public final class GTFluidRegistrator {
      * @param property the FluidProperty of the material
      */
     public static void registerMaterialFluid(@Nonnull Material material, @Nonnull FluidProperty property) {
+        Set<String> seenNames = new ObjectOpenHashSet<>();
         for (MaterialFluidDefinition definition : property.getDefinitions()) {
-            String fluidName = definition.getType().getFluidNameForMaterial(material);
+            String fluidName = definition.getRegistryName(material);
 
             // if the fluid already exists, don't make a new one from GT
             Fluid fluid = getExistingFluid(fluidName);
@@ -215,6 +216,7 @@ public final class GTFluidRegistrator {
                 registerFluidTexture(definition.getStill());
                 registerFluidTexture(definition.getFlowing());
             }
+            seenNames.add(fluidName);
 
             // store the fluid in the property
             property.setFluid(definition.getType(), fluid);
