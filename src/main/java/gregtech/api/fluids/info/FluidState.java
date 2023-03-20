@@ -3,6 +3,7 @@ package gregtech.api.fluids.info;
 import gregtech.api.unification.material.info.MaterialIconType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Possible states for a fluid
@@ -20,6 +21,8 @@ public enum FluidState {
      * A plama, like helium plasma
      */
     PLASMA;
+
+    public static final FluidState[] VALUES = values();
 
     /**
      * @return the default icon type for the still texture for this state
@@ -58,5 +61,15 @@ public enum FluidState {
             case PLASMA: return  "gregtech.fluid.state_plasma";
             default: throw new IllegalStateException("FluidState " + this + " was in an impossible configuration");
         }
+    }
+
+    @Nullable
+    public static FluidState getByName(@Nonnull String name) {
+        for (FluidState state : VALUES) {
+            if (state.name().equalsIgnoreCase(name)) {
+                return state;
+            }
+        }
+        return null;
     }
 }

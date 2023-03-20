@@ -1,6 +1,9 @@
 package gregtech.integration.groovy;
 
-import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.definition.MaterialFluidDefinition;
+import gregtech.api.fluids.info.FluidState;
+import gregtech.api.fluids.info.FluidType;
+import gregtech.api.fluids.info.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -13,14 +16,20 @@ import java.util.List;
 
 public class GroovyMaterialBuilderExpansion {
 
-    public static Material.Builder fluid(Material.Builder builder, String raw) {
-        return fluid(builder, raw, false);
+    public static Material.Builder fluid(Material.Builder builder, String fluidTypeRaw, String fluidStateRaw) {
+        return fluid(builder, fluidTypeRaw, fluidStateRaw, false);
     }
 
-    public static Material.Builder fluid(Material.Builder builder, String raw, boolean hasBlock) {
-        FluidType fluidType = FluidType.getByName(raw);
-        if (GroovyScriptCompat.validateNonNull(fluidType, () -> "Can't find fluid type for " + raw + " in material builder")) {
-            return builder.fluid(fluidType, hasBlock);
+    public static Material.Builder fluid(Material.Builder builder, String fluidTypeRaw, String fluidStateRaw, boolean hasBlock) {
+        FluidType fluidType = FluidTypes.getType(fluidTypeRaw);
+        boolean validType = GroovyScriptCompat.validateNonNull(fluidType, () -> "Can't find fluid type for " + fluidTypeRaw + " in material builder");
+        FluidState fluidState = FluidState.getByName(fluidStateRaw);
+        boolean validState = GroovyScriptCompat.validateNonNull(fluidState, () -> "Can't find fluid state for " + fluidStateRaw + " in material builder");
+        if (validType && validState) {
+            //noinspection DataFlowIssue
+            return builder.fluid(new MaterialFluidDefinition.Builder(fluidType, fluidState)
+                    .block(hasBlock)
+                    .build());
         }
         return builder;
     }
