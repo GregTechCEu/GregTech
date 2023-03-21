@@ -2444,12 +2444,12 @@ tile.transparent_casing.cleanroom_glass.name=クリーンルーム用ガラス
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
-itemGroup.gregtech.machines=機械 (GT)
-itemGroup.gregtech.cables=ケーブル (GT)
-itemGroup.gregtech.pipes=パイプ (GT)
-itemGroup.gregtech.tools=道具 (GT)
-itemGroup.gregtech.materials=素材 (GT)
-itemGroup.gregtech.ores=鉱石 (GT)
+itemGroup.gregtech.machines=GregTech - 機械
+itemGroup.gregtech.cables=GregTecg - ケーブル
+itemGroup.gregtech.pipes=GregTech - パイプ
+itemGroup.gregtech.tools=GregTech - 道具
+itemGroup.gregtech.materials=GregTech - マテリアル
+itemGroup.gregtech.ores=GregTech - 鉱石
 
 # Drums
 gregtech.machine.drum.wood.name=木製バレル
