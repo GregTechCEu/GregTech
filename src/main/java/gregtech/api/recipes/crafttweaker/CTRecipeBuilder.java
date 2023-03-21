@@ -1,6 +1,8 @@
 package gregtech.api.recipes.crafttweaker;
 
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.data.DataMap;
+import crafttweaker.api.data.IData;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
@@ -114,7 +116,11 @@ public class CTRecipeBuilder {
         } else if (items.size() == 1) {
             // single input
             final ItemStack stack = CraftTweakerMC.getItemStack(items.get(0));
-            final NBTTagCompound tagCompound = CraftTweakerMC.getNBTCompound(items.get(0).getTag());
+            final IData data = items.get(0).getTag();
+            // MCItemStack#getTag returns DataMap.EMPTY when there is no tag, instead of null
+            // CraftTweakerMC#getNBTCompound does not check for this, so it would otherwise return an empty NBT tag
+            // check for the empty tag specifically, so it is treated as a non-nbt input instead
+            final NBTTagCompound tagCompound = data == DataMap.EMPTY ? null : CraftTweakerMC.getNBTCompound(data);
 
             return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
         } else {
@@ -188,7 +194,9 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
-                .map(CraftTweakerMC::getLiquidStack).map(fluidStack -> GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount)).collect(Collectors.toList()));
+                .map(CraftTweakerMC::getLiquidStack)
+                .map(fluidStack -> GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount))
+                .collect(Collectors.toList()));
         return this;
     }
 
