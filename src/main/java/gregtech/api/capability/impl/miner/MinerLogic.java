@@ -328,10 +328,12 @@ public class MinerLogic {
     }
 
     /**
-     * Recalculates the mining area and refills the block list
+     * Recalculates the mining area, refills the block list and restarts the miner, if it was done
      */
     public void resetArea() {
         initPos(metaTileEntity.getPos(), currentRadius);
+        if (this.isDone) this.setWorkingEnabled(false);
+        this.isDone = false;
         blocksToMine.clear();
         checkBlocksToMine();
     }

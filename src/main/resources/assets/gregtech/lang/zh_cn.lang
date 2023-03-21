@@ -4404,6 +4404,7 @@ gregtech.machine.miner.multi.modes=具有精准采集模式与区块排列模式
 gregtech.machine.miner.multi.production=粉碎矿石的产出量为§f研磨机§7的 §f3 倍§7。
 gregtech.machine.miner.fluid_usage=每 tick 消耗 §f%,d L§7 的§f%s§7，超频时翻倍。
 gregtech.machine.miner.multi.description=一台工作范围极广的多方块采掘机器，能够提供巨量矿石。
+gregtech.machine.miner.multi.needsfluid=需要钻井液
 
 gregtech.machine.miner.startx=sX：%d
 gregtech.machine.miner.starty=sY：%d
@@ -4961,15 +4962,13 @@ gregtech.multiblock.large_boiler.rate_tooltip=§f每块煤炭§7能够支持 §f
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7升温耗时 §f%,d 秒§7
 gregtech.multiblock.large_boiler.explosion_tooltip=§c在无水的情况下提供燃料将导致爆炸
 
-gregtech.multiblock.large_miner.done=完成！
-gregtech.multiblock.large_miner.working=工作中……
-gregtech.multiblock.large_miner.invfull=存储空间已满！
-gregtech.multiblock.large_miner.needspower=需要能量！
-gregtech.multiblock.large_miner.vent=排气口受阻！
-gregtech.multiblock.large_miner.steam=需要蒸汽！
-gregtech.multiblock.large_miner.radius=开采半径：§a%d§r 格
-gregtech.multiblock.large_miner.errorradius=§c无法在工作中调整开采半径！
-gregtech.multiblock.large_miner.needsfluid=需要钻井液
+gregtech.machine.miner.done=完成！
+gregtech.machine.miner.working=工作中……
+gregtech.machine.miner.invfull=存储空间已满！
+gregtech.machine.miner.needspower=需要能量！
+gregtech.machine.steam_miner.vent=排气口受阻！
+gregtech.machine.steam_miner.steam=需要蒸汽！
+gregtech.machine.miner.errorradius=§c无法在工作中调整开采半径！
 
 gregtech.multiblock.pyrolyse_oven.speed=处理速度：%s%%
 
