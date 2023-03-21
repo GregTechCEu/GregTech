@@ -10,16 +10,16 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.FluidContainerSlotWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.IDirtyNotifiable;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -61,11 +61,13 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     private final Deque<BlockPos> fluidSourceBlocks = new ArrayDeque<>();
     private final Deque<BlockPos> blocksToCheck = new ArrayDeque<>();
+    private FluidFilterContainer fluidFilter;
     private boolean initializedQueue = false;
     private int pumpHeadY;
 
     public MetaTileEntityPump(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
+        fluidFilter = new FluidFilterContainer(getHolder());
     }
 
     @Override
@@ -138,6 +140,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         TankWidget tankWidget = new TankWidget(exportFluids.getTankAt(0), 69, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
+        fluidFilter.initUI(32, builder::widget);
         builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
@@ -222,7 +225,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 return;
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-            if (drainStack != null && drainStack.amount > 0) {
+            if (drainStack != null && fluidFilter.testFluidStack(drainStack) && drainStack.amount > 0) { // add filtering here
                 this.fluidSourceBlocks.add(checkPos);
             }
             shouldCheckNeighbours = true;
@@ -253,7 +256,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 return;
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-            if (drainStack != null && exportFluids.fill(drainStack, false) == drainStack.amount) {
+            if (drainStack != null && fluidFilter.testFluidStack(drainStack) && exportFluids.fill(drainStack, false) == drainStack.amount) { // add filtering here too
                 exportFluids.fill(drainStack, true);
                 fluidHandler.drain(drainStack.amount, true);
                 this.fluidSourceBlocks.remove(fluidBlockPos);
@@ -289,6 +292,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("PumpHeadDepth", pumpHeadY);
+        data.setTag("Filter", fluidFilter.serializeNBT());
         return data;
     }
 
@@ -296,6 +300,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.pumpHeadY = data.getInteger("PumpHeadDepth");
+        this.fluidFilter.deserializeNBT(data);
     }
 
     @Override
