@@ -4428,6 +4428,8 @@ gregtech.machine.miner.minex=採掘X: %d
 gregtech.machine.miner.miney=採掘Y: %d
 gregtech.machine.miner.minez=採掘Z: %d
 gregtech.machine.miner.radius=半径: %dブロック
+gregtech.machine.miner.working_area=稼働範囲: %dx%d ブロック
+gregtech.machine.miner.working_area_chunks=稼働範囲: %dx%d チャンク
 gregtech.machine.miner.chunkradius=半径: %dチャンク
 
 gregtech.machine.fluid_drilling_rig.mv.name=基本型液体採掘機
