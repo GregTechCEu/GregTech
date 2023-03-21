@@ -128,20 +128,21 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     private void addDisplayText(@Nonnull List<ITextComponent> textList) {
+        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
         if (this.minerLogic.isDone())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
         else if (!this.isWorkingEnabled())
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         if (isInventoryFull)
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
         if (!drainEnergy(true))
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     private void addDisplayText2(@Nonnull List<ITextComponent> textList) {
@@ -200,10 +201,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (getWorld().isRemote)
-            return true;
+        if (getWorld().isRemote) return true;
 
-        if (!this.minerLogic.isActive()) {
+        if (!this.isActive()) {
             int currentRadius = this.minerLogic.getCurrentRadius();
             if (currentRadius == 1)
                 this.minerLogic.setCurrentRadius(this.minerLogic.getMaximumRadius());
@@ -214,9 +214,10 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
             this.minerLogic.resetArea();
 
-            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+            int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
         } else {
-            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.errorradius")));
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.miner.errorradius"));
         }
         return true;
     }
@@ -300,6 +301,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
+        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
     }
 }
