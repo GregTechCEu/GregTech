@@ -11,12 +11,14 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
+import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -46,6 +48,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -135,12 +138,14 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.defaultBuilder();
+        // Builder builder = ModularUI.defaultBuilder();
+        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + 64, 166);
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
         TankWidget tankWidget = new TankWidget(exportFluids.getTankAt(0), 69, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
-        fluidFilter.initUI(32, builder::widget);
+        WidgetGroup filterWidget = new WidgetGroup(new Position(108, 6));
+        fluidFilter.initUI(0, filterWidget::addWidget);
         builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
@@ -150,7 +155,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
                 .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory)
+                .widget(filterWidget)
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 32, 166 - 82)
                 .build(getHolder(), entityPlayer);
     }
 
