@@ -76,7 +76,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
         }
 
-        this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
+        this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - 1);
     }
 
     @Override
