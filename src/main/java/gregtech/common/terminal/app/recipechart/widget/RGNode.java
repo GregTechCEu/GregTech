@@ -80,10 +80,10 @@ public class RGNode extends WidgetGroup implements IDraggable {
                     .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                     .setIcon(GuiTextures.ICON_CALCULATOR)
                     .setHoverText("terminal.recipe_chart.calculator")
-                    .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "terminal.recipe_chart.demand", s->{
+                    .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "terminal.recipe_chart.demand", s -> {
                         try {
                             return Integer.parseInt(s) > 0;
-                        } catch (Exception ignored){
+                        } catch (Exception ignored) {
                             return false;
                         }
                     }, s -> {
@@ -96,30 +96,30 @@ public class RGNode extends WidgetGroup implements IDraggable {
                     .setIcon(GuiTextures.ICON_ADD)
                     .setHoverText("terminal.recipe_chart.add")
                     .setClickListener(cd -> TerminalDialogWidget.showItemSelector(container.os, "terminal.recipe_chart.demand", false, itemStack -> true,
-                        itemStack -> {
-                            if (itemStack != null && !itemStack.isEmpty()){
-                                IFluidHandler handlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-                                if (handlerItem != null && handlerItem.getTankProperties().length > 0) {
-                                    FluidStack fluidStack = handlerItem.getTankProperties()[0].getContents();
-                                    if (fluidStack != null) {
-                                        phantom.setObject(fluidStack);
-                                        return;
+                            itemStack -> {
+                                if (itemStack != null && !itemStack.isEmpty()) {
+                                    IFluidHandler handlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                                    if (handlerItem != null && handlerItem.getTankProperties().length > 0) {
+                                        FluidStack fluidStack = handlerItem.getTankProperties()[0].getContents();
+                                        if (fluidStack != null) {
+                                            phantom.setObject(fluidStack);
+                                            return;
+                                        }
                                     }
-                                }
-                                phantom.setObject(itemStack);
+                                    phantom.setObject(itemStack);
 
-                                // Reset any children nodes, now that the parent has changed
-                                for (Set<RGNode> childs : children.values()) {
-                                    for (RGNode child : childs) {
-                                        child.removeParent(this);
+                                    // Reset any children nodes, now that the parent has changed
+                                    for (Set<RGNode> childs : children.values()) {
+                                        for (RGNode child : childs) {
+                                            child.removeParent(this);
+                                        }
                                     }
-                                }
-                                children.clear();
+                                    children.clear();
 
-                                // Clear the Inputs for the replaced parent
-                                this.inputsGroup.widgets.clear();
-                            }
-                        }).setClientSide().open()));
+                                    // Clear the Inputs for the replaced parent
+                                    this.inputsGroup.widgets.clear();
+                                }
+                            }).setClientSide().open()));
         } else {
             if (head instanceof ItemStack) {
                 ItemStackHandler handler = new ItemStackHandler(1);
@@ -167,7 +167,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 .setIcon(GuiTextures.ICON_LOCATION)
                 .setHoverText("terminal.recipe_chart.jei")
                 .setClickListener(cd -> {
-                    if (GTJeiPlugin.jeiRuntime != null && head != null) {
+                    if (GTJeiPlugin.jeiRuntime != null && head != null && !(head instanceof ItemStack && ((ItemStack) head).isEmpty())) {
                         GTJeiPlugin.jeiRuntime.getRecipesGui().show(new Focus<>(IFocus.Mode.OUTPUT, head));
                     }
                 }));
@@ -194,11 +194,11 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 int perC = 0;
                 if (entry.getKey() instanceof SlotWidget) {
                     perC = ((SlotWidget) entry.getKey()).getHandle().getStack().getCount();
-                } else if(entry.getKey() instanceof TankWidget) {
+                } else if (entry.getKey() instanceof TankWidget) {
                     perC = ((TankWidget) entry.getKey()).fluidTank.getFluidAmount();
                 }
-                int ratioSum = entry.getValue().stream().mapToInt(it->container.getLine(RGNode.this, it).ratio).sum();
-                return MathHelper.ceil(perC * MathHelper.ceil(getHeadDemand() / (float)recipePer) * container.getLine(RGNode.this, child).ratio / (float)ratioSum);
+                int ratioSum = entry.getValue().stream().mapToInt(it -> container.getLine(RGNode.this, it).ratio).sum();
+                return MathHelper.ceil(perC * MathHelper.ceil(getHeadDemand() / (float) recipePer) * container.getLine(RGNode.this, child).ratio / (float) ratioSum);
             }
         }
         return 0;
@@ -216,7 +216,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
     private boolean checkMergeAvailable(RGNode node) {
         Position pos1 = this.getPosition();
         Position pos2 = node.getPosition();
-        return Math.abs(pos1.x - pos2.x) < 18 && Math.abs(pos1.y - pos2.y) < 18&&
+        return Math.abs(pos1.x - pos2.x) < 18 && Math.abs(pos1.y - pos2.y) < 18 &&
                 !this.findAllChildren().contains(node) &&
                 !node.findAllChildren().contains(this);
     }
@@ -278,7 +278,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
     public void addParent(RGNode parent) {
         container.addOrUpdateLine(parent, this);
         this.parentNodes.put(parent, parent.getChildDemand(this));
-        updateDemand(parentNodes.values().stream().mapToInt(it->it).sum());
+        updateDemand(parentNodes.values().stream().mapToInt(it -> it).sum());
     }
 
     public void updateDemand(int demand) {
@@ -296,7 +296,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
         for (Set<RGNode> children : children.values()) {
             for (RGNode child : children) {
                 child.parentNodes.put(this, this.getChildDemand(child));
-                child.dfsUpdateDemand(child.parentNodes.values().stream().mapToInt(it->it).sum(), updated);
+                child.dfsUpdateDemand(child.parentNodes.values().stream().mapToInt(it -> it).sum(), updated);
             }
         }
         updated.pop();
@@ -313,7 +313,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             children.clear();
             container.removeNode(this);
         } else {
-            updateDemand(parentNodes.values().stream().mapToInt(it->it).sum());
+            updateDemand(parentNodes.values().stream().mapToInt(it -> it).sum());
         }
         container.removeLine(parent, this);
     }
@@ -344,11 +344,11 @@ public class RGNode extends WidgetGroup implements IDraggable {
         if (isSelected) {
             Object obj = recipeLayout.getFocus() == null ? null : recipeLayout.getFocus().getValue();
             if (head instanceof ItemStack && obj instanceof ItemStack) {
-                if(!((ItemStack) head).isItemEqual((ItemStack) obj)) {
+                if (!((ItemStack) head).isItemEqual((ItemStack) obj)) {
                     return false;
                 }
             } else if (head instanceof FluidStack && obj instanceof FluidStack) {
-                if(!((FluidStack) head).isFluidEqual((FluidStack)obj)) {
+                if (!((FluidStack) head).isFluidEqual((FluidStack) obj)) {
                     return false;
                 }
             } else {
@@ -359,8 +359,8 @@ public class RGNode extends WidgetGroup implements IDraggable {
 
             // items
             List<ItemStack> itemInputs = new ArrayList<>();
-            recipeLayout.getItemStacks().getGuiIngredients().values().forEach(it->{
-                if (it.isInput() && it.getDisplayedIngredient()!= null) {
+            recipeLayout.getItemStacks().getGuiIngredients().values().forEach(it -> {
+                if (it.isInput() && it.getDisplayedIngredient() != null) {
                     ItemStack input = it.getDisplayedIngredient();
                     for (ItemStack itemInput : itemInputs) {
                         if (itemInput.isItemEqual(input)) {
@@ -381,8 +381,8 @@ public class RGNode extends WidgetGroup implements IDraggable {
 
             // fluids
             List<FluidStack> fluidInputs = new ArrayList<>();
-            recipeLayout.getFluidStacks().getGuiIngredients().values().forEach(it->{
-                if (it.isInput() && it.getDisplayedIngredient()!= null) {
+            recipeLayout.getFluidStacks().getGuiIngredients().values().forEach(it -> {
+                if (it.isInput() && it.getDisplayedIngredient() != null) {
                     FluidStack input = it.getDisplayedIngredient();
                     for (FluidStack fluidInput : fluidInputs) {
                         if (fluidInput.isFluidEqual(input)) {
@@ -403,7 +403,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             // CHECK GTCE RECIPES
             Recipe recipe = null;
             if (recipeLayout instanceof RecipeLayout) {
-                IRecipeWrapper recipeWrapper = ObfuscationReflectionHelper.getPrivateValue(RecipeLayout.class, (RecipeLayout)recipeLayout, "recipeWrapper");
+                IRecipeWrapper recipeWrapper = ObfuscationReflectionHelper.getPrivateValue(RecipeLayout.class, (RecipeLayout) recipeLayout, "recipeWrapper");
                 if (recipeWrapper instanceof GTRecipeWrapper) {
                     recipe = ((GTRecipeWrapper) recipeWrapper).getRecipe();
                 }
@@ -449,7 +449,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
         Iterator<Widget> iterator = children.keySet().iterator();
         for (NBTBase nbtBase : childrenTag) {
             int[] nbt = ((NBTTagIntArray) nbtBase).getIntArray();
-            children.get(iterator.next()).addAll(Arrays.stream(nbt).mapToObj(it->container.nodes.get(it)).collect(Collectors.toList()));
+            children.get(iterator.next()).addAll(Arrays.stream(nbt).mapToObj(it -> container.nodes.get(it)).collect(Collectors.toList()));
         }
     }
 
@@ -458,11 +458,11 @@ public class RGNode extends WidgetGroup implements IDraggable {
         Object head = null;
         if (type == 1) {
             head = new ItemStack(nodeTag.getCompoundTag("nbt"));
-            ((ItemStack)head).setCount(nodeTag.getInteger("count"));
+            ((ItemStack) head).setCount(nodeTag.getInteger("count"));
         } else if (type == 2) {
             head = FluidStack.loadFluidStackFromNBT(nodeTag.getCompoundTag("nbt"));
             assert head != null;
-            ((FluidStack)head).amount = nodeTag.getInteger("count");
+            ((FluidStack) head).amount = nodeTag.getInteger("count");
         }
         RGNode node;
         if (nodeTag.getBoolean("phantom")) {
@@ -473,13 +473,13 @@ public class RGNode extends WidgetGroup implements IDraggable {
         NBTTagList itemsList = nodeTag.getTagList("items", Constants.NBT.TAG_COMPOUND);
         NBTTagList fluidsList = nodeTag.getTagList("fluids", Constants.NBT.TAG_COMPOUND);
         List<ItemStack> itemInputs = new LinkedList<>();
-        itemsList.forEach(base->{
+        itemsList.forEach(base -> {
             if (base instanceof NBTTagCompound) {
                 itemInputs.add(new ItemStack((NBTTagCompound) base));
             }
         });
         List<FluidStack> fluidsInputs = new LinkedList<>();
-        fluidsList.forEach(base->{
+        fluidsList.forEach(base -> {
             if (base instanceof NBTTagCompound) {
                 fluidsInputs.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) base));
             }
@@ -498,7 +498,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("x", getSelfPosition().x + container.getScrollXOffset());
         nbt.setInteger("y", getSelfPosition().y + container.getScrollYOffset());
-        nbt.setByte("type", head instanceof ItemStack ? (byte)1 : head instanceof FluidStack ? (byte)2 : 0);
+        nbt.setByte("type", head instanceof ItemStack ? (byte) 1 : head instanceof FluidStack ? (byte) 2 : 0);
         if (head instanceof ItemStack) {
             nbt.setTag("nbt", ((ItemStack) head).serializeNBT());
             nbt.setInteger("count", ((ItemStack) head).getCount());
@@ -506,7 +506,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             nbt.setTag("nbt", ((FluidStack) head).writeToNBT(new NBTTagCompound()));
             nbt.setInteger("count", ((FluidStack) head).amount);
         }
-        nbt.setBoolean("phantom", widgets.stream().anyMatch(it->it instanceof PhantomWidget));
+        nbt.setBoolean("phantom", widgets.stream().anyMatch(it -> it instanceof PhantomWidget));
         // recipe + children
         NBTTagList itemsList = new NBTTagList();
         NBTTagList fluidsList = new NBTTagList();
@@ -520,7 +520,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             } else {
                 continue;
             }
-            NBTTagIntArray childList = new NBTTagIntArray(entry.getValue().stream().mapToInt(it->container.nodes.indexOf(it)).toArray());
+            NBTTagIntArray childList = new NBTTagIntArray(entry.getValue().stream().mapToInt(it -> container.nodes.indexOf(it)).toArray());
             childrenList.appendTag(childList);
         }
         nbt.setTag("items", itemsList);
@@ -557,7 +557,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             Widget widget = new SlotWidget(handler, 0, 0, y.addAndGet(20), false, false) {
                 @Override
                 public boolean mouseClicked(int mouseX, int mouseY, int button) {
-                    return RGNode.this.handleTipsSlotClick(mouseX, mouseY,this, handler.getStackInSlot(0).copy());
+                    return RGNode.this.handleTipsSlotClick(mouseX, mouseY, this, handler.getStackInSlot(0).copy());
                 }
             }.setBackgroundTexture(TerminalTheme.COLOR_B_2);
             inputsGroup.addWidget(widget);
@@ -568,7 +568,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             Widget widget = new TankWidget(tank, 0, y.addAndGet(20), 18, 18) {
                 @Override
                 public boolean mouseClicked(int mouseX, int mouseY, int button) {
-                    return RGNode.this.handleTipsSlotClick(mouseX, mouseY,this, tank.getFluid().copy());
+                    return RGNode.this.handleTipsSlotClick(mouseX, mouseY, this, tank.getFluid().copy());
                 }
             }.setAlwaysShowFull(true).setBackgroundTexture(TerminalTheme.COLOR_B_2).setClient();
             inputsGroup.addWidget(widget);
@@ -577,7 +577,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
         inputsGroup.setSelfPosition(new Position(25, -(inputsGroup.widgets.size() * 20) / 2 + 8));
     }
 
-    private boolean handleTipsSlotClick(int mouseX, int mouseY, Widget slot, Object object){
+    private boolean handleTipsSlotClick(int mouseX, int mouseY, Widget slot, Object object) {
         if (slot.isMouseOverElement(mouseX, mouseY)) {
             Position position = inputsGroup.getSelfPosition();
             RGNode child = container.addNode(RGNode.this.getSelfPosition().x + 50, RGNode.this.getSelfPosition().y + position.y + slot.getSelfPosition().y, object);
