@@ -33,6 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -111,7 +112,11 @@ public class ToolEventHandlers {
                 IGTTool def = (IGTTool) item;
                 ItemStack brokenStack = def.getToolStats().getBrokenStack();
                 if (!brokenStack.isEmpty()) {
+                    EntityItemFrame itemFrame = (EntityItemFrame) entity;
+                    itemFrame.processInitialInteract(event.getEntityPlayer(), event.getHand());
+
                     event.setCanceled(true);
+                    event.setCancellationResult(EnumActionResult.SUCCESS);
                 }
             }
         }
