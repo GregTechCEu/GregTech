@@ -1237,7 +1237,7 @@ material.apatite=Апатит
 material.sterling_silver=Стерлинговое серебро
 material.rose_gold=Розовое золото
 material.black_bronze=Черная бронза
-material.bismuth_bronze=Висмут бронза
+material.bismuth_bronze=Висмутовая бронза
 material.black_steel=Черная сталь
 material.damascus_steel=Дамасская сталь
 material.tungsten_steel=Вольфрамовая сталь
@@ -1694,7 +1694,7 @@ tile.boiler_casing.tungstensteel_pipe.name=Корпус вольфрамовой
 tile.boiler_casing.bronze_pipe.name=Корпус бронзовой трубы
 tile.boiler_casing.steel_pipe.name=Корпус стальной трубы
 tile.boiler_casing.titanium_pipe.name=Корпус титановой трубы
-tile.boiler_casing.tungstensteel_pipe.name=Корпус вольфрамовой трубы
+tile.boiler_casing.tungstensteel_pipe.name=Корпус вольфрамо-стальной трубы
 tile.boiler_casing.polytetrafluoroethylene_pipe.name=Корпус ПТФЭ трубы
 
 #Firebox casing blocks
@@ -1733,14 +1733,14 @@ tile.steam_casing.steel_bricks_hull.name=Кирпичный корпус из к
 # Блоки турбинных корпусов
 tile.turbine_casing.bronze_gearbox.name=Бронзовый корпус коробки передач
 tile.turbine_casing.steel_gearbox.name=Стальной корпус коробки передач
-tile.turbine_casing.titanium_gearbox.name=Титановый корпус редуктора
+tile.turbine_casing.titanium_gearbox.name=Титановый корпус коробки передач
 tile.turbine_casing.tungstensteel_gearbox.name=Вольфрамо-стальной корпус коробки передач
 
 # Turbine casing blocks
 tile.turbine_casing.steel_turbine_casing.name=Стальной корпус турбины
 tile.turbine_casing.titanium_turbine_casing.name=Титановый корпус турбины
 tile.turbine_casing.stainless_turbine_casing.name=Нержавеющий корпус турбины
-tile.turbine_casing.tungstensteel_turbine_casing.name=Вольфрамовый корпус турбины
+tile.turbine_casing.tungstensteel_turbine_casing.name=Вольфрамо-стальной корпус турбины
 
 # Multiblock casing blocks
 tile.multiblock_casing.engine_intake.name=Воздухозаборник двигателя
@@ -4014,7 +4014,7 @@ behavior.tricorder.workable_progress=Прогресс: %s с / %s с
 behavior.tricorder.workable_consumption=Примерно использует: %s EU/t при %s A
 behavior.tricorder.workable_production=Примерно производит: %s EU/т при %s A
 behavior.tricorder.multiblock_energy_input=Макс. приход энергии: %s EU/t Уровень: %s
-behavior.tricorder.multiblock_maintenance=Проблем: %s
+behavior.tricorder.multiblock_maintenance=Проблемы: %s
 behavior.tricorder.multiblock_parallel=Параллелей: %s
 behavior.tricorder.debug_machine=Мета-ID: %s
 behavior.tricorder.debug_machine_invalid_null=Неверный! MetaTileEntity == null!
@@ -5012,7 +5012,7 @@ gregtech.advancement.zero_point_module.73_trinium_coil.name=Более 9000!
 gregtech.advancement.zero_point_module.73_trinium_coil.desc=Создайте триниумную катушку.
 gregtech.advancement.ultimate_voltage.79_tritanium_coil.name=Финальная катушка
 gregtech.advancement.ultimate_voltage.79_tritanium_coil.desc=Изготовьте нагревательную катушку из Тритания.
-behaviour.hammer=Включает и выключает глушение для машин (ударом по ним)
+behaviour.hammer=Включает и выключает глушение звука для машин (ударом по ним)
 gregtech.machine.cracker.tooltip.1=Каждая катушка после §6Купроникелевой§7 снижает потребление энергии на §f10%%§7.
 gregtech.machine.advanced_processing_array.name=Улучшенный массив машин
 gregtech.machine.large_combustion_engine.tooltip.1=Производит до §e%s§7 EU/т.
