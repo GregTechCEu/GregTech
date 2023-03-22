@@ -167,7 +167,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 .setIcon(GuiTextures.ICON_LOCATION)
                 .setHoverText("terminal.recipe_chart.jei")
                 .setClickListener(cd -> {
-                    if (GTJeiPlugin.jeiRuntime != null && head != null) {
+                    if (GTJeiPlugin.jeiRuntime != null && head != null && !(head instanceof ItemStack && ((ItemStack) head).isEmpty())) {
                         GTJeiPlugin.jeiRuntime.getRecipesGui().show(new Focus<>(IFocus.Mode.OUTPUT, head));
                     }
                 }));
