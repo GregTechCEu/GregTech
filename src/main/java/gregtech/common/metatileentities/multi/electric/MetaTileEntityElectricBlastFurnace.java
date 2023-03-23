@@ -76,7 +76,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
         }
         //the subtracted tier gives the starting level (exclusive) of the +100K heat bonus
-        this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.LV);
+        this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
     }
 
     @Override
