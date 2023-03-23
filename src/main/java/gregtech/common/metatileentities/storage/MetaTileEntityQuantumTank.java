@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,7 +59,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private final int tier;
     private final int maxFluidCapacity;
     private final int maxPartialFluidCapacity;
-    private FluidTank fluidTank;
+    protected FluidTank fluidTank;
     private boolean autoOutputFluids;
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide = false;
@@ -258,7 +259,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
-        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderTankFluid(renderState, translation, pipeline, this.getFrontFacing(), fluidTank.getFluid());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.getFrontFacing(), fluidTank.getFluid());
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), partialTicks, this.fluidTank.getFluid());
     }
 
     @Override
@@ -526,11 +532,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public boolean needsSneakToRotate() {
         return true;
-    }
-
-    @Override
-    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderTankAmount(x, y, z, this.getFrontFacing(), partialTicks, this.fluidTank.getFluid());
     }
 
     @Override

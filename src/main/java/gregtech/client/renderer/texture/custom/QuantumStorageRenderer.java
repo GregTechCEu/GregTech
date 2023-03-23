@@ -89,39 +89,28 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         });
     }
 
-    public void renderChest(double x, double y, double z, MetaTileEntityQuantumChest machine, ItemStack stack, long count, float partialTicks) {
-        if (!stack.isEmpty() || count == 0) {
-            World level = machine.getWorld();
-            EnumFacing frontFacing = machine.getFrontFacing();
-            RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-            float tick = level.getWorldTime() + partialTicks;
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x, y, z);
-            GlStateManager.translate(0.5D, 0.5D, 0.5D);
-            GlStateManager.rotate(tick * (float) Math.PI * 2 / 40, 0, 1, 0);
-            GlStateManager.scale(0.6f, 0.6f, 0.6f);
-            itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
-            GlStateManager.popMatrix();
+    public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine, ItemStack stack, long count, float partialTicks) {
+        if (stack.isEmpty() || count == 0)
+            return;
+
+        World level = machine.getWorld();
+        EnumFacing frontFacing = machine.getFrontFacing();
+        RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
+        float tick = level.getWorldTime() + partialTicks;
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.translate(0.5D, 0.5D, 0.5D);
+        GlStateManager.rotate(tick * (float) Math.PI * 2 / 40, 0, 1, 0);
+        GlStateManager.scale(0.6f, 0.6f, 0.6f);
+        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
+        GlStateManager.popMatrix();
 
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x, y, z);
-            GlStateManager.translate(frontFacing.getXOffset() * -1 / 16f, frontFacing.getYOffset() * -1 / 16f, frontFacing.getZOffset() * -1 / 16f);
-            RenderUtil.moveToFace(0, 0, 0, frontFacing);
-            if (frontFacing.getAxis() == EnumFacing.Axis.Y) {
-                RenderUtil.rotateToFace(frontFacing, EnumFacing.SOUTH);
-            } else {
-                RenderUtil.rotateToFace(frontFacing, null);
-            }
-            String amount = TextFormattingUtil.formatLongToCompactString(count, 4);
-            GlStateManager.scale(1f / 64, 1f / 64, 0);
-            GlStateManager.translate(-32, -32, 0);
-            new TextTexture(amount, 0xFFFFFF).draw(0, 24, 64, 28);
-            GlStateManager.popMatrix();
-        }
+        renderAmountText(x, y, z, count, frontFacing);
     }
 
-    public void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing, FluidStack stack) {
+    public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[]
+            pipeline, EnumFacing frontFacing, FluidStack stack) {
         if (stack == null || stack.amount == 0)
             return;
         renderState.setFluidColour(stack);
@@ -131,10 +120,14 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         GlStateManager.resetColor();
     }
 
-    public void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, float partialTicks, FluidStack stack) {
+    public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing,
+                                        float partialTicks, FluidStack stack) {
         if (stack == null || stack.amount == 0)
             return;
+        renderAmountText(x, y, z, stack.amount, frontFacing);
+    }
 
+    public static void renderAmountText(double x, double y, double z, long amount, EnumFacing frontFacing) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         GlStateManager.translate(frontFacing.getXOffset() * -1 / 16f, frontFacing.getYOffset() * -1 / 16f, frontFacing.getZOffset() * -1 / 16f);
@@ -144,13 +137,12 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         } else {
             RenderUtil.rotateToFace(frontFacing, null);
         }
-        String amount = TextFormattingUtil.formatLongToCompactString(stack.amount, 4);
+        String amountText = TextFormattingUtil.formatLongToCompactString(amount, 4);
         GlStateManager.scale(1f / 64, 1f / 64, 0);
         GlStateManager.translate(-32, -32, 0);
         GlStateManager.disableLighting();
-        new TextTexture(amount, 0xFFFFFF).draw(0, 24, 64, 28);
+        new TextTexture(amountText, 0xFFFFFF).draw(0, 24, 64, 28);
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
-
 }

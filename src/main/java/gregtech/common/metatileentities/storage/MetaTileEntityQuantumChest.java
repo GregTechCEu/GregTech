@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,7 +60,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     private final int tier;
     private final long maxStoredItems;
-    private ItemStack itemStack = ItemStack.EMPTY;
+    protected ItemStack itemStack = ItemStack.EMPTY;
     private long itemsStoredInside = 0L;
     private boolean autoOutputItems;
     private EnumFacing outputFacing;
@@ -91,27 +92,19 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-/*        for (EnumFacing facing : EnumFacing.VALUES) {
-            GlStateManager.disableCull();
-            if (facing != this.frontFacing)
-                Textures.VOLTAGE_CASINGS[tier].renderSided(facing, renderState, translation, ArrayUtils.add(pipeline,
-                        new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
-            GlStateManager.enableCull();
-        }*/
         Textures.QUANTUM_CHEST_RENDERER[this.tier].renderMachine(renderState, translation, pipeline, this.getFrontFacing());
-        Textures.QUANTUM_CHEST_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
+        Textures.QUANTUM_CHEST_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             if (isAutoOutputItems()) {
                 Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
-
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderChest(x, y, z, this, itemStack, itemsStoredInside, partialTicks);
+        QuantumStorageRenderer.renderChestStack(x, y, z, this, itemStack, itemsStoredInside, partialTicks);
     }
 
     @Override
