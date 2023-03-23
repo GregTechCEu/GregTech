@@ -33,12 +33,14 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
+        ItemStack stack = player.getHeldItem(hand);
+
         if (!(mte instanceof SimpleMachineMetaTileEntity)) {
-            return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
+            return ActionResult.newResult(EnumActionResult.FAIL, stack);
+        } else if (!world.isRemote) {
+            ((SimpleMachineMetaTileEntity) mte).setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(stack));
         }
-        SimpleMachineMetaTileEntity smte = (SimpleMachineMetaTileEntity) mte;
-        smte.setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(player.getHeldItem(hand)));
-        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
     }
 
     @Override

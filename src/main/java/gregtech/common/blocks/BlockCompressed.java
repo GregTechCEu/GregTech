@@ -1,6 +1,5 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -9,24 +8,21 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
+import gregtech.client.model.MaterialStateMapper;
+import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,9 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public final class BlockCompressed extends DelayedStateBlock implements IModelSupplier {
-
-    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "compressed_block"), "normal");
+public final class BlockCompressed extends DelayedStateBlock {
 
     public final PropertyMaterial variantProperty;
 
@@ -154,21 +148,15 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return SoundType.STONE;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            Material m = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.block.getBlockTexturePath(m.getMaterialIconSet()));
-        }
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
+        ModelLoader.setCustomStateMapper(this, new MaterialStateMapper(
+                MaterialIconType.block, s -> s.getValue(this.variantProperty).getMaterialIconSet()));
         for (IBlockState state : this.getBlockState().getValidStates()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
+                    MaterialBlockModelLoader.registerItemModel(
+                            MaterialIconType.block,
+                            state.getValue(this.variantProperty).getMaterialIconSet()));
         }
     }
 }
