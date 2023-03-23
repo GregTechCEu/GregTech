@@ -1,8 +1,9 @@
-package gregtech.client.model.modelfactories;
+package gregtech.client.model;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -11,17 +12,13 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -108,31 +105,12 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         for (BakedQuad q : model.getQuads(state, side, rand)) {
             for (String bloomTextureSuffix : BLOOM_TEXTURE_SUFFIX) {
                 if (q.getSprite().getIconName().endsWith(bloomTextureSuffix)) {
-                    list.add(transform(q));
+                    list.add(RenderUtil.makeEmissive(q));
                     break;
                 }
             }
         }
         return list;
-    }
-
-    private static BakedQuad transform(BakedQuad quad) {
-        if (FMLClientHandler.instance().hasOptifine()) return quad;
-        VertexFormat format = quad.getFormat();
-        if (!format.getElements().contains(DefaultVertexFormats.TEX_2S)) {
-            format = new VertexFormat(quad.getFormat());
-            format.addElement(DefaultVertexFormats.TEX_2S);
-        }
-        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format) {
-            @Override
-            public void put(int element, float... data) {
-                if (this.getVertexFormat().getElement(element) == DefaultVertexFormats.TEX_2S)
-                    super.put(element, 480.0f / 0xFFFF, 480.0f / 0xFFFF);
-                else super.put(element, data);
-            }
-        };
-        quad.pipe(builder);
-        return builder.build();
     }
 
     @Override
