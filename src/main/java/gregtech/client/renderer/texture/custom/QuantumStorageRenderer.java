@@ -76,7 +76,6 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing) {
-        // Rotate a Cuboid6??? Somehow???
         Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, textures[1], BlockRenderLayer.CUTOUT_MIPPED);
 
         boxFacingMap.keySet().forEach(facing -> {
