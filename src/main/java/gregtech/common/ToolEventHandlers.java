@@ -25,12 +25,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +43,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -88,6 +92,31 @@ public class ToolEventHandlers {
                     }
                 } else {
                     event.getEntityPlayer().setHeldItem(event.getHand(), brokenStack);
+                }
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onPlayerEntityInteract(@Nonnull PlayerInteractEvent.EntityInteract event) {
+        ItemStack itemStack = event.getItemStack();
+        Item item = itemStack.getItem();
+
+        /*
+        Handle item frame power unit duping
+         */
+        if (item instanceof IGTTool) {
+            Entity entity = event.getTarget();
+            if (entity instanceof EntityItemFrame) {
+                IGTTool def = (IGTTool) item;
+                ItemStack brokenStack = def.getToolStats().getBrokenStack();
+                if (!brokenStack.isEmpty()) {
+                    EntityItemFrame itemFrame = (EntityItemFrame) entity;
+                    itemFrame.processInitialInteract(event.getEntityPlayer(), event.getHand());
+
+                    event.setCanceled(true);
+                    event.setCancellationResult(EnumActionResult.SUCCESS);
                 }
             }
         }
