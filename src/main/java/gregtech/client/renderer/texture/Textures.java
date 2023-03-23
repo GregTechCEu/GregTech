@@ -45,7 +45,7 @@ public class Textures {
     public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
     public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
-    public static final QuantumChestRenderer[] QUANTUM_CHEST_RENDERER = new QuantumChestRenderer[GTValues.V.length];
+    public static final QuantumStorageRenderer[] QUANTUM_CHEST_RENDERER = new QuantumStorageRenderer[GTValues.V.length];
 
     // Simple Cube Renderers
     public static final SimpleOverlayRenderer BRONZE_PLATED_BRICKS = new SimpleOverlayRenderer("casings/solid/machine_bronze_plated_bricks");
@@ -298,7 +298,7 @@ public class Textures {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             VOLTAGE_CASINGS[i] = new SimpleSidedCubeRenderer("casings/voltage/" + voltageName);
-            QUANTUM_CHEST_RENDERER[i] = new QuantumChestRenderer(i);
+            QUANTUM_CHEST_RENDERER[i] = new QuantumStorageRenderer(i);
         }
         if (GTValues.isClientSide()) {
             RENDER_STATE = new ThreadLocal<>();

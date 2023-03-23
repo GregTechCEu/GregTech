@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -47,11 +48,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
@@ -68,6 +69,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private static final String NBT_ITEMCOUNT = "ItemAmount";
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
+    private ItemStack previousStack;
+    private long previousStackSize;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -108,7 +111,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        Textures.QUANTUM_CHEST_RENDERER[this.tier].render(x, y, z, this, partialTicks);
+        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderChest(x, y, z, this, itemStack, itemsStoredInside, partialTicks);
     }
 
     @Override
@@ -139,6 +142,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                         inputStack.shrink(amountOfItemsToInsert);
                         importItems.setStackInSlot(0, inputStack);
                         this.itemsStoredInside += amountOfItemsToInsert;
+
                         markDirty();
                     }
                 }
@@ -163,6 +167,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
             if (isAutoOutputItems()) {
                 pushItemsIntoNearbyHandlers(currentOutputFacing);
+            }
+            if (previousStack != itemStack) {
+                writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(itemStack));
+                previousStack = itemStack;
+            }
+            if (previousStackSize != itemsStoredInside) {
+                writeCustomData(UPDATE_ITEM_COUNT, buf -> buf.writeLong(itemsStoredInside));
+                previousStackSize = itemsStoredInside;
             }
         }
     }
@@ -369,6 +381,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
             this.autoOutputItems = buf.readBoolean();
             scheduleRenderUpdate();
+        } else if (dataId == UPDATE_ITEM) {
+            try {
+                this.itemStack = buf.readItemStack();
+            } catch (IOException e) {
+                GTLog.logger.error("Failed to read item stack in a quantum chest!");
+            }
+        } else if (dataId == UPDATE_ITEM_COUNT) {
+            this.itemsStoredInside = buf.readLong();
         }
     }
 

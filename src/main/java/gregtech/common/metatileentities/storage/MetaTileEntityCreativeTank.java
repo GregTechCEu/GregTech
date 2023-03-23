@@ -1,9 +1,9 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -12,7 +12,6 @@ import gregtech.api.gui.widgets.PhantomFluidWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -29,7 +28,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -46,16 +44,20 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     private boolean active = false;
 
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 15, -1);
+        super(metaTileEntityId, GTValues.MAX, -1);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, ArrayUtils.add(pipeline,
-                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        Textures.QUANTUM_CHEST_RENDERER[this.getTier()].renderMachine(renderState, translation, pipeline, this.getFrontFacing());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-        Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
-        Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+        if (this.getOutputFacing() != null) {
+            Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+            if (isAutoOutputFluids()) {
+                Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+            }
+        }
+        Textures.QUANTUM_CHEST_RENDERER[this.getTier()].renderTankFluid(renderState, translation, pipeline, this.getFrontFacing(), fluidTank.getFluid());
     }
 
     @Override

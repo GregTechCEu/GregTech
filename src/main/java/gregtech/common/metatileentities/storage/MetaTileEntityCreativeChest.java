@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.storage;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -55,7 +56,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private boolean active = false;
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 15, 0);
+        super(metaTileEntityId, GTValues.MAX, 0);
     }
 
     @Override
