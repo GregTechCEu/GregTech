@@ -2217,6 +2217,14 @@ tile.rubber_sapling.name=橡胶树苗
 
 tile.planks.rubber.name=橡胶木板
 tile.planks.treated.name=防腐木板
+tile.wood_slab.rubber.name=橡胶木台阶
+tile.wood_slab.treated.name=防腐木台阶
+tile.rubber_wood_stairs.name=橡胶木楼梯
+tile.treated_wood_stairs.name=防腐木楼梯
+tile.rubber_wood_fence.name=橡胶木栅栏
+tile.treated_wood_fence.name=防腐木栅栏
+tile.rubber_wood_fence_gate.name=橡胶木栅栏门
+tile.treated_wood_fence_gate.name=防腐木栅栏门
 
 tile.brittle_charcoal.name=脆木炭块
 tile.brittle_charcoal.tooltip.1=产自木炭堆点火器。
@@ -2274,6 +2282,13 @@ metaitem.item_magnet.lv.name=低压物品磁铁
 metaitem.item_magnet.hv.name=高压物品磁铁
 behavior.item_magnet.enabled=§a磁场已启用
 behavior.item_magnet.disabled=§c磁场已禁用
+
+metaitem.rubber_wood_boat.name=橡胶木船
+metaitem.treated_wood_boat.name=防腐木船
+metaitem.rubber_wood_door.name=橡胶木门
+metaitem.treated_wood_door.name=防腐木门
+
+entity.GTBoat.name=船
 
 metaitem.terminal.name=终端
 metaitem.terminal.tooltip=工欲善其事，必先利其器。
@@ -4422,6 +4437,8 @@ gregtech.machine.miner.minex=mX：%d
 gregtech.machine.miner.miney=mY：%d
 gregtech.machine.miner.minez=mZ：%d
 gregtech.machine.miner.radius=半径：%d
+gregtech.machine.miner.working_area=作用范围：%dx%d 格
+gregtech.machine.miner.working_area_chunks=作用范围：%dx%d 区块
 gregtech.machine.miner.chunkradius=区块半径：%d
 
 gregtech.machine.fluid_drilling_rig.mv.name=基础钻井平台
