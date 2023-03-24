@@ -7,8 +7,6 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.info.MaterialIconSet;
-import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
@@ -48,7 +46,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -160,17 +157,6 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
         ToolItems.registerModels();
-    }
-
-    @SubscribeEvent
-    public static void registerSprites(TextureStitchEvent.Pre event) {
-        for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
-            event.getMap().registerSprite(MaterialIconType.ore.getBlockTexturePath(set));
-            event.getMap().registerSprite(MaterialIconType.block.getBlockTexturePath(set));
-        }
-        MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
-        MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));
-        MetaBlocks.ORES.forEach(o -> o.onTextureStitch(event));
     }
 
     @SubscribeEvent

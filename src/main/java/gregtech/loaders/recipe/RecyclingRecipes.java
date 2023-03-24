@@ -176,8 +176,7 @@ public class RecyclingRecipes {
         // Null check the Item before adding it to the Builder.
         // - Try to output an Ingot, otherwise output a Dust.
         if (itemMs != null) {
-            OrePrefix outputPrefix = itemMs.material.hasProperty(PropertyKey.INGOT) ? OrePrefix.ingot : OrePrefix.dust;
-            extractorBuilder.output(outputPrefix, itemMs.material, (int) (itemMs.amount / M));
+            extractorBuilder.outputs(OreDictUnifier.getIngotOrDust(itemMs));
         }
 
         cleanInputNBT(input, extractorBuilder);

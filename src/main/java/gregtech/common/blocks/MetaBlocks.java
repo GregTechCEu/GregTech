@@ -11,7 +11,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
@@ -411,9 +410,9 @@ public class MetaBlocks {
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
 
-        COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        ORES.forEach(IModelSupplier::onModelRegister);
+        COMPRESSED.values().stream().distinct().forEach(BlockCompressed::onModelRegister);
+        FRAMES.values().stream().distinct().forEach(BlockFrame::onModelRegister);
+        ORES.forEach(BlockOre::onModelRegister);
     }
 
     @SideOnly(Side.CLIENT)
