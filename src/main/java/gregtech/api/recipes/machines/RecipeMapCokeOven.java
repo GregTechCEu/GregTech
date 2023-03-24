@@ -10,8 +10,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class RecipeMapCokeOven<R extends RecipeBuilder<R>> extends RecipeMap<R> {
 
-    public RecipeMapCokeOven(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, R defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapCokeOven(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
+                                 int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, R defaultRecipe, boolean isHidden) {
+        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override
@@ -22,25 +23,5 @@ public class RecipeMapCokeOven<R extends RecipeBuilder<R>> extends RecipeMap<R> 
         addSlot(builder, 106, 10, 0, exportItems, null, false, true);
         addSlot(builder, 106, 28, 0, null, exportFluids, true, true);
         return builder;
-    }
-
-    @Override
-    public void setMaxInputs(int maxInputs) {
-        throw new UnsupportedOperationException("Cannot change item input amount for Coke Oven.");
-    }
-
-    @Override
-    public void setMaxOutputs(int maxOutputs) {
-        throw new UnsupportedOperationException("Cannot change item output amount for Coke Oven.");
-    }
-
-    @Override
-    public void setMaxFluidInputs(int maxFluidInputs) {
-        throw new UnsupportedOperationException("Cannot change fluid input amount for Coke Oven.");
-    }
-
-    @Override
-    public void setMaxFluidOutputs(int maxFluidOutputs) {
-        throw new UnsupportedOperationException("Cannot change fluid output amount for Coke Oven.");
     }
 }

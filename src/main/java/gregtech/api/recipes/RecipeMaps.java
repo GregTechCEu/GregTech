@@ -131,7 +131,7 @@ public class RecipeMaps {
      * The Assembly Line Recipe Builder has no special properties/build actions yet, but will in the future
      */
     @ZenProperty
-    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 16, 1, 4, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 16, false, 1, false,  4, false,  0, false, new SimpleRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ASSEMBLER);
 
@@ -393,7 +393,7 @@ public class RecipeMaps {
      * As a Primitive Machine, the Coke Oven does not need an <B>EUt</B> parameter specified for the Recipe Builder.
      */
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapCokeOven<>("coke_oven", 1, 1, 0, 1, new PrimitiveRecipeBuilder(), false)
+    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapCokeOven<>("coke_oven", 1, false, 1, false, 0, false, 1, false, new PrimitiveRecipeBuilder(), false)
             .setSound(GTSoundEvents.FIRE);
 
     /**
@@ -430,7 +430,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CRACKING_RECIPES = new RecipeMapCrackerUnit<>("cracker", 1, 0, 2, 2, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CRACKING_RECIPES = new RecipeMapCrackerUnit<>("cracker", 1, false, 0, true, 2, false, 2, true, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.CRACKING_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.CRACKING_OVERLAY_2)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
@@ -512,7 +512,7 @@ public class RecipeMaps {
      *  This behavior can be disabled by adding a <B>.disableDistilleryRecipes()</B> onto the recipe builder.
      */
     @ZenProperty
-    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapDistillationTower("distillation_tower", 0, 1, 1, 12, new UniversalDistillationRecipeBuilder(), false)
+    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapDistillationTower("distillation_tower", 0, true, 1, true, 1, true, 12, false, new UniversalDistillationRecipeBuilder(), false)
             .setSound(GTSoundEvents.CHEMICAL_REACTOR);
 
     /**

@@ -13,8 +13,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationRecipeBuilder> {
 
-    public RecipeMapDistillationTower(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapDistillationTower(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
+                                 int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe, boolean isHidden) {
+        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override
@@ -100,10 +101,5 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
                 addSlot(builder, x, y, i, itemHandler, fluidHandler, true, true);
             }
         }
-    }
-
-    @Override
-    public void setMaxFluidOutputs(int maxFluidOutputs) {
-        throw new UnsupportedOperationException("Cannot change fluid output amount for Distillation Tower.");
     }
 }
