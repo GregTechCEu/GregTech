@@ -219,8 +219,6 @@ public class RenderUtil {
             return;
         }
 
-        int glTextureId = -1;
-
         final int iconWidth = textureAtlasSprite.getIconWidth();
         final int iconHeight = textureAtlasSprite.getIconHeight();
         final int frameCount = textureAtlasSprite.getFrameCount();
@@ -234,7 +232,7 @@ public class RenderUtil {
             int[] largestMipMapTextureData = frameTextureData[0];
             bufferedImage.setRGB(0, i * iconHeight, iconWidth, iconHeight, largestMipMapTextureData, 0, iconWidth);
         }
-        glTextureId = TextureUtil.glGenTextures();
+        int glTextureId = TextureUtil.glGenTextures();
         if (glTextureId != -1) {
             TextureUtil.uploadTextureImageAllocate(glTextureId, bufferedImage, false, false);
             textureMap.put(textureAtlasSprite, glTextureId);

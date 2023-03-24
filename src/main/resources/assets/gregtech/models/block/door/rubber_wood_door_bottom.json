@@ -1,0 +1,20 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "gregtech:blocks/wood/rubber/rubber_wood_door_bottom",
+    "bottom": "gregtech:blocks/wood/rubber/rubber_wood_door_bottom"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 2, 16, 16 ],
+      "faces": {
+        "north": { "uv": [ 2, 0, 0, 16 ], "texture": "#bottom", "cullface": "north" },
+        "east": { "uv": [ 16, 0, 0, 16 ], "texture": "#bottom" },
+        "south": { "uv": [ 0, 0, 2, 16 ], "texture": "#bottom", "cullface": "south" },
+        "west": { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "west" },
+        "down": { "uv": [ 14, 0, 16, 16 ], "texture": "#bottom", "cullface": "down" }
+      }
+    }
+  ]
+}

@@ -62,7 +62,7 @@ public class MachineRecipeLoader {
         MiscRecipeLoader.init();
         BatteryRecipes.init();
         CircuitRecipes.init();
-        WoodRecipeLoader.init();
+        WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
