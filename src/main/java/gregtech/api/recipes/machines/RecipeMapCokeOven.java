@@ -23,4 +23,24 @@ public class RecipeMapCokeOven<R extends RecipeBuilder<R>> extends RecipeMap<R> 
         addSlot(builder, 106, 28, 0, null, exportFluids, true, true);
         return builder;
     }
+
+    @Override
+    public void setMaxInputs(int maxInputs) {
+        throw new UnsupportedOperationException("Cannot change item input amount for Coke Oven.");
+    }
+
+    @Override
+    public void setMaxOutputs(int maxOutputs) {
+        throw new UnsupportedOperationException("Cannot change item output amount for Coke Oven.");
+    }
+
+    @Override
+    public void setMaxFluidInputs(int maxFluidInputs) {
+        throw new UnsupportedOperationException("Cannot change fluid input amount for Coke Oven.");
+    }
+
+    @Override
+    public void setMaxFluidOutputs(int maxFluidOutputs) {
+        throw new UnsupportedOperationException("Cannot change fluid output amount for Coke Oven.");
+    }
 }

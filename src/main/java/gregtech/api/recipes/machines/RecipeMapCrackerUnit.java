@@ -46,4 +46,14 @@ public class RecipeMapCrackerUnit<R extends RecipeBuilder<R>> extends RecipeMap<
         DoubleSupplier supplier2 = () -> tracker.get() >= 0.5 ? (tracker.get() - 0.5) * 2 : 0;
         return Pair.of(supplier1, supplier2);
     }
+
+    @Override
+    public void setMaxInputs(int maxInputs) {
+        throw new UnsupportedOperationException("Cannot change item input amount for Cracking Unit.");
+    }
+
+    @Override
+    public void setMaxFluidInputs(int maxFluidInputs) {
+        throw new UnsupportedOperationException("Cannot change fluid input amount for Cracking Unit.");
+    }
 }

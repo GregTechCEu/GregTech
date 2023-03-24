@@ -75,7 +75,17 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     }
 
     @Override
+    public void setMaxOutputs(int maxOutputs) {
+        throw new UnsupportedOperationException("Cannot change item output amount for Assembly Line.");
+    }
+
+    @Override
     public void setMaxFluidInputs(int maxFluidInputs) {
         throw new UnsupportedOperationException("Cannot change fluid input amount for Assembly Line.");
+    }
+
+    @Override
+    public void setMaxFluidOutputs(int maxFluidInputs) {
+        throw new UnsupportedOperationException("Cannot change fluid output amount for Assembly Line.");
     }
 }
