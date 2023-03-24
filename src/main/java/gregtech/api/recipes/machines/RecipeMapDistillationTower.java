@@ -101,4 +101,9 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
             }
         }
     }
+
+    @Override
+    public void setMaxFluidOutputs(int maxFluidOutputs) {
+        throw new UnsupportedOperationException("Cannot change output amount for Distillation Tower.");
+    }
 }

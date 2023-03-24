@@ -68,4 +68,14 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
             addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
         }
     }
+
+    @Override
+    public void setMaxInputs(int maxInputs) {
+        throw new UnsupportedOperationException("Cannot change output amount for Assembly Line.");
+    }
+
+    @Override
+    public void setMaxFluidInputs(int maxFluidInputs) {
+        throw new UnsupportedOperationException("Cannot change fluid output amount for Assembly Line.");
+    }
 }

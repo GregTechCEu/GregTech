@@ -40,9 +40,7 @@ import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
 import stanhebben.zenscript.annotations.Optional;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenMethod;
+import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -254,6 +252,37 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (recipe.isGroovyRecipe()) {
             return validationResult;
         }
+        if (recipe.getInputs().size() + recipe.getFluidInputs().size() == 0) {
+            GTLog.logger.error("Invalid amount of recipe inputs");
+        }
+
+        boolean emptyInputs = recipe.getInputs().isEmpty() && recipe.getFluidInputs().isEmpty();
+        if (emptyInputs) {
+            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            if (recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.");
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            }
+        }
+        boolean emptyOutputs = recipe.getOutputs().isEmpty() && recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().isEmpty();
+        if (recipe.getEUt() > 0 && emptyOutputs) {
+            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            if (recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.");
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            }
+        }
+        if (emptyInputs && emptyOutputs) {
+            GTLog.logger.error("Invalid recipe. Inputs and Outputs are empty.");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Recipe is empty"));
+            if (recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError("Invalid recipe. Inputs and Outputs are empty.");
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Recipe is empty"));
+            }
+        }
+
         int amount = recipe.getInputs().size();
         if (amount > getMaxInputs()) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount, getMaxInputs());
@@ -1025,6 +1054,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxInputs;
     }
 
+    @ZenSetter("maxInputs")
     public void setMaxInputs(@Nonnegative int maxInputs) {
         this.maxInputs = Math.max(this.maxInputs, maxInputs);
     }
@@ -1043,6 +1073,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxOutputs;
     }
 
+    @ZenSetter("maxOutputs")
     public void setMaxOutputs(@Nonnegative int maxOutputs) {
         this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
     }
@@ -1061,6 +1092,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxFluidInputs;
     }
 
+    @ZenSetter("maxFluidInputs")
     public void setMaxFluidInputs(@Nonnegative int maxFluidInputs) {
         this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
     }
@@ -1079,6 +1111,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxFluidOutputs;
     }
 
+    @ZenSetter("maxFluidOutputs")
     public void setMaxFluidOutputs(@Nonnegative int maxFluidOutputs) {
         this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
     }

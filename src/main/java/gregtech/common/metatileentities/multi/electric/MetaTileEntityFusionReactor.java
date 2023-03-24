@@ -112,7 +112,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .where('K', states(getCoilState()))
                 .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('A', air())
-                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1)))
+                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(2)))
                 .where('#', any())
                 .build();
     }
