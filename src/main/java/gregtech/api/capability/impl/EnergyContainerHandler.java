@@ -1,10 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.FeCompat;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
@@ -22,8 +19,6 @@ import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 public class EnergyContainerHandler extends MTETrait implements IEnergyContainer {
-
-    public static final String MTE_TRAIT_NAME = "EnergyContainer";
 
     protected final long maxCapacity;
     protected long energyStored;
@@ -82,7 +77,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     @Nonnull
     @Override
     public String getName() {
-        return MTE_TRAIT_NAME;
+        return GregtechDataCodes.ENERGY_CONTAINER_TRAIT;
     }
 
     @Override

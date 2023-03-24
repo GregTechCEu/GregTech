@@ -15,6 +15,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
@@ -27,6 +28,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -74,7 +76,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -896,7 +901,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         int amountOfTraits = buf.readShort();
         for (int i = 0; i < amountOfTraits; i++) {
             int traitNetworkId = buf.readVarInt();
-            Objects.requireNonNull(mteTraitByNetworkId.get(traitNetworkId)).receiveInitialData(buf);
+            MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
+            if (trait == null) {
+                GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
+            } else trait.receiveInitialData(buf);
         }
         CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
         this.isFragile = buf.readBoolean();
@@ -928,7 +936,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
-            Objects.requireNonNull(mteTraitByNetworkId.get(traitNetworkId)).receiveCustomData(buf.readVarInt(), buf);
+            MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
+            if (trait == null) {
+                GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
+            } else trait.receiveCustomData(buf.readVarInt(), buf);
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverIO.readCoverPlacement(buf, this,
                     (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
@@ -1385,11 +1396,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      */
     @Nullable
     public final AbstractRecipeLogic getRecipeLogic() {
-        MTETrait trait = getMTETrait(AbstractRecipeLogic.MTE_TRAIT_NAME);
+        MTETrait trait = getMTETrait(GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT);
         if (trait instanceof AbstractRecipeLogic) {
             return ((AbstractRecipeLogic) trait);
         } else if (trait != null) {
-            throw new IllegalStateException("MTE Trait " + trait.getName() + " has name " + AbstractRecipeLogic.MTE_TRAIT_NAME +
+            throw new IllegalStateException("MTE Trait " + trait.getName() + " has name " + GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT +
                     " but is not instanceof AbstractRecipeLogic");
         }
         return null;

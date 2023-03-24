@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.converter;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
@@ -17,8 +18,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import javax.annotation.Nonnull;
 
 public class ConverterTrait extends MTETrait {
-
-    public static final String MTE_TRAIT_NAME = "EnergyConvertTrait";
 
     private final int amps;
     private final long voltage;
@@ -75,7 +74,7 @@ public class ConverterTrait extends MTETrait {
     @Nonnull
     @Override
     public String getName() {
-        return MTE_TRAIT_NAME;
+        return GregtechDataCodes.ENERGY_CONVERTER_TRAIT;
     }
 
     @Override

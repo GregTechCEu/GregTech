@@ -1,10 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.FeCompat;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -21,7 +18,6 @@ import java.util.List;
 
 public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
-    public static final String MTE_TRAIT_NAME = "BatteryEnergyContainer";
     public static final long AMPS_PER_BATTERY = 2L;
 
     private final int tier;
@@ -237,8 +233,8 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
     @Nonnull
     @Override
-    public String getName() {
-        return MTE_TRAIT_NAME;
+    public final String getName() {
+        return GregtechDataCodes.BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT;
     }
 
     protected IItemHandlerModifiable getInventory() {

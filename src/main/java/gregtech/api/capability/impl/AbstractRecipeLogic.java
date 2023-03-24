@@ -38,8 +38,6 @@ import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
-    public static final String MTE_TRAIT_NAME = "RecipeMapWorkable";
-
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
@@ -154,7 +152,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     @Override
     public final String getName() {
         // this is final so machines are not accidentally given multiple workable instances
-        return MTE_TRAIT_NAME;
+        return GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT;
     }
 
     @Override

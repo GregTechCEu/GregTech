@@ -75,7 +75,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
             @Nonnull
             @Override
             public String getName() {
-                return "EnergyContainerInternal";
+                return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
             }
         };
     }
