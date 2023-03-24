@@ -1,0 +1,37 @@
+# Runs tests and other checks on Pull Requests
+name: PR Testing
+
+on:
+  pull_request:
+    branches:
+      - master
+
+# if a second commit is pushed quickly after the first, cancel the first one's build
+concurrency:
+  group: pr-testing-${{github.head_ref}}
+  cancel-in-progress: true
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Run Tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: 'test --build-cache --no-daemon' # disable daemon since only one gradle operation will happen
+          generate-job-summary: false
+          gradle-home-cache-includes: |
+            caches
+            jdks
+            notifications
+            wrapper
