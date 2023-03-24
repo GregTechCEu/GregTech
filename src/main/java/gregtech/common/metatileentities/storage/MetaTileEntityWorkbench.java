@@ -158,12 +158,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         super.update();
         if (!getWorld().isRemote) {
             if (recipeLogic != null) {
-                getRecipeLogic().update();
+                getCraftingRecipeLogic().update();
             }
         }
     }
 
-    private CraftingRecipeLogic getRecipeLogic() {
+    private CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
         return recipeLogic;
     }
@@ -179,7 +179,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(5, 20, "gregtech.machine.workbench.storage_note_1"));
         widgetGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
-        CraftingRecipeLogic recipeResolver = getRecipeLogic();
+        CraftingRecipeLogic recipeResolver = getCraftingRecipeLogic();
         IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
         widgetGroup.addWidget(new ItemListGridWidget(11, 45, 8, 5, itemList));
         return widgetGroup;

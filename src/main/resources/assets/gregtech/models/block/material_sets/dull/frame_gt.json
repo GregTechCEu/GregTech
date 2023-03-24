@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:block/tinted_cube_all",
+  "textures": {
+    "all": "gregtech:blocks/material_sets/dull/frame_gt"
+  }
+}

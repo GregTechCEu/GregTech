@@ -219,11 +219,13 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         wasActiveAndNeedsUpdate = true;
     }
 
+    @Nonnull
     @Override
     public MetaTileEntityLargeBoiler getMetaTileEntity() {
         return (MetaTileEntityLargeBoiler) super.getMetaTileEntity();
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = super.serializeNBT();
@@ -258,7 +260,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == BOILER_HEAT) {
             this.currentHeat = buf.readVarInt();

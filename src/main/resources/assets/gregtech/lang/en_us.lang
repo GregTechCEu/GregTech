@@ -2217,6 +2217,14 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
+tile.wood_slab.rubber.name=Rubber Wood Slab
+tile.wood_slab.treated.name=Treated Wood Slab
+tile.rubber_wood_stairs.name=Rubber Wood Stairs
+tile.treated_wood_stairs.name=Treated Wood Stairs
+tile.rubber_wood_fence.name=Rubber Wood Fence
+tile.treated_wood_fence.name=Treated Wood Fence
+tile.rubber_wood_fence_gate.name=Rubber Wood Fence Gate
+tile.treated_wood_fence_gate.name=Treated Wood Fence Gate
 
 tile.brittle_charcoal.name=Brittle Charcoal
 tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
@@ -2274,6 +2282,13 @@ metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
 behavior.item_magnet.enabled=§aMagnetic Field Enabled
 behavior.item_magnet.disabled=§cMagnetic Field Disabled
+
+metaitem.rubber_wood_boat.name=Rubber Wood Boat
+metaitem.treated_wood_boat.name=Treated Wood Boat
+metaitem.rubber_wood_door.name=Rubber Wood Door
+metaitem.treated_wood_door.name=Treated Wood Door
+
+entity.GTBoat.name=Boat
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
@@ -4413,6 +4428,7 @@ gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
 gregtech.machine.miner.multi.production=Produces §f3x§7 more crushed ore than a §fMacerator§7.
 gregtech.machine.miner.fluid_usage=Uses §f%,d L/t §7of §f%s§7, doubled per overclock.
 gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
+gregtech.machine.miner.multi.needsfluid=Needs Drilling Fluid
 
 gregtech.machine.miner.startx=sX: %d
 gregtech.machine.miner.starty=sY: %d
@@ -4421,6 +4437,8 @@ gregtech.machine.miner.minex=mX: %d
 gregtech.machine.miner.miney=mY: %d
 gregtech.machine.miner.minez=mZ: %d
 gregtech.machine.miner.radius=Radius: %d
+gregtech.machine.miner.working_area=Working Area: %dx%d blocks
+gregtech.machine.miner.working_area_chunks=Working Area: %dx%d chunks
 gregtech.machine.miner.chunkradius=Chunk Radius: %d
 
 gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
@@ -4968,15 +4986,13 @@ gregtech.multiblock.large_boiler.rate_tooltip=§7Produces §f%d L §7of Steam wi
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to heat up
 gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
 
-gregtech.multiblock.large_miner.done=Done!
-gregtech.multiblock.large_miner.working=Working...
-gregtech.multiblock.large_miner.invfull=Inventory Full!
-gregtech.multiblock.large_miner.needspower=Needs Power!
-gregtech.multiblock.large_miner.vent=Venting Blocked!
-gregtech.multiblock.large_miner.steam=Needs Steam!
-gregtech.multiblock.large_miner.radius=Radius: §a%d§r Blocks
-gregtech.multiblock.large_miner.errorradius=§cCannot change radius while working!
-gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
+gregtech.machine.miner.done=Done!
+gregtech.machine.miner.working=Working...
+gregtech.machine.miner.invfull=Inventory Full!
+gregtech.machine.miner.needspower=Needs Power!
+gregtech.machine.steam_miner.vent=Venting Blocked!
+gregtech.machine.steam_miner.steam=Needs Steam!
+gregtech.machine.miner.errorradius=§cCannot change radius while working!
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 

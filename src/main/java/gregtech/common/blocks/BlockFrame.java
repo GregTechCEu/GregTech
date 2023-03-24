@@ -1,6 +1,5 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -15,8 +14,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
+import gregtech.client.model.MaterialStateMapper;
+import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -24,7 +23,6 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
@@ -39,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,9 +44,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public final class BlockFrame extends DelayedStateBlock implements IModelSupplier {
+public final class BlockFrame extends DelayedStateBlock {
 
-    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "frame_block"), "normal");
     public static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
     public final PropertyMaterial variantProperty;
@@ -212,7 +208,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
             return replaceWithFramedPipe(worldIn, pos, state, playerIn, stackInHand, facing);
         }
 
-        if (stackInHand.getItem().getToolClasses(stackInHand).contains(ToolClasses.CROWBAR))  {
+        if (stackInHand.getItem().getToolClasses(stackInHand).contains(ToolClasses.CROWBAR)) {
             return removeFrame(worldIn, pos, playerIn, stackInHand);
         }
 
@@ -307,21 +303,15 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return BlockFaceShape.UNDEFINED;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            Material material = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.frameGt.getBlockTexturePath(material.getMaterialIconSet()));
-        }
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
+        ModelLoader.setCustomStateMapper(this, new MaterialStateMapper(
+                MaterialIconType.frameGt, s -> s.getValue(this.variantProperty).getMaterialIconSet()));
         for (IBlockState state : this.getBlockState().getValidStates()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
+                    MaterialBlockModelLoader.registerItemModel(
+                            MaterialIconType.frameGt,
+                            state.getValue(this.variantProperty).getMaterialIconSet()));
         }
     }
 }

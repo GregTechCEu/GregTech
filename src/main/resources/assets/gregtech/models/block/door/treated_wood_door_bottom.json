@@ -1,0 +1,21 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "1": "gregtech:blocks/wood/treated/treated_wood_door_up_down",
+    "particle": "gregtech:blocks/wood/treated/treated_wood_door_bottom",
+    "bottom": "gregtech:blocks/wood/treated/treated_wood_door_bottom"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 3, 16, 16 ],
+      "faces": {
+        "north": { "uv": [ 3, 0, 0, 16 ], "texture": "#bottom", "cullface": "north" },
+        "east": { "uv": [ 16, 0, 0, 16 ], "texture": "#bottom" },
+        "south": { "uv": [ 0, 0, 3, 16 ], "texture": "#bottom", "cullface": "south" },
+        "west": { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "west" },
+        "down": { "uv": [ 0, 8, 16, 11 ], "rotation": 270, "texture": "#1", "cullface": "down" }
+      }
+    }
+  ]
+}
