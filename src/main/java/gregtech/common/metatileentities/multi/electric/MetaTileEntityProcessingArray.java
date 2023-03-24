@@ -4,7 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.metatileentity.*;
+import gregtech.api.metatileentity.IMachineHatchMultiblock;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -263,21 +266,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         @Override
         public boolean checkRecipe(@Nonnull Recipe recipe) {
+            if (mte == null) return false;
 
-            if (mte == null) {
-                return false;
-            }
-
-            AbstractRecipeLogic arl = null;
-            for (MTETrait trait : mte.mteTraits) {
-                if (trait.getName().equals("RecipeMapWorkable")) {
-                    arl = ((AbstractRecipeLogic) trait);
-                }
-            }
-
-            if (arl == null) {
-                return false;
-            }
+            AbstractRecipeLogic arl = mte.getRecipeLogic();
+            if (arl == null) return false;
 
             return arl.checkRecipe(recipe) && super.checkRecipe(recipe);
         }
