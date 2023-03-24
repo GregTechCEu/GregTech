@@ -1,0 +1,38 @@
+# Updates the Gradle Cache when relevant files change
+name: Update Gradle Cache
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "gradle**" # covers gradle folder, gradle.properties, gradlew
+      - "build.gradle*"
+      - "settings.gradle*"
+      - "src/main/resources/META-INF/*_at.cfg" # access transformers
+
+jobs:
+  Update_Cache:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Update Cache
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: 'test --build-cache --no-daemon' # disable daemon since only one gradle operation will happen
+          generate-job-summary: false
+          gradle-home-cache-includes: |
+            caches
+            jdks
+            notifications
+            wrapper
+          cache-write-only: true
