@@ -8,6 +8,7 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockPlanks.EnumType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -40,6 +42,12 @@ public class BlockRubberLeaves extends BlockLeaves {
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, CHECK_DECAY, DECAYABLE);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        return this.getDefaultState().withProperty(DECAYABLE, false).withProperty(CHECK_DECAY, false);
     }
 
     @Nonnull
@@ -85,7 +93,6 @@ public class BlockRubberLeaves extends BlockLeaves {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(@Nonnull IBlockState state) {
         if (!fancyLeaves()) {
             return super.isOpaqueCube(state);
@@ -94,7 +101,6 @@ public class BlockRubberLeaves extends BlockLeaves {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean shouldSideBeRendered(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         if (!fancyLeaves()) {
             return super.shouldSideBeRendered(blockState, blockAccess, pos, side);

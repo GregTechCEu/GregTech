@@ -1,0 +1,43 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "texture": "gregtech:blocks/wood/rubber/planks_rubber"
+    },
+    "uvlock": true
+  },
+  "variants": {
+    "facing=south,in_wall=false,open=false,powered=true": { "model": "fence_gate_closed" },
+    "facing=west,in_wall=false,open=false,powered=true": { "model": "fence_gate_closed", "y": 90 },
+    "facing=north,in_wall=false,open=false,powered=true": { "model": "fence_gate_closed", "y": 180 },
+    "facing=east,in_wall=false,open=false,powered=true": { "model": "fence_gate_closed", "y": 270 },
+    "facing=south,in_wall=false,open=true,powered=true": { "model": "fence_gate_open" },
+    "facing=west,in_wall=false,open=true,powered=true": { "model": "fence_gate_open", "y": 90 },
+    "facing=north,in_wall=false,open=true,powered=true": { "model": "fence_gate_open", "y": 180 },
+    "facing=east,in_wall=false,open=true,powered=true": { "model": "fence_gate_open", "y": 270 },
+    "facing=south,in_wall=true,open=false,powered=true": { "model": "wall_gate_closed" },
+    "facing=west,in_wall=true,open=false,powered=true": { "model": "wall_gate_closed", "y": 90 },
+    "facing=north,in_wall=true,open=false,powered=true": { "model": "wall_gate_closed", "y": 180 },
+    "facing=east,in_wall=true,open=false,powered=true": { "model": "wall_gate_closed", "y": 270 },
+    "facing=south,in_wall=true,open=true,powered=true": { "model": "wall_gate_open" },
+    "facing=west,in_wall=true,open=true,powered=true": { "model": "wall_gate_open", "y": 90 },
+    "facing=north,in_wall=true,open=true,powered=true": { "model": "wall_gate_open", "y": 180 },
+    "facing=east,in_wall=true,open=true,powered=true": { "model": "wall_gate_open", "y": 270 },
+    "facing=south,in_wall=false,open=false,powered=false": { "model": "fence_gate_closed" },
+    "facing=west,in_wall=false,open=false,powered=false": { "model": "fence_gate_closed", "y": 90 },
+    "facing=north,in_wall=false,open=false,powered=false": { "model": "fence_gate_closed", "y": 180 },
+    "facing=east,in_wall=false,open=false,powered=false": { "model": "fence_gate_closed", "y": 270 },
+    "facing=south,in_wall=false,open=true,powered=false": { "model": "fence_gate_open" },
+    "facing=west,in_wall=false,open=true,powered=false": { "model": "fence_gate_open", "y": 90 },
+    "facing=north,in_wall=false,open=true,powered=false": { "model": "fence_gate_open", "y": 180 },
+    "facing=east,in_wall=false,open=true,powered=false": { "model": "fence_gate_open", "y": 270 },
+    "facing=south,in_wall=true,open=false,powered=false": { "model": "wall_gate_closed" },
+    "facing=west,in_wall=true,open=false,powered=false": { "model": "wall_gate_closed", "y": 90 },
+    "facing=north,in_wall=true,open=false,powered=false": { "model": "wall_gate_closed", "y": 180 },
+    "facing=east,in_wall=true,open=false,powered=false": { "model": "wall_gate_closed", "y": 270 },
+    "facing=south,in_wall=true,open=true,powered=false": { "model": "wall_gate_open" },
+    "facing=west,in_wall=true,open=true,powered=false": { "model": "wall_gate_open", "y": 90 },
+    "facing=north,in_wall=true,open=true,powered=false": { "model": "wall_gate_open", "y": 180 },
+    "facing=east,in_wall=true,open=true,powered=false": { "model": "wall_gate_open", "y": 270 }
+  }
+}

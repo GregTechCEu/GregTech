@@ -60,8 +60,9 @@ public class MachineRecipeLoader {
         ComponentRecipes.register();
         MiscRecipeLoader.init();
         BatteryRecipes.init();
-
         CircuitRecipes.init();
+        WoodRecipeLoader.registerRecipes();
+
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
         registerAssemblerRecipes();
@@ -486,13 +487,13 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ITEM_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ITEM_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
@@ -597,8 +598,8 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).input(cableGtSingle, Materials.YttriumBariumCuprate, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[8].getStackForm()).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).input(cableGtSingle, Materials.Europium, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[9].getStackForm()).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).circuitMeta(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plank, Wood, 4).input(screw, Iron, 4).outputs(WOODEN_CRATE.getStackForm()).duration(100).circuitMeta(5).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Bronze, 4).input(plate, Bronze, 4).outputs(BRONZE_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();

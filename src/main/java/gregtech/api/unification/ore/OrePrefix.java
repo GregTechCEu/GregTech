@@ -157,6 +157,16 @@ public class OrePrefix {
     public static final OrePrefix log = new OrePrefix("log", -1, null, null, 0, null);
     // Prefix for Planks. Usually "plankWood". Introduced by Eloraam
     public static final OrePrefix plank = new OrePrefix("plank", -1, null, null, 0, null);
+    // Prefix for Wood Slabs
+    public static final OrePrefix slab = new OrePrefix("slab", -1, null, null, 0, null);
+    // Prefix for Stairs
+    public static final OrePrefix stair = new OrePrefix("stair", -1, null, null, 0, null);
+    // Prefix for Fences
+    public static final OrePrefix fence = new OrePrefix("fence", -1, null, null, 0, null);
+    // Prefix for Fence Gates
+    public static final OrePrefix fenceGate = new OrePrefix("fenceGate", -1, null, null, 0, null);
+    // Prefix for Doors
+    public static final OrePrefix door = new OrePrefix("door", -1, null, null, 0, null);
 
     // Prefix to determine which kind of Rock this is.
     public static final OrePrefix stone = new OrePrefix("stone", -1, Materials.Stone, null, SELF_REFERENCING, null);
@@ -448,7 +458,7 @@ public class OrePrefix {
 
     public long getMaterialAmount(@Nullable Material material) {
 
-        if(material == null) {
+        if (material == null) {
             return this.materialAmount;
         }
 
@@ -562,10 +572,10 @@ public class OrePrefix {
     }
 
     private String findUnlocalizedName(Material material) {
-        if(material.hasProperty(PropertyKey.POLYMER)) {
+        if (material.hasProperty(PropertyKey.POLYMER)) {
             String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
             // Not every polymer ore prefix gets a special name
-            if(LocalizationUtils.hasKey(localizationKey)) {
+            if (LocalizationUtils.hasKey(localizationKey)) {
                 return localizationKey;
             }
         }

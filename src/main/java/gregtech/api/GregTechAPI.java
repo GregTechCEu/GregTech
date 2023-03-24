@@ -23,6 +23,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -61,11 +62,19 @@ public class GregTechAPI {
     public static final Object2ObjectOpenHashMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
 
     public static final BaseCreativeTab TAB_GREGTECH =
-            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.LOGO.getStackForm(), true);
+    public static final BaseCreativeTab TAB_GREGTECH_MACHINES =
+            new BaseCreativeTab(GTValues.MODID + ".machines", () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
+    public static final BaseCreativeTab TAB_GREGTECH_CABLES =
+            new BaseCreativeTab(GTValues.MODID + ".cables", () -> OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_PIPES =
+            new BaseCreativeTab(GTValues.MODID + ".pipes", () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_TOOLS =
+            new BaseCreativeTab(GTValues.MODID + ".tools", () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), false);
     public static final BaseCreativeTab TAB_GREGTECH_MATERIALS =
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
-            new BaseCreativeTab(GTValues.MODID + ".ores", () -> ToolItems.DRILL_MV.get(Materials.Aluminium), true);
+            new BaseCreativeTab(GTValues.MODID + ".ores", () -> OreDictUnifier.get(OrePrefix.ore, Materials.Aluminium), true);
 
     public static class RegisterEvent<V> extends GenericEvent<V> {
 

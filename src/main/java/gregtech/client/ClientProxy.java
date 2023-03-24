@@ -7,8 +7,6 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.info.MaterialIconSet;
-import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
@@ -46,10 +44,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -105,15 +101,15 @@ public class ClientProxy extends CommonProxy {
             tintIndex == 1 ? state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB() : -1;
 
     public static final IBlockColor RUBBER_LEAVES_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            ColorizerFoliage.getFoliageColorBirch();
+            0x98de4b;
 
-    public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
+    public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> 0x98de4b;
 
     public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) ->
-        state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
+            state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
 
     public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) ->
-        stack.getItemDamage() == 0 && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockMachineCasing ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
+            stack.getItemDamage() == 0 && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockMachineCasing ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
 
     public void onPreLoad() {
         super.onPreLoad();
@@ -161,17 +157,6 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
         ToolItems.registerModels();
-    }
-
-    @SubscribeEvent
-    public static void registerSprites(TextureStitchEvent.Pre event) {
-        for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
-            event.getMap().registerSprite(MaterialIconType.ore.getBlockTexturePath(set));
-            event.getMap().registerSprite(MaterialIconType.block.getBlockTexturePath(set));
-        }
-        MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
-        MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));
-        MetaBlocks.ORES.forEach(o -> o.onTextureStitch(event));
     }
 
     @SubscribeEvent
@@ -338,8 +323,10 @@ public class ClientProxy extends CommonProxy {
 
     private static boolean hasActuallyAdvancedInfo(List<String> tooltip) {
         // Actually Additions Keys
-        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":")) return true;
-        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc"))) return true;
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":"))
+            return true;
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc")))
+            return true;
         // Actually Advanced Info Keys
         if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Advanced Info:")) return true;
         return tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Press CTRL for Advanced Info");

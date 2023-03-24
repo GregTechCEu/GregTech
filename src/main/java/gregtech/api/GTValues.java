@@ -122,7 +122,8 @@ public class GTValues {
             MODID_COFH = "cofhcore",
             MODID_APPENG = "appliedenergistics2",
             MODID_JEI = "jei",
-            MODID_GROOVYSCRIPT = "groovyscript";
+            MODID_GROOVYSCRIPT = "groovyscript",
+            MODID_NC = "nuclearcraft";
 
     private static Boolean isClient;
 

@@ -4,7 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
-import gregtech.api.GregTechAPI;
 import gregtech.api.block.BuiltInRenderBlock;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
@@ -67,7 +66,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public BlockPipe() {
         super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("pipe");
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
         setSoundType(SoundType.METAL);
         setHardness(2.0f);
         setResistance(3.0f);
@@ -175,9 +173,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             // Color pipes/cables on place if holding spray can in off-hand
             if (placer instanceof EntityPlayer) {
                 ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                for (int i = 0; i < EnumDyeColor.values().length; i++) {
                     if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
                         break;
                     }
                 }
@@ -188,9 +186,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         if (worldIn.isRemote) return;
-        if (!ConfigHolder.machines.gt6StylePipesCables) {
-            IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-            if (pipeTile != null) {
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null) {
+            pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
+            if (!ConfigHolder.machines.gt6StylePipesCables) {
                 EnumFacing facing = null;
                 for (EnumFacing facing1 : EnumFacing.values()) {
                     if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
@@ -209,10 +208,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 if (open && !canConnect)
                     pipeTile.setConnection(facing, false, false);
                 updateActiveNodeStatus(worldIn, pos, pipeTile);
-                pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
             }
         }
-
     }
 
     @Override
@@ -599,7 +596,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
         return isPipeTool(stack) || ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER) ||
                 GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
+                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
     protected boolean hasCover(IPipeTile<PipeType, NodeDataType> pipeTile) {

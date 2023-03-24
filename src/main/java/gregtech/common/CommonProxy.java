@@ -39,6 +39,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
@@ -77,7 +78,7 @@ public class CommonProxy {
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
 
-           if (material.hasProperty(PropertyKey.ORE)) {
+            if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
             }
 
@@ -89,21 +90,21 @@ public class CommonProxy {
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
                     }
                 }
             }
             if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                 for (BlockItemPipe pipe : ITEM_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
                     }
                 }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
+            if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
                     !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
                 pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(340, 5, false, false, false, false));
                 pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(340, 10, false, false, false, false));
@@ -151,6 +152,16 @@ public class CommonProxy {
         registry.register(RUBBER_LEAVES);
         registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
+        registry.register(WOOD_SLAB);
+        registry.register(DOUBLE_WOOD_SLAB);
+        registry.register(RUBBER_WOOD_STAIRS);
+        registry.register(TREATED_WOOD_STAIRS);
+        registry.register(RUBBER_WOOD_FENCE);
+        registry.register(TREATED_WOOD_FENCE);
+        registry.register(RUBBER_WOOD_FENCE_GATE);
+        registry.register(TREATED_WOOD_FENCE_GATE);
+        registry.register(RUBBER_WOOD_DOOR);
+        registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
@@ -246,6 +257,13 @@ public class CommonProxy {
         registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
         registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
+        registry.register(createItemBlock(WOOD_SLAB, b -> new ItemSlab(b, b, DOUBLE_WOOD_SLAB)));
+        registry.register(createItemBlock(RUBBER_WOOD_STAIRS, ItemBlock::new));
+        registry.register(createItemBlock(TREATED_WOOD_STAIRS, ItemBlock::new));
+        registry.register(createItemBlock(RUBBER_WOOD_FENCE, ItemBlock::new));
+        registry.register(createItemBlock(TREATED_WOOD_FENCE, ItemBlock::new));
+        registry.register(createItemBlock(RUBBER_WOOD_FENCE_GATE, ItemBlock::new));
+        registry.register(createItemBlock(TREATED_WOOD_FENCE_GATE, ItemBlock::new));
         registry.register(createItemBlock(BRITTLE_CHARCOAL, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
@@ -332,13 +350,12 @@ public class CommonProxy {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
         //handle sapling and log burn rates
-        if (block == RUBBER_LOG || block == PLANKS) {
-            event.setBurnTime(300);
-        } else if (block == RUBBER_SAPLING) {
+        if (block == RUBBER_SAPLING) {
             event.setBurnTime(100);
-        }
-        //handle material blocks burn value
-        if (stack.getItem() instanceof CompressedItemBlock) {
+        } else if (block == WOOD_SLAB) {
+            event.setBurnTime(150);
+        } else if (stack.getItem() instanceof CompressedItemBlock) {
+            //handle material blocks burn value
             CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
             Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
             DustProperty property = material.getProperty(PropertyKey.DUST);
@@ -368,16 +385,15 @@ public class CommonProxy {
     }
 
     public void onPostLoad() {
-        GTRecipeManager.postLoad();
         TerminalRegistry.init();
 
-        if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
+        if (ConfigHolder.compat.removeSmeltingForEBFMetals) {
             ModHandler.removeSmeltingEBFMetals();
         }
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if(Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
+        if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
         GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();

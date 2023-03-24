@@ -28,6 +28,16 @@ public class BlockStoneWindmillB extends VariantBlock<BlockStoneWindmillB.BlockT
         return false;
     }
 
+    @Override
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockStoneWindmillB.BlockType.CONCRETE_DARK) || state == getState(BlockStoneWindmillB.BlockType.CONCRETE_LIGHT);
+    }
+
     public enum BlockType implements IStringSerializable {
 
         BLACK_GRANITE("black_granite"),

@@ -28,6 +28,16 @@ public class BlockStoneCobbleMossy extends VariantBlock<BlockStoneCobbleMossy.Bl
         return false;
     }
 
+    @Override
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockStoneCobbleMossy.BlockType.CONCRETE_DARK) || state == getState(BlockStoneCobbleMossy.BlockType.CONCRETE_LIGHT);
+    }
+
     public enum BlockType implements IStringSerializable {
 
         BLACK_GRANITE("black_granite"),

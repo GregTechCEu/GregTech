@@ -1,7 +1,10 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "birch_leaves"
+    "model": "leaves",
+    "textures": {
+      "all": "gregtech:blocks/wood/rubber/leaves_rubber"
+    }
   },
   "variants": {
     "check_decay": {
