@@ -10,6 +10,7 @@ import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -59,7 +60,7 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
     private final boolean powered;
 
     public BlockLamp(boolean noLight, boolean noBloom, boolean borderless, boolean inverted, boolean powered) {
-        super(Material.GLASS);
+        super(Material.REDSTONE_LIGHT);
         this.noLight = noLight;
         this.noBloom = noBloom;
         this.borderless = borderless;
@@ -167,6 +168,12 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
         if (!powered) {
             super.getSubBlocks(tab, list);
         }
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return MapColor.getBlockColor(getState(state));
     }
 
     @Override
