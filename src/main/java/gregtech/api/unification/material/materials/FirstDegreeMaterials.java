@@ -483,7 +483,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Ruridit = new Material.Builder(310, "ruridit")
-                .ingot(3)
+                .ingot(3).fluid()
                 .colorAverage().iconSet(BRIGHT)
                 .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD)
                 .components(Ruthenium, 2, Iridium, 1)
