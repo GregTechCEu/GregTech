@@ -1,4 +1,4 @@
-package gregtech.client.model.modelfactories;
+package gregtech.client.model;
 
 import gregtech.api.GTValues;
 import gregtech.client.utils.BloomEffectUtil;

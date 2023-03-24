@@ -1,4 +1,4 @@
-package gregtech.client.model.modelfactories;
+package gregtech.client.model;
 
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.state.IBlockState;

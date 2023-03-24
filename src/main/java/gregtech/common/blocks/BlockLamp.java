@@ -4,7 +4,7 @@ import gregtech.api.block.VariantBlock;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.client.model.modelfactories.LampBakedModel;
+import gregtech.client.model.LampBakedModel;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
