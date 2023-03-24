@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.converter;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
@@ -13,6 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+
+import javax.annotation.Nonnull;
 
 public class ConverterTrait extends MTETrait {
 
@@ -68,14 +71,10 @@ public class ConverterTrait extends MTETrait {
         return voltage;
     }
 
+    @Nonnull
     @Override
     public String getName() {
-        return "EnergyConvertTrait";
-    }
-
-    @Override
-    public int getNetworkID() {
-        return 1;
+        return GregtechDataCodes.ENERGY_CONVERTER_TRAIT;
     }
 
     @Override
@@ -90,6 +89,7 @@ public class ConverterTrait extends MTETrait {
         return change;
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
@@ -99,7 +99,7 @@ public class ConverterTrait extends MTETrait {
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(@Nonnull NBTTagCompound nbt) {
         this.storedEU = nbt.getLong("StoredEU");
         this.feToEu = nbt.getBoolean("feToEu");
     }
