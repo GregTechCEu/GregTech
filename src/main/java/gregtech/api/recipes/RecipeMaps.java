@@ -993,7 +993,7 @@ public class RecipeMaps {
      * As a Primitive Machine, the Primitive Blast Furnace does not need an <B>EUt</B> parameter specified for the Recipe Builder.
      */
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 3, 3, 0, 0, new PrimitiveRecipeBuilder(), false)
+    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 3, false, 3, false, 0, false, 0, false, new PrimitiveRecipeBuilder(), false)
             .setSound(GTSoundEvents.FIRE);
 
     /**
