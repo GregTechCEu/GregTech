@@ -44,7 +44,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -102,9 +101,9 @@ public class ClientProxy extends CommonProxy {
             tintIndex == 1 ? state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB() : -1;
 
     public static final IBlockColor RUBBER_LEAVES_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            ColorizerFoliage.getFoliageColorBirch();
+            0x98de4b;
 
-    public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
+    public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> 0x98de4b;
 
     public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) ->
             state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;

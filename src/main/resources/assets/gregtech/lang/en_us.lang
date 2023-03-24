@@ -2217,6 +2217,14 @@ tile.rubber_sapling.name=Rubber Tree Sapling
 
 tile.planks.rubber.name=Rubber Wood Planks
 tile.planks.treated.name=Treated Wood Planks
+tile.wood_slab.rubber.name=Rubber Wood Slab
+tile.wood_slab.treated.name=Treated Wood Slab
+tile.rubber_wood_stairs.name=Rubber Wood Stairs
+tile.treated_wood_stairs.name=Treated Wood Stairs
+tile.rubber_wood_fence.name=Rubber Wood Fence
+tile.treated_wood_fence.name=Treated Wood Fence
+tile.rubber_wood_fence_gate.name=Rubber Wood Fence Gate
+tile.treated_wood_fence_gate.name=Treated Wood Fence Gate
 
 tile.brittle_charcoal.name=Brittle Charcoal
 tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
@@ -2274,6 +2282,13 @@ metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
 behavior.item_magnet.enabled=§aMagnetic Field Enabled
 behavior.item_magnet.disabled=§cMagnetic Field Disabled
+
+metaitem.rubber_wood_boat.name=Rubber Wood Boat
+metaitem.treated_wood_boat.name=Treated Wood Boat
+metaitem.rubber_wood_door.name=Rubber Wood Door
+metaitem.treated_wood_door.name=Treated Wood Door
+
+entity.GTBoat.name=Boat
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
