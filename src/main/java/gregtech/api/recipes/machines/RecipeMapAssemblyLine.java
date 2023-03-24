@@ -13,9 +13,9 @@ import javax.annotation.Nonnull;
 
 public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> {
 
-    public RecipeMapAssemblyLine(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
-                                 int maxFluidOutputs, R defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapAssemblyLine(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
+                                 int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, R defaultRecipe, boolean isHidden) {
+        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override
@@ -67,25 +67,5 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
         } else {
             addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
         }
-    }
-
-    @Override
-    public void setMaxInputs(int maxInputs) {
-        throw new UnsupportedOperationException("Cannot change item input amount for Assembly Line.");
-    }
-
-    @Override
-    public void setMaxOutputs(int maxOutputs) {
-        throw new UnsupportedOperationException("Cannot change item output amount for Assembly Line.");
-    }
-
-    @Override
-    public void setMaxFluidInputs(int maxFluidInputs) {
-        throw new UnsupportedOperationException("Cannot change fluid input amount for Assembly Line.");
-    }
-
-    @Override
-    public void setMaxFluidOutputs(int maxFluidInputs) {
-        throw new UnsupportedOperationException("Cannot change fluid output amount for Assembly Line.");
     }
 }

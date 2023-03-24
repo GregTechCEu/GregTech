@@ -78,6 +78,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private int maxOutputs;
     private int maxFluidInputs;
     private int maxFluidOutputs;
+    private final boolean modifyItemInputs, modifyItemOutputs, modifyFluidInputs, modifyFluidOutputs;
     protected final TByteObjectMap<TextureArea> slotOverlays;
     protected TextureArea specialTexture;
     protected int[] specialTexturePosition;
@@ -130,6 +131,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.maxOutputs = maxOutputs;
         this.maxFluidOutputs = maxFluidOutputs;
 
+        this.modifyItemInputs = true;
+        this.modifyItemOutputs = true;
+        this.modifyFluidInputs = true;
+        this.modifyFluidOutputs = true;
+
         this.isHidden = isHidden;
         defaultRecipeBuilder.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipeBuilder;
@@ -137,6 +143,47 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
     }
+
+    /**
+     * @param unlocalizedName the unlocalized name for the RecipeMap
+     * @param maxInputs the maximum item inputs
+     * @param modifyItemInputs If the Maximum Item Inputs should be modified
+     * @param maxOutputs the maximum item outputs
+     * @param modifyItemOutputs If the Maximum Item Outputs should be modified
+     * @param maxFluidInputs the maximum fluid inputs
+     * @param modifyFluidInputs If the Maximum Fluid Inputs should be modified
+     * @param maxFluidOutputs the maximum fluid outputs
+     * @param modifyFluidOutputs If the Maximum Fluid Outputs should be modified
+     * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
+     * @param isHidden if the RecipeMap should have a category in JEI
+     */
+    public RecipeMap(@Nonnull String unlocalizedName, @Nonnegative int maxInputs, boolean modifyItemInputs, @Nonnegative int maxOutputs,
+                     boolean modifyItemOutputs, @Nonnegative int maxFluidInputs, boolean modifyFluidInputs,
+                     @Nonnegative int maxFluidOutputs, boolean modifyFluidOutputs, @Nonnull R defaultRecipeBuilder,
+                     boolean isHidden) {
+        this.unlocalizedName = unlocalizedName;
+        this.slotOverlays = new TByteObjectHashMap<>();
+        this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
+        this.moveType = MoveType.HORIZONTAL;
+
+        this.maxInputs = maxInputs;
+        this.maxFluidInputs = maxFluidInputs;
+        this.maxOutputs = maxOutputs;
+        this.maxFluidOutputs = maxFluidOutputs;
+
+        this.modifyItemInputs = modifyItemInputs;
+        this.modifyItemOutputs = modifyItemOutputs;
+        this.modifyFluidInputs = modifyFluidInputs;
+        this.modifyFluidOutputs = modifyFluidOutputs;
+
+        this.isHidden = isHidden;
+        defaultRecipeBuilder.setRecipeMap(this);
+        this.recipeBuilderSample = defaultRecipeBuilder;
+        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
+
+        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+    }
+
 
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
@@ -1055,7 +1102,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxInputs")
     public void setMaxInputs(@Nonnegative int maxInputs) {
-        this.maxInputs = Math.max(this.maxInputs, maxInputs);
+        if (modifyItemInputs) {
+            this.maxInputs = Math.max(this.maxInputs, maxInputs);
+        }
     }
 
     /**
@@ -1074,7 +1123,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxOutputs")
     public void setMaxOutputs(@Nonnegative int maxOutputs) {
-        this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
+        if (modifyItemOutputs) {
+            this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
+        }
     }
 
     /**
@@ -1093,7 +1144,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxFluidInputs")
     public void setMaxFluidInputs(@Nonnegative int maxFluidInputs) {
-        this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
+        if (modifyFluidInputs) {
+            this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
+        }
     }
 
     /**
@@ -1112,7 +1165,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxFluidOutputs")
     public void setMaxFluidOutputs(@Nonnegative int maxFluidOutputs) {
-        this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
+        if (modifyFluidOutputs) {
+            this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
+        }
     }
 
     @Override
