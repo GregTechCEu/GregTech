@@ -252,9 +252,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (recipe.isGroovyRecipe()) {
             return validationResult;
         }
-        if (recipe.getInputs().size() + recipe.getFluidInputs().size() == 0) {
-            GTLog.logger.error("Invalid amount of recipe inputs");
-        }
 
         boolean emptyInputs = recipe.getInputs().isEmpty() && recipe.getFluidInputs().isEmpty();
         if (emptyInputs) {
@@ -264,6 +261,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.");
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
             }
+            recipeStatus = EnumValidationResult.INVALID;
         }
         boolean emptyOutputs = recipe.getOutputs().isEmpty() && recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().isEmpty();
         if (recipe.getEUt() > 0 && emptyOutputs) {
@@ -273,6 +271,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.");
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             }
+            recipeStatus = EnumValidationResult.INVALID;
         }
         if (emptyInputs && emptyOutputs) {
             GTLog.logger.error("Invalid recipe. Inputs and Outputs are empty.");
