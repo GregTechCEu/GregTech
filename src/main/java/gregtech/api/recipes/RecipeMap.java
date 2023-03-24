@@ -1104,6 +1104,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public void setMaxInputs(@Nonnegative int maxInputs) {
         if (modifyItemInputs) {
             this.maxInputs = Math.max(this.maxInputs, maxInputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max item input amount for " + getUnlocalizedName());
         }
     }
 
@@ -1125,6 +1127,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public void setMaxOutputs(@Nonnegative int maxOutputs) {
         if (modifyItemOutputs) {
             this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max item output amount for " + getUnlocalizedName());
         }
     }
 
@@ -1146,6 +1150,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public void setMaxFluidInputs(@Nonnegative int maxFluidInputs) {
         if (modifyFluidInputs) {
             this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max fluid input amount for " + getUnlocalizedName());
         }
     }
 
@@ -1167,6 +1173,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public void setMaxFluidOutputs(@Nonnegative int maxFluidOutputs) {
         if (modifyFluidOutputs) {
             this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max fluid output amount for " + getUnlocalizedName());
         }
     }
 
