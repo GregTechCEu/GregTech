@@ -2224,6 +2224,14 @@ tile.rubber_sapling.name=ゴムの木の苗
 
 tile.planks.rubber.name=ゴムの木材
 tile.planks.treated.name=防腐木材
+tile.wood_slab.rubber.name=ゴムの木材のハーフブロック
+tile.wood_slab.treated.name=防腐木材のハーフブロック
+tile.rubber_wood_stairs.name=ゴムの木材の階段
+tile.treated_wood_stairs.name=防腐木材の階段
+tile.rubber_wood_fence.name=ゴムの木材のフェンス
+tile.treated_wood_fence.name=防腐木材のフェンス
+tile.rubber_wood_fence_gate.name=ゴムの木材のフェンスゲート
+tile.treated_wood_fence_gate.name=防腐木材のフェンスゲート
 
 tile.brittle_charcoal.name=脆い木炭
 tile.brittle_charcoal.tooltip.1=炭窯で製造される。
@@ -2281,6 +2289,13 @@ metaitem.item_magnet.lv.name=LV磁石
 metaitem.item_magnet.hv.name=HV磁石
 behavior.item_magnet.enabled=§aアイテムを引き寄せる
 behavior.item_magnet.disabled=§cアイテムを引き寄せない
+
+metaitem.rubber_wood_boat.name=ゴムの木材のボート
+metaitem.treated_wood_boat.name=防腐木材のボート
+metaitem.rubber_wood_door.name=ゴムの木材のドア
+metaitem.treated_wood_door.name=防腐木材のドア
+
+entity.GTBoat.name=ボート
 
 metaitem.terminal.name=ターミナル
 metaitem.terminal.tooltip=良い仕事をする賢い道具
