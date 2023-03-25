@@ -132,4 +132,12 @@ public class GregtechDataCodes {
     // From MetaTileEntityHolder
     public static final String CUSTOM_NAME = "CustomName";
 
+    // MTE Trait Names
+
+    public static final String ABSTRACT_WORKABLE_TRAIT = "RecipeMapWorkable";
+    public static final String ENERGY_CONTAINER_TRAIT = "EnergyContainer";
+    public static final String ENERGY_CONVERTER_TRAIT = "EnergyConvertTrait";
+    public static final String FUSION_REACTOR_ENERGY_CONTAINER_TRAIT = "EnergyContainerInternal";
+    public static final String BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT = "BatteryEnergyContainer";
+
 }

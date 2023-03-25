@@ -207,30 +207,22 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1) : new TraceabilityPredicate());
 
         if (checkItemIn) {
-            if (recipeMap.getMinInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-            } else if (recipeMap.getMaxInputs() > 0) {
+            if (recipeMap.getMaxInputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
             }
         }
         if (checkItemOut) {
-            if (recipeMap.getMinOutputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-            } else if (recipeMap.getMaxOutputs() > 0) {
+            if (recipeMap.getMaxOutputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
             }
         }
         if (checkFluidIn) {
-            if (recipeMap.getMinFluidInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
-            } else if (recipeMap.getMaxFluidInputs() > 0) {
+            if (recipeMap.getMaxFluidInputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
             }
         }
         if (checkFluidOut) {
-            if (recipeMap.getMinFluidOutputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
-            } else if (recipeMap.getMaxFluidOutputs() > 0) {
+            if (recipeMap.getMaxFluidOutputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
             }
         }

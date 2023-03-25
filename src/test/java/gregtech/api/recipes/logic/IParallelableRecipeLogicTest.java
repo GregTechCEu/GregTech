@@ -536,6 +536,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 return 32;
             }
 
+            @Nonnull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -613,6 +614,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 return 32;
             }
 
+            @Nonnull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -679,6 +681,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 return 32;
             }
 
+            @Nonnull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -748,6 +751,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 return 32;
             }
 
+            @Nonnull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
