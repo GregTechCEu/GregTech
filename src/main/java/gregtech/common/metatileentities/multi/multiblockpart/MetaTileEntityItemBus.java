@@ -7,16 +7,26 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
+import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTHashMaps;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.InventoryUtils;
+import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -31,15 +41,21 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
+public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable, IGhostSlotConfigurable {
+
+    @Nullable
+    protected GhostCircuitItemStackHandler circuitInventory;
+    private IItemHandlerModifiable actualImportItems;
 
     private boolean workingEnabled;
     private boolean autoCollapse;
@@ -53,6 +69,26 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityItemBus(metaTileEntityId, getTier(), isExportHatch);
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        if (this.hasGhostCircuitInventory()) {
+            this.circuitInventory = new GhostCircuitItemStackHandler();
+            this.circuitInventory.addNotifiableMetaTileEntity(this);
+        }
+        this.actualImportItems = null;
+    }
+
+    @Override
+    public IItemHandlerModifiable getImportItems() {
+        if (this.actualImportItems == null) {
+            this.actualImportItems = this.circuitInventory == null || this.isExportHatch ?
+                    super.getImportItems() :
+                    new ItemHandlerList(Arrays.asList(super.getImportItems(), this.circuitInventory));
+        }
+        return this.actualImportItems;
     }
 
     @Override
@@ -148,6 +184,9 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super.writeToNBT(data);
         data.setBoolean("workingEnabled", workingEnabled);
         data.setBoolean("autoCollapse", autoCollapse);
+        if (this.circuitInventory != null && !this.isExportHatch) {
+            this.circuitInventory.write(data);
+        }
         return data;
     }
 
@@ -159,6 +198,22 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         }
         if (data.hasKey("autoCollapse")) {
             this.autoCollapse = data.getBoolean("autoCollapse");
+        }
+        if (this.circuitInventory != null && !this.isExportHatch) {
+            if (data.hasKey("CircuitInventory", Constants.NBT.TAG_COMPOUND)) {
+                // legacy save support - move items in circuit inventory to importItems inventory, if possible
+                ItemStackHandler legacyCircuitInventory = new ItemStackHandler();
+                legacyCircuitInventory.deserializeNBT(data.getCompoundTag("CircuitInventory"));
+                for (int i = 0; i < legacyCircuitInventory.getSlots(); i++) {
+                    ItemStack stack = legacyCircuitInventory.getStackInSlot(i);
+                    if (stack.isEmpty()) continue;
+                    stack = GTTransferUtils.insertItem(this.importItems, stack, false);
+                    // If there's no space left in importItems, just set it as ghost circuit and void the item
+                    this.circuitInventory.setCircuitValueFromStack(stack);
+                }
+            } else {
+                this.circuitInventory.read(data);
+            }
         }
     }
 
@@ -183,19 +238,69 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize, int xOffset) {
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2,
-                        18 + 18 * rowSize + 94)
+        int half;
+        int extra;
+        int inv;
+        if (rowSize > 7) {
+            half = 124;
+            extra = 72;
+            inv = 36;
+        } else if (rowSize > 5) {
+            half = 106;
+            extra = 36;
+            inv = 18;
+        } else {
+            half = 88;
+            extra = 0;
+            inv = 0;
+        }
+        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2 + extra, 18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
-                        (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, !isExportHatch)
+                        (half - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, !isExportHatch)
                         .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
-        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
+
+        if (this.circuitInventory != null && !this.isExportHatch) {
+            final int circuitX = half - rowSize * 9 + (rowSize + 1) * 18 + xOffset;
+            final int circuitY = 18 * rowSize;
+
+            SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, circuitX, circuitY)
+                    .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
+            builder.widget(getCircuitSlotTooltip(circuitSlot))
+                    .widget(new ClickButtonWidget(circuitX - 9, circuitY, 9, 9, "",
+                            click -> circuitInventory.addCircuitValue(click.isShiftClick ? 5 : 1))
+                            .setShouldClientCallback(true)
+                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
+                            .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() < IntCircuitIngredient.CIRCUIT_MAX))
+                    .widget(new ClickButtonWidget(circuitX - 9, circuitY + 9, 9, 9, "",
+                            click -> circuitInventory.addCircuitValue(click.isShiftClick ? -5 : -1))
+                            .setShouldClientCallback(true)
+                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
+                            .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
+        }
+
+        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset + inv, 18 + 18 * rowSize + 12);
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return !this.isExportHatch;
+    }
+
+    // Method provided to override
+    protected TextureArea getCircuitSlotOverlay() {
+        return GuiTextures.INT_CIRCUIT_OVERLAY;
+    }
+
+    // Method provided to override
+    protected SlotWidget getCircuitSlotTooltip(@Nonnull SlotWidget widget) {
+        return widget.setTooltipText("gregtech.gui.configurator_slot.tooltip");
     }
 
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
@@ -268,6 +373,17 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         if (!getWorld().isRemote) {
             writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS, packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
             notifyBlockUpdate();
+            markDirty();
+        }
+    }
+
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
             markDirty();
         }
     }
