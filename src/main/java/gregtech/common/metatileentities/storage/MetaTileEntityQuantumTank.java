@@ -18,7 +18,6 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -110,7 +109,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             if (isAutoOutputFluids()) {
                 pushFluidsIntoNearbyHandlers(currentOutputFacing);
             }
-            if (previousFluid != fluidTank.getFluid()) {
+            if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid())) {
                 previousFluid = fluidTank.getFluid();
                 writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound())));
             }
@@ -223,7 +222,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderMachine(renderState, translation, pipeline, this.getFrontFacing());
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.tier);
         Textures.QUANTUM_TANK_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
@@ -236,7 +235,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), partialTicks, this.fluidTank.getFluid());
+        if (this.fluidTank.getFluid() == null || this.fluidTank.getFluid().amount == 0)
+            return;
+        QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), this.getWorld(), this.getPos(), this.fluidTank.getFluid().amount);
     }
 
     @Override

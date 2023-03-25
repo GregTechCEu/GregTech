@@ -92,7 +92,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_CHEST_RENDERER[this.tier].renderMachine(renderState, translation, pipeline, this.getFrontFacing());
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.tier);
         Textures.QUANTUM_CHEST_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
@@ -161,7 +161,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (isAutoOutputItems()) {
                 pushItemsIntoNearbyHandlers(currentOutputFacing);
             }
-            if (previousStack != itemStack) {
+            if (previousStack == null || !areItemStackIdentical(previousStack, itemStack)) {
                 writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(itemStack));
                 previousStack = itemStack;
             }
@@ -349,6 +349,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputItems);
+        buf.writeItemStack(itemStack);
+        buf.writeLong(itemsStoredInside);
     }
 
     @Override
@@ -356,6 +358,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputItems = buf.readBoolean();
+        try {
+            this.itemStack = buf.readItemStack();
+        } catch (IOException ignored) {
+        }
+        this.itemsStoredInside = buf.readLong();
     }
 
     @Override

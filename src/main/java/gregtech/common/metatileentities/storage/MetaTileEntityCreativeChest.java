@@ -20,6 +20,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -59,7 +60,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_CHEST_RENDERER[this.getTier()].renderMachine(renderState, translation, pipeline, this.getFrontFacing());
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.getTier());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
         Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
@@ -67,7 +68,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        QuantumStorageRenderer.renderChestStack(x, y, z, this, this.handler.getStackInSlot(0), 420, partialTicks);
+        QuantumStorageRenderer.renderChestStack(x, y, z, this, this.itemStack, 420, partialTicks);
     }
 
 
@@ -144,6 +145,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         handler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
+        this.itemStack = handler.getStackInSlot(0); // For rendering purposes
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -176,5 +178,11 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
                 + I18n.format("gregtech.creative_tooltip.3"));
         // do not append the normal tooltips
-        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.handler.setStackInSlot(0, this.itemStack);
+    }
 }
