@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -18,6 +19,8 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -43,6 +46,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -109,8 +113,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             if (isAutoOutputFluids()) {
                 pushFluidsIntoNearbyHandlers(currentOutputFacing);
             }
-            if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid())) {
-                previousFluid = fluidTank.getFluid();
+            if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid()) || previousFluid.amount != fluidTank.getFluidAmount()) {
+                previousFluid = fluidTank.getFluid().copy();
                 writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound())));
             }
         }
@@ -222,7 +226,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.tier);
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
+                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                this.getFrontFacing(), this.tier);
         Textures.QUANTUM_TANK_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
@@ -230,7 +236,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
-        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.getFrontFacing(), fluidTank.getFluid());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, fluidTank, getWorld(), getPos());
     }
 
     @Override
@@ -363,6 +369,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             try {
                 this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
             } catch (IOException ignored) {
+                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on a routine fluid update");
             }
             scheduleRenderUpdate();
         }
@@ -391,6 +398,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         try {
             this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
         } catch (IOException e) {
+            GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on initial server/client sync");
         }
     }
 

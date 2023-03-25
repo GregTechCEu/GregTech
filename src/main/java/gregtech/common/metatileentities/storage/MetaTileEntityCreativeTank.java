@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -12,6 +13,7 @@ import gregtech.api.gui.widgets.PhantomFluidWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -27,6 +29,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -44,7 +47,9 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.getTier());
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
+                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                this.getFrontFacing(), this.getTier());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (this.getOutputFacing() != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
@@ -52,7 +57,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
             }
         }
-        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.getFrontFacing(), fluidTank.getFluid());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos());
     }
 
     @Override

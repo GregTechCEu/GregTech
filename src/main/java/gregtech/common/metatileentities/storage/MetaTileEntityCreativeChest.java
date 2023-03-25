@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -13,6 +14,7 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -28,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -60,7 +63,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.getTier());
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
+                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                this.getFrontFacing(), this.getTier());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
         Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);

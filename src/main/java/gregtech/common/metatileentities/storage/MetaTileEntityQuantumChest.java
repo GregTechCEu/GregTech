@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -45,6 +46,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -92,7 +94,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation, pipeline, this.getFrontFacing(), this.tier);
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
+                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                this.getFrontFacing(), this.tier);
         Textures.QUANTUM_CHEST_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);

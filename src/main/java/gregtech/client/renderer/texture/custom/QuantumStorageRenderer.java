@@ -26,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,8 +34,6 @@ import java.util.EnumMap;
 
 public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
-    private static final Cuboid6 fluidBox = new Cuboid6(1.0625 / 16.0, 1.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0);
-
 
     private static final EnumMap<EnumFacing, Cuboid6> boxFacingMap = new EnumMap<>(EnumFacing.class);
 
@@ -96,14 +95,29 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                                       EnumFacing frontFacing, FluidStack stack) {
+                                       FluidTank tank, IBlockAccess world, BlockPos pos) {
+        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        if (world != null) {
+            setLightingCorrectly(world, pos);
+        }
+        FluidStack stack = tank.getFluid();
         if (stack == null || stack.amount == 0)
             return;
+
+        double fillFraction = (double) stack.amount / tank.getCapacity();
+        double height = Math.min((12 * fillFraction) + 2, 14.0);
+        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0, height / 16.0, 14.9375 / 16.0);
+
         renderState.setFluidColour(stack);
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
-        Textures.renderFace(renderState, translation, pipeline, frontFacing, fluidBox, fluidStillSprite, BlockRenderLayer.CUTOUT_MIPPED);
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite, BlockRenderLayer.CUTOUT_MIPPED);
+        }
         GlStateManager.resetColor();
+
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing,
