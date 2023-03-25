@@ -98,7 +98,10 @@ public final class ToolChargeBarRenderer {
         boolean renderedDurability = false;
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
         if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
-            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+            double durability = stack.getItem().getDurabilityForDisplay(stack);
+            if (durability != 0.0) {
+                renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+            }
         }
         if (tool.isElectric()) {
             renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition, renderedDurability);
