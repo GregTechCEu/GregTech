@@ -119,4 +119,61 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
         return false;
     }
 
+
+    /**
+     * Gets the average input eu/t
+     */
+    public long getAverageInput() {
+        return energyContainer.getInputPerSec() / 20;
+    }
+
+    /**
+     * Gets the average output eu/t
+     */
+    public long getAverageOutput() {
+        return energyContainer.getOutputPerSec() / 20;
+    }
+
+    /**
+     * Gets the current stored eu
+     */
+    public long getEnergyStored() {
+        return energyContainer.getEnergyStored();
+    }
+
+    /**
+     * Gets the max stored eu
+     */
+    public long getEnergyCapacity() {
+        return energyContainer.getEnergyCapacity();
+    }
+
+    /**
+     * Gets the max input voltage
+     */
+    public long getInputVoltage() {
+        return energyContainer.getInputVoltage();
+    }
+
+    /**
+     * Gets the output voltage
+     */
+    public long getOutputVoltage() {
+        return energyContainer.getOutputVoltage();
+    }
+
+    /**
+     * Gets the max input amperage
+     */
+    public long getInputAmperage() {
+        return energyContainer.getInputAmperage();
+    }
+
+    /**
+     * Gets the max output amperage
+     */
+    public long getOutputAmperage() {
+        return energyContainer.getOutputAmperage();
+    }
+
 }

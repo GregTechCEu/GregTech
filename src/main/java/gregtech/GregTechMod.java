@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.integration.cc.ComputerCraft;
 import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
@@ -58,6 +59,7 @@ public class GregTechMod {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         moduleManager.onInit(event);
+        ComputerCraft.init();
     }
 
     @EventHandler
