@@ -7,9 +7,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Efficiently delegates calls into multiple item handlers
@@ -75,4 +73,8 @@ public class ItemHandlerList implements IItemHandlerModifiable {
         return itemHandler.extractItem(slot - baseIndexOffset.get(itemHandler), amount, simulate);
     }
 
+    @Nonnull
+    public Collection<IItemHandler> getBackingHandlers() {
+        return Collections.unmodifiableCollection(handlerBySlotIndex.valueCollection());
+    }
 }

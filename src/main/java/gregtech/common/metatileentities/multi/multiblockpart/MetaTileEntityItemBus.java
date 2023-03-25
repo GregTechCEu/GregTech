@@ -4,10 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -22,6 +19,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTTransferUtils;
@@ -42,6 +40,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -77,18 +76,42 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         if (this.hasGhostCircuitInventory()) {
             this.circuitInventory = new GhostCircuitItemStackHandler();
             this.circuitInventory.addNotifiableMetaTileEntity(this);
+            this.actualImportItems = new ItemHandlerList(Arrays.asList(super.getImportItems(), this.circuitInventory));
+        } else {
+            this.actualImportItems = null;
         }
-        this.actualImportItems = null;
     }
 
     @Override
     public IItemHandlerModifiable getImportItems() {
-        if (this.actualImportItems == null) {
-            this.actualImportItems = this.circuitInventory == null || this.isExportHatch ?
-                    super.getImportItems() :
-                    new ItemHandlerList(Arrays.asList(super.getImportItems(), this.circuitInventory));
+        return this.actualImportItems == null ? super.getImportItems() : this.actualImportItems;
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
+            for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
+                if (handler instanceof INotifiableHandler) {
+                    INotifiableHandler notifiable = (INotifiableHandler) handler;
+                    notifiable.addNotifiableMetaTileEntity(controllerBase);
+                    notifiable.addToNotifiedList(this, handler, isExportHatch);
+                }
+            }
         }
-        return this.actualImportItems;
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
+            for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
+                if (handler instanceof INotifiableHandler) {
+                    INotifiableHandler notifiable = (INotifiableHandler) handler;
+                    notifiable.removeNotifiableMetaTileEntity(controllerBase);
+                }
+            }
+        }
     }
 
     @Override
@@ -227,7 +250,11 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(isExportHatch ? this.exportItems : this.importItems);
+        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
+            abilityList.add(isExportHatch ? this.exportItems : this.actualImportItems);
+        } else {
+            abilityList.add(isExportHatch ? this.exportItems : this.importItems);
+        }
     }
 
     @Override
