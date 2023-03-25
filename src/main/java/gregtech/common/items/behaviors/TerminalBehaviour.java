@@ -16,6 +16,7 @@ import gregtech.common.terminal.hardware.BatteryHardware;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,10 +61,9 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     public void onUpdate(ItemStack itemStack, Entity entity) {
         NBTTagCompound tabletNBT = itemStack.getOrCreateSubCompound("terminal");
         if (entity.ticksExisted % 20 == 0 && tabletNBT.hasKey("_ar")) {
-
-            if (entity instanceof EntityPlayer){
-                EntityPlayer ep = (EntityPlayer) entity;
-                if (!(ep.getHeldItem(EnumHand.MAIN_HAND) == itemStack || ep.getHeldItem(EnumHand.OFF_HAND) == itemStack)){
+            if (entity instanceof EntityLivingBase) {
+                EntityLivingBase livingBase = (EntityLivingBase) entity;
+                if (!livingBase.getHeldItemMainhand().isItemEqual(itemStack) && !livingBase.getHeldItemOffhand().isItemEqual(itemStack)) {
                     return;
                 }
             }
