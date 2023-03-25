@@ -574,8 +574,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default double definition$getDurabilityForDisplay(ItemStack stack) {
         int damage = stack.getItem().getDamage(stack);
         int maxDamage = stack.getItem().getMaxDamage(stack);
-        if (damage == 0) return 1.0;
-        return (double) (maxDamage - damage) / (double) maxDamage;
+        return (double) damage / (double) maxDamage;
     }
 
     @Nullable
