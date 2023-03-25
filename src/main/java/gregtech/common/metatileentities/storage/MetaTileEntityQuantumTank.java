@@ -114,7 +114,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 pushFluidsIntoNearbyHandlers(currentOutputFacing);
             }
             if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid()) || previousFluid.amount != fluidTank.getFluidAmount()) {
-                previousFluid = fluidTank.getFluid().copy();
+                previousFluid = fluidTank.getFluid() == null ? null : fluidTank.getFluid().copy();
                 writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound())));
             }
         }
