@@ -29,33 +29,25 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.EnumMap;
 
 public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
-    private static final Cuboid6 upBox = new Cuboid6(0 / 16.0, 14 / 16.0, 0 / 16.0, 16 / 16.0, 16 / 16.0, 16 / 16.0);
-    private static final Cuboid6 downBox = new Cuboid6(0 / 16.0, 0 / 16.0, 0 / 16.0, 16 / 16.0, 2 / 16.0, 16 / 16.0);
-    private static final Cuboid6 westBox = new Cuboid6(0 / 16.0, 0 / 16.0, 0 / 16.0, 2 / 16.0, 16 / 16.0, 16 / 16.0);
-    private static final Cuboid6 eastBox = new Cuboid6(14 / 16.0, 0 / 16.0, 0 / 16.0, 16 / 16.0, 16 / 16.0, 16 / 16.0);
-    private static final Cuboid6 southBox = new Cuboid6(0 / 16.0, 0 / 16.0, 14 / 16.0, 16 / 16.0, 16 / 16.0, 16 / 16.0);
-    private static final Cuboid6 northBox = new Cuboid6(0 / 16.0, 0 / 16.0, 0 / 16.0, 16 / 16.0, 16 / 16.0, 2 / 16.0);
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
     private static final Cuboid6 fluidBox = new Cuboid6(1.0625 / 16.0, 1.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0);
 
 
-    private static Map<EnumFacing, Cuboid6> boxFacingMap = new HashMap<>();
+    private static final EnumMap<EnumFacing, Cuboid6> boxFacingMap = new EnumMap<>(EnumFacing.class);
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite glassTexture;
 
     static {
-        boxFacingMap.put(EnumFacing.UP, upBox);
-        boxFacingMap.put(EnumFacing.DOWN, downBox);
-        boxFacingMap.put(EnumFacing.WEST, westBox);
-        boxFacingMap.put(EnumFacing.EAST, eastBox);
-        boxFacingMap.put(EnumFacing.SOUTH, southBox);
-        boxFacingMap.put(EnumFacing.NORTH, northBox);
+        boxFacingMap.put(EnumFacing.UP, new Cuboid6(0 / 16.0, 14 / 16.0, 0 / 16.0, 16 / 16.0, 16 / 16.0, 16 / 16.0));
+        boxFacingMap.put(EnumFacing.DOWN, new Cuboid6(0 / 16.0, 0 / 16.0, 0 / 16.0, 16 / 16.0, 2 / 16.0, 16 / 16.0));
+        boxFacingMap.put(EnumFacing.WEST, new Cuboid6(0 / 16.0, 0 / 16.0, 0 / 16.0, 2 / 16.0, 16 / 16.0, 16 / 16.0));
+        boxFacingMap.put(EnumFacing.EAST, new Cuboid6(14 / 16.0, 0 / 16.0, 0 / 16.0, 16 / 16.0, 16 / 16.0, 16 / 16.0));
+        boxFacingMap.put(EnumFacing.SOUTH, new Cuboid6(0 / 16.0, 0 / 16.0, 14 / 16.0, 16 / 16.0, 16 / 16.0, 16 / 16.0));
+        boxFacingMap.put(EnumFacing.NORTH, new Cuboid6(0 / 16.0, 0 / 16.0, 0 / 16.0, 16 / 16.0, 16 / 16.0, 2 / 16.0));
     }
 
     public QuantumStorageRenderer() {
@@ -73,9 +65,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier].getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
         boxFacingMap.keySet().forEach(facing -> {
             for (EnumFacing box : EnumFacing.VALUES) {
-                if ((facing != frontFacing || box != frontFacing) && (facing != EnumFacing.DOWN || (box == EnumFacing.DOWN || box == EnumFacing.UP))) { // Don't render the front facing box from the front, nor allow Z-fighting to occur on the bottom
+                if ((facing != frontFacing || box != frontFacing) && (facing != EnumFacing.DOWN || box.getAxis().isVertical())) { // Don't render the front facing box from the front, nor allow Z-fighting to occur on the bottom
                     Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(box), hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
-                } else {
                 }
             }
         });
@@ -104,8 +95,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
 
-    public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[]
-            pipeline, EnumFacing frontFacing, FluidStack stack) {
+    public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                                       EnumFacing frontFacing, FluidStack stack) {
         if (stack == null || stack.amount == 0)
             return;
         renderState.setFluidColour(stack);
