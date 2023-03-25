@@ -17,6 +17,7 @@ import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTLog;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.utils.RenderBufferHelper;
@@ -100,7 +101,7 @@ public class WorldProspectorARApp extends ARApplication {
                         return Collections.emptyList();
                     }
                     Rectangle rectangle = toRectangleBox();
-                    return Lists.newArrayList(new IGhostIngredientHandler.Target<Object>() {
+                    return Collections.singletonList(new IGhostIngredientHandler.Target<Object>() {
                         @Nonnull
                         @Override
                         public Rectangle getArea() {
@@ -148,14 +149,14 @@ public class WorldProspectorARApp extends ARApplication {
                         updateBlockSelectionAndColor(ItemStack.EMPTY, index, buttonWidget);
                     }
                     else if (id == 1) {
-                        PacketBuffer tmpBuffer = new PacketBuffer(buffer.copy());
                         try {
-                            ItemStack stack = tmpBuffer.readItemStack();
+                            buffer.markReaderIndex(); // just want to reset reader index, not both with .clear
+                            ItemStack stack = buffer.readItemStack();
                             updateBlockSelectionAndColor(stack, index, buttonWidget);
+                            buffer.resetReaderIndex();
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            GTLog.logger.error("Could not update block selection from world prospector buffer", e);
                         }
-
                         super.handleClientAction(id, buffer);
                     } else {
                         super.handleClientAction(id, buffer);
@@ -201,7 +202,7 @@ public class WorldProspectorARApp extends ARApplication {
             }
             colors[index] = colors[index] | 0xff000000;
             buttonWidget.setFill(colors[index]);
-        } else if (stack == ItemStack.EMPTY) {
+        } else if (stack.isEmpty()) {
             handlers[index].setStackInSlot(0, stack);
             colors[index] = 0x00000000;
             buttonWidget.setFill(colors[index]);
@@ -244,9 +245,8 @@ public class WorldProspectorARApp extends ARApplication {
     private void selectReference(int index, RectButtonWidget buttonWidget) {
         TerminalDialogWidget.showItemSelector(getOs(), "terminal.world_prospector.reference", false,
                 stack -> stack.getItem() instanceof ItemBlock,
-                stack -> {
-                    updateBlockSelectionAndColor(stack, index, buttonWidget);
-                }).open();
+                stack -> updateBlockSelectionAndColor(stack, index, buttonWidget)
+        ).open();
     }
 
     private int getMaxRadius() {
@@ -300,6 +300,7 @@ public class WorldProspectorARApp extends ARApplication {
         for (Tuple<ItemStack, Integer> stack : getAllSlotStack()) {
             if (stack.getFirst().getItem() instanceof ItemBlock) {
                 Block block = ((ItemBlock) stack.getFirst().getItem()).getBlock();
+
                 if (block != Blocks.AIR) {
                     matchers.add(new BlockStateMatcher(block.getStateFromMeta(stack.getFirst().getMetadata()), stack.getSecond()));
                 }
@@ -391,6 +392,8 @@ public class WorldProspectorARApp extends ARApplication {
     @Override
     public void tickAR(EntityPlayer player) {
         World world = player.world;
+        if (Minecraft.getMinecraft().isGamePaused()) return;
+
         if (radius == 0 || lastPos == null) {
             lastPos = player.getPosition();
         }
