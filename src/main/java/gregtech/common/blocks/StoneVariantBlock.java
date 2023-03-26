@@ -11,13 +11,11 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -35,20 +33,12 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         this.shape = shape;
         setRegistryName(shape.id);
         setTranslationKey(shape.id);
+        setHardness(shape.hardness);
+        setResistance(shape.resistance);
         setSoundType(SoundType.STONE);
         setHarvestLevel(ToolClasses.PICKAXE, 0);
         setDefaultState(getState(StoneType.BLACK_GRANITE));
         setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
-    }
-
-    @Override
-    public float getBlockHardness(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
-        return this.shape.hardness;
-    }
-
-    @Override
-    public float getExplosionResistance(@Nonnull Entity exploder) {
-        return this.shape.resistance;
     }
 
     @Nonnull
