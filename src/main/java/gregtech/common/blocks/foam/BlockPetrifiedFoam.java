@@ -1,6 +1,5 @@
 package gregtech.common.blocks.foam;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.SoundType;
@@ -20,7 +19,6 @@ public class BlockPetrifiedFoam extends BlockColored {
         setSoundType(SoundType.SNOW);
         setResistance(isReinforced ? 4.0f : 16.0f);
         setHardness(isReinforced ? 1.0f : 4.0f);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
         setHarvestLevel(ToolClasses.PICKAXE, isReinforced ? 2 : 1);
     }
 
