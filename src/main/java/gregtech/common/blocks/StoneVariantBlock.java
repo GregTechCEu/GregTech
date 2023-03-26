@@ -32,7 +32,7 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         super(net.minecraft.block.material.Material.ROCK);
         this.stoneVariant = stoneVariant;
         setRegistryName(stoneVariant.id);
-        setTranslationKey(stoneVariant.id);
+        setTranslationKey(stoneVariant.translationKey);
         setHardness(stoneVariant.hardness);
         setResistance(stoneVariant.resistance);
         setSoundType(SoundType.STONE);
@@ -133,20 +133,30 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         TILED("stone_tiled"),
         TILED_SMALL("stone_tiled_small"),
         BRICKS_SMALL("stone_bricks_small"),
-        WINDMILL_A("stone_windmill_a"),
-        WINDMILL_B("stone_windmill_b"),
+        WINDMILL_A("stone_windmill_a", "stone_bricks_windmill_a"),
+        WINDMILL_B("stone_windmill_b", "stone_bricks_windmill_b"),
         BRICKS_SQUARE("stone_bricks_square");
 
         public final String id;
+        public final String translationKey;
         public final float hardness;
         public final float resistance;
 
         StoneVariant(@Nonnull String id) {
-            this(id, 1.5f, 10.0f); // vanilla stone stats
+            this(id, id);
+        }
+
+        StoneVariant(@Nonnull String id, @Nonnull String translationKey) {
+            this(id, translationKey, 1.5f, 10.0f); // vanilla stone stats
         }
 
         StoneVariant(@Nonnull String id, float hardness, float resistance) {
+            this(id, id, hardness, resistance);
+        }
+
+        StoneVariant(@Nonnull String id, @Nonnull String translationKey, float hardness, float resistance) {
             this.id = id;
+            this.translationKey = translationKey;
             this.hardness = hardness;
             this.resistance = resistance;
         }
