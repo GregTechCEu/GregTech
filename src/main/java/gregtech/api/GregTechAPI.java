@@ -21,6 +21,8 @@ import gregtech.api.util.BaseCreativeTab;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
+import gregtech.common.blocks.BlockWarningSign;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -75,6 +77,8 @@ public class GregTechAPI {
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
             new BaseCreativeTab(GTValues.MODID + ".ores", () -> OreDictUnifier.get(OrePrefix.ore, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_DECORATIONS =
+            new BaseCreativeTab(GTValues.MODID + ".decorations", () -> MetaBlocks.WARNING_SIGN.getItemVariant(BlockWarningSign.SignType.YELLOW_STRIPES), true);
 
     public static class RegisterEvent<V> extends GenericEvent<V> {
 

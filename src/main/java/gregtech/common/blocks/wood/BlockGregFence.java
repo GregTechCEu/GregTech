@@ -13,6 +13,6 @@ public class BlockGregFence extends BlockFence {
         setHardness(2.0F);
         setResistance(5.0F);
         setSoundType(SoundType.WOOD);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
 }
