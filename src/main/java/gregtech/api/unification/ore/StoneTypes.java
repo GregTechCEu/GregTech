@@ -1,13 +1,15 @@
 package gregtech.api.unification.ore;
 
 import gregtech.api.unification.material.Materials;
-import gregtech.common.blocks.BlockStoneSmooth;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.StoneVariantBlock;
+import gregtech.common.blocks.StoneVariantBlock.StoneVariant;
 import net.minecraft.block.BlockRedSandstone;
 import net.minecraft.block.BlockSandStone;
 import net.minecraft.block.BlockStone;
 import net.minecraft.block.BlockStone.EnumType;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 
 public class StoneTypes {
@@ -50,18 +52,27 @@ public class StoneTypes {
             state -> state.getBlock() instanceof BlockStone && state.getValue(BlockStone.VARIANT) == EnumType.ANDESITE, false);
 
     public static StoneType BLACK_GRANITE = new StoneType(8, "black_granite", SoundType.STONE, OrePrefix.oreBlackgranite, Materials.GraniteBlack,
-            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.BLACK_GRANITE),
-            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.BLACK_GRANITE, false);
+            () -> gtStoneState(StoneVariantBlock.StoneType.BLACK_GRANITE),
+            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BLACK_GRANITE), false);
 
     public static StoneType RED_GRANITE = new StoneType(9, "red_granite", SoundType.STONE, OrePrefix.oreRedgranite, Materials.GraniteRed,
-            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.RED_GRANITE),
-            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.RED_GRANITE, false);
+            () -> gtStoneState(StoneVariantBlock.StoneType.RED_GRANITE),
+            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.RED_GRANITE), false);
 
     public static StoneType MARBLE = new StoneType(10, "marble", SoundType.STONE, OrePrefix.oreMarble, Materials.Marble,
-            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.MARBLE),
-            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.MARBLE, false);
+            () -> gtStoneState(StoneVariantBlock.StoneType.MARBLE),
+            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.MARBLE), false);
 
     public static StoneType BASALT = new StoneType(11, "basalt", SoundType.STONE, OrePrefix.oreBasalt, Materials.Basalt,
-            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.BASALT),
-            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.BASALT, false);
+            () -> gtStoneState(StoneVariantBlock.StoneType.BASALT),
+            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BASALT), false);
+
+    private static IBlockState gtStoneState(StoneVariantBlock.StoneType stoneType) {
+        return MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH).getState(stoneType);
+    }
+
+    private static boolean gtStonePredicate(IBlockState state, StoneVariantBlock.StoneType stoneType) {
+        StoneVariantBlock block = MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH);
+        return state.getBlock() == block && block.getState(state) == stoneType;
+    }
 }

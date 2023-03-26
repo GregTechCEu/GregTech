@@ -24,7 +24,7 @@ public class BlockRubberLog extends BlockLog {
                 .withProperty(LOG_AXIS, BlockLog.EnumAxis.Y)
                 .withProperty(NATURAL, false));
         setTranslationKey("rubber_log");
-        this.setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH);
     }
 
     @Nonnull
@@ -50,7 +50,7 @@ public class BlockRubberLog extends BlockLog {
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, IBlockState state, int fortune) {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
         if (state.getValue(NATURAL)) {
-            if(rand.nextDouble() <= .85D) {
+            if (rand.nextDouble() <= .85D) {
                 drops.add(MetaItems.STICKY_RESIN.getStackForm());
             }
         }

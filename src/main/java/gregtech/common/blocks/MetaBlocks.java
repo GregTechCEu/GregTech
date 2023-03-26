@@ -94,20 +94,7 @@ public class MetaBlocks {
 
     public static BlockAsphalt ASPHALT;
 
-    public static BlockStoneSmooth STONE_SMOOTH;
-    public static BlockStoneCobble STONE_COBBLE;
-    public static BlockStoneCobbleMossy STONE_COBBLE_MOSSY;
-    public static BlockStonePolished STONE_POLISHED;
-    public static BlockStoneBricks STONE_BRICKS;
-    public static BlockStoneBricksCracked STONE_BRICKS_CRACKED;
-    public static BlockStoneBricksMossy STONE_BRICKS_MOSSY;
-    public static BlockStoneChiseled STONE_CHISELED;
-    public static BlockStoneTiled STONE_TILED;
-    public static BlockStoneTiledSmall STONE_TILED_SMALL;
-    public static BlockStoneBricksSmall STONE_BRICKS_SMALL;
-    public static BlockStoneWindmillA STONE_WINDMILL_A;
-    public static BlockStoneWindmillB STONE_WINDMILL_B;
-    public static BlockStoneBricksSquare STONE_BRICKS_SQUARE;
+    public static final EnumMap<StoneVariantBlock.StoneVariant, StoneVariantBlock> STONE_BLOCKS = new EnumMap<>(StoneVariantBlock.StoneVariant.class);
 
     public static BlockFoam FOAM;
     public static BlockFoam REINFORCED_FOAM;
@@ -186,34 +173,9 @@ public class MetaBlocks {
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
 
-        STONE_SMOOTH = new BlockStoneSmooth();
-        STONE_SMOOTH.setRegistryName("stone_smooth");
-        STONE_COBBLE = new BlockStoneCobble();
-        STONE_COBBLE.setRegistryName("stone_cobble");
-        STONE_COBBLE_MOSSY = new BlockStoneCobbleMossy();
-        STONE_COBBLE_MOSSY.setRegistryName("stone_cobble_mossy");
-        STONE_POLISHED = new BlockStonePolished();
-        STONE_POLISHED.setRegistryName("stone_polished");
-        STONE_BRICKS = new BlockStoneBricks();
-        STONE_BRICKS.setRegistryName("stone_bricks");
-        STONE_BRICKS_CRACKED = new BlockStoneBricksCracked();
-        STONE_BRICKS_CRACKED.setRegistryName("stone_bricks_cracked");
-        STONE_BRICKS_MOSSY = new BlockStoneBricksMossy();
-        STONE_BRICKS_MOSSY.setRegistryName("stone_bricks_mossy");
-        STONE_CHISELED = new BlockStoneChiseled();
-        STONE_CHISELED.setRegistryName("stone_chiseled");
-        STONE_TILED = new BlockStoneTiled();
-        STONE_TILED.setRegistryName("stone_tiled");
-        STONE_TILED_SMALL = new BlockStoneTiledSmall();
-        STONE_TILED_SMALL.setRegistryName("stone_tiled_small");
-        STONE_BRICKS_SMALL = new BlockStoneBricksSmall();
-        STONE_BRICKS_SMALL.setRegistryName("stone_bricks_small");
-        STONE_WINDMILL_A = new BlockStoneWindmillA();
-        STONE_WINDMILL_A.setRegistryName("stone_windmill_a");
-        STONE_WINDMILL_B = new BlockStoneWindmillB();
-        STONE_WINDMILL_B.setRegistryName("stone_windmill_b");
-        STONE_BRICKS_SQUARE = new BlockStoneBricksSquare();
-        STONE_BRICKS_SQUARE.setRegistryName("stone_bricks_square");
+        for (StoneVariantBlock.StoneVariant shape : StoneVariantBlock.StoneVariant.values()) {
+            STONE_BLOCKS.put(shape, new StoneVariantBlock(shape));
+        }
 
         FOAM = new BlockFoam(false);
         FOAM.setRegistryName("foam");
@@ -369,20 +331,8 @@ public class MetaBlocks {
         registerItemModel(HERMETIC_CASING);
         registerItemModel(CLEANROOM_CASING);
         registerItemModel(ASPHALT);
-        registerItemModel(STONE_SMOOTH);
-        registerItemModel(STONE_COBBLE);
-        registerItemModel(STONE_COBBLE_MOSSY);
-        registerItemModel(STONE_POLISHED);
-        registerItemModel(STONE_BRICKS);
-        registerItemModel(STONE_BRICKS_CRACKED);
-        registerItemModel(STONE_BRICKS_MOSSY);
-        registerItemModel(STONE_CHISELED);
-        registerItemModel(STONE_TILED);
-        registerItemModel(STONE_TILED_SMALL);
-        registerItemModel(STONE_BRICKS_SMALL);
-        registerItemModel(STONE_WINDMILL_A);
-        registerItemModel(STONE_WINDMILL_B);
-        registerItemModel(STONE_BRICKS_SQUARE);
+        for (StoneVariantBlock block : STONE_BLOCKS.values())
+            registerItemModel(block);
         registerItemModelWithOverride(RUBBER_LOG, ImmutableMap.of(BlockLog.LOG_AXIS, EnumAxis.Y));
         registerItemModel(RUBBER_LEAVES);
         registerItemModel(RUBBER_SAPLING);

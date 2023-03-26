@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
@@ -21,6 +22,7 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setDefaultState(getState(BlockType.ASPHALT));
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
 
     @Override
