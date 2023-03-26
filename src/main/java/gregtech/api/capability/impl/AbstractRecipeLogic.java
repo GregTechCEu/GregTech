@@ -41,14 +41,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
-
     private final RecipeMap<?> recipeMap;
 
     protected Recipe previousRecipe;
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
-    private int[] overclockResults;
+    protected int[] overclockResults;
 
     protected boolean canRecipeProgress = true;
 
@@ -152,12 +151,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     @Nonnull
     @Override
     public final String getName() {
-        return "RecipeMapWorkable";
-    }
-
-    @Override
-    public final int getNetworkID() {
-        return TraitNetworkIds.TRAIT_ID_WORKABLE;
+        // this is final so machines are not accidentally given multiple workable instances
+        return GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT;
     }
 
     @Override
@@ -400,7 +395,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
-    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@Nonnull Recipe recipe) {
         CleanroomType requiredType = null;
         if (recipe.hasProperty(CleanroomProperty.getInstance())) {
             requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
@@ -934,7 +929,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().scheduleRenderUpdate();
@@ -956,6 +951,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.workingEnabled = buf.readBoolean();
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();

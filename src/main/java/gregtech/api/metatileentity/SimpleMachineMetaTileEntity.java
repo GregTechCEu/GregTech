@@ -12,12 +12,12 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -34,6 +34,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -44,7 +45,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -55,7 +56,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private final boolean hasFrontFacing;
 
     protected final ItemStackHandler chargerInventory;
-    protected ItemStackHandler circuitInventory;
+    @Nullable
+    protected GhostCircuitItemStackHandler circuitInventory;
     private EnumFacing outputFacingItems;
     private EnumFacing outputFacingFluids;
 
@@ -66,7 +68,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
-    protected IItemHandlerModifiable importItemsWithCircuit;
+
+    private IItemHandlerModifiable actualImportItems;
 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
@@ -91,22 +94,22 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super.initializeInventory();
         this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
-        this.circuitInventory = new NotifiableItemStackHandler(1, this, false);
+        if (this.hasGhostCircuitInventory()) {
+            this.circuitInventory = new GhostCircuitItemStackHandler();
+            this.circuitInventory.addNotifiableMetaTileEntity(this);
+        }
 
-        List<IItemHandlerModifiable> temp = new ArrayList<>();
-        temp.add(importItems);
-        temp.add(circuitInventory);
-        this.importItemsWithCircuit = new ItemHandlerList(temp);
+        this.actualImportItems = null;
     }
 
     @Override
     public IItemHandlerModifiable getImportItems() {
-        ItemStack circStack = circuitInventory != null ? circuitInventory.getStackInSlot(0) : ItemStack.EMPTY;
-        if (circStack != ItemStack.EMPTY && IntCircuitIngredient.isIntegratedCircuit(circStack)) {
-            return importItemsWithCircuit;
-        } else {
-            return super.getImportItems();
+        if (this.actualImportItems == null) {
+            this.actualImportItems = this.circuitInventory == null ?
+                    super.getImportItems() :
+                    new ItemHandlerList(Arrays.asList(super.getImportItems(), this.circuitInventory));
         }
+        return this.actualImportItems;
     }
 
     @Override
@@ -224,7 +227,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("ChargerInventory", chargerInventory.serializeNBT());
-        data.setTag("CircuitInventory", circuitInventory.serializeNBT());
+        if (this.circuitInventory != null) {
+            this.circuitInventory.write(data);
+        }
         data.setInteger("OutputFacing", getOutputFacingItems().getIndex());
         data.setInteger("OutputFacingF", getOutputFacingFluids().getIndex());
         data.setBoolean("AutoOutputItems", autoOutputItems);
@@ -238,8 +243,21 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.chargerInventory.deserializeNBT(data.getCompoundTag("ChargerInventory"));
-        if (data.hasKey("CircuitInventory")) {
-            this.circuitInventory.deserializeNBT(data.getCompoundTag("CircuitInventory"));
+        if (this.circuitInventory != null) {
+            if (data.hasKey("CircuitInventory", Constants.NBT.TAG_COMPOUND)) {
+                // legacy save support - move items in circuit inventory to importItems inventory, if possible
+                ItemStackHandler legacyCircuitInventory = new ItemStackHandler();
+                legacyCircuitInventory.deserializeNBT(data.getCompoundTag("CircuitInventory"));
+                for (int i = 0; i < legacyCircuitInventory.getSlots(); i++) {
+                    ItemStack stack = legacyCircuitInventory.getStackInSlot(i);
+                    if (stack.isEmpty()) continue;
+                    stack = GTTransferUtils.insertItem(this.importItems, stack, false);
+                    // If there's no space left in importItems, just set it as ghost circuit and void the item
+                    this.circuitInventory.setCircuitValueFromStack(stack);
+                }
+            } else {
+                this.circuitInventory.read(data);
+            }
         }
         this.outputFacingItems = EnumFacing.VALUES[data.getInteger("OutputFacing")];
         this.outputFacingFluids = EnumFacing.VALUES[data.getInteger("OutputFacingF")];
@@ -358,6 +376,24 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
     }
 
+    /**
+     * Set ghost circuit config to given value. If the provided config value is outside of valid config range
+     * (0~32), then the circuit is set to empty.
+     * <p>
+     * If the machine does not have circuit inventory, this method does nothing.
+     *
+     * @param config New config value
+     */
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+    }
+
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);
@@ -400,13 +436,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, chargerInventory);
-        clearInventory(itemBuffer, circuitInventory);
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
-        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 || workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
+        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
+                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
             yOffset = FONT_HEIGHT;
         }
 
@@ -442,36 +478,31 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                 .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17, GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO).setIgnoreColor(true);
-            SlotWidget circuitSlot = new SlotWidget(circuitInventory, 0, 124, 62 + yOffset, true, true, false)
-                    .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-            builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo)
-                    .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "", this::circuitConfigPlus)
-                            .setShouldClientCallback(true)
-                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
-                            .setDisplayFunction(() -> circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(circuitInventory.getStackInSlot(0))))
-                    .widget(new ClickButtonWidget(115, 71 + yOffset, 9, 9, "", this::circuitConfigMinus)
-                            .setShouldClientCallback(true)
-                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
-                            .setDisplayFunction(() -> circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(circuitInventory.getStackInSlot(0))));
+            ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,
+                    GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
+                    .setIgnoreColor(true);
+
+            if (this.circuitInventory != null) {
+                SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
+                        .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
+                builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo)
+                        .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "",
+                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? 5 : 1))
+                                .setShouldClientCallback(true)
+                                .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
+                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() < IntCircuitIngredient.CIRCUIT_MAX))
+                        .widget(new ClickButtonWidget(115, 71 + yOffset, 9, 9, "",
+                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? -5 : -1))
+                                .setShouldClientCallback(true)
+                                .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
+                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
+            }
         }
         return builder;
     }
 
-    private void circuitConfigPlus(Widget.ClickData data) {
-        ItemStack stack;
-        if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
-            IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? 5 : 1);
-            this.notifiedItemInputList.add(circuitInventory);
-        }
-    }
-
-    private void circuitConfigMinus(Widget.ClickData data) {
-        ItemStack stack;
-        if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
-            IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? -5 : -1);
-            this.notifiedItemInputList.add(circuitInventory);
-        }
+    protected boolean hasGhostCircuitInventory() {
+        return true;
     }
 
     // Method provided to override

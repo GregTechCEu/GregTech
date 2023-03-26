@@ -496,7 +496,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             // first check if the block is a GT machine
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof IGregTechTileEntity) {
-               stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
+                stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
             }
             if (stack.isEmpty()) {
                 // try the itemstack constructor if we're not a GT machine
@@ -579,7 +579,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
         if (controllerBase != null) {
-            controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap.put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
+            if (controllerBase.structurePattern == null) {
+                controllerBase.reinitializeStructurePattern();
+            }
+            if (controllerBase.structurePattern != null) {
+                controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap.put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
+            }
         }
 
         List<ItemStack> sortedParts = gatherStructureBlocks(worldSceneRenderer.world, blockMap, parts).stream().sorted((one, two) -> {

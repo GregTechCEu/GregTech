@@ -56,6 +56,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
     public static void chargeStackFromComponents(ItemStack toolStack, IInventory ingredients, Predicate<ItemStack> chargePredicate, boolean transferMaxCharge) {
         IElectricItem electricItem = toolStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         long totalMaxCharge = 0L;
+        long toCharge = 0L;
         if (electricItem != null && electricItem.getMaxCharge() > 0L) {
             for (int slotIndex = 0; slotIndex < ingredients.getSizeInventory(); slotIndex++) {
                 ItemStack stackInSlot = ingredients.getStackInSlot(slotIndex);
@@ -67,12 +68,13 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                     continue;
                 }
                 totalMaxCharge += batteryItem.getMaxCharge();
-                long discharged = batteryItem.discharge(Long.MAX_VALUE, Integer.MAX_VALUE, true, true, true);
-                electricItem.charge(discharged, Integer.MAX_VALUE, true, false);
+                toCharge += batteryItem.discharge(Long.MAX_VALUE, Integer.MAX_VALUE, true, true, true);
             }
         }
         if (electricItem instanceof ElectricItem && transferMaxCharge) {
             ((ElectricItem) electricItem).setMaxChargeOverride(totalMaxCharge);
         }
+        //noinspection DataFlowIssue
+        electricItem.charge(toCharge, Integer.MAX_VALUE, true, false);
     }
 }

@@ -79,7 +79,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     public BlockMachine() {
         super(Material.IRON);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_MACHINES);
         setSoundType(SoundType.METAL);
         setHardness(6.0f);
         setResistance(6.0f);
@@ -440,7 +440,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         for (MetaTileEntity metaTileEntity : GregTechAPI.MTE_REGISTRY) {
-            metaTileEntity.getSubItems(tab, items);
+            if (metaTileEntity.isInCreativeTab(tab)) {
+                metaTileEntity.getSubItems(tab, items);
+            }
         }
     }
 

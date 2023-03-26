@@ -23,7 +23,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
@@ -74,8 +74,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     private long lastUpdate;
     private WeakReference<EnergyNet> currentEnergyNet;
     private List<BlockPos> activeNodes;
-    private Set<BlockPosFace> netCovers;
-    private Set<BlockPosFace> remoteCovers;
+    private Set<FacingPos> netCovers;
+    private Set<FacingPos> remoteCovers;
     @SideOnly(Side.CLIENT)
     public List<BlockPos> parts;
     public MetaTileEntityMonitorScreen[][] screens;
@@ -126,7 +126,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         });
     }
 
-    public void addRemoteCover(BlockPosFace cover) {
+    public void addRemoteCover(FacingPos cover) {
         if (remoteCovers != null) {
             if (remoteCovers.add(cover)) {
                 writeCustomData(GregtechDataCodes.UPDATE_COVERS, this::writeCovers);
@@ -137,7 +137,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     private boolean checkCovers() {
         boolean dirty = false;
         updateNodes();
-        Set<BlockPosFace> checkCovers = new HashSet<>();
+        Set<FacingPos> checkCovers = new HashSet<>();
         World world = this.getWorld();
         for (BlockPos pos : activeNodes) {
             TileEntity tileEntityCable = world.getTileEntity(pos);
@@ -152,21 +152,21 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                         if (metaTileEntity != null) {
                             CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
                             if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
-                                checkCovers.add(new BlockPosFace(metaTileEntity.getPos(), cover.attachedSide));
+                                checkCovers.add(new FacingPos(metaTileEntity.getPos(), cover.attachedSide));
                             }
                         }
                     }
                 }
             }
         }
-        Iterator<BlockPosFace> iterator = remoteCovers.iterator();
+        Iterator<FacingPos> iterator = remoteCovers.iterator();
         while (iterator.hasNext()) {
-            BlockPosFace blockPosFace = iterator.next();
-            TileEntity tileEntity = world.getTileEntity(blockPosFace.pos);
+            FacingPos blockPosFace = iterator.next();
+            TileEntity tileEntity = world.getTileEntity(blockPosFace.getPos());
             if (tileEntity instanceof IGregTechTileEntity) {
                 MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if (metaTileEntity != null) {
-                    CoverBehavior cover = metaTileEntity.getCoverAtSide(blockPosFace.facing);
+                    CoverBehavior cover = metaTileEntity.getCoverAtSide(blockPosFace.getFacing());
                     if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
                         continue;
                     }
@@ -187,18 +187,18 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             buf.writeInt(0);
         } else {
             buf.writeInt(netCovers.size());
-            for (BlockPosFace cover : netCovers){
-                buf.writeBlockPos(cover.pos);
-                buf.writeByte(cover.facing.getIndex());
+            for (FacingPos cover : netCovers){
+                buf.writeBlockPos(cover.getPos());
+                buf.writeByte(cover.getFacing().getIndex());
             }
         }
         if(remoteCovers == null) {
             buf.writeInt(0);
         } else {
             buf.writeInt(remoteCovers.size());
-            for (BlockPosFace cover : remoteCovers){
-                buf.writeBlockPos(cover.pos);
-                buf.writeByte(cover.facing.getIndex());
+            for (FacingPos cover : remoteCovers){
+                buf.writeBlockPos(cover.getPos());
+                buf.writeByte(cover.getFacing().getIndex());
             }
         }
 
@@ -209,11 +209,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         remoteCovers = new HashSet<>();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            netCovers.add(new BlockPosFace(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
+            netCovers.add(new FacingPos(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
         }
         size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            remoteCovers.add(new BlockPosFace(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
+            remoteCovers.add(new FacingPos(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
         }
     }
 
@@ -366,7 +366,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             setActive(inputEnergy.changeEnergy(ENERGY_COST * this.getMultiblockParts().size()) == ENERGY_COST * this.getMultiblockParts().size());
             if (checkCovers()) {
                 this.getMultiblockParts().forEach(part -> {
-                    Set<BlockPosFace> covers = getAllCovers();
+                    Set<FacingPos> covers = getAllCovers();
                     if (part instanceof MetaTileEntityMonitorScreen) {
                         ((MetaTileEntityMonitorScreen) part).updateCoverValid(covers);
                     }
@@ -376,8 +376,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         }
     }
 
-    public Set<BlockPosFace> getAllCovers() {
-        Set<BlockPosFace> allCovers = new HashSet<>();
+    public Set<FacingPos> getAllCovers() {
+        Set<FacingPos> allCovers = new HashSet<>();
         if (netCovers != null) {
             allCovers.addAll(netCovers);
         }

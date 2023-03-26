@@ -299,12 +299,11 @@ public class ConfigHolder {
         @Config.SlidingOption
         public double resolution = 2;
 
-        @Config.Comment({"Whether or not to enable Emissive Textures for GregTech Machines.", "Default: true"})
+        @Config.Comment({"Whether or not to enable Emissive Textures for GregTech Machines and multiblock parts.", "Default: true"})
         public boolean machinesEmissiveTextures = true;
 
-        @Config.Comment({"Whether or not to enable Emissive Textures for GregTech Casings " +
-                "when the multiblock is working (EBF coils, Fusion Casings, etc.).", "Default: false"})
-        public boolean casingsActiveEmissiveTextures = false;
+        @Config.Comment({"Whether or not to enable Emissive Textures for Electric Blast Furnace Coils when the multiblock is working.", "Default: false"})
+        public boolean coilsActiveEmissiveTextures = true;
 
         @Config.Comment({"Whether or not sounds should be played when using tools outside of crafting.", "Default: true"})
         public boolean toolUseSounds = true;

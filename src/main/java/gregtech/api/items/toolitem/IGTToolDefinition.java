@@ -2,6 +2,7 @@ package gregtech.api.items.toolitem;
 
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
@@ -91,6 +92,8 @@ public interface IGTToolDefinition {
     }
 
     boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment);
+
+    Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack);
 
     /**
      * Misc

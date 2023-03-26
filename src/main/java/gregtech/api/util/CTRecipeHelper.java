@@ -23,8 +23,8 @@ public class CTRecipeHelper {
     @Nullable
     public static String getMetaItemId(ItemStack item) {
         if (item.getItem() instanceof MetaItem) {
-            MetaItem<?> metaItem = (MetaItem<?>) item.getItem();
-            return metaItem.getItem(item).unlocalizedName;
+            MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.getItem()).getItem(item);
+            if (metaValueItem != null) return metaValueItem.unlocalizedName;
         }
         if (item.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) item.getItem()).getBlock();

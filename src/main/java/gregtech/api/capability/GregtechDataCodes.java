@@ -114,7 +114,7 @@ public class GregtechDataCodes {
     // Phantom Tanks
     public static final int REMOVE_PHANTOM_FLUID_TYPE = 10;
     public static final int CHANGE_PHANTOM_FLUID = 11;
-    public static final int VOID_PHANTOM_FLUID = 12;
+    public static final int SET_PHANTOM_FLUID = 12;
     public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
 
     // Recipe Logic
@@ -123,5 +123,19 @@ public class GregtechDataCodes {
 
     // Creative Energy
     public static final int UPDATE_IO_SPEED = 1;
+
+
+    // NBT Keys
+
+    // From MetaTileEntityHolder
+    public static final String CUSTOM_NAME = "CustomName";
+
+    // MTE Trait Names
+
+    public static final String ABSTRACT_WORKABLE_TRAIT = "RecipeMapWorkable";
+    public static final String ENERGY_CONTAINER_TRAIT = "EnergyContainer";
+    public static final String ENERGY_CONVERTER_TRAIT = "EnergyConvertTrait";
+    public static final String FUSION_REACTOR_ENERGY_CONTAINER_TRAIT = "EnergyContainerInternal";
+    public static final String BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT = "BatteryEnergyContainer";
 
 }

@@ -19,9 +19,9 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
@@ -134,6 +134,7 @@ public class ClientEventHandler {
     private static void renderHUDMetaArmor(@Nonnull ItemStack stack) {
         if (stack.getItem() instanceof ArmorMetaItem) {
             ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
+            if (valueItem == null) return;
             if (valueItem.getArmorLogic() instanceof IItemHUDProvider) {
                 IItemHUDProvider.tryDrawHud((IItemHUDProvider) valueItem.getArmorLogic(), stack);
             }
@@ -143,6 +144,7 @@ public class ClientEventHandler {
     private static void renderHUDMetaItem(@Nonnull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>) {
             MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+            if (valueItem == null) return;
             for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
                 if (behaviour instanceof IItemHUDProvider) {
                     IItemHUDProvider.tryDrawHud((IItemHUDProvider) behaviour, stack);

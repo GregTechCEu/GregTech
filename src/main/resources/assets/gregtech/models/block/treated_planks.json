@@ -1,0 +1,21 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "gregtech:blocks/wood/treated/planks_treated",
+    "texture": "gregtech:blocks/wood/treated/planks_treated"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "rotation": 90, "texture": "#texture", "cullface": "north" },
+        "east": { "uv": [ 0, 0, 16, 16 ], "rotation": 90, "texture": "#texture", "cullface": "east" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "rotation": 90, "texture": "#texture", "cullface": "south" },
+        "west": { "uv": [ 0, 0, 16, 16 ], "rotation": 90, "texture": "#texture", "cullface": "west" },
+        "up": { "uv": [ 0, 0, 16, 16 ], "texture": "#texture", "cullface": "up" },
+        "down": { "uv": [ 0, 0, 16, 16 ], "texture": "#texture", "cullface": "down" }
+      }
+    }
+  ]
+}

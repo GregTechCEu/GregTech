@@ -11,9 +11,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.api.unification.stack.ItemMaterialInfo;
-import gregtech.api.unification.stack.MaterialStack;
-import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
@@ -23,10 +20,8 @@ import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
-import gregtech.common.blocks.wood.BlockGregPlanks;
-import gregtech.common.blocks.wood.BlockRubberLeaves;
-import gregtech.common.blocks.wood.BlockRubberLog;
-import gregtech.common.blocks.wood.BlockRubberSapling;
+import gregtech.common.blocks.wood.*;
+import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -40,9 +35,9 @@ import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
+import net.minecraft.block.*;
 import net.minecraft.block.BlockLog.EnumAxis;
+import net.minecraft.block.BlockSlab.EnumBlockHalf;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -50,7 +45,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -124,6 +118,16 @@ public class MetaBlocks {
     public static BlockRubberLeaves RUBBER_LEAVES;
     public static BlockRubberSapling RUBBER_SAPLING;
     public static BlockGregPlanks PLANKS;
+    public static BlockGregWoodSlab WOOD_SLAB;
+    public static BlockGregWoodSlab DOUBLE_WOOD_SLAB;
+    public static BlockStairs RUBBER_WOOD_STAIRS;
+    public static BlockStairs TREATED_WOOD_STAIRS;
+    public static BlockFence RUBBER_WOOD_FENCE;
+    public static BlockFence TREATED_WOOD_FENCE;
+    public static BlockFenceGate RUBBER_WOOD_FENCE_GATE;
+    public static BlockFenceGate TREATED_WOOD_FENCE_GATE;
+    public static BlockWoodenDoor RUBBER_WOOD_DOOR;
+    public static BlockWoodenDoor TREATED_WOOD_DOOR;
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
@@ -228,6 +232,27 @@ public class MetaBlocks {
         RUBBER_SAPLING.setRegistryName("rubber_sapling");
         PLANKS = new BlockGregPlanks();
         PLANKS.setRegistryName("planks");
+        WOOD_SLAB = new BlockGregWoodSlab.Half();
+        WOOD_SLAB.setRegistryName("wood_slab");
+        DOUBLE_WOOD_SLAB = new BlockGregWoodSlab.Double();
+        DOUBLE_WOOD_SLAB.setRegistryName("double_wood_slab");
+        RUBBER_WOOD_STAIRS = new BlockGregStairs(PLANKS.getState(BlockGregPlanks.BlockType.RUBBER_PLANK));
+        RUBBER_WOOD_STAIRS.setRegistryName("rubber_wood_stairs").setTranslationKey("rubber_wood_stairs");
+        TREATED_WOOD_STAIRS = new BlockGregStairs(PLANKS.getState(BlockGregPlanks.BlockType.TREATED_PLANK));
+        TREATED_WOOD_STAIRS.setRegistryName("treated_wood_stairs").setTranslationKey("treated_wood_stairs");
+        RUBBER_WOOD_FENCE = new BlockGregFence();
+        RUBBER_WOOD_FENCE.setRegistryName("rubber_wood_fence").setTranslationKey("rubber_wood_fence");
+        TREATED_WOOD_FENCE = new BlockGregFence();
+        TREATED_WOOD_FENCE.setRegistryName("treated_wood_fence").setTranslationKey("treated_wood_fence");
+        RUBBER_WOOD_FENCE_GATE = new BlockGregFenceGate();
+        RUBBER_WOOD_FENCE_GATE.setRegistryName("rubber_wood_fence_gate").setTranslationKey("rubber_wood_fence_gate");
+        TREATED_WOOD_FENCE_GATE = new BlockGregFenceGate();
+        TREATED_WOOD_FENCE_GATE.setRegistryName("treated_wood_fence_gate").setTranslationKey("treated_wood_fence_gate");
+        RUBBER_WOOD_DOOR = new BlockRubberDoor(() -> MetaItems.RUBBER_WOOD_DOOR.getStackForm());
+        RUBBER_WOOD_DOOR.setRegistryName("rubber_wood_door").setTranslationKey("rubber_wood_door");
+        TREATED_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.TREATED_WOOD_DOOR.getStackForm());
+        TREATED_WOOD_DOOR.setRegistryName("treated_wood_door").setTranslationKey("treated_wood_door");
+
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
 
@@ -247,6 +272,16 @@ public class MetaBlocks {
         Blocks.FIRE.setFireInfo(RUBBER_LOG, 5, 5);
         Blocks.FIRE.setFireInfo(RUBBER_LEAVES, 30, 60);
         Blocks.FIRE.setFireInfo(PLANKS, 5, 20);
+        Blocks.FIRE.setFireInfo(WOOD_SLAB, 5, 20);
+        Blocks.FIRE.setFireInfo(DOUBLE_WOOD_SLAB, 5, 20);
+        Blocks.FIRE.setFireInfo(RUBBER_WOOD_STAIRS, 5, 20);
+        Blocks.FIRE.setFireInfo(TREATED_WOOD_STAIRS, 5, 20);
+        Blocks.FIRE.setFireInfo(RUBBER_WOOD_FENCE, 5, 20);
+        Blocks.FIRE.setFireInfo(TREATED_WOOD_FENCE, 5, 20);
+        Blocks.FIRE.setFireInfo(RUBBER_WOOD_FENCE_GATE, 5, 20);
+        Blocks.FIRE.setFireInfo(TREATED_WOOD_FENCE_GATE, 5, 20);
+        Blocks.FIRE.setFireInfo(RUBBER_WOOD_DOOR, 5, 20);
+        Blocks.FIRE.setFireInfo(TREATED_WOOD_DOOR, 5, 20);
         Blocks.FIRE.setFireInfo(BRITTLE_CHARCOAL, 5, 5);
     }
 
@@ -354,6 +389,19 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(Objects.requireNonNull(RUBBER_SAPLING.getRegistryName()), "inventory"));
         registerItemModel(PLANKS);
+        registerItemModelWithOverride(WOOD_SLAB, ImmutableMap.of(BlockSlab.HALF, EnumBlockHalf.BOTTOM));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_WOOD_STAIRS), 0,
+                new ModelResourceLocation(Objects.requireNonNull(RUBBER_WOOD_STAIRS.getRegistryName()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TREATED_WOOD_STAIRS), 0,
+                new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_STAIRS.getRegistryName()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_WOOD_FENCE), 0,
+                new ModelResourceLocation(Objects.requireNonNull(RUBBER_WOOD_FENCE.getRegistryName()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TREATED_WOOD_FENCE), 0,
+                new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE.getRegistryName()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_WOOD_FENCE_GATE), 0,
+                new ModelResourceLocation(Objects.requireNonNull(RUBBER_WOOD_FENCE_GATE.getRegistryName()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TREATED_WOOD_FENCE_GATE), 0,
+                new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE_GATE.getRegistryName()), "inventory"));
         registerItemModel(BRITTLE_CHARCOAL);
 
         BOILER_FIREBOX_CASING.onModelRegister();
@@ -362,9 +410,9 @@ public class MetaBlocks {
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
 
-        COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        ORES.forEach(IModelSupplier::onModelRegister);
+        COMPRESSED.values().stream().distinct().forEach(BlockCompressed::onModelRegister);
+        FRAMES.values().stream().distinct().forEach(BlockFrame::onModelRegister);
+        ORES.forEach(BlockOre::onModelRegister);
     }
 
     @SideOnly(Side.CLIENT)
@@ -467,14 +515,8 @@ public class MetaBlocks {
     }
 
     public static void registerOreDict() {
-        OreDictUnifier.registerOre(new ItemStack(RUBBER_LOG, 1, GTValues.W), OrePrefix.log, Materials.Wood);
-        OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES, 1, GTValues.W), "treeLeaves");
-        OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING, 1, GTValues.W), "treeSapling");
-        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), OrePrefix.plank, Materials.Wood);
-        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.Wood, GTValues.M)));
-        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), OrePrefix.plank, Materials.TreatedWood);
-        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), new ItemMaterialInfo(new MaterialStack(Materials.TreatedWood, GTValues.M)));
-        GameRegistry.addSmelting(RUBBER_LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES), "treeLeaves");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING), "treeSapling");
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {
             Material material = entry.getKey();

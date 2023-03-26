@@ -60,8 +60,9 @@ public class MachineRecipeLoader {
         ComponentRecipes.register();
         MiscRecipeLoader.init();
         BatteryRecipes.init();
-
         CircuitRecipes.init();
+        WoodRecipeLoader.registerRecipes();
+
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
         registerAssemblerRecipes();
@@ -418,81 +419,81 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-        for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L / 2)}) {
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(solder)
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        FluidStack solder = SolderingAlloy.getFluid(L / 2);
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(cableGtSingle, Copper, 4)
-                    .input(circuit, MarkerMaterials.Tier.LV)
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ENERGY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LEVER))
+                .input(OrePrefix.plate, material)
+                .fluidInputs(solder)
+                .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ENERGY_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .output(COVER_ENERGY_DETECTOR_ADVANCED)
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(cableGtSingle, Copper, 4)
+                .input(circuit, MarkerMaterials.Tier.LV)
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ENERGY_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .output(COVER_ENERGY_DETECTOR_ADVANCED)
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(wireFine, Gold, 4)
-                    .input(circuit, MarkerMaterials.Tier.HV)
-                    .input(plate, Aluminium)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, Gold, 4)
+                .input(circuit, MarkerMaterials.Tier.HV)
+                .input(plate, Aluminium)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_FLUID_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ITEM_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
-        }
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_FLUID_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ITEM_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
@@ -520,6 +521,16 @@ public class MachineRecipeLoader {
                 .fluidInputs(Polyethylene.getFluid(L * 2))
                 .output(COVER_ENDER_FLUID_LINK)
                 .EUt(VA[HV]).duration(320)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OreDictNames.chestWood.toString())
+                .input(ELECTRIC_PISTON_LV)
+                .input(plate, Iron)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .output(COVER_STORAGE)
+                .EUt(16)
+                .duration(100)
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();
@@ -587,8 +598,8 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).input(cableGtSingle, Materials.YttriumBariumCuprate, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[8].getStackForm()).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).input(cableGtSingle, Materials.Europium, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[9].getStackForm()).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).circuitMeta(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plank, Wood, 4).input(screw, Iron, 4).outputs(WOODEN_CRATE.getStackForm()).duration(100).circuitMeta(5).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Bronze, 4).input(plate, Bronze, 4).outputs(BRONZE_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();

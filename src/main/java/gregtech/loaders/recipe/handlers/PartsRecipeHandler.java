@@ -137,27 +137,28 @@ public class PartsRecipeHandler {
     }
 
     public static void processFineWire(OrePrefix fineWirePrefix, Material material, IngotProperty property) {
-        ItemStack fineWireStack = OreDictUnifier.get(fineWirePrefix, material);
-
         if (!OreDictUnifier.get(foil, material).isEmpty())
             ModHandler.addShapelessRecipe(String.format("fine_wire_%s", material.toString()),
-                    fineWireStack, 'x', new UnificationEntry(OrePrefix.foil, material));
+                    OreDictUnifier.get(fineWirePrefix, material),
+                    'x', new UnificationEntry(OrePrefix.foil, material));
 
         if (material.hasProperty(PropertyKey.WIRE)) {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                     .input(OrePrefix.wireGtSingle, material)
-                    .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 4))
+                    .circuitMeta(1)
+                    .output(fineWirePrefix, material, 4)
                     .duration((int) material.getMass() * 3 / 2)
                     .EUt(VA[ULV])
                     .buildAndRegister();
-        } else {
-            RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material)
-                    .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 8))
-                    .duration((int) material.getMass() * 3)
-                    .EUt(VA[ULV])
-                    .buildAndRegister();
         }
+
+        RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
+                .input(OrePrefix.ingot, material)
+                .circuitMeta(3)
+                .output(fineWirePrefix, material, 8)
+                .duration((int) material.getMass() * 3)
+                .EUt(VA[ULV])
+                .buildAndRegister();
     }
 
     public static void processGear(OrePrefix gearPrefix, Material material, DustProperty property) {

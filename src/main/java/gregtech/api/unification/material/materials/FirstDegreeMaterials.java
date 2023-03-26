@@ -398,7 +398,7 @@ public class FirstDegreeMaterials {
         SterlingSilver = new Material.Builder(300, "sterling_silver")
                 .ingot().fluid()
                 .color(0xFADCE1).iconSet(SHINY)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Copper, 1, Silver, 4)
                 .toolStats(ToolProperty.Builder.of(3.0F, 8.0F, 768, 2)
                         .attackSpeed(0.3F).enchantability(33)
@@ -412,7 +412,7 @@ public class FirstDegreeMaterials {
         RoseGold = new Material.Builder(301, "rose_gold")
                 .ingot().fluid()
                 .color(0xFFE61E).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_RING)
+                .flags(EXT2_METAL, GENERATE_RING, GENERATE_GEAR)
                 .components(Copper, 1, Gold, 4)
                 .toolStats(ToolProperty.Builder.of(12.0F, 2.0F, 768, 2)
                         .enchantability(33)
@@ -483,7 +483,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Ruridit = new Material.Builder(310, "ruridit")
-                .ingot(3)
+                .ingot(3).fluid()
                 .colorAverage().iconSet(BRIGHT)
                 .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD)
                 .components(Ruthenium, 2, Iridium, 1)

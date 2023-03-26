@@ -72,9 +72,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
         this.energyContainer = new EnergyContainerHandler(this, Integer.MAX_VALUE, 0, 0, 0, 0) {
+            @Nonnull
             @Override
             public String getName() {
-                return "EnergyContainerInternal";
+                return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
             }
         };
     }
@@ -112,7 +113,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .where('K', states(getCoilState()))
                 .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('A', air())
-                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidInputs())))
+                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(2)))
                 .where('#', any())
                 .build();
     }
@@ -205,9 +206,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.inputEnergyContainers = new EnergyContainerList(energyInputs);
         long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
+            @Nonnull
             @Override
             public String getName() {
-                return "EnergyContainerInternal";
+                return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
             }
         };
     }
@@ -327,7 +329,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        protected boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@Nonnull Recipe recipe) {
             if (!super.checkRecipe(recipe))
                 return false;
 
@@ -351,6 +353,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
             return true;
         }
 
+        @Nonnull
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound tag = super.serializeNBT();

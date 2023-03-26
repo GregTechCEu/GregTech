@@ -25,7 +25,8 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
     @Override
     protected String rawItemName(GuideItem item) {
         if (item.stack.getItem() instanceof MetaItem) {
-            return ((MetaItem<?>) item.stack.getItem()).getItem((short) item.stack.getMetadata()).unlocalizedName;
+            MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.stack.getItem()).getItem((short) item.stack.getMetadata());
+            if (metaValueItem != null) return metaValueItem.unlocalizedName;
         }
         return item.stack.getTranslationKey();
     }

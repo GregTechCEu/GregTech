@@ -5,6 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.toolitem.IGTTool;
@@ -24,12 +25,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -39,6 +43,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -60,7 +65,8 @@ public class ToolEventHandlers {
      */
     @SubscribeEvent
     public static void onPlayerDestroyItem(@Nonnull PlayerDestroyItemEvent event) {
-        Item item = event.getOriginal().getItem();
+        ItemStack original = event.getOriginal();
+        Item item = original.getItem();
         if (item instanceof IGTTool) {
             IGTTool def = (IGTTool) item;
             ItemStack brokenStack = def.getToolStats().getBrokenStack();
@@ -68,7 +74,16 @@ public class ToolEventHandlers {
             if (brokenStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) && def.isElectric()) {
                 long remainingCharge = def.getCharge(event.getOriginal());
                 IElectricItem electricStack = brokenStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                electricStack.charge(Math.min(remainingCharge, def.getMaxCharge(event.getOriginal())), def.getElectricTier(), true, false);
+                if (electricStack != null) {
+                    // update the max charge of the item, if possible
+                    // applies to items like power units, which can have different max charges depending on their recipe
+                    if (electricStack instanceof ElectricItem) {
+                        ((ElectricItem) electricStack).setMaxChargeOverride(def.getMaxCharge(original));
+                    }
+
+                    electricStack.charge(Math.min(remainingCharge, def.getMaxCharge(original)),
+                            def.getElectricTier(), true, false);
+                }
             }
             if (!brokenStack.isEmpty()) {
                 if (event.getHand() == null) {
@@ -77,6 +92,31 @@ public class ToolEventHandlers {
                     }
                 } else {
                     event.getEntityPlayer().setHeldItem(event.getHand(), brokenStack);
+                }
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onPlayerEntityInteract(@Nonnull PlayerInteractEvent.EntityInteract event) {
+        ItemStack itemStack = event.getItemStack();
+        Item item = itemStack.getItem();
+
+        /*
+        Handle item frame power unit duping
+         */
+        if (item instanceof IGTTool) {
+            Entity entity = event.getTarget();
+            if (entity instanceof EntityItemFrame) {
+                IGTTool def = (IGTTool) item;
+                ItemStack brokenStack = def.getToolStats().getBrokenStack();
+                if (!brokenStack.isEmpty()) {
+                    EntityItemFrame itemFrame = (EntityItemFrame) entity;
+                    itemFrame.processInitialInteract(event.getEntityPlayer(), event.getHand());
+
+                    event.setCanceled(true);
+                    event.setCancellationResult(EnumActionResult.SUCCESS);
                 }
             }
         }
@@ -92,7 +132,7 @@ public class ToolEventHandlers {
         EntityPlayer player = event.getHarvester();
         if (player != null) {
             ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.hasTagCompound() || !(stack.getItem() instanceof IGTTool)) {
+            if (stack.isEmpty() || !stack.hasTagCompound() || !(stack.getItem() instanceof IGTTool)) {
                 return;
             }
             if (!event.isSilkTouching()) {
@@ -111,7 +151,8 @@ public class ToolEventHandlers {
                         if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
                             world.setBlockToAir(icePos);
                         }
-                        return true;
+                        // only try once, so future water placement does not get eaten too
+                        return false;
                     });
                 }
             }

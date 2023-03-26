@@ -1,0 +1,15 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "gregtech:items/metaitems/gregtech_logo"
+	},
+	"overrides": [
+		{"predicate": {"xmas": 1}, "model": "gregtech:item/metaitems/logo_xmas"}
+	],
+	"display": {
+		"gui": {
+			"translation": [0.5, -0.5, 0],
+			"scale": [1.0625, 1.0625, 1.0625]
+		}
+	}
+}
