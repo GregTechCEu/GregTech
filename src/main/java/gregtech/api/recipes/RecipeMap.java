@@ -394,36 +394,34 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity);
+    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
     }
 
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs                  the Item Inputs
-     * @param fluidInputs             the Fluid Inputs
-     * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
+     * @param voltage     Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs      the Item Inputs
+     * @param fluidInputs the Fluid Inputs
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity) {
-        return findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, false);
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
+        return findRecipe(voltage, inputs, fluidInputs, false);
     }
 
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs                  the Item Inputs
-     * @param fluidInputs             the Fluid Inputs
-     * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
-     * @param exactVoltage            should require exact voltage matching on recipe. used by craftweaker
+     * @param voltage      Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs       the Item Inputs
+     * @param fluidInputs  the Fluid Inputs
+     * @param exactVoltage should require exact voltage matching on recipe. used by craftweaker
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
-    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
+    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs, boolean exactVoltage) {
         final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0).collect(Collectors.toList());
 
@@ -1150,7 +1148,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs, @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
         List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() : Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
         List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() : Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, true);
+        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 

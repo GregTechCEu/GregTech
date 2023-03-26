@@ -63,6 +63,7 @@ public class WireRecipeHandler {
     }
 
 
+    private static final OrePrefix[] wireSizes = {wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex};
     public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
         OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot : material.hasProperty(PropertyKey.GEM) ? gem : dust;
 
@@ -76,10 +77,22 @@ public class WireRecipeHandler {
 
         WIREMILL_RECIPES.recipeBuilder()
                 .input(prefix, material)
+                .circuitMeta(1)
                 .output(wireGtSingle, material, 2)
                 .duration((int) material.getMass())
                 .EUt(getVoltageMultiplier(material))
                 .buildAndRegister();
+
+        for (OrePrefix wireSize : wireSizes) {
+            final int multiplier = (int) (wireSize.getMaterialAmount(material) / GTValues.M);
+            WIREMILL_RECIPES.recipeBuilder()
+                    .input(prefix, material, multiplier)
+                    .circuitMeta(multiplier * 2)
+                    .output(wireSize, material)
+                    .duration((int) (material.getMass() * multiplier * 2))
+                    .EUt(getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         if (!material.hasFlag(NO_WORKING) && material.hasFlag(GENERATE_PLATE)) {
             ModHandler.addShapedRecipe(String.format("%s_wire_single", material),

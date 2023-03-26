@@ -1114,8 +1114,9 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> WIREMILL_RECIPES = new RecipeMap<>("wiremill", 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> WIREMILL_RECIPES = new RecipeMap<>("wiremill", 2, 1, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.WIREMILL_OVERLAY)
+            .setSlotOverlay(false, false, true, GuiTextures.INT_CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.MOTOR);
 
