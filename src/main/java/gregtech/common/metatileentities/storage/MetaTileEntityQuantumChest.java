@@ -365,6 +365,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         try {
             this.itemStack = buf.readItemStack();
         } catch (IOException ignored) {
+            GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() + " on initial server/client sync");
         }
         this.itemsStoredInside = buf.readLong();
     }
