@@ -62,8 +62,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (this.fluidTank.getFluid() != null && this.fluidTank.getFluid().amount > 0)
-            QuantumStorageRenderer.renderAmountText(x, y, z, 69, frontFacing);
+        if (this.getWorld() != null && this.fluidTank.getFluid() != null && this.fluidTank.getFluid().amount > 0)
+            QuantumStorageRenderer.renderTankAmount(x, y, z, frontFacing, this.getWorld(), this.getPos(), 69);
     }
 
     @Override
