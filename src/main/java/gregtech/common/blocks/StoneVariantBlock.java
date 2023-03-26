@@ -13,12 +13,14 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 
 @SuppressWarnings("deprecation")
 public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType> {
@@ -70,6 +72,17 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     @Override
     public boolean checkApplicableBlocks(@Nonnull IBlockState state) {
         return state == getState(StoneType.CONCRETE_DARK) || state == getState(StoneType.CONCRETE_LIGHT);
+    }
+
+    @Override
+    protected boolean canSilkHarvest() {
+        return this.shape == StoneVariant.SMOOTH;
+    }
+
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return Item.getItemFromBlock(this.shape == StoneVariant.SMOOTH ?
+                MetaBlocks.STONE_BLOCKS.get(StoneVariant.COBBLE) : this);
     }
 
     public enum StoneType implements IStringSerializable {
