@@ -4,8 +4,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
@@ -16,11 +16,11 @@ import javax.annotation.Nonnull;
 public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
 
     public BlockAsphalt() {
-        super(net.minecraft.block.material.Material.IRON);
+        super(Material.ROCK);
         setTranslationKey("asphalt");
-        setHardness(5.0f);
+        setHardness(1.5f);
         setResistance(10.0f);
-        setSoundType(SoundType.METAL);
+        setSoundType(SoundType.STONE);
         setDefaultState(getState(BlockType.ASPHALT));
         setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
@@ -40,14 +40,9 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         return state == getState(BlockType.ASPHALT);
     }
 
-    @Override
-    public boolean bonusSpeedCondition(Entity walkingEntity) {
-        return super.bonusSpeedCondition(walkingEntity) && !walkingEntity.isSneaking();
-    }
-
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
-        ASPHALT("asphalt", 1);
+        ASPHALT("asphalt", 0);
 
         private final String name;
         private final int harvestLevel;
