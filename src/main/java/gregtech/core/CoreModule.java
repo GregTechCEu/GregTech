@@ -3,11 +3,11 @@ package gregtech.core;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.event.HighTierEvent;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
@@ -92,11 +92,7 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        HighTierEvent highTierEvent = new HighTierEvent();
-        MinecraftForge.EVENT_BUS.post(highTierEvent);
-        GregTechAPI.highTier = ConfigHolder.machines.highTierContent || highTierEvent.isHighTier();
-        if (GregTechAPI.highTier) logger.info("High-Tier is Enabled");
-
+        GregTechAPIInternal.preInit();
         GregTechAPI.advancementManager = AdvancementManager.getInstance();
         AdvancementTriggers.register();
 

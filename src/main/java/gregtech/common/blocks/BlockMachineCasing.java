@@ -39,7 +39,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
         for (MachineCasingType variant : VALUES) {
-            if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GregTechAPI.highTier) {
+            if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GregTechAPI.isHighTier()) {
                 list.add(getItemVariant(variant));
             }
         }
