@@ -12,19 +12,26 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Loader;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
 public class RecipeProgressWidget extends ProgressWidget {
 
     private final RecipeMap<?> recipeMap;
-    private final static int HOVER_TEXT_WIDTH = 200;
+    private static final int HOVER_TEXT_WIDTH = 200;
 
     public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, RecipeMap<?> recipeMap) {
         super(progressSupplier, x, y, width, height);
         this.recipeMap = recipeMap;
+    }
+
+    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, @Nonnull String recipeMapName) {
+        super(progressSupplier, x, y, width, height);
+        this.recipeMap = Objects.requireNonNull(RecipeMap.getByName(recipeMapName));
     }
 
     public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
@@ -32,9 +39,19 @@ public class RecipeProgressWidget extends ProgressWidget {
         this.recipeMap = recipeMap;
     }
 
+    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, String recipeMapName) {
+        super(progressSupplier, x, y, width, height, fullImage, moveType);
+        this.recipeMap = Objects.requireNonNull(RecipeMap.getByName(recipeMapName));
+    }
+
     public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
         super(ticksPerCycle, x, y, width, height, fullImage, moveType);
         this.recipeMap = recipeMap;
+    }
+
+    public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, String recipeMapName) {
+        super(ticksPerCycle, x, y, width, height, fullImage, moveType);
+        this.recipeMap = Objects.requireNonNull(RecipeMap.getByName(recipeMapName));
     }
 
     @Override

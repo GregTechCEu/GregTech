@@ -3,19 +3,21 @@ package gregtech.api.recipes.machines;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMapFrontend;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> {
+public class AssemblyLineFrontend extends RecipeMapFrontend {
 
-    public RecipeMapAssemblyLine(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
-                                 int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, R defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
+    public AssemblyLineFrontend(@Nonnull String unlocalizedName, @Nonnull Byte2ObjectMap<TextureArea> slotOverlays, @Nonnull TextureArea progressBarTexture, @Nonnull ProgressWidget.MoveType progressBarMovetype, @Nullable TextureArea specialTexture, @Nullable int[] specialTexturePosition, @Nullable SoundEvent sound, boolean isVisible) {
+        super(unlocalizedName, slotOverlays, progressBarTexture, progressBarMovetype, specialTexture, specialTexturePosition, sound, isVisible);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
             fluidInputsCount = tmp;
             invertFluids = true;
         }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
+        int[] inputSlotGrid = RecipeMapFrontend.determineSlotsGrid(itemInputsCount);
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = 80 - itemSlotsToLeft * 18;
@@ -53,19 +55,19 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
             for (int i = 0; i < itemSlotsToDown; i++) {
                 for (int j = 0; j < itemSlotsToLeft; j++) {
                     int slotIndex = i * itemSlotsToLeft + j/* + 1*/; // needed for data slot
-                    addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, invertFluids, false);
+                    this.addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, invertFluids, false);
                 }
             }
             if (fluidInputsCount > 0 || invertFluids) {
                 if (itemSlotsToDown >= fluidInputsCount) {
                     int startSpecX = startInputsX + 18 * 5;
                     for (int i = 0; i < fluidInputsCount; i++) {
-                        addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
+                        this.addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
                     }
                 }
             }
         } else {
-            addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
+            this.addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
         }
     }
 }

@@ -1,35 +1,30 @@
 package gregtech.api.recipes.machines;
 
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMapBackend;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
+public class FormingPressBackend<R extends RecipeBuilder<R>> extends RecipeMapBackend<R> {
 
     private static ItemStack NAME_MOLD = ItemStack.EMPTY;
 
-    public RecipeMapFormingPress(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public FormingPressBackend(@Nonnull String unlocalizedName, @Nonnull RecipeBuilder<R> defaultRecipebuilder) {
+        super(unlocalizedName, defaultRecipebuilder);
     }
 
     @Override
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+    public Recipe findRecipe(long voltage, @Nonnull List<ItemStack> inputs, @Nonnull List<FluidStack> fluidInputs, boolean exactVoltage) {
         Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, exactVoltage);
 
         // Item Mold renaming - min of 2 inputs required
@@ -61,7 +56,7 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
             if (!moldStack.isEmpty() && moldStack.getTagCompound() != null && !itemStack.isEmpty()) {
                 ItemStack output = GTUtility.copyAmount(1, itemStack);
                 output.setStackDisplayName(moldStack.getDisplayName());
-                return this.recipeBuilder()
+                return this.defaultRecipebuilder.copy()
                         .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
                         .inputs(GTUtility.copyAmount(1, itemStack))
                         .outputs(output)
@@ -73,19 +68,4 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
         return recipe;
     }
 
-    @Override
-    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
-        SlotWidget slotWidget = new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs);
-        TextureArea base = GuiTextures.SLOT;
-        if (isOutputs)
-            slotWidget.setBackgroundTexture(base, GuiTextures.PRESS_OVERLAY_3);
-        else if (slotIndex == 0 || slotIndex == 3)
-            slotWidget.setBackgroundTexture(base, GuiTextures.PRESS_OVERLAY_2);
-        else if (slotIndex == 1 || slotIndex == 4)
-            slotWidget.setBackgroundTexture(base, GuiTextures.PRESS_OVERLAY_4);
-        else if (slotIndex == 2 || slotIndex == 5)
-            slotWidget.setBackgroundTexture(base, GuiTextures.PRESS_OVERLAY_1);
-
-        builder.widget(slotWidget);
-    }
 }

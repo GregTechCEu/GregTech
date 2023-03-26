@@ -13,8 +13,8 @@ import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.RecipeCompatUtil;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
 import mezz.jei.api.ingredients.IIngredients;
@@ -148,7 +148,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
                     String recipeLine = GroovyScriptCompat.isLoaded() ?
                             GroovyScriptCompat.getRecipeRemoveLine(recipeMap, recipe) :
-                            CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
+                            CTRecipeHelper.getRecipeRemoveLine(recipeMap.unlocalizedName, recipe);
                     String output = RecipeCompatUtil.getFirstOutputString(recipe);
                     if (!output.isEmpty()) {
                         output = "// " + output + "\n";

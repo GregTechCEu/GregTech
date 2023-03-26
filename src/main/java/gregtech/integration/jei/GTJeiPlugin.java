@@ -13,7 +13,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTLog;
@@ -83,7 +82,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.isVisible()) {
                 registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
             }
         }
@@ -116,7 +115,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler, VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.isVisible()) {
                 Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
                         .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
@@ -236,7 +235,7 @@ public class GTJeiPlugin implements IModPlugin {
                 registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
             }
         });
-        registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM, I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
+        registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM, I18n.format("tile.brittle_charcoal.tooltip.1"), I18n.format(I18n.format("tile.brittle_charcoal.tooltip.2")));
     }
 
     public static void setupInputHandler() {
@@ -255,7 +254,7 @@ public class GTJeiPlugin implements IModPlugin {
 
     private static void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
         registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
-        if (recipeMap instanceof RecipeMapFurnace) {
+        if (recipeMap == RecipeMaps.FURNACE_RECIPES) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
             return;
         }

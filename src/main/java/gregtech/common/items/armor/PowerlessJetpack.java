@@ -39,7 +39,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDProvider {
 
@@ -191,7 +190,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
                 currentRecipe = previousRecipe;
                 return;
             } else if (fluidStack != null) {
-                Recipe recipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull));
+                Recipe recipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(Integer.MAX_VALUE, Collections.emptyList(), Collections.singletonList(fluidStack), false);
                 if (recipe != null)  {
                     previousRecipe = recipe;
                     currentRecipe = previousRecipe;
@@ -265,7 +264,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
             return new FluidHandlerItemStack(itemStack, maxCapacity) {
                 @Override
                 public boolean canFillFluidType(FluidStack fluidStack) {
-                    return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
+                    return RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(Integer.MAX_VALUE, Collections.emptyList(), Collections.singletonList(fluidStack), false) != null;
                 }
 
                 @Override

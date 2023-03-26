@@ -7,23 +7,26 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
+import gregtech.api.recipes.RecipeMapFrontend;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationRecipeBuilder> {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public RecipeMapDistillationTower(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
-                                 int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
+public class DistillationTowerFrontend extends RecipeMapFrontend {
+
+    public DistillationTowerFrontend(@Nonnull String unlocalizedName, @Nonnull Byte2ObjectMap<TextureArea> slotOverlays, @Nonnull TextureArea progressBarTexture, @Nonnull ProgressWidget.MoveType progressBarMovetype, @Nullable TextureArea specialTexture, @Nullable int[] specialTexturePosition, @Nullable SoundEvent sound, boolean isVisible) {
+        super(unlocalizedName, slotOverlays, progressBarTexture, progressBarMovetype, specialTexture, specialTexturePosition, sound, isVisible);
     }
 
     @Override
-    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                        FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (isFluid) {
             TankWidget tankWidget = new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18);
             TextureArea base = GuiTextures.FLUID_SLOT;
-
 
             if (!isOutputs)
                 tankWidget.setBackgroundTexture(base, GuiTextures.BEAKER_OVERLAY_1);
@@ -53,13 +56,17 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
         builder.widget(new ProgressWidget(200, 47, 8, 66, 58, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER, ProgressWidget.MoveType.HORIZONTAL));
         addInventorySlotGroup(builder, importItems, importFluids, false, 9);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, 9);
-        if (this.specialTexture != null && this.specialTexturePosition != null)
-            addSpecialTexture(builder);
+        if (this.specialTexture != null && this.specialTexturePosition != null) {
+            this.addSpecialTexture(builder);
+        }
         return builder;
     }
 
+
+
     @Override
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, @Nonnull IItemHandlerModifiable itemHandler,
+                                      @Nonnull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -69,7 +76,7 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
             fluidInputsCount = tmp;
             invertFluids = true;
         }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
+        int[] inputSlotGrid = RecipeMapFrontend.determineSlotsGrid(itemInputsCount);
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 104 : 68 - itemSlotsToLeft * 18;

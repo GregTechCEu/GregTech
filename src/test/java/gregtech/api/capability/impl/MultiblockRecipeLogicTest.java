@@ -8,9 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
@@ -50,18 +48,6 @@ public class MultiblockRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("blast_furnace",
-                1,
-                3,
-                1,
-                2,
-                0,
-                1,
-                0,
-                1,
-                new BlastRecipeBuilder().EUt(32),
-                false);
-
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
@@ -285,19 +271,6 @@ public class MultiblockRecipeLogicTest {
     public void trySearchNewRecipeDistinct() {
 
         World world = DummyWorld.INSTANCE;
-
-        // Create an empty recipe map to work with
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("blast_furnace",
-                1,
-                3,
-                1,
-                2,
-                0,
-                1,
-                0,
-                1,
-                new BlastRecipeBuilder().EUt(32),
-                false);
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))

@@ -1,26 +1,27 @@
 package gregtech.api.recipes.machines;
 
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMapBackend;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
+public class FluidCannerBackend<R extends RecipeBuilder<R>> extends RecipeMapBackend<R> {
 
-    public RecipeMapFluidCanner(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public FluidCannerBackend(@Nonnull String unlocalizedName, @Nonnull RecipeBuilder<R> defaultRecipebuilder) {
+        super(unlocalizedName, defaultRecipebuilder);
     }
 
     @Override
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+    public Recipe findRecipe(long voltage, @Nonnull List<ItemStack> inputs, @Nonnull List<FluidStack> fluidInputs, boolean exactVoltage) {
         Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, exactVoltage);
         if (recipe != null) return recipe;
 
@@ -40,7 +41,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                 FluidStack containerFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, true);
                 if (containerFluid != null) {
                     //if we actually drained something, then it's draining recipe
-                    return recipeBuilder()
+                    return this.defaultRecipebuilder.copy()
                             //we can reuse recipe as long as input container stack fully matches our one
                             .inputs(GTRecipeItemInput.getOrCreate(inputStack, 1))
                             .outputs(fluidHandlerItem.getContainer())
@@ -54,7 +55,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                     FluidStack inputFluid = fluidInputs.get(0).copy();
                     inputFluid.amount = fluidHandlerItem.fill(inputFluid, true);
                     if (inputFluid.amount > 0) {
-                        return recipeBuilder()
+                        return this.defaultRecipebuilder.copy()
                                 //we can reuse recipe as long as input container stack fully matches our one
                                 .inputs(GTRecipeItemInput.getOrCreate(inputStack, 1))
                                 .fluidInputs(inputFluid)

@@ -10,20 +10,23 @@ import gregtech.api.recipes.RecipeMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
 
     private final RecipeMap<?> recipeMap;
 
-    public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
+    public VirtualizedRecipeMap(@Nonnull RecipeMap<?> recipeMap) {
         super(false, generateAliases(recipeMap.unlocalizedName));
         this.recipeMap = recipeMap;
         GroovyScriptCompat.getInstance().addRegistry(this);
     }
 
+    @Nonnull
     public static String[] generateAliases(String name) {
         ArrayList<String> aliases = new ArrayList<>();
         aliases.add(name);
@@ -37,7 +40,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
 
     @Override
     public void onReload() {
-        removeScripted().forEach(recipeMap::removeRecipe);
+        removeScripted().forEach(recipeMap::compileRecipe);
         restoreFromBackup().forEach(recipeMap::compileRecipe);
     }
 

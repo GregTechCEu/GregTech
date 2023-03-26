@@ -6,7 +6,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -56,15 +55,15 @@ public class CTRecipeHelper {
         return item.getItem().getRegistryName().toString();
     }
 
-    public static String getRecipeRemoveLine(RecipeMap<?> recipeMap, Recipe recipe) {
+    public static String getRecipeRemoveLine(String recipeMapUnlocalizedName, Recipe recipe) {
         StringBuilder builder = new StringBuilder();
         builder.append("<recipemap:")
-                .append(recipeMap.unlocalizedName)
+                .append(recipeMapUnlocalizedName)
                 .append(">.findRecipe(")
                 .append(recipe.getEUt())
                 .append(", ");
 
-        if (recipe.getInputs().size() > 0) {
+        if (!recipe.getInputs().isEmpty()) {
             builder.append("[");
             for (GTRecipeInput ci : recipe.getInputs()) {
                 String ingredient = getCtItemString(ci);
@@ -77,7 +76,7 @@ public class CTRecipeHelper {
             builder.append("null, ");
         }
 
-        if (recipe.getFluidInputs().size() > 0) {
+        if (!recipe.getFluidInputs().isEmpty()) {
             builder.append("[");
             for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
                 builder.append("<liquid:")
@@ -102,13 +101,13 @@ public class CTRecipeHelper {
         return builder.toString();
     }
 
-    public static String getRecipeAddLine(RecipeMap<?> recipeMap, Recipe recipe) {
+    public static String getRecipeAddLine(String recipeMapUnlocalizedName, Recipe recipe) {
         StringBuilder builder = new StringBuilder();
-        builder.append(recipeMap.unlocalizedName)
+        builder.append(recipeMapUnlocalizedName)
                 .append(".recipeBuilder()")
                 .append(".inputs(");
 
-        if (recipe.getInputs().size() > 0) {
+        if (!recipe.getInputs().isEmpty()) {
             builder.append("[");
             for (GTRecipeInput ci : recipe.getInputs()) {
                 String ingredient = getCtItemString(ci);
@@ -119,7 +118,7 @@ public class CTRecipeHelper {
                     .append("])");
         }
 
-        if (recipe.getFluidInputs().size() > 0) {
+        if (!recipe.getFluidInputs().isEmpty()) {
             builder.append(".fluidInputs(");
             builder.append("[");
             for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
@@ -139,7 +138,7 @@ public class CTRecipeHelper {
                     .append("])");
         }
 
-        if (recipe.getOutputs().size() > 0) {
+        if (!recipe.getOutputs().isEmpty()) {
             builder.append(".outputs(");
             builder.append("[");
             for (ItemStack itemStack : recipe.getOutputs()) {
@@ -161,7 +160,7 @@ public class CTRecipeHelper {
 
                 if (itemStack.serializeNBT().hasKey("tag")) {
                     String nbt = NBTConverter.from(itemStack.serializeNBT().getCompoundTag("tag"), false).toString();
-                    if (nbt.length() > 0) {
+                    if (!nbt.isEmpty()) {
                         builder.append(".withTag(").append(nbt).append(")");
                     }
                 }
@@ -170,7 +169,7 @@ public class CTRecipeHelper {
                     .append("])");
         }
 
-        if (recipe.getFluidOutputs().size() > 0) {
+        if (!recipe.getFluidOutputs().isEmpty()) {
             builder.append(".fluidOutputs(");
             builder.append("[");
             for (FluidStack fluidStack : recipe.getFluidOutputs()) {

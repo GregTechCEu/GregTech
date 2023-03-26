@@ -43,7 +43,6 @@ import java.util.stream.IntStream;
 /**
  * @see Recipe
  */
-
 @SuppressWarnings("unchecked")
 public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
@@ -60,7 +59,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean hidden = false;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
-    protected Consumer<RecipeBuilder<?>> onBuildAction = null;
+    protected Collection<Consumer<RecipeBuilder<R>>> buildActions = Collections.emptyList();
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
     protected IRecipePropertyStorage recipePropertyStorage = null;
     protected boolean recipePropertyStorageErrored = false;
@@ -73,7 +72,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidOutputs = new ArrayList<>();
     }
 
-    public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
+    public RecipeBuilder(@Nonnull Recipe recipe, @Nonnull RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         this.inputs = NonNullList.create();
         this.inputs.addAll(recipe.getInputs());
@@ -92,7 +91,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
-    protected RecipeBuilder(RecipeBuilder<R> recipeBuilder) {
+    protected RecipeBuilder(@Nonnull RecipeBuilder<R> recipeBuilder) {
         this.recipeMap = recipeBuilder.recipeMap;
         this.inputs = NonNullList.create();
         this.inputs.addAll(recipeBuilder.getInputs());
@@ -104,7 +103,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
-        this.onBuildAction = recipeBuilder.onBuildAction;
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
         if (this.recipePropertyStorage != null) {
             this.recipePropertyStorage = this.recipePropertyStorage.copy();
@@ -794,19 +792,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return out;
     }
 
-    protected R onBuild(Consumer<RecipeBuilder<?>> consumer) {
-        this.onBuildAction = consumer;
-        return (R) this;
-    }
-
-    protected R invalidateOnBuildAction() {
-        this.onBuildAction = null;
+    protected R onBuild(Collection<Consumer<RecipeBuilder<R>>> buildActions) {
+        this.buildActions = buildActions;
         return (R) this;
     }
 
     public void buildAndRegister() {
-        if (onBuildAction != null) {
-            onBuildAction.accept(this);
+        Iterator<Consumer<RecipeBuilder<R>>> iterator = buildActions.iterator();
+        while (iterator.hasNext()) {
+            Consumer<RecipeBuilder<R>> action = iterator.next();
+            iterator.remove();
+            action.accept(this);
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);

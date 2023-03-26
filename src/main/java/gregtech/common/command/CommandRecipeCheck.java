@@ -76,8 +76,7 @@ public class CommandRecipeCheck extends CommandBase {
                         .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), Integer.MAX_VALUE))
                         .collect(Collectors.toList());
 
-                Set<Recipe> collidingRecipeSet = recipeMap.findRecipeCollisions(
-                        inputs, fluidInputs);
+                Set<Recipe> collidingRecipeSet = recipeMap.findRecipeCollisions(inputs, fluidInputs);
 
                 if (collidingRecipeSet == null) {
                     GTLog.logger.error("This recipe returned null for findRecipeCollisions: {}", prettyPrintRecipe(currentRecipe));
@@ -89,7 +88,7 @@ public class CommandRecipeCheck extends CommandBase {
                     Object2ObjectOpenHashMap<Recipe, Set<Recipe>> conflictingRecipeMap = mismatchedRecipes.get(recipeMap);
                     // if the conflicting recipe was iterated over before, and the current recipe is in the list, remove it
                     collidingRecipeSet.removeIf(cf -> conflictingRecipeMap.get(cf) != null && conflictingRecipeMap.get(cf).contains(currentRecipe));
-                    if (collidingRecipeSet.size() > 0) {
+                    if (!collidingRecipeSet.isEmpty()) {
                         mismatchedRecipes.get(recipeMap).put(currentRecipe, collidingRecipeSet);
                     }
                 }

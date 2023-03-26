@@ -7,7 +7,8 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.RecipeMapBuilder;
+import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -33,17 +34,12 @@ public class AbstractRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("chemical_reactor",
-                0,
-                2,
-                0,
-                2,
-                0,
-                3,
-                0,
-                2,
-                new SimpleRecipeBuilder().EUt(30),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         MetaTileEntity at =
                 MetaTileEntities.registerMetaTileEntity(190,

@@ -14,7 +14,7 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMapBackend;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
@@ -185,7 +185,7 @@ public class CoreModule implements IGregTechModule {
     public void init(FMLInitializationEvent event) {
         MTE_REGISTRY.freeze(); // freeze once addon preInit is finished
         proxy.onLoad();
-        if (RecipeMap.isFoundInvalidRecipe()) {
+        if (RecipeMapBackend.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
             //crash if config setting is set to false, or we are in deobfuscated environment
             if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {

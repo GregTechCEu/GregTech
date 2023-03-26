@@ -13,6 +13,7 @@ public class Branch {
     // Keys on this have collisions, and must be differentiated by equality.
     private Map<AbstractMapIngredient, Either<Recipe, Branch>> specialNodes;
 
+    @Nonnull
     public Stream<Recipe> getRecipes(boolean filterHidden) {
         Stream<Recipe> stream = null;
         if (nodes != null) {
