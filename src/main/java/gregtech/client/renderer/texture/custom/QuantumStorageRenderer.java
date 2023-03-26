@@ -32,6 +32,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.EnumMap;
 
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+
 public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
 
@@ -105,16 +108,24 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         if (stack == null || stack.amount == 0)
             return;
 
-        double fillFraction = (double) stack.amount / tank.getCapacity();
-        double height = Math.min((12 * fillFraction) + 2, 14.0);
-        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0, height / 16.0, 14.9375 / 16.0);
+        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0);
 
+        double fillFraction = (double) stack.amount / tank.getCapacity();
+        if (tank.getFluid().getFluid().isGaseous()) {
+            partialFluidBox.min.y = Math.max(13.9375 - (11.875 * fillFraction), 2.0) / 16.0;
+        } else {
+            partialFluidBox.max.y = Math.min((11.875 * fillFraction) + 2.0625, 14.0) / 16.0;
+        }
+
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         renderState.setFluidColour(stack);
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
         for (EnumFacing facing : EnumFacing.VALUES) {
             Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
+        GlStateManager.disableBlend();
         GlStateManager.resetColor();
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
