@@ -26,15 +26,15 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     // shared property instance
     private static final PropertyEnum<StoneType> PROPERTY = PropertyEnum.create("variant", StoneType.class);
 
-    private final StoneVariant shape;
+    private final StoneVariant stoneVariant;
 
-    public StoneVariantBlock(@Nonnull StoneVariant shape) {
+    public StoneVariantBlock(@Nonnull StoneVariant stoneVariant) {
         super(net.minecraft.block.material.Material.ROCK);
-        this.shape = shape;
-        setRegistryName(shape.id);
-        setTranslationKey(shape.id);
-        setHardness(shape.hardness);
-        setResistance(shape.resistance);
+        this.stoneVariant = stoneVariant;
+        setRegistryName(stoneVariant.id);
+        setTranslationKey(stoneVariant.id);
+        setHardness(stoneVariant.hardness);
+        setResistance(stoneVariant.resistance);
         setSoundType(SoundType.STONE);
         setHarvestLevel(ToolClasses.PICKAXE, 0);
         setDefaultState(getState(StoneType.BLACK_GRANITE));
@@ -66,12 +66,12 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
 
     @Override
     protected boolean canSilkHarvest() {
-        return this.shape == StoneVariant.SMOOTH;
+        return this.stoneVariant == StoneVariant.SMOOTH;
     }
 
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return Item.getItemFromBlock(this.shape == StoneVariant.SMOOTH ?
+        return Item.getItemFromBlock(this.stoneVariant == StoneVariant.SMOOTH ?
                 MetaBlocks.STONE_BLOCKS.get(StoneVariant.COBBLE) : this);
     }
 
