@@ -1,11 +1,6 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.recipes.FluidKey;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.Recipe;
@@ -505,7 +500,7 @@ public abstract class ParallelLogic {
             // Determine if there is a valid recipe for this item. If not, skip it.
             Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
                     Collections.singletonList(currentInputItem),
-                    Collections.emptyList(), 0);
+                    Collections.emptyList());
 
             GTRecipeInput inputIngredient;
             if (matchingRecipe != null) {
