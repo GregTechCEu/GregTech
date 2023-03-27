@@ -2458,6 +2458,7 @@ itemGroup.gregtech.pipes=管道（格雷科技）
 itemGroup.gregtech.tools=工具（格雷科技）
 itemGroup.gregtech.materials=材料（格雷科技）
 itemGroup.gregtech.ores=矿石（格雷科技）
+itemGroup.gregtech.decorations=装饰（格雷科技）
 
 # Drums
 gregtech.machine.drum.wood.name=木桶
