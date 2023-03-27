@@ -2465,6 +2465,7 @@ itemGroup.gregtech.pipes=GregTech - パイプ
 itemGroup.gregtech.tools=GregTech - 道具
 itemGroup.gregtech.materials=GregTech - マテリアル
 itemGroup.gregtech.ores=GregTech - 鉱石
+itemGroup.gregtech.decorations=GregTech - 装飾品
 
 # Drums
 gregtech.machine.drum.wood.name=木製バレル
