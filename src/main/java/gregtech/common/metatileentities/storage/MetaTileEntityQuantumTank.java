@@ -15,11 +15,14 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +33,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -46,22 +50,23 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUIDS;
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
+import static gregtech.api.capability.GregtechDataCodes.*;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
+public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
     private final int maxFluidCapacity;
-    private FluidTank fluidTank;
+    protected FluidTank fluidTank;
     private boolean autoOutputFluids;
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide = false;
     protected IFluidHandler outputFluidInventory;
 
+    private FluidStack previousFluid;
     private boolean locked;
     private boolean voiding;
     @Nullable
@@ -107,6 +112,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             fillInternalTankFromFluidContainer();
             if (isAutoOutputFluids()) {
                 pushFluidsIntoNearbyHandlers(currentOutputFacing);
+            }
+            if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid()) || previousFluid.amount != fluidTank.getFluidAmount()) {
+                previousFluid = fluidTank.getFluid() == null ? null : fluidTank.getFluid().copy();
+                writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound())));
             }
         }
     }
@@ -217,8 +226,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
-                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
+                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                this.getFrontFacing(), this.tier);
         Textures.QUANTUM_TANK_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
@@ -226,6 +236,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, fluidTank, getWorld(), getPos());
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        if (this.fluidTank.getFluid() == null || this.fluidTank.getFluid().amount == 0)
+            return;
+        QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), this.getWorld(), this.getPos(), this.fluidTank.getFluid().amount);
     }
 
     @Override
@@ -311,7 +329,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.UP);
+        super.setFrontFacing(frontFacing);
         if (this.outputFacing == null) {
             //set initial output facing as opposite to front
             setOutputFacing(frontFacing.getOpposite());
@@ -347,6 +365,13 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
             scheduleRenderUpdate();
+        } else if (dataId == UPDATE_FLUID) {
+            try {
+                this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
+            } catch (IOException ignored) {
+                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on a routine fluid update");
+            }
+            scheduleRenderUpdate();
         }
     }
 
@@ -360,6 +385,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputFluids);
+        buf.writeBoolean(locked);
+        buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound()));
     }
 
     @Override
@@ -367,6 +394,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputFluids = buf.readBoolean();
+        this.locked = buf.readBoolean();
+        try {
+            this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
+        } catch (IOException e) {
+            GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on initial server/client sync");
+        }
     }
 
     public void setOutputFacing(EnumFacing outputFacing) {
@@ -504,5 +537,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         public boolean canFillFluidType(FluidStack fluid) {
             return !locked || lockedFluid == null || fluid.isFluidEqual(lockedFluid);
         }
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(getPos());
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
     }
 }

@@ -45,6 +45,7 @@ public class Textures {
     public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
     public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
+    public static final QuantumStorageRenderer QUANTUM_STORAGE_RENDERER = new QuantumStorageRenderer();
 
     // Simple Cube Renderers
     public static final SimpleOverlayRenderer BRONZE_PLATED_BRICKS = new SimpleOverlayRenderer("casings/solid/machine_bronze_plated_bricks");
