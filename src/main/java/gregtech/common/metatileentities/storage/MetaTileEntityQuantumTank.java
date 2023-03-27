@@ -236,14 +236,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
-        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, fluidTank, getWorld(), getPos());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, fluidTank, getWorld(), getPos(), getFrontFacing());
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.fluidTank.getFluid() == null || this.fluidTank.getFluid().amount == 0)
             return;
-        QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), this.getWorld(), this.getPos(), this.fluidTank.getFluid().amount);
+        QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), this.fluidTank.getFluid().amount);
     }
 
     @Override
@@ -547,5 +547,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public boolean isOpaqueCube() {
         return false;
+    }
+
+    @Override
+    public int getLightOpacity() {
+        return 0;
     }
 }

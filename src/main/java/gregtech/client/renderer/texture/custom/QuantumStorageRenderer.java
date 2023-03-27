@@ -32,9 +32,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.EnumMap;
 
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-
 public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
 
@@ -99,11 +96,11 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                                       FluidTank tank, IBlockAccess world, BlockPos pos) {
+                                       FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         if (world != null) {
-            setLightingCorrectly(world, pos);
+            renderState.setBrightness(world, pos);
         }
         FluidStack stack = tank.getFluid();
         if (stack == null || stack.amount == 0)
@@ -118,22 +115,18 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
             partialFluidBox.max.y = Math.min((11.875 * fillFraction) + 2.0625, 14.0) / 16.0;
         }
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         renderState.setFluidColour(stack);
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
         for (EnumFacing facing : EnumFacing.VALUES) {
             Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
-        GlStateManager.disableBlend();
         GlStateManager.resetColor();
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
 
-    public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing,
-                                        IBlockAccess world, BlockPos pos, long amount) {
+    public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
@@ -167,8 +160,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         // Evil bit hackery from net.minecraft.client.renderer.ItemRenderer to actually get the right light coords
         // This makes about as much sense as the fast inverse square root algorithm
         int actualLight = world.getCombinedLight(pos, 0);
-        float lightmapXCoord = (actualLight & 65535);
-        float lightmapYCoord = (actualLight >> 16);
+        float lightmapXCoord = actualLight & 65535;
+        float lightmapYCoord = actualLight >> 16;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightmapXCoord, lightmapYCoord);
     }
 }
