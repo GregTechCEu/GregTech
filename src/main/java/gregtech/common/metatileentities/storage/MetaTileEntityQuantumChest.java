@@ -596,4 +596,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public boolean isOpaqueCube() {
         return false;
     }
+
+    @Override
+    public int getLightOpacity() {
+        return 0;
+    }
 }

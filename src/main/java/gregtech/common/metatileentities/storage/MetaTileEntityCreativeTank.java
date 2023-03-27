@@ -57,13 +57,13 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
             }
         }
-        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos(), getFrontFacing());
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.getWorld() != null && this.fluidTank.getFluid() != null && this.fluidTank.getFluid().amount > 0)
-            QuantumStorageRenderer.renderTankAmount(x, y, z, frontFacing, this.getWorld(), this.getPos(), 69);
+            QuantumStorageRenderer.renderTankAmount(x, y, z, frontFacing, 69);
     }
 
     @Override
