@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -14,8 +15,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -24,38 +25,45 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
 public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     private int mBPerCycle = 1;
     private int ticksPerCycle = 1;
-    private FluidTank fluidTank = new FluidTank(1);
-
     private boolean active = false;
 
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 15, -1);
+        super(metaTileEntityId, GTValues.MAX, -1);
+        this.fluidTank = new FluidTank(1);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, ArrayUtils.add(pipeline,
-                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
+                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                this.getFrontFacing(), this.getTier());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-        Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
-        Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+        if (this.getOutputFacing() != null) {
+            Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+            if (isAutoOutputFluids()) {
+                Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+            }
+        }
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos(), getFrontFacing());
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        if (this.getWorld() != null && this.fluidTank.getFluid() != null && this.fluidTank.getFluid().amount > 0)
+            QuantumStorageRenderer.renderTankAmount(x, y, z, frontFacing, 69);
     }
 
     @Override
@@ -117,9 +125,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        NBTTagCompound fluidTankTag = new NBTTagCompound();
-        fluidTank.writeToNBT(fluidTankTag);
-        data.setTag("FluidTank", fluidTankTag);
         data.setInteger("mBPerCycle", mBPerCycle);
         data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
@@ -128,7 +133,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
-        fluidTank.readFromNBT(data.getCompoundTag("FluidTank"));
         mBPerCycle = data.getInteger("mBPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -136,29 +140,17 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColorForRendering());
-    }
-
-    @Override
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
-        if (itemStack.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-            fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.getCompoundTag(FLUID_NBT_KEY)));
-            mBPerCycle = itemStack.getInteger("mBPerCycle");
-            ticksPerCycle = itemStack.getInteger("ticksPerCycle");
-        }
+        mBPerCycle = itemStack.getInteger("mBPerCycle");
+        ticksPerCycle = itemStack.getInteger("ticksPerCycle");
     }
 
     @Override
     public void writeItemStackData(NBTTagCompound itemStack) {
         super.writeItemStackData(itemStack);
-        FluidStack stack = fluidTank.getFluid();
-        if (stack != null && stack.amount > 0) {
-            itemStack.setTag(FLUID_NBT_KEY, stack.writeToNBT(new NBTTagCompound()));
-            itemStack.setInteger("mBPerCycle", mBPerCycle);
-            itemStack.setInteger("ticksPerCycle", ticksPerCycle);
-        }
+        itemStack.setInteger("mBPerCycle", mBPerCycle);
+        itemStack.setInteger("ticksPerCycle", ticksPerCycle);
     }
 
     @Override
