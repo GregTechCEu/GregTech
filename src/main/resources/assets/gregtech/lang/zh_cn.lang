@@ -5005,21 +5005,6 @@ gregtech.chat.cape=§5恭喜！你刚刚解锁了一件新的披风！在终端�
 
 gregtech.universal.clear_nbt_recipe.tooltip=§c该操作将清空所有内容物！
 
-gregtech.cover.energy_detector.message_electricity_storage_normal=正在以普通模式监控电力存储
-gregtech.cover.energy_detector.message_electricity_storage_inverted=正在以反相模式监控电力存储
-
-gregtech.cover.fluid_detector.message_fluid_storage_normal=正在以普通模式监控流体存储
-gregtech.cover.fluid_detector.message_fluid_storage_inverted=正在以反相模式监控流体存储
-
-gregtech.cover.item_detector.message_item_storage_normal=正在以普通模式监控物品存储
-gregtech.cover.item_detector.message_item_storage_inverted=正在以反相模式监控物品存储
-
-gregtech.cover.activity_detector.message_activity_normal=正在以普通模式监控活动状态
-gregtech.cover.activity_detector.message_activity_inverted=正在以反相模式监控活动状态
-
-gregtech.cover.activity_detector_advanced.message_activity_normal=正在以普通模式监控处理状态
-gregtech.cover.activity_detector_advanced.message_activity_inverted=正在以反相模式监控处理状态
-
 gregtech.creative.chest.item=物品
 gregtech.creative.chest.ipc=每次输出物品数
 gregtech.creative.chest.tpc=每次输出间隔 Tick
