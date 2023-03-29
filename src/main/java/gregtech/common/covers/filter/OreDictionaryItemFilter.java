@@ -8,9 +8,9 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
-import gregtech.common.gui.widget.OreGlobCompileStatusWidget;
 import gregtech.common.gui.widget.HighlightedTextField;
-import gregtech.common.gui.widget.OreFilterTestSlot;
+import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
+import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
@@ -36,9 +36,9 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public void initUI(Consumer<Widget> widgetGroup) {
-        OreFilterTestSlot[] testSlot = new OreFilterTestSlot[5];
+        ItemOreFilterTestSlot[] testSlot = new ItemOreFilterTestSlot[5];
         for (int i = 0; i < testSlot.length; i++) {
-            testSlot[i] = new OreFilterTestSlot(20 + 22 * i, 0);
+            testSlot[i] = new ItemOreFilterTestSlot(20 + 22 * i, 0);
             widgetGroup.accept(testSlot[i]);
         }
         OreGlobCompileStatusWidget compilationStatus = new OreGlobCompileStatusWidget(10, 10);
@@ -58,7 +58,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                     }
                     this.matchCache.clear();
                     markDirty();
-                    for (OreFilterTestSlot slot : testSlot) {
+                    for (ItemOreFilterTestSlot slot : testSlot) {
                         slot.setGlob(this.error ? null : this.glob);
                     }
                 });
