@@ -5,7 +5,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -35,7 +34,6 @@ import net.minecraftforge.fluids.FluidTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
@@ -47,22 +45,20 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         super(metaTileEntityId);
         this.isMetal = isMetal;
         this.capacity = capacity;
-        initializeAbilities();
+        initializeInventory();
     }
 
-    protected void initializeAbilities() {
-        this.importFluids = new FluidTankList(true, makeFluidTanks());
-        this.exportFluids = importFluids;
-        this.fluidInventory = new FluidHandlerProxy(this.importFluids, this.exportFluids);
-    }
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
 
-    @Nonnull
-    private List<FluidTank> makeFluidTanks() {
-        List<FluidTank> fluidTankList = new ArrayList<>(1);
-        fluidTankList.add(new FilteredFluidHandler(capacity).setFillPredicate(
-                fluidStack -> isMetal || (!fluidStack.getFluid().isGaseous() && fluidStack.getFluid().getTemperature() <= 325)
-        ));
-        return fluidTankList;
+        FluidTank tank = new FilteredFluidHandler(capacity).setFillPredicate(
+                fluidStack -> isMetal || (!fluidStack.getFluid().isGaseous() && fluidStack.getFluid().getTemperature() <= 325));
+        FluidTankList tankList = new FluidTankList(true, tank);
+
+        this.importFluids = tankList;
+        this.exportFluids = tankList;
+        this.fluidInventory = tank;
     }
 
     @Override
