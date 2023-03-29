@@ -40,10 +40,9 @@ import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
 import stanhebben.zenscript.annotations.Optional;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenMethod;
+import stanhebben.zenscript.annotations.*;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -77,10 +76,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public final String unlocalizedName;
 
     private final R recipeBuilderSample;
-    private final int minInputs, maxInputs;
-    private final int minOutputs, maxOutputs;
-    private final int minFluidInputs, maxFluidInputs;
-    private final int minFluidOutputs, maxFluidOutputs;
+    private int maxInputs;
+    private int maxOutputs;
+    private int maxFluidInputs;
+    private int maxFluidOutputs;
+    private final boolean modifyItemInputs, modifyItemOutputs, modifyFluidInputs, modifyFluidOutputs;
     protected final TByteObjectMap<TextureArea> slotOverlays;
     protected TextureArea specialTexture;
     protected int[] specialTexturePosition;
@@ -100,29 +100,92 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected SoundEvent sound;
     private RecipeMap<?> smallRecipeMap;
 
-    public RecipeMap(String unlocalizedName, int minInputs, int maxInputs, int minOutputs, int maxOutputs, int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs, R defaultRecipe, boolean isHidden) {
+    /**
+     * @deprecated Use {@link RecipeMap#RecipeMap(String, int, int, int, int, R, boolean)}
+     */
+    @SuppressWarnings("unused")
+    @Deprecated
+    public RecipeMap(@Nonnull String unlocalizedName, int minInputs, @Nonnegative int maxInputs, int minOutputs,
+                     @Nonnegative int maxOutputs, int minFluidInputs, @Nonnegative int maxFluidInputs, int minFluidOutputs,
+                     @Nonnegative int maxFluidOutputs, @Nonnull R defaultRecipeBuilder, boolean isHidden) {
+        this(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipeBuilder, isHidden);
+    }
+
+    /**
+     * @param unlocalizedName the unlocalized name for the RecipeMap
+     * @param maxInputs the maximum item inputs
+     * @param maxOutputs the maximum item outputs
+     * @param maxFluidInputs the maximum fluid inputs
+     * @param maxFluidOutputs the maximum fluid outputs
+     * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
+     * @param isHidden if the RecipeMap should have a category in JEI
+     */
+    public RecipeMap(@Nonnull String unlocalizedName, @Nonnegative int maxInputs, @Nonnegative int maxOutputs,
+                     @Nonnegative int maxFluidInputs, @Nonnegative int maxFluidOutputs, @Nonnull R defaultRecipeBuilder,
+                     boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
         this.slotOverlays = new TByteObjectHashMap<>();
         this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
         this.moveType = MoveType.HORIZONTAL;
-
-        this.minInputs = minInputs;
-        this.minFluidInputs = minFluidInputs;
-        this.minOutputs = minOutputs;
-        this.minFluidOutputs = minFluidOutputs;
 
         this.maxInputs = maxInputs;
         this.maxFluidInputs = maxFluidInputs;
         this.maxOutputs = maxOutputs;
         this.maxFluidOutputs = maxFluidOutputs;
 
+        this.modifyItemInputs = true;
+        this.modifyItemOutputs = true;
+        this.modifyFluidInputs = true;
+        this.modifyFluidOutputs = true;
+
         this.isHidden = isHidden;
-        defaultRecipe.setRecipeMap(this);
-        this.recipeBuilderSample = defaultRecipe;
+        defaultRecipeBuilder.setRecipeMap(this);
+        this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
         this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
     }
+
+    /**
+     * @param unlocalizedName the unlocalized name for the RecipeMap
+     * @param maxInputs the maximum item inputs
+     * @param modifyItemInputs If the Maximum Item Inputs should be modified
+     * @param maxOutputs the maximum item outputs
+     * @param modifyItemOutputs If the Maximum Item Outputs should be modified
+     * @param maxFluidInputs the maximum fluid inputs
+     * @param modifyFluidInputs If the Maximum Fluid Inputs should be modified
+     * @param maxFluidOutputs the maximum fluid outputs
+     * @param modifyFluidOutputs If the Maximum Fluid Outputs should be modified
+     * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
+     * @param isHidden if the RecipeMap should have a category in JEI
+     */
+    public RecipeMap(@Nonnull String unlocalizedName, @Nonnegative int maxInputs, boolean modifyItemInputs, @Nonnegative int maxOutputs,
+                     boolean modifyItemOutputs, @Nonnegative int maxFluidInputs, boolean modifyFluidInputs,
+                     @Nonnegative int maxFluidOutputs, boolean modifyFluidOutputs, @Nonnull R defaultRecipeBuilder,
+                     boolean isHidden) {
+        this.unlocalizedName = unlocalizedName;
+        this.slotOverlays = new TByteObjectHashMap<>();
+        this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
+        this.moveType = MoveType.HORIZONTAL;
+
+        this.maxInputs = maxInputs;
+        this.maxFluidInputs = maxFluidInputs;
+        this.maxOutputs = maxOutputs;
+        this.maxFluidOutputs = maxFluidOutputs;
+
+        this.modifyItemInputs = modifyItemInputs;
+        this.modifyItemOutputs = modifyItemOutputs;
+        this.modifyFluidInputs = modifyFluidInputs;
+        this.modifyFluidOutputs = modifyFluidOutputs;
+
+        this.isHidden = isHidden;
+        defaultRecipeBuilder.setRecipeMap(this);
+        this.recipeBuilderSample = defaultRecipeBuilder;
+        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
+
+        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+    }
+
 
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
@@ -254,38 +317,75 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (recipe.isGroovyRecipe()) {
             return validationResult;
         }
-        if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
-            GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs());
+
+        boolean emptyInputs = recipe.getInputs().isEmpty() && recipe.getFluidInputs().isEmpty();
+        if (emptyInputs) {
+            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.");
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe inputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs()));
+                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.");
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        if (!GTUtility.isBetweenInclusive(getMinOutputs(), getMaxOutputs(), recipe.getOutputs().size() + recipe.getChancedOutputs().size())) {
-            GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getOutputs().size() + recipe.getChancedOutputs().size(), getMinOutputs(), getMaxOutputs());
+        boolean emptyOutputs = recipe.getOutputs().isEmpty() && recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().isEmpty();
+        if (recipe.getEUt() > 0 && emptyOutputs) {
+            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getOutputs().size() + recipe.getChancedOutputs().size(), getMinOutputs(), getMaxOutputs()));
+                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.");
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        if (!GTUtility.isBetweenInclusive(getMinFluidInputs(), getMaxFluidInputs(), recipe.getFluidInputs().size())) {
-            GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getFluidInputs().size(), getMinFluidInputs(), getMaxFluidInputs());
+        if (emptyInputs && emptyOutputs) {
+            GTLog.logger.error("Invalid recipe. Inputs and Outputs are empty.");
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Recipe is empty"));
+            if (recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError("Invalid recipe. Inputs and Outputs are empty.");
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Recipe is empty"));
+            }
+        }
+
+        int amount = recipe.getInputs().size();
+        if (amount > getMaxInputs()) {
+            GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount, getMaxInputs());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            if (recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()));
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            }
+            recipeStatus = EnumValidationResult.INVALID;
+        }
+
+        amount = recipe.getOutputs().size() + recipe.getChancedOutputs().size();
+        if (amount > getMaxOutputs()) {
+            GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount, getMaxOutputs());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            if (recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.", amount, getMaxOutputs()));
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            }
+            recipeStatus = EnumValidationResult.INVALID;
+        }
+
+        amount = recipe.getFluidInputs().size();
+        if (amount > getMaxFluidInputs()) {
+            GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount, getMaxFluidInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getFluidInputs().size(), getMinFluidInputs(), getMaxFluidInputs()));
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.", amount, getMaxFluidInputs()));
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        if (!GTUtility.isBetweenInclusive(getMinFluidOutputs(), getMaxFluidOutputs(), recipe.getFluidOutputs().size())) {
-            GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getFluidOutputs().size(), getMinFluidOutputs(), getMaxFluidOutputs());
+
+        amount = recipe.getFluidOutputs().size();
+        if (amount > getMaxFluidOutputs()) {
+            GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount, getMaxFluidOutputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getFluidOutputs().size(), getMinFluidOutputs(), getMaxFluidOutputs()));
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.", amount, getMaxFluidOutputs()));
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
@@ -294,36 +394,34 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity);
+    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
     }
 
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs                  the Item Inputs
-     * @param fluidInputs             the Fluid Inputs
-     * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
+     * @param voltage     Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs      the Item Inputs
+     * @param fluidInputs the Fluid Inputs
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity) {
-        return findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, false);
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
+        return findRecipe(voltage, inputs, fluidInputs, false);
     }
 
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs                  the Item Inputs
-     * @param fluidInputs             the Fluid Inputs
-     * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
-     * @param exactVoltage            should require exact voltage matching on recipe. used by craftweaker
+     * @param voltage      Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs       the Item Inputs
+     * @param fluidInputs  the Fluid Inputs
+     * @param exactVoltage should require exact voltage matching on recipe. used by craftweaker
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
-    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
+    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs, boolean exactVoltage) {
         final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0).collect(Collectors.toList());
 
@@ -1050,7 +1148,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs, @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
         List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() : Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
         List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() : Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, true);
+        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 
@@ -1141,9 +1239,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return new CTRecipeBuilder(recipeBuilder());
     }
 
+    /**
+     * @deprecated this value is no longer implemented
+     */
+    @Deprecated
     @ZenGetter("minInputs")
     public int getMinInputs() {
-        return minInputs;
+        return 0;
     }
 
     @ZenGetter("maxInputs")
@@ -1151,9 +1253,22 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxInputs;
     }
 
+    @ZenSetter("maxInputs")
+    public void setMaxInputs(@Nonnegative int maxInputs) {
+        if (modifyItemInputs) {
+            this.maxInputs = Math.max(this.maxInputs, maxInputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max item input amount for " + getUnlocalizedName());
+        }
+    }
+
+    /**
+     * @deprecated this value is no longer used
+     */
+    @Deprecated
     @ZenGetter("minOutputs")
     public int getMinOutputs() {
-        return minOutputs;
+        return 0;
     }
 
     @ZenGetter("maxOutputs")
@@ -1161,9 +1276,22 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxOutputs;
     }
 
+    @ZenSetter("maxOutputs")
+    public void setMaxOutputs(@Nonnegative int maxOutputs) {
+        if (modifyItemOutputs) {
+            this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max item output amount for " + getUnlocalizedName());
+        }
+    }
+
+    /**
+     * @deprecated this value is no longer used
+     */
+    @Deprecated
     @ZenGetter("minFluidInputs")
     public int getMinFluidInputs() {
-        return minFluidInputs;
+        return 0;
     }
 
     @ZenGetter("maxFluidInputs")
@@ -1171,14 +1299,36 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return maxFluidInputs;
     }
 
+    @ZenSetter("maxFluidInputs")
+    public void setMaxFluidInputs(@Nonnegative int maxFluidInputs) {
+        if (modifyFluidInputs) {
+            this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max fluid input amount for " + getUnlocalizedName());
+        }
+    }
+
+    /**
+     * @deprecated this value is no longer used
+     */
+    @Deprecated
     @ZenGetter("minFluidOutputs")
     public int getMinFluidOutputs() {
-        return minFluidOutputs;
+        return 0;
     }
 
     @ZenGetter("maxFluidOutputs")
     public int getMaxFluidOutputs() {
         return maxFluidOutputs;
+    }
+
+    @ZenSetter("maxFluidOutputs")
+    public void setMaxFluidOutputs(@Nonnegative int maxFluidOutputs) {
+        if (modifyFluidOutputs) {
+            this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
+        } else {
+            throw new UnsupportedOperationException("Cannot change max fluid output amount for " + getUnlocalizedName());
+        }
     }
 
     @Override

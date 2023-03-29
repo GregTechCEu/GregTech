@@ -4,6 +4,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.recipes.FluidKey;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -17,7 +18,7 @@ public class OverlayedFluidHandler {
     private final OverlayedTank[] originalTanks;
     private final IMultipleTankHandler overlayed;
     private boolean allowSameFluidFill = true;
-    private final ObjectOpenHashSet<IFluidTankProperties> tankDeniesSameFluidFill = new ObjectOpenHashSet<>();
+    private final ObjectOpenCustomHashSet<IFluidTankProperties> tankDeniesSameFluidFill = new ObjectOpenCustomHashSet<>(IFluidTankPropertiesHashStrategy.create());
     private final Map<IMultipleTankHandler, ObjectOpenHashSet<FluidKey>> uniqueFluidMap = new Object2ObjectOpenHashMap<>();
 
     public OverlayedFluidHandler(IMultipleTankHandler toOverlay) {

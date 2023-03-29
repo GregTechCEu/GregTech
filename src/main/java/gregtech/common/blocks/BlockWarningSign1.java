@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
@@ -18,6 +19,7 @@ public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType> 
         setSoundType(SoundType.METAL);
         setHarvestLevel(ToolClasses.WRENCH, 1);
         setDefaultState(getState(SignType.MOB_SPAWNER_HAZARD));
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
 
     public enum SignType implements IStringSerializable {

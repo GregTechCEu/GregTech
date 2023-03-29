@@ -771,27 +771,26 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected void validateGroovy(GroovyLog.Msg errorMsg) {
         errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
         errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");
-        int minInput = recipeMap.getMinInputs(), maxInput = recipeMap.getMaxInputs(), minOutput = recipeMap.getMinOutputs(), maxOutput = recipeMap.getMaxOutputs();
-        int minFluidInput = recipeMap.getMinFluidInputs(), maxFluidInput = recipeMap.getMaxFluidInputs(), minFluidOutput = recipeMap.getMinFluidOutputs(), maxFluidOutput = recipeMap.getMaxFluidOutputs();
-        errorMsg.add(inputs.size() < minInput || inputs.size() > maxInput, () -> getRequiredString(minInput, maxInput, " item input") + ", but found " + inputs.size());
-        errorMsg.add(outputs.size() < minOutput || outputs.size() > maxOutput, () -> getRequiredString(minOutput, maxOutput, "item output") + ", but found " + outputs.size());
-        errorMsg.add(fluidInputs.size() < minFluidInput || fluidInputs.size() > maxFluidInput, () -> getRequiredString(minFluidInput, maxFluidInput, "fluid input") + ", but found " + fluidInputs.size());
-        errorMsg.add(fluidOutputs.size() < minFluidOutput || fluidOutputs.size() > maxFluidOutput, () -> getRequiredString(minFluidOutput, maxFluidOutput, "fluid output") + ", but found " + fluidOutputs.size());
+        int maxInput = recipeMap.getMaxInputs();
+        int maxOutput = recipeMap.getMaxOutputs();
+        int maxFluidInput = recipeMap.getMaxFluidInputs();
+        int maxFluidOutput = recipeMap.getMaxFluidOutputs();
+        errorMsg.add(inputs.size() > maxInput, () -> getRequiredString(maxInput, inputs.size(), "item input"));
+        errorMsg.add(outputs.size() > maxOutput, () -> getRequiredString(maxOutput, outputs.size(), "item output"));
+        errorMsg.add(fluidInputs.size() > maxFluidInput, () -> getRequiredString(maxFluidInput, fluidInputs.size(), "fluid input"));
+        errorMsg.add(fluidOutputs.size() > maxFluidOutput, () -> getRequiredString(maxFluidOutput, fluidOutputs.size(), "fluid output"));
     }
 
-    protected static String getRequiredString(int min, int max, String type) {
+    @Nonnull
+    protected static String getRequiredString(int max, int actual, @Nonnull String type) {
         if (max <= 0) {
-            return "No " + type + "s allowed";
+            return "No " + type + "s allowed, but found " + actual;
         }
-        String out = "Must have ";
-        if (min == max) {
-            out += "exactly " + min + " " + type;
-        } else {
-            out += min + " - " + max + " " + type;
-        }
+        String out = "Must have at most " + max + " " + type;
         if (max != 1) {
             out += "s";
         }
+        out += ", but found " + actual;
         return out;
     }
 

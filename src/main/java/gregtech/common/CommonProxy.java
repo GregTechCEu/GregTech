@@ -134,20 +134,7 @@ public class CommonProxy {
         registry.register(WARNING_SIGN);
         registry.register(WARNING_SIGN_1);
         registry.register(ASPHALT);
-        registry.register(STONE_SMOOTH);
-        registry.register(STONE_COBBLE);
-        registry.register(STONE_COBBLE_MOSSY);
-        registry.register(STONE_POLISHED);
-        registry.register(STONE_BRICKS);
-        registry.register(STONE_BRICKS_CRACKED);
-        registry.register(STONE_BRICKS_MOSSY);
-        registry.register(STONE_CHISELED);
-        registry.register(STONE_TILED);
-        registry.register(STONE_TILED_SMALL);
-        registry.register(STONE_BRICKS_SMALL);
-        registry.register(STONE_WINDMILL_A);
-        registry.register(STONE_WINDMILL_B);
-        registry.register(STONE_BRICKS_SQUARE);
+        for (StoneVariantBlock block : STONE_BLOCKS.values()) registry.register(block);
         registry.register(RUBBER_LOG);
         registry.register(RUBBER_LEAVES);
         registry.register(RUBBER_SAPLING);
@@ -249,20 +236,9 @@ public class CommonProxy {
             }
         }
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_SMOOTH, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_COBBLE, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_COBBLE_MOSSY, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_POLISHED, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_BRICKS, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_BRICKS_CRACKED, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_BRICKS_MOSSY, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_CHISELED, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_TILED, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_TILED_SMALL, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_BRICKS_SMALL, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_WINDMILL_A, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
-        registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
+        for (StoneVariantBlock block : STONE_BLOCKS.values()) {
+            registry.register(createItemBlock(block, VariantItemBlock::new));
+        }
         registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
         registry.register(createItemBlock(WOOD_SLAB, b -> new ItemSlab(b, b, DOUBLE_WOOD_SLAB)));
         registry.register(createItemBlock(RUBBER_WOOD_STAIRS, ItemBlock::new));

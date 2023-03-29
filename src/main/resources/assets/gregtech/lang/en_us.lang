@@ -2497,6 +2497,7 @@ itemGroup.gregtech.pipes=Pipes (GT)
 itemGroup.gregtech.tools=Tools (GT)
 itemGroup.gregtech.materials=Materials (GT)
 itemGroup.gregtech.ores=Ores (GT)
+itemGroup.gregtech.decorations=Decorations (GT)
 
 # Drums
 gregtech.machine.drum.wood.name=Wooden Barrel
