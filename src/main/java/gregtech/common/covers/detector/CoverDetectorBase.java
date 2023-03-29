@@ -21,11 +21,11 @@ public abstract class CoverDetectorBase extends CoverBehavior {
         isInverted = false;
     }
 
-    protected boolean isInverted(){
+    protected boolean isInverted() {
         return this.isInverted;
     }
 
-    protected void setInverted(boolean isInverted){
+    protected void setInverted(boolean isInverted) {
         this.isInverted = isInverted;
     }
 
@@ -55,12 +55,14 @@ public abstract class CoverDetectorBase extends CoverBehavior {
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeBoolean(isInverted());
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
-         setInverted(packetBuffer.readBoolean());
+        super.readInitialSyncData(packetBuffer);
+        setInverted(packetBuffer.readBoolean());
     }
 
     @Override
