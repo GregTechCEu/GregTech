@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -84,6 +85,7 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
         setResistance(8.0f);
         setSoundType(SoundType.GLASS);
         setDefaultState(getState(EnumDyeColor.WHITE));
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
 
         if (!noLight && isLightActive()) {
             setLightLevel(1.0f);
