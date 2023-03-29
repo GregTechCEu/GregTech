@@ -16,7 +16,6 @@ import net.minecraft.util.ITickable;
 public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable {
     public CoverDetectorEnergy(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-
     }
 
     @Override
@@ -28,7 +27,6 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.DETECTOR_ENERGY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
-
 
     @Override
     public void update() {

@@ -84,7 +84,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-
         WidgetGroup group = new WidgetGroup();
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_energy_detector.label"));
 

@@ -16,7 +16,6 @@ import net.minecraftforge.items.IItemHandler;
 public class CoverDetectorItem extends CoverDetectorBase implements ITickable {
     public CoverDetectorItem(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-
     }
 
     @Override

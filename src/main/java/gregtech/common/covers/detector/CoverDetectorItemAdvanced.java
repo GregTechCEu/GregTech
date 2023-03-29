@@ -25,7 +25,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
-    
+
     private static final int PADDING = 3;
     private static final int SIZE = 18;
 
@@ -127,7 +127,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, this.isInverted()));
+        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, isInverted()));
     }
 
     @Override

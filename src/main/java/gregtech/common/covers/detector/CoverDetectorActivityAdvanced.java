@@ -13,7 +13,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
 public class CoverDetectorActivityAdvanced extends CoverDetectorActivity {
-
     public CoverDetectorActivityAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
     }
