@@ -1,10 +1,15 @@
 package gregtech.common.covers.detector;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 
 public abstract class CoverDetectorBase extends CoverBehavior {
     protected static final String NBT_KEY_IS_INVERTED = "isInverted";
@@ -56,5 +61,26 @@ public abstract class CoverDetectorBase extends CoverBehavior {
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
          setInverted(packetBuffer.readBoolean());
+    }
+
+    @Override
+    public boolean canConnectRedstone() {
+        return true;
+    }
+
+    @Override
+    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+        if (this.coverHolder.getWorld().isRemote) {
+            return EnumActionResult.SUCCESS;
+        }
+
+        String translationKey = isInverted()
+                ? "gregtech.cover.detector_base.message_inverted_state"
+                : "gregtech.cover.detector_base.message_normal_state";
+        playerIn.sendMessage(new TextComponentTranslation(translationKey));
+
+        toggleInvertedWithNotification();
+
+        return EnumActionResult.SUCCESS;
     }
 }

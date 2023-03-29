@@ -5030,6 +5030,9 @@ gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selec
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 
+gregtech.cover.detector_base.message_normal_state=Monitoring Status: Normal
+gregtech.cover.detector_base.message_inverted_state=Monitoring Status: Inverted
+
 gregtech.cover.energy_detector.message_electricity_storage_normal=Monitoring Normal Electricity Storage
 gregtech.cover.energy_detector.message_electricity_storage_inverted=Monitoring Inverted Electricity Storage
 
