@@ -29,7 +29,7 @@ public abstract class CoverDetectorBase extends CoverBehavior {
         this.isInverted = isInverted;
     }
 
-    protected void toggleInvertedWithNotification() {
+    private void toggleInvertedWithNotification() {
         setInverted(!isInverted());
 
         if (!this.coverHolder.getWorld().isRemote) {
