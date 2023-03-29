@@ -18,7 +18,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -183,7 +182,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             }
         }
         this.variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
-        VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
         replaceVariantBlocksActive(false);
     }
 
@@ -300,11 +298,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 buf.writeBoolean(isActive);
                 buf.writeInt(variantActiveBlocks.size());
                 for (BlockPos blockPos : variantActiveBlocks) {
-                    if (isActive) {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                    } else {
-                        VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                    }
+                    VariantActiveBlock.setBlockActive(id, blockPos, isActive);
                     buf.writeBlockPos(blockPos);
                 }
             });
@@ -322,7 +316,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                     .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
         }
         if (checkMuffler && hasMufflerMechanics()) {
-            predicate =  predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
+            predicate = predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
         }
         return predicate;
     }
@@ -401,7 +395,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
-        if(shouldShowVoidingModeButton()) {
+        if (shouldShowVoidingModeButton()) {
             builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
                     .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
@@ -426,7 +420,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         this.voidingItems = mode == 1 || mode == 3;
 
         // After changing the voiding mode, reset the notified buses in case a recipe can run now that voiding mode has been changed
-        for(IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
+        for (IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
             this.getNotifiedFluidInputList().add((IFluidHandler) tank);
         }
         this.getNotifiedItemInputList().addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
@@ -459,15 +453,15 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.readFromNBT(data);
         maintenance_problems = data.getByte("Maintenance");
         timeActive = data.getInteger("ActiveTimer");
-        if(data.hasKey(NBT_VOIDING_ITEMS)) {
+        if (data.hasKey(NBT_VOIDING_ITEMS)) {
             voidingItems = data.getBoolean(NBT_VOIDING_ITEMS);
         }
 
-        if(data.hasKey(NBT_VOIDING_FLUIDS)) {
+        if (data.hasKey(NBT_VOIDING_FLUIDS)) {
             voidingFluids = data.getBoolean(NBT_VOIDING_FLUIDS);
         }
 
-        if(data.hasKey(NBT_VOIDING_MODE)) {
+        if (data.hasKey(NBT_VOIDING_MODE)) {
             voidingMode = VoidingMode.values()[data.getInteger(NBT_VOIDING_MODE)];
         }
     }
@@ -510,16 +504,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
             int id = buf.readInt();
             boolean isActive = buf.readBoolean();
-            //the server can send a packet to the client before the map is initialized by the world loading client-side
-            VariantActiveBlock.ACTIVE_BLOCKS.putIfAbsent(getWorld().provider.getDimension(), new ObjectOpenHashSet<>());
             int size = buf.readInt();
             for (int i = 0; i < size; i++) {
                 BlockPos blockPos = buf.readBlockPos();
-                if (isActive) {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).add(blockPos);
-                } else {
-                    VariantActiveBlock.ACTIVE_BLOCKS.get(id).remove(blockPos);
-                }
+                VariantActiveBlock.setBlockActive(id, blockPos, isActive);
                 minX = Math.min(minX, blockPos.getX());
                 minY = Math.min(minY, blockPos.getY());
                 minZ = Math.min(minZ, blockPos.getZ());

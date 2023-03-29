@@ -44,6 +44,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     public BlockFluidPipe(FluidPipeType pipeType) {
         super(pipeType);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 

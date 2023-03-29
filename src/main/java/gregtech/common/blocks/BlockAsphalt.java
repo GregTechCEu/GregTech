@@ -1,27 +1,28 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
 public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
 
     public BlockAsphalt() {
-        super(net.minecraft.block.material.Material.IRON);
+        super(Material.ROCK);
         setTranslationKey("asphalt");
-        setHardness(5.0f);
+        setHardness(1.5f);
         setResistance(10.0f);
-        setSoundType(SoundType.METAL);
+        setSoundType(SoundType.STONE);
         setDefaultState(getState(BlockType.ASPHALT));
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
 
     @Override
@@ -30,16 +31,18 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
     }
 
     @Override
-    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
-        if ((entityIn.motionX != 0 || entityIn.motionZ != 0) && !entityIn.isInWater() && !entityIn.isSneaking()) {
-            entityIn.motionX *= 1.3;
-            entityIn.motionZ *= 1.3;
-        }
+    public double getWalkingSpeedBonus() {
+        return 1.6D;
+    }
+
+    @Override
+    public boolean checkApplicableBlocks(IBlockState state) {
+        return state == getState(BlockType.ASPHALT);
     }
 
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
-        ASPHALT("asphalt", 1);
+        ASPHALT("asphalt", 0);
 
         private final String name;
         private final int harvestLevel;

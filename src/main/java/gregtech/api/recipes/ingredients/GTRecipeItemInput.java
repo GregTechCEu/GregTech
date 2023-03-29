@@ -33,7 +33,11 @@ public class GTRecipeItemInput extends GTRecipeInput {
         this(input.getInputStacks(), amount);
     }
 
-    protected GTRecipeItemInput(ItemStack[] stack, int amount) {
+    public GTRecipeItemInput(ItemStack... stacks) {
+        this(stacks, stacks[0].getCount());
+    }
+
+    public GTRecipeItemInput(ItemStack[] stack, int amount) {
         this.amount = amount;
 
         NonNullList<ItemStack> lst = NonNullList.create();
@@ -75,10 +79,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
         }).toArray(ItemStack[]::new);
     }
 
-    protected GTRecipeItemInput(ItemStack... stack) {
-        this(stack, stack[0].getCount());
-    }
-
     /**
      * @deprecated Use constructors
      */
@@ -109,6 +109,14 @@ public class GTRecipeItemInput extends GTRecipeInput {
     @Deprecated
     public static GTRecipeInput getOrCreate(ItemStack stack) {
         return new GTRecipeItemInput(stack);
+    }
+
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(ItemStack[] stacks) {
+        return new GTRecipeItemInput(stacks);
     }
 
     @Override
@@ -148,7 +156,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
                     if (tagList.meta == input.getMetadata()) {
                         final NBTTagCompound inputNBT = input.getTagCompound();
                         if (nbtMatcher != null) {
-                            return nbtMatcher.evaluate(inputNBT, nbtCondition);
+                            return nbtMatcher.evaluate(input, nbtCondition);
                         } else {
                             List<TagToStack> tagMaps = tagList.tagToStack;
                             for (TagToStack tagMapping : tagMaps) {

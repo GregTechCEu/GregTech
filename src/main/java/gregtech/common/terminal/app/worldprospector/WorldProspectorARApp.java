@@ -1,11 +1,13 @@
 package gregtech.common.terminal.app.worldprospector;
 
+import com.google.common.collect.Lists;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.PhantomSlotUtil;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
@@ -13,13 +15,18 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTLog;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.utils.RenderBufferHelper;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.worldprospector.matcher.BlockStateMatcher;
 import gregtech.common.terminal.app.worldprospector.matcher.IMatcher;
+import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.client.Minecraft;
@@ -31,6 +38,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,9 +52,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class WorldProspectorARApp extends ARApplication {
 
@@ -81,12 +94,48 @@ public class WorldProspectorARApp extends ARApplication {
             }
             RectButtonWidget buttonWidget = new RectButtonWidget(x + i * 24, y + 18, 18, 18, 1);
             addWidget(new PhantomSlotWidget(handlers[i], 0, x + i * 24, y) {
+
+                @Override
+                public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
+                    if (!(ingredient instanceof ItemStack)) {
+                        return Collections.emptyList();
+                    }
+                    Rectangle rectangle = toRectangleBox();
+                    return Collections.singletonList(new IGhostIngredientHandler.Target<Object>() {
+                        @Nonnull
+                        @Override
+                        public Rectangle getArea() {
+                            return rectangle;
+                        }
+
+                        @Override
+                        public void accept(@Nonnull Object ingredient) {
+                            if (ingredient instanceof ItemStack) {
+                                int mouseButton = Mouse.getEventButton();
+                                boolean shiftDown = TooltipHelper.isShiftDown();
+                                ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
+                                PhantomSlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, (ItemStack) ingredient);
+                                updateBlockSelectionAndColor((ItemStack) ingredient, index, buttonWidget);
+                                writeClientAction(1, buffer -> {
+                                    buffer.writeItemStack((ItemStack) ingredient);
+                                    buffer.writeVarInt(mouseButton);
+                                    buffer.writeBoolean(shiftDown);
+                                });
+                            }
+                        }
+                    });
+                }
+
+
                 @Override
                 public boolean mouseClicked(int mouseX, int mouseY, int button) {
                     if (handlers[index].getStackInSlot(0).isEmpty() && isMouseOverElement(mouseX, mouseY)) {
                         writeClientAction(-1, buffer -> {});
                         selectReference(index, buttonWidget);
                         return true;
+                    } else if (isMouseOverElement(mouseX, mouseY)) {
+                        writeClientAction(0, buffer -> {});
+                        updateBlockSelectionAndColor(ItemStack.EMPTY, index, buttonWidget);
                     }
                     return super.mouseClicked(mouseX, mouseY, button);
                 }
@@ -95,6 +144,20 @@ public class WorldProspectorARApp extends ARApplication {
                 public void handleClientAction(int id, PacketBuffer buffer) {
                     if (id == -1) {
                         selectReference(index, buttonWidget);
+                    }
+                    else if (id == 0) {
+                        updateBlockSelectionAndColor(ItemStack.EMPTY, index, buttonWidget);
+                    }
+                    else if (id == 1) {
+                        try {
+                            buffer.markReaderIndex(); // just want to reset reader index, not both with .clear
+                            ItemStack stack = buffer.readItemStack();
+                            updateBlockSelectionAndColor(stack, index, buttonWidget);
+                            buffer.resetReaderIndex();
+                        } catch (IOException e) {
+                            GTLog.logger.error("Could not update block selection from world prospector buffer", e);
+                        }
+                        super.handleClientAction(id, buffer);
                     } else {
                         super.handleClientAction(id, buffer);
                     }
@@ -117,6 +180,33 @@ public class WorldProspectorARApp extends ARApplication {
                 .setColors(0, -1, TerminalTheme.COLOR_B_3.getColor())
                 .setIcon(new ItemStackTexture(MetaItems.CAMERA.getStackForm())));
         return this;
+    }
+
+    private void updateBlockSelectionAndColor(ItemStack stack, int index, RectButtonWidget buttonWidget) {
+        if (stack.getItem() instanceof ItemBlock) {
+            ItemStack copy = stack.copy();
+            copy.setCount(1);
+            handlers[index].setStackInSlot(0, copy);
+
+            MaterialStack ms = OreDictUnifier.getMaterial(copy);
+            Block block = ((ItemBlock) copy.getItem()).getBlock();
+            if (block instanceof BlockFalling) {
+                colors[index] = ((BlockFalling) block).getDustColor(block.getStateFromMeta(copy.getMetadata()));
+            } else if (ms != null) {
+                colors[index] = ms.material.getMaterialRGB();
+            } else {
+                colors[index] = block.getStateFromMeta(copy.getMetadata()).getMaterial().getMaterialMapColor().colorValue;
+            }
+            if (colors[index] == 0) {
+                colors[index] = block.hashCode();
+            }
+            colors[index] = colors[index] | 0xff000000;
+            buttonWidget.setFill(colors[index]);
+        } else if (stack.isEmpty()) {
+            handlers[index].setStackInSlot(0, stack);
+            colors[index] = 0x00000000;
+            buttonWidget.setFill(colors[index]);
+        }
     }
 
     @Override
@@ -154,27 +244,9 @@ public class WorldProspectorARApp extends ARApplication {
 
     private void selectReference(int index, RectButtonWidget buttonWidget) {
         TerminalDialogWidget.showItemSelector(getOs(), "terminal.world_prospector.reference", false,
-            stack-> stack.getItem() instanceof ItemBlock,
-            stack -> {
-                if (stack.getItem() instanceof ItemBlock) {
-                    ItemStack copy = stack.copy();
-                    copy.setCount(1);
-                    handlers[index].setStackInSlot(0, copy);
-                    Block block = ((ItemBlock)copy.getItem()).getBlock();
-
-                    if (block instanceof BlockFalling) {
-                        colors[index] = ((BlockFalling) block).getDustColor(block.getStateFromMeta(copy.getMetadata()));
-                    } else {
-                        colors[index] = block.getStateFromMeta(copy.getMetadata()).getMaterial().getMaterialMapColor().colorValue;
-                    }
-                    if (colors[index] == 0) {
-                        colors[index] = block.hashCode();
-                    }
-                    colors[index] = colors[index] | 0xff000000;
-                    buttonWidget.setFill(colors[index]);
-                }
-
-            }).open();
+                stack -> stack.getItem() instanceof ItemBlock,
+                stack -> updateBlockSelectionAndColor(stack, index, buttonWidget)
+        ).open();
     }
 
     private int getMaxRadius() {
@@ -228,6 +300,7 @@ public class WorldProspectorARApp extends ARApplication {
         for (Tuple<ItemStack, Integer> stack : getAllSlotStack()) {
             if (stack.getFirst().getItem() instanceof ItemBlock) {
                 Block block = ((ItemBlock) stack.getFirst().getItem()).getBlock();
+
                 if (block != Blocks.AIR) {
                     matchers.add(new BlockStateMatcher(block.getStateFromMeta(stack.getFirst().getMetadata()), stack.getSecond()));
                 }
@@ -319,6 +392,8 @@ public class WorldProspectorARApp extends ARApplication {
     @Override
     public void tickAR(EntityPlayer player) {
         World world = player.world;
+        if (Minecraft.getMinecraft().isGamePaused()) return;
+
         if (radius == 0 || lastPos == null) {
             lastPos = player.getPosition();
         }

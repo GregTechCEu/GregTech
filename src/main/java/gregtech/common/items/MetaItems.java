@@ -440,6 +440,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_FLUID_VOIDING_ADVANCED;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_VOIDING;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_VOIDING_ADVANCED;
+    public static MetaItem<?>.MetaValueItem COVER_STORAGE;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
@@ -486,6 +487,12 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem ITEM_MAGNET_LV;
     public static MetaItem<?>.MetaValueItem ITEM_MAGNET_HV;
+
+    public static MetaItem<?>.MetaValueItem RUBBER_WOOD_BOAT;
+    public static MetaItem<?>.MetaValueItem TREATED_WOOD_BOAT;
+
+    public static MetaItem<?>.MetaValueItem RUBBER_WOOD_DOOR;
+    public static MetaItem<?>.MetaValueItem TREATED_WOOD_DOOR;
 
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
@@ -545,6 +552,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FERTILIZER;
     public static MetaItem<?>.MetaValueItem BLACKLIGHT;
 
+    public static MetaItem<?>.MetaValueItem LOGO;
 
     public static MetaOreDictItem CT_OREDICT_ITEM;
 

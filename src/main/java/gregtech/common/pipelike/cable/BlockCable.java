@@ -50,6 +50,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     public BlockCable(Insulation cableType) {
         super(cableType);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_CABLES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 
@@ -106,7 +107,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
             int temp = cable.getTemperature();
             // max light at 5000 K
             // min light at 500 K
-            if(temp >= 5000) {
+            if (temp >= 5000) {
                 return 15;
             }
             if (temp > 500) {

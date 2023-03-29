@@ -1,10 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.FeCompat;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -15,6 +12,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -233,9 +231,10 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         return !inputsEnergy(side);
     }
 
+    @Nonnull
     @Override
-    public String getName() {
-        return "BatteryEnergyContainer";
+    public final String getName() {
+        return GregtechDataCodes.BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT;
     }
 
     protected IItemHandlerModifiable getInventory() {

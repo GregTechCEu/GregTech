@@ -139,18 +139,12 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
                 .or(checkSteam ? abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1).setPreviewCount(1) : new TraceabilityPredicate());
         if (checkItemIn) {
-            if (recipeMap.getMinInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-            }
-            else if (recipeMap.getMaxInputs() > 0) {
+            if (recipeMap.getMaxInputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1));
             }
         }
         if (checkItemOut) {
-            if (recipeMap.getMinOutputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-            }
-            else if (recipeMap.getMaxOutputs() > 0) {
+            if (recipeMap.getMaxOutputs() > 0) {
                 predicate =  predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1));
             }
         }

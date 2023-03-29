@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -166,7 +167,7 @@ public abstract class GTRecipeInput {
      * non-consumable status.
      * <p>
      * used for unique input matching in RecipeMap
-     * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(List) (GTRecipeInput)
+     * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(Collection) RecipeMap#uniqueIngredientsList(Collection)
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
 

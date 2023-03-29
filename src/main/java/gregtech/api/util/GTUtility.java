@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -640,14 +641,19 @@ public class GTUtility {
         return ItemStack.EMPTY;
     }
 
-    public static ItemStack copyAmount(int amount, ItemStack... stacks) {
-        ItemStack stack = copy(stacks);
+    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
+        ItemStack copy = stack.copy();
         if (amount > 64) amount = 64;
         else if (amount == -1) amount = 111;
         else if (amount < 0) amount = 0;
-        stack.setCount(amount);
-        return stack;
+        copy.setCount(amount);
+        return copy;
+    }
+
+    public static ItemStack copyAmount(int amount, ItemStack... stacks) {
+        ItemStack stack = copy(stacks);
+        return copyAmount(amount, stack);
     }
 
     public static FluidStack copyAmount(int amount, FluidStack fluidStack) {
@@ -919,8 +925,10 @@ public class GTUtility {
         }
 
         MetaTileEntity machine = getMetaTileEntity(machineStack);
-        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity))
-            return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity)) {
+            RecipeMap<?> recipeMap = machine.getRecipeMap();
+            return recipeMap != null && !findMachineInBlacklist(recipeMap.getUnlocalizedName(), recipeMapBlacklist);
+        }
 
         return false;
     }

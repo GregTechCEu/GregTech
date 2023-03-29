@@ -2,6 +2,7 @@ package gregtech.api.items.armor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.api.items.metaitem.stats.IItemComponent;
@@ -30,6 +31,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
     public ArmorMetaItem() {
         super((short) 0);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
     }
 
     @SuppressWarnings("unchecked")
@@ -204,7 +206,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     @Override
     public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
         EntityEquipmentSlot slot = this.getEquipmentSlot(stack);
-        if(slot == null || enchantment.type == null) {
+        if (slot == null || enchantment.type == null) {
             return false;
         }
 

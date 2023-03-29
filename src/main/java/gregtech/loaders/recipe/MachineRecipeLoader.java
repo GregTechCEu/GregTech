@@ -19,6 +19,7 @@ import gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
+import gregtech.common.blocks.StoneVariantBlock.StoneVariant;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
@@ -32,6 +33,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +62,9 @@ public class MachineRecipeLoader {
         ComponentRecipes.register();
         MiscRecipeLoader.init();
         BatteryRecipes.init();
-
         CircuitRecipes.init();
+        WoodRecipeLoader.registerRecipes();
+
         registerDecompositionRecipes();
         registerBlastFurnaceRecipes();
         registerAssemblerRecipes();
@@ -241,21 +244,28 @@ public class MachineRecipeLoader {
 
     private static void registerStoneBricksRecipes() {
         // normal variant -> cobble variant
-        List<ItemStack> cobbles = Arrays.stream(BlockStoneCobble.BlockType.values()).map(MetaBlocks.STONE_COBBLE::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> mossCobbles = Arrays.stream(BlockStoneCobbleMossy.BlockType.values()).map(MetaBlocks.STONE_COBBLE_MOSSY::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> smooths = Arrays.stream(BlockStoneSmooth.BlockType.values()).map(MetaBlocks.STONE_SMOOTH::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> polisheds = Arrays.stream(BlockStonePolished.BlockType.values()).map(MetaBlocks.STONE_POLISHED::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> bricks = Arrays.stream(BlockStoneBricks.BlockType.values()).map(MetaBlocks.STONE_BRICKS::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> crackedBricks = Arrays.stream(BlockStoneBricksCracked.BlockType.values()).map(MetaBlocks.STONE_BRICKS_CRACKED::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> mossBricks = Arrays.stream(BlockStoneBricksMossy.BlockType.values()).map(MetaBlocks.STONE_BRICKS_MOSSY::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> chiseledBricks = Arrays.stream(BlockStoneChiseled.BlockType.values()).map(MetaBlocks.STONE_CHISELED::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> tiledBricks = Arrays.stream(BlockStoneTiled.BlockType.values()).map(MetaBlocks.STONE_TILED::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> smallTiledBricks = Arrays.stream(BlockStoneTiledSmall.BlockType.values()).map(MetaBlocks.STONE_TILED_SMALL::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> windmillA = Arrays.stream(BlockStoneWindmillA.BlockType.values()).map(MetaBlocks.STONE_WINDMILL_A::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> windmillB = Arrays.stream(BlockStoneWindmillB.BlockType.values()).map(MetaBlocks.STONE_WINDMILL_B::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> squareBricks = Arrays.stream(BlockStoneBricksSquare.BlockType.values()).map(MetaBlocks.STONE_BRICKS_SQUARE::getItemVariant).collect(Collectors.toList());
-        List<ItemStack> smallBricks = Arrays.stream(BlockStoneBricksSmall.BlockType.values()).map(MetaBlocks.STONE_BRICKS_SMALL::getItemVariant).collect(Collectors.toList());
-
+        EnumMap<StoneVariant, List<ItemStack>> variantListMap = new EnumMap<>(StoneVariant.class);
+        for (StoneVariant shape : StoneVariant.values()) {
+            StoneVariantBlock block = MetaBlocks.STONE_BLOCKS.get(shape);
+            variantListMap.put(shape,
+                    Arrays.stream(StoneVariantBlock.StoneType.values())
+                            .map(block::getItemVariant)
+                            .collect(Collectors.toList()));
+        }
+        List<ItemStack> cobbles = variantListMap.get(StoneVariant.COBBLE);
+        List<ItemStack> mossCobbles = variantListMap.get(StoneVariant.COBBLE_MOSSY);
+        List<ItemStack> smooths = variantListMap.get(StoneVariant.SMOOTH);
+        List<ItemStack> polisheds = variantListMap.get(StoneVariant.POLISHED);
+        List<ItemStack> bricks = variantListMap.get(StoneVariant.BRICKS);
+        List<ItemStack> crackedBricks = variantListMap.get(StoneVariant.BRICKS_CRACKED);
+        List<ItemStack> mossBricks = variantListMap.get(StoneVariant.BRICKS_MOSSY);
+        List<ItemStack> chiseledBricks = variantListMap.get(StoneVariant.CHISELED);
+        List<ItemStack> tiledBricks = variantListMap.get(StoneVariant.TILED);
+        List<ItemStack> smallTiledBricks = variantListMap.get(StoneVariant.TILED_SMALL);
+        List<ItemStack> windmillA = variantListMap.get(StoneVariant.WINDMILL_A);
+        List<ItemStack> windmillB = variantListMap.get(StoneVariant.WINDMILL_B);
+        List<ItemStack> squareBricks = variantListMap.get(StoneVariant.BRICKS_SQUARE);
+        List<ItemStack> smallBricks = variantListMap.get(StoneVariant.BRICKS_SMALL);
 
         registerSmoothRecipe(cobbles, smooths);
         registerCobbleRecipe(smooths, cobbles);
@@ -418,81 +428,81 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-        for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L / 2)}) {
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(solder)
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        FluidStack solder = SolderingAlloy.getFluid(L / 2);
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(cableGtSingle, Copper, 4)
-                    .input(circuit, MarkerMaterials.Tier.LV)
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ENERGY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LEVER))
+                .input(OrePrefix.plate, material)
+                .fluidInputs(solder)
+                .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ENERGY_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .output(COVER_ENERGY_DETECTOR_ADVANCED)
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(cableGtSingle, Copper, 4)
+                .input(circuit, MarkerMaterials.Tier.LV)
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ENERGY_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .output(COVER_ENERGY_DETECTOR_ADVANCED)
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(wireFine, Gold, 4)
-                    .input(circuit, MarkerMaterials.Tier.HV)
-                    .input(plate, Aluminium)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, Gold, 4)
+                .input(circuit, MarkerMaterials.Tier.HV)
+                .input(plate, Aluminium)
+                .fluidInputs(solder)
+                .outputs(COVER_ACTIVITY_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
-                    .input(plate, material)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_FLUID_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
+                .input(plate, material)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(COVER_ITEM_DETECTOR)
-                    .input(SENSOR_HV)
-                    .fluidInputs(solder)
-                    .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
-                    .EUt(16).duration(100)
-                    .buildAndRegister();
-        }
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_FLUID_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ITEM_DETECTOR)
+                .input(SENSOR_HV)
+                .fluidInputs(solder)
+                .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
@@ -520,6 +530,16 @@ public class MachineRecipeLoader {
                 .fluidInputs(Polyethylene.getFluid(L * 2))
                 .output(COVER_ENDER_FLUID_LINK)
                 .EUt(VA[HV]).duration(320)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OreDictNames.chestWood.toString())
+                .input(ELECTRIC_PISTON_LV)
+                .input(plate, Iron)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .output(COVER_STORAGE)
+                .EUt(16)
+                .duration(100)
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();
@@ -587,8 +607,8 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).input(cableGtSingle, Materials.YttriumBariumCuprate, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[8].getStackForm()).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).input(cableGtSingle, Materials.Europium, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[9].getStackForm()).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(OreDictNames.chestWood.toString()).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).circuitMeta(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plank, Wood, 4).input(screw, Iron, 4).outputs(WOODEN_CRATE.getStackForm()).duration(100).circuitMeta(5).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Bronze, 4).input(plate, Bronze, 4).outputs(BRONZE_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();

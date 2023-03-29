@@ -10,9 +10,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,7 +24,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block {
+public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block implements IWalkingSpeedBonus {
 
     protected PropertyEnum<T> VARIANT;
     protected T[] VALUES;
@@ -103,6 +105,22 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     @Override
     public int getMetaFromState(IBlockState state) {
         return state.getValue(VARIANT).ordinal();
+    }
+
+    @Override
+    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
+        // Short circuit if there is no bonus speed
+        if (getWalkingSpeedBonus() == 1.0D) {
+            return;
+        }
+
+        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
+        if (checkApplicableBlocks(below)) {
+            if (bonusSpeedCondition(entityIn)) {
+                entityIn.motionX *= getWalkingSpeedBonus();
+                entityIn.motionZ *= getWalkingSpeedBonus();
+            }
+        }
     }
 
 }

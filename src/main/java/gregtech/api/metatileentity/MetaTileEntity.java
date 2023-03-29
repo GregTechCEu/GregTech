@@ -15,21 +15,29 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.core.advancement.AdvancementTriggers;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
@@ -41,7 +49,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -71,6 +78,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -97,7 +105,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     protected IFluidHandler fluidInventory;
 
-    protected final List<MTETrait> mteTraits = new ArrayList<>();
+    private final Map<String, MTETrait> mteTraits = new Object2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<MTETrait> mteTraitByNetworkId = new Int2ObjectOpenHashMap<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
     private int paintingColor = -1;
@@ -305,7 +314,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs) MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH;
+        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES;
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -349,25 +358,25 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * Adds a trait to this meta tile entity
-     * traits are objects linked with meta tile entity and performing certain
-     * actions. usually traits implement capabilities
-     * there can be only one trait for given name
+     * Adds a trait to this meta tile entity.
+     * Traits are objects linked with meta tile entity and performing certain actions.
+     * Usually traits implement capabilities there can be only one trait for a given name
      *
      * @param trait trait object to add
      */
-    void addMetaTileEntityTrait(MTETrait trait) {
-        mteTraits.removeIf(otherTrait -> {
-            if (trait.getName().equals(otherTrait.getName())) {
-                return true;
-            }
-            if (otherTrait.getNetworkID() == trait.getNetworkID()) {
-                String message = "Trait %s is incompatible with trait %s, as they both use same network id %d";
-                throw new IllegalArgumentException(String.format(message, trait, otherTrait, trait.getNetworkID()));
-            }
-            return false;
-        });
-        this.mteTraits.add(trait);
+    void addMetaTileEntityTrait(@Nonnull MTETrait trait) {
+        this.mteTraits.put(trait.getName(), trait);
+        this.mteTraitByNetworkId.put(trait.getNetworkID(), trait);
+    }
+
+    /**
+     * Get a trait by name
+     * @param name the name of the trait
+     * @return the trait associated with the name
+     */
+    @Nullable
+    public final MTETrait getMTETrait(@Nonnull String name) {
+        return this.mteTraits.get(name);
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
@@ -420,16 +429,24 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
-        } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+        } else {
             EnumFacing hitFacing = hitResult.sideHit;
-
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
+            if (coverBehavior == null) {
+                return false;
+            }
+            EnumActionResult result = coverBehavior.onRightClick(playerIn, hand, hitResult);
 
-            EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-                    coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
+            if (result == EnumActionResult.SUCCESS) {
+                return true;
+            }
+            else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+                result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
 
-            return coverResult == EnumActionResult.SUCCESS;
+                return result == EnumActionResult.SUCCESS;
+            }
         }
+
         return false;
     }
 
@@ -564,11 +581,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_MTE, buffer -> {
-            buffer.writeByte(side.getIndex());
-            buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
-            coverBehavior.writeInitialSyncData(buffer);
-        });
+        writeCustomData(COVER_ATTACHED_MTE, CoverIO.getCoverPlacementCustomDataWriter(side, coverBehavior));
         notifyBlockUpdate();
         markDirty();
         onCoverPlacementUpdate();
@@ -737,7 +750,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void update() {
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
             }
@@ -868,21 +881,12 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
         buf.writeInt(this.paintingColor);
-        buf.writeShort(mteTraits.size());
-        for (MTETrait trait : mteTraits) {
-            buf.writeVarInt(trait.getNetworkID());
-            trait.writeInitialData(buf);
+        buf.writeShort(this.mteTraitByNetworkId.size());
+        for (Int2ObjectMap.Entry<MTETrait> entry : mteTraitByNetworkId.int2ObjectEntrySet()) {
+            buf.writeVarInt(entry.getIntKey());
+            entry.getValue().writeInitialData(buf);
         }
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
-            if (coverBehavior != null) {
-                int coverId = CoverDefinition.getNetworkIdForCover(coverBehavior.getCoverDefinition());
-                buf.writeVarInt(coverId);
-                coverBehavior.writeInitialSyncData(buf);
-            } else {
-                buf.writeVarInt(-1);
-            }
-        }
+        CoverIO.writeCoverSyncData(buf, this);
         buf.writeBoolean(isFragile);
         buf.writeBoolean(muffled);
     }
@@ -897,20 +901,12 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         int amountOfTraits = buf.readShort();
         for (int i = 0; i < amountOfTraits; i++) {
             int traitNetworkId = buf.readVarInt();
-            mteTraits.stream()
-                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
-                    .findAny()
-                    .ifPresent(trait -> trait.receiveInitialData(buf));
+            MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
+            if (trait == null) {
+                GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
+            } else trait.receiveInitialData(buf);
         }
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            int coverId = buf.readVarInt();
-            if (coverId != -1) {
-                CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readInitialSyncData(buf);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
         this.isFragile = buf.readBoolean();
         this.muffled = buf.readBoolean();
     }
@@ -940,20 +936,14 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
-            mteTraits.stream()
-                    .filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId)
-                    .findAny()
-                    .ifPresent(trait -> trait.receiveCustomData(buf.readVarInt(), buf));
+            MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
+            if (trait == null) {
+                GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
+            } else trait.receiveCustomData(buf.readVarInt(), buf);
         } else if (dataId == COVER_ATTACHED_MTE) {
-            //cover placement event
-            EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            int coverId = buf.readVarInt();
-            CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(coverId);
-            CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, placementSide);
-            this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
-            coverBehavior.readInitialSyncData(buf);
-            onCoverPlacementUpdate();
-            scheduleRenderUpdate();
+            CoverIO.readCoverPlacement(buf, this,
+                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
+                    this::scheduleRenderUpdate);
         } else if (dataId == COVER_REMOVED_MTE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
@@ -1009,7 +999,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getItemInventory());
         }
         T capabilityResult = null;
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             capabilityResult = mteTrait.getCapability(capability);
             if (capabilityResult != null) {
                 break;
@@ -1145,7 +1135,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             notifyBlockUpdate();
             markDirty();
             writeCustomData(UPDATE_FRONT_FACING, buf -> buf.writeByte(frontFacing.getIndex()));
-            mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
+            for (MTETrait mteTrait : this.mteTraits.values()) {
+                mteTrait.onFrontFacingSet(frontFacing);
+            }
         }
     }
 
@@ -1203,23 +1195,12 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             data.setTag("ExportFluidInventory", exportFluids.serializeNBT());
         }
 
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             data.setTag(mteTrait.getName(), mteTrait.serializeNBT());
         }
 
-        NBTTagList coversList = new NBTTagList();
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = coverBehaviors[coverSide.getIndex()];
-            if (coverBehavior != null) {
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                ResourceLocation coverId = coverBehavior.getCoverDefinition().getCoverId();
-                tagCompound.setString("CoverId", coverId.toString());
-                tagCompound.setByte("Side", (byte) coverSide.getIndex());
-                coverBehavior.writeToNBT(tagCompound);
-                coversList.appendTag(tagCompound);
-            }
-        }
-        data.setTag("Covers", coversList);
+        CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
+
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
         return data;
@@ -1240,23 +1221,12 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             exportFluids.deserializeNBT(data.getCompoundTag("ExportFluidInventory"));
         }
 
-        for (MTETrait mteTrait : this.mteTraits) {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
             NBTTagCompound traitCompound = data.getCompoundTag(mteTrait.getName());
             mteTrait.deserializeNBT(traitCompound);
         }
 
-        NBTTagList coversList = data.getTagList("Covers", NBT.TAG_COMPOUND);
-        for (int index = 0; index < coversList.tagCount(); index++) {
-            NBTTagCompound tagCompound = coversList.getCompoundTagAt(index);
-            if (tagCompound.hasKey("CoverId", NBT.TAG_STRING)) {
-                EnumFacing coverSide = EnumFacing.VALUES[tagCompound.getByte("Side")];
-                ResourceLocation coverId = new ResourceLocation(tagCompound.getString("CoverId"));
-                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverId);
-                CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, coverSide);
-                coverBehavior.readFromNBT(tagCompound);
-                this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
-            }
-        }
+        CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
 
         this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
@@ -1421,13 +1391,28 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return face == this.getFrontFacing() && this.canRenderFrontFaceX();
     }
 
-    public RecipeMap<?> getRecipeMap() {
-        for (MTETrait mteTrait : mteTraits) {
-            if (mteTrait.getName().equals("RecipeMapWorkable")) {
-                return ((AbstractRecipeLogic) mteTrait).getRecipeMap();
-            }
+    /**
+     * @return the MTE's {@link AbstractRecipeLogic}
+     */
+    @Nullable
+    public final AbstractRecipeLogic getRecipeLogic() {
+        MTETrait trait = getMTETrait(GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT);
+        if (trait instanceof AbstractRecipeLogic) {
+            return ((AbstractRecipeLogic) trait);
+        } else if (trait != null) {
+            throw new IllegalStateException("MTE Trait " + trait.getName() + " has name " + GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT +
+                    " but is not instanceof AbstractRecipeLogic");
         }
         return null;
+    }
+
+    /**
+     * @return the RecipeMap from the MTE's {@link AbstractRecipeLogic}
+     */
+    @Nullable
+    public final RecipeMap<?> getRecipeMap() {
+        AbstractRecipeLogic recipeLogic = getRecipeLogic();
+        return recipeLogic == null ? null : recipeLogic.getRecipeMap();
     }
 
     public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance, IEnergyContainer energyContainer) {
