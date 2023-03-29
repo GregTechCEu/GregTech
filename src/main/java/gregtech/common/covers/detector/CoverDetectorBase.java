@@ -25,7 +25,7 @@ public abstract class CoverDetectorBase extends CoverBehavior {
     }
 
     protected void toggleInvertedWithNotification() {
-        setInverted(isInverted());
+        setInverted(!isInverted());
 
         if (!this.coverHolder.getWorld().isRemote) {
             this.coverHolder.writeCoverData(this, 100, b -> b.writeBoolean(isInverted()));
