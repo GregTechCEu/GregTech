@@ -10,23 +10,18 @@ import gregtech.api.cover.ICoverable;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 
-public class CoverActivityDetector extends CoverDetectorBase implements ITickable {
-    public CoverActivityDetector(ICoverable coverHolder, EnumFacing attachedSide) {
+public class CoverDetectorActivityAdvanced extends CoverDetectorActivity {
+
+    public CoverDetectorActivityAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
     }
 
     @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null) != null;
+    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+        Textures.DETECTOR_ACTIVITY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
-    @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ACTIVITY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
-    }
-    
     @Override
     public void update() {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
@@ -36,7 +31,13 @@ public class CoverActivityDetector extends CoverDetectorBase implements ITickabl
         if (workable == null)
             return;
 
-        if (isInverted()) setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 0 : 15);
-        else setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 15 : 0);
+        int outputAmount = (int) (15.0 * workable.getProgress() / workable.getMaxProgress());
+
+        if (!workable.isWorkingEnabled())
+            outputAmount = 0;
+        else if (this.isInverted())
+            outputAmount = 15 - outputAmount;
+
+        setRedstoneSignalOutput(outputAmount);
     }
 }
