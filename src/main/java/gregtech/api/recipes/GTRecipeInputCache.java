@@ -88,7 +88,6 @@ public class GTRecipeInputCache {
         for (GTRecipeInput input : inputs) {
             list.add(deduplicate(input));
         }
-        list.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
         return list;
     }
 }

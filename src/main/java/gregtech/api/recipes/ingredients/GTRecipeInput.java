@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -29,6 +30,21 @@ import java.util.List;
  * caching strategy is turned off after recipe registration is over.
  */
 public abstract class GTRecipeInput {
+
+    /**
+     * Sorting order of standard recipe inputs.
+     */
+    public static final int SORTING_ORDER_COMMON = 0;
+    /**
+     * Sorting order of non-consumable recipe inputs.
+     */
+    public static final int SORTING_ORDER_NC = 5;
+    /**
+     * Sorting order of non-consumable {@link IntCircuitIngredient}s.
+     */
+    public static final int SORTING_ORDER_INT_CIRCUIT = 10;
+
+    public static final Comparator<GTRecipeInput> RECIPE_INPUT_COMPARATOR = Comparator.comparingInt(GTRecipeInput::getSortingOrder);
 
     /**
      * All items will initially match the with is NBT (OreDicts have a null tag?)
@@ -170,6 +186,18 @@ public abstract class GTRecipeInput {
      * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(Collection) RecipeMap#uniqueIngredientsList(Collection)
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
+
+    /**
+     * Get sorting order of this recipe input instance. Recipe inputs are sorted with ascending order.
+     *
+     * @return sorting order of this recipe input instance
+     * @see #SORTING_ORDER_COMMON
+     * @see #SORTING_ORDER_NC
+     * @see #SORTING_ORDER_INT_CIRCUIT
+     */
+    public int getSortingOrder() {
+        return this.isNonConsumable() ? SORTING_ORDER_NC : SORTING_ORDER_COMMON;
+    }
 
     protected static class ItemToMetaList implements Object2ObjectMap.Entry<Item, List<MetaToTAGList>> {
         protected Item item;

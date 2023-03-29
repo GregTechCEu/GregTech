@@ -13,8 +13,8 @@ import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.RecipeCompatUtil;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
 import mezz.jei.api.ingredients.IIngredients;
@@ -27,7 +27,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
@@ -38,9 +41,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
 
+    private final List<GTRecipeInput> sortedInputs;
+    private final List<GTRecipeInput> sortedFluidInputs;
+
     public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipeMap = recipeMap;
         this.recipe = recipe;
+
+        this.sortedInputs = new ArrayList<>(recipe.getInputs());
+        this.sortedInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
+        this.sortedFluidInputs = new ArrayList<>(recipe.getFluidInputs());
+        this.sortedFluidInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
     }
 
     public Recipe getRecipe() {
@@ -51,25 +62,25 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     public void getIngredients(@Nonnull IIngredients ingredients) {
 
         // Inputs
-        if (!recipe.getInputs().isEmpty()) {
-            List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
-            for (GTRecipeInput recipeInput : recipe.getInputs()) {
-                matchingInputs.add(Arrays.stream(recipeInput.getInputStacks())
-                        .map(ItemStack::copy)
-                        .collect(Collectors.toList()));
+        if (!sortedInputs.isEmpty()) {
+            List<List<ItemStack>> list = new ArrayList<>();
+            for (GTRecipeInput input : sortedInputs) {
+                List<ItemStack> stacks = new ArrayList<>();
+                for (ItemStack stack : input.getInputStacks()) {
+                    stacks.add(stack.copy());
+                }
+                list.add(stacks);
             }
-            ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
+            ingredients.setInputLists(VanillaTypes.ITEM, list);
         }
 
         // Fluid Inputs
-        if (!recipe.getFluidInputs().isEmpty()) {
-            List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
-
-            for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
-                FluidStack fluidStack = fluidInput.getInputFluidStack();
-                Collections.addAll(matchingFluidInputs, fluidStack);
+        if (!sortedFluidInputs.isEmpty()) {
+            List<FluidStack> list = new ArrayList<>();
+            for (GTRecipeInput input : sortedFluidInputs) {
+                list.add(input.getInputFluidStack());
             }
-            ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
+            ingredients.setInputs(VanillaTypes.FLUID, list);
         }
 
         // Outputs
@@ -167,13 +178,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public boolean isNotConsumedItem(int slot) {
-        if (slot >= recipe.getInputs().size()) return false;
-        return recipe.getInputs().get(slot).isNonConsumable();
+        return slot < this.sortedInputs.size() && this.sortedInputs.get(slot).isNonConsumable();
     }
 
     public boolean isNotConsumedFluid(int slot) {
-        if (slot >= recipe.getFluidInputs().size()) return false;
-        return recipe.getFluidInputs().get(slot).isNonConsumable();
+        return slot < this.sortedFluidInputs.size() && this.sortedFluidInputs.get(slot).isNonConsumable();
     }
 
     private int getPropertyListHeight() {

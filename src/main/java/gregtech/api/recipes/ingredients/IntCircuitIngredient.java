@@ -104,6 +104,16 @@ public class IntCircuitIngredient extends GTRecipeInput {
         return this.matchingConfigurations == other.matchingConfigurations;
     }
 
+    @Override
+    public int getSortingOrder() {
+        return this.isNonConsumable() ? SORTING_ORDER_INT_CIRCUIT : super.getSortingOrder();
+    }
+
+    @Override
+    public String toString() {
+        return "1xcircuit(" + matchingConfigurations + ")";
+    }
+
     public static ItemStack getIntegratedCircuit(int configuration) {
         ItemStack stack = MetaItems.INTEGRATED_CIRCUIT.getStackForm();
         setCircuitConfiguration(stack, configuration);
@@ -153,10 +163,5 @@ public class IntCircuitIngredient extends GTRecipeInput {
         configuration += amount;
         configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
         IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
-    }
-
-    @Override
-    public String toString() {
-        return "1xcircuit(" + matchingConfigurations + ")";
     }
 }
