@@ -70,7 +70,7 @@ public class WidgetProspectingMap extends Widget {
     public static final int FLUID_PROSPECTING_MODE = 1;
     private long lastClicked;
 
-    private List<String> hoveredNames;
+    private final List<String> hoveredNames = new ArrayList<>();
     private int color;
 
     public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList, int mode, int scanTick) {
