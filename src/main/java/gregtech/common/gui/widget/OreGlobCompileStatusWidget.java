@@ -14,14 +14,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompileStatusWidget extends Widget {
+public class OreGlobCompileStatusWidget extends Widget {
 
     @Nullable
     private OreGlobCompileResult result;
 
     private TextFieldWidget2 textField;
 
-    public CompileStatusWidget(int x, int y) {
+    public OreGlobCompileStatusWidget(int x, int y) {
         super(x, y, 7, 7);
     }
 

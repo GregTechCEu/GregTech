@@ -8,7 +8,7 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
-import gregtech.common.gui.widget.CompileStatusWidget;
+import gregtech.common.gui.widget.OreGlobCompileStatusWidget;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.OreFilterTestSlot;
 import it.unimi.dsi.fastutil.Hash;
@@ -41,7 +41,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
             testSlot[i] = new OreFilterTestSlot(20 + 22 * i, 0);
             widgetGroup.accept(testSlot[i]);
         }
-        CompileStatusWidget compilationStatus = new CompileStatusWidget(10, 10);
+        OreGlobCompileStatusWidget compilationStatus = new OreGlobCompileStatusWidget(10, 10);
         HighlightedTextField textField = new HighlightedTextField(14, 26, 152, 14, () -> this.expression,
                 s -> {
                     if (s.equals(this.expression)) return;
