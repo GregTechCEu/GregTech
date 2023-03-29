@@ -168,14 +168,14 @@ public class OreDictUnifier {
     public static Set<String> getOreDictionaryNames(ItemStack itemStack) {
         if (itemStack.isEmpty()) return Collections.emptySet();
         ItemAndMetadata key = new ItemAndMetadata(itemStack);
-        Set<String> t1 = stackOreDictName.get(key);
-        Set<String> t2 = key.isWildcard() ? null : stackOreDictName.get(key.toWildcard());
-        if (t1 == null) {
-            return t2 == null ? Collections.emptySet() : Collections.unmodifiableSet(t2);
-        } else if (t2 == null) {
-            return Collections.unmodifiableSet(t1);
+        Set<String> names = stackOreDictName.get(key);
+        Set<String> wildcardNames = key.isWildcard() ? null : stackOreDictName.get(key.toWildcard());
+        if (names == null) {
+            return wildcardNames == null ? Collections.emptySet() : Collections.unmodifiableSet(wildcardNames);
+        } else if (wildcardNames == null) {
+            return Collections.unmodifiableSet(names);
         } else {
-            return Sets.union(t1, t2);
+            return Sets.union(names, wildcardNames);
         }
     }
 
