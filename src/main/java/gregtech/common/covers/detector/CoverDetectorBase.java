@@ -50,7 +50,10 @@ public abstract class CoverDetectorBase extends CoverBehavior {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        setInverted(tagCompound.getBoolean(NBT_KEY_IS_INVERTED));
+
+        if (tagCompound.hasKey(NBT_KEY_IS_INVERTED)) { //compatibility check
+            setInverted(tagCompound.getBoolean(NBT_KEY_IS_INVERTED));
+        }
     }
 
     @Override
