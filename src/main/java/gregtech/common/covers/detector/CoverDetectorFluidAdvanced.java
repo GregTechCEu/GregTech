@@ -5,13 +5,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -19,14 +17,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-
-import java.util.regex.Pattern;
 
 public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
 
@@ -94,7 +92,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
         this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 164 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 164 + 82)
                 .widget(group)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 164)
                 .build(this, player);
@@ -139,6 +137,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
         setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
     }
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
@@ -159,12 +158,14 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();
     }
