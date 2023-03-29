@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -47,11 +48,6 @@ public class CoverDetectorItem extends CoverDetectorBase implements ITickable {
             storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        int outputAmount = (int) (15.0 * storedItems / itemCapacity);
-
-        if (this.isInverted())
-            outputAmount = 15 - outputAmount;
-
-        setRedstoneSignalOutput(outputAmount);
+        setRedstoneSignalOutput(GTUtility.computeRedstoneValue(storedItems, itemCapacity, isInverted()));
     }
 }

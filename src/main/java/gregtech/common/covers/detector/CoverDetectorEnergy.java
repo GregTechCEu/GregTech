@@ -7,6 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -42,12 +43,7 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
             if (energyCapacity == 0)
                 return;
 
-            int outputAmount = (int) (15.0 * storedEnergy / energyCapacity);
-
-            if (this.isInverted())
-                outputAmount = 15 - outputAmount;
-
-            setRedstoneSignalOutput(outputAmount);
+            setRedstoneSignalOutput(GTUtility.computeRedstoneValue(storedEnergy, energyCapacity, isInverted()));
         }
     }
 }
