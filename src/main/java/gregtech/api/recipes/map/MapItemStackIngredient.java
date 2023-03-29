@@ -5,7 +5,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Collection;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MapItemStackIngredient extends AbstractMapIngredient {
 
@@ -28,7 +29,8 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
         this.gtRecipeInput = gtRecipeInput;
     }
 
-    public static Collection<AbstractMapIngredient> from(GTRecipeInput r) {
+    @Nonnull
+    public static List<AbstractMapIngredient> from(@Nonnull GTRecipeInput r) {
         ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
         for (ItemStack s : r.getInputStacks()) {
             list.add(new MapItemStackIngredient(s, r));

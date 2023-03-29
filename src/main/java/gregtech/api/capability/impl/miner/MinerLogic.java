@@ -328,10 +328,12 @@ public class MinerLogic {
     }
 
     /**
-     * Recalculates the mining area and refills the block list
+     * Recalculates the mining area, refills the block list and restarts the miner, if it was done
      */
     public void resetArea() {
         initPos(metaTileEntity.getPos(), currentRadius);
+        if (this.isDone) this.setWorkingEnabled(false);
+        this.isDone = false;
         blocksToMine.clear();
         checkBlocksToMine();
     }
@@ -402,7 +404,7 @@ public class MinerLogic {
      */
     protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
         ItemStack itemStack = GTUtility.toItem(blockState);
-        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
+        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList());
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
             for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), tier, map)) {

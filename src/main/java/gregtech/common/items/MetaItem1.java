@@ -19,6 +19,8 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.entities.GTBoatEntity.GTBoatType;
 import gregtech.common.items.behaviors.*;
 import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
@@ -692,6 +694,11 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
+        RUBBER_WOOD_BOAT = addItem(473, "rubber_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.RUBBER_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
+        TREATED_WOOD_BOAT = addItem(474, "treated_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.TREATED_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
+        RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR)).setBurnValue(200).setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+        TREATED_WOOD_DOOR = addItem(476, "treated_wood_door").addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR)).setBurnValue(200).setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
         ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
@@ -903,5 +910,8 @@ public class MetaItem1 extends StandardMetaItem {
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
         FERTILIZER = addItem(1001, "fertilizer").addComponents(new FertilizerBehavior());
         BLACKLIGHT = addItem(1002, "blacklight");
+
+        LOGO = addItem(1003, "logo").setInvisible();
+        LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"), (s, w, e) -> GTValues.XMAS.get() ? 1 : 0);
     }
 }

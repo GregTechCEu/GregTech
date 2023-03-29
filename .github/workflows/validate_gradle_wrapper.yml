@@ -1,0 +1,30 @@
+# Validates the integrity of the Gradle wrapper
+name: Validate Gradle Wrapper
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'gradle/**'
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - 'gradle/**'
+
+# if a second commit is pushed quickly after the first, cancel the first one's build
+concurrency:
+  group: gradle-wrapper-validation-${{github.head_ref}}
+  cancel-in-progress: true
+
+jobs:
+  Validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1

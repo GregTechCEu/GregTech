@@ -5,6 +5,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class is used to match NBT tags. Used to match a MapItemStackNBTIngredient NBT tag to a given NBT tag value.
  */
@@ -131,13 +134,24 @@ public interface NBTMatcher {
         return false;
     };
 
-    boolean evaluate(NBTTagCompound nbtTagCompound, NBTCondition nbtCondition);
+    /**
+     * Return true if NBT isn't present or is the provided key is present
+     */
+    NBTMatcher NOT_PRESENT_OR_HAS_KEY = (tag, condition) -> {
+        if (tag == null) {
+            return true;
+        }
 
-    default boolean evaluate(ItemStack stack, NBTCondition nbtCondition) {
+        return hasKey(tag, condition.nbtKey, condition.tagType.typeId);
+    };
+
+    boolean evaluate(@Nullable NBTTagCompound nbtTagCompound, @Nullable NBTCondition nbtCondition);
+
+    default boolean evaluate(@Nonnull ItemStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.getTagCompound(), nbtCondition);
     }
 
-    default boolean evaluate(FluidStack stack, NBTCondition nbtCondition) {
+    default boolean evaluate(@Nonnull FluidStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.tag, nbtCondition);
     }
 
