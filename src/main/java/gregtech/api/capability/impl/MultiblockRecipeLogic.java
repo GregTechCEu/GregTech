@@ -11,6 +11,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -121,16 +122,37 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     metaTileEntity.getNotifiedFluidInputList().clear();
                     metaTileEntity.getNotifiedItemInputList().clear();
                 } else {
-                    Iterator<IItemHandlerModifiable> iterator = metaTileEntity.getNotifiedItemInputList().iterator();
-                    while (iterator.hasNext()) {
-                        IItemHandlerModifiable bus = iterator.next();
-                        if (invalidatedInputList.remove(bus)) {
-                            canWork = true;
+                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList().iterator();
+                    while (notifiedIter.hasNext()) {
+                        IItemHandlerModifiable bus = notifiedIter.next();
+                        Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
+                        while (invalidatedIter.hasNext()) {
+                            IItemHandler invalidatedHandler = invalidatedIter.next();
+                            if (invalidatedHandler instanceof ItemHandlerList) {
+                                for (IItemHandler ih : ((ItemHandlerList) invalidatedHandler).getBackingHandlers()) {
+                                    if (ih == bus) {
+                                        canWork = true;
+                                        invalidatedIter.remove();
+                                        break;
+                                    }
+                                }
+                            } else if (invalidatedHandler == bus) {
+                                canWork = true;
+                                invalidatedIter.remove();
+                            }
                         }
-                        iterator.remove();
+                        notifiedIter.remove();
                     }
                 }
-                if (!invalidatedInputList.containsAll(getInputBuses())) {
+                ArrayList<IItemHandler> flattenedHandlers = new ArrayList<>();
+                for (IItemHandler ih : getInputBuses()) {
+                    if (ih instanceof ItemHandlerList) {
+                        flattenedHandlers.addAll(((ItemHandlerList) ih).getBackingHandlers());
+                    }
+                    flattenedHandlers.add(ih);
+                }
+
+                if (!invalidatedInputList.containsAll(flattenedHandlers)) {
                     canWork = true;
                 }
                 return canWork;
@@ -384,7 +406,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public RecipeMap<?> getRecipeMap() {
         // if the multiblock has more than one RecipeMap, return the currently selected one
         if (metaTileEntity instanceof IMultipleRecipeMaps)
-                return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
+            return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
         return super.getRecipeMap();
     }
 }
