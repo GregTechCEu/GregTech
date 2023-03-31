@@ -11,6 +11,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -135,7 +136,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 storedFluid += contents.amount;
         }
 
-        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
+        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
     }
 
     @Override

@@ -14,6 +14,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -68,15 +69,13 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
             if (usePercent) {
                 if (energyContainer.getEnergyCapacity() > 0) {
                     float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-                    this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
-                    // compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+                    this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
                 } else {
                     this.outputAmount = isInverted() ? 0 : 15;
                 }
             } else {
-                this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
+                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
                         this.maxValue, this.minValue, isInverted(), this.outputAmount);
-                // compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
             }
         }
         setRedstoneSignalOutput(outputAmount);

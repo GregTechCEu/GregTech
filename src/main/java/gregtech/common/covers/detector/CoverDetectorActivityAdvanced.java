@@ -7,7 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -34,7 +34,7 @@ public class CoverDetectorActivityAdvanced extends CoverDetectorActivity {
         if (workable.getMaxProgress() == 0)
             return;
 
-        int outputAmount = GTUtility.computeRedstoneValue(workable.getProgress(), workable.getMaxProgress(), isInverted());
+        int outputAmount = RedstoneUtil.computeRedstoneValue(workable.getProgress(), workable.getMaxProgress(), isInverted());
 
         //nonstandard logic for handling off state
         if (!workable.isWorkingEnabled())

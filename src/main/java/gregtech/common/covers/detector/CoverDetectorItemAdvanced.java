@@ -11,6 +11,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -127,7 +128,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, isInverted()));
+        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneBetweenValues(storedItems, max, min, isInverted()));
     }
 
     @Override
