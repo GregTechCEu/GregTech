@@ -1,8 +1,9 @@
 package gregtech.api.util;
 
-import gregtech.api.recipes.KeySharedStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class OverlayedItemHandler {
     private final OverlayedItemHandlerSlot[] originalSlots;
@@ -49,20 +50,20 @@ public class OverlayedItemHandler {
     }
 
 
-    public int insertStackedItemStackKey(ItemStackKey key, int amountToInsert) {
+    public int insertStackedItemStackKey(ItemStack key, int amountToInsert) {
         int lastKnownPopulatedSlot = 0;
         //loop through all slots, looking for ones matching the key
         for (int i = 0; i < this.slots.length; i++) {
             //populate the slot if it's not already populated
             initSlot(i);
             // if it's the same item or there is no item in the slot
-            ItemStackKey slotKey = this.slots[i].getItemStackKey();
-            if (slotKey == key || slotKey == null) {
-                //if the slot its not full
+            ItemStack slotKey = this.slots[i].getItemStack();
+            if (slotKey.isEmpty() || ItemStackHashStrategy.comparingAllButCount().equals(slotKey, key)) {
+                //if the slot is not full
                 int canInsertUpTo = this.slots[i].slotLimit - this.slots[i].count;
                 if (canInsertUpTo > 0) {
                     int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
-                    this.slots[i].setItemStackKey(key);
+                    this.slots[i].setItemStack(key);
                     this.slots[i].setCount(this.slots[i].getCount() + insertedAmount);
                     amountToInsert -= insertedAmount;
                 }
@@ -81,11 +82,11 @@ public class OverlayedItemHandler {
             for (int i = lastKnownPopulatedSlot + 1; i < this.slots.length; i++) {
                 OverlayedItemHandlerSlot slot = this.slots[i];
                 //if the slot is empty
-                if (slot.getItemStackKey() == null) {
+                if (slot.getItemStack().isEmpty()) {
                     int canInsertUpTo = Math.min(key.getMaxStackSize(), slot.slotLimit);
                     if (canInsertUpTo > 0) {
                         int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
-                        slot.setItemStackKey(key);
+                        slot.setItemStack(key);
                         slot.setCount(insertedAmount);
                         amountToInsert -= insertedAmount;
                     }
@@ -100,22 +101,22 @@ public class OverlayedItemHandler {
     }
 
     private static class OverlayedItemHandlerSlot {
-        private ItemStackKey itemStackKey = null;
+        private ItemStack itemStack = ItemStack.EMPTY;
         private int count = 0;
         private int slotLimit = 0;
 
-        OverlayedItemHandlerSlot(ItemStack stackToMirror, int slotLimit) {
+        OverlayedItemHandlerSlot(@Nonnull ItemStack stackToMirror, int slotLimit) {
             if (!stackToMirror.isEmpty()) {
-                this.itemStackKey = KeySharedStack.getRegisteredStack(stackToMirror);
+                this.itemStack = stackToMirror.copy();
                 this.count = stackToMirror.getCount();
-                this.slotLimit = Math.min(itemStackKey.getMaxStackSize(), slotLimit);
+                this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
             } else {
                 this.slotLimit = slotLimit;
             }
         }
 
-        OverlayedItemHandlerSlot(ItemStackKey itemStackKey, int slotLimit, int count) {
-            this.itemStackKey = itemStackKey;
+        protected OverlayedItemHandlerSlot(@Nonnull ItemStack itemStack, int slotLimit, int count) {
+            this.itemStack = itemStack;
             this.count = count;
             this.slotLimit = slotLimit;
         }
@@ -128,14 +129,15 @@ public class OverlayedItemHandler {
             return count;
         }
 
-        public ItemStackKey getItemStackKey() {
-            return itemStackKey;
+        @Nonnull
+        public ItemStack getItemStack() {
+            return this.itemStack;
         }
 
-        public void setItemStackKey(ItemStackKey itemStackKey) {
-            if (this.itemStackKey != itemStackKey) {
-                this.itemStackKey = itemStackKey;
-                this.slotLimit = Math.min(itemStackKey.getMaxStackSize(), slotLimit);
+        public void setItemStack(ItemStack itemStack) {
+            if (!ItemStackHashStrategy.comparingAllButCount().equals(this.itemStack, itemStack)) {
+                this.itemStack = itemStack;
+                this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
             }
         }
 
@@ -143,8 +145,9 @@ public class OverlayedItemHandler {
             this.count = count;
         }
 
+        @Nonnull
         OverlayedItemHandlerSlot copy() {
-            return new OverlayedItemHandlerSlot(this.itemStackKey, this.slotLimit, this.count);
+            return new OverlayedItemHandlerSlot(this.itemStack, this.slotLimit, this.count);
         }
     }
 }

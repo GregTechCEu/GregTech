@@ -7,7 +7,11 @@ import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
-public class KeySharedStack {
+/**
+ * @deprecated Use {@link gregtech.api.util.ItemStackHashStrategy} with Custom FastUtil maps.
+ */
+@Deprecated
+public final class KeySharedStack {
 
     private static final WeakHashMap<ItemStackKey, WeakReference<ItemStackKey>> registeredItemStackKeys = new WeakHashMap<>();
     public static ItemStackKey EMPTY = new ItemStackKey(ItemStack.EMPTY);
@@ -16,7 +20,10 @@ public class KeySharedStack {
 
     }
 
-    public static synchronized ItemStackKey getRegisteredStack(final @Nonnull ItemStack itemStack) {
+    /**
+     * @deprecated Use {@link ItemStack#copy()} instead
+     */
+    public static synchronized ItemStackKey getRegisteredStack(@Nonnull final ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return EMPTY;
         }
