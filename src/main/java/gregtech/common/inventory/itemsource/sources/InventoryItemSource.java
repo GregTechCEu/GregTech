@@ -99,7 +99,7 @@ public class InventoryItemSource extends ItemSource {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack itemStack = itemHandler.extractItem(i, Integer.MAX_VALUE, true);
             if (itemStack.isEmpty()) continue;
-            amountMap.put(itemStack.copy(), amountMap.getInt(itemStack) + itemStack.getCount());
+            amountMap.put(itemStack, amountMap.getInt(itemStack) + itemStack.getCount());
         }
         this.itemStackByAmountMap = amountMap;
     }

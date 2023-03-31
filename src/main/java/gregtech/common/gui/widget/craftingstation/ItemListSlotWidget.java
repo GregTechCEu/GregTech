@@ -90,7 +90,7 @@ public class ItemListSlotWidget extends Widget {
                 //on server, we lookup item list to see how much we can actually insert
                 ItemStack heldItemStack = inventory.getItemStack();
                 IItemList itemList = gridWidget.getItemList();
-                int amountInserted = itemList.insertItem(heldItemStack.copy(), Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
+                int amountInserted = itemList.insertItem(heldItemStack, Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
                 heldItemStack.shrink(amountInserted);
                 uiAccess.sendHeldItemUpdate();
                 gui.entityPlayer.openContainer.detectAndSendChanges();

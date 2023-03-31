@@ -74,7 +74,7 @@ public class CachedRecipeData {
             return true; //stack is empty, nothing to return
         }
 
-        if (simulateExtractItem(currentStack.copy())) {
+        if (simulateExtractItem(currentStack)) {
             return true;
         }
 

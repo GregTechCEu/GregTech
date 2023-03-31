@@ -521,13 +521,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
             // if we got a stack, add it to the set and map
             if (!stack.isEmpty()) {
-                ItemStack stackKey = stack.copy();
-                parts.add(stackKey);
+                parts.add(stack);
 
-                PartInfo partInfo = partsMap.get(stackKey);
+                PartInfo partInfo = partsMap.get(stack);
                 if (partInfo == null) {
-                    partInfo = new PartInfo(stackKey, entry.getValue());
-                    partsMap.put(stackKey, partInfo);
+                    partInfo = new PartInfo(stack, entry.getValue());
+                    partsMap.put(stack, partInfo);
                 }
                 partInfo.amount++;
             }

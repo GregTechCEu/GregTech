@@ -83,7 +83,7 @@ public class CraftingRecipeLogic {
                 if (newStack.isEmpty()) {
                     continue;
                 }
-                oldStack = newStack.copy();
+                oldStack = newStack;
                 oldCraftingGrid[i] = oldStack;
                 inventoryCrafting.setInventorySlotContents(i, newStack.copy());
                 craftingGridChanged = true;
@@ -93,7 +93,7 @@ public class CraftingRecipeLogic {
                 craftingGridChanged = true;
             } else if (!ItemStack.areItemsEqual(oldStack, newStack) ||
                     !ItemStack.areItemStackTagsEqual(oldStack, newStack)) {
-                oldCraftingGrid[i] = newStack.copy();
+                oldCraftingGrid[i] = newStack;
                 inventoryCrafting.setInventorySlotContents(i, newStack.copy());
                 craftingGridChanged = true;
             }
@@ -123,7 +123,7 @@ public class CraftingRecipeLogic {
                 inventoryCrafting.setInventorySlotContents(i, current);
             }
 
-            int remainingAmount = itemStack.getCount() - itemSources.insertItem(itemStack.copy(), itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
+            int remainingAmount = itemStack.getCount() - itemSources.insertItem(itemStack, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
                 player.addItemStackToInventory(itemStack);

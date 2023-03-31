@@ -73,7 +73,7 @@ public class ItemListGridWidget extends ScrollableListWidget {
         ItemStack itemStack = clickedSlot.getHandle().getStack();
         if (clickedSlot.getHandle().canTakeStack(gui.entityPlayer) && !itemStack.isEmpty()) {
             itemStack = clickedSlot.onItemTake(gui.entityPlayer, itemStack, true);
-            int amountInserted = getItemList().insertItem(itemStack.copy(), itemStack.getCount(), false, InsertMode.LOWEST_PRIORITY);
+            int amountInserted = getItemList().insertItem(itemStack, itemStack.getCount(), false, InsertMode.LOWEST_PRIORITY);
             if (amountInserted > 0) {
                 clickedSlot.onItemTake(gui.entityPlayer, itemStack, false);
                 itemStack.shrink(amountInserted);

@@ -59,7 +59,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                 EntityPlayer player = gui.entityPlayer;
                 if (isShiftDown) {
                     OverlayedItemHandler playerInventory = new OverlayedItemHandler(new PlayerMainInvWrapper(gui.entityPlayer.inventory));
-                    ItemStack toMerge = slotReference.getStack().copy();
+                    ItemStack toMerge = slotReference.getStack();
                     int crafts = this.slotReference.getStack().getCount();
                     if (isLeftClick) {
                         //limit shift click to one stack at a time
