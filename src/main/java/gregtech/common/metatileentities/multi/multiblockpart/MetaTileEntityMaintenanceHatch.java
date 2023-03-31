@@ -39,7 +39,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -59,7 +58,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     private final boolean isConfigurable;
     private boolean isTaped;
-    private ItemStackHandler itemStackHandler;
+    private final ItemStackHandler itemStackHandler = new TapeItemStackHandler(1);;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
@@ -99,14 +98,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return new TapeItemStackHandler(1);
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.itemInventory = itemStackHandler;
     }
 
     @Override
-    protected void initializeInventory() {
-        super.initializeInventory();
-        this.itemInventory = itemStackHandler = new ItemStackHandler(1);
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        clearInventory(itemBuffer, itemStackHandler);
     }
 
     /**
@@ -429,6 +428,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         // Legacy Inventory Handler Support
         if (data.hasKey("ImportInventory")) {
             GTUtility.readItems(itemStackHandler, "ImportInventory", data);
+            data.removeTag("ImportInventory");
         }
     }
 
