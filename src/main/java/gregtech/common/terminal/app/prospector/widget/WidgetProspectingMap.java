@@ -321,7 +321,7 @@ public class WidgetProspectingMap extends Widget {
         int zPos = ((Minecraft.getMinecraft().player.chunkCoordZ + zDiff) << 4) + 8;
 
         BlockPos b = new BlockPos(xPos, Minecraft.getMinecraft().world.getHeight(xPos, zPos), zPos);
-        if (System.currentTimeMillis() - lastClicked < 400) {
+        if (System.currentTimeMillis() - lastClicked < 400 && !hoveredNames.isEmpty()) {
             boolean added = false;
             trimHoveredNames();
 
@@ -340,7 +340,7 @@ public class WidgetProspectingMap extends Widget {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    List<String> trimHoveredNames() {
+    void trimHoveredNames() {
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
         for (OreDepositDefinition odd : oreVeins) {
             for (FillerEntry fillerEntry : odd.getBlockFiller().getAllPossibleStates()) {
@@ -361,7 +361,6 @@ public class WidgetProspectingMap extends Widget {
                 }
             }
         }
-        return this.hoveredNames;
     }
 
     @Optional.Method(modid = "journeymap")
@@ -436,17 +435,22 @@ public class WidgetProspectingMap extends Widget {
                 b.getX(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
                 b.getZ(),
-                hoveredNames.toString(), "", bestColorIndex);
-        if (!wps.getList().contains(xaeroWaypoint)) {
-            wps.getList().add(xaeroWaypoint);
-            try {
-                minimapSession.getModMain().getSettings().saveWaypoints(ww);
-            } catch (IOException e) {
+                hoveredNames.toString(), hoveredNames.get(0).substring(0, 1), bestColorIndex);
+
+        for (xaero.common.minimap.waypoints.Waypoint xwp : wps.getList()) {
+            if (xwp.getX() == xaeroWaypoint.getX() &&
+                    xwp.getY() == xaeroWaypoint.getY() &&
+                    xwp.getZ() == xaeroWaypoint.getZ()) {
                 return false;
             }
-            return true;
         }
-        return false;
+        wps.getList().add(xaeroWaypoint);
+        try {
+            minimapSession.getModMain().getSettings().saveWaypoints(ww);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
     private int clamp(int color) {
