@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class ItemOreFilterTestSlot extends gregtech.common.gui.widget.orefilter.OreFilterTestSlot implements IGhostIngredientTarget {
+public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIngredientTarget {
 
     @Nonnull
     private ItemStack testStack = ItemStack.EMPTY;
