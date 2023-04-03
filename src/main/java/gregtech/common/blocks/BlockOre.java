@@ -25,7 +25,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -77,7 +76,12 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Override
     public int damageDropped(@Nonnull IBlockState state) {
-        return getMetaFromState(state);
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return getMetaFromState(state);
+        } else {
+            return 0;
+        }
     }
 
     @Nonnull
@@ -120,41 +124,10 @@ public class BlockOre extends Block implements IBlockOre {
     }
 
     @Override
-    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            super.getDrops(drops, world, pos, state, fortune);
-        } else {
-            super.getDrops(drops, world, pos, this.getDefaultState(), fortune);
-        }
-    }
-
-    @Override
-    @Nonnull
-    @SuppressWarnings("deprecation")
-    public ItemStack getItem(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return super.getItem(worldIn, pos, state);
-        }
-        return new ItemStack(this, 1, 0);
-    }
-
-    @Override
     @SuppressWarnings("deprecation")
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         // Still get correct block even if shouldBeDroppedAsItem is false
-        return super.getItem(world, pos, state);
-    }
-
-    @Override
-    @Nonnull
-    protected ItemStack getSilkTouchDrop(IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return super.getSilkTouchDrop(state);
-        }
-        return super.getSilkTouchDrop(this.getDefaultState());
+        return BlockOre.getItem(state);
     }
 
     @Override
