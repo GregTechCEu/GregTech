@@ -83,10 +83,10 @@ public class CachedRecipeData {
         Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(slot, (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount()));
 
         //iterate stored items to find equivalent
-        for (ItemStack itemStackKey : itemSources.getStoredItems()) {
+        for (ItemStack itemStack : itemSources.getStoredItems()) {
             boolean matchedPreviously = false;
-            if (map.containsKey(itemStackKey)) {
-                if (!map.get(itemStackKey)) {
+            if (map.containsKey(itemStack)) {
+                if (!map.get(itemStack)) {
                     continue;
                 } else {
                     //cant return here before checking if:
@@ -102,28 +102,28 @@ public class CachedRecipeData {
                 //recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
                 //take the stack
                 for (Ingredient in : recipe.getIngredients()) {
-                    if (in.apply(itemStackKey)) {
+                    if (in.apply(itemStack)) {
                         matched = true;
                         break;
                     }
                 }
                 if (!matched) {
-                    map.put(itemStackKey, false);
+                    map.put(itemStack, false);
                     continue;
                 }
             }
 
             //update item in slot, and check that recipe matches and output item is equal to the expected one
-            inventory.setInventorySlotContents(slot, itemStackKey);
+            inventory.setInventorySlotContents(slot, itemStack);
             if (recipe.matches(inventory, itemSources.getWorld()) &&
                     (ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack) || recipe instanceof ShapedOreEnergyTransferRecipe)) {
-                map.put(itemStackKey, true);
+                map.put(itemStack, true);
                 //ingredient matched, attempt to extract it and return if successful
-                if (simulateExtractItem(itemStackKey)) {
+                if (simulateExtractItem(itemStack)) {
                     return true;
                 }
             }
-            map.put(itemStackKey, false);
+            map.put(itemStack, false);
             inventory.setInventorySlotContents(slot, currentStack);
         }
         //nothing matched, so return null
