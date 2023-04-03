@@ -251,9 +251,11 @@ public class TextFieldWidget2 extends Widget {
         String renderText = getRenderText();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         boolean bold = false;
+        // Determine width of string, copied from FontRenderer#getStringWidth
         for (float x = 0; i < renderText.length() && x < base; i++) {
             char c = renderText.charAt(i);
             int cw = fontRenderer.getCharWidth(c);
+            // char width of the formatting character (U+167) is -1, for some reason
             if (cw < 0 && i < renderText.length() - 1) {
                 cw = 0;
                 char c2 = renderText.charAt(++i);
