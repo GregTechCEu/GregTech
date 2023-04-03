@@ -181,7 +181,7 @@ public class GTTransferUtils {
             if (slotStack.isEmpty()) {
                 emptySlots.add(i);
             }
-            if (ItemHandlerHelper.canItemStacksStackRelaxed(stack, slotStack)) {
+            if (ItemHandlerHelper.canItemStacksStack(stack, slotStack)) {
                 stack = handler.insertItem(i, stack, simulate);
                 if (stack.isEmpty()) {
                     return ItemStack.EMPTY;
