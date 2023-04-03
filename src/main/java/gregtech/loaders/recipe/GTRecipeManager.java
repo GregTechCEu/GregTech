@@ -23,8 +23,8 @@ public final class GTRecipeManager {
     }
 
     public static void loadLatest() {
-        DecompositionRecipeHandler.runRecipeGeneration();
         MinecraftForge.EVENT_BUS.post(new MaterialInfoEvent());
+        DecompositionRecipeHandler.runRecipeGeneration();
         RecyclingRecipes.init();
     }
 }
