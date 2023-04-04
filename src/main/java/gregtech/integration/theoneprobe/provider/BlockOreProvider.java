@@ -20,7 +20,7 @@ public class BlockOreProvider implements IProbeInfoProvider {
         if (blockState.getBlock() instanceof BlockOre) {
             StoneType stoneType = blockState.getValue(((BlockOre) blockState.getBlock()).STONE_TYPE);
             if (entityPlayer.isSneaking() && !stoneType.shouldBeDroppedAsItem) {
-                probeInfo.text(TextStyleClass.INFO + "Drops:");
+                probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.block_drops*}:");
                 ItemStack itemDropped = blockState.getBlock().getItem(world, probeHitData.getPos(), blockState);
                 IProbeInfo horizontalInfo = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
                 horizontalInfo.item(itemDropped);
