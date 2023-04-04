@@ -35,14 +35,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@ParametersAreNonnullByDefault
 public class BlockLamp extends VariantBlock<EnumDyeColor> {
 
+    @Nonnull
     public static BlockLamp getInstance(boolean noLight, boolean noBloom, boolean borderless, boolean inverted, boolean powered) {
         int index = 0;
         if (noLight) index |= 16;
@@ -124,6 +127,7 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
         return new BlockStateContainer(this, VARIANT);
     }
 
+    @Nonnull
     protected IBlockState getComplementaryState(IBlockState state) {
         return getInstance(this.noLight, this.noBloom, this.borderless, this.inverted, !this.powered)
                 .getState(state.getValue(VARIANT));
@@ -166,7 +170,7 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
         if (!powered) {
             super.getSubBlocks(tab, list);
         }
@@ -179,7 +183,7 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         if (this.inverted) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.inverted"));
         if (this.noBloom) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.no_bloom"));
