@@ -83,7 +83,11 @@ public class MaterialIconType {
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
 
     // BLOCK TEXTURES
-    public static final MaterialIconType fluid = new MaterialIconType("fluid"); //TODO figure out what to do with this
+    /**
+     * @deprecated Use {@link MaterialIconType#liquid} or {@link MaterialIconType#gas} or {@link MaterialIconType#plasma}
+     */
+    @Deprecated
+    public static final MaterialIconType fluid = new MaterialIconType("fluid");
     public static final MaterialIconType liquid = new MaterialIconType("liquid");
     public static final MaterialIconType liquid_flowing = new MaterialIconType("liquid_flowing");
     public static final MaterialIconType gas = new MaterialIconType("gas");
