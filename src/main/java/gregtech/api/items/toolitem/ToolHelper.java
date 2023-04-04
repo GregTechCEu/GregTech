@@ -18,7 +18,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.tools.enchants.EnchantmentHardHammer;
+import gregtech.tool.enchantment.EnchantmentHardHammer;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;

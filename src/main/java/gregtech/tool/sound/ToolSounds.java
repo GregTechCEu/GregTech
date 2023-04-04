@@ -17,7 +17,7 @@ public class ToolSounds {
     public static SoundEvent TRICORDER_TOOL;
     public static SoundEvent WRENCH_TOOL;
     public static SoundEvent MORTAR_TOOL;
-    public static SoundEvent SOFT_HAMMER_TOOL;
+    public static SoundEvent SOFT_MALLET_TOOL;
 
     public static void register() {
         DRILL_TOOL = soundManager.registerSound("use.drill");
@@ -31,6 +31,6 @@ public class ToolSounds {
         TRICORDER_TOOL = soundManager.registerSound("use.tricorder");
         WRENCH_TOOL = soundManager.registerSound("use.wrench");
         MORTAR_TOOL = soundManager.registerSound("use.mortar");
-        SOFT_HAMMER_TOOL = soundManager.registerSound("use.soft_hammer");
+        SOFT_MALLET_TOOL = soundManager.registerSound("use.soft_hammer");
     }
 }
