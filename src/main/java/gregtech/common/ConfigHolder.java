@@ -116,6 +116,18 @@ public class ConfigHolder {
 
         @Config.Comment({"Block to replace mined ores with in the miner and multiblock miner.", "Default: minecraft:cobblestone"})
         public String replaceMinedBlocksWith = "minecraft:cobblestone";
+
+        /**
+         * <strong>Addons mods should not reference this config directly.</strong>
+         * Use {@link gregtech.api.GregTechAPI#highTier} instead.
+         */
+        @Config.Comment({"If High Tier (>UV-tier) GT content should be registered.",
+                "Items and Machines enabled with this config will have missing recipes by default.",
+                "This is intended for modpack developers only, and is not playable without custom tweaks or addons.",
+                "Other mods can override this to true, regardless of the config file.",
+                "Default: false"})
+        @Config.RequiresMcRestart
+        public boolean highTierContent = false;
     }
 
     public static class WorldGenOptions {

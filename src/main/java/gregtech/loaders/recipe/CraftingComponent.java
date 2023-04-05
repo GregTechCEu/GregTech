@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.BlastProperty;
@@ -134,7 +135,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             PUMP.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_PUMP_UHV.getStackForm()},
                     {10, MetaItems.ELECTRIC_PUMP_UEV.getStackForm()},
@@ -290,7 +291,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             HULL.appendIngredients(Stream.of(new Object[][]{
                     {10, MetaTileEntities.HULL[10].getStackForm()},
                     {11, MetaTileEntities.HULL[11].getStackForm()},
@@ -315,7 +316,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             CASING.appendIngredients(Stream.of(new Object[][]{
                     {10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UEV)},
                     {11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UIV)},
@@ -441,7 +442,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             MOTOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_MOTOR_UHV.getStackForm()},
                     {10, MetaItems.ELECTRIC_MOTOR_UEV.getStackForm()},
@@ -478,7 +479,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             SENSOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.SENSOR_UHV.getStackForm()},
                     {10, MetaItems.SENSOR_UEV.getStackForm()},
@@ -534,7 +535,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             PISTON.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_PISTON_UHV.getStackForm()},
                     {10, MetaItems.ELECTRIC_PISTON_UEV.getStackForm()},
@@ -557,7 +558,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             EMITTER.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.EMITTER_UHV.getStackForm()},
                     {10, MetaItems.EMITTER_UEV.getStackForm()},
@@ -580,7 +581,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             CONVEYOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.CONVEYOR_MODULE_UHV.getStackForm()},
                     {10, MetaItems.CONVEYOR_MODULE_UEV.getStackForm()},
@@ -603,7 +604,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             ROBOT_ARM.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ROBOT_ARM_UHV.getStackForm()},
                     {10, MetaItems.ROBOT_ARM_UEV.getStackForm()},
@@ -698,7 +699,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        if (GTValues.HT) {
+        if (GregTechAPI.isHighTier()) {
             FIELD_GENERATOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.FIELD_GENERATOR_UHV.getStackForm()},
                     {10, MetaItems.FIELD_GENERATOR_UEV.getStackForm()},

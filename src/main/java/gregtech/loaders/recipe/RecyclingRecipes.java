@@ -46,7 +46,7 @@ public class RecyclingRecipes {
         for (Entry<ItemStack, ItemMaterialInfo> entry : OreDictUnifier.getAllItemInfos()) {
             ItemStack itemStack = entry.getKey();
             ItemMaterialInfo materialInfo = entry.getValue();
-            ArrayList<MaterialStack> materialStacks = new ArrayList<>(materialInfo.getMaterials());
+            List<MaterialStack> materialStacks = new ArrayList<>(materialInfo.getMaterials());
             registerRecyclingRecipes(itemStack, materialStacks, false, null);
         }
     }
