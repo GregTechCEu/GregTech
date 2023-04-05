@@ -2648,6 +2648,7 @@ gregtech.machine.crate.aluminium.name=Aluminium Crate
 gregtech.machine.crate.stainless_steel.name=Stainless Steel Crate
 gregtech.machine.crate.titanium.name=Titanium Crate
 gregtech.machine.crate.tungstensteel.name=Tungstensteel Crate
+gregtech.crate.tooltip.taped_movement=Can be Taped to keep inventory contents when broken
 
 # Safe
 gregtech.machine.locked_safe.name=Locked Safe

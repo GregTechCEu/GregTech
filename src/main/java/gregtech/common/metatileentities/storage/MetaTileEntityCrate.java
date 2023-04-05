@@ -36,6 +36,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
+import static gregtech.api.capability.GregtechDataCodes.TAG_KEY_PAINTING_COLOR;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
 
@@ -166,28 +167,34 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public void initFromItemStackData(NBTTagCompound itemStack) {
-        super.initFromItemStackData(itemStack);
-        this.isTaped = itemStack.getBoolean(TAPED_NBT);
+    public void initFromItemStackData(NBTTagCompound data) {
+        super.initFromItemStackData(data);
+        if (data.hasKey(TAG_KEY_PAINTING_COLOR)) {
+            this.setPaintingColor(data.getInteger(TAG_KEY_PAINTING_COLOR));
+        }
+        this.isTaped = data.getBoolean(TAPED_NBT);
         if(isTaped) {
-            this.inventory.deserializeNBT(itemStack.getCompoundTag("Inventory"));
-            itemStack.removeTag("Inventory");
+            this.inventory.deserializeNBT(data.getCompoundTag("Inventory"));
         }
 
-        itemStack.removeTag(TAPED_NBT);
-        if(itemStack.isEmpty()) {
-            itemStack = null;
-        }
+        data.removeTag(TAPED_NBT);
+        data.removeTag(TAG_KEY_PAINTING_COLOR);
 
         this.isTaped = false;
     }
 
     @Override
-    public void writeItemStackData(NBTTagCompound itemStack) {
-        super.writeItemStackData(itemStack);
-        itemStack.setBoolean(TAPED_NBT, isTaped);
+    public void writeItemStackData(NBTTagCompound data) {
+        super.writeItemStackData(data);
+
+        // Account for painting color when breaking the crate
+        if (this.isPainted()) {
+            data.setInteger(TAG_KEY_PAINTING_COLOR, this.getPaintingColor());
+        }
+        // Don't write tape NBT if not taped, to stack with ones from JEI
         if(isTaped) {
-            itemStack.setTag("Inventory", inventory.serializeNBT());
+            data.setBoolean(TAPED_NBT, isTaped);
+            data.setTag("Inventory", inventory.serializeNBT());
         }
     }
 
@@ -210,6 +217,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
+        tooltip.add(I18n.format("gregtech.crate.tooltip.taped_movement"));
     }
 
     @Override

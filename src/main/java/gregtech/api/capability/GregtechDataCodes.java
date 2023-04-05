@@ -142,6 +142,12 @@ public class GregtechDataCodes {
     // From MetaTileEntityHolder
     public static final String CUSTOM_NAME = "CustomName";
 
+    // From MetaTileEntity
+    public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
+    public static final String TAG_KEY_FRAGILE = "Fragile";
+    public static final String TAG_KEY_MUFFLED = "Muffled";
+
+
     // MTE Trait Names
 
     public static final String ABSTRACT_WORKABLE_TRAIT = "RecipeMapWorkable";
