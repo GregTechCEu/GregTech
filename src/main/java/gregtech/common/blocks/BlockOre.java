@@ -6,8 +6,10 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IBlockOre;
+import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.client.model.OreBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
@@ -33,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class BlockOre extends Block implements IBlockOre {
@@ -72,6 +75,23 @@ public class BlockOre extends Block implements IBlockOre {
         BlockStateContainer stateContainer = createStateContainer();
         this.blockState = stateContainer;
         setDefaultState(stateContainer.getBaseState());
+    }
+
+    @Nonnull
+    @Override
+    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        // if the stone type should be dropped as an item, or if it is within the first 16 block states
+        // don't do any special handling
+        if (stoneType.shouldBeDroppedAsItem || StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType) < 16) {
+            return super.getItemDropped(state, rand, fortune);
+        }
+
+        // always drop StoneTypes.STONE as the default
+        // this prevents stone types of id>15 from dropping the meta=0 variant of the block,
+        // which might not be the block with the vanilla stone type
+        IBlockState stoneOre = OreConfigUtils.getOreForMaterial(this.material).get(StoneTypes.STONE);
+        return Item.getItemFromBlock(stoneOre.getBlock());
     }
 
     @Override
