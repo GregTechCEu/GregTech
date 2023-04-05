@@ -11,6 +11,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_INVERTED;
+
 public abstract class CoverDetectorBase extends CoverBehavior {
     protected static final String NBT_KEY_IS_INVERTED = "isInverted";
 
@@ -33,7 +35,7 @@ public abstract class CoverDetectorBase extends CoverBehavior {
         setInverted(!isInverted());
 
         if (!this.coverHolder.getWorld().isRemote) {
-            this.coverHolder.writeCoverData(this, 100, b -> b.writeBoolean(isInverted()));
+            this.coverHolder.writeCoverData(this, UPDATE_INVERTED, b -> b.writeBoolean(isInverted()));
             this.coverHolder.notifyBlockUpdate();
             this.coverHolder.markDirty();
         }
