@@ -330,7 +330,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
         if (frontFacing == EnumFacing.UP) {
-            if (this.outputFacing == null) {
+            if (this.outputFacing == null || this.outputFacing == EnumFacing.DOWN) {
                 super.setFrontFacing(EnumFacing.NORTH);
             } else {
                 super.setFrontFacing(outputFacing.getOpposite());
@@ -403,7 +403,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
 
         if (this.frontFacing == EnumFacing.UP) {
-            this.frontFacing = this.outputFacing.getOpposite();
+            if (this.outputFacing != EnumFacing.DOWN) {
+                this.frontFacing = this.outputFacing.getOpposite();
+            } else {
+                this.frontFacing = EnumFacing.NORTH;
+            }
         }
         this.autoOutputFluids = buf.readBoolean();
         this.locked = buf.readBoolean();
