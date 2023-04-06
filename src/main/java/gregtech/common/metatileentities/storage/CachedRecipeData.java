@@ -53,11 +53,11 @@ public class CachedRecipeData {
             int requestedAmount = entry.getIntValue();
             int extractedAmount = itemSources.extractItem(stack, requestedAmount, false);
             if (extractedAmount != requestedAmount) {
-                gatheredItems.put(stack, extractedAmount);
+                gatheredItems.put(stack.copy(), extractedAmount);
                 gathered = false;
                 break;
             } else {
-                gatheredItems.put(stack, requestedAmount);
+                gatheredItems.put(stack.copy(), requestedAmount);
             }
         }
         if (!gathered) {
@@ -108,7 +108,7 @@ public class CachedRecipeData {
                     }
                 }
                 if (!matched) {
-                    map.put(itemStack, false);
+                    map.put(itemStack.copy(), false);
                     continue;
                 }
             }
@@ -134,7 +134,7 @@ public class CachedRecipeData {
         int amountToExtract = requiredItems.getOrDefault(itemStack, 0) + 1;
         int extracted = itemSources.extractItem(itemStack, amountToExtract, true);
         if (extracted == amountToExtract) {
-            requiredItems.put(itemStack, amountToExtract);
+            requiredItems.put(itemStack.copy(), amountToExtract);
             return true;
         }
         return false;

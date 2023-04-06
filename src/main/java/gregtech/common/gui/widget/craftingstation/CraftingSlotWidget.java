@@ -121,7 +121,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     }
 
     private static boolean canMergeToInv(OverlayedItemHandler inventory, ItemStack stack, int crafts) {
-        return inventory.insertStackedItemStackKey(stack, crafts) == 0;
+        return inventory.insertStackedItemStack(stack, crafts) == 0;
     }
 
     private void mergeToHand(ItemStack toMerge) {

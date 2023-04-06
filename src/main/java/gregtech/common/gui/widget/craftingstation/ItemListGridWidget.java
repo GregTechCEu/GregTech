@@ -193,13 +193,16 @@ public class ItemListGridWidget extends ScrollableListWidget {
                 int itemsRemoved = buffer.readVarInt();
                 for (int i = 0; i < itemsRemoved; i++) {
                     ItemStack itemStack = buffer.readItemStack();
-                    this.displayItemList.removeIf(it -> it.getItemStack().equals(itemStack));
+                    this.displayItemList.removeIf(it -> ItemStackHashStrategy.comparingAllButCount().equals(it.getItemStack(), itemStack));
                 }
                 int itemsChanged = buffer.readVarInt();
                 for (int i = 0; i < itemsChanged; i++) {
                     ItemStack itemStack = buffer.readItemStack();
                     int newTotalAmount = buffer.readVarInt();
-                    SimpleItemInfo itemInfo = displayItemList.stream().filter(it -> it.getItemStack().equals(itemStack)).findAny().orElse(null);
+                    SimpleItemInfo itemInfo = displayItemList.stream()
+                            .filter(it -> ItemStackHashStrategy.comparingAllButCount().equals(it.getItemStack(), itemStack))
+                            .findAny()
+                            .orElse(null);
                     if (itemInfo == null) {
                         itemInfo = new SimpleItemInfo(itemStack);
                         this.displayItemList.add(itemInfo);

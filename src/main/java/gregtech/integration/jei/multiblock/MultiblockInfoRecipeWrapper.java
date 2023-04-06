@@ -459,14 +459,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private static class PartInfo {
-        final ItemStack itemStackKey;
+        final ItemStack itemStack;
         boolean isController = false;
         boolean isTile = false;
         final int blockId;
         int amount = 0;
 
-        PartInfo(final ItemStack itemStackKey, final BlockInfo blockInfo) {
-            this.itemStackKey = itemStackKey;
+        PartInfo(final ItemStack itemStack, final BlockInfo blockInfo) {
+            this.itemStack = itemStack;
             this.blockId = Block.getIdFromBlock(blockInfo.getBlockState().getBlock());
             TileEntity tileEntity = blockInfo.getTileEntity();
             if (tileEntity != null) {
@@ -477,8 +477,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
         }
 
+        @Nonnull
         ItemStack getItemStack() {
-            ItemStack result = this.itemStackKey.copy();
+            ItemStack result = this.itemStack.copy();
             result.setCount(this.amount);
             return result;
         }

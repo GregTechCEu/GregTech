@@ -1,9 +1,9 @@
 package gregtech.api.util;
 
 import gregtech.api.recipes.FluidKey;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -26,7 +26,7 @@ public final class GTHashMaps {
      */
     @Nonnull
     public static Object2IntMap<ItemStack> fromItemHandler(@Nonnull IItemHandler inputs) {
-        final Object2IntMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        final Object2IntMap<ItemStack> map = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
 
         // Create a single stack of the combined count for each item
 
@@ -48,7 +48,7 @@ public final class GTHashMaps {
      */
     @Nonnull
     public static Object2IntMap<ItemStack> fromItemStackCollection(@Nonnull Iterable<ItemStack> inputs) {
-        final Object2IntMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        final Object2IntMap<ItemStack> map = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
 
         // Create a single stack of the combined count for each item
 

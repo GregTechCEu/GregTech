@@ -12,8 +12,8 @@ public interface IItemList {
     @Nullable
     IItemInfo getItemInfo(ItemStack stack);
 
-    default boolean hasItemStored(ItemStack itemStackKey) {
-        return getItemInfo(itemStackKey) != null;
+    default boolean hasItemStored(ItemStack stack) {
+        return getItemInfo(stack) != null;
     }
 
     int insertItem(ItemStack itemStack, int amount, boolean simulate, InsertMode insertMode);

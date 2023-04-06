@@ -117,7 +117,7 @@ public class GTTransferUtils {
 
             for (Object2IntMap.Entry<ItemStack> entry : stackKeyMap.object2IntEntrySet()) {
                 int amountToInsert = entry.getIntValue();
-                int amount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+                int amount = overlayedItemHandler.insertStackedItemStack(entry.getKey(), amountToInsert);
                 if (amount > 0) {
                     return false;
                 }

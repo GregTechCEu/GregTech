@@ -130,7 +130,7 @@ public abstract class ParallelLogic {
                 } else {
                     amountToInsert = entry.getIntValue() * multiplier;
                 }
-                returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+                returnedAmount = overlayedItemHandler.insertStackedItemStack(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
                 }
@@ -182,7 +182,7 @@ public abstract class ParallelLogic {
 
             for (Object2IntMap.Entry<ItemStack> entry : appendedResultMap.object2IntEntrySet()) {
                 int amountToInsert = entry.getIntValue();
-                returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+                returnedAmount = overlayedItemHandler.insertStackedItemStack(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
                 }
