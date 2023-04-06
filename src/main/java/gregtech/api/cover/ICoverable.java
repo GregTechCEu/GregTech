@@ -24,6 +24,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -217,7 +218,12 @@ public interface ICoverable {
         return false;
     }
 
-    default boolean canRenderMachineGrid() {
+    /**
+     * @param mainHandStack the itemstack held in the player's main hand
+     * @param offHandStack the itemstack held in the player's off-hand
+     * @return if the machine grid should be rendered
+     */
+    default boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
         return true;
     }
 }
