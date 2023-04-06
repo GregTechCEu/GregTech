@@ -41,6 +41,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +241,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     @Override
-    public boolean canRenderMachineGrid() {
+    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
         return false;
     }
 
