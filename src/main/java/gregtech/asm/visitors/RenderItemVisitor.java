@@ -39,9 +39,11 @@ public class RenderItemVisitor implements Opcodes {
                 }
 
                 boolean ifne = false, l2 = false, renderLampOverlayApplied = false;
+
                 boolean primed, onFrame, renderElectricBarApplied;
                 primed = onFrame = renderElectricBarApplied = enderCoreLoaded;
                 Label target = null;
+
                 for (int i = 0; i < m.instructions.size(); i++) {
                     AbstractInsnNode next = m.instructions.get(i);
 
@@ -68,23 +70,34 @@ public class RenderItemVisitor implements Opcodes {
                         continue;
                     }
 
-                    if (!primed && target == null && next.getOpcode() == INVOKEVIRTUAL && next instanceof MethodInsnNode) {
-                        if ("showDurabilityBar".equals(((MethodInsnNode) next).name)) {
+                    if (renderElectricBarApplied) {
+                        break;
+                    }
+
+                    if (!primed) {
+                        if (next.getOpcode() == INVOKEVIRTUAL &&
+                                next instanceof MethodInsnNode &&
+                                "showDurabilityBar".equals(((MethodInsnNode) next).name)) {
                             primed = true;
                         }
-                    }
-
-                    if (primed && next.getOpcode() == IFEQ && next instanceof JumpInsnNode) {
-                        target = ((JumpInsnNode) next).label.getLabel();
-                        primed = false;
-                    }
-
-                    if (target != null && next instanceof LabelNode && ((LabelNode) next).getLabel() == target) {
-                        onFrame = true;
                         continue;
                     }
 
-                    if (onFrame && next instanceof FrameNode) {
+                    if (target == null) {
+                        if (next.getOpcode() == IFEQ && next instanceof JumpInsnNode) {
+                            target = ((JumpInsnNode) next).label.getLabel();
+                        }
+                        continue;
+                    }
+
+                    if (!onFrame) {
+                        if (next instanceof LabelNode && ((LabelNode) next).getLabel() == target) {
+                            onFrame = true;
+                        }
+                        continue;
+                    }
+
+                    if (next instanceof FrameNode) {
                         m.instructions.insert(next, callRenderElectricBar);
                         renderElectricBarApplied = true;
                         break;
