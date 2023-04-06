@@ -68,12 +68,24 @@ public class BlockLamp extends Block {
         setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
 
-    public boolean isLightActive(ItemStack stack) {
+    public boolean isLightEnabled(ItemStack stack) {
         return (stack.getMetadata() & LIGHT_FLAG) == 0;
     }
 
-    public boolean isBloomActive(ItemStack stack) {
+    public boolean isBloomEnabled(ItemStack stack) {
         return (stack.getMetadata() & BLOOM_FLAG) == 0;
+    }
+
+    public boolean isInverted(IBlockState state) {
+        return state.getValue(INVERTED);
+    }
+
+    public boolean isLightEnabled(IBlockState state) {
+        return state.getValue(LIGHT);
+    }
+
+    public boolean isBloomEnabled(IBlockState state) {
+        return state.getValue(BLOOM);
     }
 
     public int getItemMetadataStates() {
