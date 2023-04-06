@@ -1,12 +1,16 @@
 package gregtech.api.unification;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.*;
+import gregtech.api.unification.stack.ItemAndMetadata;
+import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -19,6 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
@@ -30,15 +35,14 @@ import static gregtech.api.GTValues.M;
 
 public class OreDictUnifier {
 
-    private OreDictUnifier() {
-    }
+    private OreDictUnifier() {}
 
     //simple version of material registry for marker materials
     private static final Map<String, MarkerMaterial> markerMaterialRegistry = new Object2ObjectOpenHashMap<>();
-    private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new WildcardAwareHashMap<>();
-    private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new WildcardAwareHashMap<>();
+    private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new Object2ObjectOpenHashMap<>();
+    private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<UnificationEntry, ArrayList<ItemAndMetadata>> stackUnificationItems = new Object2ObjectOpenHashMap<>();
-    private static final Map<ItemAndMetadata, Set<String>> stackOreDictName = new WildcardAwareHashMap<>();
+    private static final Map<ItemAndMetadata, Set<String>> stackOreDictName = new Object2ObjectOpenHashMap<>();
     private static final Map<String, List<ItemStack>> oreDictNameStacks = new Object2ObjectOpenHashMap<>();
 
     @Nullable
@@ -101,10 +105,10 @@ public class OreDictUnifier {
 
     @SubscribeEvent
     public static void onItemRegistration(OreRegisterEvent event) {
-        ItemAndMetadata simpleItemStack = new ItemAndMetadata(event.getOre());
+        ItemAndMetadata key = new ItemAndMetadata(event.getOre());
         String oreName = event.getName();
         //cache this registration by name
-        stackOreDictName.computeIfAbsent(simpleItemStack, k -> new HashSet<>()).add(oreName);
+        stackOreDictName.computeIfAbsent(key, k -> new HashSet<>()).add(oreName);
         List<ItemStack> itemStackListForOreDictName = oreDictNameStacks.computeIfAbsent(oreName, k -> new ArrayList<>());
         addAndSort(itemStackListForOreDictName, event.getOre().copy(), getItemStackComparator());
 
@@ -152,10 +156,10 @@ public class OreDictUnifier {
         if (orePrefix != null && (material != null || orePrefix.isSelfReferencing)) {
             UnificationEntry unificationEntry = new UnificationEntry(orePrefix, material);
             ArrayList<ItemAndMetadata> itemListForUnifiedEntry = stackUnificationItems.computeIfAbsent(unificationEntry, p -> new ArrayList<>());
-            addAndSort(itemListForUnifiedEntry, simpleItemStack, getSimpleItemStackComparator());
+            addAndSort(itemListForUnifiedEntry, key, getSimpleItemStackComparator());
 
             if (!unificationEntry.orePrefix.isMarkerPrefix()) {
-                stackUnificationInfo.put(simpleItemStack, unificationEntry);
+                stackUnificationInfo.put(key, unificationEntry);
             }
             orePrefix.processOreRegistration(material);
         }
@@ -163,10 +167,16 @@ public class OreDictUnifier {
 
     public static Set<String> getOreDictionaryNames(ItemStack itemStack) {
         if (itemStack.isEmpty()) return Collections.emptySet();
-        ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
-        if (stackOreDictName.containsKey(simpleItemStack))
-            return Collections.unmodifiableSet(stackOreDictName.get(simpleItemStack));
-        return Collections.emptySet();
+        ItemAndMetadata key = new ItemAndMetadata(itemStack);
+        Set<String> names = stackOreDictName.get(key);
+        Set<String> wildcardNames = key.isWildcard() ? null : stackOreDictName.get(key.toWildcard());
+        if (names == null) {
+            return wildcardNames == null ? Collections.emptySet() : Collections.unmodifiableSet(wildcardNames);
+        } else if (wildcardNames == null) {
+            return Collections.unmodifiableSet(names);
+        } else {
+            return Sets.union(names, wildcardNames);
+        }
     }
 
     public static List<ItemStack> getAllWithOreDictionaryName(String oreDictionaryName) {
@@ -178,8 +188,8 @@ public class OreDictUnifier {
     @Nullable
     public static MaterialStack getMaterial(ItemStack itemStack) {
         if (itemStack.isEmpty()) return null;
-        ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
-        UnificationEntry entry = stackUnificationInfo.get(simpleItemStack);
+        ItemAndMetadata key = new ItemAndMetadata(itemStack);
+        UnificationEntry entry = getOrWildcard(stackUnificationInfo, key);
         if (entry != null) {
             Material entryMaterial = entry.material;
             if (entryMaterial == null) {
@@ -189,24 +199,21 @@ public class OreDictUnifier {
                 return new MaterialStack(entryMaterial, entry.orePrefix.getMaterialAmount(entryMaterial));
             }
         }
-        ItemMaterialInfo info = materialUnificationInfo.get(simpleItemStack);
+        ItemMaterialInfo info = getOrWildcard(materialUnificationInfo, key);
         return info == null ? null : info.getMaterial().copy();
     }
 
     @Nullable
     public static ItemMaterialInfo getMaterialInfo(ItemStack itemStack) {
         if (itemStack.isEmpty()) return null;
-        ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
-        return materialUnificationInfo.get(simpleItemStack);
+        return getOrWildcard(materialUnificationInfo, new ItemAndMetadata(itemStack));
     }
 
     @Nullable
     public static OrePrefix getPrefix(ItemStack itemStack) {
         if (itemStack.isEmpty()) return null;
-        ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
-        UnificationEntry entry = stackUnificationInfo.get(simpleItemStack);
-        if (entry != null) return entry.orePrefix;
-        return null;
+        UnificationEntry entry = getOrWildcard(stackUnificationInfo, new ItemAndMetadata(itemStack));
+        return entry != null ? entry.orePrefix : null;
     }
 
     public static OrePrefix getPrefix(Block block) {
@@ -216,7 +223,7 @@ public class OreDictUnifier {
     @Nullable
     public static UnificationEntry getUnificationEntry(ItemStack itemStack) {
         if (itemStack.isEmpty()) return null;
-        return stackUnificationInfo.get(new ItemAndMetadata(itemStack));
+        return getOrWildcard(stackUnificationInfo, new ItemAndMetadata(itemStack));
     }
 
     public static ItemStack getUnificated(ItemStack itemStack) {
@@ -323,5 +330,21 @@ public class OreDictUnifier {
 
         if (list.size() > 1)
             list.sort(comparator);
+    }
+
+    /**
+     * Get the value corresponding to given key or its wildcard counterpart.
+     *
+     * @param map Map
+     * @param key Key
+     * @return value corresponding to given key or its wildcard counterpart
+     */
+    @Nullable
+    private static <T> T getOrWildcard(@Nonnull Map<ItemAndMetadata, T> map,
+                                       @Nonnull ItemAndMetadata key) {
+        T t = map.get(key);
+        if (t != null) return t;
+        if (key.isWildcard()) return null;
+        return map.get(key.toWildcard());
     }
 }

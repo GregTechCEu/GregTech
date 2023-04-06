@@ -14,6 +14,6 @@ public interface IWalkingSpeedBonus {
     }
 
     default boolean bonusSpeedCondition(Entity walkingEntity) {
-        return !walkingEntity.isInWater();
+        return !walkingEntity.isInWater() && !walkingEntity.isSneaking();
     }
 }

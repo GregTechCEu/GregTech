@@ -8,7 +8,7 @@ public class BlockGregStairs extends BlockStairs {
 
     public BlockGregStairs(IBlockState state) {
         super(state);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
         this.useNeighborBrightness = true;
     }
 }

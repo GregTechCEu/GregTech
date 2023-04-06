@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,11 +55,12 @@ public class OreConfigUtils {
         return getOreForMaterial(material);
     }
 
+    @Nonnull
     public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
                 .filter(ore -> ore.material == material)
                 .collect(Collectors.toList());
-        HashMap<StoneType, IBlockState> stoneTypeMap = new HashMap<>();
+        Map<StoneType, IBlockState> stoneTypeMap = new HashMap<>();
         for (BlockOre blockOre : oreBlocks) {
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
                 IBlockState blockState = blockOre.getOreBlock(stoneType);
