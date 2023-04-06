@@ -9,22 +9,7 @@
     ],
     "extra": {
       "connect_to": [
-        { "block": "gregtech:lamp", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_inverted", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_inverted_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_bloom", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_bloom_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_bloom_inverted", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_bloom_inverted_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_inverted", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_inverted_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_no_bloom", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_no_bloom_powered", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_no_bloom_inverted", "predicate": { "color": "yellow" } },
-        { "block": "gregtech:lamp_no_light_no_bloom_inverted_powered", "predicate": { "color": "yellow" } }
+        { "block": "gregtech:yellow_lamp" }
       ]
     }
   }

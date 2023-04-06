@@ -51,8 +51,7 @@ import static gregtech.loaders.OreDictionaryLoader.OREDICT_FUEL_COKE;
 
 public class MachineRecipeLoader {
 
-    private MachineRecipeLoader() {
-    }
+    private MachineRecipeLoader() {}
 
     public static void init() {
         ChemistryRecipes.init();
@@ -405,21 +404,21 @@ public class MachineRecipeLoader {
                     .EUt(VA[ULV]).duration(200)
                     .buildAndRegister();
 
-            int circuit = 1;
-            for (int i2 = 0; i2 < MetaBlocks.LAMPS.length; i2 += 2, circuit++) {
-                EnumDyeColor color = EnumDyeColor.byMetadata(i);
+            EnumDyeColor color = EnumDyeColor.byMetadata(i);
+            BlockLamp lamp = MetaBlocks.LAMPS.get(color);
+            for (int lampMeta = 0; lampMeta < lamp.getItemMetadataStates(); lampMeta++) {
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .input(plate, Glass, 6)
                         .input(dust, Glowstone, 1)
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
-                        .outputs(MetaBlocks.LAMPS[i2].getItemVariant(color, 6))
-                        .circuitMeta(circuit).EUt(VA[ULV]).duration(40)
+                        .outputs(new ItemStack(lamp, 6, lampMeta))
+                        .circuitMeta(lampMeta + 1).EUt(VA[ULV]).duration(40)
                         .buildAndRegister();
 
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .input(lampGt, MarkerMaterials.Color.COLORS.get(color))
-                        .outputs(MetaBlocks.LAMPS[i2].getItemVariant(color))
-                        .circuitMeta(circuit).EUt(VA[ULV]).duration(10)
+                        .outputs(new ItemStack(lamp, 1, lampMeta))
+                        .circuitMeta(lampMeta + 1).EUt(VA[ULV]).duration(10)
                         .buildAndRegister();
             }
         }

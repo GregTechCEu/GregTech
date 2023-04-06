@@ -1,4 +1,4 @@
-package gregtech.client.model;
+package gregtech.client.model.lamp;
 
 import gregtech.api.GTValues;
 import gregtech.client.utils.BloomEffectUtil;
@@ -29,8 +29,8 @@ public class LampBakedModel implements IBakedModel {
     private static final String[] BLOOM_TEXTURE_SUFFIX = {"_bloom", "_emissive", "_bloom_ctm", "_emissive_ctm"};
     private static final Map<Key, Entry> ENTRIES = new Object2ObjectOpenHashMap<>();
 
-    public static Entry register(EnumDyeColor color, boolean noBloom, boolean borderless, boolean active) {
-        return ENTRIES.computeIfAbsent(new Key(color, noBloom, borderless, active), Entry::new);
+    public static Entry register(EnumDyeColor color, LampModelType modelType, boolean bloom, boolean active) {
+        return ENTRIES.computeIfAbsent(new Key(color, modelType, bloom, active), Entry::new);
     }
 
     private final ModelResourceLocation modelLocation;
@@ -137,14 +137,13 @@ public class LampBakedModel implements IBakedModel {
                 IBakedModel model = event.getModelRegistry().getObject(entry.originalModelLocation);
                 if (model != null) {
                     // Directly provide existing model to prevent using CTM models
-                    IBakedModel customModel = e.getKey().borderless ? new BorderlessLampBakedModel(model) : new LampBakedModel(model);
+                    IBakedModel customModel = e.getKey().modelType.createModel(model);
                     event.getModelRegistry().putObject(entry.customItemModel, customModel);
                 }
             }
             if (entry.customBlockModel != null) {
                 // Lazy populate model with model location to use CTM models
-                IBakedModel customModel = e.getKey().borderless ?
-                        new BorderlessLampBakedModel(entry.originalModelLocation) : new LampBakedModel(entry.originalModelLocation);
+                IBakedModel customModel = e.getKey().modelType.createModel(entry.originalModelLocation);
                 event.getModelRegistry().putObject(entry.customBlockModel, customModel);
             }
         }
@@ -153,19 +152,19 @@ public class LampBakedModel implements IBakedModel {
     private static final class Key {
 
         private final EnumDyeColor color;
-        private final boolean noBloom;
-        private final boolean borderless;
+        private final LampModelType modelType;
+        private final boolean bloom;
         private final boolean active;
 
         private final int hash;
 
-        private Key(EnumDyeColor color, boolean noBloom, boolean borderless, boolean active) {
+        private Key(EnumDyeColor color, LampModelType modelType, boolean bloom, boolean active) {
             this.color = color;
-            this.noBloom = noBloom;
-            this.borderless = borderless;
+            this.modelType = modelType;
+            this.bloom = bloom;
             this.active = active;
 
-            this.hash = Objects.hash(color, noBloom, borderless, active);
+            this.hash = Objects.hash(color, modelType, bloom, active);
         }
 
         @Override
@@ -173,10 +172,10 @@ public class LampBakedModel implements IBakedModel {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Key entry = (Key) o;
-            return borderless == entry.borderless &&
-                    noBloom == entry.noBloom &&
+            return bloom == entry.bloom &&
                     active == entry.active &&
-                    color == entry.color;
+                    color == entry.color &&
+                    modelType.equals(entry.modelType);
         }
 
         @Override
@@ -186,7 +185,7 @@ public class LampBakedModel implements IBakedModel {
 
         @Override
         public String toString() {
-            return "color=" + color.getName() + ", noBloom=" + noBloom + ", borderless=" + borderless + ", active=" + active;
+            return "color=" + color.getName() + ", modelType=" + modelType + ", bloom=" + bloom + ", active=" + active;
         }
     }
 
@@ -200,16 +199,15 @@ public class LampBakedModel implements IBakedModel {
         private final ModelResourceLocation originalModelLocation;
 
         private Entry(Key key) {
-            this.originalModelLocation = new ModelResourceLocation(
-                    new ResourceLocation(GTValues.MODID, !key.borderless ? "lamp" : "lamp_borderless"),
+            this.originalModelLocation = new ModelResourceLocation(key.modelType.modelName,
                     "active=" + key.active + ",color=" + key.color.getName());
             if (key.active) {
+                String baseModelId = "active_lamp_" + key.modelType.modelName.getNamespace() +
+                        "_" + key.modelType.modelName.getPath() + "_" + key.color.getName();
                 this.customItemModel = new ModelResourceLocation(
-                        new ResourceLocation(GTValues.MODID, "active_lamp_item_" + key.color.getName() + "_" +
-                                (key.borderless ? "b" : "")), "");
+                        new ResourceLocation(GTValues.MODID, baseModelId + "_item"), "");
                 this.customBlockModel = new ModelResourceLocation(
-                        new ResourceLocation(GTValues.MODID, "active_lamp_block_" + key.color.getName() + "_" +
-                                (key.noBloom ? "n" : "") + (key.borderless ? "b" : "")), "");
+                        new ResourceLocation(GTValues.MODID, baseModelId + "_block" + (key.bloom ? "_bloom" : "")), "");
             } else { // just use original model, no custom code required
                 this.customItemModel = this.customBlockModel = null;
             }

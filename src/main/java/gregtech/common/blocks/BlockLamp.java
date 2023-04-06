@@ -1,33 +1,29 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.VariantBlock;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.client.model.LampBakedModel;
-import gregtech.client.shader.Shaders;
+import gregtech.client.model.lamp.LampBakedModel;
+import gregtech.client.model.lamp.LampModelType;
 import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,107 +32,99 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
-public class BlockLamp extends VariantBlock<EnumDyeColor> {
+public class BlockLamp extends Block {
 
-    @Nonnull
-    public static BlockLamp getInstance(boolean noLight, boolean noBloom, boolean borderless, boolean inverted, boolean powered) {
-        int index = 0;
-        if (noLight) index |= 16;
-        if (noBloom) index |= 8;
-        if (borderless) index |= 4;
-        if (inverted) index |= 2;
-        if (powered) index |= 1;
+    public static final PropertyBool BLOOM = PropertyBool.create("bloom");
+    public static final PropertyBool LIGHT = PropertyBool.create("light");
+    public static final PropertyBool INVERTED = PropertyBool.create("inverted");
+    public static final PropertyBool POWERED = PropertyBool.create("powered");
 
-        return MetaBlocks.LAMPS[index];
-    }
+    public static final int BLOOM_FLAG = 1;
+    public static final int LIGHT_FLAG = 2;
+    public static final int INVERTED_FLAG = 4;
+    public static final int POWERED_FLAG = 8;
 
-    private final boolean noLight;
-    private final boolean noBloom;
-    private final boolean borderless;
-    private final boolean inverted;
-    private final boolean powered;
+    public static final int ITEM_FLAGS = INVERTED_FLAG | LIGHT_FLAG | BLOOM_FLAG; // ignore powered state
 
-    public BlockLamp(boolean noLight, boolean noBloom, boolean borderless, boolean inverted, boolean powered) {
-        super(Material.REDSTONE_LIGHT);
-        this.noLight = noLight;
-        this.noBloom = noBloom;
-        this.borderless = borderless;
-        this.inverted = inverted;
-        this.powered = powered;
+    public final EnumDyeColor color;
 
-        StringBuilder stb = new StringBuilder("lamp");
-        if (noLight) stb.append("_no_light");
-        if (noBloom) stb.append("_no_bloom");
-        if (borderless) stb.append("_borderless");
-        if (inverted) stb.append("_inverted");
-        if (powered) stb.append("_powered");
-
-        setRegistryName(stb.toString());
-
-        stb = new StringBuilder("gregtech_lamp");
-        if (borderless) stb.append("_borderless");
-
-        setTranslationKey(stb.toString());
+    public BlockLamp(EnumDyeColor color) {
+        super(Material.REDSTONE_LIGHT, MapColor.getBlockColor(color));
+        this.color = color;
         setHardness(0.3f);
         setResistance(8.0f);
         setSoundType(SoundType.GLASS);
-        setDefaultState(getState(EnumDyeColor.WHITE));
+        setDefaultState(getBlockState().getBaseState()
+                .withProperty(BLOOM, true)
+                .withProperty(LIGHT, true)
+                .withProperty(INVERTED, false)
+                .withProperty(POWERED, false));
         setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
-
-        if (!noLight && isLightActive()) {
-            setLightLevel(1.0f);
-        }
     }
 
-    public boolean hasNoLight() {
-        return noLight;
+    public boolean isLightActive(ItemStack stack) {
+        return (stack.getMetadata() & LIGHT_FLAG) == 0;
     }
 
-    public boolean hasNoBloom() {
-        return noBloom;
+    public boolean isBloomActive(ItemStack stack) {
+        return (stack.getMetadata() & BLOOM_FLAG) == 0;
     }
 
-    public boolean isBorderless() {
-        return borderless;
-    }
-
-    public boolean isInverted() {
-        return inverted;
-    }
-
-    public boolean isPowered() {
-        return powered;
-    }
-
-    public boolean isLightActive() {
-        return inverted == powered;
+    public int getItemMetadataStates() {
+        return 8;
     }
 
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-        this.VARIANT = BlockColored.COLOR;
-        this.VALUES = EnumDyeColor.values();
-        return new BlockStateContainer(this, VARIANT);
+        return new BlockStateContainer(this, INVERTED, BLOOM, LIGHT, POWERED);
+    }
+
+    @Override
+    public int damageDropped(@Nonnull IBlockState state) {
+        return getMetaFromState(state) & ITEM_FLAGS;
     }
 
     @Nonnull
-    protected IBlockState getComplementaryState(IBlockState state) {
-        return getInstance(this.noLight, this.noBloom, this.borderless, this.inverted, !this.powered)
-                .getState(state.getValue(VARIANT));
+    @Override
+    @SuppressWarnings("deprecation")
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState()
+                .withProperty(BLOOM, (meta & BLOOM_FLAG) == 0)
+                .withProperty(LIGHT, (meta & LIGHT_FLAG) == 0)
+                .withProperty(INVERTED, (meta & INVERTED_FLAG) != 0)
+                .withProperty(POWERED, (meta & POWERED_FLAG) != 0);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        int meta = 0;
+        if (!state.getValue(BLOOM)) meta |= BLOOM_FLAG;
+        if (!state.getValue(LIGHT)) meta |= LIGHT_FLAG;
+        if (state.getValue(INVERTED)) meta |= INVERTED_FLAG;
+        if (state.getValue(POWERED)) meta |= POWERED_FLAG;
+        return meta;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public int getLightValue(IBlockState state) {
+        return state.getValue(LIGHT) && isLightActive(state) ? 15 : 0;
     }
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        if (!world.isRemote && this.powered != world.isBlockPowered(pos)) {
-            world.setBlockState(pos, getComplementaryState(state), 2);
+        if (!world.isRemote) {
+            boolean powered = state.getValue(POWERED);
+            if (powered != world.isBlockPowered(pos)) {
+                world.setBlockState(pos, state.withProperty(POWERED, !powered), state.getValue(LIGHT) ? 2 | 8 : 2);
+            }
         }
     }
 
@@ -144,87 +132,71 @@ public class BlockLamp extends VariantBlock<EnumDyeColor> {
     @SuppressWarnings("deprecation")
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         if (!world.isRemote) {
-            if (this.powered && !world.isBlockPowered(pos)) {
-                world.scheduleUpdate(pos, this, 4);
-            } else if (!this.powered && world.isBlockPowered(pos)) {
-                world.setBlockState(pos, getComplementaryState(state), 2);
+            if (state.getValue(POWERED)) {
+                if (!world.isBlockPowered(pos)) {
+                    world.scheduleUpdate(pos, this, 4);
+                }
+            } else if (world.isBlockPowered(pos)) {
+                world.setBlockState(pos, state.withProperty(POWERED, true), state.getValue(LIGHT) ? 2 | 8 : 2);
             }
         }
     }
 
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
-        if (!world.isRemote && this.powered && !world.isBlockPowered(pos)) {
-            world.setBlockState(pos, getComplementaryState(state), 2);
+        if (!world.isRemote && state.getValue(POWERED) && !world.isBlockPowered(pos)) {
+            world.setBlockState(pos, state.withProperty(POWERED, false), state.getValue(LIGHT) ? 2 | 8 : 2);
         }
-    }
-
-    @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        drops.add(new ItemStack(this.isPowered() ? getInstance(this.noLight, this.noBloom, this.borderless, this.inverted, !this.powered) : this, 1, this.damageDropped(state)));
-    }
-
-    @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult ray, World world, BlockPos pos, EntityPlayer player) {
-        return new ItemStack(this.isPowered() ? getInstance(this.noLight, this.noBloom, this.borderless, this.inverted, !this.powered) : this, 1, this.damageDropped(state));
     }
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        if (!powered) {
-            super.getSubBlocks(tab, list);
+        for (int meta = 0; meta < getItemMetadataStates(); meta++) {
+            list.add(new ItemStack(this, 1, meta));
         }
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return MapColor.getBlockColor(getState(state));
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        if (this.inverted) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.inverted"));
-        if (this.noBloom) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.no_bloom"));
-        if (this.noLight) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.no_light"));
+        IBlockState state = getStateFromMeta(stack.getMetadata());
+        if (state.getValue(INVERTED)) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.inverted"));
+        if (!state.getValue(BLOOM)) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.no_bloom"));
+        if (!state.getValue(LIGHT)) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.no_light"));
     }
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        if (this.borderless) {
-            return this.isLightActive() && !this.noBloom && !Shaders.isOptiFineShaderPackLoaded() ?
-                    layer == BloomEffectUtil.BLOOM :
-                    layer == BlockRenderLayer.SOLID;
-        } else {
-            if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
-            return this.isLightActive() && !this.noBloom && layer == BloomEffectUtil.getRealBloomLayer();
-        }
+        if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
+        return isLightActive(state) && state.getValue(BLOOM) && layer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        Map<EnumDyeColor, ModelResourceLocation> models = new EnumMap<>(VALUES[0].getDeclaringClass());
-        for (EnumDyeColor color : VALUES) {
-            LampBakedModel.Entry entry = LampBakedModel.register(color, this.noBloom, this.borderless, this.isLightActive());
-            models.put(color, entry.getBlockModelId());
+        Map<IBlockState, ModelResourceLocation> models = new HashMap<>();
+        for (IBlockState state : getBlockState().getValidStates()) {
+            LampBakedModel.Entry entry = LampBakedModel.register(color, getModelType(), state.getValue(BLOOM), isLightActive(state));
+            models.put(state, entry.getBlockModelId());
+            if (state.getValue(POWERED)) continue;
             Item item = Item.getItemFromBlock(this);
-            ModelLoader.setCustomModelResourceLocation(item, color.getMetadata(), entry.getItemModelId());
+            ModelLoader.setCustomModelResourceLocation(item, getMetaFromState(state), entry.getItemModelId());
             ModelLoader.registerItemVariants(item, entry.getOriginalModelLocation());
         }
-        ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream().collect(Collectors.toMap(
-                s -> s,
-                s -> models.get(s.getValue(VARIANT))
-        )));
+        ModelLoader.setCustomStateMapper(this, b -> models);
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected LampModelType getModelType() {
+        return LampModelType.LAMP;
     }
 
     public void registerOreDict() {
-        if (this.powered) {
-            return;
-        }
-        for (EnumDyeColor color : EnumDyeColor.values()) {
-            OreDictUnifier.registerOre(new ItemStack(this, 1, color.getMetadata()),
+        for (int meta = 0; meta < getItemMetadataStates(); meta++) {
+            OreDictUnifier.registerOre(new ItemStack(this, 1, meta),
                     OrePrefix.lampGt, MarkerMaterials.Color.COLORS.get(color));
         }
+    }
+
+    public static boolean isLightActive(IBlockState state) {
+        return state.getValue(INVERTED) == state.getValue(POWERED);
     }
 }

@@ -1,5 +1,6 @@
 package gregtech.client.model;
 
+import gregtech.client.model.lamp.LampBakedModel;
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;

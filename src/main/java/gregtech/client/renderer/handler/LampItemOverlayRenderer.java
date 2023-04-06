@@ -1,38 +1,32 @@
 package gregtech.client.renderer.handler;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.common.blocks.MetaBlocks;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import gregtech.common.blocks.BlockLamp;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-
-import java.util.Map;
 
 public class LampItemOverlayRenderer {
 
-    private static Map<Item, OverlayType> itemToOverlayType;
-
     public static OverlayType getOverlayType(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return OverlayType.NONE;
-        }
-        if (itemToOverlayType == null) {
-            itemToOverlayType = new Object2ObjectOpenHashMap<>();
-
-            for (int i = 8; i < 32; i += 2) {
-                itemToOverlayType.put(Item.getItemFromBlock(MetaBlocks.LAMPS[i]),
-                        getOverlayType((i & 16) != 0, (i & 8) != 0));
+        Item item = stack.getItem();
+        if (item instanceof ItemBlock) {
+            Block block = ((ItemBlock) item).getBlock();
+            if (block instanceof BlockLamp) {
+                BlockLamp lamp = (BlockLamp) block;
+                return getOverlayType(lamp.isLightActive(stack), lamp.isBloomActive(stack));
             }
         }
-        return itemToOverlayType.getOrDefault(stack.getItem(), OverlayType.NONE);
+        return OverlayType.NONE;
     }
 
-    public static OverlayType getOverlayType(boolean noLight, boolean noBloom) {
-        if (noLight) {
-            return noBloom ? OverlayType.NO_BLOOM_NO_LIGHT : OverlayType.NO_LIGHT;
+    public static OverlayType getOverlayType(boolean light, boolean bloom) {
+        if (light) {
+            return bloom ? OverlayType.NONE : OverlayType.NO_BLOOM;
         } else {
-            return noBloom ? OverlayType.NO_BLOOM : OverlayType.NONE;
+            return bloom ? OverlayType.NO_LIGHT : OverlayType.NO_BLOOM_NO_LIGHT;
         }
     }
 
