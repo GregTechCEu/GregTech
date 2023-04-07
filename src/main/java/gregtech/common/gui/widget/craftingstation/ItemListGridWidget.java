@@ -4,13 +4,13 @@ import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
 import gregtech.common.inventory.SimpleItemInfo;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
@@ -25,11 +25,11 @@ public class ItemListGridWidget extends ScrollableListWidget {
     private final int slotAmountX;
     private final int slotAmountY;
     private int slotRowsAmount = 0;
-    private final Map<ItemStackKey, SimpleItemInfo> cachedItemList = new HashMap<>();
+    private final Map<ItemStack, SimpleItemInfo> cachedItemList = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
     private final List<SimpleItemInfo> itemsChanged = new ArrayList<>();
-    private final List<ItemStackKey> itemsRemoved = new ArrayList<>();
+    private final List<ItemStack> itemsRemoved = new ArrayList<>();
 
-    private final Comparator<IItemInfo> comparator = Comparator.comparing(it -> it.getItemStackKey().getItemStackRaw(), GTUtility.createItemStackComparator());
+    private final Comparator<IItemInfo> comparator = Comparator.comparing(IItemInfo::getItemStack, GTUtility.createItemStackComparator());
     private final List<SimpleItemInfo> displayItemList = new ArrayList<>();
 
     public ItemListGridWidget(int x, int y, int slotsX, int slotsY, @Nullable IItemList itemList) {
@@ -73,7 +73,7 @@ public class ItemListGridWidget extends ScrollableListWidget {
         ItemStack itemStack = clickedSlot.getHandle().getStack();
         if (clickedSlot.getHandle().canTakeStack(gui.entityPlayer) && !itemStack.isEmpty()) {
             itemStack = clickedSlot.onItemTake(gui.entityPlayer, itemStack, true);
-            int amountInserted = getItemList().insertItem(KeySharedStack.getRegisteredStack(itemStack), itemStack.getCount(), false, InsertMode.LOWEST_PRIORITY);
+            int amountInserted = getItemList().insertItem(itemStack, itemStack.getCount(), false, InsertMode.LOWEST_PRIORITY);
             if (amountInserted > 0) {
                 clickedSlot.onItemTake(gui.entityPlayer, itemStack, false);
                 itemStack.shrink(amountInserted);
@@ -116,15 +116,15 @@ public class ItemListGridWidget extends ScrollableListWidget {
     }
 
     private void checkItemListForChanges() {
-        Iterator<ItemStackKey> iterator = cachedItemList.keySet().iterator();
+        Iterator<ItemStack> iterator = cachedItemList.keySet().iterator();
         while (iterator.hasNext()) {
-            ItemStackKey itemStack = iterator.next();
+            ItemStack itemStack = iterator.next();
             if (!itemList.hasItemStored(itemStack)) {
                 iterator.remove();
                 itemsRemoved.add(itemStack);
             }
         }
-        for (ItemStackKey itemStack : itemList.getStoredItems()) {
+        for (ItemStack itemStack : itemList.getStoredItems()) {
             IItemInfo itemInfo = itemList.getItemInfo(itemStack);
             if (itemInfo == null)
                 continue;
@@ -169,12 +169,12 @@ public class ItemListGridWidget extends ScrollableListWidget {
         if (!itemsChanged.isEmpty() || !itemsRemoved.isEmpty()) {
             writeUpdateInfo(3, buf -> {
                 buf.writeVarInt(itemsRemoved.size());
-                for (ItemStackKey itemStackKey : itemsRemoved) {
-                    buf.writeItemStack(itemStackKey.getItemStackRaw());
+                for (ItemStack stack : itemsRemoved) {
+                    buf.writeItemStack(stack);
                 }
                 buf.writeVarInt(itemsChanged.size());
                 for (SimpleItemInfo itemInfo : itemsChanged) {
-                    buf.writeItemStack(itemInfo.getItemStackKey().getItemStackRaw());
+                    buf.writeItemStack(itemInfo.getItemStack());
                     buf.writeVarInt(itemInfo.getTotalItemAmount());
                 }
             });
@@ -192,14 +192,17 @@ public class ItemListGridWidget extends ScrollableListWidget {
             try {
                 int itemsRemoved = buffer.readVarInt();
                 for (int i = 0; i < itemsRemoved; i++) {
-                    ItemStackKey itemStack = KeySharedStack.getRegisteredStack(buffer.readItemStack());
-                    this.displayItemList.removeIf(it -> it.getItemStackKey().equals(itemStack));
+                    ItemStack itemStack = buffer.readItemStack();
+                    this.displayItemList.removeIf(it -> ItemStackHashStrategy.comparingAllButCount().equals(it.getItemStack(), itemStack));
                 }
                 int itemsChanged = buffer.readVarInt();
                 for (int i = 0; i < itemsChanged; i++) {
-                    ItemStackKey itemStack = KeySharedStack.getRegisteredStack(buffer.readItemStack());
+                    ItemStack itemStack = buffer.readItemStack();
                     int newTotalAmount = buffer.readVarInt();
-                    SimpleItemInfo itemInfo = displayItemList.stream().filter(it -> it.getItemStackKey().equals(itemStack)).findAny().orElse(null);
+                    SimpleItemInfo itemInfo = displayItemList.stream()
+                            .filter(it -> ItemStackHashStrategy.comparingAllButCount().equals(it.getItemStack(), itemStack))
+                            .findAny()
+                            .orElse(null);
                     if (itemInfo == null) {
                         itemInfo = new SimpleItemInfo(itemStack);
                         this.displayItemList.add(itemInfo);

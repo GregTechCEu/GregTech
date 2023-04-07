@@ -1,9 +1,7 @@
 package gregtech.common.inventory.itemsource;
 
-import gregtech.api.util.ItemStackKey;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-
-import java.util.Map;
+import net.minecraft.item.ItemStack;
 
 public abstract class ItemSource {
 
@@ -16,15 +14,15 @@ public abstract class ItemSource {
     /**
      * @return items stored in this inventory
      */
-    public abstract Map<ItemStackKey, Integer> getStoredItems();
+    public abstract Object2IntMap<ItemStack> getStoredItems();
 
     /**
      * @return amount of items inserted into the inventory
      */
-    public abstract int insertItem(ItemStackKey itemStackKey, int amount, boolean simulate, Object2IntMap<ItemSource> map);
+    public abstract int insertItem(ItemStack itemStack, int amount, boolean simulate, Object2IntMap<ItemSource> map);
 
     /**
      * @return amount of items extracted from the inventory
      */
-    public abstract int extractItem(ItemStackKey itemStackKey, int amount, boolean simulate, Object2IntMap<ItemSource> map);
+    public abstract int extractItem(ItemStack itemStack, int amount, boolean simulate, Object2IntMap<ItemSource> map);
 }
