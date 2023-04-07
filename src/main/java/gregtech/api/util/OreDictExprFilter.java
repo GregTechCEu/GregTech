@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 
 /**
  * @author brachy84
+ * @deprecated This class is deprecated in favor of the new ore filter system; see {@link gregtech.api.util.oreglob.OreGlob}.
  */
+@Deprecated
 public class OreDictExprFilter {
 
     private static final Pattern PARTS_PATTERN = Pattern.compile("\\*+");
