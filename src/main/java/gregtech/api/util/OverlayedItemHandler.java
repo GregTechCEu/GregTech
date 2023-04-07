@@ -62,7 +62,7 @@ public class OverlayedItemHandler {
                 int canInsertUpTo = this.slots[i].getSlotLimit() - this.slots[i].getCount();
                 if (canInsertUpTo > 0) {
                     int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
-                    this.slots[i].setItemStack(stack);
+                    this.slots[i].setItemStack(stack.copy()); // this copy may not be need, needs further tests
                     this.slots[i].setCount(this.slots[i].getCount() + insertedAmount);
                     amountToInsert -= insertedAmount;
                 }
@@ -85,7 +85,7 @@ public class OverlayedItemHandler {
                     int canInsertUpTo = Math.min(stack.getMaxStackSize(), slot.getSlotLimit());
                     if (canInsertUpTo > 0) {
                         int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
-                        slot.setItemStack(stack);
+                        slot.setItemStack(stack.copy()); // this copy may not be need, needs further tests
                         slot.setCount(insertedAmount);
                         amountToInsert -= insertedAmount;
                     }
