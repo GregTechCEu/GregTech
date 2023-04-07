@@ -123,7 +123,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         }
         GlStateManager.resetColor();
 
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+        renderState.reset();
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {

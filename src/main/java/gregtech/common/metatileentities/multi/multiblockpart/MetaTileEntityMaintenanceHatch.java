@@ -38,8 +38,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -57,9 +57,9 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
+    private final ItemStackHandler itemStackHandler = new TapeItemStackHandler(1);
     private final boolean isConfigurable;
     private boolean isTaped;
-    private ItemStackHandler itemStackHandler;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
@@ -99,14 +99,15 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return new TapeItemStackHandler(1);
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.itemInventory = itemStackHandler;
     }
 
     @Override
-    protected void initializeInventory() {
-        super.initializeInventory();
-        this.itemInventory = itemStackHandler = new ItemStackHandler(1);
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        super.clearMachineInventory(itemBuffer);
+        clearInventory(itemBuffer, itemStackHandler);
     }
 
     /**
@@ -417,7 +418,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("IsTaped", isTaped);
-        if (isConfigurable) data.setDouble("DurationMultiplier", durationMultiplier.doubleValue());
+        data.setTag("tapeInventory", itemStackHandler.serializeNBT());
+        if (isConfigurable) {
+            data.setDouble("DurationMultiplier", durationMultiplier.doubleValue());
+        }
         return data;
     }
 
@@ -425,10 +429,16 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
-        if (isConfigurable) durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
+        if (data.hasKey("tapeInventory", Constants.NBT.TAG_COMPOUND)) {
+            this.itemStackHandler.deserializeNBT(data.getCompoundTag("tapeInventory"));
+        }
+        if (isConfigurable) {
+            durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
+        }
         // Legacy Inventory Handler Support
-        if (data.hasKey("ImportInventory")) {
+        if (data.hasKey("ImportInventory", Constants.NBT.TAG_COMPOUND)) {
             GTUtility.readItems(itemStackHandler, "ImportInventory", data);
+            data.removeTag("ImportInventory");
         }
     }
 

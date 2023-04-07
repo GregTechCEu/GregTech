@@ -22,6 +22,7 @@ public class TheOneProbeCompatibility {
         oneProbe.registerProvider(new RecipeLogicInfoProvider());
         oneProbe.registerProvider(new PrimitivePumpInfoProvider());
         oneProbe.registerProvider(new CoverProvider());
+        oneProbe.registerProvider(new BlockOreProvider());
         oneProbe.registerProvider(new LampInfoProvider());
     }
 }

@@ -3,8 +3,10 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
+import gregtech.api.util.oreglob.OreGlob;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,6 +44,7 @@ public class GregTechMod {
     public void onConstruction(FMLConstructionEvent event) {
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
+        OreGlob.setCompiler(input -> new OreGlobParser(input).compile());
         moduleManager.registerContainer(new GregTechModules());
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
 

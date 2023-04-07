@@ -1,30 +1,45 @@
 package gregtech.api.unification.stack;
 
+import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public final class ItemAndMetadata {
 
+    @Nonnull
     public final Item item;
     public final int itemDamage;
 
-    public ItemAndMetadata(Item item, int itemDamage) {
+    public ItemAndMetadata(@Nonnull Item item, int itemDamage) {
         this.item = item;
         this.itemDamage = itemDamage;
     }
 
-    public ItemAndMetadata(ItemStack itemStack) {
+    public ItemAndMetadata(@Nonnull ItemStack itemStack) {
         this.item = itemStack.getItem();
         this.itemDamage = GTUtility.getActualItemDamageFromStack(itemStack);
     }
 
+    @Nonnull
     public ItemStack toItemStack() {
         return new ItemStack(item, 1, itemDamage);
     }
 
+    @Nonnull
     public ItemStack toItemStack(int stackSize) {
         return new ItemStack(item, stackSize, itemDamage);
+    }
+
+    public boolean isWildcard() {
+        return this.itemDamage == GTValues.W;
+    }
+
+    @Nonnull
+    public ItemAndMetadata toWildcard() {
+        return this.isWildcard() ? this : new ItemAndMetadata(item, GTValues.W);
     }
 
     @Override
@@ -49,5 +64,4 @@ public final class ItemAndMetadata {
     public String toString() {
         return this.item.getTranslationKey(toItemStack());
     }
-
 }

@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.SoundType;
@@ -38,7 +39,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
         for (MachineCasingType variant : VALUES) {
-            if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GTValues.HT) {
+            if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GregTechAPI.isHighTier()) {
                 list.add(getItemVariant(variant));
             }
         }
