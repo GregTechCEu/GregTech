@@ -219,6 +219,16 @@ public class GuiTextures {
     // Covers
     public static final TextureArea COVER_MACHINE_CONTROLLER = TextureArea.fullImage("textures/items/metaitems/cover.controller.png");
 
+    // Ore Filter
+    public static final TextureArea ORE_FILTER_INFO = TextureArea.fullImage("textures/gui/widget/ore_filter/info.png");
+    public static final TextureArea ORE_FILTER_SUCCESS = TextureArea.fullImage("textures/gui/widget/ore_filter/success.png");
+    public static final TextureArea ORE_FILTER_ERROR = TextureArea.fullImage("textures/gui/widget/ore_filter/error.png");
+    public static final TextureArea ORE_FILTER_WARN = TextureArea.fullImage("textures/gui/widget/ore_filter/warn.png");
+    public static final TextureArea ORE_FILTER_WAITING = TextureArea.fullImage("textures/gui/widget/ore_filter/waiting.png");
+
+    public static final TextureArea ORE_FILTER_MATCH = TextureArea.fullImage("textures/gui/widget/ore_filter/match.png");
+    public static final TextureArea ORE_FILTER_NO_MATCH = TextureArea.fullImage("textures/gui/widget/ore_filter/no_match.png");
+
     //Terminal
     public static final TextureArea ICON_REMOVE = TextureArea.fullImage("textures/gui/terminal/icon/remove_hover.png");
     public static final TextureArea ICON_UP = TextureArea.fullImage("textures/gui/terminal/icon/up_hover.png");

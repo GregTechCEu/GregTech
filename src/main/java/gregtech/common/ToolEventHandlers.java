@@ -289,11 +289,8 @@ public class ToolEventHandlers {
 
         if (tile instanceof IGregTechTileEntity) {
             MetaTileEntity mte = ((IGregTechTileEntity) tile).getMetaTileEntity();
-            if (mte != null && mte.canRenderMachineGrid()) {
-                if (ToolHelper.isTool(mainHand, ToolClasses.WRENCH, ToolClasses.SCREWDRIVER) ||
-                        ToolHelper.isTool(offHand, ToolClasses.WRENCH, ToolClasses.SCREWDRIVER)) {
-                    return true;
-                }
+            if (mte != null && mte.canRenderMachineGrid(mainHand, offHand)) {
+                return true;
             }
         }
         ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
