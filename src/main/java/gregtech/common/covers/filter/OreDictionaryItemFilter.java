@@ -4,16 +4,15 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
 import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
@@ -22,13 +21,11 @@ import java.util.function.Consumer;
 
 public class OreDictionaryItemFilter extends ItemFilter {
 
-    private static final Hash.Strategy<ItemStack> HASH_STRATEGY = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
-
     protected String expression = "";
     private OreGlob glob = ImpossibleOreGlob.getInstance();
     private boolean error;
 
-    private final Object2BooleanMap<ItemStack> matchCache = new Object2BooleanOpenCustomHashMap<>(HASH_STRATEGY);
+    private final Object2BooleanMap<ItemAndMetadata> matchCache = new Object2BooleanOpenHashMap<>();
 
     public String getExpression() {
         return expression;
@@ -123,12 +120,13 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     public boolean matchesItemStack(ItemStack itemStack) {
         if (this.error) return false;
-        Boolean cached = this.matchCache.get(itemStack);
+        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
+        Boolean cached = this.matchCache.get(itemAndMetadata);
         if (cached != null) {
             return cached;
         }
         boolean matches = this.glob.matches(itemStack);
-        this.matchCache.put(itemStack, matches);
+        this.matchCache.put(itemAndMetadata, matches);
         return matches;
     }
 
