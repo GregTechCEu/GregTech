@@ -1124,10 +1124,19 @@ cover.filter.blacklist.disabled=白名单
 cover.filter.blacklist.enabled=黑名单
 
 cover.ore_dictionary_filter.title=矿物词典过滤
-cover.ore_dictionary_filter.info=§b接受复杂表达式/n& = 和/n| = 或/n^ = 异或/n! = 非/n( ) 表示优先级/n* 表示通配符/n§b例：/n§6dust*Gold | (plate* & !*Double*)/n匹配双层板以外的板与包括小撮、小堆在内的所有粉
+cover.ore_dictionary_filter.info=§b接受复杂表达式/n§6a & b§r = 和/n§6a | b§r = 或/n§6a ^ b§r = 异或/n§6! abc§r = 非/n§6( abc )§r 表示组别/n§6*§r 表示通配（也即零或多个字符）/n§6?§r 表示任一字符/n§6()§r 匹配空条目（包括不带矿物词典的物品）/n在表达式开头添加 §6$c§r 可匹配大小写/n§b使用范例：/n§6dust*Gold | (plate* & !*Double*)/n匹配双层板以外的板与包括小撮、小堆在内的所有金粉
 cover.ore_dictionary_filter.test_slot.info=放入一件物品以测试是否匹配过滤表达式
 cover.ore_dictionary_filter.matches=物品匹配
 cover.ore_dictionary_filter.matches_not=物品不匹配
+cover.ore_dictionary_filter.test_slot.matches=§a* %s
+cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
+cover.ore_dictionary_filter.test_slot.no_oredict.matches=§a（无矿物词典）
+cover.ore_dictionary_filter.test_slot.no_oredict.matches_not=§c（无矿物词典）
+cover.ore_dictionary_filter.status.err=§c%s 个错误
+cover.ore_dictionary_filter.status.err_warn=§c%s 个错误、%s 个警告
+cover.ore_dictionary_filter.status.warn=§7%s 个警告
+cover.ore_dictionary_filter.status.no_issues=§a无问题
+cover.ore_dictionary_filter.status.explain=矿物过滤说明：
 
 cover.fluid_filter.title=流体过滤
 cover.fluid_filter.config_amount=向上或向下滚动鼠标滚轮以增加或减少流体量。/nShift[§6x10§r]，Ctrl[§ex100§r]，Shift+Ctrl[§ax1000§r]/n亦可通过右击或左击来增减流体量。/n按住 Shift 时点击鼠标则将使流体量翻倍或减半。/n点击中键以清除
