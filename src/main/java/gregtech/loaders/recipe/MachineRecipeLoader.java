@@ -421,6 +421,22 @@ public class MachineRecipeLoader {
                         .circuitMeta(lampMeta + 1).EUt(VA[ULV]).duration(10)
                         .buildAndRegister();
             }
+            lamp = MetaBlocks.BORDERLESS_LAMPS.get(color);
+            for (int lampMeta = 0; lampMeta < lamp.getItemMetadataStates(); lampMeta++) {
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(plate, Glass, 6)
+                        .input(dust, Glowstone, 1)
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                        .outputs(new ItemStack(lamp, 6, lampMeta))
+                        .circuitMeta(lampMeta + 9).EUt(VA[ULV]).duration(40)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(lampGt, MarkerMaterials.Color.COLORS.get(color))
+                        .outputs(new ItemStack(lamp, 1, lampMeta))
+                        .circuitMeta(lampMeta + 9).EUt(VA[ULV]).duration(10)
+                        .buildAndRegister();
+            }
         }
 
         CANNER_RECIPES.recipeBuilder()
