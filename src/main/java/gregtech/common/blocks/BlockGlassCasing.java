@@ -28,6 +28,7 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
         setSoundType(SoundType.GLASS);
         setHarvestLevel(ToolClasses.PICKAXE, 1);
         setDefaultState(getState(CasingType.TEMPERED_GLASS));
+        this.useNeighborBrightness = true;
     }
 
     @Override
@@ -47,7 +48,6 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(IBlockState state) {
         return false;
