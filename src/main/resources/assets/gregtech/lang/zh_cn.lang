@@ -5078,6 +5078,9 @@ gregtech.chat.cape=§5恭喜！你刚刚解锁了一件新的披风！在终端�
 
 gregtech.universal.clear_nbt_recipe.tooltip=§c该操作将清空所有内容物！
 
+gregtech.cover.detector_base.message_normal_state=监控状态：普通
+gregtech.cover.detector_base.message_inverted_state=监控状态：反相
+
 gregtech.creative.chest.item=物品
 gregtech.creative.chest.ipc=每次输出物品数
 gregtech.creative.chest.tpc=每次输出间隔 Tick
