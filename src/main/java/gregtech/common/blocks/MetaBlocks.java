@@ -45,6 +45,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -69,8 +70,7 @@ import static gregtech.client.ClientProxy.*;
 
 public class MetaBlocks {
 
-    private MetaBlocks() {
-    }
+    private MetaBlocks() {}
 
     public static BlockMachine MACHINE;
     public static final BlockCable[] CABLES = new BlockCable[10];
@@ -91,6 +91,9 @@ public class MetaBlocks {
     public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
     public static BlockCleanroomCasing CLEANROOM_CASING;
+
+    public static final EnumMap<EnumDyeColor, BlockLamp> LAMPS = new EnumMap<>(EnumDyeColor.class);
+    public static final EnumMap<EnumDyeColor, BlockLamp> BORDERLESS_LAMPS = new EnumMap<>(EnumDyeColor.class);
 
     public static BlockAsphalt ASPHALT;
 
@@ -169,6 +172,17 @@ public class MetaBlocks {
         HERMETIC_CASING.setRegistryName("hermetic_casing");
         CLEANROOM_CASING = new BlockCleanroomCasing();
         CLEANROOM_CASING.setRegistryName("cleanroom_casing");
+
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            BlockLamp block = new BlockLamp(color);
+            block.setRegistryName(color.getName() + "_lamp");
+            block.setTranslationKey("gregtech_lamp." + color.getName());
+            LAMPS.put(color, block);
+            block = new BlockLampBorderless(color);
+            block.setRegistryName("borderless_" + color.getName() + "_lamp");
+            block.setTranslationKey("gregtech_lamp_borderless." + color.getName());
+            BORDERLESS_LAMPS.put(color, block);
+        }
 
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
@@ -360,6 +374,9 @@ public class MetaBlocks {
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
 
+        for (BlockLamp lamp : LAMPS.values()) lamp.onModelRegister();
+        for (BlockLamp lamp : BORDERLESS_LAMPS.values()) lamp.onModelRegister();
+
         COMPRESSED.values().stream().distinct().forEach(BlockCompressed::onModelRegister);
         FRAMES.values().stream().distinct().forEach(BlockFrame::onModelRegister);
         ORES.forEach(BlockOre::onModelRegister);
@@ -467,6 +484,13 @@ public class MetaBlocks {
     public static void registerOreDict() {
         OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES), "treeLeaves");
         OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING), "treeSapling");
+
+        for (BlockLamp block : LAMPS.values()) {
+            block.registerOreDict();
+        }
+        for (BlockLamp block : BORDERLESS_LAMPS.values()) {
+            block.registerOreDict();
+        }
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {
             Material material = entry.getKey();

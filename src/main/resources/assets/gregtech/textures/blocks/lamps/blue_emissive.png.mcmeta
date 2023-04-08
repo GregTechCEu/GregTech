@@ -1,0 +1,16 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "CTM",
+    "layer": "BLOOM",
+    "gregtech": true,
+    "textures": [
+      "gregtech:blocks/lamps/blue_ctm_emissive"
+    ],
+    "extra": {
+      "connect_to": [
+        { "block": "gregtech:blue_lamp" }
+      ]
+    }
+  }
+}

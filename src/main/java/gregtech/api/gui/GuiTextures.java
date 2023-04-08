@@ -254,4 +254,8 @@ public class GuiTextures {
     public static final TextureArea BUTTON_INTERFACE = TextureArea.fullImage("textures/blocks/cover/cover_interface_computer_button.png");
     public static final TextureArea COVER_INTERFACE_MACHINE_ON_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_on_proxy.png");
     public static final TextureArea COVER_INTERFACE_MACHINE_OFF_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_off_proxy.png");
+
+    // Lamp item overlay
+    public static final TextureArea LAMP_NO_BLOOM = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_bloom.png");
+    public static final TextureArea LAMP_NO_LIGHT = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_light.png");
 }
