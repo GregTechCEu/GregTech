@@ -1247,7 +1247,7 @@ cover.advanced_item_detector.invert_tooltip=启用反相以反转红石逻辑/n�
 cover.advanced_item_detector.max=最大物品数量：
 cover.advanced_item_detector.min=最小物品数量：
 
-cover.storage.title存储覆盖板
+cover.storage.title=存储覆盖板
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=黑花岗岩%s矿石
