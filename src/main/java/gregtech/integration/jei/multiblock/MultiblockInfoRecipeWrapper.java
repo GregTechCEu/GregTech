@@ -16,13 +16,14 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
@@ -118,11 +119,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @SuppressWarnings("NewExpressionSideOnly")
     public MultiblockInfoRecipeWrapper(@Nonnull MultiblockControllerBase controller) {
         this.controller = controller;
-        Set<ItemStackKey> drops = new ObjectOpenHashSet<>();
+        Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
         this.patterns = controller.getMatchingShapes().stream()
                 .map(it -> initializePattern(it, drops))
                 .toArray(MBPattern[]::new);
-        drops.forEach(stackKey -> allItemStackInputs.add(stackKey.getItemStack()));
+        allItemStackInputs.addAll(drops);
         this.nextLayerButton = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
         this.buttonPreviousPattern = new GuiButton(0, 176 - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
         this.buttonNextPattern = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
@@ -458,14 +459,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private static class PartInfo {
-        final ItemStackKey itemStackKey;
+        final ItemStack itemStack;
         boolean isController = false;
         boolean isTile = false;
         final int blockId;
         int amount = 0;
 
-        PartInfo(final ItemStackKey itemStackKey, final BlockInfo blockInfo) {
-            this.itemStackKey = itemStackKey;
+        PartInfo(final ItemStack itemStack, final BlockInfo blockInfo) {
+            this.itemStack = itemStack;
             this.blockId = Block.getIdFromBlock(blockInfo.getBlockState().getBlock());
             TileEntity tileEntity = blockInfo.getTileEntity();
             if (tileEntity != null) {
@@ -476,16 +477,17 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
         }
 
+        @Nonnull
         ItemStack getItemStack() {
-            ItemStack result = this.itemStackKey.getItemStack();
+            ItemStack result = this.itemStack.copy();
             result.setCount(this.amount);
             return result;
         }
     }
 
     @Nonnull
-    private static Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStackKey> parts) {
-        Map<ItemStackKey, PartInfo> partsMap = new HashMap<>();
+    private static Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStack> parts) {
+        Map<ItemStack, PartInfo> partsMap = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
             BlockPos pos = entry.getKey();
             IBlockState state = world.getBlockState(pos);
@@ -520,13 +522,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
             // if we got a stack, add it to the set and map
             if (!stack.isEmpty()) {
-                ItemStackKey stackKey = new ItemStackKey(stack);
-                parts.add(stackKey);
+                parts.add(stack);
 
-                PartInfo partInfo = partsMap.get(stackKey);
+                PartInfo partInfo = partsMap.get(stack);
                 if (partInfo == null) {
-                    partInfo = new PartInfo(stackKey, entry.getValue());
-                    partsMap.put(stackKey, partInfo);
+                    partInfo = new PartInfo(stack, entry.getValue());
+                    partsMap.put(stack, partInfo);
                 }
                 partInfo.amount++;
             }
@@ -536,7 +537,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     @SuppressWarnings("NewExpressionSideOnly")
     @Nonnull
-    private MBPattern initializePattern(@Nonnull MultiblockShapeInfo shapeInfo, @Nonnull Set<ItemStackKey> parts) {
+    private MBPattern initializePattern(@Nonnull MultiblockShapeInfo shapeInfo, @Nonnull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         MultiblockControllerBase controllerBase = null;
         BlockInfo[][][] blocks = shapeInfo.getBlocks();

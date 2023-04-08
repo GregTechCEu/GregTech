@@ -2,8 +2,7 @@ package gregtech.api.block;
 
 import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.modelfactories.ActiveVariantBlockBakedModel;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -23,7 +22,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -41,7 +39,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> implements IModelSupplier {
+public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> {
 
     private static final Int2ObjectMap<ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Int2ObjectOpenHashMap<>();
     private static final ReadWriteLock ACTIVE_BLOCKS_LOCK = new ReentrantReadWriteLock();
@@ -140,11 +138,6 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return ext;
     }
 
-    @Override
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
         Map<T, ModelResourceLocation> models = new EnumMap<>(VALUES[0].getDeclaringClass());

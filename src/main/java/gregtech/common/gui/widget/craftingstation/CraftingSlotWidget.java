@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.recipes.KeySharedStack;
-import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import mezz.jei.api.gui.IGuiIngredient;
@@ -61,7 +59,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                 EntityPlayer player = gui.entityPlayer;
                 if (isShiftDown) {
                     OverlayedItemHandler playerInventory = new OverlayedItemHandler(new PlayerMainInvWrapper(gui.entityPlayer.inventory));
-                    ItemStackKey toMerge = KeySharedStack.getRegisteredStack(slotReference.getStack());
+                    ItemStack toMerge = slotReference.getStack();
                     int crafts = this.slotReference.getStack().getCount();
                     if (isLeftClick) {
                         //limit shift click to one stack at a time
@@ -122,8 +120,8 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         return false;
     }
 
-    private static boolean canMergeToInv(OverlayedItemHandler inventory, ItemStackKey stack, int crafts) {
-        return inventory.insertStackedItemStackKey(stack, crafts) == 0;
+    private static boolean canMergeToInv(OverlayedItemHandler inventory, ItemStack stack, int crafts) {
+        return inventory.insertStackedItemStack(stack, crafts) == 0;
     }
 
     private void mergeToHand(ItemStack toMerge) {

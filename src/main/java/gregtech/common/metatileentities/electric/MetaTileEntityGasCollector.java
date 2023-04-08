@@ -52,7 +52,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         }
 
         @Override
-        protected boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@Nonnull Recipe recipe) {
             return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe) && super.checkRecipe(recipe);
         }
     }

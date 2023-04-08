@@ -4,160 +4,116 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.OreDictFilterTestSlot;
-import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.api.util.OreDictExprFilter;
+import gregtech.api.util.oreglob.OreGlob;
+import gregtech.api.util.oreglob.OreGlobCompileResult;
+import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
+import gregtech.common.gui.widget.HighlightedTextField;
+import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
+import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 public class OreDictionaryItemFilter extends ItemFilter {
 
-    private static final Pattern ALLOWED_CHARS = Pattern.compile("[0-9a-zA-Z* &|^!()]*");
+    private static final Hash.Strategy<ItemStack> HASH_STRATEGY = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
 
-    private static final Pattern DOUBLE_WILDCARD = Pattern.compile("\\*{2,}");
-    private static final Pattern DOUBLE_AND = Pattern.compile("&{2,}");
-    private static final Pattern DOUBLE_OR = Pattern.compile("\\|{2,}");
-    private static final Pattern DOUBLE_NOT = Pattern.compile("!{2,}");
-    private static final Pattern DOUBLE_XOR = Pattern.compile("\\^{2,}");
-    private static final Pattern DOUBLE_SPACE = Pattern.compile(" {2,}");
+    protected String expression = "";
+    private OreGlob glob = ImpossibleOreGlob.getInstance();
+    private boolean error;
 
-    protected String oreDictFilterExpression = "";
-    private String testMsg = "";
-    private boolean testResult;
-    private ItemStack testStack = ItemStack.EMPTY;
+    private final Object2BooleanMap<ItemStack> matchCache = new Object2BooleanOpenCustomHashMap<>(HASH_STRATEGY);
 
-    private final List<OreDictExprFilter.MatchRule> matchRules = new ArrayList<>();
-    private static final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
-    private final Map<ItemStack, Boolean> recentlyChecked = new Object2BooleanOpenCustomHashMap<>(strategy);
-
-    protected void setOreDictFilterExpression(String oreDictFilterExpression) {
-        this.oreDictFilterExpression = oreDictFilterExpression;
-        OreDictExprFilter.parseExpression(matchRules, oreDictFilterExpression);
-        recentlyChecked.clear();
-        markDirty();
-        updateTestMsg();
-    }
-
-    public String getOreDictFilterExpression() {
-        return oreDictFilterExpression;
+    public String getExpression() {
+        return expression;
     }
 
     @Override
     public void initUI(Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new ImageWidget(12, 0, 20, 20, GuiTextures.INFO_ICON)
+        ItemOreFilterTestSlot[] testSlot = new ItemOreFilterTestSlot[5];
+        for (int i = 0; i < testSlot.length; i++) {
+            testSlot[i] = new ItemOreFilterTestSlot(20 + 22 * i, 0);
+            widgetGroup.accept(testSlot[i]);
+        }
+        OreGlobCompileStatusWidget compilationStatus = new OreGlobCompileStatusWidget(10, 10);
+        HighlightedTextField textField = new HighlightedTextField(14, 26, 152, 14, () -> this.expression,
+                s -> {
+                    if (s.equals(this.expression)) return;
+                    this.expression = s;
+                    if (!s.isEmpty()) {
+                        OreGlobCompileResult result = OreGlob.compile(s);
+                        this.glob = result.getInstance();
+                        this.error = result.hasError();
+                        compilationStatus.setCompileResult(result);
+                    } else {
+                        this.glob = ImpossibleOreGlob.getInstance();
+                        this.error = true;
+                        compilationStatus.setCompileResult(null);
+                    }
+                    this.matchCache.clear();
+                    markDirty();
+                    for (ItemOreFilterTestSlot slot : testSlot) {
+                        slot.setGlob(this.error ? null : this.glob);
+                    }
+                });
+        compilationStatus.setTextField(textField);
+
+        widgetGroup.accept(new ImageWidget(10, 0, 7, 7, GuiTextures.ORE_FILTER_INFO)
                 .setTooltip("cover.ore_dictionary_filter.info"));
-        widgetGroup.accept(new ImageWidget(10, 25, 156, 14, GuiTextures.DISPLAY));
-        widgetGroup.accept(new TextFieldWidget2(14, 29, 152, 12, () -> oreDictFilterExpression, this::setOreDictFilterExpression)
-                .setAllowedChars(ALLOWED_CHARS)
-                .setMaxLength(64)
-                .setScale(0.75f)
-                .setValidator(input -> {
-                    // remove all operators that are double
-                    input = DOUBLE_WILDCARD.matcher(input).replaceAll("*");
-                    input = DOUBLE_AND.matcher(input).replaceAll("&");
-                    input = DOUBLE_OR.matcher(input).replaceAll("|");
-                    input = DOUBLE_NOT.matcher(input).replaceAll("!");
-                    input = DOUBLE_XOR.matcher(input).replaceAll("^");
-                    input = DOUBLE_SPACE.matcher(input).replaceAll(" ");
-                    // move ( and ) so it doesn't create invalid expressions f.e. xxx (& yyy) => xxx & (yyy)
-                    // append or prepend ( and ) if the amount is not equal
-                    StringBuilder builder = new StringBuilder();
-                    int unclosed = 0;
-                    char last = ' ';
-                    for (int i = 0; i < input.length(); i++) {
-                        char c = input.charAt(i);
-                        if (c == ' ') {
-                            if (last != '(')
-                                builder.append(" ");
-                            continue;
-                        }
-                        if (c == '(')
-                            unclosed++;
-                        else if (c == ')') {
-                            unclosed--;
-                            if (last == '&' || last == '|' || last == '^') {
-                                int l = builder.lastIndexOf(" " + last);
-                                int l2 = builder.lastIndexOf(String.valueOf(last));
-                                builder.insert(l == l2 - 1 ? l : l2, ")");
-                                continue;
-                            }
-                            if (i > 0 && builder.charAt(builder.length() - 1) == ' ') {
-                                builder.deleteCharAt(builder.length() - 1);
-                            }
-                        } else if ((c == '&' || c == '|' || c == '^') && last == '(') {
-                            builder.deleteCharAt(builder.lastIndexOf("("));
-                            builder.append(c).append(" (");
-                            continue;
-                        }
-
-                        builder.append(c);
-                        last = c;
-                    }
-                    if (unclosed > 0) {
-                        for (int i = 0; i < unclosed; i++) {
-                            builder.append(")");
-                        }
-                    } else if (unclosed < 0) {
-                        unclosed = -unclosed;
-                        for (int i = 0; i < unclosed; i++) {
-                            builder.insert(0, "(");
-                        }
-                    }
-                    input = builder.toString();
-                    input = input.replaceAll(" {2,}", " ");
-                    return input;
-                })
-        );
-
-        widgetGroup.accept(new DrawableWidget(36, 1, 100, 18)
-                .setBackgroundDrawer(((mouseX, mouseY, partialTicks, context, widget) -> {
-                    if (testStack.isEmpty()) {
-                        return;
-                    }
-                    int color = 0xD15858;
-                    if (testResult) {
-                        color = 0x66C261;
-                    }
-                    GlStateManager.pushMatrix();
-                    GlStateManager.translate(widget.getPosition().x, widget.getPosition().y, 0);
-                    GlStateManager.colorMask(true, true, true, true);
-                    Widget.drawText(I18n.format(testMsg), 22, 6.5f, 0.75f, color, false);
-                    color |= (140 & 0xFF) << 24;
-                    Widget.drawGradientRect(0, 0, 18, 18, color, color);
-                    GlStateManager.popMatrix();
-
-                }))
-        );
-        widgetGroup.accept(new OreDictFilterTestSlot(36, 1)
-                .setListener(stack -> {
-                    testStack = stack;
-                    updateTestMsg();
+        widgetGroup.accept(compilationStatus);
+        widgetGroup.accept(new DrawableWidget(10, 22, 156, 16)
+                .setBackgroundDrawer((mouseX, mouseY, partialTicks, context, widget) -> {
+                    Widget.drawGradientRect(widget.getPosition().x, widget.getPosition().y,
+                            widget.getSize().width, widget.getSize().height,
+                            0xFF808080, 0xFF808080, false);
+                    Widget.drawGradientRect(widget.getPosition().x + 1, widget.getPosition().y + 1,
+                            widget.getSize().width - 2, widget.getSize().height - 2,
+                            0xFF000000, 0xFF000000, false);
                 }));
-    }
-
-    private void updateTestMsg() {
-        if (testStack.isEmpty()) {
-            testMsg = "";
-            return;
-        }
-
-        testResult = matchesItemStack(testStack);
-        if (testResult) {
-            testMsg = "cover.ore_dictionary_filter.matches";
-        } else {
-            testMsg = "cover.ore_dictionary_filter.matches_not";
-        }
+        widgetGroup.accept(textField
+                .setHighlightRule(h -> {
+                    String t = h.getOriginalText();
+                    for (int i = 0; i < t.length(); i++) {
+                        switch (t.charAt(i)) {
+                            case '|': case '&': case '^': case '(': case ')':
+                                h.format(i, TextFormatting.GOLD);
+                                break;
+                            case '*': case '?':
+                                h.format(i, TextFormatting.GREEN);
+                                break;
+                            case '!':
+                                h.format(i, TextFormatting.RED);
+                                break;
+                            case '\\':
+                                h.format(i++, TextFormatting.YELLOW);
+                                break;
+                            case '$': {
+                                h.format(i, TextFormatting.DARK_GREEN);
+                                for (; i < t.length(); i++) {
+                                    switch (t.charAt(i)) {
+                                        case ' ': case '\t': case '\n': case '\r':
+                                            break;
+                                        case '\\':
+                                            i++;
+                                        default:
+                                            continue;
+                                    }
+                                    break;
+                                }
+                                break;
+                            }
+                            default:
+                                continue;
+                        }
+                        h.format(i + 1, TextFormatting.RESET);
+                    }
+                }).setMaxLength(64));
     }
 
     @Override
@@ -166,15 +122,14 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     public boolean matchesItemStack(ItemStack itemStack) {
-        Boolean b = recentlyChecked.get(itemStack);
-        if (b != null)
-            return b;
-        if (OreDictExprFilter.matchesOreDict(matchRules, itemStack)) {
-            recentlyChecked.put(itemStack, true);
-            return true;
+        if (this.error) return false;
+        Boolean cached = this.matchCache.get(itemStack);
+        if (cached != null) {
+            return cached;
         }
-        recentlyChecked.put(itemStack, false);
-        return false;
+        boolean matches = this.glob.matches(itemStack);
+        this.matchCache.put(itemStack, matches);
+        return matches;
     }
 
     @Override
@@ -194,12 +149,19 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setString("OreDictionaryFilter", oreDictFilterExpression);
+        tagCompound.setString("OreDictionaryFilter", expression);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.oreDictFilterExpression = tagCompound.getString("OreDictionaryFilter");
-        OreDictExprFilter.parseExpression(this.matchRules, this.oreDictFilterExpression);
+        this.expression = tagCompound.getString("OreDictionaryFilter");
+        if (!this.expression.isEmpty()) {
+            OreGlobCompileResult result = OreGlob.compile(this.expression);
+            this.glob = result.getInstance();
+            this.error = result.hasError();
+        } else {
+            this.glob = ImpossibleOreGlob.getInstance();
+            this.error = true;
+        }
     }
 }

@@ -1,0 +1,16 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "CTM",
+    "layer": "SOLID",
+    "gregtech": true,
+    "textures": [
+      "gregtech:blocks/lamps/red_ctm"
+    ],
+    "extra": {
+      "connect_to": [
+        { "block": "gregtech:red_lamp" }
+      ]
+    }
+  }
+}

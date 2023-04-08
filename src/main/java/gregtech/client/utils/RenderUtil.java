@@ -7,18 +7,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -147,7 +151,7 @@ public class RenderUtil {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
 
-    public static void useLightMap(float x, float y, Runnable codeBlock){
+    public static void useLightMap(float x, float y, Runnable codeBlock) {
         /* hack the lightmap */
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
@@ -215,8 +219,6 @@ public class RenderUtil {
             return;
         }
 
-        int glTextureId = -1;
-
         final int iconWidth = textureAtlasSprite.getIconWidth();
         final int iconHeight = textureAtlasSprite.getIconHeight();
         final int frameCount = textureAtlasSprite.getFrameCount();
@@ -230,7 +232,7 @@ public class RenderUtil {
             int[] largestMipMapTextureData = frameTextureData[0];
             bufferedImage.setRGB(0, i * iconHeight, iconWidth, iconHeight, largestMipMapTextureData, 0, iconWidth);
         }
-        glTextureId = TextureUtil.glGenTextures();
+        int glTextureId = TextureUtil.glGenTextures();
         if (glTextureId != -1) {
             TextureUtil.uploadTextureImageAllocate(glTextureId, bufferedImage, false, false);
             textureMap.put(textureAtlasSprite, glTextureId);
@@ -250,22 +252,22 @@ public class RenderUtil {
         Matrix4 trans = translation.copy();
         switch (side) {
             case DOWN:
-                trans.translate(0 , -0.0005D * layer,0);
+                trans.translate(0, -0.0005D * layer, 0);
                 break;
             case UP:
-                trans.translate(0 , 0.0005D * layer,0);
+                trans.translate(0, 0.0005D * layer, 0);
                 break;
             case NORTH:
-                trans.translate(0 , 0,-0.0005D * layer);
+                trans.translate(0, 0, -0.0005D * layer);
                 break;
             case SOUTH:
-                trans.translate(0 , 0,0.0005D * layer);
+                trans.translate(0, 0, 0.0005D * layer);
                 break;
             case EAST:
-                trans.translate(0.0005D * layer, 0,0);
+                trans.translate(0.0005D * layer, 0, 0);
                 break;
             case WEST:
-                trans.translate(-0.0005D * layer, 0,0);
+                trans.translate(-0.0005D * layer, 0, 0);
                 break;
         }
         return trans;
@@ -281,7 +283,7 @@ public class RenderUtil {
         int r2 = color2 >> 16 & 255;
         int g2 = color2 >> 8 & 255;
         int b2 = color2 & 255;
-        return (f)->{
+        return (f) -> {
             int A = (int) (a * (1 - f) + a2 * (f));
             int R = (int) (r * (1 - f) + r2 * (f));
             int G = (int) (g * (1 - f) + g2 * (f));
@@ -291,10 +293,10 @@ public class RenderUtil {
     }
 
     public static void renderRect(float x, float y, float width, float height, float z, int color) {
-        float f3 = (float)(color >> 24 & 255) / 255.0F;
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
+        float f3 = (float) (color >> 24 & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -309,7 +311,7 @@ public class RenderUtil {
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     public static void renderGradientRect(float x, float y, float width, float height, float z, int startColor, int endColor, boolean horizontal) {
@@ -349,10 +351,10 @@ public class RenderUtil {
     public static void renderText(float x, float y, float z, float scale, int color, final String renderedText, boolean centered) {
         GlStateManager.pushMatrix();
         final FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        final int width = fr.getStringWidth( renderedText );
+        final int width = fr.getStringWidth(renderedText);
         GlStateManager.translate(x, y - scale * 4, z);
         GlStateManager.scale(scale, scale, scale);
-        GlStateManager.translate(-0.5f * (centered? 1:0)*width, 0.0f, 0.5f );
+        GlStateManager.translate(-0.5f * (centered ? 1 : 0) * width, 0.0f, 0.5f);
 
         fr.drawString(renderedText, 0, 0, color);
         GlStateManager.popMatrix();
@@ -364,7 +366,7 @@ public class RenderUtil {
         GlStateManager.scale(scale, scale, 0.0001f);
         GlStateManager.translate(x * 16, y * 16, z * 16);
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0 );
+        renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
         GlStateManager.popMatrix();
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
     }
@@ -480,7 +482,7 @@ public class RenderUtil {
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     public static void drawFluidTexture(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
@@ -589,8 +591,7 @@ public class RenderUtil {
         if (fbo.isStencilEnabled()) {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, depthBuffer);
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, depthBuffer);
-        }
-        else {
+        } else {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, depthBuffer);
         }
     }
@@ -603,5 +604,35 @@ public class RenderUtil {
         } else {
             OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture, 0);
         }
+    }
+
+    /**
+     * Makes given BakedQuad emissive; specifically, it makes a new UnpackedBakedQuad with
+     * constant lightmap coordination and {@code applyDiffuseLighting} set to {@code false}.
+     * The other properties, such as textures, tint color and other vertex data will be copied from
+     * the template.<p>
+     * Note that this method just returns {@code quad} if Optifine is installed.
+     *
+     * @param quad Template BakedQuad.
+     * @return New UnpackedBakedQuad with emissive property
+     */
+    public static BakedQuad makeEmissive(BakedQuad quad) {
+        if (FMLClientHandler.instance().hasOptifine()) return quad;
+        VertexFormat format = quad.getFormat();
+        if (!format.getElements().contains(DefaultVertexFormats.TEX_2S)) {
+            format = new VertexFormat(quad.getFormat());
+            format.addElement(DefaultVertexFormats.TEX_2S);
+        }
+        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format) {
+            @Override
+            public void put(int element, float... data) {
+                if (this.getVertexFormat().getElement(element) == DefaultVertexFormats.TEX_2S)
+                    super.put(element, 480.0f / 0xFFFF, 480.0f / 0xFFFF);
+                else super.put(element, data);
+            }
+        };
+        quad.pipe(builder);
+        builder.setApplyDiffuseLighting(false);
+        return builder.build();
     }
 }

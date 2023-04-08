@@ -14,15 +14,13 @@ buildscript {
 plugins {
     id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
     id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
+    id 'com.matthewprenger.cursegradle' version "${curse_gradle_version}" apply false
+    id 'com.modrinth.minotaur' version "${minotaur_version}" apply false
 }
 
 apply plugin: 'org.spongepowered.mixin'
 
-tasks.register('getVersionFromJava') {
-    return getVersionFromJava()
-}
-
-version = getVersionFromJava()
+version = getVersionFromJava(true)
 group = project.maven_group
 archivesBaseName = "${project.archives_base_name}-${project.minecraft_version}"
 
@@ -98,11 +96,13 @@ repositories {
         name 'Cleanroom Maven'
         url 'https://maven.cleanroommc.com'
     }
-    maven { // JEI
+    maven {
+        // JEI
         name 'Progwml6 Maven'
         url 'https://dvs1.progwml6.com/files/maven/'
     }
-    maven { // CraftTweaker and JEI Backup
+    maven {
+        // CraftTweaker and JEI Backup
         name 'BlameJared Maven'
         url 'https://maven.blamejared.com'
     }
@@ -164,7 +164,9 @@ fancyGradle {
 
 processJarTask jar
 
-if (project.build_deobfJar.toBoolean()) {
+def final is_ci_env = providers.environmentVariable('CI').getOrElse('false').toBoolean()
+
+if (is_ci_env || project.build_deobfJar.toBoolean()) {
     // Create deobf dev jars
     tasks.register('deobfJar', Jar) {
         archiveClassifier.set 'deobf'
@@ -173,7 +175,7 @@ if (project.build_deobfJar.toBoolean()) {
     processJarTask deobfJar
 }
 
-if (project.build_apiJar.toBoolean()) {
+if (is_ci_env || project.build_apiJar.toBoolean()) {
     // Create API library jar
     tasks.register('apiJar', Jar) {
         archiveClassifier.set 'api'
@@ -187,7 +189,7 @@ if (project.build_apiJar.toBoolean()) {
     }
 }
 
-if (project.build_sourceJar.toBoolean()) {
+if (is_ci_env || project.build_sourceJar.toBoolean()) {
     // Create source jar
     tasks.register('sourcesJar', Jar) {
         archiveClassifier.set 'sources'
@@ -225,13 +227,13 @@ sourceSets {
 }
 
 artifacts {
-    if (project.build_deobfJar.toBoolean()) {
+    if (is_ci_env || project.build_deobfJar.toBoolean()) {
         archives deobfJar
     }
-    if (project.build_apiJar.toBoolean()) {
+    if (is_ci_env || project.build_apiJar.toBoolean()) {
         archives apiJar
     }
-    if (project.build_sourceJar.toBoolean()) {
+    if (is_ci_env || project.build_sourceJar.toBoolean()) {
         archives sourcesJar
     }
 }
@@ -275,6 +277,70 @@ test {
     useJUnitPlatform()
 }
 
+// Deployment
+
+def final deployment_debug = providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse('false').toBoolean()
+
+def final cf_api_key = providers.environmentVariable('CURSEFORGE_API_KEY')
+if (cf_api_key.isPresent()) {
+    apply plugin: 'com.matthewprenger.cursegradle'
+
+    curseforge {
+        apiKey = cf_api_key.get()
+        //noinspection GroovyAssignabilityCheck
+        project {
+            id = providers.environmentVariable('CURSEFORGE_PROJECT_ID').get()
+            changelogType = "markdown"
+            changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
+            releaseType = providers.environmentVariable('RELEASE_TYPE').get()
+
+            addGameVersion "${minecraft_version}"
+
+            def main_artifact = "${archivesBaseName}-${version}.jar"
+            mainArtifact file("build/libs/${main_artifact}")
+            file('build/libs/').eachFile { file ->
+                if (file.name.endsWith('.jar') && file.name != main_artifact) {
+                    addArtifact file
+                }
+            }
+        }
+        options {
+            debug = "${project.deployment_debug}".toBoolean() || deployment_debug
+            javaVersionAutoDetect = true
+            detectNewerJava = false
+            javaIntegration = false
+            forgeGradleIntegration = false
+        }
+    }
+    tasks.curseforge.dependsOn(build)
+}
+
+def final modrinth_api_key = providers.environmentVariable('MODRINTH_API_KEY')
+if (modrinth_api_key.isPresent()) {
+    apply plugin: 'com.modrinth.minotaur'
+
+    modrinth {
+        token = modrinth_api_key.get()
+        projectId = providers.environmentVariable("MODRINTH_PROJECT_ID").get()
+        changelog = providers.environmentVariable("CHANGELOG_LOCATION").get()
+        versionType = providers.environmentVariable("RELEASE_TYPE").get()
+
+        versionNumber = getVersionFromJava(false)
+        gameVersions = ["${minecraft_version}"]
+
+        def main_artifact = "${archivesBaseName}-${version}.jar"
+        uploadFile = file("build/libs/${main_artifact}")
+        file('build/libs/').eachFile { file ->
+            if (file.name.endsWith('.jar') && file.name != main_artifact) {
+                additionalFiles.add file
+            }
+        }
+
+        debugMode = "${project.deployment_debug}".toBoolean() || deployment_debug
+    }
+    tasks.modrinth.dependsOn(build)
+}
+
 /**
  * Applies required processing to jar tasks
  * @param task the task to process
@@ -308,11 +374,8 @@ private void processJarTask(task) {
     }
 }
 
-/**
- * @return the current project version, parsed from the version file
- */
 @SuppressWarnings('GroovyAssignabilityCheck')
-private String getVersionFromJava() {
+private String getVersionFromJava(boolean addExtra) {
     def major = '0'
     def minor = '0'
     def revision = '0'
@@ -335,10 +398,9 @@ private String getVersionFromJava() {
         }
     }
 
-    if (extra) {
+    if (addExtra && extra) {
         return "${major}.${minor}.${revision}-${extra}"
     } else {
         return "${major}.${minor}.${revision}"
     }
 }
-

@@ -7,6 +7,7 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.IModuleManager;
@@ -21,12 +22,16 @@ import gregtech.api.util.BaseCreativeTab;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
+import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockWarningSign;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -51,6 +56,9 @@ public class GregTechAPI {
     public static IAdvancementManager advancementManager;
     /** Will be available at the Pre-Initialization stage */
     public static ISoundManager soundManager;
+    /** Will be available at the Pre-Initialization stage */
+    private static boolean highTier;
+    private static boolean highTierInitialized;
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
@@ -62,7 +70,7 @@ public class GregTechAPI {
     public static final Object2ObjectOpenHashMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
 
     public static final BaseCreativeTab TAB_GREGTECH =
-            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.LOGO.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_MACHINES =
             new BaseCreativeTab(GTValues.MODID + ".machines", () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_CABLES =
@@ -75,6 +83,28 @@ public class GregTechAPI {
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
             new BaseCreativeTab(GTValues.MODID + ".ores", () -> OreDictUnifier.get(OrePrefix.ore, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_DECORATIONS =
+            new BaseCreativeTab(GTValues.MODID + ".decorations", () -> MetaBlocks.WARNING_SIGN.getItemVariant(BlockWarningSign.SignType.YELLOW_STRIPES), true);
+
+    /** Will be available at the Pre-Initialization stage */
+    public static boolean isHighTier() {
+        return highTier;
+    }
+
+    /**
+     * Initializes High-Tier. Internal use only, do not attempt to call this.
+     */
+    static void initializeHighTier() {
+        if (highTierInitialized) throw new IllegalStateException("High-Tier is already initialized.");
+        HighTierEvent highTierEvent = new HighTierEvent();
+        MinecraftForge.EVENT_BUS.post(highTierEvent);
+
+        highTier = ConfigHolder.machines.highTierContent || highTierEvent.isHighTier();
+        highTierInitialized = true;
+
+        if (GregTechAPI.isHighTier()) GTLog.logger.info("High-Tier is Enabled.");
+        else GTLog.logger.info("High-Tier is Disabled.");
+    }
 
     public static class RegisterEvent<V> extends GenericEvent<V> {
 

@@ -363,14 +363,14 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
+                .input("treeSapling")
                 .outputs(new ItemStack(Items.STICK))
                 .output(dustTiny, Wood)
                 .duration(16).EUt(VA[ULV])
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
+                .input(slab, Wood)
                 .outputs(new ItemStack(Items.BOWL))
                 .output(dustSmall, Wood)
                 .duration(50).EUt(VA[ULV])
@@ -434,9 +434,9 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("torch_coke_dust", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_creosote", new ItemStack(Blocks.TORCH, 16), "WB", "S ", 'W', OreDictUnifier.get("wool"), 'S', new UnificationEntry(stick, Wood), 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(dust, Redstone).input(stick, Wood).outputs(new ItemStack(Blocks.REDSTONE_TORCH, 1)).duration(100).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(100).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(100).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(dust, Redstone).input(stick, Wood).outputs(new ItemStack(Blocks.REDSTONE_TORCH, 1)).duration(100).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(100).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(100).circuitMeta(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(40).circuitMeta(7).inputs(new ItemStack(Items.STICK, 7)).outputs(new ItemStack(Blocks.LADDER, ConfigHolder.recipes.hardWoodRecipes ? 2 : 3)).buildAndRegister();
 
@@ -519,7 +519,7 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
                     .buildAndRegister();
 
-            if(i != 0) {
+            if (i != 0) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                         .inputs(new ItemStack(Blocks.CONCRETE))
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
@@ -545,7 +545,7 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
                     .buildAndRegister();
 
-            if(i != 0) {
+            if (i != 0) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
                         .inputs(new ItemStack(Blocks.WOOL))
                         .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
@@ -739,17 +739,25 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("daylight_detector_certus", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "CCC", "PPP",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'C', new UnificationEntry(gem, CertusQuartz),
-                'P', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W)
+                'P', new UnificationEntry(OrePrefix.slab, Materials.Wood)
         );
 
         ModHandler.addShapedRecipe("daylight_detector_quartzite", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "CCC", "PPP",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'C', new UnificationEntry(gem, Quartzite),
-                'P', new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W)
+                'P', new UnificationEntry(OrePrefix.slab, Materials.Wood)
         );
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(dust, Redstone).circuitMeta(9).outputs(new ItemStack(Blocks.NOTEBLOCK)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.PLANKS, 8, GTValues.W)).input(gem, Diamond).outputs(new ItemStack(Blocks.JUKEBOX)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 8)
+                .input(dust, Redstone)
+                .outputs(new ItemStack(Blocks.NOTEBLOCK))
+                .circuitMeta(9).duration(100).EUt(16).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 8)
+                .input(gem, Diamond)
+                .outputs(new ItemStack(Blocks.JUKEBOX))
+                .duration(100).EUt(16).buildAndRegister();
     }
 
     /**
@@ -1003,7 +1011,7 @@ public class VanillaStandardRecipes {
                 .input(OrePrefix.stick, Materials.Gold, 12)
                 .input(OrePrefix.stick, Materials.Wood)
                 .input(dust, Redstone)
-                .circuitMeta(1)
+                .circuitMeta(2)
                 .outputs(new ItemStack(Blocks.GOLDEN_RAIL, 12))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 

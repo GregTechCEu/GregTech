@@ -41,6 +41,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,12 +159,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         super.update();
         if (!getWorld().isRemote) {
             if (recipeLogic != null) {
-                getRecipeLogic().update();
+                getCraftingRecipeLogic().update();
             }
         }
     }
 
-    private CraftingRecipeLogic getRecipeLogic() {
+    private CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
         return recipeLogic;
     }
@@ -179,7 +180,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(5, 20, "gregtech.machine.workbench.storage_note_1"));
         widgetGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
-        CraftingRecipeLogic recipeResolver = getRecipeLogic();
+        CraftingRecipeLogic recipeResolver = getCraftingRecipeLogic();
         IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
         widgetGroup.addWidget(new ItemListGridWidget(11, 45, 8, 5, itemList));
         return widgetGroup;
@@ -240,7 +241,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     @Override
-    public boolean canRenderMachineGrid() {
+    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
         return false;
     }
 
