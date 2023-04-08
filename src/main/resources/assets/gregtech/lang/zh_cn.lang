@@ -2373,6 +2373,45 @@ tile.warning_sign_1.causality_hazard.name=非标准因果律危害警示方块
 tile.warning_sign_1.automated_defenses_hazard.name=自动化防御设施危害警示方块
 tile.warning_sign_1.high_pressure_hazard.name=高压危害警示方块
 
+# Lamps(ON)
+tile.gregtech_lamp.white.name=白色灯
+tile.gregtech_lamp.orange.name=橙色灯
+tile.gregtech_lamp.magenta.name=品红色灯
+tile.gregtech_lamp.light_blue.name=淡蓝色灯
+tile.gregtech_lamp.yellow.name=黄色灯
+tile.gregtech_lamp.lime.name=黄绿色灯
+tile.gregtech_lamp.pink.name=粉红色灯
+tile.gregtech_lamp.gray.name=灰色灯
+tile.gregtech_lamp.silver.name=淡灰色灯
+tile.gregtech_lamp.cyan.name=青色灯
+tile.gregtech_lamp.purple.name=紫色灯
+tile.gregtech_lamp.blue.name=蓝色灯
+tile.gregtech_lamp.brown.name=棕色灯
+tile.gregtech_lamp.green.name=绿色灯
+tile.gregtech_lamp.red.name=红色灯
+tile.gregtech_lamp.black.name=黑色灯
+
+tile.gregtech_lamp_borderless.white.name=白色无框灯
+tile.gregtech_lamp_borderless.orange.name=橙色无框灯
+tile.gregtech_lamp_borderless.magenta.name=品红色无框灯
+tile.gregtech_lamp_borderless.light_blue.name=淡蓝色无框灯
+tile.gregtech_lamp_borderless.yellow.name=黄色无框灯
+tile.gregtech_lamp_borderless.lime.name=黄绿色无框灯
+tile.gregtech_lamp_borderless.pink.name=粉红色无框灯
+tile.gregtech_lamp_borderless.gray.name=灰色无框灯
+tile.gregtech_lamp_borderless.silver.name=淡灰色无框灯
+tile.gregtech_lamp_borderless.cyan.name=青色无框灯
+tile.gregtech_lamp_borderless.purple.name=紫色无框灯
+tile.gregtech_lamp_borderless.blue.name=蓝色无框灯
+tile.gregtech_lamp_borderless.brown.name=棕色无框灯
+tile.gregtech_lamp_borderless.green.name=绿色无框灯
+tile.gregtech_lamp_borderless.red.name=红色无框灯
+tile.gregtech_lamp_borderless.black.name=黑色无框灯
+
+tile.gregtech_lamp.tooltip.inverted=反相
+tile.gregtech_lamp.tooltip.no_bloom=无泛光
+tile.gregtech_lamp.tooltip.no_light=无光照
+
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=青铜管道外壳
 tile.boiler_casing.steel_pipe.name=钢管道外壳
