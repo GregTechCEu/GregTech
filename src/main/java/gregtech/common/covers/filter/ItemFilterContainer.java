@@ -84,7 +84,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
-
         this.filterWrapper.initUI(y + 38, widgetGroup);
         this.filterWrapper.blacklistUI(y + 38, widgetGroup, () -> true);
     }
