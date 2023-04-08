@@ -158,7 +158,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
      * @param enderFluidLink the ender fluid link cover to get data from
      */
     private static void enderFluidLinkInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverEnderFluidLink enderFluidLink) {
-        transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
+        transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIoEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
         fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
