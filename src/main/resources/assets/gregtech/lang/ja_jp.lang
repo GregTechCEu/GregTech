@@ -1131,10 +1131,17 @@ cover.filter.blacklist.disabled=ホワイトリスト
 cover.filter.blacklist.enabled=ブラックリスト
 
 cover.ore_dictionary_filter.title=鉱石辞書フィルター
-cover.ore_dictionary_filter.info=§b論理式対応/n&=AND/n|=OR/n^=XOR/n!=NOT/n( ) 優先/n* ワイルドカード/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが、二重プレートは該当しない。
+cover.ore_dictionary_filter.info=§b論理式対応/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r グループ化/n§6*§r ワイルドカード (0文字以上の任意文字列)/n§6?§r 任意の1文字/n§6()§r 空の項目（鉱石辞書がない項目も含む）に適合/n§6$c§r 大文字・小文字を区別する場合に式の先頭に付ける。/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが、二重プレートは該当しない。
 cover.ore_dictionary_filter.test_slot.info=フィルタ式に一致するかどうかのテスト用スロット
-cover.ore_dictionary_filter.matches=適合アイテム
-cover.ore_dictionary_filter.matches_not=非適合アイテム
+cover.ore_dictionary_filter.test_slot.matches=§a* %s
+cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
+cover.ore_dictionary_filter.test_slot.no_oredict.matches=§a(鉱石辞書がない)
+cover.ore_dictionary_filter.test_slot.no_oredict.matches_not=§c(鉱石辞書がない)
+cover.ore_dictionary_filter.status.err=§c%s個のエラー
+cover.ore_dictionary_filter.status.err_warn=§c%s個のエラーと%s個の警告
+cover.ore_dictionary_filter.status.warn=§7%s個の警告
+cover.ore_dictionary_filter.status.no_issues=§a問題ナシ
+cover.ore_dictionary_filter.status.explain=フィルターの状況:
 
 cover.fluid_filter.title=液体フィルター
 cover.fluid_filter.config_amount=スクロールで量を調整できる。/nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/n右クリックで増加して左クリックで減少です。/nShiftで倍/半分。/nホイールクリックで消去。
