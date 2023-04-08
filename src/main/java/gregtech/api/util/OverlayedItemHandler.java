@@ -1,15 +1,16 @@
 package gregtech.api.util;
 
-import gregtech.api.recipes.KeySharedStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class OverlayedItemHandler {
     private final OverlayedItemHandlerSlot[] originalSlots;
     private final OverlayedItemHandlerSlot[] slots;
     private final IItemHandler overlayedHandler;
 
-    public OverlayedItemHandler(IItemHandler toOverlay) {
+    public OverlayedItemHandler(@Nonnull IItemHandler toOverlay) {
         this.slots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
         this.originalSlots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
         this.overlayedHandler = toOverlay;
@@ -19,7 +20,6 @@ public class OverlayedItemHandler {
      * Resets the {slots} array to the state when the handler was
      * first mirrored
      */
-
     public void reset() {
         for (int i = 0; i < this.originalSlots.length; i++) {
             if (this.originalSlots[i] != null) {
@@ -49,20 +49,20 @@ public class OverlayedItemHandler {
     }
 
 
-    public int insertStackedItemStackKey(ItemStackKey key, int amountToInsert) {
+    public int insertStackedItemStack(@Nonnull ItemStack stack, int amountToInsert) {
         int lastKnownPopulatedSlot = 0;
         //loop through all slots, looking for ones matching the key
         for (int i = 0; i < this.slots.length; i++) {
             //populate the slot if it's not already populated
             initSlot(i);
             // if it's the same item or there is no item in the slot
-            ItemStackKey slotKey = this.slots[i].getItemStackKey();
-            if (slotKey == key || slotKey == null) {
-                //if the slot its not full
-                int canInsertUpTo = this.slots[i].slotLimit - this.slots[i].count;
+            ItemStack slotKey = this.slots[i].getItemStack();
+            if (slotKey.isEmpty() || ItemStackHashStrategy.comparingAllButCount().equals(slotKey, stack)) {
+                //if the slot is not full
+                int canInsertUpTo = this.slots[i].getSlotLimit() - this.slots[i].getCount();
                 if (canInsertUpTo > 0) {
                     int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
-                    this.slots[i].setItemStackKey(key);
+                    this.slots[i].setItemStack(stack.copy()); // this copy may not be need, needs further tests
                     this.slots[i].setCount(this.slots[i].getCount() + insertedAmount);
                     amountToInsert -= insertedAmount;
                 }
@@ -81,11 +81,11 @@ public class OverlayedItemHandler {
             for (int i = lastKnownPopulatedSlot + 1; i < this.slots.length; i++) {
                 OverlayedItemHandlerSlot slot = this.slots[i];
                 //if the slot is empty
-                if (slot.getItemStackKey() == null) {
-                    int canInsertUpTo = Math.min(key.getMaxStackSize(), slot.slotLimit);
+                if (slot.getItemStack().isEmpty()) {
+                    int canInsertUpTo = Math.min(stack.getMaxStackSize(), slot.getSlotLimit());
                     if (canInsertUpTo > 0) {
                         int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
-                        slot.setItemStackKey(key);
+                        slot.setItemStack(stack.copy()); // this copy may not be need, needs further tests
                         slot.setCount(insertedAmount);
                         amountToInsert -= insertedAmount;
                     }
@@ -100,22 +100,22 @@ public class OverlayedItemHandler {
     }
 
     private static class OverlayedItemHandlerSlot {
-        private ItemStackKey itemStackKey = null;
+        private ItemStack itemStack = ItemStack.EMPTY;
         private int count = 0;
-        private int slotLimit = 0;
+        private int slotLimit;
 
-        OverlayedItemHandlerSlot(ItemStack stackToMirror, int slotLimit) {
+        protected OverlayedItemHandlerSlot(@Nonnull ItemStack stackToMirror, int slotLimit) {
             if (!stackToMirror.isEmpty()) {
-                this.itemStackKey = KeySharedStack.getRegisteredStack(stackToMirror);
+                this.itemStack = stackToMirror.copy();
                 this.count = stackToMirror.getCount();
-                this.slotLimit = Math.min(itemStackKey.getMaxStackSize(), slotLimit);
+                this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
             } else {
                 this.slotLimit = slotLimit;
             }
         }
 
-        OverlayedItemHandlerSlot(ItemStackKey itemStackKey, int slotLimit, int count) {
-            this.itemStackKey = itemStackKey;
+        protected OverlayedItemHandlerSlot(@Nonnull ItemStack itemStack, int slotLimit, int count) {
+            this.itemStack = itemStack;
             this.count = count;
             this.slotLimit = slotLimit;
         }
@@ -128,14 +128,19 @@ public class OverlayedItemHandler {
             return count;
         }
 
-        public ItemStackKey getItemStackKey() {
-            return itemStackKey;
+        /**
+         * Storage of this ItemStack elsewhere will require copying it
+         * @return the stored ItemStack
+         */
+        @Nonnull
+        public ItemStack getItemStack() {
+            return this.itemStack;
         }
 
-        public void setItemStackKey(ItemStackKey itemStackKey) {
-            if (this.itemStackKey != itemStackKey) {
-                this.itemStackKey = itemStackKey;
-                this.slotLimit = Math.min(itemStackKey.getMaxStackSize(), slotLimit);
+        public void setItemStack(@Nonnull ItemStack itemStack) {
+            if (!ItemStackHashStrategy.comparingAllButCount().equals(this.itemStack, itemStack)) {
+                this.itemStack = itemStack;
+                this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
             }
         }
 
@@ -143,8 +148,9 @@ public class OverlayedItemHandler {
             this.count = count;
         }
 
+        @Nonnull
         OverlayedItemHandlerSlot copy() {
-            return new OverlayedItemHandlerSlot(this.itemStackKey, this.slotLimit, this.count);
+            return new OverlayedItemHandlerSlot(this.itemStack, this.slotLimit, this.count);
         }
     }
 }

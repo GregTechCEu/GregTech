@@ -1,15 +1,14 @@
 package gregtech.common.inventory;
 
-import gregtech.api.util.ItemStackKey;
-
-import java.util.Objects;
+import gregtech.api.util.ItemStackHashStrategy;
+import net.minecraft.item.ItemStack;
 
 public class SimpleItemInfo implements IItemInfo {
 
-    private final ItemStackKey itemStack;
+    private final ItemStack itemStack;
     private int totalItemAmount = 0;
 
-    public SimpleItemInfo(ItemStackKey itemStack) {
+    public SimpleItemInfo(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
@@ -23,7 +22,7 @@ public class SimpleItemInfo implements IItemInfo {
     }
 
     @Override
-    public ItemStackKey getItemStackKey() {
+    public ItemStack getItemStack() {
         return itemStack;
     }
 
@@ -37,6 +36,6 @@ public class SimpleItemInfo implements IItemInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(itemStack);
+        return ItemStackHashStrategy.comparingAllButCount().hashCode(this.itemStack);
     }
 }

@@ -5037,20 +5037,8 @@ gregtech.chat.cape=§5おめでとうございます: 新しいマントを解�
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cこれによりすべてのコンテンツが破棄されます!
 
-gregtech.cover.energy_detector.message_electricity_storage_normal=通常
-gregtech.cover.energy_detector.message_electricity_storage_inverted=反転
-
-gregtech.cover.fluid_detector.message_fluid_storage_normal=通常
-gregtech.cover.fluid_detector.message_fluid_storage_inverted=反転
-
-gregtech.cover.item_detector.message_item_storage_normal=通常
-gregtech.cover.item_detector.message_item_storage_inverted=反転
-
-gregtech.cover.activity_detector.message_activity_normal=通常
-gregtech.cover.activity_detector.message_activity_inverted=反転
-
-gregtech.cover.activity_detector_advanced.message_activity_normal=通常
-gregtech.cover.activity_detector_advanced.message_activity_inverted=反転
+gregtech.cover.detector_base.message_normal_state=通常
+gregtech.cover.detector_base.message_inverted_state=反転
 
 gregtech.creative.chest.item=アイテム
 gregtech.creative.chest.ipc=アイテム毎サイクル

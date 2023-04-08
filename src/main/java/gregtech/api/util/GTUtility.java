@@ -92,7 +92,7 @@ public class GTUtility {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
     private static final DecimalFormat TWO_PLACES_FORMAT = new DecimalFormat("#.##");
 
-    private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
+    private static final TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
     private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
 
@@ -1084,6 +1084,7 @@ public class GTUtility {
 
     /**
      * Attempt to break a (single) snow layer at the given BlockPos.
+     *
      * @return true if the passed IBlockState was a snow layer
      */
     public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
@@ -1109,11 +1110,12 @@ public class GTUtility {
 
     /**
      * Tries to parse a string into an int, returning a default value if it fails.
-     * @param val string to parse
+     *
+     * @param val          string to parse
      * @param defaultValue default value to return
      * @return returns an int from the parsed string, otherwise the default value
      */
-    public static int tryParseInt(String val, int defaultValue){
+    public static int tryParseInt(String val, int defaultValue) {
         try {
             return Integer.parseInt(val);
         } catch (NumberFormatException e) {
@@ -1124,59 +1126,18 @@ public class GTUtility {
 
     /**
      * Tries to parse a string into a long, returning a default value if it fails.
-     * @param val string to parse
+     *
+     * @param val          string to parse
      * @param defaultValue default value to return
      * @return returns a long from the parsed string, otherwise the default value
      */
-    public static long tryParseLong(String val, long defaultValue){
+    public static long tryParseLong(String val, long defaultValue) {
         try {
             return Long.parseLong(val);
         } catch (NumberFormatException e) {
             GTLog.logger.warn(e);
         }
         return defaultValue;
-    }
-
-    /**
-     * Compares a value against a min and max, with an option to invert the logic
-     * @param value value to be compared
-     * @param maxValue the max that the value can be
-     * @param minValue the min that the value can be
-     * @param isInverted whether to invert the logic of this method
-     * @return an int from 0 (value <= min) to 15 (value >= max) normally, with a ratio when the value is between min and max
-     */
-    public static int computeRedstoneBetweenValues(int value, float maxValue, float minValue, boolean isInverted) {
-        if (value >= maxValue) {
-            return isInverted ? 0 : 15; // value above maxValue should normally be 15, otherwise 0
-        } else if (value <= minValue) {
-            return isInverted ? 15 : 0; // value below minValue should normally be 0, otherwise 15
-        }
-
-        float ratio;
-        if (!isInverted) {
-            ratio = 15 * (value - minValue) / (maxValue - minValue); // value closer to max results in higher output
-        } else {
-            ratio = 15 * (maxValue - value) / (maxValue - minValue); // value closer to min results in higher output
-        }
-
-        return Math.round(ratio);
-    }
-
-    /**
-     * Compares a value against a min and max, with an option to invert the logic. Has latching functionality.
-     * @param value value to be compared
-     * @param maxValue the max that the value can be
-     * @param minValue the min that the value can be
-     * @param output the output value the function modifies
-     * @return returns the modified output value
-     */
-    public static int computeLatchedRedstoneBetweenValues(float value, float maxValue, float minValue, boolean isInverted, int output) {
-        if (value >= maxValue) {
-            output = !isInverted ? 0 : 15; // value above maxValue should normally be 0, otherwise 15
-        } else if (value <= minValue) {
-            output = !isInverted ? 15 : 0; // value below minValue should normally be 15, otherwise 0
-        }
-        return output;
     }
 
     /**
@@ -1243,7 +1204,6 @@ public class GTUtility {
      * @param height   The height of the box
      * @param pointX   The X value of the point to check
      * @param pointY   The Y value of the point to check
-     *
      * @return True if the provided (X,Y) point is within the described box, else false
      */
     public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {

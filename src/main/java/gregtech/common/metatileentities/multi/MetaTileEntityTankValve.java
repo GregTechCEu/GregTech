@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -21,7 +20,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -81,41 +79,26 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), new FluidTankList(false));
+        initializeDummyInventory();
     }
 
-    @Override
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        boolean wasRotated = super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
-        if (wasRotated && !getWorld().isRemote) {
-            reinitializeFluidInventory(getFrontFacing());
-        }
-        return wasRotated;
+    /**
+     * When this block is not connected to any multiblock it uses dummy inventory to prevent problems with capability checks
+     */
+    private void initializeDummyInventory() {
+        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), new FluidTankList(false));
     }
 
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        if (getFrontFacing() == EnumFacing.DOWN) {
-            this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), controllerBase.getImportFluids());
-        } else {
-            this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false, controllerBase.getImportFluids()), controllerBase.getImportFluids());
-        }
-    }
-
-    private void reinitializeFluidInventory(EnumFacing facing) {
-        FluidHandlerProxy proxy = (FluidHandlerProxy) fluidInventory;
-        if (facing == EnumFacing.DOWN) {
-            proxy.reinitializeHandler(new FluidTankList(false), proxy.output);
-        } else {
-            proxy.reinitializeHandler(proxy.output, proxy.output);
-        }
+        this.fluidInventory = controllerBase.getFluidInventory(); //directly use controllers fluid inventory as there is no reason to proxy it
     }
 
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), new FluidTankList(false));
+        initializeDummyInventory();
     }
 
     @Override
@@ -149,7 +132,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.tank_valve.tooltip"));
     }

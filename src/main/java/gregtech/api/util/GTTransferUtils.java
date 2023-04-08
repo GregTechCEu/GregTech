@@ -4,6 +4,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.FluidKey;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
@@ -112,11 +113,11 @@ public class GTTransferUtils {
         // determine if there is sufficient room to insert all items into the target inventory
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            Map<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
+            Object2IntMap<ItemStack> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
 
-            for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                int amount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+            for (Object2IntMap.Entry<ItemStack> entry : stackKeyMap.object2IntEntrySet()) {
+                int amountToInsert = entry.getIntValue();
+                int amount = overlayedItemHandler.insertStackedItemStack(entry.getKey(), amountToInsert);
                 if (amount > 0) {
                     return false;
                 }

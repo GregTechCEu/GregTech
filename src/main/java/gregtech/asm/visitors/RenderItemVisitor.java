@@ -1,6 +1,8 @@
 package gregtech.asm.visitors;
 
+import gregtech.api.GTValues;
 import gregtech.asm.util.ObfMapping;
+import net.minecraftforge.fml.common.Loader;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -16,41 +18,93 @@ public class RenderItemVisitor implements Opcodes {
         while (methods.hasNext()) {
             MethodNode m = methods.next();
             if (TARGET_METHOD.matches(m)) {
-                InsnList toAdd = new InsnList();
-                toAdd.add(new VarInsnNode(ALOAD, 2));
-                toAdd.add(new VarInsnNode(ILOAD, 3));
-                toAdd.add(new VarInsnNode(ILOAD, 4));
-                toAdd.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks", "renderElectricBar", "(Lnet/minecraft/item/ItemStack;II)V", false));
+                InsnList callRenderLampOverlay = new InsnList();
+                callRenderLampOverlay.add(new VarInsnNode(ALOAD, 2));
+                callRenderLampOverlay.add(new VarInsnNode(ILOAD, 3));
+                callRenderLampOverlay.add(new VarInsnNode(ILOAD, 4));
+                callRenderLampOverlay.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks", "renderLampOverlay", "(Lnet/minecraft/item/ItemStack;II)V", false));
 
-                boolean primed = false, onFrame = false, applied = false;
+                boolean enderCoreLoaded = Loader.instance().getIndexedModList().containsKey(GTValues.MODID_ECORE);
+
+                // do not conflict with EnderCore's changes, which already do what we need
+                InsnList callRenderElectricBar;
+                if (!enderCoreLoaded) {
+                    callRenderElectricBar = new InsnList();
+                    callRenderElectricBar.add(new VarInsnNode(ALOAD, 2));
+                    callRenderElectricBar.add(new VarInsnNode(ILOAD, 3));
+                    callRenderElectricBar.add(new VarInsnNode(ILOAD, 4));
+                    callRenderElectricBar.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks", "renderElectricBar", "(Lnet/minecraft/item/ItemStack;II)V", false));
+                } else {
+                    callRenderElectricBar = null;
+                }
+
+                boolean ifne = false, l2 = false, renderLampOverlayApplied = false;
+
+                boolean primed, onFrame, renderElectricBarApplied;
+                primed = onFrame = renderElectricBarApplied = enderCoreLoaded;
                 Label target = null;
+
                 for (int i = 0; i < m.instructions.size(); i++) {
                     AbstractInsnNode next = m.instructions.get(i);
 
-                    if (!primed && target == null && next.getOpcode() == INVOKEVIRTUAL && next instanceof MethodInsnNode) {
-                        if ("showDurabilityBar".equals(((MethodInsnNode) next).name)) {
-                            primed = true;
+                    if (!ifne) {
+                        if (next.getOpcode() == IFNE) {
+                            ifne = true;
                         }
-                    }
-
-                    if (primed && next.getOpcode() == IFEQ && next instanceof JumpInsnNode) {
-                        target = ((JumpInsnNode) next).label.getLabel();
-                        primed = false;
-                    }
-
-                    if (target != null && next instanceof LabelNode && ((LabelNode) next).getLabel() == target) {
-                        onFrame = true;
                         continue;
                     }
 
-                    if (onFrame && next instanceof FrameNode) {
-                        m.instructions.insert(next, toAdd);
-                        applied = true;
+                    if (!l2) {
+                        if (next instanceof LabelNode) {
+                            l2 = true;
+                            m.instructions.insert(next, callRenderLampOverlay);
+                        }
+                        continue;
+                    }
+
+                    if (!renderLampOverlayApplied) {
+                        if (next instanceof FrameNode) {
+                            m.instructions.insert(next, callRenderLampOverlay);
+                            renderLampOverlayApplied = true;
+                        }
+                        continue;
+                    }
+
+                    if (renderElectricBarApplied) {
+                        break;
+                    }
+
+                    if (!primed) {
+                        if (next.getOpcode() == INVOKEVIRTUAL &&
+                                next instanceof MethodInsnNode &&
+                                "showDurabilityBar".equals(((MethodInsnNode) next).name)) {
+                            primed = true;
+                        }
+                        continue;
+                    }
+
+                    if (target == null) {
+                        if (next.getOpcode() == IFEQ && next instanceof JumpInsnNode) {
+                            target = ((JumpInsnNode) next).label.getLabel();
+                        }
+                        continue;
+                    }
+
+                    if (!onFrame) {
+                        if (next instanceof LabelNode && ((LabelNode) next).getLabel() == target) {
+                            onFrame = true;
+                        }
+                        continue;
+                    }
+
+                    if (next instanceof FrameNode) {
+                        m.instructions.insert(next, callRenderElectricBar);
+                        renderElectricBarApplied = true;
                         break;
                     }
                 }
-                if (!applied) {
-                    m.instructions.insert(toAdd);
+                if (!renderElectricBarApplied) {
+                    m.instructions.insert(callRenderElectricBar);
                 }
                 break;
             }

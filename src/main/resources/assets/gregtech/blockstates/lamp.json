@@ -1,0 +1,128 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "active": {
+      "true": {
+        "model": "gregtech:lamp"
+      },
+      "false": {
+        "model": "gregtech:lamp_off"
+      }
+    },
+    "color": {
+      "white": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/white",
+          "active_overlay": "gregtech:blocks/lamps/white_emissive",
+          "inactive": "gregtech:blocks/lamps/white_off"
+        }
+      },
+      "orange": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/orange",
+          "active_overlay": "gregtech:blocks/lamps/orange_emissive",
+          "inactive": "gregtech:blocks/lamps/orange_off"
+        }
+      },
+      "magenta": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/magenta",
+          "active_overlay": "gregtech:blocks/lamps/magenta_emissive",
+          "inactive": "gregtech:blocks/lamps/magenta_off"
+        }
+      },
+      "light_blue": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/light_blue",
+          "active_overlay": "gregtech:blocks/lamps/light_blue_emissive",
+          "inactive": "gregtech:blocks/lamps/light_blue_off"
+        }
+      },
+      "yellow": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/yellow",
+          "active_overlay": "gregtech:blocks/lamps/yellow_emissive",
+          "inactive": "gregtech:blocks/lamps/yellow_off"
+        }
+      },
+      "lime": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/lime",
+          "active_overlay": "gregtech:blocks/lamps/lime_emissive",
+          "inactive": "gregtech:blocks/lamps/lime_off"
+        }
+      },
+      "pink": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/pink",
+          "active_overlay": "gregtech:blocks/lamps/pink_emissive",
+          "inactive": "gregtech:blocks/lamps/pink_off"
+        }
+      },
+      "gray": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/gray",
+          "active_overlay": "gregtech:blocks/lamps/gray_emissive",
+          "inactive": "gregtech:blocks/lamps/gray_off"
+        }
+      },
+      "silver": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/silver",
+          "active_overlay": "gregtech:blocks/lamps/silver_emissive",
+          "inactive": "gregtech:blocks/lamps/silver_off"
+        }
+      },
+      "cyan": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/cyan",
+          "active_overlay": "gregtech:blocks/lamps/cyan_emissive",
+          "inactive": "gregtech:blocks/lamps/cyan_off"
+        }
+      },
+      "purple": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/purple",
+          "active_overlay": "gregtech:blocks/lamps/purple_emissive",
+          "inactive": "gregtech:blocks/lamps/purple_off"
+        }
+      },
+      "blue": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/blue",
+          "active_overlay": "gregtech:blocks/lamps/blue_emissive",
+          "inactive": "gregtech:blocks/lamps/blue_off"
+        }
+      },
+      "brown": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/brown",
+          "active_overlay": "gregtech:blocks/lamps/brown_emissive",
+          "inactive": "gregtech:blocks/lamps/brown_off"
+        }
+      },
+      "green": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/green",
+          "active_overlay": "gregtech:blocks/lamps/green_emissive",
+          "inactive": "gregtech:blocks/lamps/green_off"
+        }
+      },
+      "red": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/red",
+          "active_overlay": "gregtech:blocks/lamps/red_emissive",
+          "inactive": "gregtech:blocks/lamps/red_off"
+        }
+      },
+      "black": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/black",
+          "active_overlay": "gregtech:blocks/lamps/black_emissive",
+          "inactive": "gregtech:blocks/lamps/black_off"
+        }
+      }
+    }
+  }
+}
+

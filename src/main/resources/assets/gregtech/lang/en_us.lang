@@ -2373,6 +2373,45 @@ tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Blo
 tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
 tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
+# Lamps(ON)
+tile.gregtech_lamp.white.name=White Lamp
+tile.gregtech_lamp.orange.name=Orange Lamp
+tile.gregtech_lamp.magenta.name=Magenta Lamp
+tile.gregtech_lamp.light_blue.name=Light Blue Lamp
+tile.gregtech_lamp.yellow.name=Yellow Lamp
+tile.gregtech_lamp.lime.name=Lime Lamp
+tile.gregtech_lamp.pink.name=Pink Lamp
+tile.gregtech_lamp.gray.name=Gray Lamp
+tile.gregtech_lamp.silver.name=Light Gray Lamp
+tile.gregtech_lamp.cyan.name=Cyan Lamp
+tile.gregtech_lamp.purple.name=Purple Lamp
+tile.gregtech_lamp.blue.name=Blue Lamp
+tile.gregtech_lamp.brown.name=Brown Lamp
+tile.gregtech_lamp.green.name=Green Lamp
+tile.gregtech_lamp.red.name=Red Lamp
+tile.gregtech_lamp.black.name=Black Lamp
+
+tile.gregtech_lamp_borderless.white.name=Borderless White Lamp
+tile.gregtech_lamp_borderless.orange.name=Borderless Orange Lamp
+tile.gregtech_lamp_borderless.magenta.name=Borderless Magenta Lamp
+tile.gregtech_lamp_borderless.light_blue.name=Borderless Light Blue Lamp
+tile.gregtech_lamp_borderless.yellow.name=Borderless Yellow Lamp
+tile.gregtech_lamp_borderless.lime.name=Borderless Lime Lamp
+tile.gregtech_lamp_borderless.pink.name=Borderless Pink Lamp
+tile.gregtech_lamp_borderless.gray.name=Borderless Gray Lamp
+tile.gregtech_lamp_borderless.silver.name=Borderless Light Gray Lamp
+tile.gregtech_lamp_borderless.cyan.name=Borderless Cyan Lamp
+tile.gregtech_lamp_borderless.purple.name=Borderless Purple Lamp
+tile.gregtech_lamp_borderless.blue.name=Borderless Blue Lamp
+tile.gregtech_lamp_borderless.brown.name=Borderless Brown Lamp
+tile.gregtech_lamp_borderless.green.name=Borderless Green Lamp
+tile.gregtech_lamp_borderless.red.name=Borderless Red Lamp
+tile.gregtech_lamp_borderless.black.name=Borderless Black Lamp
+
+tile.gregtech_lamp.tooltip.inverted=Inverted
+tile.gregtech_lamp.tooltip.no_bloom=No Bloom
+tile.gregtech_lamp.tooltip.no_light=No Light
+
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
 tile.boiler_casing.steel_pipe.name=Steel Pipe Casing
@@ -5039,20 +5078,8 @@ gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selec
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 
-gregtech.cover.energy_detector.message_electricity_storage_normal=Monitoring Normal Electricity Storage
-gregtech.cover.energy_detector.message_electricity_storage_inverted=Monitoring Inverted Electricity Storage
-
-gregtech.cover.fluid_detector.message_fluid_storage_normal=Monitoring Normal Fluid Storage
-gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted Fluid Storage
-
-gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
-gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
-
-gregtech.cover.activity_detector.message_activity_normal=Monitoring Normal Activity Status
-gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted Activity Status
-
-gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
-gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
+gregtech.cover.detector_base.message_normal_state=Monitoring Status: Normal
+gregtech.cover.detector_base.message_inverted_state=Monitoring Status: Inverted
 
 gregtech.creative.chest.item=Item
 gregtech.creative.chest.ipc=Items per Cycle

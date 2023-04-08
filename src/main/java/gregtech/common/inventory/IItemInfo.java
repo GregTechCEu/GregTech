@@ -1,10 +1,10 @@
 package gregtech.common.inventory;
 
-import gregtech.api.util.ItemStackKey;
+import net.minecraft.item.ItemStack;
 
 public interface IItemInfo {
 
     int getTotalItemAmount();
 
-    ItemStackKey getItemStackKey();
+    ItemStack getItemStack();
 }

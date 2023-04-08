@@ -1,35 +1,39 @@
 package gregtech.api.util;
 
 import gregtech.api.recipes.FluidKey;
-import gregtech.api.recipes.KeySharedStack;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class GTHashMaps {
+public final class GTHashMaps {
+
+    private GTHashMaps() {/**/}
+
     /**
-     * Maps all items in the {@link IItemHandler} into a {@link ItemStackKey}, {@link Integer} value as amount
+     * Maps all items in the {@link IItemHandler} into a {@link ItemStack}, {@link Integer} value as amount
      *
      * @param inputs The inventory handler of the inventory
-     * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
+     * @return a {@link Map} of {@link ItemStack} and {@link Integer} as amount on the inventory
      */
-    public static Map<ItemStackKey, Integer> fromItemHandler(IItemHandler inputs) {
-        final Object2IntMap<ItemStackKey> map = new Object2IntLinkedOpenHashMap<>();
+    @Nonnull
+    public static Object2IntMap<ItemStack> fromItemHandler(@Nonnull IItemHandler inputs) {
+        final Object2IntMap<ItemStack> map = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
 
         // Create a single stack of the combined count for each item
 
         for (int i = 0; i < inputs.getSlots(); i++) {
             ItemStack stack = inputs.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
-                map.put(key, map.getInt(key) + stack.getCount());
+                map.put(stack.copy(), map.getInt(stack) + stack.getCount());
             }
         }
 
@@ -37,20 +41,20 @@ public class GTHashMaps {
     }
 
     /**
-     * Maps all items in the {@link ItemStack} {@link Collection} into a {@link ItemStackKey}, {@link Integer} value as amount
+     * Maps all items in the {@link ItemStack} {@link Collection} into a {@link ItemStack}, {@link Integer} value as amount
      *
      * @param inputs The inventory handler of the inventory
-     * @return a {@link Map} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
+     * @return a {@link Map} of {@link ItemStack} and {@link Integer} as amount on the inventory
      */
-    public static Map<ItemStackKey, Integer> fromItemStackCollection(Iterable<ItemStack> inputs) {
-        final Object2IntMap<ItemStackKey> map = new Object2IntLinkedOpenHashMap<>();
+    @Nonnull
+    public static Object2IntMap<ItemStack> fromItemStackCollection(@Nonnull Iterable<ItemStack> inputs) {
+        final Object2IntMap<ItemStack> map = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
 
         // Create a single stack of the combined count for each item
 
         for (ItemStack stack : inputs) {
             if (!stack.isEmpty()) {
-                ItemStackKey key = KeySharedStack.getRegisteredStack(stack);
-                map.put(key, map.getInt(key) + stack.getCount());
+                map.put(stack.copy(), map.getInt(stack) + stack.getCount());
             }
         }
 
