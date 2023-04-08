@@ -99,6 +99,8 @@ gregtech.top.unit.items=アイテム
 gregtech.top.unit.fluid_milibuckets=L
 gregtech.top.unit.fluid_buckets=kL
 
+gregtech.top.block_drops=Drops
+
 gregtech.multiblock.title=マルチブロックの構造
 gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉(PBF)は序盤にスチールを得るためのマルチブロック機械です。 動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
 gregtech.multiblock.coke_oven.description=コークス炉は序盤にコークスやクレオソート油を得るためのマルチブロック機械です。燃料を必要とせず、クレオソート油用の32バケツ分の内部タンクを有します。コークス炉ハッチを経由してインベントリにアクセスできます。
