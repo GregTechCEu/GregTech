@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.5.5 - beta
-# 対応バージョン: 2.5.5 - beta
+# Corresponding Version: 2.6.0 - beta
+# 対応バージョン: 2.6.0 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -4532,7 +4532,7 @@ gregtech.multiblock.central_monitor.low_power=電力不足
 gregtech.multiblock.central_monitor.height=スクリーンの高さ:
 gregtech.multiblock.central_monitor.width=スクリーンの長さ: %d
 gregtech.multiblock.central_monitor.height_modify=高さ変更: %d
-gregtech.multiblock.central_monitor.tooltip.1=セントラルモニターはデジタルインターフェースカバーによって連結された機械を監視する機械です。/nこれによりエネルギーネットワーク内の液体とアイテムとエネルギーと機械の状態を容易に管理することができます。
+gregtech.multiblock.central_monitor.tooltip.1=セントラルモニターはデジタルインターフェースカバーによって連結された機械を監視する機械です。これによりエネルギーネットワーク内の液体とアイテムとエネルギーと機械の状態を容易に管理することができます。
 gregtech.multiblock.central_monitor.tooltip.2=モニタースクリーンは§b3x2§7から§b%dx%d§7までの自由な大きさにすることができます (長さx高さ)
 gregtech.multiblock.central_monitor.tooltip.3=デフォルトの高さは3です.モニターが完成するまでにGUIを開くことで高さを調節することができます。
 gregtech.multiblock.central_monitor.tooltip.4=エネルギー消費: スクリーン一枚につき%dEU/sを消費します。
