@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class VirtualContainerRegistry extends WorldSavedData{
+public class VirtualContainerRegistry extends WorldSavedData {
     private static final int DEFAULT_SIZE = 9; // 9 slots
     private static final String DATA_ID = GTValues.MODID + ".vcontainer_data";
 
