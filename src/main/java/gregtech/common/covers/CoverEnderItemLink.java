@@ -15,13 +15,12 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.VirtualContainerRegistry;
-import gregtech.api.util.ItemContainerSwitchShim;
+import gregtech.api.util.enderlink.VirtualContainerRegistry;
+import gregtech.api.util.enderlink.ItemContainerSwitchShim;
 import gregtech.api.util.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -29,16 +28,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 

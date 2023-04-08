@@ -6,18 +6,16 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverBehaviorUIFactory;
-import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.FluidTankSwitchShim;
+import gregtech.api.util.enderlink.CoverEnderLinkBase;
+import gregtech.api.util.enderlink.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.VirtualTankRegistry;
+import gregtech.api.util.enderlink.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.block.Block;
@@ -32,32 +30,19 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.UUID;
-import java.util.regex.Pattern;
 
-public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
+public class CoverEnderFluidLink extends CoverEnderLinkBase implements ITickable {
 
+    private static final String IDENTIFIER = "EFLink#";
     public static final int TRANSFER_RATE = 8000; // mB/t
-    private static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");
-
     protected CoverPump.PumpMode pumpMode;
-    private int color;
-    private UUID playerUUID;
-    private boolean isPrivate;
-    private boolean workingEnabled = true;
-    private boolean ioEnabled;
-    private String tempColorStr;
-    private boolean isColorTemp;
     private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
 
     public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         pumpMode = CoverPump.PumpMode.IMPORT;
-        ioEnabled = false;
-        isPrivate = false;
-        playerUUID = null;
-        color = 0xFFFFFFFF;
-        this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
+        this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeName(IDENTIFIER), null));
         fluidFilter = new FluidFilterContainer(this);
     }
 
@@ -197,7 +182,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     public void updateTankLink() {
-        this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeTankName(), getTankUUID()));
+        this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeName(IDENTIFIER), getTankUUID()));
         coverHolder.markDirty();
     }
 
