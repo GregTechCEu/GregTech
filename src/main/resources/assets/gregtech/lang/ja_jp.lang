@@ -2380,6 +2380,45 @@ tile.warning_sign_1.causality_hazard.name=標準的因果危害警告ブロッ�
 tile.warning_sign_1.automated_defenses_hazard.name=自動防衛システム危害警告ブロック
 tile.warning_sign_1.high_pressure_hazard.name=高圧危害警告ブロック
 
+# Lampss(ON)
+tile.gregtech_lamp.white.name=白のランプ
+tile.gregtech_lamp.orange.name=橙色のランプ
+tile.gregtech_lamp.magenta.name=赤紫色のランプ
+tile.gregtech_lamp.light_blue.name=空色のランプ
+tile.gregtech_lamp.yellow.name=黄色のランプ
+tile.gregtech_lamp.lime.name=黄緑色のランプ
+tile.gregtech_lamp.pink.name=桃色のランプ
+tile.gregtech_lamp.gray.name=灰色のランプ
+tile.gregtech_lamp.silver.name=薄灰色のランプ
+tile.gregtech_lamp.cyan.name=青緑色のランプ
+tile.gregtech_lamp.purple.name=紫色のランプ
+tile.gregtech_lamp.blue.name=青のランプ
+tile.gregtech_lamp.brown.name=茶色のランプ
+tile.gregtech_lamp.green.name=緑色のランプ
+tile.gregtech_lamp.red.name=赤のランプ
+tile.gregtech_lamp.black.name=黒のランプ
+
+tile.gregtech_lamp_borderless.white.name=白のフチなしランプ
+tile.gregtech_lamp_borderless.orange.name=橙色のフチなしランプ
+tile.gregtech_lamp_borderless.magenta.name=赤紫色のフチなしランプ
+tile.gregtech_lamp_borderless.light_blue.name=空色のフチなしランプ
+tile.gregtech_lamp_borderless.yellow.name=黄色のフチなしランプ
+tile.gregtech_lamp_borderless.lime.name=黄緑色のフチなしランプ
+tile.gregtech_lamp_borderless.pink.name=桃色のフチなしランプ
+tile.gregtech_lamp_borderless.gray.name=灰色のフチなしランプ
+tile.gregtech_lamp_borderless.silver.name=薄灰色のフチなしランプ
+tile.gregtech_lamp_borderless.cyan.name=青緑色のフチなしランプ
+tile.gregtech_lamp_borderless.purple.name=紫色のフチなしランプ
+tile.gregtech_lamp_borderless.blue.name=青のフチなしランプ
+tile.gregtech_lamp_borderless.brown.name=茶色のフチなしランプ
+tile.gregtech_lamp_borderless.green.name=緑色のフチなしランプ
+tile.gregtech_lamp_borderless.red.name=赤のフチなしランプ
+tile.gregtech_lamp_borderless.black.name=黒のフチなしランプ
+
+tile.gregtech_lamp.tooltip.inverted=反転
+tile.gregtech_lamp.tooltip.no_bloom=非輝光
+tile.gregtech_lamp.tooltip.no_light=非光源
+
 # Boiler casing blocks
 tile.boiler_casing.bronze_pipe.name=ブロンズ製パイプ外装
 tile.boiler_casing.steel_pipe.name=スチール製パイプ外装
