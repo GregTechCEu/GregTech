@@ -15,6 +15,7 @@ public class FluidTankSwitchShim extends SwitchShimBase implements IFluidTank, I
 
     public FluidTankSwitchShim(IFluidTank tank) {
         super(tank);
+        this.tank = (IFluidTank) container;
     }
 
     @Nullable
