@@ -165,10 +165,6 @@ public abstract class CoverEnderLinkBase extends CoverBehavior implements CoverW
 
     public void setPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
-        if (linkedShim instanceof FluidTankSwitchShim) {
-
-        }
-
         updateLink();
     }
 }
