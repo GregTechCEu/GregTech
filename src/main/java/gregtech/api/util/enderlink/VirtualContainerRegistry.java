@@ -1,30 +1,18 @@
-package gregtech.api.util;
+package gregtech.api.util.enderlink;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.common.covers.CoverConveyor;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemCarrotOnAStick;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class VirtualContainerRegistry extends WorldSavedData {

@@ -1,6 +1,7 @@
-package gregtech.api.util;
+package gregtech.api.util.enderlink;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;

@@ -1,12 +1,7 @@
-package gregtech.api.util;
+package gregtech.api.util.enderlink;
 
-import codechicken.lib.inventory.InventoryUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 

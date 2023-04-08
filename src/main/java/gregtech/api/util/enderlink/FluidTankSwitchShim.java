@@ -1,4 +1,4 @@
-package gregtech.api.util;
+package gregtech.api.util.enderlink;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
