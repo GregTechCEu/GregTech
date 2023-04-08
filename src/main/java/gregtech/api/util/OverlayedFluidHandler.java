@@ -132,7 +132,7 @@ public class OverlayedFluidHandler {
                 return uniqueFluidMap.get(overlayed).add(toInsert);
             }
         }
-        return false;
+        return true;
     }
 
     private static class OverlayedTank {
