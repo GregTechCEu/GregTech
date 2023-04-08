@@ -5078,20 +5078,8 @@ gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selec
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 
-gregtech.cover.energy_detector.message_electricity_storage_normal=Monitoring Normal Electricity Storage
-gregtech.cover.energy_detector.message_electricity_storage_inverted=Monitoring Inverted Electricity Storage
-
-gregtech.cover.fluid_detector.message_fluid_storage_normal=Monitoring Normal Fluid Storage
-gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted Fluid Storage
-
-gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
-gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
-
-gregtech.cover.activity_detector.message_activity_normal=Monitoring Normal Activity Status
-gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted Activity Status
-
-gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
-gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
+gregtech.cover.detector_base.message_normal_state=Monitoring Status: Normal
+gregtech.cover.detector_base.message_inverted_state=Monitoring Status: Inverted
 
 gregtech.creative.chest.item=Item
 gregtech.creative.chest.ipc=Items per Cycle
