@@ -9,19 +9,12 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 
 // probably causes problems
-public class FluidTankSwitchShim implements IFluidTank, IFluidHandler {
+public class FluidTankSwitchShim extends SwitchShimBase implements IFluidTank, IFluidHandler {
 
     IFluidTank tank;
 
     public FluidTankSwitchShim(IFluidTank tank) {
-        changeTank(tank);
-    }
-
-    public void changeTank(IFluidTank tank) {
-        if (!(tank instanceof IFluidHandler)) {
-            throw new IllegalArgumentException("Shim tank must be both IFluidTank and IFluidHandler!");
-        }
-        this.tank = tank;
+        super(tank);
     }
 
     @Nullable

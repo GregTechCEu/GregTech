@@ -1,23 +1,17 @@
 package gregtech.api.util.enderlink;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerSwitchShim implements IItemHandlerModifiable {
+public class ItemContainerSwitchShim extends SwitchShimBase implements IItemHandlerModifiable {
 
     IItemHandlerModifiable container;
 
-    public ItemContainerSwitchShim(IItemHandlerModifiable container) {
-        changeInventory(container);
-    }
-
-    public void changeInventory(IItemHandlerModifiable container) {
-        if (container == null) {
-            throw new IllegalArgumentException("Shim container must be an IItemHandler!");
-        }
-        this.container = container;
+    public ItemContainerSwitchShim(IItemHandler container) {
+        super(container);
     }
 
     @Override

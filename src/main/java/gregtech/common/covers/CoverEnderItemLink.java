@@ -15,6 +15,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.enderlink.CoverEnderLinkBase;
 import gregtech.api.util.enderlink.VirtualContainerRegistry;
 import gregtech.api.util.enderlink.ItemContainerSwitchShim;
 import gregtech.api.util.*;
@@ -23,6 +24,7 @@ import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -30,42 +32,22 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.UUID;
 
-public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
+public class CoverEnderItemLink extends CoverEnderLinkBase implements ITickable {
 
     private final int TRANSFER_RATE = 64;
-
     protected CoverConveyor.ConveyorMode conveyorMode;
-    private int color;
-    private UUID playerUUID;
-    private boolean isPrivate;
-    private boolean workingEnabled = true;
-    private boolean ioEnabled;
-    private String tempColorStr;
-    private boolean isColorTemp;
-    private final ItemContainerSwitchShim linkedContainer;
     protected final ItemFilterContainer itemFilter;
     protected int itemsLeftToTransferLastSecond;
 
     public CoverEnderItemLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         conveyorMode = CoverConveyor.ConveyorMode.IMPORT;
-        ioEnabled = false;
-        isPrivate = false;
-        playerUUID = null;
-        color = 0xFFFFFFFF;
-        this.linkedContainer = new ItemContainerSwitchShim(VirtualContainerRegistry.getContainerCreate(makeContainerName(), null));
+        this.linkedShim = new ItemContainerSwitchShim(VirtualContainerRegistry.getContainerCreate(makeName(ITEM_IDENTIFIER), null));
         itemFilter = new ItemFilterContainer(this);
-    }
-
-    private String makeContainerName() {
-        return "EILink#" + Integer.toHexString(this.color).toUpperCase();
-    }
-
-    private UUID getContainerUUID() {
-        return isPrivate ? playerUUID : null;
     }
 
     @Override
@@ -77,22 +59,6 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         // TODO update texture to be unique
         Textures.ENDER_ITEM_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
-    }
-
-    @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
-        }
-        return EnumActionResult.SUCCESS;
-    }
-
-    @Override
-    public void onAttached(ItemStack itemStack, EntityPlayer player) {
-        super.onAttached(itemStack, player);
-        if (player != null) {
-            this.playerUUID = player.getUniqueID();
-        }
     }
 
     @Override
@@ -109,7 +75,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         long timer = coverHolder.getOffsetTimer();
         IItemHandler targetInventory = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
         if (workingEnabled && ioEnabled && itemsLeftToTransferLastSecond > 0 && timer % 5 == 0) {
-            int totalTransferred = doTransferItemsAny(targetInventory, linkedContainer, itemsLeftToTransferLastSecond);
+            int totalTransferred = doTransferItemsAny(targetInventory, (IItemHandler) linkedShim, itemsLeftToTransferLastSecond);
             this.itemsLeftToTransferLastSecond -= totalTransferred;
         }
 
@@ -165,14 +131,6 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public void openUI(EntityPlayerMP player) {
-        CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
-        isColorTemp = false;
-    }
-
-
-
-    @Override
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_item_link.title"));
@@ -199,7 +157,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         WidgetGroup containerGroup = new WidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                containerGroup.addWidget(new SlotWidget(this.linkedContainer, row + col, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+                containerGroup.addWidget(new SlotWidget((IItemHandlerModifiable) this.linkedShim, row + col, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
             }
         }
 
@@ -210,40 +168,10 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
                 .build(this, player);
     }
 
-    private void updateColor(String str) {
-        if (str.length() == 8) {
-            isColorTemp = false;
-            // stupid java not having actual unsigned ints
-            long tmp = Long.parseLong(str, 16);
-            if (tmp > 0x7FFFFFFF) {
-                tmp -= 0x100000000L;
-            }
-            this.color = (int) tmp;
-            updateContainerLink();
-        } else {
-            tempColorStr = str;
-            isColorTemp = true;
-        }
-    }
-
-    private String getColorStr() {
-        return isColorTemp ? tempColorStr : Integer.toHexString(this.color).toUpperCase();
-    }
-
-    public void updateContainerLink() {
-        this.linkedContainer.changeInventory(VirtualContainerRegistry.getContainerCreate(makeContainerName(), getContainerUUID()));
-        coverHolder.markDirty();
-    }
-
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("Frequency", color);
-        tagCompound.setInteger("PumpMode", conveyorMode.ordinal());
-        tagCompound.setBoolean("WorkingAllowed", workingEnabled);
-        tagCompound.setBoolean("IOAllowed", ioEnabled);
-        tagCompound.setBoolean("Private", isPrivate);
-        tagCompound.setString("PlacedUUID", playerUUID.toString());
+        tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
         tagCompound.setTag("Filter", itemFilter.serializeNBT());
 
         return tagCompound;
@@ -252,65 +180,17 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.color = tagCompound.getInteger("Frequency");
-        this.conveyorMode = CoverConveyor.ConveyorMode.values()[tagCompound.getInteger("PumpMode")];
-        this.workingEnabled = tagCompound.getBoolean("WorkingAllowed");
-        this.ioEnabled = tagCompound.getBoolean("IOAllowed");
-        this.isPrivate = tagCompound.getBoolean("Private");
-        this.playerUUID = UUID.fromString(tagCompound.getString("PlacedUUID"));
+        this.conveyorMode = CoverConveyor.ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
         this.itemFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        updateContainerLink();
+        updateLink();
     }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeInt(this.color);
-        packetBuffer.writeString(this.playerUUID == null ? "null" : this.playerUUID.toString());
-    }
-
-    @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
-        this.color = packetBuffer.readInt();
-        //does client even need uuid info? just in case
-        String uuidStr = packetBuffer.readString(36);
-        this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);
-        //client does not need the actual tank reference, the default one will do just fine
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean isActivationAllowed) {
-        this.workingEnabled = isActivationAllowed;
-    }
-
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(linkedContainer);
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast((IItemHandler) linkedShim);
         }
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return defaultValue;
-    }
-
-    private boolean isIoEnabled() {
-        return ioEnabled;
-    }
-
-    private void setIoEnabled(boolean ioEnabled) {
-        this.ioEnabled = ioEnabled;
-    }
-
-    private boolean isPrivate() {
-        return isPrivate;
-    }
-
-    private void setPrivate(boolean isPrivate) {
-        this.isPrivate = isPrivate;
-        updateContainerLink();
     }
 }
