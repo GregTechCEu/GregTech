@@ -233,7 +233,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
     @Nonnull
     @Override
-    public final String getName() {
+    public final String createName() {
         return GregtechDataCodes.BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT;
     }
 

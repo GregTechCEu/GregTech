@@ -17,6 +17,7 @@ public abstract class MTETrait {
 
     protected final MetaTileEntity metaTileEntity;
     private final int networkId;
+    private final String name;
 
     /**
      * Create a new MTE trait.
@@ -25,14 +26,15 @@ public abstract class MTETrait {
      */
     public MTETrait(@Nonnull MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
-        metaTileEntity.addMetaTileEntityTrait(this);
+        this.name = createName();
 
-        final String traitName = getName();
-        if (!traitIds.containsKey(traitName)) {
-           this.networkId = traitIds.put(traitName, rollingNetworkId++);
+        if (!traitIds.containsKey(this.name)) {
+            this.networkId = rollingNetworkId++;
+            traitIds.put(this.name, this.networkId);
         } else {
-            this.networkId = traitIds.getInt(traitName);
+            this.networkId = traitIds.getInt(this.name);
         }
+        metaTileEntity.addMetaTileEntityTrait(this);
     }
 
     @Nonnull
@@ -40,11 +42,16 @@ public abstract class MTETrait {
         return metaTileEntity;
     }
 
+    @Nonnull
+    protected abstract String createName();
+
     /**
      * @return the name of the MTE Trait
      */
     @Nonnull
-    public abstract String getName();
+    public final String getName() {
+        return this.name;
+    }
 
     /**
      * @return the network ID of the MTE Trait
@@ -80,5 +87,14 @@ public abstract class MTETrait {
 
     public final void writeCustomData(int id, @Nonnull Consumer<PacketBuffer> writer) {
         metaTileEntity.writeTraitData(this, id, writer);
+    }
+
+    @Override
+    public String toString() {
+        return "MTETrait{" +
+                "metaTileEntity=" + metaTileEntity +
+                ", networkId=" + networkId +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

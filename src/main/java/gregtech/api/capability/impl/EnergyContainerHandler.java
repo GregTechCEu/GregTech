@@ -76,7 +76,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     @Nonnull
     @Override
-    public String getName() {
+    public String createName() {
         return GregtechDataCodes.ENERGY_CONTAINER_TRAIT;
     }
 

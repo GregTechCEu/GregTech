@@ -73,7 +73,7 @@ public class ConverterTrait extends MTETrait {
 
     @Nonnull
     @Override
-    public String getName() {
+    public String createName() {
         return GregtechDataCodes.ENERGY_CONVERTER_TRAIT;
     }
 
