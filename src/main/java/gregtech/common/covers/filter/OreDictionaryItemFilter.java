@@ -4,19 +4,24 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.unification.stack.ItemAndMetadata;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.stack.ItemVariantMap;
+import gregtech.api.unification.stack.SingleItemVariantMap;
+import gregtech.api.unification.stack.MultiItemVariantMap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
 import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class OreDictionaryItemFilter extends ItemFilter {
@@ -25,7 +30,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     private OreGlob glob = ImpossibleOreGlob.getInstance();
     private boolean error;
 
-    private final Object2BooleanMap<ItemAndMetadata> matchCache = new Object2BooleanOpenHashMap<>();
+    private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
+    private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
 
     public String getExpression() {
         return expression;
@@ -54,6 +60,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                         compilationStatus.setCompileResult(null);
                     }
                     this.matchCache.clear();
+                    this.noOreDictMatch.clear();
                     markDirty();
                     for (ItemOreFilterTestSlot slot : testSlot) {
                         slot.setGlob(this.error ? null : this.glob);
@@ -120,13 +127,33 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     public boolean matchesItemStack(ItemStack itemStack) {
         if (this.error) return false;
-        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
-        Boolean cached = this.matchCache.get(itemAndMetadata);
-        if (cached != null) {
-            return cached;
+        Item item = itemStack.getItem();
+        ItemVariantMap.Mutable<Boolean> cacheEntry = this.matchCache.get(item);
+        if (cacheEntry != null) {
+            Boolean cached = cacheEntry.getEntry(itemStack);
+            if (cached != null) return cached;
+        }
+
+        ItemVariantMap<Set<String>> oreDictEntry = OreDictUnifier.getOreDictionaryEntry(item);
+
+        if (cacheEntry == null) {
+            if (oreDictEntry.isEmpty()) {
+                // no oredict entries associated
+                Boolean cached = this.noOreDictMatch.getEntry();
+                if (cached == null) {
+                    this.noOreDictMatch.setEntry(cached = this.glob.matches(""));
+                }
+                this.matchCache.put(item, this.noOreDictMatch);
+                return cached;
+            } else if (!item.getHasSubtypes() || !oreDictEntry.hasNonWildcardEntry()) {
+                cacheEntry = new SingleItemVariantMap<>(); // we can just ignore metadata and use shared cache
+            } else {
+                cacheEntry = new MultiItemVariantMap<>(); // variant items
+            }
+            this.matchCache.put(item, cacheEntry);
         }
         boolean matches = this.glob.matches(itemStack);
-        this.matchCache.put(itemAndMetadata, matches);
+        cacheEntry.setEntry(itemStack, matches);
         return matches;
     }
 

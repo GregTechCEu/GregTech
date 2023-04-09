@@ -1,0 +1,34 @@
+package gregtech.api.unification.stack;
+
+import javax.annotation.Nullable;
+
+/**
+ * An unmodifiable {@link ItemVariantMap} instance with no elements.
+ *
+ * @see ItemVariantMap#empty()
+ */
+final class EmptyVariantMap implements ItemVariantMap<Object> {
+
+    static final EmptyVariantMap INSTANCE = new EmptyVariantMap();
+
+    @Override
+    public boolean hasNonWildcardEntry() {
+        return false;
+    }
+
+    @Override
+    public boolean hasEntry(short meta) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Object getEntry(short meta) {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "EmptyEntry";
+    }
+}
