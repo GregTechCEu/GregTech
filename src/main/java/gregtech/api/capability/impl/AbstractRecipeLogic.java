@@ -150,7 +150,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     @Nonnull
     @Override
-    public final String createName() {
+    public final String getName() {
         // this is final so machines are not accidentally given multiple workable instances
         return GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT;
     }

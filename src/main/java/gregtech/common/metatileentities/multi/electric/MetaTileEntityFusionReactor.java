@@ -74,7 +74,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.energyContainer = new EnergyContainerHandler(this, Integer.MAX_VALUE, 0, 0, 0, 0) {
             @Nonnull
             @Override
-            public String createName() {
+            public String getName() {
                 return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
             }
         };
@@ -208,7 +208,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
             @Nonnull
             @Override
-            public String createName() {
+            public String getName() {
                 return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
             }
         };
