@@ -5,18 +5,19 @@ import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import gregtech.core.network.NetworkUtils;
-import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-@NoArgsConstructor
 public class PacketClipboardNBTUpdate implements IPacket, IServerExecutor {
     private int dimension;
     private BlockPos pos;
     private int id;
     private PacketBuffer updateData;
+
+    @SuppressWarnings("unused")
+    public PacketClipboardNBTUpdate() {/**/}
 
     public PacketClipboardNBTUpdate(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
         this.dimension = dimension;

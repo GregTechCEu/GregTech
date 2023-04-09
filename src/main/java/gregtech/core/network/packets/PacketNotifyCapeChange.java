@@ -3,18 +3,19 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
 import gregtech.api.util.CapesRegistry;
-import lombok.NoArgsConstructor;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.UUID;
 
-@NoArgsConstructor
 public class PacketNotifyCapeChange implements IPacket, IClientExecutor {
 
     public ResourceLocation cape;
     public UUID uuid;
+
+    @SuppressWarnings("unused")
+    public PacketNotifyCapeChange() {/**/}
 
     public PacketNotifyCapeChange(UUID uuid, ResourceLocation cape) {
         this.uuid = uuid;

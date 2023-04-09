@@ -143,8 +143,6 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest:${hamcrest_version}")
 
     // Compile-Time Dependencies
-    compileOnly "org.projectlombok:lombok:${lombok_version}"
-    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 
     // GroovyScript dependency
     implementation "zone.rong:mixinbooter:${mixinbooter_version}"

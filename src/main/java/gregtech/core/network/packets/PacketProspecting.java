@@ -1,7 +1,6 @@
 package gregtech.core.network.packets;
 
 import io.netty.buffer.Unpooled;
-import lombok.NoArgsConstructor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -9,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor
 public class PacketProspecting {
     public int chunkX;
     public int chunkZ;
@@ -18,6 +16,9 @@ public class PacketProspecting {
     public int mode;
     public HashMap<Byte, String>[][] map;
     public Set<String> ores;
+
+    @SuppressWarnings("unused")
+    public PacketProspecting() {/**/}
 
     public PacketProspecting(int chunkX, int chunkZ, int posX, int posZ, int mode) {
         this.chunkX = chunkX;

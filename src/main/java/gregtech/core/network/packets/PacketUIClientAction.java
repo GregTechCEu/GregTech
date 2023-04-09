@@ -5,17 +5,18 @@ import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.core.network.NetworkUtils;
-import lombok.NoArgsConstructor;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 
-@NoArgsConstructor
 public class PacketUIClientAction implements IPacket, IServerExecutor {
 
     private int windowId;
     private int widgetId;
     private PacketBuffer updateData;
+
+    @SuppressWarnings("unused")
+    public PacketUIClientAction() {/**/}
 
     public PacketUIClientAction(int windowId, int widgetId, PacketBuffer updateData) {
         this.windowId = windowId;

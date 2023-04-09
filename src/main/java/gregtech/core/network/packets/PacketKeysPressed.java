@@ -3,17 +3,18 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.api.util.input.KeyBind;
-import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-@NoArgsConstructor
 public class PacketKeysPressed implements IPacket, IServerExecutor {
 
     private Object updateKeys;
+
+    @SuppressWarnings("unused")
+    public PacketKeysPressed() {/**/}
 
     public PacketKeysPressed(List<KeyBind> updateKeys) {
         this.updateKeys = updateKeys;
