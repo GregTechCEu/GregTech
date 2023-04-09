@@ -40,7 +40,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
 
     @Override
     public void onReload() {
-        removeScripted().forEach(recipeMap::compileRecipe);
+        removeScripted().forEach(recipeMap::removeRecipe);
         restoreFromBackup().forEach(recipeMap::compileRecipe);
     }
 
