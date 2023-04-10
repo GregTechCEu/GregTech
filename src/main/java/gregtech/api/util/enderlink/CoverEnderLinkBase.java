@@ -94,13 +94,6 @@ public abstract class CoverEnderLinkBase<T> extends CoverBehavior implements Cov
     }
 
     protected void updateLink() {
-        /*
-        if (linkedShim instanceof IFluidTank) {
-            this.linkedShim.changeInventory((T) VirtualTankRegistry.getTankCreate(makeName(FLUID_IDENTIFIER), getUUID()));
-        } else {
-            this.linkedShim.changeInventory((T) VirtualContainerRegistry.getContainerCreate(makeName(ITEM_IDENTIFIER), getUUID()));
-        }
-        */
         coverHolder.markDirty();
     }
 
