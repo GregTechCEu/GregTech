@@ -19,6 +19,7 @@ import gregtech.api.util.enderlink.CoverEnderLinkBase;
 import gregtech.api.util.enderlink.VirtualContainerRegistry;
 import gregtech.api.util.enderlink.ItemContainerSwitchShim;
 import gregtech.api.util.*;
+import gregtech.api.util.enderlink.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.block.Block;
@@ -36,7 +37,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.UUID;
 
-public class CoverEnderItemLink extends CoverEnderLinkBase implements ITickable {
+public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiable> implements ITickable {
 
     private final int TRANSFER_RATE = 64;
     protected CoverConveyor.ConveyorMode conveyorMode;
@@ -59,6 +60,12 @@ public class CoverEnderItemLink extends CoverEnderLinkBase implements ITickable 
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         // TODO update texture to be unique
         Textures.ENDER_ITEM_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected void updateLink() {
+        this.linkedShim.changeInventory(VirtualContainerRegistry.getContainerCreate(makeName(ITEM_IDENTIFIER), getUUID()));
+        coverHolder.markDirty();
     }
 
     @Override

@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.enderlink.CoverEnderLinkBase;
 import gregtech.api.util.enderlink.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.enderlink.VirtualContainerRegistry;
 import gregtech.api.util.enderlink.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -32,11 +33,12 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.UUID;
 
-public class CoverEnderFluidLink extends CoverEnderLinkBase implements ITickable {
+public class CoverEnderFluidLink extends CoverEnderLinkBase<IFluidTank> implements ITickable {
 
     public static final int TRANSFER_RATE = 8000; // mB/t
     protected CoverPump.PumpMode pumpMode;
     protected final FluidFilterContainer fluidFilter;
+
 
     public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -58,6 +60,12 @@ public class CoverEnderFluidLink extends CoverEnderLinkBase implements ITickable
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.ENDER_FLUID_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected void updateLink() {
+        this.linkedShim.changeInventory(VirtualTankRegistry.getTankCreate(makeName(FLUID_IDENTIFIER), getUUID()));
+        coverHolder.markDirty();
     }
 
     @Override
