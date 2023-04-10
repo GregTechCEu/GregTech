@@ -5,10 +5,12 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -138,7 +140,7 @@ public class VirtualContainerRegistry extends WorldSavedData {
             NBTTagCompound publicContainers = nbt.getCompoundTag("Public");
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
-                GTUtility.readItems(VirtualContainerRegistry.getContainer(key, null), "Items", containerCompound);
+                readItems(VirtualContainerRegistry.getContainerCreate(key, null), "Items", containerCompound);
             }
         }
         if (nbt.hasKey("Private")) {
@@ -148,7 +150,7 @@ public class VirtualContainerRegistry extends WorldSavedData {
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-                    GTUtility.readItems(VirtualContainerRegistry.getContainer(key, uuid), "Items", containerCompound);
+                    readItems(VirtualContainerRegistry.getContainerCreate(key, uuid), "Items", containerCompound);
                 }
             }
         }
@@ -161,8 +163,14 @@ public class VirtualContainerRegistry extends WorldSavedData {
         containerMap.forEach( (uuid, map) -> {
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, container) -> {
-                NBTTagCompound containerCompound = new NBTTagCompound();
-                GTUtility.writeItems(container, "Items", containerCompound);
+                NBTTagList containerCompound = new NBTTagList();
+                for (int i = 0; i < container.getSlots(); i++) {
+                    NBTTagCompound stack = new NBTTagCompound();
+                    stack.setInteger("slot", i);
+                    container.getStackInSlot(i).writeToNBT(stack);
+                    containerCompound.appendTag(stack);
+                }
+                // GTUtility.writeItems(container, "Items", containerCompound);
                 mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
@@ -174,6 +182,20 @@ public class VirtualContainerRegistry extends WorldSavedData {
             }
         });
         return compound;
+    }
+
+    private void readItems(IItemHandlerModifiable handler, String tagName, NBTTagCompound tag){
+        if (tag.hasKey(tagName)) {
+            NBTTagList tagList = tag.getTagList(tagName, Constants.NBT.TAG_COMPOUND);
+
+            for (int i = 0; i < tagList.tagCount(); i++) {
+                int slot = tagList.getCompoundTagAt(i).getInteger("slot");
+
+                if (slot >= 0 && slot < handler.getSlots()) {
+                    handler.setStackInSlot(slot, new ItemStack(tagList.getCompoundTagAt(i)));
+                }
+            }
+        }
     }
 
     @Override
