@@ -9,55 +9,52 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 
 // probably causes problems
-public class FluidTankSwitchShim extends SwitchShimBase implements IFluidTank, IFluidHandler {
-
-    IFluidTank tank;
+public class FluidTankSwitchShim extends SwitchShimBase<IFluidTank> implements IFluidTank, IFluidHandler {
 
     public FluidTankSwitchShim(IFluidTank tank) {
         super(tank);
-        this.tank = (IFluidTank) container;
     }
 
     @Nullable
     @Override
     public FluidStack getFluid() {
-        return tank.getFluid();
+        return container.getFluid();
     }
 
     @Override
     public int getFluidAmount() {
-        return tank.getFluidAmount();
+        return container.getFluidAmount();
     }
 
     @Override
     public int getCapacity() {
-        return tank.getCapacity();
+        return container.getCapacity();
     }
 
     @Override
     public FluidTankInfo getInfo() {
-        return tank.getInfo();
+        return container.getInfo();
     }
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        return ((IFluidHandler) tank).getTankProperties();
+        return ((IFluidHandler) container).getTankProperties();
     }
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        return ((IFluidHandler) tank).fill(resource, doFill);
+        return ((IFluidHandler) container).fill(resource, doFill);
     }
 
     @Nullable
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        return ((IFluidHandler) tank).drain(resource, doDrain);
+        return ((IFluidHandler) container).drain(resource, doDrain);
     }
 
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        return tank.drain(maxDrain, doDrain);
+        return container.drain(maxDrain, doDrain);
     }
 }

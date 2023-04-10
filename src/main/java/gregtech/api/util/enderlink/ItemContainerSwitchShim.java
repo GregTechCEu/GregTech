@@ -6,11 +6,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerSwitchShim extends SwitchShimBase implements IItemHandlerModifiable {
+public class ItemContainerSwitchShim extends SwitchShimBase<IItemHandlerModifiable> implements IItemHandlerModifiable {
 
-    IItemHandlerModifiable container;
-
-    public ItemContainerSwitchShim(IItemHandler container) {
+    public ItemContainerSwitchShim(IItemHandlerModifiable container) {
         super(container);
     }
 

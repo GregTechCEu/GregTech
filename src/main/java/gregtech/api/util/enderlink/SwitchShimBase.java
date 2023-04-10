@@ -3,12 +3,12 @@ package gregtech.api.util.enderlink;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class SwitchShimBase {
-    protected Object container;
-    public SwitchShimBase(Object container) {
+public class SwitchShimBase<T> {
+    protected T container;
+    public SwitchShimBase(T container) {
         changeInventory(container);
     }
-    public void changeInventory(Object container) {
+    public void changeInventory(T container) {
         if (container == null) { // i don't think this is necessary anymore?
             throw new IllegalArgumentException("Shim container must be an IItemHandler!");
         }
