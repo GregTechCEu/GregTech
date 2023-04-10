@@ -139,6 +139,9 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
+        int ROW = 3;
+        int COL = 3;
+
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_item_link.title"));
         widgetGroup.addWidget(new ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
@@ -161,11 +164,10 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_item_link.iomode.disabled", "cover.ender_item_link.iomode.enabled"));
         this.itemFilter.initUI(65, widgetGroup::addWidget);
 
-        WidgetGroup containerGroup = new WidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                containerGroup.addWidget(new SlotWidget((IItemHandlerModifiable) this.linkedShim, row + col, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
-            }
+        WidgetGroup containerGroup = new WidgetGroup(widgetGroup.getPosition().add(new Position(18 + 5, 0)));
+        for (int i = 0; i < ROW * COL; i++) {
+            containerGroup.addWidget(new SlotWidget((IItemHandlerModifiable) this.linkedShim, i, 154 + (i % COL) * 18, 10 + Math.floorDiv(i, COL) * 18, false, false)
+                    .setBackgroundTexture(GuiTextures.SLOT_DARKENED));
         }
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
@@ -191,6 +193,7 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
         this.itemFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         updateLink();
     }
+
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast((IItemHandler) linkedShim);
