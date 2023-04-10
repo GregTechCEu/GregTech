@@ -31,7 +31,6 @@ public class OverlayedFluidHandler {
      * Resets the {slots} array to the state when the handler was
      * first mirrored
      */
-
     public void reset() {
         for (int i = 0; i < this.originalTanks.length; i++) {
             if (this.originalTanks[i] != null) {
@@ -74,7 +73,7 @@ public class OverlayedFluidHandler {
             // if the fluid key matches the tank, insert the fluid
             OverlayedTank overlayedTank = this.overlayedTanks[i];
             if (toInsert.equals(overlayedTank.getFluidKey())) {
-                if (!handleUniqueFluid(toInsert, i)) continue;
+                if (!markUniqueFluid(toInsert, i)) continue;
                 int spaceInTank = overlayedTank.getCapacity() - overlayedTank.getFluidAmount();
                 int canInsertUpTo = Math.min(spaceInTank, amountToInsert);
                 if (canInsertUpTo > 0) {
@@ -95,7 +94,7 @@ public class OverlayedFluidHandler {
                 OverlayedTank overlayedTank = this.overlayedTanks[i];
                 // if the tank is empty
                 if (overlayedTank.getFluidKey() == null) {
-                    if (!handleUniqueFluid(toInsert, i)) continue;
+                    if (!markUniqueFluid(toInsert, i)) continue;
                     //check if this tanks accepts the fluid we're simulating
                     if (overlayed.getTankProperties()[i].canFillFluidType(new FluidStack(toInsert.getFluid(), amountToInsert))) {
                         int canInsertUpTo = Math.min(overlayedTank.getCapacity(), amountToInsert);
@@ -123,14 +122,14 @@ public class OverlayedFluidHandler {
      * @param i the index of the tank
      * @return if the fluid is unique in this handler's maps
      */
-    private boolean handleUniqueFluid(@Nonnull FluidKey toInsert, int i) {
-        if ((!this.allowSameFluidFill || tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]))) {
-            if (overlayed.getTankAt(i) instanceof NotifiableFluidTankFromList) {
+    private boolean markUniqueFluid(@Nonnull FluidKey toInsert, int i) {
+        if (overlayed.getTankAt(i) instanceof NotifiableFluidTankFromList) {
+            if (!this.allowSameFluidFill || tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i])) {
                 NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) overlayed.getTankAt(i);
                 return uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert);
-            } else if (!this.allowSameFluidFill) {
-                return uniqueFluidMap.get(overlayed).add(toInsert);
             }
+        } else if (!this.allowSameFluidFill) {
+            return uniqueFluidMap.get(overlayed).add(toInsert);
         }
         return true;
     }
