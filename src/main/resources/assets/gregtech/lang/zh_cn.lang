@@ -4651,7 +4651,7 @@ gregtech.machine.fluid_hatch.export.zpm.name=输出仓（ZPM）
 gregtech.machine.fluid_hatch.export.uv.name=输出仓（UV）
 gregtech.machine.fluid_hatch.export.uhv.name=输出仓（UHV）
 
-gregtech.machine.energy_hatch.input.tooltip=为多方块结构提供能量
+gregtech.machine.energy_hatch.input.tooltip=多方块结构的能量输入端
 
 gregtech.machine.energy_hatch.input.ulv.name=能源仓（ULV）
 gregtech.machine.energy_hatch.input.lv.name=能源仓（LV）
@@ -4669,7 +4669,7 @@ gregtech.machine.energy_hatch.input.uxv.name=能源仓（UXV）
 gregtech.machine.energy_hatch.input.opv.name=能源仓（OpV）
 gregtech.machine.energy_hatch.input.max.name=能源仓（MAX）
 
-gregtech.machine.energy_hatch.input_hi_amp.tooltip=Multiple Ampere Energy Input for Multiblocks
+gregtech.machine.energy_hatch.input_hi_amp.tooltip=多方块结构的高电流能量输入端
 
 gregtech.machine.energy_hatch.input_4a.ev.name=4 安能源仓（EV）
 gregtech.machine.energy_hatch.input_4a.iv.name=4 安能源仓（IV）
@@ -4686,36 +4686,36 @@ gregtech.machine.energy_hatch.input_16a.uhv.name=16 安能源仓（UHV）
 
 gregtech.machine.energy_hatch.output.tooltip=多方块结构的能量输出端
 
-gregtech.machine.energy_hatch.output.ulv.name=动力仓（ULV）
-gregtech.machine.energy_hatch.output.lv.name=动力仓（LV）
-gregtech.machine.energy_hatch.output.mv.name=动力仓（MV）
-gregtech.machine.energy_hatch.output.hv.name=动力仓（HV）
-gregtech.machine.energy_hatch.output.ev.name=动力仓（EV）
-gregtech.machine.energy_hatch.output.iv.name=动力仓（IV）
-gregtech.machine.energy_hatch.output.luv.name=动力仓（LuV）
-gregtech.machine.energy_hatch.output.zpm.name=动力仓（ZPM）
-gregtech.machine.energy_hatch.output.uv.name=动力仓（UV）
-gregtech.machine.energy_hatch.output.uhv.name=动力仓（UHV）
-gregtech.machine.energy_hatch.output.uev.name=动力仓（UEV）
-gregtech.machine.energy_hatch.output.uiv.name=动力仓（UIV）
-gregtech.machine.energy_hatch.output.uxv.name=动力仓（UXV）
-gregtech.machine.energy_hatch.output.opv.name=动力仓（OpV）
-gregtech.machine.energy_hatch.output.max.name=动力仓（MAX）
+gregtech.machine.energy_hatch.output.ulv.name=发电仓（ULV）
+gregtech.machine.energy_hatch.output.lv.name=发电仓（LV）
+gregtech.machine.energy_hatch.output.mv.name=发电仓（MV）
+gregtech.machine.energy_hatch.output.hv.name=发电仓（HV）
+gregtech.machine.energy_hatch.output.ev.name=发电仓（EV）
+gregtech.machine.energy_hatch.output.iv.name=发电仓（IV）
+gregtech.machine.energy_hatch.output.luv.name=发电仓（LuV）
+gregtech.machine.energy_hatch.output.zpm.name=发电仓（ZPM）
+gregtech.machine.energy_hatch.output.uv.name=发电仓（UV）
+gregtech.machine.energy_hatch.output.uhv.name=发电仓（UHV）
+gregtech.machine.energy_hatch.output.uev.name=发电仓（UEV）
+gregtech.machine.energy_hatch.output.uiv.name=发电仓（UIV）
+gregtech.machine.energy_hatch.output.uxv.name=发电仓（UXV）
+gregtech.machine.energy_hatch.output.opv.name=发电仓（OpV）
+gregtech.machine.energy_hatch.output.max.name=发电仓（MAX）
 
-gregtech.machine.energy_hatch.output_hi_amp.tooltip=Multiple Ampere Energy Output for Multiblocks
+gregtech.machine.energy_hatch.output_hi_amp.tooltip=多方块结构的高电流能量输出端
 
-gregtech.machine.energy_hatch.output_4a.ev.name=4 安动力仓（EV）
-gregtech.machine.energy_hatch.output_4a.iv.name=4 安动力仓（IV）
-gregtech.machine.energy_hatch.output_4a.luv.name=4 安动力仓（LuV）
-gregtech.machine.energy_hatch.output_4a.zpm.name=4 安动力仓（ZPM）
-gregtech.machine.energy_hatch.output_4a.uv.name=4 安动力仓（UV）
-gregtech.machine.energy_hatch.output_4a.uhv.name=4 安动力仓（UHV）
+gregtech.machine.energy_hatch.output_4a.ev.name=4 安发电仓（EV）
+gregtech.machine.energy_hatch.output_4a.iv.name=4 安发电仓（IV）
+gregtech.machine.energy_hatch.output_4a.luv.name=4 安发电仓（LuV）
+gregtech.machine.energy_hatch.output_4a.zpm.name=4 安发电仓（ZPM）
+gregtech.machine.energy_hatch.output_4a.uv.name=4 安发电仓（UV）
+gregtech.machine.energy_hatch.output_4a.uhv.name=4 安发电仓（UHV）
 
-gregtech.machine.energy_hatch.output_16a.iv.name=16 安动力仓（IV）
-gregtech.machine.energy_hatch.output_16a.luv.name=16 安动力仓（LuV）
-gregtech.machine.energy_hatch.output_16a.zpm.name=16 安动力仓（ZPM）
-gregtech.machine.energy_hatch.output_16a.uv.name=16 安动力仓（UV）
-gregtech.machine.energy_hatch.output_16a.uhv.name=16 安动力仓（UHV）
+gregtech.machine.energy_hatch.output_16a.iv.name=16 安发电仓（IV）
+gregtech.machine.energy_hatch.output_16a.luv.name=16 安发电仓（LuV）
+gregtech.machine.energy_hatch.output_16a.zpm.name=16 安发电仓（ZPM）
+gregtech.machine.energy_hatch.output_16a.uv.name=16 安发电仓（UV）
+gregtech.machine.energy_hatch.output_16a.uhv.name=16 安发电仓（UHV）
 
 gregtech.machine.rotor_holder.tooltip1=用于多方块机器的转子固定器
 gregtech.machine.rotor_holder.tooltip2=固定转子，以防转着转着就飞出去了
@@ -5012,7 +5012,7 @@ gregtech.multiblock.large_combustion_engine.oxygen_amount=氧储量：%sL
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=液氧储量：%sL
 gregtech.multiblock.large_combustion_engine.oxygen_boosted=§b氧促燃已起效。
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted=§b液氧促燃已起效。
-gregtech.multiblock.large_combustion_engine.boost_disallowed=§b使用更高电压等级的动力仓来启用氧促燃。
+gregtech.multiblock.large_combustion_engine.boost_disallowed=§b使用更高电压等级的发电仓来启用氧促燃。
 gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=供氧以促燃。
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=提供液氧以促燃。
 gregtech.multiblock.large_combustion_engine.obstructed=引擎进气口受阻。
