@@ -11,7 +11,7 @@ public class FissionReactor {
      * Thresholds important for determining the evolution of the reactor
      */
     protected final int criticalRodInsertion;
-    protected final int criticalCoolantFlow;
+    //protected final int criticalCoolantFlow;
     protected final int criticalPressure;
     protected final double criticalPower;
 
@@ -33,9 +33,12 @@ public class FissionReactor {
     protected double maxPower;
     protected double maxCoolantFlow;
 
-    public FissionReactor(int criticalRodInsertion, int criticalCoolantFlow, int criticalPressure, double criticalPower) {
+    protected double coolingFactor;
+
+    protected double decayPower;
+
+    public FissionReactor(int criticalRodInsertion, int criticalPressure, double criticalPower) {
         this.criticalRodInsertion = criticalRodInsertion;
-        this.criticalCoolantFlow = criticalCoolantFlow;
         this.criticalPower = criticalPower;
         this.criticalPressure = criticalPressure;
     }
@@ -46,6 +49,10 @@ public class FissionReactor {
 
     public double voidFactor() {
         return this.canCoolantBoil() ? (this.temperature - this.envTemperature) / (double) this.pressure : 0.D;
+    }
+
+    public double criticalCoolantFlow() {
+        return this.powerProductionFactor / this.coolingFactor;
     }
 
 }

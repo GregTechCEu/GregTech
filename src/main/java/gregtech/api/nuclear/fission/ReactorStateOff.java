@@ -12,7 +12,7 @@ public class ReactorStateOff extends ReactorStateBase {
     public IReactorState getNextState() {
         if (this.reactor.controlRodInsertion <= this.reactor.criticalRodInsertion) {
             if (this.reactor.pressure == this.reactor.criticalPressure) {
-                if (this.reactor.coolantFlowRate > this.reactor.criticalCoolantFlow) {
+                if (this.reactor.coolantFlowRate > this.reactor.criticalCoolantFlow()) {
                     if (this.reactor.voidFactor() == 0 && this.reactor.fuelDepletion < 1 && this.reactor.neutronPoisoning == 0) {
                         return new ReactorStateZeroPower(this.reactor);
                     }
