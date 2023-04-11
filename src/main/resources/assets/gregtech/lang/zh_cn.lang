@@ -2985,7 +2985,7 @@ gregtech.machine.brewery.uxv.tooltip=强劲酿制者
 gregtech.machine.brewery.opv.name=传奇酿造室
 gregtech.machine.brewery.opv.tooltip=强劲酿制者
 
-gregtech.machine.canner.tooltip=填满或倒空你的流体容器（如桶或流体单元）
+gregtech.machine.canner.jei_description=填满或倒空桶和流体单元等任何流体容器
 
 # Canning Machine
 gregtech.machine.canner.lv.name=基础装罐机
