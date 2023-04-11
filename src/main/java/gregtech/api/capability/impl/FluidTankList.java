@@ -91,7 +91,7 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         int totalInserted = 0;
         boolean inputFluidCopied = false;
         // flag value indicating whether the fluid was stored in 'distinct' slot at least once
-        boolean distinctFillPerformed = false;
+        boolean distinctSlotVisited = false;
 
         // search for tanks with same fluid type first
         for (MultiFluidTankEntry tank : this.fluidTanks) {
@@ -108,9 +108,11 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
                         resource = resource.copy();
                     }
                     resource.amount -= inserted;
-                    if (!tank.allowSameFluidFill()) {
-                        distinctFillPerformed = true;
-                    }
+                }
+                // regardless of whether the insertion succeeded, presence of identical fluid in
+                // a slot prevents distinct fill to other slots
+                if (!tank.allowSameFluidFill()) {
+                    distinctSlotVisited = true;
                 }
             }
         }
@@ -119,7 +121,7 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
             // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
             // received the fluid, skip this tank
             boolean usesDistinctFluidFill = tank.allowSameFluidFill();
-            if ((usesDistinctFluidFill || !distinctFillPerformed) && tank.getFluidAmount() == 0) {
+            if ((usesDistinctFluidFill || !distinctSlotVisited) && tank.getFluidAmount() == 0) {
                 int inserted = tank.fill(resource, doFill);
                 if (inserted > 0) {
                     totalInserted += inserted;
@@ -132,7 +134,7 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
                     }
                     resource.amount -= inserted;
                     if (!usesDistinctFluidFill) {
-                        distinctFillPerformed = true;
+                        distinctSlotVisited = true;
                     }
                 }
             }
@@ -216,5 +218,28 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         for (int i = 0; i < Math.min(fluidTanks.length, tanks.tagCount()); i++) {
             this.fluidTanks[i].tryDeserialize(tanks.getCompoundTagAt(i));
         }
+    }
+
+    @Override
+    public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean lineBreak) {
+        StringBuilder stb = new StringBuilder("FluidTankList[").append(this.fluidTanks.length).append(";");
+        for (int i = 0; i < this.fluidTanks.length; i++) {
+            if (i != 0) stb.append(',');
+            stb.append(lineBreak ? "\n  " : " ");
+
+            FluidStack fluid = this.fluidTanks[i].getFluid();
+            if (fluid == null || fluid.amount == 0) {
+                stb.append("None 0 / ").append(this.fluidTanks[i].getCapacity());
+            } else {
+                stb.append(fluid.getFluid().getName()).append(' ').append(fluid.amount)
+                        .append(" / ").append(this.fluidTanks[i].getCapacity());
+            }
+        }
+        if (lineBreak) stb.append('\n');
+        return stb.append(']').toString();
     }
 }

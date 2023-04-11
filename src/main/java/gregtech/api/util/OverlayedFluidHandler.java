@@ -61,9 +61,11 @@ public class OverlayedFluidHandler {
                     if (amountToInsert <= 0) {
                         return totalInserted;
                     }
-                    if (!overlayedTank.allowSameFluidFill) {
-                        distinctFillPerformed = true;
-                    }
+                }
+                // regardless of whether the insertion succeeded, presence of identical fluid in
+                // a slot prevents distinct fill to other slots
+                if (!overlayedTank.allowSameFluidFill) {
+                    distinctFillPerformed = true;
                 }
             }
         }
@@ -89,6 +91,31 @@ public class OverlayedFluidHandler {
         }
         // return the amount of fluid that was inserted
         return totalInserted;
+    }
+
+    @Override
+    public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean lineBreak) {
+        StringBuilder stb = new StringBuilder("OverlayedFluidHandler[").append(this.overlayedTanks.size()).append(";");
+        if (lineBreak) stb.append("\n  ");
+        for (int i = 0; i < this.overlayedTanks.size(); i++) {
+            if (i != 0) stb.append(',');
+            if (lineBreak) stb.append("\n  ");
+
+            OverlayedTank overlayedTank = this.overlayedTanks.get(i);
+            FluidStack fluid = overlayedTank.fluid;
+            if (fluid == null || fluid.amount == 0) {
+                stb.append("None 0 / ").append(overlayedTank.property.getCapacity());
+            } else {
+                stb.append(fluid.getFluid().getName()).append(' ').append(fluid.amount)
+                        .append(" / ").append(overlayedTank.property.getCapacity());
+            }
+        }
+        if (lineBreak) stb.append('\n');
+        return stb.append(']').toString();
     }
 
     private static class OverlayedTank {
