@@ -2,9 +2,9 @@ package gregtech.api.nuclear.fission;
 
 import gregtech.api.nuclear.IReactorState;
 
-public class ReactorStateRampDown extends ReactorStateBase {
+public class ReactorStateFullPower extends ReactorStateBase{
 
-    public ReactorStateRampDown(FissionReactor reactor) {
+    public ReactorStateFullPower(FissionReactor reactor) {
         super(reactor);
     }
 
@@ -12,9 +12,9 @@ public class ReactorStateRampDown extends ReactorStateBase {
     public IReactorState getNextState() {
         if (this.reactor.temperature > this.reactor.maxTemperature) {
             return new ReactorStateOverheating(this.reactor);
-        } else if (this.reactor.controlRodInsertion < this.reactor.criticalRodInsertion) {
-            return new ReactorStateStalling(this.reactor);
-        } else if (this.reactor.powerProductionFactor < 0.1 * this.reactor.maxPower) {
+        } else if (this.reactor.powerProductionFactor < 0.6 * this.reactor.maxPower) {
+            return new ReactorStateRampDown(this.reactor);
+        } else if (this.reactor.fuelDepletion == 0) {
             return new ReactorStateShutdown(this.reactor);
         } else {
             return this;
@@ -23,10 +23,9 @@ public class ReactorStateRampDown extends ReactorStateBase {
 
     @Override
     public void runStateEvolution() {
+        this.reactor.powerProductionFactor = responseFunction(this.reactor.maxPower, this.reactor.powerProductionFactor, this.reactor.criticalRodInsertion, this.reactor.controlRodInsertion);
         this.reactor.temperature = responseFunction(this.reactor.maxTemperature, this.reactor.temperature, this.reactor.criticalCoolantFlow(), this.reactor.coolantFlowRate);
-        this.reactor.powerProductionFactor -= 0.05 * this.reactor.powerProductionFactor;
+        this.reactor.neutronPoisoning *= 0.05D;
         this.reactor.fuelDepletion -= Math.max(0.D, this.reactor.powerProductionFactor/this.reactor.maxPower);
-        this.reactor.neutronPoisoning += Math.max(0.1, this.reactor.neutronPoisoning * 0.05);
-        this.reactor.neutronPoisoning = Math.max(1.D, this.reactor.neutronPoisoning);
     }
 }
