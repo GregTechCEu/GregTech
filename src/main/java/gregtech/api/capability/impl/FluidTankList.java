@@ -147,7 +147,6 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         if (resource == null || resource.amount <= 0) {
             return null;
         }
-        resource = resource.copy();
         int amountLeft = resource.amount;
         FluidStack totalDrained = null;
         for (IFluidTank handler : fluidTanks) {
