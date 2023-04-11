@@ -36,6 +36,7 @@ import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -173,7 +174,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
 
         // Set tool and material enchantments
-        Object2IntMap<Enchantment> enchantments = toolProperty.getEnchantments();
+        Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
+        enchantments.putAll(toolProperty.getEnchantments());
         enchantments.putAll(toolStats.getDefaultEnchantments(stack));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
