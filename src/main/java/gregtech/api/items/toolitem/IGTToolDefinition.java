@@ -95,6 +95,8 @@ public interface IGTToolDefinition {
 
     Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack);
 
+    Object2IntMap<Enchantment> getDefaultEnchantmentLevelIncrease(ItemStack stack);
+
     /**
      * Misc
      */

@@ -46,6 +46,8 @@ public class ToolDefinitionBuilder {
     private Predicate<IBlockState> effectiveStates;
     private Object2IntMap<Enchantment> defaultEnchantments = new Object2IntArrayMap<>();
 
+    private Object2IntMap<Enchantment> defaultEnchantmentLevelIncreases = new Object2IntArrayMap<>();
+
     public ToolDefinitionBuilder behaviors(IToolBehavior... behaviours) {
         Collections.addAll(this.behaviours, behaviours);
         return this;
@@ -188,6 +190,11 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
+    public ToolDefinitionBuilder defaultEnchantmentLevelIncrease(Enchantment enchantment, int increase) {
+        this.defaultEnchantmentLevelIncreases.put(enchantment, increase);
+        return this;
+    }
+
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
@@ -211,6 +218,7 @@ public class ToolDefinitionBuilder {
             private final AoESymmetrical aoeSymmetrical = ToolDefinitionBuilder.this.aoeSymmetrical;
             private final Predicate<IBlockState> effectiveStatePredicate;
             private final Object2IntMap<Enchantment> defaultEnchantments = ToolDefinitionBuilder.this.defaultEnchantments;
+            private final Object2IntMap<Enchantment> defaultEnchantmentLevelIncreases = ToolDefinitionBuilder.this.defaultEnchantmentLevelIncreases;
 
 
             {
@@ -310,6 +318,11 @@ public class ToolDefinitionBuilder {
             @Override
             public Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack) {
                 return this.defaultEnchantments;
+            }
+
+            @Override
+            public Object2IntMap<Enchantment> getDefaultEnchantmentLevelIncrease(ItemStack stack) {
+                return this.defaultEnchantmentLevelIncreases;
             }
 
             @Override

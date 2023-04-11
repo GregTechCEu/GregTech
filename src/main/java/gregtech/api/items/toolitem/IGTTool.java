@@ -179,7 +179,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         enchantments.putAll(toolStats.getDefaultEnchantments(stack));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
-                stack.addEnchantment(enchantment, level);
+                int levelIncrease = toolStats.getDefaultEnchantmentLevelIncrease(stack).getOrDefault(enchantment, 0)
+                        * toolProperty.getToolHarvestLevel();
+                stack.addEnchantment(enchantment, level + levelIncrease);
             }
         });
 
