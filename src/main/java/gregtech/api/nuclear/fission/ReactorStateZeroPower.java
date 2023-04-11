@@ -15,4 +15,10 @@ public class ReactorStateZeroPower extends ReactorStateBase {
         }
         return this;
     }
+
+    @Override
+    public void runStateEvolution() {
+        this.reactor.powerProductionFactor = 0.1;
+        this.reactor.fuelDepletion -= Math.max(0.D, this.reactor.powerProductionFactor/this.reactor.maxPower);
+    }
 }
