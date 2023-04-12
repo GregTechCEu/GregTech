@@ -172,7 +172,7 @@ public class OreDictUnifier {
     }
 
     @Nonnull
-    public static Set<String> getOreDictionaryNames(ItemStack itemStack) {
+    public static Set<String> getOreDictionaryNames(@Nonnull ItemStack itemStack) {
         if (itemStack.isEmpty()) return Collections.emptySet();
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
         if (nameEntry == null) return Collections.emptySet();
@@ -192,6 +192,21 @@ public class OreDictUnifier {
     public static ItemVariantMap<Set<String>> getOreDictionaryEntry(@Nonnull Item item) {
         ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
         return entry == null ? ItemVariantMap.empty() : ItemVariantMap.unmodifiableSetView(entry);
+    }
+
+    public static boolean hasOreDictionary(@Nonnull ItemStack itemStack, @Nonnull String oreDictName) {
+        if (itemStack.isEmpty()) return false;
+        ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
+        if (nameEntry == null) return false;
+
+        short itemDamage = (short) GTUtility.getActualItemDamageFromStack(itemStack);
+        Set<String> names = nameEntry.getEntry(itemDamage);
+        if (names != null && names.contains(oreDictName)) return true;
+
+        if (itemDamage == GTValues.W) return false;
+
+        Set<String> wildcardNames = nameEntry.getEntry(GTValues.W);
+        return wildcardNames != null && wildcardNames != names && wildcardNames.contains(oreDictName);
     }
 
     public static List<ItemStack> getAllWithOreDictionaryName(String oreDictionaryName) {
