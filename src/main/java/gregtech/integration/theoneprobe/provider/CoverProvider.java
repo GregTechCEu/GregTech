@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.*;
+import gregtech.common.covers.ender.CoverEnderFluidLink;
 import gregtech.common.covers.filter.*;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

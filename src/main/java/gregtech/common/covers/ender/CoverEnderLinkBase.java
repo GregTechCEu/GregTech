@@ -1,4 +1,4 @@
-package gregtech.api.util.enderlink;
+package gregtech.common.covers.ender;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.capability.IControllable;
@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.enderlink.SwitchShimBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;

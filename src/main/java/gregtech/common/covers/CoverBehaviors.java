@@ -10,6 +10,8 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.detector.*;
+import gregtech.common.covers.ender.CoverEnderFluidLink;
+import gregtech.common.covers.ender.CoverEnderItemLink;
 import gregtech.common.covers.filter.OreDictionaryItemFilter;
 import gregtech.common.covers.filter.SimpleFluidFilter;
 import gregtech.common.covers.filter.SimpleItemFilter;

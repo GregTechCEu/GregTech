@@ -1,37 +1,30 @@
-package gregtech.common.covers;
+package gregtech.common.covers.ender;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.enderlink.CoverEnderLinkBase;
 import gregtech.api.util.enderlink.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.enderlink.VirtualContainerRegistry;
 import gregtech.api.util.enderlink.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-
-import java.util.UUID;
 
 public class CoverEnderFluidLink extends CoverEnderLinkBase<IFluidTank> implements ITickable {
 

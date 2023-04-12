@@ -1,41 +1,30 @@
-package gregtech.common.covers;
+package gregtech.common.covers.ender;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverBehaviorUIFactory;
-import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.enderlink.CoverEnderLinkBase;
 import gregtech.api.util.enderlink.VirtualContainerRegistry;
 import gregtech.api.util.enderlink.ItemContainerSwitchShim;
 import gregtech.api.util.*;
-import gregtech.api.util.enderlink.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import java.util.UUID;
 
 public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiable> implements ITickable {
 
