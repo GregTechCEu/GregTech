@@ -5,6 +5,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
@@ -27,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,16 +38,19 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
 
-public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch>, IControllable {
 
     protected IEnergyContainer energyContainer;
 
     private static final String AMP_NBT_KEY = "amp_mode";
+    private static final String WORKING_ALLOWED_NBT_KEY = "WorkingAllowed";
     private int amps;
+    private boolean isWorkingAllowed;
 
     public MetaTileEntityDiode(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         amps = 1;
+        isWorkingAllowed = true;
         reinitializeEnergyContainer();
     }
 
@@ -65,6 +71,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger(AMP_NBT_KEY, amps);
+        data.setBoolean(WORKING_ALLOWED_NBT_KEY, isWorkingAllowed);
         return data;
     }
 
@@ -72,6 +79,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.amps = data.getInteger(AMP_NBT_KEY);
+        if (data.hasKey(WORKING_ALLOWED_NBT_KEY)) this.isWorkingAllowed = data.getBoolean(WORKING_ALLOWED_NBT_KEY);
         reinitializeEnergyContainer();
     }
 
@@ -96,7 +104,16 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     }
 
     private void setAmpMode() {
-        amps = amps == getMaxAmperage() ? 1 : amps << 1;
+        if (amps == getMaxAmperage()) {
+            amps = 1;
+            isWorkingAllowed = false;
+        } else if (!isWorkingAllowed) {
+            amps = 1;
+            isWorkingAllowed = true;
+        } else {
+            amps <<= 1;
+            isWorkingAllowed = true;
+        }
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
             writeCustomData(AMP_INDEX, b -> b.writeInt(amps));
@@ -112,7 +129,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
 
     protected void reinitializeEnergyContainer() {
         long tierVoltage = GTValues.V[getTier()];
-        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 16, tierVoltage, amps, tierVoltage, amps);
+        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 16, tierVoltage, isWorkingAllowed ? amps : 0, tierVoltage, isWorkingAllowed ? amps : 0);
         ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
         ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
     }
@@ -137,7 +154,11 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
             return true;
         }
         setAmpMode();
-        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+        if (isWorkingAllowed) {
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+        } else {
+            playerIn.sendMessage(new TextComponentTranslation("behaviour.soft_hammer.disabled"));
+        }
         return true;
     }
 
@@ -181,5 +202,27 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     @Override
     public Class<?> getPassthroughType() {
         return IEnergyContainer.class;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return isWorkingAllowed;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        this.isWorkingAllowed = isWorkingAllowed;
+        if (!getWorld().isRemote) {
+            reinitializeEnergyContainer();
+            markDirty();
+        }
     }
 }
