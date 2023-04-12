@@ -3,9 +3,7 @@ package gregtech.api.items.toolitem;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -44,9 +42,7 @@ public class ToolDefinitionBuilder {
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
     private final Set<Material> effectiveMaterials = new ObjectOpenHashSet<>();
     private Predicate<IBlockState> effectiveStates;
-    private Object2IntMap<Enchantment> defaultEnchantments = new Object2IntArrayMap<>();
-
-    private Object2IntMap<Enchantment> defaultEnchantmentLevelIncreases = new Object2IntArrayMap<>();
+    private Object2ObjectMap<Enchantment, EnchantmentLevel> defaultEnchantments = new Object2ObjectArrayMap<>();
 
     public ToolDefinitionBuilder behaviors(IToolBehavior... behaviours) {
         Collections.addAll(this.behaviours, behaviours);
@@ -186,14 +182,14 @@ public class ToolDefinitionBuilder {
     }
 
     public ToolDefinitionBuilder defaultEnchantment(Enchantment enchantment, int level) {
-        this.defaultEnchantments.put(enchantment, level);
+        return this.defaultEnchantment(enchantment, (double) level, 0);
+    }
+
+    public ToolDefinitionBuilder defaultEnchantment(Enchantment enchantment, double level, double growth) {
+        this.defaultEnchantments.put(enchantment, new EnchantmentLevel(level, growth));
         return this;
     }
 
-    public ToolDefinitionBuilder defaultEnchantmentLevelIncrease(Enchantment enchantment, int increase) {
-        this.defaultEnchantmentLevelIncreases.put(enchantment, increase);
-        return this;
-    }
 
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
@@ -217,9 +213,7 @@ public class ToolDefinitionBuilder {
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
             private final AoESymmetrical aoeSymmetrical = ToolDefinitionBuilder.this.aoeSymmetrical;
             private final Predicate<IBlockState> effectiveStatePredicate;
-            private final Object2IntMap<Enchantment> defaultEnchantments = ToolDefinitionBuilder.this.defaultEnchantments;
-            private final Object2IntMap<Enchantment> defaultEnchantmentLevelIncreases = ToolDefinitionBuilder.this.defaultEnchantmentLevelIncreases;
-
+            private final Object2ObjectMap<Enchantment, EnchantmentLevel> defaultEnchantments = ToolDefinitionBuilder.this.defaultEnchantments;
 
             {
                 Set<Block> effectiveBlocks = ToolDefinitionBuilder.this.effectiveBlocks;
@@ -316,13 +310,8 @@ public class ToolDefinitionBuilder {
             }
 
             @Override
-            public Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack) {
-                return this.defaultEnchantments;
-            }
-
-            @Override
-            public Object2IntMap<Enchantment> getDefaultEnchantmentLevelIncrease(ItemStack stack) {
-                return this.defaultEnchantmentLevelIncreases;
+            public Object2ObjectMap<Enchantment, EnchantmentLevel> getDefaultEnchantments(ItemStack stack) {
+                return Object2ObjectMaps.unmodifiable(this.defaultEnchantments);
             }
 
             @Override

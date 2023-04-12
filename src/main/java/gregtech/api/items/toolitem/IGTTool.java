@@ -175,13 +175,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set tool and material enchantments
         Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-        enchantments.putAll(toolProperty.getEnchantments());
-        enchantments.putAll(toolStats.getDefaultEnchantments(stack));
+        toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment, level.getLevel(toolProperty.getToolHarvestLevel())));
+        toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment, level.getLevel(toolProperty.getToolHarvestLevel())));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
-                int levelIncrease = toolStats.getDefaultEnchantmentLevelIncrease(stack).getOrDefault(enchantment, 0)
-                        * toolProperty.getToolHarvestLevel();
-                stack.addEnchantment(enchantment, level + levelIncrease);
+                stack.addEnchantment(enchantment, level);
             }
         });
 
