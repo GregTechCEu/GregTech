@@ -6,8 +6,8 @@ import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.ItemVariantMap;
-import gregtech.api.unification.stack.SingleItemVariantMap;
 import gregtech.api.unification.stack.MultiItemVariantMap;
+import gregtech.api.unification.stack.SingleItemVariantMap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
@@ -128,13 +128,23 @@ public class OreDictionaryItemFilter extends ItemFilter {
     public boolean matchesItemStack(ItemStack itemStack) {
         if (this.error) return false;
         Item item = itemStack.getItem();
+        ItemVariantMap<Set<String>> oreDictEntry = OreDictUnifier.getOreDictionaryEntry(item);
+
+        if (oreDictEntry == null) {
+            // no oredict entries associated
+            Boolean cached = this.noOreDictMatch.getEntry();
+            if (cached == null) {
+                cached = this.glob.matches("");
+            }
+            this.matchCache.put(item, this.noOreDictMatch);
+            return cached;
+        }
+
         ItemVariantMap.Mutable<Boolean> cacheEntry = this.matchCache.get(item);
         if (cacheEntry != null) {
             Boolean cached = cacheEntry.getEntry(itemStack);
             if (cached != null) return cached;
         }
-
-        ItemVariantMap<Set<String>> oreDictEntry = OreDictUnifier.getOreDictionaryEntry(item);
 
         if (cacheEntry == null) {
             if (oreDictEntry.isEmpty()) {

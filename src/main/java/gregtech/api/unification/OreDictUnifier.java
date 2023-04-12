@@ -188,10 +188,20 @@ public class OreDictUnifier {
         }
     }
 
-    @Nonnull
+    @Nullable
     public static ItemVariantMap<Set<String>> getOreDictionaryEntry(@Nonnull Item item) {
         ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
+        return entry == null ? null : ItemVariantMap.unmodifiableSetView(entry);
+    }
+
+    @Nonnull
+    public static ItemVariantMap<Set<String>> getOreDictionaryEntryOrEmpty(@Nonnull Item item) {
+        ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
         return entry == null ? ItemVariantMap.empty() : ItemVariantMap.unmodifiableSetView(entry);
+    }
+
+    public static boolean hasOreDictionaryEntry(@Nonnull Item item) {
+        return stackOreDictName.containsKey(item);
     }
 
     public static boolean hasOreDictionary(@Nonnull ItemStack itemStack, @Nonnull String oreDictName) {
