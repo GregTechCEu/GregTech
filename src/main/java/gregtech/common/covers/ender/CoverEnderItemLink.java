@@ -32,6 +32,7 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
     protected CoverConveyor.ConveyorMode conveyorMode;
     protected final ItemFilterContainer itemFilter;
     protected int itemsLeftToTransferLastSecond;
+    protected ItemContainerSwitchShim linkedShim;
 
     public CoverEnderItemLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -71,7 +72,7 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
         long timer = coverHolder.getOffsetTimer();
         IItemHandler targetInventory = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
         if (workingEnabled && ioEnabled && itemsLeftToTransferLastSecond > 0 && timer % 5 == 0) {
-            int totalTransferred = doTransferItemsAny(targetInventory, (IItemHandler) linkedShim, itemsLeftToTransferLastSecond);
+            int totalTransferred = doTransferItemsAny(targetInventory, linkedShim, itemsLeftToTransferLastSecond);
             this.itemsLeftToTransferLastSecond -= totalTransferred;
         }
 
@@ -155,7 +156,7 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
 
         WidgetGroup containerGroup = new WidgetGroup(widgetGroup.getPosition().add(new Position(18 + 5, 0)));
         for (int i = 0; i < ROW * COL; i++) {
-            containerGroup.addWidget(new SlotWidget((IItemHandlerModifiable) this.linkedShim, i, 154 + (i % COL) * 18, 10 + Math.floorDiv(i, COL) * 18, false, false)
+            containerGroup.addWidget(new SlotWidget(this.linkedShim, i, 154 + (i % COL) * 18, 10 + Math.floorDiv(i, COL) * 18, false, false)
                     .setBackgroundTexture(GuiTextures.SLOT_DARKENED));
         }
 

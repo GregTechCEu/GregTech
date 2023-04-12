@@ -31,6 +31,7 @@ public class CoverEnderFluidLink extends CoverEnderLinkBase<IFluidTank> implemen
     public static final int TRANSFER_RATE = 8000; // mB/t
     protected CoverPump.PumpMode pumpMode;
     protected final FluidFilterContainer fluidFilter;
+    protected FluidTankSwitchShim linkedShim;
 
 
     public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
@@ -79,7 +80,7 @@ public class CoverEnderFluidLink extends CoverEnderLinkBase<IFluidTank> implemen
 
     protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
-        IFluidHandler fluidTankSwitchShim = (FluidTankSwitchShim) linkedShim;
+        IFluidHandler fluidTankSwitchShim = linkedShim;
 
         if (fluidHandler == null) return;
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
@@ -111,7 +112,7 @@ public class CoverEnderFluidLink extends CoverEnderLinkBase<IFluidTank> implemen
         widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
                 .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
-        widgetGroup.addWidget(new TankWidget((IFluidTank) this.linkedShim, 123, 18, 18, 18)
+        widgetGroup.addWidget(new TankWidget(this.linkedShim, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
         widgetGroup.addWidget(new ImageWidget(147, 19, 16, 16)

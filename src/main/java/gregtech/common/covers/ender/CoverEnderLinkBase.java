@@ -30,7 +30,6 @@ public abstract class CoverEnderLinkBase<T> extends CoverBehavior implements Cov
     protected boolean ioEnabled;
     protected String tempColorStr;
     protected boolean isColorTemp;
-    protected SwitchShimBase<T> linkedShim;
 
     public CoverEnderLinkBase(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
