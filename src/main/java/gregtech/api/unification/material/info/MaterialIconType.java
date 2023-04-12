@@ -7,9 +7,10 @@ import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -180,9 +181,10 @@ public class MaterialIconType {
     }
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void beforeTextureStitch(TextureStitchEvent.Pre event) {
         ITEM_MODEL_CACHE.clear();
         BLOCK_TEXTURE_CACHE.clear();
+        BLOCK_MODEL_CACHE.clear();
     }
 }
