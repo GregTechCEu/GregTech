@@ -100,7 +100,7 @@ public final class ToolChargeBarRenderer {
         if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
             double durability = stack.getItem().getDurabilityForDisplay(stack);
             if (durability != 0.0) {
-                renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+                renderedDurability = renderDurabilityBar(durability, xPosition, yPosition);
             }
         }
         if (tool.isElectric()) {
@@ -141,7 +141,7 @@ public final class ToolChargeBarRenderer {
     }
 
     private static boolean renderDurabilityBar(double level, int xPosition, int yPosition) {
-        render(1.0- level, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
+        render(1.0 - level, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
         return true;
     }
 
