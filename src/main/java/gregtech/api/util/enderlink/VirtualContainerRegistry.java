@@ -13,6 +13,7 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -81,8 +82,8 @@ public class VirtualContainerRegistry extends WorldSavedData {
      * @param size The initial size of the container
      */
     public static void addContainer(String key, UUID uuid, int size) {
-        if(containerMap.containsKey(uuid) && containerMap.get(uuid).containsKey(key)) {
-            GTLog.logger.warn("Overwriting virtual container " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", this might cause fluid loss!");
+        if (containerMap.containsKey(uuid) && containerMap.get(uuid).containsKey(key)) {
+            GTLog.logger.warn("Overwriting virtual container " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", this might cause item loss!");
         } else if (!containerMap.containsKey(uuid)) {
             containerMap.put(uuid, new HashMap<>());
         }
@@ -118,7 +119,7 @@ public class VirtualContainerRegistry extends WorldSavedData {
 
             if (removeContainer || isEmpty) {
                 containerMap.get(uuid).remove(key);
-                if (containerMap.get(uuid).size() <= 0) {
+                if (containerMap.get(uuid).size() == 0) {
                     containerMap.remove(uuid);
                 }
             }
@@ -140,7 +141,17 @@ public class VirtualContainerRegistry extends WorldSavedData {
             NBTTagCompound publicContainers = nbt.getCompoundTag("Public");
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
-                readItems(VirtualContainerRegistry.getContainerCreate(key, null), "Items", containerCompound);
+                if (containerCompound.hasKey("Items")) {
+                    NBTTagList tagList = containerCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+                    IItemHandlerModifiable handler = VirtualContainerRegistry.getContainerCreate(key, null, tagList.tagCount());
+                    for (int i = 0; i < tagList.tagCount(); i++) {
+                        int slot = tagList.getCompoundTagAt(i).getInteger("Slot");
+
+                        if (slot >= 0 && slot < handler.getSlots()) {
+                            handler.setStackInSlot(slot, new ItemStack(tagList.getCompoundTagAt(i)));
+                        }
+                    }
+                }
             }
         }
         if (nbt.hasKey("Private")) {
@@ -150,7 +161,17 @@ public class VirtualContainerRegistry extends WorldSavedData {
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-                    readItems(VirtualContainerRegistry.getContainerCreate(key, uuid), "Items", containerCompound);
+                    if (containerCompound.hasKey("Items")) {
+                        NBTTagList tagList = containerCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+                        IItemHandlerModifiable handler = VirtualContainerRegistry.getContainerCreate(key, uuid, tagList.tagCount());
+                        for (int i = 0; i < tagList.tagCount(); i++) {
+                            int slot = tagList.getCompoundTagAt(i).getInteger("Slot");
+
+                            if (slot >= 0 && slot < handler.getSlots()) {
+                                handler.setStackInSlot(slot, new ItemStack(tagList.getCompoundTagAt(i)));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -163,14 +184,8 @@ public class VirtualContainerRegistry extends WorldSavedData {
         containerMap.forEach( (uuid, map) -> {
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, container) -> {
-                NBTTagList containerCompound = new NBTTagList();
-                for (int i = 0; i < container.getSlots(); i++) {
-                    NBTTagCompound stack = new NBTTagCompound();
-                    stack.setInteger("slot", i);
-                    container.getStackInSlot(i).writeToNBT(stack);
-                    containerCompound.appendTag(stack);
-                }
-                // GTUtility.writeItems(container, "Items", containerCompound);
+                NBTTagCompound containerCompound = new NBTTagCompound();
+                GTUtility.writeItems(container, "Items", containerCompound);
                 mapCompound.setTag(key, containerCompound);
             });
             if (mapCompound.getSize() > 0) {
@@ -182,20 +197,6 @@ public class VirtualContainerRegistry extends WorldSavedData {
             }
         });
         return compound;
-    }
-
-    private void readItems(IItemHandlerModifiable handler, String tagName, NBTTagCompound tag){
-        if (tag.hasKey(tagName)) {
-            NBTTagList tagList = tag.getTagList(tagName, Constants.NBT.TAG_COMPOUND);
-
-            for (int i = 0; i < tagList.tagCount(); i++) {
-                int slot = tagList.getCompoundTagAt(i).getInteger("slot");
-
-                if (slot >= 0 && slot < handler.getSlots()) {
-                    handler.setStackInSlot(slot, new ItemStack(tagList.getCompoundTagAt(i)));
-                }
-            }
-        }
     }
 
     @Override
@@ -218,22 +219,21 @@ public class VirtualContainerRegistry extends WorldSavedData {
     }
 
     protected static class VirtualContainer implements IItemHandlerModifiable {
-
-        private NonNullList<ItemStack> items;
+        ItemStackHandler handler;
 
         public VirtualContainer(int size){
-            this.items = NonNullList.withSize(size, ItemStack.EMPTY);
+            this.handler = new ItemStackHandler(size);
         }
 
         @Override
         public int getSlots() {
-            return items.size();
+            return handler.getSlots();
         }
 
         @Nonnull
         @Override
         public ItemStack getStackInSlot(int i) {
-            return items.get(i);
+            return handler.getStackInSlot(i);
         }
 
         /**
@@ -246,29 +246,7 @@ public class VirtualContainerRegistry extends WorldSavedData {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean simulate) {
-            if (itemStack.isEmpty())
-                return ItemStack.EMPTY;
-
-            int amt; // theoretically, how much can be inserted?
-            if (items.get(slot).isEmpty())
-                amt = items.get(slot).getMaxStackSize();
-            else
-                amt = items.get(slot).getMaxStackSize() - items.get(slot).getCount();
-            int remainder = Math.max(0, itemStack.getCount() - amt);  // what is left of the incoming item stack?
-
-            if (!simulate){
-                items.set(slot, itemStack);
-                items.get(slot).setCount(itemStack.getCount());
-
-            }
-
-            if (remainder <= 0) { // not enough or exactly for a full stack
-                return ItemStack.EMPTY;
-            }
-            else { // more than a full stack, there are leftover incoming items to return
-                itemStack.setCount(remainder);
-                return itemStack;
-            }
+            return handler.insertItem(slot, itemStack, simulate);
         }
 
         /**
@@ -281,26 +259,17 @@ public class VirtualContainerRegistry extends WorldSavedData {
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amtToExtract, boolean simulate) {
-            if (items.get(slot).isEmpty())
-                return ItemStack.EMPTY;
-
-            int remainder = amtToExtract - items.get(slot).getCount();
-            ItemStack returnable = items.get(slot).copy();
-            returnable.setCount(amtToExtract - remainder);
-
-            if (!simulate) // extracted all item in slot
-                items.set(slot, ItemStack.EMPTY);
-            return returnable;
+            return handler.extractItem(slot, amtToExtract, simulate);
         }
 
         @Override
         public int getSlotLimit(int slot) {
-            return items.get(slot).getMaxStackSize();
+            return handler.getSlotLimit(slot);
         }
 
         @Override
         public void setStackInSlot(int i, @Nonnull ItemStack itemStack) {
-            this.items.set(i, itemStack);
+            handler.setStackInSlot(i, itemStack);
         }
     }
 }
