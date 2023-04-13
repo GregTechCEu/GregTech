@@ -36,7 +36,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.M;
-import static gregtech.api.util.DyeUtil.getOredictColorName;
+import static gregtech.api.util.GTColorUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
 
 public class MetaItem1 extends StandardMetaItem {

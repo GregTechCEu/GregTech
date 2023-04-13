@@ -7,6 +7,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.EmptyRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptCompat;
@@ -397,7 +398,7 @@ public class Recipe {
                     recipeTier, machineTier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
-                GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
+                GTTransferUtils.addStackToItemStackList(stackToAdd, resultChanced);
             }
         }
 

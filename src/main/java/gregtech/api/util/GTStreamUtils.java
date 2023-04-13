@@ -6,17 +6,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
  * Various Quality-of-Life methods for working with Java 8 Streams.
  */
-public final class StreamUtils {
+public final class GTStreamUtils {
 
     /**
      * Creates a stream view of the actual contents of the inventory.
@@ -122,5 +120,16 @@ public final class StreamUtils {
                 return Spliterators.spliterator(iterator(), fluidInventory.getTankProperties().length, 0);
             }
         };
+    }
+
+    public static Stream<Object> flatten(Object[] array) {
+        return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
+    }
+
+    public static <T> IntStream indices(T[] array) {
+        int[] indices = new int[array.length];
+        for (int i = 0; i < indices.length; i++)
+            indices[i] = i;
+        return Arrays.stream(indices);
     }
 }

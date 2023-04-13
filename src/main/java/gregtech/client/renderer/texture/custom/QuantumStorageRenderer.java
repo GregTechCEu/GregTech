@@ -6,7 +6,7 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.util.TextFormattingUtil;
+import gregtech.api.util.GTTextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.client.utils.RenderUtil;
@@ -147,7 +147,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         } else {
             RenderUtil.rotateToFace(frontFacing, null);
         }
-        String amountText = TextFormattingUtil.formatLongToCompactString(amount, 4);
+        String amountText = GTTextFormattingUtil.formatLongToCompactString(amount, 4);
         GlStateManager.scale(1f / 64, 1f / 64, 0);
         GlStateManager.translate(-32, -32, 0);
         GlStateManager.disableLighting();

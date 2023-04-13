@@ -12,7 +12,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.CustomModPriorityComparator;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTTextFormattingUtil;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
@@ -138,7 +138,7 @@ public class OreDictUnifier {
                 buffer.append(splits.get(i));
                 OrePrefix maybePrefix = OrePrefix.getPrefix(buffer.toString()); //ore -> OrePrefix.ore
                 String possibleMaterialName = Joiner.on("").join(splits.subList(i + 1, splits.size())); //BasalticMineralSand
-                String underscoreName = GTUtility.toLowerCaseUnderscore(possibleMaterialName); //basaltic_mineral_sand
+                String underscoreName = GTTextFormattingUtil.toLowerCaseUnderscore(possibleMaterialName); //basaltic_mineral_sand
                 Material possibleMaterial = GregTechAPI.MATERIAL_REGISTRY.getObject(underscoreName); //Materials.BasalticSand
                 if (possibleMaterial == null) {
                     //if we didn't found real material, try using marker material registry

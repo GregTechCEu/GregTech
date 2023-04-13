@@ -8,7 +8,7 @@ import gregtech.api.items.metaitem.stats.*;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
@@ -64,7 +64,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         if (internalTank == null)
             return;
 
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(stack);
         byte toggleTimer = 0;
         boolean hover = false;
 
@@ -278,7 +278,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         @Override
         public void addInformation(ItemStack itemStack, List<String> lines) {
             IItemBehaviour.super.addInformation(itemStack, lines);
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
+            NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(itemStack);
             String status = I18n.format("metaarmor.hud.status.disabled");
             if (data.hasKey("hover")) {
                 if (data.getBoolean("hover"))

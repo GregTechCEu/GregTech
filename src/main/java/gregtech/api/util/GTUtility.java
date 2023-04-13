@@ -28,7 +28,6 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -39,11 +38,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -60,7 +56,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -82,21 +77,64 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
 
+    /**
+     * Default function for tank sizes, takes a tier input and returns the corresponding size
+     */
+    public static final Function<Integer, Integer> defaultTankSizeFunction = tier -> {
+        if (tier <= GTValues.LV)
+            return 8000;
+        if (tier == GTValues.MV)
+            return 12000;
+        if (tier == GTValues.HV)
+            return 16000;
+        if (tier == GTValues.EV)
+            return 32000;
+        // IV+
+        return 64000;
+    };
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     * <p>
+     * This function scales the same as the default function except it stops scaling past HV
+     */
+    public static final Function<Integer, Integer> hvCappedTankSizeFunction = tier -> {
+        if (tier <= GTValues.LV)
+            return 8000;
+        if (tier == GTValues.MV)
+            return 12000;
+        // HV+
+        return 16000;
+    };
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     * <p>
+     * This function is meant for use with machines that need very large tanks, it stops scaling past HV
+     */
+    public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
+        if (tier <= GTValues.LV)
+            return 32000;
+        if (tier == GTValues.MV)
+            return 48000;
+        // HV+
+        return 64000;
+    };
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     * <p>
+     * This function is meant for use with generators
+     */
+    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math.min(16000 * (1 << (tier - 1)), 64000);
+    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
     private static final DecimalFormat TWO_PLACES_FORMAT = new DecimalFormat("#.##");
-
-    private static final TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
-
     private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
-
     private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
+    private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
 
     static {
         for (int i = 0; i < V.length; i++) {
@@ -113,24 +151,11 @@ public class GTUtility {
         };
     }
 
-    private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
-
-    public static Stream<Object> flatten(Object[] array) {
-        return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
-    }
-
     public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
             dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
         }
-    }
-
-    public static <T> IntStream indices(T[] array) {
-        int[] indices = new int[array.length];
-        for (int i = 0; i < indices.length; i++)
-            indices[i] = i;
-        return Arrays.stream(indices);
     }
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
@@ -162,33 +187,6 @@ public class GTUtility {
         return potionEffect;
     }
 
-    //just because CCL uses a different color format
-    //0xRRGGBBAA
-    public static int convertRGBtoOpaqueRGBA_CL(int colorValue) {
-        return convertRGBtoRGBA_CL(colorValue, 255);
-    }
-
-    public static int convertRGBtoRGBA_CL(int colorValue, int opacity) {
-        return colorValue << 8 | (opacity & 0xFF);
-    }
-
-    public static int convertOpaqueRGBA_CLtoRGB(int colorAlpha) {
-        return colorAlpha >>> 8;
-    }
-
-    //0xAARRGGBB
-    public static int convertRGBtoOpaqueRGBA_MC(int colorValue) {
-        return convertRGBtoOpaqueRGBA_MC(colorValue, 255);
-    }
-
-    public static int convertRGBtoOpaqueRGBA_MC(int colorValue, int opacity) {
-        return opacity << 24 | colorValue;
-    }
-
-    public static int convertOpaqueRGBA_MCtoRGB(int alphaColor) {
-        return alphaColor & 0xFFFFFF;
-    }
-
     /**
      * Exists because for stack equality checks actual ItemStack.itemDamage
      * field is used, and ItemStack.getItemDamage() can be overriden,
@@ -199,103 +197,6 @@ public class GTUtility {
      */
     public static int getActualItemDamageFromStack(ItemStack itemStack) {
         return Items.FEATHER.getDamage(itemStack);
-    }
-
-    /**
-     * Attempts to merge given ItemStack with ItemStacks in slot list supplied
-     * If it's not possible to merge it fully, it will attempt to insert it into first empty slots
-     *
-     * @param itemStack item stack to merge. It WILL be modified.
-     * @param simulate  if true, stack won't actually modify items in other slots
-     * @return if merging of at least one item succeed, false otherwise
-     */
-    public static boolean mergeItemStack(ItemStack itemStack, List<Slot> slots, boolean simulate) {
-        if (itemStack.isEmpty())
-            return false; //if we are merging empty stack, return
-
-        boolean merged = false;
-        //iterate non-empty slots first
-        //to try to insert stack into them
-        for (Slot slot : slots) {
-            if (!slot.isItemValid(itemStack))
-                continue; //if itemstack cannot be placed into that slot, continue
-            ItemStack stackInSlot = slot.getStack();
-            if (!ItemStack.areItemsEqual(itemStack, stackInSlot) ||
-                    !ItemStack.areItemStackTagsEqual(itemStack, stackInSlot))
-                continue; //if itemstacks don't match, continue
-            int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
-            int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
-            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
-            if (amountToInsert <= 0)
-                continue; //if we can't insert anything, continue
-            //shrink our stack, grow slot's stack and mark slot as changed
-            if (!simulate) {
-                stackInSlot.grow(amountToInsert);
-            }
-            itemStack.shrink(amountToInsert);
-            slot.onSlotChanged();
-            merged = true;
-            if (itemStack.isEmpty())
-                return true; //if we inserted all items, return
-        }
-
-        //then try to insert itemstack into empty slots
-        //breaking it into pieces if needed
-        for (Slot slot : slots) {
-            if (!slot.isItemValid(itemStack))
-                continue; //if itemstack cannot be placed into that slot, continue
-            if (slot.getHasStack())
-                continue; //if slot contains something, continue
-            int amountToInsert = Math.min(itemStack.getCount(), slot.getItemStackLimit(itemStack));
-            if (amountToInsert == 0)
-                continue; //if we can't insert anything, continue
-            //split our stack and put result in slot
-            ItemStack stackInSlot = itemStack.splitStack(amountToInsert);
-            if (!simulate) {
-                slot.putStack(stackInSlot);
-            }
-            merged = true;
-            if (itemStack.isEmpty())
-                return true; //if we inserted all items, return
-        }
-        return merged;
-    }
-
-    /**
-     * Attempts to merge given ItemStack with ItemStacks in list supplied
-     * growing up to their max stack size
-     *
-     * @param stackToAdd item stack to merge.
-     * @return a list of stacks, with optimized stack sizes
-     */
-
-    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
-        if (!itemStackList.isEmpty()) {
-            for (ItemStack stackInList : itemStackList) {
-                if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
-                    if (stackInList.getCount() < stackInList.getMaxStackSize()) {
-                        int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
-                        if (insertable >= stackToAdd.getCount()) {
-                            stackInList.grow(stackToAdd.getCount());
-                            stackToAdd = ItemStack.EMPTY;
-                        } else {
-                            stackInList.grow(insertable);
-                            stackToAdd = stackToAdd.copy();
-                            stackToAdd.setCount(stackToAdd.getCount() - insertable);
-                        }
-                        if (stackToAdd.isEmpty()) {
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!stackToAdd.isEmpty()) {
-                itemStackList.add(stackToAdd);
-            }
-        } else {
-            itemStackList.add(stackToAdd.copy());
-        }
-        return itemStackList;
     }
 
     public static boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
@@ -347,35 +248,6 @@ public class GTUtility {
             }
         }
         return wasRemovedByPlayer;
-    }
-
-    public static void writeItems(IItemHandler handler, String tagName, NBTTagCompound tag) {
-        NBTTagList tagList = new NBTTagList();
-
-        for (int i = 0; i < handler.getSlots(); i++) {
-            if (!handler.getStackInSlot(i).isEmpty()) {
-                NBTTagCompound stackTag = new NBTTagCompound();
-                stackTag.setInteger("Slot", i);
-                handler.getStackInSlot(i).writeToNBT(stackTag);
-                tagList.appendTag(stackTag);
-            }
-        }
-
-        tag.setTag(tagName, tagList);
-    }
-
-    public static void readItems(IItemHandlerModifiable handler, String tagName, NBTTagCompound tag) {
-        if (tag.hasKey(tagName)) {
-            NBTTagList tagList = tag.getTagList(tagName, Constants.NBT.TAG_COMPOUND);
-
-            for (int i = 0; i < tagList.tagCount(); i++) {
-                int slot = tagList.getCompoundTagAt(i).getInteger("Slot");
-
-                if (slot >= 0 && slot < handler.getSlots()) {
-                    handler.setStackInSlot(slot, new ItemStack(tagList.getCompoundTagAt(i)));
-                }
-            }
-        }
     }
 
     public static boolean isBetweenInclusive(long start, long end, long value) {
@@ -612,15 +484,6 @@ public class GTUtility {
         return amount;
     }
 
-    public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) {
-            compound = new NBTTagCompound();
-            stack.setTagCompound(compound);
-        }
-        return compound;
-    }
-
     public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
         ItemStack[] stacks = new ItemStack[itemStacks.size()];
         for (int i = 0; i < itemStacks.size(); i++) {
@@ -720,6 +583,7 @@ public class GTUtility {
         return worldPower;
     }
 
+    // TODO, Remove this, use ItemStackHashStrategy instead
     public static Comparator<ItemStack> createItemStackComparator() {
         return Comparator.<ItemStack, Integer>comparing(it -> Item.REGISTRY.getIDForObject(it.getItem()))
                 .thenComparing(ItemStack::getItemDamage)
@@ -799,84 +663,6 @@ public class GTUtility {
         return rotatedAABB;
     }
 
-    /**
-     * Default function for tank sizes, takes a tier input and returns the corresponding size
-     */
-    public static final Function<Integer, Integer> defaultTankSizeFunction = tier -> {
-        if (tier <= GTValues.LV)
-            return 8000;
-        if (tier == GTValues.MV)
-            return 12000;
-        if (tier == GTValues.HV)
-            return 16000;
-        if (tier == GTValues.EV)
-            return 32000;
-        // IV+
-        return 64000;
-    };
-
-    /**
-     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     * <p>
-     * This function scales the same as the default function except it stops scaling past HV
-     */
-    public static final Function<Integer, Integer> hvCappedTankSizeFunction = tier -> {
-        if (tier <= GTValues.LV)
-            return 8000;
-        if (tier == GTValues.MV)
-            return 12000;
-        // HV+
-        return 16000;
-    };
-
-    /**
-     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     * <p>
-     * This function is meant for use with machines that need very large tanks, it stops scaling past HV
-     */
-    public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
-        if (tier <= GTValues.LV)
-            return 32000;
-        if (tier == GTValues.MV)
-            return 48000;
-        // HV+
-        return 64000;
-    };
-
-    /**
-     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     * <p>
-     * This function is meant for use with generators
-     */
-    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math.min(16000 * (1 << (tier - 1)), 64000);
-
-    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
-
-    public static String romanNumeralString(int num) {
-
-        if (romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
-            romanNumeralConversions.put(1000, "M");
-            romanNumeralConversions.put(900, "CM");
-            romanNumeralConversions.put(500, "D");
-            romanNumeralConversions.put(400, "CD");
-            romanNumeralConversions.put(100, "C");
-            romanNumeralConversions.put(90, "XC");
-            romanNumeralConversions.put(50, "L");
-            romanNumeralConversions.put(40, "XL");
-            romanNumeralConversions.put(10, "X");
-            romanNumeralConversions.put(9, "IX");
-            romanNumeralConversions.put(5, "V");
-            romanNumeralConversions.put(4, "IV");
-            romanNumeralConversions.put(1, "I");
-        }
-
-        int conversion = romanNumeralConversions.floorKey(num);
-        if (num == conversion) {
-            return romanNumeralConversions.get(num);
-        }
-        return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
-    }
-
     public static ItemStack toItem(IBlockState state) {
         return toItem(state, 1);
     }
@@ -943,42 +729,6 @@ public class GTUtility {
         return Arrays.asList(recipeMapBlacklist).contains(unlocalizedName);
     }
 
-    /**
-     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and numbers.
-     *
-     * @param string Any string with ASCII characters.
-     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maragingSteel300" -> "maraging_steel_300"
-     */
-    public static String toLowerCaseUnderscore(String string) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < string.length(); i++) {
-            if (i != 0 && (Character.isUpperCase(string.charAt(i)) || (
-                    Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
-                result.append("_");
-            result.append(Character.toLowerCase(string.charAt(i)));
-        }
-        return result.toString();
-    }
-
-    /**
-     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before numbers.
-     *
-     * @param string Any string with ASCII characters.
-     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maraging_steel_300" -> "maragingSteel300"
-     */
-    public static String lowerUnderscoreToUpperCamel(String string) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) == '_')
-                continue;
-            if (i == 0 || string.charAt(i - 1) == '_') {
-                result.append(Character.toUpperCase(string.charAt(i)));
-            } else {
-                result.append(string.charAt(i));
-            }
-        }
-        return result.toString();
-    }
 
     public static String formatNumbers(long number) {
         return NUMBER_FORMAT.format(number);
@@ -1028,36 +778,6 @@ public class GTUtility {
         return world.isDaytime();
     }
 
-    public static MapColor getMapColor(int rgb) {
-        MapColor color = MapColor.BLACK;
-        int originalR = (rgb >> 16) & 0xFF;
-        int originalG = (rgb >> 8) & 0xFF;
-        int originalB = rgb & 0xFF;
-        int distance = Integer.MAX_VALUE;
-
-        for (MapColor mapColor : MapColor.COLORS) {
-            // why is there a null in here mojang!?
-            if (mapColor == null) continue;
-
-            int colorValue = mapColor.colorValue;
-            if (colorValue == 0) continue;
-
-            int colorR = (colorValue >> 16) & 0xFF;
-            int colorG = (colorValue >> 8) & 0xFF;
-            int colorB = colorValue & 0xFF;
-
-            int distR = Math.abs(originalR - colorR);
-            int distG = Math.abs(originalG - colorG);
-            int distB = Math.abs(originalB - colorB);
-            int dist = distR * distR + distG * distG + distB * distB;
-
-            if (dist < distance) {
-                distance = dist;
-                color = mapColor;
-            }
-        }
-        return color;
-    }
 
     /**
      * Gather a list of all registered dimensions. Done as a Supplier so that it can be called at any time and catch

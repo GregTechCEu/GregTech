@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -39,7 +39,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
             return;
         }
 
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(item);
         boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
         boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
@@ -131,7 +131,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
 
     @Override
     public void addInfo(ItemStack itemStack, List<String> lines) {
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(itemStack);
         String state;
         if (data.hasKey("canShare")) {
             state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
@@ -155,7 +155,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         ItemStack armor = player.getHeldItem(hand);
 
         if (armor.getItem() instanceof ArmorMetaItem && player.isSneaking()) {
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
+            NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(player.getHeldItem(hand));
             boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
             IElectricItem cont = player.getHeldItem(hand).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             if (cont == null) {

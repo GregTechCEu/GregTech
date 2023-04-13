@@ -29,9 +29,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
@@ -247,7 +245,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
-        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
             Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
@@ -1189,8 +1187,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         data.setInteger("CachedLightValue", cachedLightValue);
 
         if (shouldSerializeInventories()) {
-            GTUtility.writeItems(importItems, "ImportInventory", data);
-            GTUtility.writeItems(exportItems, "ExportInventory", data);
+            GTNBTUtil.writeItems(importItems, "ImportInventory", data);
+            GTNBTUtil.writeItems(exportItems, "ExportInventory", data);
 
             data.setTag("ImportFluidInventory", importFluids.serializeNBT());
             data.setTag("ExportFluidInventory", exportFluids.serializeNBT());
@@ -1215,8 +1213,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         this.cachedLightValue = data.getInteger("CachedLightValue");
 
         if (shouldSerializeInventories()) {
-            GTUtility.readItems(importItems, "ImportInventory", data);
-            GTUtility.readItems(exportItems, "ExportInventory", data);
+            GTNBTUtil.readItems(importItems, "ImportInventory", data);
+            GTNBTUtil.readItems(exportItems, "ExportInventory", data);
 
             importFluids.deserializeNBT(data.getCompoundTag("ImportFluidInventory"));
             exportFluids.deserializeNBT(data.getCompoundTag("ExportFluidInventory"));

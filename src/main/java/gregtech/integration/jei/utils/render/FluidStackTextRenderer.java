@@ -1,7 +1,7 @@
 package gregtech.integration.jei.utils.render;
 
+import gregtech.api.util.GTTextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.api.util.TextFormattingUtil;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.plugins.vanilla.ingredients.fluid.FluidStackRenderer;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
         GlStateManager.pushMatrix();
         GlStateManager.scale(0.5, 0.5, 1);
 
-        String s = TextFormattingUtil.formatLongToCompactString(fluidStack.amount, 4) + "L";
+        String s = GTTextFormattingUtil.formatLongToCompactString(fluidStack.amount, 4) + "L";
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 11) * 2, 0xFFFFFF);

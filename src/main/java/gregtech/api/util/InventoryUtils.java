@@ -11,9 +11,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gregtech.api.util.GTStreamUtils.streamFrom;
 import static gregtech.api.util.Predicates.not;
 import static gregtech.api.util.Predicates.or;
-import static gregtech.api.util.StreamUtils.streamFrom;
 
 public final class InventoryUtils {
     /**

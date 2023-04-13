@@ -1,14 +1,19 @@
 package gregtech.api.util;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.DataSerializerEntry;
 
-public class NBTUtil {
+public class GTNBTUtil {
 
     public static final DataSerializer<Vec3d> VECTOR = new DataSerializer<Vec3d>() {
         @Override
@@ -52,5 +57,43 @@ public class NBTUtil {
         tag.setFloat("Y", (float) vector.y);
         tag.setFloat("Z", (float) vector.z);
         return tag;
+    }
+
+    public static void writeItems(IItemHandler handler, String tagName, NBTTagCompound tag) {
+        NBTTagList tagList = new NBTTagList();
+
+        for (int i = 0; i < handler.getSlots(); i++) {
+            if (!handler.getStackInSlot(i).isEmpty()) {
+                NBTTagCompound stackTag = new NBTTagCompound();
+                stackTag.setInteger("Slot", i);
+                handler.getStackInSlot(i).writeToNBT(stackTag);
+                tagList.appendTag(stackTag);
+            }
+        }
+
+        tag.setTag(tagName, tagList);
+    }
+
+    public static void readItems(IItemHandlerModifiable handler, String tagName, NBTTagCompound tag) {
+        if (tag.hasKey(tagName)) {
+            NBTTagList tagList = tag.getTagList(tagName, Constants.NBT.TAG_COMPOUND);
+
+            for (int i = 0; i < tagList.tagCount(); i++) {
+                int slot = tagList.getCompoundTagAt(i).getInteger("Slot");
+
+                if (slot >= 0 && slot < handler.getSlots()) {
+                    handler.setStackInSlot(slot, new ItemStack(tagList.getCompoundTagAt(i)));
+                }
+            }
+        }
+    }
+
+    public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            compound = new NBTTagCompound();
+            stack.setTagCompound(compound);
+        }
+        return compound;
     }
 }

@@ -14,10 +14,9 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTTextFormattingUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -292,7 +291,7 @@ public class Material implements Comparable<Material> {
 
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
-        return GTUtility.lowerUnderscoreToUpperCamel(toString());
+        return GTTextFormattingUtil.lowerUnderscoreToUpperCamel(toString());
     }
 
     @ZenGetter("unlocalizedName")
@@ -955,7 +954,7 @@ public class Material implements Comparable<Material> {
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
-            if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name))
+            if (!GTTextFormattingUtil.toLowerCaseUnderscore(GTTextFormattingUtil.lowerUnderscoreToUpperCamel(name)).equals(name))
                 throw new IllegalStateException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
             this.name = name;
         }

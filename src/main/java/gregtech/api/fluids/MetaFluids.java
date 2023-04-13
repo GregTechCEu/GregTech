@@ -15,7 +15,7 @@ import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTColorUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.blocks.MetaBlocks;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -228,7 +228,7 @@ public class MetaFluids {
             fluid.setTemperature(temperature);
             fluid.setDensity((int) (material.getMass() * 100));
             if (material.hasFluidColor()) {
-                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+                fluid.setColor(GTColorUtil.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             } else {
                 fluid.setColor(0xFFFFFFFF);
             }
@@ -247,7 +247,7 @@ public class MetaFluids {
 
         // generate fluid blocks if the material has one, and the current state being handled is not plasma
         if (generateBlock && fluid.getBlock() == null && fluidType != FluidTypes.PLASMA) {
-            GTFluidMaterial fluidMaterial = new GTFluidMaterial(GTUtility.getMapColor(material.getMaterialRGB()),
+            GTFluidMaterial fluidMaterial = new GTFluidMaterial(GTColorUtil.getMapColor(material.getMaterialRGB()),
                     material.hasFlag(MaterialFlags.STICKY));
 
             BlockFluidBase fluidBlock = new MaterialFluidBlock(fluid, fluidMaterial, material);

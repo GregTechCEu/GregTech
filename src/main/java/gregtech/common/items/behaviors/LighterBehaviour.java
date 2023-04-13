@@ -5,7 +5,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.GradientUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
@@ -72,7 +72,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         if (entity instanceof EntityCreeper) {
-            NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
+            NBTTagCompound compound = GTNBTUtil.getOrCreateNbtCompound(stack);
             // If this item does not have opening mechanics, or if it does and is currently open
             if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
                 player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
@@ -86,7 +86,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     @Override
     public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
+        NBTTagCompound compound = GTNBTUtil.getOrCreateNbtCompound(stack);
 
         if (canOpen && player.isSneaking()) {
             compound.setBoolean(LIGHTER_OPEN, !compound.getBoolean(LIGHTER_OPEN));
@@ -149,7 +149,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
             return drained == null ? 0 : drained.amount;
         }
         if (hasMultipleUses) {
-            NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
+            NBTTagCompound compound = GTNBTUtil.getOrCreateNbtCompound(stack);
             if (compound.hasKey(USES_LEFT)) {
                 return compound.getInteger(USES_LEFT);
             }
@@ -174,7 +174,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
                 stack.setCount(0);
                 entity.addItemStackToInventory(new ItemStack(destroyItem));
             } else {
-                GTUtility.getOrCreateNbtCompound(stack).setInteger(USES_LEFT, usesLeft);
+                GTNBTUtil.getOrCreateNbtCompound(stack).setInteger(USES_LEFT, usesLeft);
             }
         } else {
             stack.setCount(usesLeft);
@@ -185,7 +185,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     public void addPropertyOverride(@Nonnull Item item) {
         if (overrideLocation != null) {
             item.addPropertyOverride(overrideLocation,
-                    (stack, world, entity) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
+                    (stack, world, entity) -> GTNBTUtil.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
         }
     }
 

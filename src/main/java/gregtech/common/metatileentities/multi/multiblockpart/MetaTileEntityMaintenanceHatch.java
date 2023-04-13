@@ -20,7 +20,7 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
@@ -438,7 +438,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
         // Legacy Inventory Handler Support
         if (data.hasKey("ImportInventory", Constants.NBT.TAG_COMPOUND)) {
-            GTUtility.readItems(itemStackHandler, "ImportInventory", data);
+            GTNBTUtil.readItems(itemStackHandler, "ImportInventory", data);
             data.removeTag("ImportInventory");
         }
     }

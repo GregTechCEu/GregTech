@@ -24,7 +24,7 @@ import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTColorUtil;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
@@ -118,7 +118,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         if (pipeType != null) {
             // 12 == 0b1100 is North and South connection (index 2 & 3)
             PipeRenderContext renderContext = new PipeRenderContext(12, 0, pipeType.getThickness());
-            renderContext.color = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(material, -1));
+            renderContext.color = GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPipeColor(material, -1));
             buildRenderer(renderContext, blockFluidPipe, null, pipeType, material);
             renderPipeBlock(renderState, renderContext);
         }
@@ -156,7 +156,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             if (renderLayer == BlockRenderLayer.CUTOUT) {
                 renderState.lightMatrix.locate(world, pos);
                 PipeRenderContext renderContext = new PipeRenderContext(pos, renderState.lightMatrix, connectedSidesMap, blockedConnections, pipeType.getThickness());
-                renderContext.color = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(pipeMaterial, paintingColor));
+                renderContext.color = GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPipeColor(pipeMaterial, paintingColor));
                 buildRenderer(renderContext, blockPipe, pipeTile, pipeType, pipeMaterial);
                 renderPipeBlock(renderState, renderContext);
                 renderFrame(pipeTile, pos, renderState, connectedSidesMap);
@@ -178,7 +178,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
                     new Translation(pos),
                     renderState.lightMatrix,
                     new IconTransformation(sprite),
-                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(frameMaterial.getMaterialRGB()))
+                    new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(frameMaterial.getMaterialRGB()))
             };
 
             for (EnumFacing side : EnumFacing.VALUES) {

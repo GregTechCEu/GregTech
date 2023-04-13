@@ -9,7 +9,7 @@ import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
@@ -91,7 +91,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     }
 
     private static void setMode(ItemStack stack, int mode) {
-        NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
+        NBTTagCompound tagCompound = GTNBTUtil.getOrCreateNbtCompound(stack);
         tagCompound.setInteger("Mode", mode);
     }
 

@@ -9,6 +9,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.*;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.BlockPipe.PipeConnectionData;
+import gregtech.api.util.GTColorUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -80,7 +81,7 @@ public interface ICoverable {
     default void renderCovers(CCRenderState renderState, Matrix4 translation, BlockRenderLayer layer) {
         renderState.lightMatrix.locate(getWorld(), getPos());
         double coverPlateThickness = getCoverPlateThickness();
-        IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))};
+        IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))};
         IVertexOperation[] coverPipeline = new IVertexOperation[]{renderState.lightMatrix};
 
         for (EnumFacing sideFacing : EnumFacing.values()) {

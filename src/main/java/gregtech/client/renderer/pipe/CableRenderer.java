@@ -10,7 +10,7 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTColorUtil;
 import gregtech.common.pipelike.cable.Insulation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -47,13 +47,13 @@ public class CableRenderer extends PipeRenderer {
 
         int insulationLevel = ((Insulation) pipeType).insulationLevel;
         IVertexOperation wireRender = new IconTransformation(wireTexture);
-        ColourMultiplier wireColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()));
-        ColourMultiplier insulationColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(0x404040));
+        ColourMultiplier wireColor = new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()));
+        ColourMultiplier insulationColor = new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(0x404040));
         if (pipeTile != null) {
             if (pipeTile.getPaintingColor() != pipeTile.getDefaultPaintingColor()) {
-                wireColor.colour = GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
+                wireColor.colour = GTColorUtil.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
             }
-            insulationColor.colour = GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
+            insulationColor.colour = GTColorUtil.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
         }
 
         if (insulationLevel != -1) {

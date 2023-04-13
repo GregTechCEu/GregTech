@@ -7,7 +7,7 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTColorUtil;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
@@ -67,7 +67,7 @@ public class LargeTurbineRenderer implements IIconRegister {
         }
         if (hasRotor) {
             TextureAtlasSprite sprite = isActive ? activeBladeSprite : idleBladeSprite;
-            IVertexOperation[] color = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(rotorRGB)));
+            IVertexOperation[] color = ArrayUtils.add(pipeline, new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(rotorRGB)));
             Textures.renderFace(renderState, cornerOffset, color, side, Cuboid6.full, sprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }

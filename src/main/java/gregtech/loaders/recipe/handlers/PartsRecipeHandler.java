@@ -26,7 +26,7 @@ import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.util.DyeUtil.determineDyeColor;
+import static gregtech.api.util.GTColorUtil.determineDyeColor;
 
 public class PartsRecipeHandler {
 

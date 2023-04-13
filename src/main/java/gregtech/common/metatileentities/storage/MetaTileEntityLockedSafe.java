@@ -21,6 +21,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.util.GTColorUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.worldgen.LootTableHelper;
@@ -343,7 +344,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        ColourMultiplier colourMultiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(GTValues.VC[unlockComponentTier]));
+        ColourMultiplier colourMultiplier = new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(GTValues.VC[unlockComponentTier]));
         float angle = prevDoorAngle + (doorAngle - prevDoorAngle) * partialTicks;
         angle = 1.0f - (1.0f - angle) * (1.0f - angle) * (1.0f - angle);
         float resultDoorAngle = angle * 120.0f;

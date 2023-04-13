@@ -14,7 +14,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.function.QuintFunction;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
@@ -175,7 +175,7 @@ public final class ToolHelper {
 
     public static ItemStack getAndSetToolData(IGTTool tool, Material material, int maxDurability, int harvestLevel, float toolSpeed, float attackDamage) {
         ItemStack stack = tool.getRaw();
-        GTUtility.getOrCreateNbtCompound(stack).setInteger(HIDE_FLAGS, 2);
+        GTNBTUtil.getOrCreateNbtCompound(stack).setInteger(HIDE_FLAGS, 2);
         NBTTagCompound toolTag = getToolTag(stack);
         toolTag.setString(MATERIAL_KEY, material.toString());
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);

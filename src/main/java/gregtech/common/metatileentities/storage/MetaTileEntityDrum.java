@@ -19,7 +19,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTColorUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -259,9 +259,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
             int color = ColourRGBA.multiply(
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
-            color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
+                    GTColorUtil.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
+                    GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+            color = GTColorUtil.convertOpaqueRGBA_CLtoRGB(color);
             return Pair.of(Textures.DRUM.getParticleTexture(), color);
         }
     }
@@ -269,10 +269,10 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         if(isMaterialWood(material)) {
-            ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+            ColourMultiplier multiplier = new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
         } else {
-            ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+            ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTColorUtil.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             Textures.DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
             Textures.DRUM_OVERLAY.render(renderState, translation, pipeline);
         }

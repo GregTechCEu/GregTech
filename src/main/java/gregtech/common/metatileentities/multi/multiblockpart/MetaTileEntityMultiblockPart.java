@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTColorUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -45,10 +46,10 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
         ICubeRenderer baseTexture = getBaseTexture();
         if (baseTexture instanceof FireboxActiveRenderer) {
             baseTexture.renderOriented(renderState, translation, ArrayUtils.add(pipeline,
-                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))), getFrontFacing());
+                    new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))), getFrontFacing());
         } else {
             baseTexture.render(renderState, translation, ArrayUtils.add(pipeline,
-                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+                    new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
         }
     }
 

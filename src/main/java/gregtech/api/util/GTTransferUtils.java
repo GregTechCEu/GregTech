@@ -5,6 +5,7 @@ import gregtech.api.recipes.FluidKey;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
@@ -239,5 +240,103 @@ public class GTTransferUtils {
             itemHandler.extractItem(inputSlot, 1, false);
             itemHandler.insertItem(outputSlot, remainingItem, false);
         }
+    }
+
+    /**
+     * Attempts to merge given ItemStack with ItemStacks in slot list supplied
+     * If it's not possible to merge it fully, it will attempt to insert it into first empty slots
+     *
+     * @param itemStack item stack to merge. It WILL be modified.
+     * @param simulate  if true, stack won't actually modify items in other slots
+     * @return if merging of at least one item succeed, false otherwise
+     */
+    // TODO, is this method still needed with the above methods?
+    public static boolean mergeItemStack(ItemStack itemStack, List<Slot> slots, boolean simulate) {
+        if (itemStack.isEmpty())
+            return false; //if we are merging empty stack, return
+
+        boolean merged = false;
+        //iterate non-empty slots first
+        //to try to insert stack into them
+        for (Slot slot : slots) {
+            if (!slot.isItemValid(itemStack))
+                continue; //if itemstack cannot be placed into that slot, continue
+            ItemStack stackInSlot = slot.getStack();
+            if (!ItemStack.areItemsEqual(itemStack, stackInSlot) ||
+                    !ItemStack.areItemStackTagsEqual(itemStack, stackInSlot))
+                continue; //if itemstacks don't match, continue
+            int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
+            int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
+            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
+            if (amountToInsert <= 0)
+                continue; //if we can't insert anything, continue
+            //shrink our stack, grow slot's stack and mark slot as changed
+            if (!simulate) {
+                stackInSlot.grow(amountToInsert);
+            }
+            itemStack.shrink(amountToInsert);
+            slot.onSlotChanged();
+            merged = true;
+            if (itemStack.isEmpty())
+                return true; //if we inserted all items, return
+        }
+
+        //then try to insert itemstack into empty slots
+        //breaking it into pieces if needed
+        for (Slot slot : slots) {
+            if (!slot.isItemValid(itemStack))
+                continue; //if itemstack cannot be placed into that slot, continue
+            if (slot.getHasStack())
+                continue; //if slot contains something, continue
+            int amountToInsert = Math.min(itemStack.getCount(), slot.getItemStackLimit(itemStack));
+            if (amountToInsert == 0)
+                continue; //if we can't insert anything, continue
+            //split our stack and put result in slot
+            ItemStack stackInSlot = itemStack.splitStack(amountToInsert);
+            if (!simulate) {
+                slot.putStack(stackInSlot);
+            }
+            merged = true;
+            if (itemStack.isEmpty())
+                return true; //if we inserted all items, return
+        }
+        return merged;
+    }
+
+    /**
+     * Attempts to merge given ItemStack with ItemStacks in list supplied
+     * growing up to their max stack size
+     *
+     * @param stackToAdd item stack to merge.
+     * @return a list of stacks, with optimized stack sizes
+     */
+
+    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
+        if (!itemStackList.isEmpty()) {
+            for (ItemStack stackInList : itemStackList) {
+                if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
+                    if (stackInList.getCount() < stackInList.getMaxStackSize()) {
+                        int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
+                        if (insertable >= stackToAdd.getCount()) {
+                            stackInList.grow(stackToAdd.getCount());
+                            stackToAdd = ItemStack.EMPTY;
+                        } else {
+                            stackInList.grow(insertable);
+                            stackToAdd = stackToAdd.copy();
+                            stackToAdd.setCount(stackToAdd.getCount() - insertable);
+                        }
+                        if (stackToAdd.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!stackToAdd.isEmpty()) {
+                itemStackList.add(stackToAdd);
+            }
+        } else {
+            itemStackList.add(stackToAdd.copy());
+        }
+        return itemStackList;
     }
 }

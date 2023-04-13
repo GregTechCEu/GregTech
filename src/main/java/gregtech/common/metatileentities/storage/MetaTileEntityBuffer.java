@@ -12,8 +12,8 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTColorUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -95,7 +95,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
-                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+                new ColourMultiplier(GTColorUtil.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
         for (EnumFacing facing : EnumFacing.VALUES) {
             Textures.BUFFER_OVERLAY.renderSided(facing, renderState, translation, pipeline);
         }

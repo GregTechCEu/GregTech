@@ -6,7 +6,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
@@ -154,7 +154,7 @@ public class EventHandlers {
                     player.fallDistance = 0;
                     event.setCanceled(true);
                 }
-            } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> && GTUtility.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
+            } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> && GTNBTUtil.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
                 ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
                 if (valueItem != null) {
                     valueItem.getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);

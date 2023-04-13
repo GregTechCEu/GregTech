@@ -6,7 +6,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.PerTickIntCounter;
 import gregtech.core.network.packets.PacketUIClientAction;
 import gregtech.core.network.packets.PacketUIWidgetUpdate;
@@ -176,7 +176,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         List<Slot> inventorySlots = getShiftClickSlots(itemStack, fromContainer).stream()
                 .map(INativeWidget::getHandle)
                 .collect(Collectors.toList());
-        return GTUtility.mergeItemStack(itemStack, inventorySlots, simulate);
+        return GTTransferUtils.mergeItemStack(itemStack, inventorySlots, simulate);
     }
 
     @Nonnull

@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.input.KeyBind;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
@@ -46,7 +46,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
         if (item == null) {
             return;
         }
-        NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
+        NBTTagCompound nbtData = GTNBTUtil.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
@@ -156,7 +156,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
     public void addInfo(ItemStack itemStack, List<String> lines) {
         super.addInfo(itemStack, lines);
         if (SLOT == EntityEquipmentSlot.HEAD) {
-            NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
+            NBTTagCompound nbtData = GTNBTUtil.getOrCreateNbtCompound(itemStack);
             boolean nv = nbtData.getBoolean("Nightvision");
             if (nv) {
                 lines.add(I18n.format("metaarmor.message.nightvision.enabled"));

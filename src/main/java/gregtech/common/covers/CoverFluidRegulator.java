@@ -5,8 +5,8 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.util.GTTextFormattingUtil;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilter;
@@ -253,7 +253,7 @@ public class CoverFluidRegulator extends CoverPump {
         if (this.bucketMode == BucketMode.BUCKET) {
             val /= 1000;
         }
-        return val == -1 ? "" : TextFormattingUtil.formatLongToCompactString(val);
+        return val == -1 ? "" : GTTextFormattingUtil.formatLongToCompactString(val);
     }
 
     protected void getHoverString(List<ITextComponent> textList) {

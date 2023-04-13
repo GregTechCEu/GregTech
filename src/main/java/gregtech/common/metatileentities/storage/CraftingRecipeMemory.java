@@ -1,6 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTStreamUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -60,7 +60,7 @@ public class CraftingRecipeMemory {
         return result.orElseGet(() -> {
             MemorizedRecipe recipe = new MemorizedRecipe();
             recipe.recipeResult = itemStack.copy();
-            int firstFreeIndex = GTUtility.indices(memorizedRecipes)
+            int firstFreeIndex = GTStreamUtils.indices(memorizedRecipes)
                     .filter(this::isNullOrUnlockedRecipe)
                     .findFirst().orElse(-1);
             if (firstFreeIndex == -1) {

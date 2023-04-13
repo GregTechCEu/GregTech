@@ -3,7 +3,7 @@ package gregtech.common.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -31,7 +31,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         if (item == null) {
             return;
         }
-        NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
+        NBTTagCompound nbtData = GTNBTUtil.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
         if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isItemEqual(itemStack)) {
             disableNightVision(world, player, false);
@@ -87,7 +87,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     public void addInfo(ItemStack itemStack, List<String> lines) {
         super.addInfo(itemStack, lines);
         if (SLOT == EntityEquipmentSlot.HEAD) {
-            NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
+            NBTTagCompound nbtData = GTNBTUtil.getOrCreateNbtCompound(itemStack);
             boolean nv = nbtData.getBoolean("Nightvision");
             if (nv) {
                 lines.add(I18n.format("metaarmor.message.nightvision.enabled"));

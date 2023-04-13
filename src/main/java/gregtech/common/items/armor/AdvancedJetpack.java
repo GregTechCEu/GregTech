@@ -3,7 +3,7 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +28,7 @@ public class AdvancedJetpack extends Jetpack {
         if(cont == null) {
             return;
         }
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(item);
         boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
 

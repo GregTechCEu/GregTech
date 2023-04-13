@@ -1,7 +1,7 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.common.items.behaviors.ModeSwitchBehavior.ILocalizationKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +40,7 @@ public class ModeSwitchBehavior<T extends Enum<T> & ILocalizationKey> implements
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(itemStack);
+        NBTTagCompound tagCompound = GTNBTUtil.getOrCreateNbtCompound(itemStack);
         tagCompound.setInteger("Mode", ArrayUtils.indexOf(enumConstants, newMode));
     }
 

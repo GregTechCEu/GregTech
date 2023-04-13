@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -39,7 +39,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(stack);
         byte toggleTimer = 0;
         boolean hover = false;
         if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");

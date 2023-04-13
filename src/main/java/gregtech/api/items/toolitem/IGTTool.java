@@ -31,6 +31,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -135,7 +136,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
 
-        NBTTagCompound stackCompound = GTUtility.getOrCreateNbtCompound(stack);
+        NBTTagCompound stackCompound = GTNBTUtil.getOrCreateNbtCompound(stack);
         stackCompound.setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
 
         NBTTagCompound toolTag = getToolTag(stack);

@@ -4,7 +4,7 @@ import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FluidTooltipUtil;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTColorUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
@@ -20,7 +20,7 @@ public class MaterialFluid extends Fluid {
     private final FluidType fluidType;
 
     public MaterialFluid(String fluidName, @Nonnull Material material, @Nonnull FluidType fluidType, ResourceLocation texture) {
-        super(fluidName, texture, texture, GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+        super(fluidName, texture, texture, GTColorUtil.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
         this.material = material;
         this.fluidType = fluidType;
     }

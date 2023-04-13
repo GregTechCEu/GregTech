@@ -80,7 +80,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         List<ItemStack> items = new ArrayList<>();
         IntStream.range(0, numRolls).forEach(slot -> {
             if (calculateChance())
-                GTUtility.addStackToItemStackList(recoveryItems.get(slot), items);
+                GTTransferUtils.addStackToItemStackList(recoveryItems.get(slot), items);
         });
         GTTransferUtils.addItemsToItemHandler(inventory, false, items);
     }

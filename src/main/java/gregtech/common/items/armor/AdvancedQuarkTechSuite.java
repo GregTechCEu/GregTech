@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTNBTUtil;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -41,7 +41,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
             return;
         }
 
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(item);
         boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
         boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
@@ -136,7 +136,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
     @Override
     public void addInfo(ItemStack itemStack, List<String> lines) {
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
+        NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(itemStack);
         String state;
         if (data.hasKey("canShare")) {
             state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
@@ -157,7 +157,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem<?> && player.isSneaking()) {
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
+            NBTTagCompound data = GTNBTUtil.getOrCreateNbtCompound(player.getHeldItem(hand));
             boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
             IElectricItem cont = player.getHeldItem(hand).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             if (cont == null) {
