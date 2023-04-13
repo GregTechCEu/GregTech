@@ -18,9 +18,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.InventoryUtils;
-import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
 
@@ -203,14 +202,14 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
 
         // Gather a snapshot of the provided inventory
-        Map<ItemStackKey, Integer> inventoryContents = GTHashMaps.fromItemHandler(inventory);
+        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory);
 
         List<ItemStack> inventoryItemContents = new ArrayList<>();
 
         // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
-        for(Map.Entry<ItemStackKey, Integer> slot : inventoryContents.entrySet()) {
-            ItemStack stack = slot.getKey().getItemStack();
-            stack.setCount(slot.getValue());
+        for(Object2IntMap.Entry<ItemStack> slot : inventoryContents.object2IntEntrySet()) {
+            ItemStack stack = slot.getKey();
+            stack.setCount(slot.getIntValue());
             inventoryItemContents.addAll(InventoryUtils.apportionStack(stack, stack.getMaxStackSize()));
         }
 

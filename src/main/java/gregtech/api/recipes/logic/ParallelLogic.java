@@ -8,9 +8,11 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTHashMaps;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,7 +35,7 @@ public abstract class ParallelLogic {
 
     public static int getMaxRecipeMultiplier(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable inputs, @Nonnull IMultipleTankHandler fluidInputs, int parallelAmount) {
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        Map<ItemStackKey, Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
+        Object2IntMap<ItemStack> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
         Map<FluidKey, Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
@@ -113,22 +115,22 @@ public abstract class ParallelLogic {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        Map<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getAllItemOutputs());
+        Object2IntMap<ItemStack> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getAllItemOutputs());
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
 
             int returnedAmount = 0;
-            int amountToInsert = 0;
+            int amountToInsert;
 
-            for (Map.Entry<ItemStackKey, Integer> entry : recipeOutputs.entrySet()) {
+            for (Object2IntMap.Entry<ItemStack> entry : recipeOutputs.object2IntEntrySet()) {
                 // Since multiplier starts at Int.MAX, check here for integer overflow
-                if (entry.getValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getValue()) {
+                if (entry.getIntValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getIntValue()) {
                     amountToInsert = Integer.MAX_VALUE;
                 } else {
-                    amountToInsert = entry.getValue() * multiplier;
+                    amountToInsert = entry.getIntValue() * multiplier;
                 }
-                returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+                returnedAmount = overlayedItemHandler.insertStackedItemStack(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
                 }
@@ -159,10 +161,10 @@ public abstract class ParallelLogic {
         int maxMultiplier = multiplier;
         int previousMultiplier = multiplier;
 
-        Map<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipeOutputList);
-        Map<ItemStackKey, Integer> recipeOutputsToAppend = GTHashMaps.fromItemStackCollection(outputsToAppend);
+        Object2IntMap<ItemStack> recipeOutputs = GTHashMaps.fromItemStackCollection(recipeOutputList);
+        Object2IntMap<ItemStack> recipeOutputsToAppend = GTHashMaps.fromItemStackCollection(outputsToAppend);
 
-        Map<ItemStackKey, Integer> appendedResultMap = new HashMap<>(recipeOutputs);
+        Object2IntMap<ItemStack> appendedResultMap = new Object2IntLinkedOpenCustomHashMap<>(recipeOutputs, ItemStackHashStrategy.comparingAllButCount());
         recipeOutputsToAppend.forEach((stackKey, amt) -> appendedResultMap.merge(stackKey, amt * multiplier, Integer::sum));
 
         while (minMultiplier != maxMultiplier) {
@@ -178,9 +180,9 @@ public abstract class ParallelLogic {
 
             int returnedAmount = 0;
 
-            for (Map.Entry<ItemStackKey, Integer> entry : appendedResultMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+            for (Object2IntMap.Entry<ItemStack> entry : appendedResultMap.object2IntEntrySet()) {
+                int amountToInsert = entry.getIntValue();
+                returnedAmount = overlayedItemHandler.insertStackedItemStack(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
                 }
@@ -273,12 +275,12 @@ public abstract class ParallelLogic {
     /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
      *
-     * @param countIngredients a {@link Map} of {@link ItemStackKey}s that is the result of calling {@link GTHashMaps#fromItemHandler(IItemHandler)}
+     * @param countIngredients a {@link Map} of {@link ItemStack}s that is the result of calling {@link GTHashMaps#fromItemHandler(IItemHandler)}
      * @param recipe           The {@link Recipe} for which to find the maximum that can be run simultaneously
      * @param parallelAmount   The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
-    protected static int getMaxRatioItem(@Nonnull Map<ItemStackKey, Integer> countIngredients, @Nonnull Recipe recipe, int parallelAmount) {
+    protected static int getMaxRatioItem(@Nonnull Object2IntMap<ItemStack> countIngredients, @Nonnull Recipe recipe, int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
         //map the recipe ingredients to account for duplicated and notConsumable ingredients.
         //notConsumable ingredients are not counted towards the max ratio
@@ -297,13 +299,13 @@ public abstract class ParallelLogic {
         }
 
         // Iterate through the recipe inputs, excluding the not consumable ingredients from the inventory map
-        for (Map.Entry<GTRecipeInput, Integer> recipeInputEntry : notConsumableMap.entrySet()) {
-            int needed = recipeInputEntry.getValue();
+        for (Object2IntMap.Entry<GTRecipeInput> recipeInputEntry : notConsumableMap.object2IntEntrySet()) {
+            int needed = recipeInputEntry.getIntValue();
             int available = 0;
             // For every stack in the ingredients gathered from the input bus.
-            for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
-                if (recipeInputEntry.getKey().acceptsStack(inventoryEntry.getKey().getItemStackRaw())) {
-                    available = inventoryEntry.getValue();
+            for (Object2IntMap.Entry<ItemStack> inventoryEntry : countIngredients.object2IntEntrySet()) {
+                if (recipeInputEntry.getKey().acceptsStack(inventoryEntry.getKey())) {
+                    available = inventoryEntry.getIntValue();
                     if (available > needed) {
                         inventoryEntry.setValue(available - needed);
                         needed -= available;
@@ -330,13 +332,13 @@ public abstract class ParallelLogic {
         }
 
         // Iterate through the recipe inputs
-        for (Map.Entry<GTRecipeInput, Integer> recipeInputEntry : countableMap.entrySet()) {
-            int needed = recipeInputEntry.getValue();
+        for (Object2IntMap.Entry<GTRecipeInput> recipeInputEntry : countableMap.object2IntEntrySet()) {
+            int needed = recipeInputEntry.getIntValue();
             int available = 0;
             // For every stack in the ingredients gathered from the input bus.
-            for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
-                if (recipeInputEntry.getKey().acceptsStack(inventoryEntry.getKey().getItemStackRaw())) {
-                    available += inventoryEntry.getValue();
+            for (Object2IntMap.Entry<ItemStack> inventoryEntry : countIngredients.object2IntEntrySet()) {
+                if (recipeInputEntry.getKey().acceptsStack(inventoryEntry.getKey())) {
+                    available += inventoryEntry.getIntValue();
                 }
             }
             if (available >= needed) {

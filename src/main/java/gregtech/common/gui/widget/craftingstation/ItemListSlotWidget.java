@@ -3,8 +3,6 @@ package gregtech.common.gui.widget.craftingstation;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.recipes.KeySharedStack;
-import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.TooltipHelper;
@@ -17,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ItemListSlotWidget extends Widget {
         int stackX = position.x + 1;
         int stackY = position.y + 1;
         if (itemInfo != null) {
-            ItemStack itemStack = itemInfo.getItemStackKey().getItemStackRaw();
+            ItemStack itemStack = itemInfo.getItemStack();
             String itemAmountStr = formatItemAmount(itemInfo.getTotalItemAmount());
             drawItemStack(itemStack, stackX, stackY, null);
             drawStringFixedCorner(itemAmountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
@@ -60,7 +59,7 @@ public class ItemListSlotWidget extends Widget {
         super.drawInForeground(mouseX, mouseY);
         IItemInfo itemInfo = gridWidget.getItemInfoAt(index);
         if (itemInfo != null && isMouseOverElement(mouseX, mouseY)) {
-            ItemStack itemStack = itemInfo.getItemStackKey().getItemStackRaw();
+            ItemStack itemStack = itemInfo.getItemStack();
             List<String> tooltip = getItemToolTip(itemStack);
             int totalItemStored = itemInfo.getTotalItemAmount();
             String itemStoredText = I18n.format("gregtech.item_list.item_stored", totalItemStored);
@@ -69,7 +68,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private void setCreativeHeldItem(ItemStack itemStack) {
+    private void setCreativeHeldItem(@Nonnull ItemStack itemStack) {
         InventoryPlayer inventory = gui.entityPlayer.inventory;
         if (!itemStack.isEmpty() && inventory.getItemStack().isEmpty()) {
             itemStack.setCount(itemStack.getMaxStackSize());
@@ -77,7 +76,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private static int getAmountToTake(ItemStack itemStack, int maxAmount, int button) {
+    private static int getAmountToTake(@Nonnull ItemStack itemStack, int maxAmount, int button) {
         int maxStackSize = Math.min(itemStack.getMaxStackSize(), maxAmount);
         return button == 0 ? maxStackSize : (maxStackSize >= 2 ? maxStackSize / 2 : 1);
     }
@@ -91,7 +90,7 @@ public class ItemListSlotWidget extends Widget {
                 //on server, we lookup item list to see how much we can actually insert
                 ItemStack heldItemStack = inventory.getItemStack();
                 IItemList itemList = gridWidget.getItemList();
-                int amountInserted = itemList.insertItem(KeySharedStack.getRegisteredStack(heldItemStack), Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
+                int amountInserted = itemList.insertItem(heldItemStack, Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
                 heldItemStack.shrink(amountInserted);
                 uiAccess.sendHeldItemUpdate();
                 gui.entityPlayer.openContainer.detectAndSendChanges();
@@ -105,24 +104,24 @@ public class ItemListSlotWidget extends Widget {
         return false;
     }
 
-    private void extractItemStack(ItemStackKey itemStackKey, int amount, boolean isClient) {
+    private void extractItemStack(ItemStack itemStack, int amount, boolean isClient) {
         InventoryPlayer inventory = gui.entityPlayer.inventory;
         if (inventory.getItemStack().isEmpty()) {
             if (!isClient) {
                 //on server, we try to extract from the network
                 IItemList itemList = gridWidget.getItemList();
-                int amountExtracted = itemList.extractItem(itemStackKey, amount, false);
+                int amountExtracted = itemList.extractItem(itemStack, amount, false);
                 if (amountExtracted > 0) {
-                    ItemStack resultStack = itemStackKey.getItemStack();
+                    ItemStack resultStack = itemStack.copy();
                     resultStack.setCount(amountExtracted);
                     inventory.setItemStack(resultStack);
                 }
                 uiAccess.sendHeldItemUpdate();
             } else {
                 //on client we assume we can extract as much items as user wishes
-                ItemStack itemStack = itemStackKey.getItemStack();
-                itemStack.setCount(amount);
-                inventory.setItemStack(itemStack);
+                ItemStack resultStack = itemStack.copy();
+                resultStack.setCount(amount);
+                inventory.setItemStack(resultStack);
             }
         }
     }
@@ -130,7 +129,7 @@ public class ItemListSlotWidget extends Widget {
     private void handleMouseClick(@Nullable IItemInfo itemInfo, int button, boolean isClient) {
         if (button == 2) {
             if (itemInfo != null && gui.entityPlayer.isCreative()) {
-                ItemStack itemStack = itemInfo.getItemStackKey().getItemStack();
+                ItemStack itemStack = itemInfo.getItemStack().copy();
                 setCreativeHeldItem(itemStack);
             }
         } else if (button == 0 || button == 1) {
@@ -139,22 +138,22 @@ public class ItemListSlotWidget extends Widget {
                 return;
             }
             if (itemInfo != null) {
-                ItemStack itemStack = itemInfo.getItemStackKey().getItemStack();
+                ItemStack itemStack = itemInfo.getItemStack();
                 int extractAmount = getAmountToTake(itemStack, itemInfo.getTotalItemAmount(), button);
-                extractItemStack(itemInfo.getItemStackKey(), extractAmount, isClient);
+                extractItemStack(itemStack, extractAmount, isClient);
             }
         }
     }
 
-    private void handleSelfShiftClick(IItemInfo itemInfo) {
-        ItemStack itemStack = itemInfo.getItemStackKey().getItemStack();
+    private void handleSelfShiftClick(@Nonnull IItemInfo itemInfo) {
+        ItemStack itemStack = itemInfo.getItemStack().copy();
         itemStack.setCount(itemStack.getMaxStackSize());
         int currentStackSize = itemStack.getCount();
         uiAccess.attemptMergeStack(itemStack, true, true);
         int amountToExtract = Math.min(currentStackSize - itemStack.getCount(), itemInfo.getTotalItemAmount());
         if (amountToExtract > 0) {
-            int extracted = gridWidget.getItemList().extractItem(itemInfo.getItemStackKey(), amountToExtract, false);
-            ItemStack resultStack = itemInfo.getItemStackKey().getItemStack();
+            int extracted = gridWidget.getItemList().extractItem(itemInfo.getItemStack(), amountToExtract, false);
+            ItemStack resultStack = itemInfo.getItemStack().copy();
             resultStack.setCount(extracted);
             if (!resultStack.isEmpty()) {
                 uiAccess.attemptMergeStack(resultStack, true, false);
@@ -173,7 +172,7 @@ public class ItemListSlotWidget extends Widget {
             try {
                 ItemStack itemStack = buffer.readItemStack();
                 int button = buffer.readVarInt();
-                IItemInfo itemInfo = itemStack.isEmpty() ? null : gridWidget.getItemList().getItemInfo(KeySharedStack.getRegisteredStack(itemStack));
+                IItemInfo itemInfo = itemStack.isEmpty() ? null : gridWidget.getItemList().getItemInfo(itemStack);
                 handleMouseClick(itemInfo, button, false);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -181,7 +180,7 @@ public class ItemListSlotWidget extends Widget {
         } else if (id == 2) {
             try {
                 ItemStack itemStack = buffer.readItemStack();
-                IItemInfo itemInfo = gridWidget.getItemList().getItemInfo(KeySharedStack.getRegisteredStack(itemStack));
+                IItemInfo itemInfo = gridWidget.getItemList().getItemInfo(itemStack);
                 if (itemInfo != null) {
                     handleSelfShiftClick(itemInfo);
                 }
@@ -194,7 +193,7 @@ public class ItemListSlotWidget extends Widget {
     private void dispatchMouseClick(int button) {
         IItemInfo itemInfo = gridWidget.getItemInfoAt(index);
         handleMouseClick(itemInfo, button, true);
-        ItemStack itemStack = itemInfo == null ? ItemStack.EMPTY : itemInfo.getItemStackKey().getItemStack();
+        ItemStack itemStack = itemInfo == null ? ItemStack.EMPTY : itemInfo.getItemStack();
         writeClientAction(1, buf -> {
             buf.writeItemStack(itemStack);
             buf.writeVarInt(button);
@@ -204,7 +203,7 @@ public class ItemListSlotWidget extends Widget {
     private void dispatchSelfShiftClick() {
         IItemInfo itemInfo = gridWidget.getItemInfoAt(index);
         if (itemInfo != null) {
-            writeClientAction(2, buf -> buf.writeItemStack(itemInfo.getItemStackKey().getItemStackRaw()));
+            writeClientAction(2, buf -> buf.writeItemStack(itemInfo.getItemStack()));
         }
     }
 

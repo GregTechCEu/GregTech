@@ -1,27 +1,26 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.recipes.KeySharedStack;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 public class CachedRecipeData {
     private final ItemSources itemSources;
     private IRecipe recipe;
-    private final Map<ItemStackKey, Integer> requiredItems = new HashMap<>();
-    private final Map<Integer, Map<ItemStackKey, Boolean>> replaceAttemptMap = new Int2ObjectArrayMap<>();
+    private final Object2IntMap<ItemStack> requiredItems = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+    private final Int2ObjectMap<Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting inventory;
 
     public CachedRecipeData(ItemSources sourceList, IRecipe recipe, InventoryCrafting inventoryCrafting) {
@@ -45,25 +44,25 @@ public class CachedRecipeData {
 
     protected boolean consumeRecipeItems() {
         boolean gathered = true;
-        HashMap<ItemStackKey, Integer> gatheredItems = new HashMap<>();
+        Object2IntMap<ItemStack> gatheredItems = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
         if (requiredItems.isEmpty()) {
             return false;
         }
-        for (Entry<ItemStackKey, Integer> entry : requiredItems.entrySet()) {
-            ItemStackKey itemStackKey = entry.getKey();
-            int requestedAmount = entry.getValue();
-            int extractedAmount = itemSources.extractItem(itemStackKey, requestedAmount, false);
+        for (Object2IntMap.Entry<ItemStack> entry : requiredItems.object2IntEntrySet()) {
+            ItemStack stack = entry.getKey();
+            int requestedAmount = entry.getIntValue();
+            int extractedAmount = itemSources.extractItem(stack, requestedAmount, false);
             if (extractedAmount != requestedAmount) {
-                gatheredItems.put(itemStackKey, extractedAmount);
+                gatheredItems.put(stack.copy(), extractedAmount);
                 gathered = false;
                 break;
             } else {
-                gatheredItems.put(itemStackKey, requestedAmount);
+                gatheredItems.put(stack.copy(), requestedAmount);
             }
         }
         if (!gathered) {
-            for (Entry<ItemStackKey, Integer> entry : gatheredItems.entrySet()) {
-                itemSources.insertItem(entry.getKey(), entry.getValue(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
+            for (Object2IntMap.Entry<ItemStack> entry : gatheredItems.object2IntEntrySet()) {
+                itemSources.insertItem(entry.getKey(), entry.getIntValue(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             }
         }
         return gathered;
@@ -75,19 +74,19 @@ public class CachedRecipeData {
             return true; //stack is empty, nothing to return
         }
 
-        if (simulateExtractItem(KeySharedStack.getRegisteredStack(currentStack))) {
+        if (simulateExtractItem(currentStack)) {
             return true;
         }
 
         ItemStack previousStack = recipe.getCraftingResult(inventory);
 
-        Map<ItemStackKey, Boolean> map = replaceAttemptMap.computeIfAbsent(slot, (m) -> new Object2BooleanOpenHashMap<>());
+        Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(slot, (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount()));
 
         //iterate stored items to find equivalent
-        for (ItemStackKey itemStackKey : itemSources.getStoredItems()) {
+        for (ItemStack itemStack : itemSources.getStoredItems()) {
             boolean matchedPreviously = false;
-            if (map.containsKey(itemStackKey)) {
-                if (!map.get(itemStackKey)) {
+            if (map.containsKey(itemStack)) {
+                if (!map.get(itemStack)) {
                     continue;
                 } else {
                     //cant return here before checking if:
@@ -96,8 +95,6 @@ public class CachedRecipeData {
                     matchedPreviously = true;
                 }
             }
-
-            ItemStack itemStack = itemStackKey.getItemStack();
 
             if (!matchedPreviously) {
                 boolean matched = false;
@@ -111,7 +108,7 @@ public class CachedRecipeData {
                     }
                 }
                 if (!matched) {
-                    map.put(itemStackKey, false);
+                    map.put(itemStack.copy(), false);
                     continue;
                 }
             }
@@ -120,24 +117,24 @@ public class CachedRecipeData {
             inventory.setInventorySlotContents(slot, itemStack);
             if (recipe.matches(inventory, itemSources.getWorld()) &&
                     (ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack) || recipe instanceof ShapedOreEnergyTransferRecipe)) {
-                map.put(itemStackKey, true);
+                map.put(itemStack, true);
                 //ingredient matched, attempt to extract it and return if successful
-                if (simulateExtractItem(itemStackKey)) {
+                if (simulateExtractItem(itemStack)) {
                     return true;
                 }
             }
-            map.put(itemStackKey, false);
+            map.put(itemStack, false);
             inventory.setInventorySlotContents(slot, currentStack);
         }
         //nothing matched, so return null
         return false;
     }
 
-    private boolean simulateExtractItem(ItemStackKey itemStack) {
+    private boolean simulateExtractItem(ItemStack itemStack) {
         int amountToExtract = requiredItems.getOrDefault(itemStack, 0) + 1;
         int extracted = itemSources.extractItem(itemStack, amountToExtract, true);
         if (extracted == amountToExtract) {
-            requiredItems.put(itemStack, amountToExtract);
+            requiredItems.put(itemStack.copy(), amountToExtract);
             return true;
         }
         return false;

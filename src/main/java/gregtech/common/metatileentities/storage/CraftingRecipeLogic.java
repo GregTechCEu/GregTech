@@ -1,10 +1,8 @@
 package gregtech.common.metatileentities.storage;
 
 import com.google.common.collect.Lists;
-import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.util.DummyContainer;
-import gregtech.api.util.ItemStackKey;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.TileItemSource;
@@ -31,7 +29,7 @@ public class CraftingRecipeLogic {
     private final World world;
     private final ItemSources itemSources;
     private final ItemStackHandler craftingGrid;
-    private final ItemStackKey[] oldCraftingGrid = new ItemStackKey[9];
+    private final ItemStack[] oldCraftingGrid = new ItemStack[9];
     private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new DummyContainer(), 3, 3);
     private final IInventory craftingResultInventory = new InventoryCraftResult();
     private ItemStack oldResult = ItemStack.EMPTY;
@@ -79,13 +77,13 @@ public class CraftingRecipeLogic {
     private boolean hasCraftingGridUpdated() {
         boolean craftingGridChanged = false;
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
-            ItemStackKey oldStack = oldCraftingGrid[i];
+            ItemStack oldStack = oldCraftingGrid[i];
             ItemStack newStack = craftingGrid.getStackInSlot(i);
-            if (oldStack == null) {
+            if (oldStack == null || oldStack.isEmpty()) {
                 if (newStack.isEmpty()) {
                     continue;
                 }
-                oldStack = KeySharedStack.getRegisteredStack(newStack);
+                oldStack = newStack;
                 oldCraftingGrid[i] = oldStack;
                 inventoryCrafting.setInventorySlotContents(i, newStack.copy());
                 craftingGridChanged = true;
@@ -93,9 +91,9 @@ public class CraftingRecipeLogic {
                 oldCraftingGrid[i] = null;
                 inventoryCrafting.setInventorySlotContents(i, ItemStack.EMPTY);
                 craftingGridChanged = true;
-            } else if (!ItemStack.areItemsEqual(oldStack.getItemStackRaw(), newStack) ||
-                    !ItemStack.areItemStackTagsEqual(oldStack.getItemStackRaw(), newStack)) {
-                oldCraftingGrid[i] = KeySharedStack.getRegisteredStack(newStack);
+            } else if (!ItemStack.areItemsEqual(oldStack, newStack) ||
+                    !ItemStack.areItemStackTagsEqual(oldStack, newStack)) {
+                oldCraftingGrid[i] = newStack;
                 inventoryCrafting.setInventorySlotContents(i, newStack.copy());
                 craftingGridChanged = true;
             }
@@ -118,7 +116,6 @@ public class CraftingRecipeLogic {
             if (itemStack.isEmpty()) {
                 continue;
             }
-            ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
 
             ItemStack current = inventoryCrafting.getStackInSlot(i);
             inventoryCrafting.setInventorySlotContents(i, itemStack);
@@ -126,7 +123,7 @@ public class CraftingRecipeLogic {
                 inventoryCrafting.setInventorySlotContents(i, current);
             }
 
-            int remainingAmount = itemStack.getCount() - itemSources.insertItem(stackKey, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
+            int remainingAmount = itemStack.getCount() - itemSources.insertItem(itemStack, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
                 player.addItemStackToInventory(itemStack);
