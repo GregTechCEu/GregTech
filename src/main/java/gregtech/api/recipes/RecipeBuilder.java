@@ -19,10 +19,7 @@ import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.EnumValidationResult;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.ValidationResult;
+import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptCompat;
 import net.minecraft.block.Block;
@@ -395,7 +392,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R circuitMeta(int circuitNumber) {
-        if (!GTUtility.isBetweenInclusive(IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, circuitNumber)) {
+        if (!GTMathUtil.isBetweenInclusive(IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, circuitNumber)) {
             GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
                     IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));

@@ -14,7 +14,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTMachineUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
@@ -171,7 +171,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
             MultiblockControllerBase controller = getController();
             if (controller instanceof IMachineHatchMultiblock)
-                return slotMatches && GTUtility.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist());
+                return slotMatches && GTMachineUtils.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist());
 
             //If the controller is null, this part is not attached to any Multiblock
             return slotMatches;

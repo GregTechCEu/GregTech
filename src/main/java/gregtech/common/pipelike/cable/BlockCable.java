@@ -13,6 +13,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -163,7 +164,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                 long voltage = cable.getCurrentMaxVoltage();
                 double amperage = cable.getAverageAmperage();
                 if (voltage > 0L && amperage > 0L) {
-                    float damageAmount = (float) ((GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4);
+                    float damageAmount = (float) ((GTVoltageUtil.getTierByVoltage(voltage) + 1) * amperage * 4);
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
                     if (entityLiving instanceof EntityPlayerMP) {
                         AdvancementTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);

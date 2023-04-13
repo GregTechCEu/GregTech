@@ -82,6 +82,17 @@ public final class GTStringUtils {
     }
 
     /**
+     * Capitalizes string, making first letter upper case
+     *
+     * @return capitalized string
+     */
+    public static String capitalizeString(String string) {
+        if (string != null && string.length() > 0)
+            return string.substring(0, 1).toUpperCase() + string.substring(1);
+        return "";
+    }
+
+    /**
      * Draws a String centered within a given width.
      * If the String exceeds the given width, it is cutoff
      *

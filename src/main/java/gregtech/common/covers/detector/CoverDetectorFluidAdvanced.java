@@ -10,8 +10,8 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.RedstoneUtil;
+import gregtech.api.util.GTMathUtil;
+import gregtech.api.util.GTRedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -108,12 +108,12 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     private void setMinValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
+        int parsedValue = GTMathUtil.tryParseInt(val, DEFAULT_MIN);
         this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
+        int parsedValue = GTMathUtil.tryParseInt(val, DEFAULT_MAX);
         this.max = Math.max(min + 1, parsedValue);
     }
 
@@ -136,7 +136,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 storedFluid += contents.amount;
         }
 
-        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
+        setRedstoneSignalOutput(GTRedstoneUtil.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
     }
 
     @Override

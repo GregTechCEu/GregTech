@@ -6,7 +6,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTRedstoneUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.Block;
@@ -119,7 +119,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     public void onLoad() {
         for (EnumFacing side : EnumFacing.VALUES) {
-            this.sidedRedstoneInput[side.getIndex()] = GTUtility.getRedstonePower(getWorld(), getPos(), side);
+            this.sidedRedstoneInput[side.getIndex()] = GTRedstoneUtil.getRedstonePower(getWorld(), getPos(), side);
         }
     }
 
@@ -133,7 +133,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     public void updateInputRedstoneSignals() {
         for (EnumFacing side : EnumFacing.VALUES) {
-            int redstoneValue = GTUtility.getRedstonePower(getWorld(), getPos(), side);
+            int redstoneValue = GTRedstoneUtil.getRedstonePower(getWorld(), getPos(), side);
             int currentValue = sidedRedstoneInput[side.getIndex()];
             if (redstoneValue != currentValue) {
                 this.sidedRedstoneInput[side.getIndex()] = redstoneValue;

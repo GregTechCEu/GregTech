@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -28,14 +28,14 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityTransformer) {
                 StringBuilder input = new StringBuilder()
-                        .append(GTValues.VNF[GTUtility.getTierByVoltage(capability.getInputVoltage())])
+                        .append(GTValues.VNF[GTVoltageUtil.getTierByVoltage(capability.getInputVoltage())])
                         .append(TextFormatting.GREEN)
                         .append(" (")
                         .append(capability.getInputAmperage())
                         .append("A)");
 
                 StringBuilder output = new StringBuilder()
-                        .append(GTValues.VNF[GTUtility.getTierByVoltage(capability.getOutputVoltage())])
+                        .append(GTValues.VNF[GTVoltageUtil.getTierByVoltage(capability.getOutputVoltage())])
                         .append(TextFormatting.GREEN)
                         .append(" (")
                         .append(capability.getOutputAmperage())

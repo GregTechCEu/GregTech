@@ -2,8 +2,7 @@ package gregtech.api.items.metaitem;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.stats.IFoodBehavior;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.RandomPotionEffect;
+import gregtech.api.util.GTPotionUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -23,12 +22,12 @@ public class FoodStats implements IFoodBehavior {
     public final float saturation;
     public final boolean isDrink;
     public final boolean alwaysEdible;
-    public final RandomPotionEffect[] potionEffects;
+    public final GTPotionUtil.ChancedPotionEffect[] potionEffects;
 
     @Nullable
     public ItemStack containerItem;
 
-    public FoodStats(int foodLevel, float saturation, boolean isDrink, boolean alwaysEdible, ItemStack containerItem, RandomPotionEffect... potionEffects) {
+    public FoodStats(int foodLevel, float saturation, boolean isDrink, boolean alwaysEdible, ItemStack containerItem, GTPotionUtil.ChancedPotionEffect... potionEffects) {
         this.foodLevel = foodLevel;
         this.saturation = saturation;
         this.isDrink = isDrink;
@@ -70,9 +69,9 @@ public class FoodStats implements IFoodBehavior {
     @Override
     public ItemStack onFoodEaten(ItemStack itemStack, EntityPlayer player) {
         if (!player.world.isRemote) {
-            for (RandomPotionEffect potionEffect : potionEffects) {
+            for (GTPotionUtil.ChancedPotionEffect potionEffect : potionEffects) {
                 if (GTValues.RNG.nextDouble() * 100 > potionEffect.chance) {
-                    player.addPotionEffect(GTUtility.copyPotionEffect(potionEffect.effect));
+                    player.addPotionEffect(GTPotionUtil.copyPotionEffect(potionEffect.effect));
                 }
             }
 

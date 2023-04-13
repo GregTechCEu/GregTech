@@ -17,7 +17,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.*;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -438,7 +438,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         if (isStructureFormed()) {
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+                String voltageName = GTValues.VNF[GTVoltageUtil.getTierByVoltage(maxVoltage)];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
@@ -557,7 +557,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public int getEnergyTier() {
         if (energyContainer == null) return GTValues.LV;
-        return Math.max(GTValues.LV, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
+        return Math.max(GTValues.LV, GTVoltageUtil.getFloorTierByVoltage(energyContainer.getInputVoltage()));
     }
 
     @Override

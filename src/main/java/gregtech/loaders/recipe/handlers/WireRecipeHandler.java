@@ -10,7 +10,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 
 import java.util.Map;
 
@@ -108,7 +108,7 @@ public class WireRecipeHandler {
 
         int cableAmount = (int) (wirePrefix.getMaterialAmount(material) * 2 / GTValues.M);
         OrePrefix cablePrefix = OrePrefix.getPrefix("cable" + wirePrefix.name().substring(4));
-        int voltageTier = GTUtility.getTierByVoltage(property.getVoltage());
+        int voltageTier = GTVoltageUtil.getTierByVoltage(property.getVoltage());
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);
 
         // Generate hand-crafting recipes for ULV and LV cables

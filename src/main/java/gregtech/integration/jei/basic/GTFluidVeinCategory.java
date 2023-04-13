@@ -2,6 +2,7 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTJEIUtility;
+import gregtech.api.util.GTMathUtil;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
@@ -134,22 +135,22 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
 
-        if(GTUtility.isPointWithinRange(textStartX, startPosY, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
+        if(GTMathUtil.isPointWithinRange(textStartX, startPosY, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.weight_hover"));
         }
-        else if (GTUtility.isPointWithinRange(textStartX, startPosY + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        else if (GTMathUtil.isPointWithinRange(textStartX, startPosY + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.min_hover"));
         }
-        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        else if (GTMathUtil.isPointWithinRange(textStartX, startPosY + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.max_hover"));
         }
-        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 3 * FONT_HEIGHT + 1, depletionChanceLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        else if (GTMathUtil.isPointWithinRange(textStartX, startPosY + 3 * FONT_HEIGHT + 1, depletionChanceLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_chance_hover"));
         }
-        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 4 * FONT_HEIGHT + 1, depletionAmountLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        else if (GTMathUtil.isPointWithinRange(textStartX, startPosY + 4 * FONT_HEIGHT + 1, depletionAmountLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_amount_hover"));
         }
-        else if (GTUtility.isPointWithinRange(textStartX, startPosY + 5 * FONT_HEIGHT + 1, depletedYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        else if (GTMathUtil.isPointWithinRange(textStartX, startPosY + 5 * FONT_HEIGHT + 1, depletedYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_yield_hover"));
         }
 

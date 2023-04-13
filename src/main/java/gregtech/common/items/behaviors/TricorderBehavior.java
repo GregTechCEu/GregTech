@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
@@ -201,14 +202,14 @@ public class TricorderBehavior implements IItemBehaviour {
                 if (container.getInputVoltage() > 0) {
                     list.add(new TextComponentTranslation("behavior.tricorder.energy_container_in",
                             new TextComponentTranslation(GTUtility.formatNumbers(container.getInputVoltage())).setStyle(new Style().setColor(TextFormatting.RED)),
-                            new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(container.getInputVoltage())]).setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(GTValues.VN[GTVoltageUtil.getTierByVoltage(container.getInputVoltage())]).setStyle(new Style().setColor(TextFormatting.RED)),
                             new TextComponentTranslation(GTUtility.formatNumbers(container.getInputAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
                     ));
                 }
                 if (container.getOutputVoltage() > 0) {
                     list.add(new TextComponentTranslation("behavior.tricorder.energy_container_out",
                             new TextComponentTranslation(GTUtility.formatNumbers(container.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.RED)),
-                            new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(container.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(GTValues.VN[GTVoltageUtil.getTierByVoltage(container.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.RED)),
                             new TextComponentTranslation(GTUtility.formatNumbers(container.getOutputAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
                     ));
                 }

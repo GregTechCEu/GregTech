@@ -29,7 +29,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTextFormattingUtil;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -113,8 +113,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.inputFluidInventory = new FluidTankList(false, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.minerLogic.setVoltageTier(GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()));
-        this.minerLogic.setOverclockAmount(Math.max(1, GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()) - this.tier));
+        this.minerLogic.setVoltageTier(GTVoltageUtil.getTierByVoltage(this.energyContainer.getInputVoltage()));
+        this.minerLogic.setOverclockAmount(Math.max(1, GTVoltageUtil.getTierByVoltage(this.energyContainer.getInputVoltage()) - this.tier));
         this.minerLogic.initPos(getPos(), this.minerLogic.getCurrentRadius());
     }
 
@@ -126,7 +126,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getEnergyTier() {
         if (energyContainer == null) return this.tier;
-        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+        return Math.min(this.tier + 1 , Math.max(this.tier, GTVoltageUtil.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     @Override
@@ -332,7 +332,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     public long getMaxVoltage() {
-        return GTValues.V[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
+        return GTValues.V[GTVoltageUtil.getTierByVoltage(energyContainer.getInputVoltage())];
     }
 
     @Override

@@ -1,6 +1,12 @@
 package gregtech.api.util;
 
-public class RedstoneUtil {
+import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+public class GTRedstoneUtil {
 
     /**
      * Compares a value against a min and max, with an option to invert the logic
@@ -63,5 +69,18 @@ public class RedstoneUtil {
         }
 
         return outputAmount;
+    }
+
+    public static int getRedstonePower(World world, BlockPos blockPos, EnumFacing side) {
+        BlockPos offsetPos = blockPos.offset(side);
+        int worldPower = world.getRedstonePower(offsetPos, side);
+        if (worldPower < 15) {
+            IBlockState offsetState = world.getBlockState(offsetPos);
+            if (offsetState.getBlock() instanceof BlockRedstoneWire) {
+                int wirePower = offsetState.getValue(BlockRedstoneWire.POWER);
+                return Math.max(worldPower, wirePower);
+            }
+        }
+        return worldPower;
     }
 }

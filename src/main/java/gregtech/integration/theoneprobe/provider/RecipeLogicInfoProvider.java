@@ -7,7 +7,7 @@ import gregtech.api.capability.impl.PrimitiveRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
@@ -51,7 +51,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             }
             if (text == null) {
                 // Default behavior, if this TE is not a steam machine (or somehow not instanceof IGregTechTileEntity...)
-                text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN + " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
+                text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN + " (" + GTValues.VNF[GTVoltageUtil.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
             }
 
             if (EUt > 0) {

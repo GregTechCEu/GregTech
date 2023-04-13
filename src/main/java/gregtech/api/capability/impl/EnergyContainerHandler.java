@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -145,7 +145,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     private boolean handleElectricItem(IElectricItem electricItem) {
-        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        int machineTier = GTVoltageUtil.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
         int chargeTier = Math.min(machineTier, electricItem.getTier());
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
 
@@ -170,7 +170,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     private boolean handleForgeEnergyItem(IEnergyStorage energyStorage) {
-        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        int machineTier = GTVoltageUtil.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
 
         if (chargePercent > 0.5) {
@@ -220,7 +220,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         long canAccept = getEnergyCapacity() - getEnergyStored();
         if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
+                metaTileEntity.doExplosion(GTVoltageUtil.getExplosionPower(voltage));
                 return Math.min(amperage, getInputAmperage() - amps);
             }
             if (canAccept >= voltage) {

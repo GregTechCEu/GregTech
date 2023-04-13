@@ -5,7 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.RedstoneUtil;
+import gregtech.api.util.GTRedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -53,6 +53,6 @@ public class CoverDetectorFluid extends CoverDetectorBase implements ITickable {
         if (fluidCapacity == 0)
             return;
 
-        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneValue(storedFluid, fluidCapacity, isInverted()));
+        setRedstoneSignalOutput(GTRedstoneUtil.computeRedstoneValue(storedFluid, fluidCapacity, isInverted()));
     }
 }

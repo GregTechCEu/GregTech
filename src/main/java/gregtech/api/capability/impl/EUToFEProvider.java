@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -181,7 +181,7 @@ public class EUToFEProvider extends CapabilityCompatProvider {
             long maxInput = energyStorage.receiveEnergy(Integer.MAX_VALUE, true);
 
             if (maxInput == 0) return 0;
-            return GTValues.V[GTUtility.getTierByVoltage(FeCompat.toEu(maxInput, FeCompat.ratio(false)))];
+            return GTValues.V[GTVoltageUtil.getTierByVoltage(FeCompat.toEu(maxInput, FeCompat.ratio(false)))];
         }
 
         @Override

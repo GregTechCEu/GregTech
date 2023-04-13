@@ -18,6 +18,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -76,7 +77,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
         }
         //the subtracted tier gives the starting level (exclusive) of the +100K heat bonus
-        this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
+        this.blastFurnaceTemperature += 100 * Math.max(0, GTVoltageUtil.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
     }
 
     @Override

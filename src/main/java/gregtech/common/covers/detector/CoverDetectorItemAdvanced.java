@@ -10,8 +10,8 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.RedstoneUtil;
+import gregtech.api.util.GTMathUtil;
+import gregtech.api.util.GTRedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -95,12 +95,12 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     }
 
     private void setMinValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
+        int parsedValue = GTMathUtil.tryParseInt(val, DEFAULT_MIN);
         this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
+        int parsedValue = GTMathUtil.tryParseInt(val, DEFAULT_MAX);
         max = Math.max(min + 1, parsedValue);
     }
 
@@ -128,7 +128,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneBetweenValues(storedItems, max, min, isInverted()));
+        setRedstoneSignalOutput(GTRedstoneUtil.computeRedstoneBetweenValues(storedItems, max, min, isInverted()));
     }
 
     @Override

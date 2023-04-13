@@ -16,6 +16,7 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.api.util.Position;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.recipe.GTRecipeWrapper;
@@ -413,7 +414,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             ItemStack catalyst = null;
 
             if (recipe != null) { // GT
-                int tierRequire = GTUtility.getTierByVoltage(recipe.getEUt());
+                int tierRequire = GTVoltageUtil.getTierByVoltage(recipe.getEUt());
                 for (Object o : catalysts) {
                     if (o instanceof ItemStack) {
                         MetaTileEntity mte = GTUtility.getMetaTileEntity((ItemStack) o);

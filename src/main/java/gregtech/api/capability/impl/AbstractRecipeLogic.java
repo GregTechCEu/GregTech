@@ -15,6 +15,7 @@ import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -649,7 +650,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         // If the maximum tier that the machine can overclock to is ULV, return false.
         // There is no overclocking allowed in ULV
         if (overclockTier <= GTValues.LV) return false;
-        int recipeTier = GTUtility.getTierByVoltage(recipeEUt);
+        int recipeTier = GTVoltageUtil.getTierByVoltage(recipeEUt);
 
         // Do overclock if the overclock tier is greater than the recipe tier
         return overclockTier > recipeTier;
@@ -663,7 +664,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] performOverclocking(@Nonnull Recipe recipe) {
-        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        int recipeTier = GTVoltageUtil.getTierByVoltage(recipe.getEUt());
         int maximumTier = getOverclockForTier(getMaximumOverclockVoltage());
 
         // The maximum number of overclocks is determined by the difference between the tier the recipe is running at,
@@ -721,7 +722,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return the highest voltage tier the machine should use to overclock with
      */
     protected int getOverclockForTier(long voltage) {
-        return GTUtility.getTierByVoltage(voltage);
+        return GTVoltageUtil.getTierByVoltage(voltage);
     }
 
     /**
@@ -750,7 +751,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.recipeEUt = overclockResults[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
-                GTUtility.getTierByVoltage(recipe.getEUt()),
+                GTVoltageUtil.getTierByVoltage(recipe.getEUt()),
                 getOverclockForTier(getMaximumOverclockVoltage()),
                 getRecipeMap())
         );

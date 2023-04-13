@@ -14,19 +14,13 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
-import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -43,7 +37,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.network.play.server.SPacketBlockChange;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -56,8 +49,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -77,8 +71,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
-
-import static gregtech.api.GTValues.V;
 
 public class GTUtility {
 
@@ -132,15 +124,8 @@ public class GTUtility {
     public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
     private static final DecimalFormat TWO_PLACES_FORMAT = new DecimalFormat("#.##");
-    private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
     private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
     private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
-
-    static {
-        for (int i = 0; i < V.length; i++) {
-            tierByVoltage.put(V[i], (byte) i);
-        }
-    }
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
@@ -179,12 +164,6 @@ public class GTUtility {
             }
         }
         return (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[index];
-    }
-
-    public static PotionEffect copyPotionEffect(PotionEffect sample) {
-        PotionEffect potionEffect = new PotionEffect(sample.getPotion(), sample.getDuration(), sample.getAmplifier(), sample.getIsAmbient(), sample.doesShowParticles());
-        potionEffect.setCurativeItems(sample.getCurativeItems());
-        return potionEffect;
     }
 
     /**
@@ -248,39 +227,6 @@ public class GTUtility {
             }
         }
         return wasRemovedByPlayer;
-    }
-
-    public static boolean isBetweenInclusive(long start, long end, long value) {
-        return start <= value && value <= end;
-    }
-
-    /**
-     * Capitalizes string, making first letter upper case
-     *
-     * @return capitalized string
-     */
-    public static String capitalizeString(String string) {
-        if (string != null && string.length() > 0)
-            return string.substring(0, 1).toUpperCase() + string.substring(1);
-        return "";
-    }
-
-    /**
-     * @return lowest tier that can handle passed voltage
-     */
-    public static byte getTierByVoltage(long voltage) {
-        if (voltage > V[GTValues.MAX]) return GTValues.MAX;
-        return tierByVoltage.ceilingEntry(voltage).getValue();
-    }
-
-    /**
-     * Ex: This method turns both 1024 and 512 into HV.
-     *
-     * @return the highest tier below or equal to the voltage value given
-     */
-    public static byte getFloorTierByVoltage(long voltage) {
-        if (voltage < V[GTValues.ULV]) return GTValues.ULV;
-        return tierByVoltage.floorEntry(voltage).getValue();
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
@@ -566,23 +512,6 @@ public class GTUtility {
         return replacement;
     }
 
-    public static int getExplosionPower(long voltage) {
-        return getTierByVoltage(voltage) + 1;
-    }
-
-    public static int getRedstonePower(World world, BlockPos blockPos, EnumFacing side) {
-        BlockPos offsetPos = blockPos.offset(side);
-        int worldPower = world.getRedstonePower(offsetPos, side);
-        if (worldPower < 15) {
-            IBlockState offsetState = world.getBlockState(offsetPos);
-            if (offsetState.getBlock() instanceof BlockRedstoneWire) {
-                int wirePower = offsetState.getValue(BlockRedstoneWire.POWER);
-                return Math.max(worldPower, wirePower);
-            }
-        }
-        return worldPower;
-    }
-
     // TODO, Remove this, use ItemStackHashStrategy instead
     public static Comparator<ItemStack> createItemStackComparator() {
         return Comparator.<ItemStack, Integer>comparing(it -> Item.REGISTRY.getIDForObject(it.getItem()))
@@ -677,46 +606,11 @@ public class GTUtility {
     }
 
     /**
-     * @param values to find the mean of
-     * @return the mean value
-     */
-    public static long mean(@Nonnull long[] values) {
-        if (values.length == 0L)
-            return 0L;
-
-        long sum = 0L;
-        for (long v : values)
-            sum += v;
-        return sum / values.length;
-    }
-
-    /**
      * @param world the {@link World} to get the average tick time of
      * @return the mean tick time
      */
     public static double getMeanTickTime(@Nonnull World world) {
-        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
-    }
-
-    /**
-     * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
-     *
-     * @param machineStack the ItemStack containing the machine to check the validity of
-     * @return whether the machine is valid or not
-     */
-    public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
-
-        if (machineStack == null || machineStack.isEmpty()) {
-            return false;
-        }
-
-        MetaTileEntity machine = getMetaTileEntity(machineStack);
-        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity)) {
-            RecipeMap<?> recipeMap = machine.getRecipeMap();
-            return recipeMap != null && !findMachineInBlacklist(recipeMap.getUnlocalizedName(), recipeMapBlacklist);
-        }
-
-        return false;
+        return GTMathUtil.mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
 
     /**
@@ -750,6 +644,7 @@ public class GTUtility {
         return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
     }
 
+    // TODO, move to machine utils?
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
@@ -777,7 +672,6 @@ public class GTUtility {
         }
         return world.isDaytime();
     }
-
 
     /**
      * Gather a list of all registered dimensions. Done as a Supplier so that it can be called at any time and catch
@@ -829,75 +723,6 @@ public class GTUtility {
     }
 
     /**
-     * Tries to parse a string into an int, returning a default value if it fails.
-     *
-     * @param val          string to parse
-     * @param defaultValue default value to return
-     * @return returns an int from the parsed string, otherwise the default value
-     */
-    public static int tryParseInt(String val, int defaultValue) {
-        try {
-            return Integer.parseInt(val);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-        }
-        return defaultValue;
-    }
-
-    /**
-     * Tries to parse a string into a long, returning a default value if it fails.
-     *
-     * @param val          string to parse
-     * @param defaultValue default value to return
-     * @return returns a long from the parsed string, otherwise the default value
-     */
-    public static long tryParseLong(String val, long defaultValue) {
-        try {
-            return Long.parseLong(val);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-        }
-        return defaultValue;
-    }
-
-    /**
-     * @param fluidHandler the handler to drain from
-     * @param doDrain      if the handler should be actually drained
-     * @return a valid boiler fluid from a container, with amount=1
-     */
-    @Nullable
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
-        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
-    }
-
-    /**
-     * @param fluidHandler the handler to drain from
-     * @param amount       the amount to drain
-     * @param doDrain      if the handler should be actually drained
-     * @return a valid boiler fluid from a container
-     */
-    @Nullable
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
-        if (amount == 0) return null;
-        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
-        if (drainedWater == null || drainedWater.amount == 0) {
-            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
-        }
-        if (drainedWater == null || drainedWater.amount == 0) {
-            for (String fluidName : ConfigHolder.machines.boilerFluids) {
-                Fluid fluid = FluidRegistry.getFluid(fluidName);
-                if (fluid != null) {
-                    drainedWater = fluidHandler.drain(new FluidStack(fluid, amount), doDrain);
-                    if (drainedWater != null && drainedWater.amount > 0) {
-                        break;
-                    }
-                }
-            }
-        }
-        return drainedWater;
-    }
-
-    /**
      * @param stack the stack to retrieve from
      * @return all the sub-items of an ItemStack
      */
@@ -913,20 +738,5 @@ public class GTUtility {
             set.addAll(subItems);
         }
         return set;
-    }
-
-    /**
-     * Checks if an (X,Y) point is within a defined box range
-     *
-     * @param initialX The initial X point of the box
-     * @param initialY The initial Y point of the box
-     * @param width    The width of the box
-     * @param height   The height of the box
-     * @param pointX   The X value of the point to check
-     * @param pointY   The Y value of the point to check
-     * @return True if the provided (X,Y) point is within the described box, else false
-     */
-    public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
-        return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
 }

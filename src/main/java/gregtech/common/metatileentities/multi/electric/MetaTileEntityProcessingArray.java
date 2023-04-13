@@ -18,7 +18,9 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTMachineUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
@@ -207,7 +209,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 return false;
             }
 
-            return GTUtility.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
+            return GTMachineUtils.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
         }
 
         @Override
@@ -300,8 +302,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             // apply maintenance penalties
             Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
-            int originalTier = Math.max(0, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
-            int numOverclocks = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage())) - originalTier;
+            int originalTier = Math.max(0, GTVoltageUtil.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
+            int numOverclocks = Math.min(this.machineTier, GTVoltageUtil.getTierByVoltage(getMaxVoltage())) - originalTier;
 
             if (originalTier == ULV) numOverclocks--; // no ULV overclocking
 

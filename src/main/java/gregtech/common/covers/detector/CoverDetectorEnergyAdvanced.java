@@ -13,8 +13,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.RedstoneUtil;
+import gregtech.api.util.GTMathUtil;
+import gregtech.api.util.GTRedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -69,12 +69,12 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
             if (usePercent) {
                 if (energyContainer.getEnergyCapacity() > 0) {
                     float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-                    this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
+                    this.outputAmount = GTRedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
                 } else {
                     this.outputAmount = isInverted() ? 0 : 15;
                 }
             } else {
-                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
+                this.outputAmount = GTRedstoneUtil.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
                         this.maxValue, this.minValue, isInverted(), this.outputAmount);
             }
         }
@@ -141,13 +141,13 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private void setMinValue(String val) {
-        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
+        long parsedValue = GTMathUtil.tryParseLong(val, usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
 
         this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val) {
-        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
+        long parsedValue = GTMathUtil.tryParseLong(val, usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
         long maxUpperLimit = usePercent ? 100 : Long.MAX_VALUE;
 
         this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));

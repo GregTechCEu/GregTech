@@ -17,7 +17,7 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTColorUtil;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTVoltageUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -97,7 +97,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
             if (!value.isEmpty()) {
                 voltage = Long.parseLong(value);
-                setTier = GTUtility.getTierByVoltage(voltage);
+                setTier = GTVoltageUtil.getTierByVoltage(voltage);
             }
         }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
 
