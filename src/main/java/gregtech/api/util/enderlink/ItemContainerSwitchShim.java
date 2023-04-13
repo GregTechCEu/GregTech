@@ -20,7 +20,7 @@ public class ItemContainerSwitchShim extends SwitchShimBase<IItemHandlerModifiab
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
-        return this.container.getStackInSlot((slot));
+        return this.container.getStackInSlot(slot);
     }
 
     @Nonnull
