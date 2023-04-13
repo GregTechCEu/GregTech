@@ -6,7 +6,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -96,8 +95,8 @@ public final class ToolChargeBarRenderer {
 
     public static void renderBarsTool(IGTTool tool, ItemStack stack, int xPosition, int yPosition) {
         boolean renderedDurability = false;
-        NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
-        if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null || !tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
             double durability = stack.getItem().getDurabilityForDisplay(stack);
             if (durability != 0.0) {
                 renderedDurability = renderDurabilityBar(durability, xPosition, yPosition);
