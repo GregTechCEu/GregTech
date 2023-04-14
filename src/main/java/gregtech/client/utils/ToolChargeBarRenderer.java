@@ -99,7 +99,8 @@ public final class ToolChargeBarRenderer {
         if (tag == null || !tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
             double durability = stack.getItem().getDurabilityForDisplay(stack);
             if (durability != 0.0) {
-                renderedDurability = renderDurabilityBar(durability, xPosition, yPosition);
+                render(1.0 - durability, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
+                renderedDurability = true;
             }
         }
         if (tool.isElectric()) {
@@ -136,11 +137,6 @@ public final class ToolChargeBarRenderer {
         Color left = colors != null ? colors.getLeft() : colorBarLeftDurability;
         Color right = colors != null ? colors.getRight() : colorBarRightDurability;
         render(level, xPosition, yPosition, 0, true, left, right, doDepletedColor);
-        return true;
-    }
-
-    private static boolean renderDurabilityBar(double level, int xPosition, int yPosition) {
-        render(1.0 - level, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
         return true;
     }
 
