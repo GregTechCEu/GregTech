@@ -9,10 +9,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -255,10 +252,9 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 holder.setWorld(this.metaTileEntity.getWorld());
 
                 // Set the cleanroom of the MTEs to the PA's cleanroom reference
-                if (this.getMetaTileEntity() instanceof ICleanroomReceiver) {
-                    if (((ICleanroomReceiver) this.getMetaTileEntity()).getCleanroom() != null && mte instanceof ICleanroomReceiver) {
-                        ((ICleanroomReceiver) mte).setCleanroom(((ICleanroomReceiver) this.getMetaTileEntity()).getCleanroom());
-                    }
+                ICleanroomProvider cleanroom = controller.getCleanroom();
+                if (cleanroom != null && mte instanceof ICleanroomReceiver) {
+                    ((ICleanroomReceiver) mte).setCleanroom(cleanroom);
                 }
             }
 
