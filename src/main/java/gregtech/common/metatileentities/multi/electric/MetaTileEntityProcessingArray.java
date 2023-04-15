@@ -183,6 +183,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         @Override
         public void invalidate() {
             super.invalidate();
+
+            // invalidate mte's cleanroom reference
+            if (mte != null && mte instanceof ICleanroomReceiver){
+                ((ICleanroomReceiver) mte).setCleanroom(null);
+            }
+
             // Reset locally cached variables upon invalidation
             currentMachineStack = ItemStack.EMPTY;
             mte = null;
