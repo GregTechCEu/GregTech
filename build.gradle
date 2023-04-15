@@ -296,6 +296,11 @@ if (cf_api_key.isPresent()) {
 
             addGameVersion "${minecraft_version}"
 
+            relations {
+                requiredDependency 'codechicken-lib-1-8'
+                incompatible 'gregtechce'
+            }
+
             def main_artifact = "${archivesBaseName}-${version}.jar"
             mainArtifact file("build/libs/${main_artifact}")
             file('build/libs/').eachFile { file ->
