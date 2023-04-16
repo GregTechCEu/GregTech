@@ -8,6 +8,8 @@ import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -17,17 +19,22 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
     private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final Map<FacingPos, Integer> transferred = new HashMap<>();
+    private final Object2IntMap<FacingPos> transferred = new Object2IntOpenHashMap<>();
     private ItemNetHandler defaultHandler;
     // the ItemNetHandler can only be created on the server so we have a empty placeholder for the client
     private final IItemHandler clientCapability = new ItemStackHandler(0);
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
+
+    private int transferredItems = 0;
+    private long timer = 0;
+
+    public long getWorldTime() {
+        return hasWorld() ? getWorld().getTotalWorldTime() : 0L;
+    }
 
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
@@ -97,25 +104,44 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         transferred.clear();
     }
 
-    public Map<FacingPos, Integer> getTransferred() {
+    public Object2IntMap<FacingPos> getTransferred() {
         return transferred;
     }
 
     @Override
     public void transferDataFrom(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
         super.transferDataFrom(tileEntity);
-        if (getItemPipeNet() == null)
-            return;
         TileEntityItemPipe itemPipe = (TileEntityItemPipe) tileEntity;
-        if (!itemPipe.handlers.isEmpty() && itemPipe.defaultHandler != null) {
-            // take handlers from old pipe
-            handlers.clear();
-            handlers.putAll(itemPipe.handlers);
-            defaultHandler = itemPipe.defaultHandler;
-            checkNetwork();
-        } else {
-            // create new handlers
-            initHandlers();
+        // take handlers from old pipe
+        if (!itemPipe.handlers.isEmpty()) {
+            this.handlers.clear();
+            for (ItemNetHandler handler : itemPipe.handlers.values()) {
+                handler.updatePipe(this);
+                this.handlers.put(handler.getFacing(), handler);
+            }
         }
+        if (itemPipe.defaultHandler != null) {
+            itemPipe.defaultHandler.updatePipe(this);
+            this.defaultHandler = itemPipe.defaultHandler;
+        }
+    }
+
+    private void checkTransferredState() {
+        long currentTime = getWorldTime();
+        long dif = currentTime - this.timer;
+        if (dif >= 20 || dif < 0) {
+            this.transferredItems = 0;
+            this.timer = currentTime;
+        }
+    }
+
+    public void transferItems(int amount) {
+        checkTransferredState();
+        this.transferredItems += amount;
+    }
+
+    public int getTransferredItems() {
+        checkTransferredState();
+        return 0;
     }
 }

@@ -8,7 +8,10 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
-import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -19,16 +22,18 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 public class ItemNetHandler implements IItemHandler {
 
     private ItemPipeNet net;
     private TileEntityItemPipe pipe;
-    private TileEntityItemPipeTickable tickingPipe;
     private final World world;
     private final EnumFacing facing;
-    private final Map<FacingPos, Integer> simulatedTransfersGlobalRoundRobin = new HashMap<>();
+    private final Object2IntMap<FacingPos> simulatedTransfersGlobalRoundRobin = new Object2IntOpenHashMap<>();
     private int simulatedTransfers = 0;
     private final ItemStackHandler testHandler = new ItemStackHandler(1);
 
@@ -43,12 +48,20 @@ public class ItemNetHandler implements IItemHandler {
         this.net = net;
     }
 
+    public void updatePipe(TileEntityItemPipe pipe) {
+        this.pipe = pipe;
+    }
+
     public ItemPipeNet getNet() {
         return net;
     }
 
+    public EnumFacing getFacing() {
+        return facing;
+    }
+
     private void copyTransferred() {
-        simulatedTransfers = tickingPipe.getTransferredItems();
+        simulatedTransfers = pipe.getTransferredItems();
         simulatedTransfersGlobalRoundRobin.clear();
         simulatedTransfersGlobalRoundRobin.putAll(pipe.getTransferred());
     }
@@ -57,11 +70,6 @@ public class ItemNetHandler implements IItemHandler {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
-        // only set pipe to ticking when something is inserted
-        if (tickingPipe == null) {
-            this.tickingPipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
-            this.pipe = tickingPipe;
-        }
 
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return stack;
@@ -176,8 +184,8 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private ItemStack insertToHandlersEnhanced(List<ItemPipeNet.Inventory> copy, ItemStack stack, int dest, boolean simulate) {
-        LinkedList<EnhancedRoundRobinData> transferred = new LinkedList<>();
-        LinkedList<Integer> steps = new LinkedList<>();
+        List<EnhancedRoundRobinData> transferred = new ArrayList<>();
+        IntList steps = new IntArrayList();
         int min = Integer.MAX_VALUE;
         ItemStack simStack;
 
@@ -189,7 +197,7 @@ public class ItemNetHandler implements IItemHandler {
                 continue;
             int didTransfer = didTransferTo(inv, simulate);
             EnhancedRoundRobinData data = new EnhancedRoundRobinData(inv, ins, didTransfer);
-            transferred.addLast(data);
+            transferred.add(data);
 
             min = Math.min(min, didTransfer);
 
@@ -216,7 +224,7 @@ public class ItemNetHandler implements IItemHandler {
         int c = amount / transferred.size();
         int m = amount % transferred.size();
         List<EnhancedRoundRobinData> transferredCopy = new ArrayList<>(transferred);
-        int nextStep = steps.isEmpty() ? -1 : steps.pollFirst();
+        int nextStep = steps.removeInt(0);
 
         // equally distribute items over all inventories
         // it takes into account how much was inserted in total
@@ -267,7 +275,7 @@ public class ItemNetHandler implements IItemHandler {
                     nextStep = -1;
                 }
             } else {
-                nextStep = steps.pollFirst();
+                nextStep = steps.removeInt(0);
             }
         }
 
@@ -408,14 +416,14 @@ public class ItemNetHandler implements IItemHandler {
         if (simulate)
             return Math.max(0, Math.min(max - simulatedTransfers, amount));
         else
-            return Math.max(0, Math.min(max - tickingPipe.getTransferredItems(), amount));
+            return Math.max(0, Math.min(max - pipe.getTransferredItems(), amount));
     }
 
     private void transfer(boolean simulate, int amount) {
         if (simulate)
             simulatedTransfers += amount;
         else
-            tickingPipe.transferItems(amount);
+            pipe.transferItems(amount);
     }
 
     @Override
@@ -454,8 +462,8 @@ public class ItemNetHandler implements IItemHandler {
 
     private int didTransferTo(ItemPipeNet.Inventory handler, boolean simulate) {
         if (simulate)
-            return simulatedTransfersGlobalRoundRobin.getOrDefault(handler.toFacingPos(), 0);
-        return pipe.getTransferred().getOrDefault(handler.toFacingPos(), 0);
+            return simulatedTransfersGlobalRoundRobin.getInt(handler.toFacingPos());
+        return pipe.getTransferred().getInt(handler.toFacingPos());
     }
 
     private void resetTransferred(boolean simulated) {
@@ -466,8 +474,8 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private void decrementBy(int amount) {
-        for (Map.Entry<FacingPos, Integer> entry : pipe.getTransferred().entrySet()) {
-            entry.setValue(entry.getValue() - amount);
+        for (Object2IntMap.Entry<FacingPos> entry : pipe.getTransferred().object2IntEntrySet()) {
+            entry.setValue(entry.getIntValue() - amount);
         }
     }
 
