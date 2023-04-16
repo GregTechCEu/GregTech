@@ -6,4 +6,8 @@ public class ReactorStateExplosion extends ReactorStateBase {
         super(reactor);
     }
 
+    @Override
+    public boolean isFailedState() {
+        return true;
+    }
 }

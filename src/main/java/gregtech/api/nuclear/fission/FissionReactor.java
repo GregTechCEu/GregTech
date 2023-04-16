@@ -47,6 +47,10 @@ public class FissionReactor {
         return false;
     }
 
+    public boolean explosionPossible() {
+        return false;
+    }
+
     public double voidFactor() {
         return this.canCoolantBoil() ? (this.temperature - this.envTemperature) / (double) this.pressure : 0.D;
     }
