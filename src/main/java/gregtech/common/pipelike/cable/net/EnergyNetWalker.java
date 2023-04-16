@@ -18,6 +18,10 @@ import java.util.List;
 public class EnergyNetWalker extends PipeNetWalker {
 
     public static List<RoutePath> createNetData(World world, BlockPos sourcePipe) {
+        TileEntity te = world.getTileEntity(sourcePipe);
+        if (!(te instanceof TileEntityCable)) {
+            return null;
+        }
         EnergyNetWalker walker = new EnergyNetWalker(world, sourcePipe, 1, new ArrayList<>());
         walker.traversePipeNet();
         return walker.isFailed() ? null : walker.routes;

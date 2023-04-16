@@ -111,7 +111,10 @@ public abstract class PipeNetWalker {
 
     private boolean walk() {
         if (walkers == null) {
-            checkPos();
+            if (!checkPos()) {
+                this.root.failed = true;
+                return true;
+            }
 
             if (pipes.size() == 0)
                 return true;
@@ -140,19 +143,14 @@ public abstract class PipeNetWalker {
         return !isRunning() || walkers.size() == 0;
     }
 
-    private void checkPos() {
+    private boolean checkPos() {
         pipes.clear();
         TileEntity thisPipe = world.getTileEntity(currentPos);
-        IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
-        if (pipeTile == null) {
-            if (walkedBlocks == 1) {
-                // if it is the first block, it wasn't already checked
-                GTLog.logger.error("First PipeTile is null during walk at {}", currentPos);
-                this.failed = true;
-                return;
-            } else
-                throw new IllegalStateException("PipeTile was not null last walk, but now is");
+        if (!(thisPipe instanceof IPipeTile<?, ?>)) {
+            GTLog.logger.fatal("PipeWalker expected a pipe, but found {} at {}", thisPipe, currentPos);
+            return false;
         }
+        IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
         checkPipe(pipeTile, currentPos);
         root.walked.add(pipeTile.getPipePos().toLong());
 
@@ -177,6 +175,7 @@ public abstract class PipeNetWalker {
             checkNeighbour(pipeTile, currentPos, accessSide, tile);
         }
         pos.release();
+        return true;
     }
 
     protected boolean isWalked(IPipeTile<?, ?> pipe) {
