@@ -10,7 +10,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -108,12 +107,22 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     private void setMinValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
+        int parsedValue;
+        try {
+            parsedValue = Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            parsedValue = DEFAULT_MIN;
+        }
         this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
+        int parsedValue;
+        try {
+            parsedValue = Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            parsedValue = DEFAULT_MAX;
+        }
         this.max = Math.max(min + 1, parsedValue);
     }
 

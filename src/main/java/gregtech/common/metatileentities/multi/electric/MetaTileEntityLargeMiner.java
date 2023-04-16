@@ -76,7 +76,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean isInventoryFull = false;
 
     private final int drillingFluidConsumePerTick;
-    private final String romanNumeralString;
 
     private final MultiblockMinerLogic minerLogic;
 
@@ -85,7 +84,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.material = material;
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
-        this.romanNumeralString = GTUtility.romanNumeralString(fortune);
         this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
     }
 
@@ -125,7 +123,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getEnergyTier() {
         if (energyContainer == null) return this.tier;
-        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+        return Math.min(this.tier + 1, Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     @Override
@@ -250,11 +248,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private void addDisplayText2(List<ITextComponent> textList) {
         if (this.isStructureFormed()) {
             ITextComponent mCoords = new TextComponentString("    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
-                .appendText("\n    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
-                .appendText("\n    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
+                    .appendText("\n    ")
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
+                    .appendText("\n    ")
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
             textList.add(mCoords);
         }
     }
@@ -411,10 +409,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getDrillingFluidConsumePerTick() {
         return this.drillingFluidConsumePerTick;
-    }
-
-    public String getRomanNumeralString() {
-        return this.romanNumeralString;
     }
 
     @Override

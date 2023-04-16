@@ -216,6 +216,8 @@ public class OreDictUnifier {
         return entry != null ? entry.orePrefix : null;
     }
 
+    @Deprecated
+    @Nullable
     public static OrePrefix getPrefix(Block block) {
         return getPrefix(new ItemStack(block));
     }

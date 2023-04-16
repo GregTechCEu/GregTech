@@ -1,11 +1,10 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.util.GTJEIUtility;
 import gregtech.api.util.GTStringUtils;
-import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
+import gregtech.integration.jei.utils.JEIResourceDepositCategoryUtils;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -16,9 +15,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
@@ -30,7 +27,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     protected int outputCount;
     protected int weight;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
-    private Supplier<List<Integer>> dimension;
+    private int[] dimension;
     private final int NUM_OF_SLOTS = 5;
     private final int SLOT_WIDTH = 18;
     private final int SLOT_HEIGHT = 18;
@@ -43,7 +40,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
         this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
     }
-
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @Nonnull IIngredients ingredients) {
@@ -68,17 +64,14 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
         itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
         itemStackGroup.set(ingredients);
-        veinName = recipeWrapper.getVeinName();
-        minHeight = recipeWrapper.getMinHeight();
-        maxHeight = recipeWrapper.getMaxHeight();
-        outputCount = recipeWrapper.getOutputCount();
-        weight = recipeWrapper.getWeight();
-        definition = recipeWrapper.getDefinition();
+        this.veinName = recipeWrapper.getVeinName();
+        this.minHeight = recipeWrapper.getMinHeight();
+        this.maxHeight = recipeWrapper.getMaxHeight();
+        this.outputCount = recipeWrapper.getOutputCount();
+        this.weight = recipeWrapper.getWeight();
+        this.definition = recipeWrapper.getDefinition();
 
-        this.dimension = GTUtility.getAllRegisteredDimensions(definition.getDimensionFilter());
-
-        GTJEIUtility.cleanupDimensionList(this.dimension);
-
+        this.dimension = JEIResourceDepositCategoryUtils.getAllRegisteredDimensions(definition.getDimensionFilter());
     }
 
     @Nonnull
@@ -130,7 +123,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         //Create the Dimensions
         minecraft.fontRenderer.drawString("Dimensions: ", baseXPos, baseYPos + (2 * FONT_HEIGHT), 0x111111);
 
-        GTJEIUtility.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension.get(), minecraft.fontRenderer, baseXPos, baseYPos + 3 * FONT_HEIGHT, dimDisplayPos);
+        JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension, minecraft.fontRenderer, baseXPos, baseYPos + 3 * FONT_HEIGHT, dimDisplayPos);
 
         //Label the Surface Identifier
         minecraft.fontRenderer.drawSplitString("SurfaceMaterial", 15, 92, minecraft.fontRenderer.getStringWidth("Surface"), 0x111111);

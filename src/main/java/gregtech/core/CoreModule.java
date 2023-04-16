@@ -20,7 +20,6 @@ import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.NBTUtil;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -139,7 +138,6 @@ public class CoreModule implements IGregTechModule {
         /* End Material Registration */
 
         OreDictUnifier.init();
-        NBTUtil.registerSerializers();
 
         MetaBlocks.init();
         MetaItems.init();

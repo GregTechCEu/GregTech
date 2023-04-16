@@ -21,6 +21,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,7 +74,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-        Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), VariantBlock.class, 0);
+        Class<T> enumClass = getActualTypeParameter(getClass(), VariantBlock.class, 0);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
         return new BlockStateContainer(this, VARIANT);
@@ -87,7 +89,8 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedVariantTooltip))));
         //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
-        if (I18n.hasKey(unlocalizedTooltip)) tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
+        if (I18n.hasKey(unlocalizedTooltip))
+            tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
     }
 
     @Override
@@ -123,4 +126,18 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         }
     }
 
+    //magic is here
+    @SuppressWarnings("unchecked")
+    protected static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass, int index) {
+        Type type = thisClass.getGenericSuperclass();
+
+        while (!(type instanceof ParameterizedType) || ((ParameterizedType) type).getRawType() != declaringClass) {
+            if (type instanceof ParameterizedType) {
+                type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
+            } else {
+                type = ((Class<?>) type).getGenericSuperclass();
+            }
+        }
+        return (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[index];
+    }
 }
