@@ -3,9 +3,11 @@ package gregtech.common.pipelike.cable.tile;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
+import java.util.function.LongSupplier;
 
 public class AveragingPerTickCounter {
 
+    private final LongSupplier timeSupplier;
     private final long defaultValue;
     private final long[] values;
     private long lastUpdatedWorldTime = 0;
@@ -13,23 +15,29 @@ public class AveragingPerTickCounter {
     private boolean dirty = true;
     private double lastAverage = 0;
 
+    public AveragingPerTickCounter(LongSupplier timeSupplier) {
+        this(timeSupplier, 0, 20);
+    }
+
     /**
      * Averages a value over a certain amount of ticks
      *
-     * @param defaultValue self explanatory
+     * @param timeSupplier current time in ticks supplier. Usually {@link World#getTotalWorldTime()}
+     * @param defaultValue self-explanatory
      * @param length       amount of ticks to average (20 for 1 second)
      */
-    public AveragingPerTickCounter(long defaultValue, int length) {
+    public AveragingPerTickCounter(LongSupplier timeSupplier, long defaultValue, int length) {
+        this.timeSupplier = timeSupplier;
         this.defaultValue = defaultValue;
         this.values = new long[length];
         Arrays.fill(values, defaultValue);
     }
 
-    private void checkValueState(World world) {
-        long currentWorldTime = world.getTotalWorldTime();
+    private void checkValueState() {
+        long currentWorldTime = this.timeSupplier.getAsLong();
         if (currentWorldTime != lastUpdatedWorldTime) {
             long dif = currentWorldTime - lastUpdatedWorldTime;
-            if (dif >= values.length) {
+            if (dif >= values.length || dif < 0) {
                 Arrays.fill(values, defaultValue);
                 currentIndex = 0;
             } else {
@@ -52,16 +60,16 @@ public class AveragingPerTickCounter {
     /**
      * @return the value from the current tick
      */
-    public long getLast(World world) {
-        checkValueState(world);
+    public long getLast() {
+        checkValueState();
         return values[currentIndex];
     }
 
     /**
      * @return the average of all values
      */
-    public double getAverage(World world) {
-        checkValueState(world);
+    public double getAverage() {
+        checkValueState();
         if (!dirty)
             return lastAverage;
         dirty = false;
@@ -71,16 +79,16 @@ public class AveragingPerTickCounter {
     /**
      * @param value the value to increment the current value by
      */
-    public void increment(World world, long value) {
-        checkValueState(world);
+    public void increment(long value) {
+        checkValueState();
         values[currentIndex] += value;
     }
 
     /**
      * @param value the value to set current value to
      */
-    public void set(World world, long value) {
-        checkValueState(world);
+    public void set(long value) {
+        checkValueState();
         values[currentIndex] = value;
     }
 }
