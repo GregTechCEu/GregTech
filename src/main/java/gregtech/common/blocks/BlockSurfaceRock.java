@@ -1,21 +1,16 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
-import gregtech.api.block.DelayedStateBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,61 +28,31 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("deprecation")
-public class BlockSurfaceRock extends DelayedStateBlock {
+public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
     private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0);
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "surface_rock"), "normal");
-    public final PropertyMaterial variantProperty;
 
-    public BlockSurfaceRock(Material[] materials) {
+    public static BlockSurfaceRock create(Material[] materials) {
+        PropertyMaterial property = PropertyMaterial.create("variant", materials);
+        return new BlockSurfaceRock() {
+            @Override
+            public PropertyMaterial getVariantProperty() {
+                return property;
+            }
+        };
+    }
+
+    private BlockSurfaceRock() {
         super(net.minecraft.block.material.Material.GOURD);
         setTranslationKey("surface_rock");
         setHardness(0.25f);
-        this.variantProperty = PropertyMaterial.create("variant", materials);
-        initBlockState();
     }
 
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
         return ToolClasses.SHOVEL;
-    }
-
-    @Nonnull
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        Material material = variantProperty.getAllowedValues().get(meta);
-        return getDefaultState().withProperty(variantProperty, material);
-    }
-
-    @Override
-    public int getMetaFromState(@Nonnull IBlockState state) {
-        Material material = state.getValue(variantProperty);
-        return variantProperty.getAllowedValues().indexOf(material);
-    }
-
-    public IBlockState getBlock(Material material) {
-        return getDefaultState().withProperty(variantProperty, material);
-    }
-
-    @Override
-    protected BlockStateContainer createStateContainer() {
-        return new BlockStateContainer(this, variantProperty);
-    }
-
-    public static ItemStack getItem(IBlockState blockState) {
-        return GTUtility.toItem(blockState);
-    }
-
-    public ItemStack getItem(Material material) {
-        return getItem(getDefaultState().withProperty(variantProperty, material));
-    }
-
-    @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
-        blockState.getValidStates().stream()
-                .filter(blockState -> blockState.getValue(variantProperty) != Materials.NULL)
-                .forEach(blockState -> list.add(getItem(blockState)));
     }
 
     @Override
@@ -110,9 +75,8 @@ public class BlockSurfaceRock extends DelayedStateBlock {
         return STONE_AABB;
     }
 
-    private ItemStack getDropStack(IBlockState blockState, int amount) {
-        Material material = blockState.getValue(variantProperty);
-        return OreDictUnifier.get(OrePrefix.dustTiny, material, amount);
+    private ItemStack getDropStack(IBlockState state, int amount) {
+        return OreDictUnifier.get(OrePrefix.dustTiny, getGtMaterial(state), amount);
     }
 
     @Override

@@ -11,6 +11,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.util.GTUtility;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
@@ -18,6 +19,7 @@ import gregtech.client.renderer.handler.MetaTileEntityTESR;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.wood.*;
@@ -34,7 +36,7 @@ import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
-import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.*;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.BlockSlab.EnumBlockHalf;
@@ -44,6 +46,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -66,7 +70,6 @@ import java.util.stream.Collectors;
 
 import static gregtech.api.unification.material.info.MaterialFlags.FORCE_GENERATE_BLOCK;
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
-import static gregtech.client.ClientProxy.*;
 
 public class MetaBlocks {
 
@@ -121,11 +124,16 @@ public class MetaBlocks {
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
-    public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
-    public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
-    public static final Collection<BlockOre> ORES = new ReferenceArrayList<>();
-    public static final Map<Material, BlockSurfaceRock> SURFACE_ROCK = new HashMap<>();
-    public static final Collection<BlockFluidBase> FLUID_BLOCKS = new ReferenceArrayList<>();
+    public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
+    public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
+    public static final Map<Material, BlockSurfaceRock> SURFACE_ROCK = new Object2ObjectOpenHashMap<>();
+
+    public static final List<BlockCompressed> COMPRESSED_BLOCKS = new ArrayList<>();
+    public static final List<BlockFrame> FRAME_BLOCKS = new ArrayList<>();
+    public static final List<BlockSurfaceRock> SURFACE_ROCK_BLOCKS = new ArrayList<>();
+
+    public static final List<BlockOre> ORES = new ArrayList<>();
+    public static final List<BlockFluidBase> FLUID_BLOCKS = new ArrayList<>();
 
     public static void init() {
         GregTechAPI.MACHINE = MACHINE = new BlockMachine();
@@ -293,27 +301,30 @@ public class MetaBlocks {
     }
 
     private static void createCompressedBlock(Material[] materials, int index) {
-        BlockCompressed block = new BlockCompressed(materials);
+        BlockCompressed block = BlockCompressed.create(materials);
         block.setRegistryName("meta_block_compressed_" + index);
-        for (Material material : materials) {
-            COMPRESSED.put(material, block);
+        for (Material m : materials) {
+            COMPRESSED.put(m, block);
         }
+        COMPRESSED_BLOCKS.add(block);
     }
 
     private static void createFrameBlock(Material[] materials, int index) {
-        BlockFrame block = new BlockFrame(materials);
+        BlockFrame block = BlockFrame.create(materials);
         block.setRegistryName("meta_block_frame_" + index);
         for (Material m : materials) {
             FRAMES.put(m, block);
         }
+        FRAME_BLOCKS.add(block);
     }
 
     private static void createSurfaceRockBlock(Material[] materials, int index) {
-        BlockSurfaceRock block = new BlockSurfaceRock(materials);
+        BlockSurfaceRock block = BlockSurfaceRock.create(materials);
         block.setRegistryName("meta_block_surface_rock_" + index);
-        for (Material material : materials) {
-            SURFACE_ROCK.put(material, block);
+        for (Material m : materials) {
+            SURFACE_ROCK.put(m, block);
         }
+        SURFACE_ROCK_BLOCKS.add(block);
     }
 
     public static void registerTileEntity() {
@@ -377,9 +388,9 @@ public class MetaBlocks {
         for (BlockLamp lamp : LAMPS.values()) lamp.onModelRegister();
         for (BlockLamp lamp : BORDERLESS_LAMPS.values()) lamp.onModelRegister();
 
-        COMPRESSED.values().stream().distinct().forEach(BlockCompressed::onModelRegister);
-        FRAMES.values().stream().distinct().forEach(BlockFrame::onModelRegister);
-        ORES.forEach(BlockOre::onModelRegister);
+        for (BlockCompressed COMPRESSED_BLOCK : COMPRESSED_BLOCKS) COMPRESSED_BLOCK.onModelRegister();
+        for (BlockFrame FRAME_BLOCK : FRAME_BLOCKS) FRAME_BLOCK.onModelRegister();
+        for (BlockOre ORE : ORES) ORE.onModelRegister();
     }
 
     @SideOnly(Side.CLIENT)
@@ -449,36 +460,57 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerColors() {
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
-                FOAM_BLOCK_COLOR, FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
+        BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
+        ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
 
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(RUBBER_LEAVES_BLOCK_COLOR, RUBBER_LEAVES);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(RUBBER_LEAVES_ITEM_COLOR, RUBBER_LEAVES);
+        blockColors.registerBlockColorHandler((s, w, p, i) ->
+                        s.getValue(BlockColored.COLOR).colorValue,
+                FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
 
-        MetaBlocks.COMPRESSED.values().stream().distinct().forEach(block -> {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(COMPRESSED_BLOCK_COLOR, block);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(COMPRESSED_ITEM_COLOR, block);
-        });
+        final int rubberLeavesColor = 0x98de4b;
 
-        MetaBlocks.FRAMES.values().forEach(block -> {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(FRAME_BLOCK_COLOR, block);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(FRAME_ITEM_COLOR, block);
-        });
+        blockColors.registerBlockColorHandler((s, w, p, i) ->
+                rubberLeavesColor, RUBBER_LEAVES);
+        itemColors.registerItemColorHandler((s, i) ->
+                rubberLeavesColor, RUBBER_LEAVES);
 
-        MetaBlocks.SURFACE_ROCK.values().stream().distinct().forEach(block -> {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(SURFACE_ROCK_BLOCK_COLOR, block);
-        });
+        for (BlockCompressed block : COMPRESSED_BLOCKS) {
+            blockColors.registerBlockColorHandler((s, w, p, i) ->
+                    block.getGtMaterial(s).getMaterialRGB(), block);
+            itemColors.registerItemColorHandler((s, i) ->
+                    block.getGtMaterial(s).getMaterialRGB(), block);
+        }
 
-        MetaBlocks.ORES.stream().distinct().forEach(block -> {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(ORE_BLOCK_COLOR, block);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(ORE_ITEM_COLOR, block);
-        });
+        for (BlockFrame block : FRAME_BLOCKS) {
+            blockColors.registerBlockColorHandler((s, w, p, i) ->
+                    block.getGtMaterial(s).getMaterialRGB(), block);
+            itemColors.registerItemColorHandler((s, i) ->
+                    block.getGtMaterial(s).getMaterialRGB(), block);
+        }
 
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(MACHINE_CASING_BLOCK_COLOR, MACHINE_CASING);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(MACHINE_CASING_ITEM_COLOR, MACHINE_CASING);
+        for (BlockSurfaceRock block : SURFACE_ROCK_BLOCKS) {
+            blockColors.registerBlockColorHandler((s, w, p, i) ->
+                    i == 1 ? block.getGtMaterial(s).getMaterialRGB() : -1, block);
+        }
 
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(MACHINE_CASING_BLOCK_COLOR, HERMETIC_CASING);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(MACHINE_CASING_ITEM_COLOR, HERMETIC_CASING);
+        for (BlockOre block : ORES) {
+            blockColors.registerBlockColorHandler((s, w, p, i) ->
+                    i == 1 ? block.material.getMaterialRGB() : 0xFFFFFF, block);
+            itemColors.registerItemColorHandler((s, i) ->
+                    i == 1 ? block.material.getMaterialRGB() : 0xFFFFFF, block);
+        }
+
+        blockColors.registerBlockColorHandler((s, w, p, i) ->
+                MACHINE_CASING.getState(s) == BlockMachineCasing.MachineCasingType.ULV ?
+                        0xFFFFFF : ConfigHolder.client.defaultPaintingColor, MACHINE_CASING);
+        itemColors.registerItemColorHandler((s, i) ->
+                MACHINE_CASING.getState(s) == BlockMachineCasing.MachineCasingType.ULV ?
+                        0xFFFFFF : ConfigHolder.client.defaultPaintingColor, MACHINE_CASING);
+
+        blockColors.registerBlockColorHandler((s, w, p, i) ->
+                ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
+        itemColors.registerItemColorHandler((s, i) ->
+                ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
     }
 
     public static void registerOreDict() {
@@ -510,7 +542,7 @@ public class MetaBlocks {
             Material material = blockOre.material;
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
                 if (stoneType == null) continue;
-                ItemStack normalStack = BlockOre.getItem(blockOre.getDefaultState()
+                ItemStack normalStack = GTUtility.toItem(blockOre.getDefaultState()
                         .withProperty(blockOre.STONE_TYPE, stoneType));
                 OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);
             }

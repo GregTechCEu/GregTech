@@ -256,11 +256,11 @@ public class CommonProxy {
 
         COMPRESSED.values()
                 .stream().distinct()
-                .map(block -> createItemBlock(block, CompressedItemBlock::new))
+                .map(block -> createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)))
                 .forEach(registry::register);
         FRAMES.values()
                 .stream().distinct()
-                .map(block -> createItemBlock(block, FrameItemBlock::new))
+                .map(block -> createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.frameGt)))
                 .forEach(registry::register);
         ORES.stream()
                 .map(block -> createItemBlock(block, OreItemBlock::new))
@@ -339,13 +339,11 @@ public class CommonProxy {
             event.setBurnTime(100);
         } else if (block == WOOD_SLAB) {
             event.setBurnTime(150);
-        } else if (stack.getItem() instanceof CompressedItemBlock) {
+        } else if (block instanceof BlockCompressed) {
             //handle material blocks burn value
-            CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
-            Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
+            Material material = ((BlockCompressed) block).getGtMaterial(stack);
             DustProperty property = material.getProperty(PropertyKey.DUST);
-            if (property != null &&
-                    property.getBurnTime() > 0) {
+            if (property != null && property.getBurnTime() > 0) {
                 //compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));

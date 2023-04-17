@@ -1,9 +1,7 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.unification.ore.StoneType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
@@ -22,12 +20,6 @@ public class OreItemBlock extends ItemBlock {
     @Override
     public int getMetadata(int damage) {
         return damage;
-    }
-
-    @Nonnull
-    @Override
-    public CreativeTabs[] getCreativeTabs() {
-        return new CreativeTabs[]{CreativeTabs.SEARCH, GregTechAPI.TAB_GREGTECH_ORES};
     }
 
     protected IBlockState getBlockState(ItemStack stack) {
