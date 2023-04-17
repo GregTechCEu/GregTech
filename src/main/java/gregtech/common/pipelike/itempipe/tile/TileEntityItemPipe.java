@@ -126,6 +126,13 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         }
     }
 
+    // every time the transferred variable is accessed this method should be called
+    // if 20 ticks passed since the last access it will reset it
+    // this method is equal to
+    // if (++time % 20 == 0) {
+    //    this.transferredItems = 0;
+    // }
+    // if it was in a ticking TileEntity
     private void checkTransferredState() {
         long currentTime = getWorldTime();
         long dif = currentTime - this.timer;

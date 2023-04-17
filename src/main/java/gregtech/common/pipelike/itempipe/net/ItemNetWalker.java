@@ -26,8 +26,7 @@ import java.util.function.Predicate;
 public class ItemNetWalker extends PipeNetWalker {
 
     public static List<ItemPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
-        TileEntity te = world.getTileEntity(sourcePipe);
-        if (!(te instanceof TileEntityItemPipe)) {
+        if (!(world.getTileEntity(sourcePipe) instanceof TileEntityItemPipe)) {
             return null;
         }
         ItemNetWalker walker = new ItemNetWalker(world, sourcePipe, 1, new ArrayList<>(), null);
