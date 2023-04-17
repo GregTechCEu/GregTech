@@ -407,7 +407,7 @@ public class MetaBlocks {
     @SideOnly(Side.CLIENT)
     private static void registerItemModelWithOverride(Block block, Map<IProperty<?>, Comparable<?>> stateOverrides) {
         for (IBlockState state : block.getBlockState().getValidStates()) {
-            HashMap<IProperty<?>, Comparable<?>> stringProperties = new HashMap<>(state.getProperties());
+            Map<IProperty<?>, Comparable<?>> stringProperties = new Object2ObjectOpenHashMap<>(state.getProperties());
             stringProperties.putAll(stateOverrides);
             //noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
@@ -434,7 +434,7 @@ public class MetaBlocks {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }
         normalStateMapper = new SimpleStateMapper(BlockSurfaceRock.MODEL_LOCATION);
-        for (BlockSurfaceRock surfaceRock : new HashSet<>(SURFACE_ROCK.values())) {
+        for (BlockSurfaceRock surfaceRock : SURFACE_ROCK_BLOCKS) {
             ModelLoader.setCustomStateMapper(surfaceRock, normalStateMapper);
         }
 
