@@ -388,9 +388,9 @@ public class MetaBlocks {
         for (BlockLamp lamp : LAMPS.values()) lamp.onModelRegister();
         for (BlockLamp lamp : BORDERLESS_LAMPS.values()) lamp.onModelRegister();
 
-        for (BlockCompressed COMPRESSED_BLOCK : COMPRESSED_BLOCKS) COMPRESSED_BLOCK.onModelRegister();
-        for (BlockFrame FRAME_BLOCK : FRAME_BLOCKS) FRAME_BLOCK.onModelRegister();
-        for (BlockOre ORE : ORES) ORE.onModelRegister();
+        for (BlockCompressed block : COMPRESSED_BLOCKS) block.onModelRegister();
+        for (BlockFrame block : FRAME_BLOCKS) block.onModelRegister();
+        for (BlockOre block : ORES) block.onModelRegister();
     }
 
     @SideOnly(Side.CLIENT)
