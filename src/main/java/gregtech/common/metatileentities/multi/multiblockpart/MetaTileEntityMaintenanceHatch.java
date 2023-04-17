@@ -57,8 +57,8 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
-    private final ItemStackHandler itemStackHandler = new TapeItemStackHandler(1);
     private final boolean isConfigurable;
+    private ItemStackHandler itemStackHandler;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
@@ -101,6 +101,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
+        this.itemStackHandler = new TapeItemStackHandler(1);
         this.itemInventory = itemStackHandler;
     }
 

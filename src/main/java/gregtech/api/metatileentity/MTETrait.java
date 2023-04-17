@@ -25,14 +25,15 @@ public abstract class MTETrait {
      */
     public MTETrait(@Nonnull MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
-        metaTileEntity.addMetaTileEntityTrait(this);
 
         final String traitName = getName();
         if (!traitIds.containsKey(traitName)) {
-           this.networkId = traitIds.put(traitName, rollingNetworkId++);
+            this.networkId = rollingNetworkId++;
+            traitIds.put(traitName, this.networkId);
         } else {
             this.networkId = traitIds.getInt(traitName);
         }
+        metaTileEntity.addMetaTileEntityTrait(this);
     }
 
     @Nonnull
@@ -80,5 +81,14 @@ public abstract class MTETrait {
 
     public final void writeCustomData(int id, @Nonnull Consumer<PacketBuffer> writer) {
         metaTileEntity.writeTraitData(this, id, writer);
+    }
+
+    @Override
+    public String toString() {
+        return "MTETrait{" +
+                "metaTileEntity=" + metaTileEntity +
+                ", networkId=" + networkId +
+                ", name='" + getName() + '\'' +
+                '}';
     }
 }
