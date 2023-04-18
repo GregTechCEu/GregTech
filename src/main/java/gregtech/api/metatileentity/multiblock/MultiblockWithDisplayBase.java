@@ -18,6 +18,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.InfinitySink;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -54,6 +55,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
     private VoidingMode voidingMode;
+    private boolean fluidInfSink = false;
+    private boolean itemInfSink = false;
 
     /**
      * Items to recover in a muffler hatch
@@ -539,11 +542,27 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public boolean canVoidRecipeFluidOutputs() {
-        return voidingFluids;
+        return voidingFluids | fluidInfSink;
     }
 
     @Override
     public boolean canVoidRecipeItemOutputs() {
-        return voidingItems;
+        return voidingItems | itemInfSink;
+    }
+
+    public void checkStructurePattern() {
+        super.checkStructurePattern();
+        for (IMultiblockPart part : this.getMultiblockParts()) {
+            if (part instanceof InfinitySink) {
+                if (part instanceof IMultiblockAbilityPart) {
+                    if (((IMultiblockAbilityPart<?>) part).getAbility() == MultiblockAbility.EXPORT_FLUIDS) {
+                        this.fluidInfSink = true;
+                    }
+                    if (((IMultiblockAbilityPart<?>) part).getAbility() == MultiblockAbility.EXPORT_ITEMS) {
+                        this.itemInfSink = true;
+                    }
+                }
+            }
+        }
     }
 }

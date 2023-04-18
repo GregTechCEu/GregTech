@@ -6,9 +6,6 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import net.minecraft.network.PacketBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @Author GlodBlock
  * @Description A display only widget for {@link IItemList}
