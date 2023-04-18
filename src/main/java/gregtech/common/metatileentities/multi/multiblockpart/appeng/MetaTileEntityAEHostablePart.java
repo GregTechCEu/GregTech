@@ -117,6 +117,10 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         // NO-OP
     }
 
+    /**
+     * Update me network connection status.
+     * @return the updated status.
+     */
     public boolean updateMEStatus() {
         if (this.aeProxy != null) {
             this.isOnline = this.aeProxy.isActive() && this.aeProxy.isPowered();

@@ -258,4 +258,8 @@ public class GuiTextures {
     // Lamp item overlay
     public static final TextureArea LAMP_NO_BLOOM = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_bloom.png");
     public static final TextureArea LAMP_NO_LIGHT = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_light.png");
+
+    // Number background
+    public static final TextureArea NUMBER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/number_background.png");
+
 }
