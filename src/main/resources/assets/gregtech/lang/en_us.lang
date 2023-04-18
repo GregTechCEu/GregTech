@@ -4784,6 +4784,7 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to t
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
+gregtech.machine.me_export_fluid_hatch.name=Output Hatch (ME)
 gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
 gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
 

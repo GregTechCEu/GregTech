@@ -27,6 +27,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.multiblockpart.*;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEFluidOutputHatch;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
@@ -224,6 +225,7 @@ public class MetaTileEntities {
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
+    public static MetaTileEntityMEFluidOutputHatch FLUID_EXPORT_HATCH_ME;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -743,6 +745,9 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+
+        // ME Hatches, IDs 1730-1740
+        FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1730, new MetaTileEntityMEFluidOutputHatch(gregtechId("me_export_fluid_hatch")));
 
         /*
          * FOR ADDON DEVELOPERS:
