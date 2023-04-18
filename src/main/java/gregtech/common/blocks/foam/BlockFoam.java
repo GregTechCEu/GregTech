@@ -1,6 +1,5 @@
 package gregtech.common.blocks.foam;
 
-import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
@@ -40,7 +39,6 @@ public class BlockFoam extends BlockColored {
         setHardness(0.5f);
         setLightOpacity(0);
         setTickRandomly(true);
-        setHarvestLevel(ToolClasses.SHOVEL, 0);
         this.isReinforced = isReinforced;
     }
 
