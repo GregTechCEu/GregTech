@@ -462,6 +462,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @Override
     @Method(modid = GTValues.MODID_APPENG)
     public IGridNode getGridNode(@Nonnull AEPartLocation part) {
+        // Forbid it connects the faces it shouldn't connect.
+        if (this.getCableConnectionType(part) == AECableType.NONE) {
+            return null;
+        }
         AENetworkProxy proxy = getProxy();
         return proxy == null ? null : proxy.getNode();
     }
