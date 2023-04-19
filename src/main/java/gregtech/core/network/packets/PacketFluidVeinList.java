@@ -18,7 +18,7 @@ public class PacketFluidVeinList implements IPacket, IClientExecutor {
     private Map<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map;
 
     @SuppressWarnings("unused")
-    public PacketFluidVeinList() {/**/}
+    public PacketFluidVeinList() {}
 
     public PacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
         this.map = map;

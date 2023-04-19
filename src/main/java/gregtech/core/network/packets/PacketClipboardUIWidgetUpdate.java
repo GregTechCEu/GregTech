@@ -18,7 +18,7 @@ public class PacketClipboardUIWidgetUpdate implements IPacket, IServerExecutor {
     private PacketBuffer updateData;
 
     @SuppressWarnings("unused")
-    public PacketClipboardUIWidgetUpdate() {/**/}
+    public PacketClipboardUIWidgetUpdate() {}
 
     public PacketClipboardUIWidgetUpdate(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
         this.dimension = dimension;

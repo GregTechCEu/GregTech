@@ -14,7 +14,7 @@ public class PacketKeysPressed implements IPacket, IServerExecutor {
     private Object updateKeys;
 
     @SuppressWarnings("unused")
-    public PacketKeysPressed() {/**/}
+    public PacketKeysPressed() {}
 
     public PacketKeysPressed(List<KeyBind> updateKeys) {
         this.updateKeys = updateKeys;

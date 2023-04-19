@@ -19,7 +19,7 @@ public class PacketPluginSynced implements IPacket, IServerExecutor {
     private PacketBuffer updateData;
 
     @SuppressWarnings("unused")
-    public PacketPluginSynced() {/**/}
+    public PacketPluginSynced() {}
 
     public PacketPluginSynced(int dimension, BlockPos pos, int id, PacketBuffer updateData) {
         this.dimension = dimension;

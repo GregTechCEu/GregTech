@@ -18,7 +18,7 @@ public class PacketUIWidgetUpdate implements IPacket, IClientExecutor {
     public PacketBuffer updateData;
 
     @SuppressWarnings("unused")
-    public PacketUIWidgetUpdate() {/**/}
+    public PacketUIWidgetUpdate() {}
 
     public PacketUIWidgetUpdate(int windowId, int widgetId, PacketBuffer updateData) {
         this.windowId = windowId;

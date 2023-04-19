@@ -21,7 +21,7 @@ public class PacketRecoverMTE implements IPacket, IServerExecutor {
     private BlockPos pos;
 
     @SuppressWarnings("unused")
-    public PacketRecoverMTE() {/**/}
+    public PacketRecoverMTE() {}
 
     public PacketRecoverMTE(int dimension, BlockPos pos) {
         this.dimension = dimension;

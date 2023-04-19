@@ -18,7 +18,7 @@ public class PacketProspecting {
     public Set<String> ores;
 
     @SuppressWarnings("unused")
-    public PacketProspecting() {/**/}
+    public PacketProspecting() {}
 
     public PacketProspecting(int chunkX, int chunkZ, int posX, int posZ, int mode) {
         this.chunkX = chunkX;

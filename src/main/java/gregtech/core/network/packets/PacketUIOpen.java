@@ -22,7 +22,7 @@ public class PacketUIOpen implements IPacket, IClientExecutor {
     private List<PacketUIWidgetUpdate> initialWidgetUpdates;
 
     @SuppressWarnings("unused")
-    public PacketUIOpen() {/**/}
+    public PacketUIOpen() {}
 
     public PacketUIOpen(int uiFactoryId, PacketBuffer serializedHolder, int windowId, List<PacketUIWidgetUpdate> initialWidgetUpdates) {
         this.uiFactoryId = uiFactoryId;

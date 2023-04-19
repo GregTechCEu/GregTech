@@ -15,7 +15,7 @@ public class PacketNotifyCapeChange implements IPacket, IClientExecutor {
     public UUID uuid;
 
     @SuppressWarnings("unused")
-    public PacketNotifyCapeChange() {/**/}
+    public PacketNotifyCapeChange() {}
 
     public PacketNotifyCapeChange(UUID uuid, ResourceLocation cape) {
         this.uuid = uuid;

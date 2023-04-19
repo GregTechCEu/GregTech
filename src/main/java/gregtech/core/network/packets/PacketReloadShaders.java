@@ -10,7 +10,7 @@ import net.minecraft.network.PacketBuffer;
 public class PacketReloadShaders implements IPacket, IClientExecutor {
 
     @SuppressWarnings("unused")
-    public PacketReloadShaders() {/**/}
+    public PacketReloadShaders() {}
 
     @Override
     public void encode(PacketBuffer buf) {

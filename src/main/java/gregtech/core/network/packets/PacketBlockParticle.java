@@ -21,7 +21,7 @@ public class PacketBlockParticle implements IPacket, IClientExecutor {
     private int particlesAmount;
 
     @SuppressWarnings("unused")
-    public PacketBlockParticle() {/**/}
+    public PacketBlockParticle() {}
 
     public PacketBlockParticle(BlockPos blockPos, Vector3 entityPos, int particlesAmount) {
         this.blockPos = blockPos;

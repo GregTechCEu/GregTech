@@ -13,7 +13,7 @@ public class PacketClipboard implements IPacket, IClientExecutor {
     private String text;
 
     @SuppressWarnings("unused")
-    public PacketClipboard() {/**/}
+    public PacketClipboard() {}
 
     public PacketClipboard(final String text) {
         this.text = text;
