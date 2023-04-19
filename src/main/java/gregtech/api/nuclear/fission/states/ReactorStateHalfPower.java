@@ -1,6 +1,6 @@
-package gregtech.api.nuclear.fission;
+package gregtech.api.nuclear.fission.states;
 
-import gregtech.api.nuclear.IReactorState;
+import gregtech.api.nuclear.fission.FissionReactor;
 
 public class ReactorStateHalfPower extends ReactorStateBase {
 
