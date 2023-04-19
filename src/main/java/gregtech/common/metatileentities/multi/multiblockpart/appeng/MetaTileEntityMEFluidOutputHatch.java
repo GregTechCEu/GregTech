@@ -45,7 +45,7 @@ import java.util.List;
 
 /**
  * @Author GlodBlock
- * @Description TODO
+ * @Description The Output Hatch that can directly send its contents to ME storage network.
  * @Date 2023/4/19-1:18
  */
 public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IFluidTank>, InfinitySink {

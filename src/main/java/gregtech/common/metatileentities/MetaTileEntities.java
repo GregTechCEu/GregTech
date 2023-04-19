@@ -747,7 +747,9 @@ public class MetaTileEntities {
         }
 
         // ME Hatches, IDs 1730-1740
-        FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1730, new MetaTileEntityMEFluidOutputHatch(gregtechId("me_export_fluid_hatch")));
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1730, new MetaTileEntityMEFluidOutputHatch(gregtechId("me_export_fluid_hatch")));
+        }
 
         /*
          * FOR ADDON DEVELOPERS:
