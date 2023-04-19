@@ -1,4 +1,4 @@
-package gregtech.api.nuclear;
+package gregtech.api.nuclear.fission.states;
 
 public interface IReactorState {
 
