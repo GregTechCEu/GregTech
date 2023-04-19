@@ -38,7 +38,7 @@ public class AEItemDisplayWidget extends Widget {
             ItemStack realStack = item.createItemStack();
             realStack.setCount(1);
             drawItemStack(realStack, stackX, stackY, null);
-            String amountStr = "x" + item.getStackSize();
+            String amountStr = String.format("x%,d", item.getStackSize());
             drawText(amountStr, stackX + 20, stackY + 5, 1, 0xFFFFFFFF);
         }
         if (isMouseOverElement(mouseX, mouseY)) {

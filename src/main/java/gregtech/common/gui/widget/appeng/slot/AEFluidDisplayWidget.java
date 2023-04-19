@@ -41,7 +41,7 @@ public class AEFluidDisplayWidget extends Widget {
         int stackY = position.y + 1;
         if (fluid != null) {
             RenderUtil.drawFluidForGui(fluid.getFluidStack(), fluid.getFluidStack().amount, stackX, stackY, 17, 17);
-            String amountStr = "x" + fluid.getStackSize();
+            String amountStr = String.format("x%,d", fluid.getStackSize());
             drawText(amountStr, stackX + 20, stackY + 5, 1, 0xFFFFFFFF);
         }
         if (isMouseOverElement(mouseX, mouseY)) {
@@ -56,7 +56,7 @@ public class AEFluidDisplayWidget extends Widget {
             if (fluid != null) {
                 List<String> hoverStringList = new ArrayList<>();
                 hoverStringList.add(fluid.getFluidStack().getLocalizedName());
-                hoverStringList.add(fluid.getStackSize() + " L");
+                hoverStringList.add(String.format("%,d L", fluid.getStackSize()));
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(fluid.getFluidStack());
                 if (formula != null) {
                     for (String s : formula) {
