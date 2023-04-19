@@ -34,6 +34,7 @@ public class AEFluidGridWidget extends AEListGridWidget<IAEFluidStack> {
             if (cnt == index) {
                 return fluid;
             }
+            cnt ++;
         }
         return null;
     }
@@ -52,7 +53,7 @@ public class AEFluidGridWidget extends AEListGridWidget<IAEFluidStack> {
         this.changeMap.clear();
         // Remove fluid
         for (IAEFluidStack fluid : this.cached) {
-            if (this.list.findPrecise(fluid) == null) {
+            if (this.list.findPrecise(fluid) == null || this.list.findPrecise(fluid).getStackSize() == 0) {
                 this.changeMap.put(fluid.copy(), -fluid.getStackSize());
                 fluid.reset();
             }
@@ -60,7 +61,7 @@ public class AEFluidGridWidget extends AEListGridWidget<IAEFluidStack> {
         // Change/Add fluid
         for (IAEFluidStack fluid : this.list) {
             IAEFluidStack cachedFluid = this.cached.findPrecise(fluid);
-            if (cachedFluid == null) {
+            if (cachedFluid == null || cachedFluid.getStackSize() == 0) {
                 this.changeMap.put(fluid.copy(), fluid.getStackSize());
                 this.cached.add(fluid.copy());
             } else {
@@ -74,7 +75,7 @@ public class AEFluidGridWidget extends AEListGridWidget<IAEFluidStack> {
             buf.writeVarInt(this.changeMap.size());
             for (IAEFluidStack fluid : this.changeMap.keySet()) {
                 buf.writeString(fluid.getFluid().getName());
-                buf.writeVarLong(fluid.getStackSize());
+                buf.writeVarLong(this.changeMap.get(fluid));
             }
         });
     }

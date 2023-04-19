@@ -34,7 +34,7 @@ public class AEFluidDisplayWidget extends Widget {
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
         Position position = getPosition();
-        IAEFluidStack fluid = this.gridWidget.getAt(index);
+        IAEFluidStack fluid = this.gridWidget.getAt(this.index);
         GuiTextures.FLUID_SLOT.draw(position.x, position.y, 18, 18);
         GuiTextures.NUMBER_BACKGROUND.draw(position.x + 18, position.y, 140, 18);
         int stackX = position.x + 1;

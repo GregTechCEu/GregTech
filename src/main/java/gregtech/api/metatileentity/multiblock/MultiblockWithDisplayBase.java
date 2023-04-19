@@ -552,6 +552,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     public void checkStructurePattern() {
         super.checkStructurePattern();
+        this.fluidInfSink = false;
+        this.itemInfSink = false;
         for (IMultiblockPart part : this.getMultiblockParts()) {
             if (part instanceof InfinitySink) {
                 if (part instanceof IMultiblockAbilityPart) {

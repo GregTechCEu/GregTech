@@ -183,8 +183,8 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
             }
             return this.hatchTexture;
         } else {
-            // Always display as LV casing
-            return Textures.VOLTAGE_CASINGS[GTValues.LV];
+            // Always display as EV casing
+            return Textures.VOLTAGE_CASINGS[GTValues.EV];
         }
     }
 

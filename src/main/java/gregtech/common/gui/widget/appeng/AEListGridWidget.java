@@ -25,9 +25,7 @@ public abstract class AEListGridWidget<T extends IAEStack<T>> extends Scrollable
         this.slotAmountY = slotsY;
     }
 
-    public abstract T getAt(int index);/* {
-        return this.displayList.size() > index ? this.displayList.get(index) : null;
-    }*/
+    public abstract T getAt(int index);
 
     protected abstract void addSlotRows(int amount);
 
