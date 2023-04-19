@@ -13,7 +13,7 @@ import net.minecraft.network.PacketBuffer;
  * <p>
  * - If this Packet is to be received on the CLIENT, implement {@link IClientExecutor}.<br><br>
  * <p>
- * Lastly, add the {@link lombok.NoArgsConstructor} annotation to your Packet class.
+ * Lastly, add a no-args constructor to your Packet class.
  */
 public interface IPacket {
 
