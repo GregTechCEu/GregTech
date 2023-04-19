@@ -27,7 +27,8 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.multiblockpart.*;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEFluidOutputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
@@ -225,7 +226,8 @@ public class MetaTileEntities {
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
-    public static MetaTileEntityMEFluidOutputHatch FLUID_EXPORT_HATCH_ME;
+    public static MetaTileEntityMEOutputHatch FLUID_EXPORT_HATCH_ME;
+    public static MetaTileEntityMEOutputBus ITEM_EXPORT_BUS_ME;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -748,7 +750,8 @@ public class MetaTileEntities {
 
         // ME Hatches, IDs 1730-1740
         if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-            FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1730, new MetaTileEntityMEFluidOutputHatch(gregtechId("me_export_fluid_hatch")));
+            FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1730, new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
+            ITEM_EXPORT_BUS_ME = registerMetaTileEntity(1731, new MetaTileEntityMEOutputBus(gregtechId("me_export_item_bus")));
         }
 
         /*

@@ -2,10 +2,10 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
-import appeng.fluids.util.AEFluidStack;
 import appeng.me.GridAccessException;
+import appeng.util.item.AEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -19,11 +19,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEFluidGridWidget;
-import gregtech.common.inventory.appeng.SerializableFluidList;
+import gregtech.common.gui.widget.appeng.AEItemGridWidget;
+import gregtech.common.inventory.appeng.SerializableItemList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,9 +32,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,24 +41,24 @@ import java.util.List;
 
 /**
  * @Author GlodBlock
- * @Description The Output Hatch that can directly send its contents to ME storage network.
- * @Date 2023/4/19-1:18
+ * @Description The Output Bus that can directly send its contents to ME storage network.
+ * @Date 2023/4/19-20:37
  */
-public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IFluidTank>, InfinitySink {
+public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, InfinitySink {
 
-    public final static String FLUID_BUFFER_TAG = "FluidBuffer";
+    public final static String ITEM_BUFFER_TAG = "ItemBuffer";
     public final static String WORKING_TAG = "WorkingEnabled";
     private boolean workingEnabled;
-    private SerializableFluidList internalBuffer;
+    private SerializableItemList internalBuffer;
 
-    public MetaTileEntityMEFluidOutputHatch(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityMEOutputBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.UHV, true);
         this.workingEnabled = true;
     }
 
     @Override
     protected void initializeInventory() {
-        this.internalBuffer = new SerializableFluidList();
+        this.internalBuffer = new SerializableItemList();
         super.initializeInventory();
     }
 
@@ -73,13 +69,13 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
             if (this.updateMEStatus()) {
                 if (!this.internalBuffer.isEmpty()) {
                     try {
-                        IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
-                        for (IAEFluidStack fluid : this.internalBuffer) {
-                            IAEFluidStack notInserted = aeNetwork.injectItems(fluid.copy(), Actionable.MODULATE, this.getActionSource());
+                        IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
+                        for (IAEItemStack item : this.internalBuffer) {
+                            IAEItemStack notInserted = aeNetwork.injectItems(item.copy(), Actionable.MODULATE, this.getActionSource());
                             if (notInserted != null && notInserted.getStackSize() > 0) {
-                                fluid.setStackSize(notInserted.getStackSize());
+                                item.setStackSize(notInserted.getStackSize());
                             } else {
-                                fluid.reset();
+                                item.reset();
                             }
                         }
                     } catch (GridAccessException ignore) {
@@ -91,7 +87,7 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEFluidOutputHatch(this.metaTileEntityId);
+        return new MetaTileEntityMEOutputBus(this.metaTileEntityId);
     }
 
     @Override
@@ -105,7 +101,7 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
                         I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
         builder.label(10, 25, "gregtech.gui.waiting_list", 0xFFFFFFFF);
-        builder.widget(new AEFluidGridWidget(10, 35, 3, this.internalBuffer));
+        builder.widget(new AEItemGridWidget(10, 35, 3, this.internalBuffer));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
@@ -149,7 +145,7 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
-        data.setTag(FLUID_BUFFER_TAG, this.internalBuffer.serializeNBT());
+        data.setTag(ITEM_BUFFER_TAG, this.internalBuffer.serializeNBT());
         return data;
     }
 
@@ -159,8 +155,8 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }
-        if (data.hasKey(FLUID_BUFFER_TAG, 9)) {
-            this.internalBuffer.deserializeNBT((NBTTagList) data.getTag(FLUID_BUFFER_TAG));
+        if (data.hasKey(ITEM_BUFFER_TAG, 9)) {
+            this.internalBuffer.deserializeNBT((NBTTagList) data.getTag(ITEM_BUFFER_TAG));
         }
     }
 
@@ -168,91 +164,77 @@ public class MetaTileEntityMEFluidOutputHatch extends MetaTileEntityAEHostablePa
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_OUTPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
-        }
-    }
-
-    @Override
-    public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = getController();
-        if (controller != null) {
-            return this.hatchTexture = controller.getBaseTexture(this);
-        } else if (this.hatchTexture != null) {
-            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
-                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
-            }
-            return this.hatchTexture;
-        } else {
-            // Always display as EV casing
-            return Textures.VOLTAGE_CASINGS[GTValues.EV];
+            Textures.ME_OUTPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.fluid_hatch.export.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.fluid_export.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.item_export.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.export.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return MultiblockAbility.EXPORT_FLUIDS;
+    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
+        return MultiblockAbility.EXPORT_ITEMS;
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> list) {
-        list.add(new InaccessibleInfiniteTank(this.internalBuffer, this));
+    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
+        abilityList.add(new InaccessibleInfiniteSlot(this.internalBuffer, this));
     }
 
-    private static class InaccessibleInfiniteTank implements IFluidTank, INotifiableHandler {
-        private final IItemList<IAEFluidStack> internalBuffer;
+    private static class InaccessibleInfiniteSlot implements IItemHandlerModifiable, INotifiableHandler {
+        private final IItemList<IAEItemStack> internalBuffer;
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
 
-        public InaccessibleInfiniteTank(IItemList<IAEFluidStack> internalBuffer, MetaTileEntity mte) {
+        public InaccessibleInfiniteSlot(IItemList<IAEItemStack> internalBuffer, MetaTileEntity mte) {
             this.internalBuffer = internalBuffer;
             this.notifiableEntities.add(mte);
         }
 
-        @Nullable
         @Override
-        public FluidStack getFluid() {
-            return null;
+        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+            this.internalBuffer.add(AEItemStack.fromItemStack(stack));
+            this.trigger();
         }
 
         @Override
-        public int getFluidAmount() {
-            return 0;
+        public int getSlots() {
+            return 1;
         }
 
+        @Nonnull
         @Override
-        public int getCapacity() {
-            return Integer.MAX_VALUE - 1;
+        public ItemStack getStackInSlot(int slot) {
+            return ItemStack.EMPTY;
         }
 
+        @Nonnull
         @Override
-        public FluidTankInfo getInfo() {
-            return null;
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) {
-                return 0;
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            if (stack.isEmpty()) {
+                return ItemStack.EMPTY;
             }
-            if (doFill) {
-                this.internalBuffer.add(AEFluidStack.fromFluidStack(resource));
+            if (!simulate) {
+                this.internalBuffer.add(AEItemStack.fromItemStack(stack));
             }
             this.trigger();
-            return resource.amount;
+            return ItemStack.EMPTY;
         }
 
-        @Nullable
+        @Nonnull
         @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            return null;
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return Integer.MAX_VALUE - 1;
         }
 
         @Override

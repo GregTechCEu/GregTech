@@ -15,7 +15,11 @@ import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.BaseActionSource;
 import appeng.me.helpers.IGridProxyable;
 import appeng.me.helpers.MachineSource;
+import gregtech.api.GTValues;
 import gregtech.api.capability.IControllable;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 import net.minecraft.nbt.NBTTagCompound;
@@ -88,6 +92,22 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         super.receiveCustomData(dataId, buf);
         if (dataId == ONLINE_ID) {
             this.isOnline = buf.readBoolean();
+        }
+    }
+
+    @Override
+    public ICubeRenderer getBaseTexture() {
+        MultiblockControllerBase controller = getController();
+        if (controller != null) {
+            return this.hatchTexture = controller.getBaseTexture(this);
+        } else if (this.hatchTexture != null) {
+            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
+                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
+            }
+            return this.hatchTexture;
+        } else {
+            // Always display as EV casing
+            return Textures.VOLTAGE_CASINGS[GTValues.EV];
         }
     }
 
